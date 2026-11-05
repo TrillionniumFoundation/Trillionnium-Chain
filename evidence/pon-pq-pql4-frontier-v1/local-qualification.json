@@ -1,0 +1,60 @@
+{
+  "schema": "pon-pq-pql4-local-qualification-v1",
+  "source_parent_commit": "06e689c183d69990e61d26dd61aa96af85eeb233",
+  "source_parent_pr": 451,
+  "claim": "local PQL3 state parity and genuine ML-DSA-65 witness verification; not independent trust or production activation",
+  "execution_utc": "2026-10-27T03:02:47.988936+00:00",
+  "environment": {
+    "python": "3.13.5",
+    "sqlite": "3.46.1",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "os": "Linux-6.18.55-x86_64-with-glibc2.41"
+  },
+  "exact_command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_pq_pql4_signed_frontier.py"
+  ],
+  "environment_overrides": {
+    "PYTHONWARNINGS": "error"
+  },
+  "tests_passed": 12,
+  "tests_failed": 0,
+  "tests_errors": 0,
+  "signed_header_byte_mutations_rejected": 336,
+  "actual_ml_dsa_65_used": true,
+  "full_db_rollback_current_external_witness_rejected": true,
+  "old_db_plus_old_external_head_still_accepted": true,
+  "externally_independent_custodian_installed": false,
+  "native_rust_node_tested": false,
+  "native_chain_authority_integrated": false,
+  "real_old_chain_source_authenticated": false,
+  "remote_wan_tested": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "full_chain_pq_secure": false,
+  "source_and_log_files": {
+    "pq_pql4_signed_frontier.py": {
+      "bytes": 16975,
+      "sha256": "60d67a2cc4ec2620739aa2edae0bcf79e9e73db346bf5cd9b356f869634c1d8b",
+      "git_blob_sha1": "16186129dbe6a660dea1e646d27a484e037caa2b"
+    },
+    "test_pq_pql4_signed_frontier.py": {
+      "bytes": 14188,
+      "sha256": "cf8a6558955fada727d53b48fdcf7ef224f45b4b537890262b240d6a5620248d",
+      "git_blob_sha1": "a12fd9fb148cfd42e22d48d37f23ac45a535f7da"
+    },
+    "PQ_PQL4_SIGNED_EXTERNAL_FRONTIER_RESEARCH_V1.md": {
+      "bytes": 6658,
+      "sha256": "4b7fd04b3a5e9a5a7413c5c6295208742e6392a49de8e75d7e89b1e191de72a4",
+      "git_blob_sha1": "1a62cc67f3a0192946d62b9a29e9f7150bf18d19"
+    },
+    "local-unittest.log": {
+      "bytes": 2143,
+      "sha256": "c8f8becf4ce30aac3e3ec3837849b2e294536cda49153f14428c6d695dd1a4ab",
+      "git_blob_sha1": "b53e75b6bbf730164b2ffd259afa5b3eace2057a"
+    }
+  }
+}

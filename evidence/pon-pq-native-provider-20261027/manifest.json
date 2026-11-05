@@ -1,0 +1,66 @@
+{
+  "artifacts": [
+    {
+      "bytes": 2848,
+      "path": "README.md",
+      "sha256": "bbda8e08ecbaee887a749beaf3105c202d0b65b3a00a52ce64f4617bdcf4d508"
+    },
+    {
+      "bytes": 6118,
+      "path": "executed-prepare-pq-provider.sh.txt",
+      "sha256": "72310d322bb405c3a198aac3a07318af81b37293e012bda1c3b06732ec08d5bf"
+    },
+    {
+      "bytes": 37631,
+      "path": "full-download-build/build-and-smoke.log.gz",
+      "sha256": "ca839218a133a174d8bd3c496a750c7bf8128d5ef7325c19b0e550fcbf5a42bc",
+      "uncompressed_bytes": 1325769,
+      "uncompressed_sha256": "445de46911ef33c642d719867ff29824fde33cc679e41ff9511c2fa2517dc47c"
+    },
+    {
+      "bytes": 1097,
+      "path": "full-download-build/provider.json",
+      "sha256": "34a2305c23a2bfb4903c2b975fb23a27b0bdea659b8dc09c9f2427ed5492e679"
+    },
+    {
+      "bytes": 23654,
+      "path": "pq_owner_migration_review.md",
+      "sha256": "af6accf0ba3b96c1e23dee92eb08c9534badda78d02ec27557b135221cc4ec7f"
+    },
+    {
+      "bytes": 49557,
+      "path": "pq_owner_source_inventory_31dc8b2.json",
+      "sha256": "e16134c8a5e19d7eb891832c3272acbd223e3f4300eefdbaf1808f09f59284cf"
+    },
+    {
+      "bytes": 371,
+      "path": "provider-wiring-tests.log.gz",
+      "sha256": "91bbb30ac1894a17fe32d7f0624997e132ceea45deba5747b96505c761c2cf81",
+      "uncompressed_bytes": 1216,
+      "uncompressed_sha256": "0e39bf634a8b9b91780ebb1acba2540cc47e390d88612543f1748d62452a4ef3"
+    },
+    {
+      "bytes": 201,
+      "path": "sandbox-download-failure/build-and-smoke.log.gz",
+      "sha256": "345714d77d7a45633fe1625985595eab7298f6b1efccac8624e6a639d21ca27c",
+      "uncompressed_bytes": 411,
+      "uncompressed_sha256": "b8e1fca9868c2e8cd0d913081562b89109bb3c01013d311bf0a551576d4513d2"
+    },
+    {
+      "bytes": 1097,
+      "path": "sandbox-download-failure/provider.json",
+      "sha256": "e7af176aadbf81b4b49b944c1c9adb191c115ca42c45e5bff2186ca120aa19b4"
+    }
+  ],
+  "audited_integration_commit": "31dc8b2247aed8cbb4e3f6912659da97a2cbc2b3",
+  "hosted_ci_execution": false,
+  "installer_cache_branch_full_execution": false,
+  "installer_full_execution": true,
+  "native_owner_migration_complete": false,
+  "native_rust_tests_run_by_installer": false,
+  "observation_date": "2026-10-27",
+  "preparation_source_commit": "f1829c8fa8550a1665bc2da34cbd8b6e6a8b2714",
+  "schema": "trnm-pq-provider-local-observations-v1",
+  "whole_chain_quantum_security_qualified": false,
+  "wiring_test_source_commit": "0915e5ab19f4489618b9c7cfa25fe65644bfa010"
+}

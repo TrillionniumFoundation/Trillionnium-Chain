@@ -1,0 +1,17 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 57s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 5 tests
+test account_archive_prototype::account_prefix_tests::prefix_range_component_cost_abba ... ignored, explicit paired parser wall observation; no Node/service performance gate
+test account_archive_prototype::account_prefix_tests::prefix_range_preserves_account_value_grammar_and_first_error_order ... ok
+test account_archive_prototype::account_prefix_tests::prefix_range_preserves_all_account_suffixes_and_neighboring_keys ... ok
+test account_archive_prototype::account_prefix_tests::prefix_range_visits_fixed_account_rows_when_working_state_grows ... ok
+{"admission_parser_calls":2,"admission_parser_rows":6,"both_successor_proof_passes_retained":true,"cold_replay_and_old_nonce_rejection":true,"dormant_accounts":0,"extra_working_rows":0,"full_state_root_equal":true,"make_parser_calls":2,"make_parser_rows":6,"permanent_accounts":5,"proved_successor_accounts":3,"public_service_qualified":false,"schema":"native-growth-account-prefix-observation-v1","scope":"actual native make/admit, complete reference roots, durable reopen and nonce rejection; other working-state scans remain","working_rows":7}
+{"admission_parser_calls":2,"admission_parser_rows":6,"both_successor_proof_passes_retained":true,"cold_replay_and_old_nonce_rejection":true,"dormant_accounts":0,"extra_working_rows":64,"full_state_root_equal":true,"make_parser_calls":2,"make_parser_rows":6,"permanent_accounts":5,"proved_successor_accounts":3,"public_service_qualified":false,"schema":"native-growth-account-prefix-observation-v1","scope":"actual native make/admit, complete reference roots, durable reopen and nonce rejection; other working-state scans remain","working_rows":71}
+{"admission_parser_calls":2,"admission_parser_rows":6,"both_successor_proof_passes_retained":true,"cold_replay_and_old_nonce_rejection":true,"dormant_accounts":0,"extra_working_rows":4096,"full_state_root_equal":true,"make_parser_calls":2,"make_parser_rows":6,"permanent_accounts":5,"proved_successor_accounts":3,"public_service_qualified":false,"schema":"native-growth-account-prefix-observation-v1","scope":"actual native make/admit, complete reference roots, durable reopen and nonce rejection; other working-state scans remain","working_rows":4103}
+{"admission_parser_calls":2,"admission_parser_rows":6,"both_successor_proof_passes_retained":true,"cold_replay_and_old_nonce_rejection":true,"dormant_accounts":256,"extra_working_rows":64,"full_state_root_equal":true,"make_parser_calls":2,"make_parser_rows":6,"permanent_accounts":261,"proved_successor_accounts":3,"public_service_qualified":false,"schema":"native-growth-account-prefix-observation-v1","scope":"actual native make/admit, complete reference roots, durable reopen and nonce rejection; other working-state scans remain","working_rows":71}
+test account_archive_execution::state_witness::native_growth::account_prefix_tests::native_growth_account_prefix_cost_keeps_complete_roots_and_recovery ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 1074 filtered out; finished in 17.66s
+

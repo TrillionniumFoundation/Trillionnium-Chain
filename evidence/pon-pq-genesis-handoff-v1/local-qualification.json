@@ -1,0 +1,37 @@
+{
+  "adversarial_header_byte_mutations": 177,
+  "base_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "exact_parent_commit": "2a29fc75546c97187069c3a9ffe176343ac41650",
+  "independent_accepted": false,
+  "invocation": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_genesis_handoff.py",
+  "local_conformance_only": true,
+  "local_tests_failed": 0,
+  "local_tests_passed": 23,
+  "production_activation": false,
+  "promotes_chain_or_hepta_authority": false,
+  "raw_log_sha256": "79dc4f72b57ddcb7c0469912d07618879cb24a5fe4ebaf1d08a4c65e7ffe2f8c",
+  "runtime": {
+    "cryptography": "46.0.4",
+    "filesystem": "container overlayfs",
+    "independent_operators": false,
+    "native_rust_executed": false,
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "production_flags_changed": false,
+    "public_or_node_integration": false,
+    "python": "3.13.5",
+    "sqlite3": "3.46.1"
+  },
+  "schema": "trnm-pq-genesis-handoff-local-qualification-v1",
+  "source_paths": {
+    "formal/pon-nakamoto-v1/pq_genesis_handoff.py": {
+      "git_blob_sha1": "717e62713238e19d36f4554d6ff592552821c69d",
+      "sha256": "59535bccd1b1b91bfe27a990c4c338726f36509f4b4a50825d8cff38edf81844"
+    },
+    "formal/pon-nakamoto-v1/test_pq_genesis_handoff.py": {
+      "git_blob_sha1": "059c4447308e08ca33e841738ac1a0fd1d2711bd",
+      "sha256": "31b49bc2602940926ae5e99559afa6fadce47af9c85dbdfe55383c99f62963e6"
+    }
+  },
+  "upstream_strict_signature_git_blob_sha1": "b0cedca3a0423f2563359a8645ba322f966804dc"
+}

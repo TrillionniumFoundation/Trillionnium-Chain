@@ -1,0 +1,28 @@
+[
+  {
+    "jobId": 124792592393,
+    "label": "w1-v3-head-x64",
+    "needle": "original release compiler/target contract forbids overrides",
+    "line_from": 850,
+    "line_to": 906,
+    "file": "w1-v3-head-x64.job-log-excerpt.gz",
+    "raw_sha256": "c3de66c8b629faea2c0f631dda65cd129f5bbe631c03eaea7f90a1257b85a13b",
+    "gzip_sha256": "99e7415747c0a0a4bb7a15d4b973d22193729168b40c91efebe12d34c76a2371",
+    "raw_bytes": 4257,
+    "original_job_log_subset": true,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41287811776/job/124792592393"
+  },
+  {
+    "jobId": 124792592211,
+    "label": "cross-arch-cost-x64",
+    "needle": "release compiler/target overrides would change the campaign build contract",
+    "line_from": 810,
+    "line_to": 866,
+    "file": "cross-arch-cost-x64.job-log-excerpt.gz",
+    "raw_sha256": "ae8c5042fddd52a67e0f03870bb3866bd7fcf12c5b25dd0bb2d21c9dbe8cf5dd",
+    "gzip_sha256": "42fd75caf8806402985b1f877a718886fa1883d03c069e7c990aba296459ea05",
+    "raw_bytes": 4026,
+    "original_job_log_subset": true,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41287811776/job/124792592211"
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/target-w1/release/w1-native-cost",
+    "/workspace/scratch/56818e4fba76/w1-real-proof-attempt1/proof/input-0.bin"
+  ],
+  "timeout_seconds": 30
+}

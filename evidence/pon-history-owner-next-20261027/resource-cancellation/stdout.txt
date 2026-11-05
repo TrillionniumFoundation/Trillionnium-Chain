@@ -1,0 +1,7 @@
+
+running 1 test
+test ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit ... {"flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":133780047,"discarded_refill_ns":0,"initial_credit_ns":0,"live_debited_cpu_ns":133783034,"live_owners":0,"paid_cpu_debit_ns":133784015,"remaining_paid_credit_ns":-3968,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":133784015,"settlement_discard_ns":0,"settlement_residual_cpu_ns":981,"stored_credit_ns":-3968,"unsettled_known_live_cpu_ns":0},"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":133783034,"live_refused":false,"owner_cpu_ns":133784015,"residual_cpu_ns":981,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":133784015},"schema":"history-resource-cancellation-real-refill-v1"}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 768 filtered out; finished in 0.55s
+

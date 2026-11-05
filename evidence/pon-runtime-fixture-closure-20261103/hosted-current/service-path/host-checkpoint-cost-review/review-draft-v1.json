@@ -1,0 +1,415 @@
+{
+  "schema": "trnm-host-checkpoint-cost-static-review-v1",
+  "reviewed_utc": "2026-11-03T22:44:02.945057+00:00",
+  "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "source_tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+  "artifact": {
+    "id": 13276003536,
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/c5dd7c-original-campaign-13276003536.zip",
+    "bytes": 60966255,
+    "sha256": "78e1b41ced06d6b77568a132d60623a1a7b5059ef9791dd43cc8ed4110efaacb",
+    "downloaded_by_this_reader": false
+  },
+  "readback_sha256": "ca3302f2bb99112a74901a3bad1e2822eb62e375a33edd4f1cf614b8331ec14e",
+  "conclusion": "The retained measurements establish material repeated live Host verification cost; they do not isolate its I/O/parsing constituents or prove any new optimization. Existing allocation reductions already apply. Cross-checkpoint descriptor or authorization reuse is not a compatible shortcut. One bounded pure canonical-encoding comparison could be investigated only after its actual cost is measured.",
+  "implementation_changed": false,
+  "native_or_benchmark_executions": 0,
+  "observed_complete_page_rows": [
+    {
+      "run": 1,
+      "history_index": 6,
+      "client_import": {
+        "ended_ns": 23709048657,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page",
+        "scope": "calling client thread only; excludes scoped execution worker CPU; unknown clock is null; no deadline or acceptance authority",
+        "started_ns": 16141280173,
+        "succeeded": true,
+        "thread_cpu_ns": 1743752286,
+        "thread_cpu_observation_available": true,
+        "wall_ns": 7567768473
+      },
+      "host_checkpoint": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 205144,
+        "last_ended_ns": 7567278419,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1422129691,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1730259814
+      },
+      "submit_result": {
+        "packet_index": 0,
+        "packet_id": [
+          216,
+          171,
+          63,
+          59,
+          84,
+          202,
+          91,
+          163,
+          126,
+          4,
+          254,
+          157,
+          126,
+          251,
+          213,
+          8,
+          152,
+          36,
+          116,
+          238,
+          234,
+          134,
+          179,
+          125,
+          184,
+          254,
+          119,
+          24,
+          28,
+          110,
+          202,
+          150
+        ],
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7567281083,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2074934564,
+        "thread_cpu_ns": 1257045603,
+        "wall_ns": 5492346519
+      }
+    },
+    {
+      "run": 2,
+      "history_index": 6,
+      "client_import": {
+        "ended_ns": 23710890459,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page",
+        "scope": "calling client thread only; excludes scoped execution worker CPU; unknown clock is null; no deadline or acceptance authority",
+        "started_ns": 16136512189,
+        "succeeded": true,
+        "thread_cpu_ns": 1745852215,
+        "thread_cpu_observation_available": true,
+        "wall_ns": 7574378270
+      },
+      "host_checkpoint": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 195368,
+        "last_ended_ns": 7573870849,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1421790997,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1652390575
+      },
+      "submit_result": {
+        "packet_index": 0,
+        "packet_id": [
+          216,
+          171,
+          63,
+          59,
+          84,
+          202,
+          91,
+          163,
+          126,
+          4,
+          254,
+          157,
+          126,
+          251,
+          213,
+          8,
+          152,
+          36,
+          116,
+          238,
+          234,
+          134,
+          179,
+          125,
+          184,
+          254,
+          119,
+          24,
+          28,
+          110,
+          202,
+          150
+        ],
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7573873383,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2078243906,
+        "thread_cpu_ns": 1257437312,
+        "wall_ns": 5495629477
+      }
+    },
+    {
+      "run": 3,
+      "history_index": 6,
+      "client_import": {
+        "ended_ns": 23697038719,
+        "error": null,
+        "operation": "deserialize Page and ordinary receive_page, including activation only on the original complete page",
+        "scope": "calling client thread only; excludes scoped execution worker CPU; unknown clock is null; no deadline or acceptance authority",
+        "started_ns": 16135985646,
+        "succeeded": true,
+        "thread_cpu_ns": 1740148025,
+        "thread_cpu_observation_available": true,
+        "wall_ns": 7561053083
+      },
+      "host_checkpoint": {
+        "calls_accepted": 29928,
+        "calls_completed": 29928,
+        "calls_rejected": 0,
+        "calls_started": 29928,
+        "calls_unfinished": 0,
+        "cpu_clock_unknown_calls": 0,
+        "first_started_ns": 184633,
+        "last_ended_ns": 7560190296,
+        "last_error_code": null,
+        "phase": "checkpoint",
+        "thread_cpu_ns": 1418853502,
+        "wall_clock_unknown_calls": 0,
+        "wall_ns": 1647645546
+      },
+      "submit_result": {
+        "packet_index": 0,
+        "packet_id": [
+          216,
+          171,
+          63,
+          59,
+          84,
+          202,
+          91,
+          163,
+          126,
+          4,
+          254,
+          157,
+          126,
+          251,
+          213,
+          8,
+          152,
+          36,
+          116,
+          238,
+          234,
+          134,
+          179,
+          125,
+          184,
+          254,
+          119,
+          24,
+          28,
+          110,
+          202,
+          150
+        ],
+        "accepted": true,
+        "completed": true,
+        "ended_ns": 7560193510,
+        "error_code": null,
+        "parent_phase": null,
+        "phase": "submit_result",
+        "started": true,
+        "started_ns": 2080566037,
+        "thread_cpu_ns": 1249896483,
+        "wall_ns": 5479627473
+      }
+    }
+  ],
+  "scope_constraints": [
+    "29928 is the checkpoint aggregate of the entire index6 page import, not an exact activation-only call count.",
+    "Host CPU sums actual Host-call intervals on each invoking thread; caller CPU excludes scoped workers. Their ratio is not an exact cost fraction.",
+    "Host intervals nest inside page import and include no full worker CPU or independent transport duration; do not add nested totals.",
+    "No per-file open/read/close/parser CPU attribution exists in this retained aggregate.",
+    "Resource_sample cpu.stat/BTreeMap parsing is not called by KernelBudget.verify; it is not repeated at every checkpoint.",
+    "Static source inspection and arithmetic provide no measured optimization benefit or service acceptance."
+  ],
+  "static_cost_chain": [
+    {
+      "step": 1,
+      "operation": "Original absolute deadline check before Host",
+      "source": "ingress/history_import.rs:27-32; scalar_cpu.rs:685-716",
+      "retention": "Keep original lifetime/cancellation and every refill-loop resource recheck; no new reservation or cached prior acceptance."
+    },
+    {
+      "step": 2,
+      "operation": "Fresh boot_id open/read-to-real-EOF/UTF8/trim comparison",
+      "source": "host_kernel_parent.rs:336-344",
+      "retention": "Boot mismatch/failed current open/read remain refusal; same-stream long fallback remains."
+    },
+    {
+      "step": 3,
+      "operation": "Fresh parent symlink_metadata type/root UID/mode/dev/inode checks",
+      "source": "host_kernel_parent.rs:345-353",
+      "retention": "Keep actual current named parent lookup; do not replace it with metadata only on a previously held directory."
+    },
+    {
+      "step": 4,
+      "operation": "Fresh /proc/thread-self/cgroup open/read-to-EOF/UTF8/one-entry canonical descendant test",
+      "source": "host_kernel_parent.rs:225-271,354-356",
+      "retention": "Current invoking TID, not process leader or the TID that opened a cached proc descriptor."
+    },
+    {
+      "step": 5,
+      "operation": "Five fresh opens, complete bounded reads, all UTF8 checks, then full limit validation and unchanged-limits comparison",
+      "source": "host_kernel_parent.rs:131-188,357-360",
+      "retention": "Keep 128-byte bound, short-read and EINTR behavior, real EOF, all five I/O-before-parse error precedence, original finite caps and limits_changed semantics."
+    },
+    {
+      "step": 6,
+      "operation": "Original caller/worker CPU observation and shared budget charge/refill after Host",
+      "source": "scalar_cpu.rs:693-810",
+      "retention": "Request->global lock order, actual current-thread registry/stamp, missing CPU failure, owner/cancel/termination identity and original 5ms refill wait/deadline clipping stay unchanged."
+    }
+  ],
+  "existing_optimizations": [
+    {
+      "fact": "Five PathBuf limit names are already computed once per KernelBudget; parent-relative string is already retained.",
+      "source": "host_kernel_parent.rs:166-175,325-333,384-399"
+    },
+    {
+      "fact": "Five limit reads already use fixed 129-byte stack buffers; short boot/membership reads already use borrowed 257-byte stack buffers. Long context uses the same original opened stream and heap fallback.",
+      "source": "host_kernel_parent.rs:131-235"
+    },
+    {
+      "fact": "The previous adjacent duplicate Host call in admit_packet was already removed while retaining original history_checkpoint at every native progress boundary.",
+      "source": "history_import.rs:285-291"
+    },
+    {
+      "fact": "Rust1.95 File::open converts these short paths to a temporary stack C string, not a heap CString. Replacing it cannot be advertised as removing seven heap allocations.",
+      "source": "rust-1.95.0-small_c_string.rs:6-48; rust-1.95.0-unix.rs:1345-1360",
+      "primary_urls": [
+        "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/helpers/small_c_string.rs",
+        "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/fs/unix.rs"
+      ]
+    }
+  ],
+  "observer_cost_boundary": {
+    "source": "history_import/observation.rs:257-345; public_v3/request_observation.rs:950-985",
+    "work": "Two monotonic stamps, two calling-thread CPU stamps and two nonblocking aggregate try-lock/update attempts per observed Host call. The action still executes once even if measurement contention occurs.",
+    "measurement_limit": "Host CPU stamp starts after the beginning aggregation lock and ends before final aggregation lock/update; aggregate CPU does not measure all observer overhead. Observer overhead still remains inside the enclosing real paid operation."
+  },
+  "static_operation_arithmetic": {
+    "fresh_file_open_operations": 7,
+    "file_drops_closing_descriptors": 7,
+    "complete_Read_read_calls_minimum_when_all_seven_texts_nonempty": 14,
+    "parent_symlink_metadata_API_calls": 1,
+    "normal_case_source_buffer_bytes": 1159,
+    "contents_or_authorization_verdict_cached": false,
+    "paths_precomputed_or_literal": [
+      "/proc/sys/kernel/random/boot_id",
+      "/proc/thread-self/cgroup",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max",
+      "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.max",
+      "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max",
+      "/sys/fs/cgroup/trnmponpublic.slice/pids.max"
+    ],
+    "path_utf8_byte_lengths": [
+      31,
+      24,
+      42,
+      48,
+      45,
+      50,
+      43
+    ],
+    "std_C_string_stack_threshold_bytes": 384,
+    "per_page6_29928_checkpoints_source_level_fresh_opens": 209496,
+    "per_page6_29928_checkpoints_minimum_nonempty_Read_calls": 418992,
+    "per_page6_29928_checkpoints_parent_metadata_API_calls": 29928,
+    "counts_are_static_source_arithmetic_not_observed_syscall_trace": true
+  },
+  "descriptor_reuse_rejection": {
+    "decision": "Do not implement a retained file/directory descriptor shortcut under the stated exact-live-observation constraint.",
+    "reasons": [
+      "An open descriptor can retain a removed or replaced object and can differ from a fresh permission-checked named-path open. Current tests explicitly require renamed contents and missing-path errors to be observed on the next call.",
+      "A /proc/thread-self descriptor is bound when opened; sharing it across scoped invoking workers does not re-resolve the actual current TID.",
+      "A kept parent directory descriptor plus relative opens can continue from the old directory after the named parent changes. Comparing only the held descriptor does not preserve the original current path evidence.",
+      "Adding fresh path/permission/namespace checks around cached descriptors would require a new equivalence proof and can erase the intended savings. No such proof or measurement has been produced here."
+    ],
+    "existing_controls": [
+      "context_reader_reopens_actual_path_after_replacement_and_failure",
+      "limit_reader_reopens_the_current_path_and_propagates_open_failure",
+      "limit_reader_keeps_all_five_reads_before_validation_and_observes_changes",
+      "read_kernel_membership_from_current_os_thread_not_process_leader",
+      "fake_root_or_wrong_parent_never_counts_as_root_kernel_budget"
+    ]
+  },
+  "bounded_parse_candidate": {
+    "status": "NOT_IMPLEMENTED_NOT_COMPILED_NOT_MEASURED",
+    "scope": "Pure comparison against a canonical encoding derived from private already-validated initial Limits; not a saved Host authorization result or retained live file descriptor.",
+    "mechanism": [
+      "At successful KernelBudget construction, derive the five canonical complete text encodings from the same initial validated Limits and fixed zero burst/swap. Bind them to this private immutable instance and compiled parser/profile version.",
+      "Every check retains all original fresh boot, parent identity/ownership, current-thread membership and five limit opens/complete EOF/UTF8 reads, in the original order.",
+      "Only after all five complete current texts are available, compare full raw bytes against the precomputed canonical encoding. If all match, the parsed mathematical values are the same valid initial Limits.",
+      "Any byte difference, alternative whitespace, noncanonical form or malformed value follows the original validate_limits path. Preserve the final observed-vs-original Limits comparison and original errors.",
+      "Do not use prefix-only, trimmed-only, truncated, hash-only or last-success matching. Do not cache generation/authorization/CPU/deadline decisions."
+    ],
+    "why_equivalent_if_implemented_as_stated": "Full equality to an encoding constructed from the same validated scalar inputs proves only those parsed values. Current path/membership/limit evidence still has to be freshly obtained on every invocation.",
+    "constraints": [
+      "The actual current aggregate provides no parse-only CPU duration, so benefit is unproven and could be negligible.",
+      "Do not add this merely to obtain another green component benchmark. The original fixed-Host business/control runs remain necessary for any performance claim.",
+      "Keep all Unicode/ASCII whitespace grammar, late I/O-before-parse errors, size/UTF8/EOF and changing-values controls on the fallback."
+    ],
+    "expected_acceptance_or_performance_gain": null
+  },
+  "other_low_value_candidate": {
+    "description": "Immutable precomputed CStr paths with fresh opens could remove short temporary path copy/NUL scanning, but not current syscalls or heap allocations.",
+    "status": "NOT_IMPLEMENTED_NOT_MEASURED",
+    "constraints": [
+      "Do not change O_CLOEXEC/large-file behavior, EINTR retry, open error mapping, actual path spelling, or per-call descriptor close.",
+      "Existing Rust1.95 short-path stack conversion makes the likely target small; no benefit is evidenced."
+    ]
+  },
+  "next_measurement_question": {
+    "question": "What fraction of the original complete KernelBudget.check cost belongs to boot open/read/close, parent metadata, current-thread membership, five limit opens/reads/closes, and parse/comparison, on the original fixed Host?",
+    "scope": "Diagnostic decomposition only, retaining original full invocation count/failed samples and complete caller/worker accounting. No measurement was run by this reviewer.",
+    "already_unsupported_claims": [
+      "Host CPU divided by caller-only import CPU is an exact percentage.",
+      "All29928 checks occurred in SubmitResult.",
+      "resource_sample BTreeMap parsing runs29928 times.",
+      "Skipping EOF or refreshing authority every N checks is an allowed optimization."
+    ]
+  },
+  "source_binding": {
+    "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+    "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "bytes": 53670,
+    "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+    "git_blob": "7089e961965af9209f2d588061c8526c5acba161",
+    "current_worktree_bytes_equal": true,
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs"
+  }
+}

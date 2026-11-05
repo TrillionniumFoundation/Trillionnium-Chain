@@ -1,0 +1,182 @@
+[
+  {
+    "command": {
+      "name": "large-parent-baseline",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/validation/node-before-borrow",
+        "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+        "--nocapture",
+        "--test-threads=1",
+        "--exact"
+      ],
+      "exit_code": 101,
+      "elapsed_s": 30.87929727200003,
+      "binary_sha256": "6f877f68c96591184ebdb1d77e0f2a938836fcc597d8b79eeec9c89f5a02cc34"
+    },
+    "raw_log_sha256": "b09a5f6c6dafb0bafa5a8a75125ad9f63e6febd1493c40650942b9273aa87f17",
+    "outcomes": [
+      {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": false,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "dispatch_elapsed_ns": "1987280078",
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 496367856,
+          "discarded_refill_ns": 524697,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 1984352938,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 1984355852,
+          "remaining_paid_credit_ns": 512012004,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 1984355852,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 2914,
+          "stored_credit_ns": 512012004,
+          "unsettled_known_live_cpu_ns": 0
+        }
+      },
+      {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": false,
+        "native_result": {
+          "Ok": "ok"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 1984352938,
+          "live_refused": false,
+          "owner_cpu_ns": 1984053843,
+          "residual_cpu_ns": 2914,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 302009,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 1984355852
+        },
+        "host_qualified": false
+      },
+      {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": true,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "dispatch_elapsed_ns": "2715225146",
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 678252497,
+          "discarded_refill_ns": 610904,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 2703018252,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 2703021126,
+          "remaining_paid_credit_ns": -24768629,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 2703021126,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 2874,
+          "stored_credit_ns": -24768629,
+          "unsettled_known_live_cpu_ns": 0
+        }
+      },
+      {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": true,
+        "native_result": {
+          "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 2703018252,
+          "live_refused": true,
+          "owner_cpu_ns": 2702407844,
+          "residual_cpu_ns": 2874,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 613282,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 2703021126
+        },
+        "host_qualified": false
+      }
+    ]
+  },
+  {
+    "command": {
+      "name": "large-parent-auth-baseline",
+      "command": [
+        "/workspace/scratch/b5a148b09b11/validation/node-before-borrow",
+        "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+        "--nocapture",
+        "--test-threads=1",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_s": 21.247375766000005,
+      "binary_sha256": "6f877f68c96591184ebdb1d77e0f2a938836fcc597d8b79eeec9c89f5a02cc34"
+    },
+    "raw_log_sha256": "50928bd69d830f50426836d2f4043a5e32d54c43f8998e48b912a1175db6b4b9",
+    "outcomes": [
+      {
+        "schema": "native-large-parent-original-dispatch-diagnostic-v1",
+        "authenticated_backend": true,
+        "complete_key_utf8_and_canonical_value_bytes": 8625548,
+        "dispatch_elapsed_ns": "2390454584",
+        "original_dispatch_result": {
+          "Ok": "ok"
+        },
+        "actual_cpu_flow_after": {
+          "balance_identity_verified": true,
+          "booked_reservation_ns": 0,
+          "credited_refill_ns": 597221470,
+          "discarded_refill_ns": 456972,
+          "initial_credit_ns": 2000000000,
+          "live_debited_cpu_ns": 2381187269,
+          "live_owners": 0,
+          "paid_cpu_debit_ns": 2381189953,
+          "remaining_paid_credit_ns": 216031517,
+          "schema": "public-v3-local-actual-cpu-flow-v1",
+          "settled_full_cpu_ns": 2381189953,
+          "settlement_discard_ns": 0,
+          "settlement_residual_cpu_ns": 2684,
+          "stored_credit_ns": 216031517,
+          "unsettled_known_live_cpu_ns": 0
+        }
+      },
+      {
+        "schema": "native-large-parent-schedule-parity-v1",
+        "authenticated_backend": true,
+        "native_result": {
+          "Ok": "ok"
+        },
+        "original_cpu_receipt": {
+          "accounting_unavailable": false,
+          "finished_workers": 2,
+          "known_workers": 2,
+          "live_paid_cpu_ns": 2381187269,
+          "live_refused": false,
+          "owner_cpu_ns": 2380865641,
+          "residual_cpu_ns": 2684,
+          "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+          "scoped_worker_cpu_ns": 324312,
+          "spawned_workers": 2,
+          "started_workers": 2,
+          "total_cpu_ns": 2381189953
+        },
+        "host_qualified": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "scope": "complete native pon_work source module only",
+  "command": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "/workspace/scratch/295b0f1bca6b/pn1-w1-harness/Cargo.toml",
+    "--lib",
+    "--tests",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 6.920734882354736,
+  "workspace_or_pq_qualified": false,
+  "stubs": false
+}

@@ -1,0 +1,55 @@
+{
+  "operation": "read-only POSIX_FADV_DONTNEED on tracked published evidence files",
+  "root": "/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/checkout",
+  "head": "f135eb867d10ead2058073f78d9d82af2e174f29",
+  "files_advised": 7368,
+  "bytes_advised": 920789648,
+  "skipped": [],
+  "errors": [],
+  "wall_seconds": 0.1834401779997279,
+  "before": {
+    "memory.current": "8516083712",
+    "memory.max": "8589934592",
+    "memory.stat": {
+      "anon": 2798624768,
+      "file": 4994560000,
+      "file_dirty": 440266752,
+      "file_writeback": 0,
+      "inactive_file": 707072000,
+      "active_file": 4287315968,
+      "slab_reclaimable": 702267376
+    },
+    "memory.events": {
+      "low": 0,
+      "high": 0,
+      "max": 146371,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    }
+  },
+  "after": {
+    "memory.current": "7596679168",
+    "memory.max": "8589934592",
+    "memory.stat": {
+      "anon": 2801111040,
+      "file": 4076937216,
+      "file_dirty": 440266752,
+      "file_writeback": 0,
+      "inactive_file": 707743744,
+      "active_file": 3368988672,
+      "slab_reclaimable": 698118472
+    },
+    "memory.events": {
+      "low": 0,
+      "high": 0,
+      "max": 146371,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    }
+  },
+  "worktree_status_after": "",
+  "source_deleted_or_modified": false,
+  "advisory_only": "No release amount or causal memory delta claimed; other compilation processes share the cgroup."
+}

@@ -1,0 +1,522 @@
+{
+  "schema": "trnm-native-liveness-composition-v1",
+  "generated_at_utc": "2026-11-04T14:31:56.964310+00:00",
+  "status": "HOLD_NO_GO",
+  "source": {
+    "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+    "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+    "incoming_tree": "10748e74e6ccb8711316b515c353462f3f11d97e",
+    "tested_candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+    "component_rust_unchanged": {
+      "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa",
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf",
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs": "7bebea6cb8890313168832c66129b8286908a546",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs": "950a9320636e8c68207ca01b0b67f6450bdcd304",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs": "cfd44e53cae61728bf58c5315fa1e76f1965aef8",
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs": "ae73ee11346ca1ba4ebf22310f9162befc32409c",
+      "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "b9463c0b37630251e847964138effb7acce7ce6d",
+      "trillionnium/crates/trnm-pon-node/src/store.rs": "0e30e12fbcc2cd951ceff2ea6d89006073a27ad3",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs": "c2cae5fd6b81d0819be56730948dcfcd9e1c5b39"
+    },
+    "changed_paths_relative_incoming": [
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "evidence/native-liveness-20261104/README.md",
+      "evidence/native-liveness-20261104/reproduction.json",
+      "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+    ],
+    "tested_subtrees": {
+      "trillionnium": "f25db46a85666c114df77620e8f87594b92e44bb",
+      "scripts": "8217eefd4791f4cf0123c3114fb7f014285add0a",
+      ".github": "2063d64436f7df484a16adff1a739474dd9714b6",
+      "formal": "ff1e4409551d40e1505e4a0cf5fd1c998ae61a7b",
+      "config": "6df4a4b427f054611eae508685a3173cd747b7c4"
+    },
+    "native_runtime_tests_executed": 0,
+    "latest_combination_full_clippy_completed": false,
+    "latest_combination_m06_runtime_executed": false
+  },
+  "component_receipt": {
+    "path": "reproduction.json",
+    "git_blob": "af86d6a27a058350b1790afb3ae7e37fb3eaf101",
+    "sha256": "074cc1877ea0225d677ae982b82321f38d82a7d09e74c092916fc932c4a2e903",
+    "immutable": true,
+    "interpretation": "Component observations retain their original source base and overlay; no component runtime result is transferred to a later combination."
+  },
+  "stages": {
+    "f11": {
+      "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+      "incoming": "f11fb50b6968407a9eb098e1767edd591620f91a",
+      "tested_tree": "744c08cdfe7b0a2d997ea0d3c6042b8fcbc57c25",
+      "clippy_exit_code": 0,
+      "fmt_exit_code": 0,
+      "repository_exit_code": 0,
+      "pq_source_exit_code": 0,
+      "pq_source_negative_exit_code": 0,
+      "native_runtime_tests_executed": 0,
+      "logs": {
+        "preflight": {
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+          "bytes": 170,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-six-axis-performance-20261103\", \"remote_policy_mutated\": false}\n"
+        },
+        "clippy": {
+          "sha256": "fc2e906e629cf0747cf8bf53a8dbe412060dc28a116d01cd1706df11487235d1",
+          "bytes": 6341,
+          "text": "   Compiling shlex v1.3.0\n   Compiling find-msvc-tools v0.1.9\n   Compiling cc v1.2.59\n   Compiling version_check v0.9.5\n   Compiling generic-array v0.14.7\n    Checking trnm-mempool v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-mempool)\n    Checking typenum v1.20.1\n    Checking cfg-if v1.0.4\n    Checking crypto-common v0.1.7\n    Checking block-buffer v0.10.4\n   Compiling sha2-asm v0.6.4\n    Checking digest v0.10.7\n    Checking cpufeatures v0.2.17\n    Checking sha2 v0.10.9\n   Compiling proc-macro2 v1.0.106\n   Compiling unicode-ident v1.0.24\n   Compiling quote v1.0.45\n   Compiling syn v2.0.117\n   Compiling libc v0.2.184\n    Checking zeroize v1.8.2\n   Compiling serde_core v1.0.228\n   Compiling serde v1.0.228\n   Compiling serde_derive v1.0.228\n    Checking bitflags v2.11.0\n    Checking hex v0.4.3\n   Compiling semver v1.0.27\n   Compiling rustc_version v0.4.1\n   Compiling getrandom v0.4.2\n   Compiling curve25519-dalek v4.1.3\n    Checking rand_core v0.10.1\n   Compiling curve25519-dalek-derive v0.1.1\n    Checking signature v2.2.0\n   Compiling zmij v1.0.21\n    Checking subtle v2.6.1\n    Checking ed25519 v2.2.3\n   Compiling serde_json v1.0.149\n    Checking ed25519-dalek v2.2.0\n    Checking itoa v1.0.18\n    Checking memchr v2.8.0\n   Compiling pkg-config v0.3.32\n   Compiling vcpkg v0.2.15\n    Checking cmov v0.5.4\n    Checking ctutils v0.4.6\n    Checking hybrid-array v0.4.15\n   Compiling thiserror v1.0.69\n   Compiling autocfg v1.5.1\n   Compiling num-traits v0.2.19\n    Checking crypto-common v0.2.2\n   Compiling thiserror-impl v1.0.69\n    Checking const-oid v0.10.2\n    Checking der v0.8.3\n    Checking digest v0.11.3\n    Checking spki v0.8.1\n    Checking keccak v0.2.2\n    Checking sponge-cursor v0.1.0\n    Checking shake v0.1.0\n    Checking pkcs8 v0.11.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n    Checking ml-dsa v0.1.1\n   Compiling anyhow v1.0.103\n    Checking trnm-protocol v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-protocol)\n   Compiling openssl-sys v0.9.117\n   Compiling openssl v0.10.81\n    Checking foreign-types-shared v0.1.1\n   Compiling rustix v1.1.4\n    Checking foreign-types v0.3.2\n   Compiling openssl-macros v0.1.1\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking once_cell v1.21.4\n    Checking fastrand v2.3.0\n    Checking tempfile v3.27.0\n   Compiling libsqlite3-sys v0.37.0\n    Checking foldhash v0.2.0\n    Checking hashbrown v0.16.1\n    Checking hashlink v0.11.1\n    Checking smallvec v1.15.1\n    Checking fallible-iterator v0.3.0\n    Checking fallible-streaming-iterator v0.1.9\n    Checking rusqlite v0.39.0\n   Compiling winnow v1.0.4\n   Compiling equivalent v1.0.2\n   Compiling indexmap v2.13.1\n   Compiling toml_parser v1.1.3+spec-1.1.0\n   Compiling toml_datetime v1.1.1+spec-1.1.0\n   Compiling toml_edit v0.25.13+spec-1.1.0\n   Compiling cfg_aliases v0.2.2\n   Compiling borsh v1.8.0\n   Compiling proc-macro-crate v3.5.0\n   Compiling borsh-derive v1.8.0\n    Checking fs2 v0.4.3\n    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-verification-profiles)\n    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-mvcc-fee)\n    Checking trnm-data-availability v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-data-availability)\n   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-sqlite-io-boundary)\n    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-task-kernel)\n    Checking trnm-transport v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-transport)\n    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-service-settlement)\n    Checking trnm-pon-node v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-pon-node)\n    Checking trnm-types v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-types)\n    Checking trnm-peer-lease v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-peer-lease)\n    Checking utf8parse v0.2.2\n    Checking anstyle-parse v1.0.0\n    Checking anstyle-query v1.1.5\n    Checking anstyle v1.0.14\n    Checking colorchoice v1.0.5\n    Checking is_terminal_polyfill v1.70.2\n    Checking anstream v1.0.0\n    Checking strsim v0.11.1\n    Checking clap_lex v1.1.0\n   Compiling heck v0.5.0\n   Compiling clap_derive v4.6.0\n    Checking clap_builder v4.6.0\n    Checking clap v4.6.0\n    Checking trnm-checkpoint-types v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-checkpoint-types)\n    Checking trnm-checkpoint-store v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-checkpoint-store)\n    Checking wait-timeout v0.2.1\n    Checking shell-escape v0.1.5\n    Checking trnm-audit-events v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-audit-events)\n    Checking trnm-executor v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-executor)\n    Checking trnm-research-protocol v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-research-protocol)\n    Checking trnm-bench v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-bench)\n    Checking trnm-worker-agent v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-worker-agent)\n    Checking trnm-governance-guard v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-governance-guard)\n    Checking trnm-escrow-vault v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-escrow-vault)\n    Checking trnm-state-import v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-state-import)\n    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-release-bundle)\n    Checking trnm-oracle v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-oracle)\n    Checking trnm-control-plane v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-control-plane)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4m 53s\n"
+        },
+        "fmt": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "text": ""
+        },
+        "repository-initial": {
+          "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+          "bytes": 84,
+          "text": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md\n"
+        },
+        "repository": {
+          "sha256": "5e39336dfe1cdf3b96f449eee8a44ec683c9ef5d7e963f43868c19f984c6a08e",
+          "bytes": 307,
+          "text": "{\"activation\": false, \"head\": \"1e6efc39e192323f34c2a499e29736b507c8f500\", \"local_links\": 2414, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1123, \"source_state\": \"dirty-candidate\", \"tree\": \"7eca261df2d3d488ec156b514a25fe48e09bb9ee\", \"workspace_packages\": 26}\n"
+        },
+        "pq-source": {
+          "sha256": "e70d1737b9b41706dce093647444c5d29b40259547b2a942c7a3339f04e32b1a",
+          "bytes": 557,
+          "text": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 442, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n"
+        },
+        "pq-source-negative": {
+          "sha256": "e6be0bc47eb8d21a3f44c6574ac1c6ac52dd7612a5c5ee12c89907da5229c8be",
+          "bytes": 135,
+          "text": "...................................\n----------------------------------------------------------------------\nRan 35 tests in 23.689s\n\nOK\n"
+        },
+        "own-delta-whitespace": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "text": ""
+        }
+      },
+      "scope": "This stage passed source checks and whole-workspace strict Clippy. It predates the changed M06 evaluation code in d481 and the later Growth/Cell work in 33a."
+    },
+    "d481": {
+      "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+      "incoming": "d4816ca5d1375347d8ed341a434158e350c29bbc",
+      "attempted_tree": "33ddf4df47aafbad6add9cc7f29ec8f075dff9b1",
+      "clippy_status": "failed_build_enospc",
+      "clippy_exit_code": null,
+      "exit_code_note": "Original exec terminal session unavailable after context compaction; compiler log retains fatal ENOSPC. No pass is inferred.",
+      "fmt_status": "not_executed_short_circuited_after_clippy_failure",
+      "repository_status": "failed_missing_sparse_markdown_input",
+      "repository_exit_code": null,
+      "pq_source_status": "not_executed_short_circuited",
+      "native_runtime_tests_executed": 0,
+      "followup_local_git_fetch": {
+        "first_attempt_exit_code": 128,
+        "failure": "unable to write loose object file: No space left on device",
+        "after_inactive_cache_cleanup_exit_code": 0
+      },
+      "own_rust_count": 11,
+      "own_rust_mismatches": [],
+      "m06_component_result_covers_combination": false,
+      "logs": {
+        "preflight": {
+          "sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+          "bytes": 170,
+          "text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-six-axis-performance-20261103\", \"remote_policy_mutated\": false}\n"
+        },
+        "clippy": {
+          "sha256": "74d56f8239dc233f476b3d0db447cad90692142b4fa566f79efa1f75c4fae19f",
+          "bytes": 5639,
+          "text": "   Compiling find-msvc-tools v0.1.9\n   Compiling shlex v1.3.0\n   Compiling cc v1.2.59\n   Compiling version_check v0.9.5\n   Compiling generic-array v0.14.7\n    Checking trnm-mempool v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-mempool)\n    Checking typenum v1.20.1\n    Checking cfg-if v1.0.4\n    Checking crypto-common v0.1.7\n    Checking block-buffer v0.10.4\n   Compiling sha2-asm v0.6.4\n    Checking digest v0.10.7\n    Checking cpufeatures v0.2.17\n    Checking sha2 v0.10.9\n   Compiling proc-macro2 v1.0.106\n   Compiling unicode-ident v1.0.24\n   Compiling quote v1.0.45\n   Compiling syn v2.0.117\n   Compiling libc v0.2.184\n    Checking zeroize v1.8.2\n   Compiling serde_core v1.0.228\n   Compiling serde v1.0.228\n   Compiling serde_derive v1.0.228\n    Checking bitflags v2.11.0\n    Checking hex v0.4.3\n   Compiling semver v1.0.27\n   Compiling rustc_version v0.4.1\n   Compiling getrandom v0.4.2\n   Compiling curve25519-dalek v4.1.3\n    Checking rand_core v0.10.1\n   Compiling curve25519-dalek-derive v0.1.1\n   Compiling zmij v1.0.21\n    Checking signature v2.2.0\n    Checking subtle v2.6.1\n    Checking ed25519 v2.2.3\n   Compiling serde_json v1.0.149\n    Checking ed25519-dalek v2.2.0\n    Checking memchr v2.8.0\n    Checking itoa v1.0.18\n   Compiling vcpkg v0.2.15\n   Compiling pkg-config v0.3.32\n    Checking cmov v0.5.4\n    Checking ctutils v0.4.6\n    Checking hybrid-array v0.4.15\n   Compiling thiserror v1.0.69\n   Compiling autocfg v1.5.1\n   Compiling num-traits v0.2.19\n    Checking crypto-common v0.2.2\n   Compiling thiserror-impl v1.0.69\n    Checking const-oid v0.10.2\n    Checking der v0.8.3\n    Checking digest v0.11.3\n    Checking spki v0.8.1\n    Checking keccak v0.2.2\n    Checking sponge-cursor v0.1.0\n    Checking shake v0.1.0\n    Checking pkcs8 v0.11.0\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n    Checking ml-dsa v0.1.1\n   Compiling anyhow v1.0.103\n    Checking trnm-protocol v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-protocol)\n   Compiling openssl-sys v0.9.117\n    Checking foreign-types-shared v0.1.1\n   Compiling rustix v1.1.4\n   Compiling openssl v0.10.81\n    Checking foreign-types v0.3.2\n   Compiling openssl-macros v0.1.1\n    Checking linux-raw-sys v0.12.1\n    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/e7ee7840f31c/chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking fastrand v2.3.0\n    Checking once_cell v1.21.4\n    Checking tempfile v3.27.0\n   Compiling libsqlite3-sys v0.37.0\nwarning: libsqlite3-sys@0.37.0: sqlite3/sqlite3.c:265975:1: fatal error: error writing to /tmp/cc3cYwqU.s: No space left on device\nwarning: libsqlite3-sys@0.37.0: 265975 | SQLITE_API const char *sqlite3_sourceid(void){ return SQLITE_SOURCE_ID; }\nwarning: libsqlite3-sys@0.37.0:        | ^~~~~~~~~~\nwarning: libsqlite3-sys@0.37.0: compilation terminated.\nerror: failed to run custom build command for `libsqlite3-sys v0.37.0`\n\nCaused by:\n  process didn't exit successfully: `/workspace/scratch/e7ee7840f31c/validation/native-cache/debug/build/libsqlite3-sys-3ebc4b8a1b2ebe8f/build-script-build` (exit status: 1)\n  --- stdout\n  cargo:rerun-if-env-changed=LIBSQLITE3_SYS_USE_PKG_CONFIG\n  cargo:include=/workspace/scratch/7318d5f890d1/runtime93/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0/sqlite3\n  cargo:rerun-if-changed=sqlite3/sqlite3.c\n  cargo:rerun-if-changed=sqlite3/wasm32-wasi-vfs.c\n  cargo:rerun-if-env-changed=SQLITE_MAX_VARIABLE_NUMBER\n  cargo:rerun-if-env-changed=SQLITE_MAX_EXPR_DEPTH\n  cargo:rerun-if-env-changed=SQLITE_MAX_COLUMN\n  cargo:rerun-if-env-changed=LIBSQLITE3_FLAGS\n  cargo:rerun-if-env-changed=CC_FORCE_DISABLE\n  CC_FORCE_DISABLE = None\n  cargo:rerun-if-env-changed=CC_x86_64-unknown-linux-gnu\n  CC_x86_64-unknown-linux-gnu = None\n  cargo:rerun-if-env-changed=CC_x86_64_unknown_linux_gnu\n  CC_x86_64_unknown_linux_gnu = None\n  cargo:rerun-if-env-changed=HOST_CC\n  HOST_CC = None\n  cargo:rerun-if-env-changed=CC\n  CC = None\n  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT\n  cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS\n  CRATE_CC_NO_DEFAULTS = None\n  cargo:rerun-if-env-changed=CFLAGS\n  CFLAGS = None\n  cargo:rerun-if-env-changed=HOST_CFLAGS\n  HOST_CFLAGS = None\n  cargo:rerun-if-env-changed=CFLAGS_x86_64_unknown_linux_gnu\n  CFLAGS_x86_64_unknown_linux_gnu = None\n  cargo:rerun-if-env-changed=CFLAGS_x86_64-unknown-linux-gnu\n  CFLAGS_x86_64-unknown-linux-gnu = None\n  cargo:warning=sqlite3/sqlite3.c:265975:1: fatal error: error writing to /tmp/cc3cYwqU.s: No space left on device\n  cargo:warning=265975 | SQLITE_API const char *sqlite3_sourceid(void){ return SQLITE_SOURCE_ID; }\n  cargo:warning=       | ^~~~~~~~~~\n  cargo:warning=compilation terminated.\n\n  --- stderr\n\n\n  error occurred in cc-rs: command did not execute successfully (status code exit status: 1): LC_ALL=\"C\" \"cc\" \"-O0\" \"-ffunction-sections\" \"-fdata-sections\" \"-fPIC\" \"-g\" \"-gdwarf-4\" \"-fno-omit-frame-pointer\" \"-m64\" \"-w\" \"-DSQLITE_CORE\" \"-DSQLITE_DEFAULT_FOREIGN_KEYS=1\" \"-DSQLITE_ENABLE_API_ARMOR\" \"-DSQLITE_ENABLE_COLUMN_METADATA\" \"-DSQLITE_ENABLE_DBSTAT_VTAB\" \"-DSQLITE_ENABLE_FTS3\" \"-DSQLITE_ENABLE_FTS3_PARENTHESIS\" \"-DSQLITE_ENABLE_FTS5\" \"-DSQLITE_ENABLE_JSON1\" \"-DSQLITE_ENABLE_LOAD_EXTENSION=1\" \"-DSQLITE_ENABLE_MEMORY_MANAGEMENT\" \"-DSQLITE_ENABLE_RTREE\" \"-DSQLITE_ENABLE_STAT4\" \"-DSQLITE_SOUNDEX\" \"-DSQLITE_THREADSAFE=1\" \"-DSQLITE_USE_URI\" \"-DHAVE_USLEEP=1\" \"-DHAVE_ISNAN\" \"-D_POSIX_THREAD_SAFE_FUNCTIONS\" \"-DHAVE_LOCALTIME_R\" \"-o\" \"/workspace/scratch/e7ee7840f31c/validation/native-cache/debug/build/libsqlite3-sys-0b4e9332de508ef1/out/c877a2978823c39d-sqlite3.o\" \"-c\" \"sqlite3/sqlite3.c\"\n\n\n"
+        },
+        "repository": {
+          "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+          "bytes": 84,
+          "text": "Repository check failed: broken link docs/README.md -> ../evidence/pon-v1/README.md\n"
+        },
+        "own-delta-whitespace": {
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "text": ""
+        }
+      },
+      "changed_m06_paths_since_component": [
+        "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+        "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs"
+      ],
+      "m06_119_passed_0_failed_7_ignored_covers_stage": false
+    },
+    "33a": {
+      "checks": {
+        "preflight": {
+          "name": "preflight",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "bash",
+            "scripts/project-preflight.sh"
+          ],
+          "exit_code": 0,
+          "seconds": 0.075,
+          "log_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+          "log_text": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-six-axis-performance-20261103\", \"remote_policy_mutated\": false}\n"
+        },
+        "fmt": {
+          "name": "fmt",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "bash",
+            "/workspace/scratch/dd6e880c7c92/run-native.sh",
+            "env",
+            "CARGO_TARGET_DIR=/workspace/scratch/e7ee7840f31c/validation/native-cache",
+            "cargo",
+            "fmt",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 16.356,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "log_text": ""
+        },
+        "repository": {
+          "name": "repository",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "python3",
+            "scripts/ci/check_repository.py"
+          ],
+          "exit_code": 0,
+          "seconds": 49.053,
+          "log_sha256": "d973e13340696082a88b2e61f76ce2d8abe0bbea53fce15e8ae1583d21c937f6",
+          "log_text": "{\"activation\": false, \"head\": \"1e6efc39e192323f34c2a499e29736b507c8f500\", \"local_links\": 2426, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1123, \"source_state\": \"dirty-candidate\", \"tree\": \"7eca261df2d3d488ec156b514a25fe48e09bb9ee\", \"workspace_packages\": 26}\n"
+        },
+        "pq-source": {
+          "name": "pq-source",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "python3",
+            "scripts/ci/check_pq_research_integration.py"
+          ],
+          "exit_code": 0,
+          "seconds": 0.269,
+          "log_sha256": "1934edca2b621062b58b531f3e32d894de94452d1d9cd665743a6b4a209e11dc",
+          "log_text": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 450, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n"
+        },
+        "pq-source-negative": {
+          "name": "pq-source-negative",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "python3",
+            "scripts/ci/test_pq_research_integration.py"
+          ],
+          "exit_code": 0,
+          "seconds": 25.592,
+          "log_sha256": "957567acf400f22f9714a744a8c35327b0e6d7cc9d1184b99c5cd840df348569",
+          "log_text": "...................................\n----------------------------------------------------------------------\nRan 35 tests in 25.517s\n\nOK\n"
+        },
+        "own-delta-whitespace": {
+          "name": "own-delta-whitespace",
+          "incoming": "33a170e863a413279d6611457d907913a54e9e5a",
+          "component": "1e6efc39e192323f34c2a499e29736b507c8f500",
+          "candidate_tree": "69990eee1e3712e2a31cce160951e91874438120",
+          "command": [
+            "git",
+            "diff",
+            "33a170e863a413279d6611457d907913a54e9e5a",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.034,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "log_text": ""
+        }
+      },
+      "full_workspace_strict_clippy": {
+        "status": "not_completed",
+        "reason": "Latest preceding combination failed compilation with ENOSPC; no full Clippy run was completed on this later source."
+      },
+      "m06_full_library": {
+        "status": "not_run_on_this_combination",
+        "component_result_reused": false
+      },
+      "selected_node_runtime": {
+        "status": "not_executed",
+        "selectors_planned": 14,
+        "tests_planned": 19,
+        "tests_executed": 0
+      },
+      "sparse_input_recovery": {
+        "source": "Exact staged Git blobs, never substitutes or weakened checks.",
+        "first_pin_refresh": "Failed because evidence/pon-pq-account-native-20261028/README.md was absent from the sparse working tree.",
+        "second_pin_refresh": "Failed because evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log was absent from the sparse working tree.",
+        "final": "All referenced source and pinned inputs restored from the staged tree; pin refresh and checks then passed."
+      },
+      "source_binding_note": "The checker logs report the component HEAD and dirty-candidate. The separately computed tested_candidate_tree and tested_subtrees bind the actual staged combination. Only this README and composition.json are added after those checks."
+    }
+  },
+  "original_gate": {
+    "status": "not-run-locally",
+    "deadline_ms": 4000,
+    "hostile_w1_producers": 16,
+    "calls_per_producer": 1024,
+    "aggregate_cpu_cores": 0.25,
+    "aggregate_memory_bytes": 2147483648,
+    "aggregate_tasks": 256,
+    "budgets_unchanged": true,
+    "reason": "This shared execution environment cannot provision the required fixed root-owned Host slice and is not original-budget performance evidence.",
+    "required_semantics": [
+      "real signed transactions",
+      "full W1",
+      "independent replay",
+      "six-deep confirmation",
+      "all failures/cancellations/timeouts/pending requests in the denominator"
+    ],
+    "required_scenarios": [
+      "attack-free full business",
+      "hostile traffic from zero",
+      "already-running system then hostile traffic",
+      "cold start/history/reorg/recovery",
+      "concurrent Cell download and normal authorization",
+      "valid/invalid signatures under new crypto configuration"
+    ],
+    "reproduction_recipe_not_a_local_execution": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\"",
+    "unchanged_gate_source_blobs": {
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "f08831277c66244cc8469285cdfc63aaafaecb48",
+      "scripts/ci/run_from_zero_native.py": "e91c5337ff3847885a67515522314b1c9e762cbd",
+      "scripts/ci/run_from_zero_host.py": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "scripts/ci/test_run_from_zero_native.py": "0fbb20b9f1eb2b6b001f002434717695d95a288f",
+      "scripts/ci/test_from_zero_host_ci.py": "4d32cf894376d0fa9380ed64b78dc3ea7f48f795"
+    }
+  },
+  "acceptance": {
+    "issue_639_closed": false,
+    "original_4s_16_host_accepted": false,
+    "attack_free_full_business_baseline_accepted": false,
+    "end_to_end_touched_state_cost_accepted": false,
+    "complete_lifecycle_budget_accepted": false,
+    "sybil_resistant_liveness_accepted": false,
+    "complete_six_scenario_matrix_accepted": false,
+    "performance_qualified": false,
+    "whole_pq_accepted": false,
+    "production_ready": false,
+    "activation_authorized": false
+  },
+  "remaining_gaps": {
+    "5.1": [
+      "No fresh attack-free full-business Host baseline has been executed here.",
+      "GrowthV2 batch nonce API is not yet wired through real Growth CLI/business callers.",
+      "M06 prefix selection removes these unrelated-map scans, but whole-state clone/root/schema and bounded working-partition costs are not eliminated or given end-to-end touched-state complexity."
+    ],
+    "5.2": [
+      "No universal operation identity and budget covers every parser allocation, nested verification, state I/O, retry, recovery, output and cleanup.",
+      "Deadline completion no longer revives expired work; worker-owned reservations remain charged until the worker actually exits. Uninterruptible crypto/state/I/O tails do not have an immediate-release guarantee.",
+      "Busy exact-frame retries preserve nonce semantics; they do not establish one persistent CPU budget across every network retry.",
+      "This change does not complete a full verification-cache key/context/authorization audit."
+    ],
+    "5.3": [
+      "Existing shared Node admission/CPU caps limit identity multiplication; two public lanes and separate Cell limits do not implement four reserved, cost-aware global service classes.",
+      "No global estimated-cost scheduler with measured-cost feedback and a proved opportunity for every legitimate public candidate is established.",
+      "Existing recovery accepts matching pre-existing local operation capabilities; this patch introduces no remotely self-selected recovery priority, identity preference or paid consensus voting power.",
+      "Local queue Busy is retryable and remains distinct from protocol invalidity; bounded hardware/arrival-rate liveness is still unproven."
+    ],
+    "5.4": [
+      "Original 4,000 ms / 16 hostile W1 producer Host campaign was not run locally; supplementary 30 s / 24 producers cannot replace it.",
+      "All six workload scenarios still require current-source Host observations with failed, cancelled, timed-out and unresolved operations included.",
+      "Node selected Rust controls did not execute after the final compiler failure; Python readers and historical 130-attempt fixtures are not live service evidence."
+    ]
+  },
+  "resource_observations": {
+    "node_component_builds": "Five SIGKILL terminations and one compiled-but-unavailable ELF remain in reproduction.json; none is a runtime test pass.",
+    "latest_composition": "Clippy sqlite3 compilation and a local Git object import failed with No space left on device. The import succeeded after cleanup; the failed Clippy result remains retained.",
+    "cache_recovery": {
+      "caches": [
+        {
+          "path": "/workspace/scratch/9d99fced0bf1/target-pq/debug",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 279,
+          "bytes": 584258227
+        },
+        {
+          "path": "/workspace/scratch/9d99fced0bf1/target-pq/release",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 100,
+          "bytes": 77754388
+        },
+        {
+          "path": "/workspace/scratch/850bfac2502c/sqlite-qualification-probe/debug",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 55,
+          "bytes": 45266868
+        },
+        {
+          "path": "/workspace/scratch/7181e37ea4bd/target/debug",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 5,
+          "bytes": 6185136
+        },
+        {
+          "path": "/workspace/scratch/89b6d0fa4335/target-chain/debug",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 294,
+          "bytes": 415262279
+        },
+        {
+          "path": "/workspace/scratch/7318d5f890d1/target-throughput/debug",
+          "status": "inactive_rebuildable_only",
+          "files_removed": 473,
+          "bytes": 693182249
+        }
+      ],
+      "root_free_bytes": 1841479680
+    },
+    "cleanup_scope": "Only inactive Cargo .rlib/.rmeta/.o cache files under an exclusive nonblocking .cargo-lock. No source, evidence or retained executable was removed.",
+    "final_evidence_staging": {
+      "initial_exit_code": 128,
+      "reason": "unable to write loose object file: No space left on device",
+      "result": "Failed staging is not a validation pass; retried only after inactive rebuildable-cache cleanup."
+    }
+  },
+  "review_notes": [
+    "All eleven component Rust files retain their exact component blob IDs.",
+    "All incoming source files outside the component delta retain incoming bytes.",
+    "The sole plan retains the incoming text and the component insertion. The existing corpus changes only actual source pins.",
+    "The 30-second / 24-producer campaign does not replace the original 4-second / 16-producer gate.",
+    "No remote CI wait, protected-main mutation, activation or issue closure is part of this composition.",
+    "Independent read-only 33a review found no duplicate Growth methods, nested batch/evaluation transactions or request-denominator double counting.",
+    "Original test, runner, Host, slice and original workflow bytes remain unchanged; evidence-only additions do not qualify runtime."
+  ],
+  "publication_composition": {
+    "incoming_commit": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "incoming_tree": "d2d470407ee6e9e49b0c6aa72008943608ee1021",
+    "validated_integration_checkpoint": "c9a4aed6be2a516427702b5df848543f260eeeaa",
+    "checkpoint_tree": "99c35eb37fec57b8a2e58f0052f24739974a04dc",
+    "checkpoint_final_repository_check": {
+      "exit_code": 0,
+      "workspace_packages": 26,
+      "rust_files": 1123,
+      "local_links": 2427
+    },
+    "later_incoming_changes": [
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py",
+        "blob": "9173eef5470760ffbb23d3c4141cdb3b9cfc8445",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+        "blob": "c8ab59bf8bd9158acb7cfa8b737f3479f7fea310",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+        "blob": "a7b51838a80c39cb521550cd512f0023b9325f23",
+        "status": "modified"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/quantum_resource_clock_campaign.py",
+        "blob": "3508cac9d629a4d357735d1d35d8ea780626b8dd",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+        "blob": "c514b206cce772b5e0880819a46722b88e5e86cb",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+        "blob": "f6a861917022e72f486d6c1f9ea50bbdd3ed30ea",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+        "blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+        "blob": "82e235aed43c18c325c7c5051355abb7e23a1ee0",
+        "status": "modified"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+        "blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+        "blob": "3f5f510024df697910520460879b60b8f4bc8122",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",
+        "blob": "b88dfbda888766d6a7f63c2596d2b561d227d79d",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+        "blob": "0714a7499fa94773b20efeab1f583475eed52ee6",
+        "status": "modified"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+        "blob": "8fbb0bdd76f7dff92f1e335ded4e60c0106101e2",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py",
+        "blob": "b19052928e1a0fcf2a9fd45719355926e0d3e10c",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+        "blob": "d6e749358074c5246adcfec81842df1e43947805",
+        "status": "added"
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/w1_quantum_primitives.py",
+        "blob": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+        "status": "added"
+      },
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "blob": "28387126d05de6e1e23a863bc152ead491519a77",
+        "status": "modified"
+      }
+    ],
+    "overlap_with_component_implementation_files": [],
+    "rust_subtree_unchanged_from_33a_checkpoint": "f25db46a85666c114df77620e8f87594b92e44bb",
+    "source_pin_adjustment": "The existing scripts/ci/ci_job.sh pin is refreshed to the exact incoming blob; all acceptance flags remain false.",
+    "validation_status": "HOLD_NO_GO. This final composition is byte-checked; no full latest-combination validation or native runtime run completed. Earlier results retain their original scope.",
+    "local_resource_observations": [
+      "Repeated local staging, Git-object imports and reference lock creation failed with ENOSPC after inactive-cache cleanup.",
+      "A local donor fetch could not traverse an unavailable historical commit. No history, source or evidence was fabricated.",
+      "Final remote tree composition uses exact existing GitHub blobs and retains both histories; expected tree is independently computed without disk writes."
+    ]
+  }
+}

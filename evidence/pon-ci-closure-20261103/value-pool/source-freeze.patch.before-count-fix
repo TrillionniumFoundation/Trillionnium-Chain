@@ -1,0 +1,742 @@
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
+index a1f2412..40b5817 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs
+@@ -307,3 +307,56 @@ fn exact_string_root_hits_keep_complete_current_grammar_and_original_miss_encodi
+     assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
+     assert!(arithmetic.retained_payload_bytes() <= 2 * 1024 * 1024);
+ }
++
++#[test]
++fn shared_string_storage_keeps_cold_encoding_counts_and_full_current_validation() {
++    const BUDGET: usize = 64 * 1024;
++    let state: State = (0..128)
++        .map(|index| (format!("shared:{index:04}"), json!("x".repeat(4080))))
++        .collect();
++    let expected = root(&state).unwrap();
++    let mut arithmetic = StateRootArithmetic::new(BUDGET);
++    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
++    let cold = arithmetic.observation();
++    assert_eq!(cold.input_keys, state.len());
++    assert_eq!(cold.leaf_hashes_computed, state.len());
++    assert_eq!(cold.exact_string_hits, 0);
++    assert_eq!(cold.string_encodings_reused, 0);
++    assert_eq!(cold.retained_string_entries, state.len());
++    assert!(cold.retained_payload_bytes <= BUDGET);
++    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
++    let warm = arithmetic.observation();
++    assert_eq!(warm.input_keys, state.len());
++    assert_eq!(warm.leaf_hashes_computed, 0);
++    assert_eq!(warm.exact_string_hits, state.len());
++    assert_eq!(warm.string_encodings_reused, state.len());
++
++    // Shared storage never relaxes the complete grammar pass. The later
++    // error must still precede an earlier key/value wire-limit violation.
++    for late in [json!(0.0), json!(-0.0), json!("λ"), json!({"λ":0})] {
++        let mut invalid = state.clone();
++        invalid.insert("a".repeat(161), json!("x".repeat(4095)));
++        invalid.insert("zz-invalid".into(), late);
++        let original = root(&invalid);
++        assert!(original.is_err() && original != Err("LIMIT"));
++        assert_eq!(root_with_arithmetic(&invalid, &mut arithmetic), original);
++        assert_eq!(arithmetic.observation(), warm);
++    }
++    let mut changed = state.clone();
++    changed.insert(
++        "shared:0000".into(),
++        json!(format!("{}y{}", "x".repeat(2000), "x".repeat(2079))),
++    );
++    let renamed = changed.remove("shared:0001").unwrap();
++    changed.insert("renamed:0001".into(), renamed);
++    let actual = root(&changed).unwrap();
++    assert_ne!(actual, expected);
++    assert_eq!(root_with_arithmetic(&changed, &mut arithmetic), Ok(actual));
++    let current = arithmetic.observation();
++    assert_eq!(current.input_keys, changed.len());
++    assert_eq!(current.leaf_hashes_computed, 2);
++    assert_eq!(current.exact_string_hits, changed.len() - 2);
++    assert_eq!(current.string_encodings_reused, current.exact_string_hits);
++    assert_eq!(root_with_arithmetic(&state, &mut arithmetic), Ok(expected));
++    assert!(arithmetic.retained_payload_bytes() <= BUDGET);
++}
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
+index fc02fbf..22e23bd 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs
+@@ -54,13 +54,15 @@ fn large_complete_inputs_keep_actual_accounts_conservation_and_context_checks()
+         .unwrap();
+     assert!(payload <= 2 * 1024 * 1024);
+     assert!(strings > 0 && strings <= payload);
+-    // The original tree remains compact; strings occupy only its old pool's
+-    // remaining space, including every key/value allocation and descriptor.
++    // The original tree remains compact. Every key/leaf entry is independent;
++    // one immutable value allocation fits all repeated strings in the SAME
++    // pool, including descriptors and the shared allocation's software charge.
+     assert!(payload - strings < 300_000);
+     let string_entries = root_material["retained_material"]["exact_string_entries"]
+         .as_u64()
+         .unwrap();
+-    assert!(string_entries > 0 && string_entries < 2100);
++    assert_eq!(string_entries, 2100);
++    assert!(payload < 512 * 1024);
+     let counters = &root_material["counters"];
+     let observed = counters["partition_inputs_observed"].as_u64().unwrap();
+     let hashed = counters["partition_inputs_hashed"].as_u64().unwrap();
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
+index 308ee45..abd262b 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs
+@@ -199,7 +199,8 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
+         let encodings =
+             after.partition_string_encodings_reused - before.partition_string_encodings_reused;
+         assert_eq!(hashed + exact, state.len() as u64);
+-        assert!(hashed > 0 && exact > 0);
++        assert_eq!(hashed, 0);
++        assert_eq!(exact, state.len() as u64);
+         assert_eq!(encodings, exact);
+         assert!(after.partition_roots_reused > before.partition_roots_reused);
+     }
+@@ -209,7 +210,17 @@ fn refused_offers_preserve_only_same_context_complete_input_partition_arithmetic
+     let initial_root = pon_executor::root(&state).unwrap();
+     state.insert("large-partition-0001".into(), json!("y".repeat(4094)));
+     cache.offer(&settings, None);
++    let before = cache.counters.get();
+     equal(&cache, &settings, &state);
++    let after = cache.counters.get();
++    assert_eq!(
++        after.partition_inputs_hashed - before.partition_inputs_hashed,
++        1
++    );
++    assert_eq!(
++        after.partition_exact_string_hits - before.partition_exact_string_hits,
++        state.len() as u64 - 1
++    );
+     assert_ne!(pon_executor::root(&state).unwrap(), initial_root);
+     state.remove("large-partition-0002");
+     equal(&cache, &settings, &state);
+diff --git a/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs b/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs
+index 827ba53..14b5cbf 100644
+--- a/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs
++++ b/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs
+@@ -11,9 +11,16 @@
+ //! any remainder can retain a bounded subset of unescaped ASCII JSON strings.
+ use super::{hash, state_empty_hashes, state_node_hash, state_root_from_hashes};
+ use super::{Hash, StateRootInputError, WireError};
++use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
++use std::sync::Arc;
+ 
+ const PARTITION_DEPTH: usize = 12;
+-const STRING_SET_CHARGE: usize = std::mem::size_of::<Box<[ExactString]>>();
++const STRING_SET_CHARGE: usize =
++    std::mem::size_of::<Box<[ExactString]>>() + std::mem::size_of::<usize>();
++// Conservative software allowance for Arc's reference counts and alignment,
++// additional to the actual PlainValue descriptor and boxed payload length.
++// This is retained-material accounting, not an allocator/RSS or peak bound.
++const VALUE_ARC_CHARGE: usize = 4 * std::mem::size_of::<usize>();
+ 
+ struct Partition {
+     prefix: u16,
+@@ -22,17 +29,55 @@ struct Partition {
+     root: Hash,
+ }
+ 
+-// Constructed only from bounded actual wire bytes and their original hashes.
+-// The canonical value includes both quotes; its body has no JSON escapes.
++// A deliberately cheap, collision-tolerant allocation index, never a fact key.
++// One candidate per index bounds lookup work; complete bytes decide all reuse.
++#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
++struct ValueIndex {
++    length: usize,
++    edges: [u8; 16],
++}
++
++impl ValueIndex {
++    fn from_bytes(value: &[u8]) -> Self {
++        let mut edges = [0; 16];
++        let length = value.len().min(8);
++        edges[..length].copy_from_slice(&value[..length]);
++        edges[8..8 + length].copy_from_slice(&value[value.len() - length..]);
++        Self {
++            length: value.len(),
++            edges,
++        }
++    }
++}
++
++// Private immutable canonical bytes, constructed only after the original wire
++// bounds and the plain-string grammar. The full value includes both quotes.
++struct PlainValue {
++    bytes: Box<[u8]>,
++    index: ValueIndex,
++}
++
++impl PlainValue {
++    fn charge_for(length: usize) -> usize {
++        std::mem::size_of::<Self>() + VALUE_ARC_CHARGE + length
++    }
++
++    fn charge(&self) -> usize {
++        Self::charge_for(self.bytes.len())
++    }
++}
++
++// A value allocation may be shared, but every entry keeps this exact key's
++// independently computed original hashes. No cross-key encoding/hash hit.
+ struct ExactString {
+     key: Box<[u8]>,
+-    value: Box<[u8]>,
++    value: Arc<PlainValue>,
+     hashes: (Hash, Hash),
+ }
+ 
+ impl ExactString {
+-    fn charge(&self) -> usize {
+-        std::mem::size_of::<Self>() + self.key.len() + self.value.len()
++    fn entry_charge(&self) -> usize {
++        std::mem::size_of::<Self>() + self.key.len()
+     }
+ }
+ 
+@@ -40,6 +85,7 @@ struct Material {
+     leaves: Box<[(Hash, Hash)]>,
+     partitions: Box<[Partition]>,
+     strings: Box<[ExactString]>,
++    string_charge_bytes: usize,
+ }
+ 
+ impl Material {
+@@ -55,11 +101,9 @@ impl Material {
+     }
+ 
+     fn string_charge(&self) -> usize {
+-        if self.strings.is_empty() {
+-            0
+-        } else {
+-            STRING_SET_CHARGE + self.strings.iter().map(ExactString::charge).sum::<usize>()
+-        }
++        // Set only at complete successful publication. Private immutable
++        // allocations keep this exact charge valid without a warm rescan.
++        self.string_charge_bytes
+     }
+ 
+     fn retained_payload_bytes(&self) -> usize {
+@@ -70,8 +114,9 @@ impl Material {
+ }
+ 
+ /// Arithmetic work from the last successful complete input, not a validation
+-/// verdict. Boxed lengths charge all retained allocations, entry descriptors
+-/// and the additional string-array handle; no spare Vec capacity is retained.
++/// verdict. Boxed lengths charge all retained allocations, entry descriptors,
++/// shared value objects and the additional string-array bookkeeping. No spare
++/// Vec capacity is retained; each actual value allocation is charged once.
+ #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+ pub struct StateRootArithmeticObservation {
+     pub input_keys: usize,
+@@ -111,6 +156,10 @@ pub struct StateRootInputBuilder<'a> {
+     leaves: Vec<(Hash, Hash)>,
+     prior_strings_used: Vec<bool>,
+     pending_strings: Vec<ExactString>,
++    // Built only for a potentially retainable new string, never for an exact
++    // current-key hit. Bounded by the original retained/pending entries and
++    // discarded with this builder; it carries no retained budget.
++    values: Option<BTreeMap<ValueIndex, Arc<PlainValue>>>,
+     pending_budget: usize,
+     observation: StateRootArithmeticObservation,
+     failed: Option<WireError>,
+@@ -149,6 +198,7 @@ impl StateRootArithmetic {
+             leaves: Vec::new(),
+             prior_strings_used: vec![false; prior_strings],
+             pending_strings: Vec::new(),
++            values: None,
+             pending_budget,
+             observation: StateRootArithmeticObservation::default(),
+             failed: None,
+@@ -256,15 +306,30 @@ impl StateRootArithmetic {
+             .map_or_else(Vec::new, |material| material.strings.into_vec());
+         let mut remaining = self.max_retained_payload_bytes - tree_charge;
+         let mut strings = Vec::new();
++        let mut paid_values = BTreeSet::new();
++        let mut string_charge_bytes = 0;
+         for entry in prior_strings
+             .into_iter()
+             .zip(prior_strings_used)
+             .filter_map(|(entry, used)| used.then_some(entry))
+             .chain(pending_strings)
+         {
+-            let charge = entry.charge() + usize::from(strings.is_empty()) * STRING_SET_CHARGE;
++            // Allocation identity is only accounting, never input equality.
++            // A rejected entry must not mark its value paid. Selected entries
++            // keep these pointers alive until the new material is published.
++            let identity = Arc::as_ptr(&entry.value);
++            let value_charge = if paid_values.contains(&identity) {
++                0
++            } else {
++                entry.value.charge()
++            };
++            let charge = entry.entry_charge()
++                + value_charge
++                + usize::from(strings.is_empty()) * STRING_SET_CHARGE;
+             if charge <= remaining {
+                 remaining -= charge;
++                string_charge_bytes += charge;
++                paid_values.insert(identity);
+                 strings.push(entry);
+             }
+         }
+@@ -273,6 +338,7 @@ impl StateRootArithmetic {
+             leaves: leaves.into_boxed_slice(),
+             partitions: partitions.into_boxed_slice(),
+             strings: strings.into_boxed_slice(),
++            string_charge_bytes,
+         };
+         observation.reused_partitions = reused;
+         observation.computed_partitions = count - reused;
+@@ -320,13 +386,11 @@ impl StateRootInputBuilder<'_> {
+         if let Some(error) = self.failed {
+             return Err(error);
+         }
+-        let hit = self.prior_string(key).and_then(|(index, prior)| {
+-            (&prior.value[1..prior.value.len() - 1] == value.as_bytes()).then_some((
+-                index,
+-                prior.hashes,
+-                prior.value.len(),
+-            ))
+-        });
++        let hit =
++            self.prior_string(key).and_then(|(index, prior)| {
++                (&prior.value.bytes[1..prior.value.bytes.len() - 1] == value.as_bytes())
++                    .then_some((index, prior.hashes, prior.value.bytes.len()))
++            });
+         let Some((index, hashes, encoded_len)) = hit else {
+             return Ok(false);
+         };
+@@ -341,7 +405,7 @@ impl StateRootInputBuilder<'_> {
+     pub fn add_encoded(&mut self, key: &[u8], value: &[u8]) -> Result<(), WireError> {
+         self.bounds(key, value.len())?;
+         let hit = self.prior_string(key).and_then(|(index, prior)| {
+-            (prior.value.as_ref() == value).then_some((index, prior.hashes))
++            (prior.value.bytes.as_ref() == value).then_some((index, prior.hashes))
+         });
+         if let Some((index, hashes)) = hit {
+             self.add_exact(index, hashes, false);
+@@ -354,20 +418,71 @@ impl StateRootInputBuilder<'_> {
+         self.leaves.push(hashes);
+         self.observation.input_keys += 1;
+         self.observation.leaf_hashes_computed += 1;
+-        let charge = std::mem::size_of::<ExactString>() + key.len() + value.len();
+-        // Check the budget before scanning/copying a candidate. In particular,
+-        // an already full warm entry does not rescan every large uncached row.
+-        if charge <= self.pending_budget && plain_json_string(value) {
+-            self.pending_budget -= charge;
+-            self.pending_strings.push(ExactString {
+-                key: key.into(),
+-                value: value.into(),
+-                hashes,
+-            });
+-        }
++        self.retain_string(key, value, hashes);
+         Ok(())
+     }
+ 
++    fn retain_string(&mut self, key: &[u8], value: &[u8], hashes: (Hash, Hash)) {
++        let entry_charge = std::mem::size_of::<ExactString>() + key.len();
++        // Full pools and ordinary non-string misses cannot build an index or
++        // rescan a large value. The index reads at most sixteen edge bytes;
++        // it deliberately adds no second full hash of current string input.
++        if entry_charge > self.pending_budget
++            || value.len() < 2
++            || value[0] != b'"'
++            || value[value.len() - 1] != b'"'
++        {
++            return;
++        }
++        let prior = self.arithmetic.material.as_ref();
++        let values = self.values.get_or_insert_with(|| {
++            let mut values = BTreeMap::new();
++            if let Some(prior) = prior {
++                for entry in &prior.strings {
++                    values
++                        .entry(entry.value.index)
++                        .or_insert_with(|| entry.value.clone());
++                }
++            }
++            values
++        });
++        let index = ValueIndex::from_bytes(value);
++        let shared = match values.entry(index) {
++            // Includes both delimiters and every current byte. An index
++            // alone can never share a value or the already computed hashes.
++            Entry::Occupied(candidate) if candidate.get().bytes.as_ref() == value => {
++                candidate.get().clone()
++            }
++            candidate => {
++                let charge = PlainValue::charge_for(value.len());
++                if entry_charge + charge > self.pending_budget || !plain_json_string(value) {
++                    return;
++                }
++                let shared = Arc::new(PlainValue {
++                    bytes: value.into(),
++                    index,
++                });
++                self.pending_budget -= charge;
++                // A collision keeps at most the original one index candidate.
++                // Independently paid storage preserves ordinary per-key
++                // retention even for distinct values with identical edges.
++                if let Entry::Vacant(candidate) = candidate {
++                    candidate.insert(shared.clone());
++                }
++                shared
++            }
++        };
++        // Old shared payloads are already paid by the live prior material;
++        // new shared payloads were paid once above. No old allocation is
++        // released or credited until the complete operation succeeds.
++        self.pending_budget -= entry_charge;
++        self.pending_strings.push(ExactString {
++            key: key.into(),
++            value: shared,
++            hashes,
++        });
++    }
++
+     pub fn finish(self) -> Result<Hash, WireError> {
+         if let Some(error) = self.failed {
+             return Err(error);
+diff --git a/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs b/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs
+index 5a6e5b8..321027f 100644
+--- a/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs
++++ b/trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs
+@@ -338,7 +338,8 @@ fn exact_string_hits_cannot_publish_after_failure_collision_or_abandonment() {
+ #[test]
+ fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_credit() {
+     let tree_charge = std::mem::size_of::<(Hash, Hash)>() + std::mem::size_of::<Partition>();
+-    let string_charge = STRING_SET_CHARGE + std::mem::size_of::<ExactString>() + 1 + 5;
++    let string_charge =
++        STRING_SET_CHARGE + std::mem::size_of::<ExactString>() + 1 + PlainValue::charge_for(5);
+     let values = BTreeMap::from([(b"k".to_vec(), br#""old""#.to_vec())]);
+     let expected = state_root(&values).unwrap();
+     for budget in [
+@@ -372,8 +373,9 @@ fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_c
+             + material
+                 .strings
+                 .iter()
+-                .map(|entry| entry.key.len() + entry.value.len())
++                .map(|entry| entry.key.len())
+                 .sum::<usize>()
++            + PlainValue::charge_for(5)
+     );
+     assert_eq!(calculated(&mut arithmetic, &values), expected);
+     assert_eq!(arithmetic.observation().exact_string_hits, 1);
+@@ -398,3 +400,312 @@ fn exact_strings_share_the_existing_pool_with_tree_priority_and_no_replacement_c
+     assert!(tree_only.observation().retention_refused);
+     assert_eq!(tree_only.retained_payload_bytes(), 0);
+ }
++
++#[test]
++fn shared_values_keep_every_key_and_its_original_hashes_in_the_same_small_pool() {
++    const BUDGET: usize = 64 * 1024;
++    let encoded = format!("\"{}\"", "x".repeat(4080)).into_bytes();
++    let values: BTreeMap<_, _> = (0..128)
++        .map(|index| (format!("shared:{index:04}").into_bytes(), encoded.clone()))
++        .collect();
++    assert!(values.values().map(Vec::len).sum::<usize>() > BUDGET);
++    let mut arithmetic = StateRootArithmetic::new(BUDGET);
++    let expected = calculated(&mut arithmetic, &values);
++    let cold = arithmetic.observation();
++    assert_eq!(cold.leaf_hashes_computed, values.len());
++    assert_eq!(cold.exact_string_hits, 0);
++    assert_eq!(cold.string_encodings_reused, 0);
++    assert_eq!(cold.retained_string_entries, values.len());
++    assert!(cold.retained_payload_bytes <= BUDGET);
++    let material = arithmetic.material.as_ref().unwrap();
++    let shared = &material.strings[0].value;
++    for entry in &material.strings {
++        assert!(Arc::ptr_eq(&entry.value, shared));
++        assert_eq!(
++            entry.hashes,
++            (
++                hash(b"state-key", &[&entry.key]),
++                hash(b"state-leaf", &[&entry.key, &encoded]),
++            )
++        );
++    }
++    assert_eq!(
++        material.string_charge(),
++        STRING_SET_CHARGE
++            + std::mem::size_of_val(material.strings.as_ref())
++            + values.keys().map(Vec::len).sum::<usize>()
++            + PlainValue::charge_for(encoded.len())
++    );
++    let mut input = arithmetic.input_builder();
++    for key in values.keys().rev() {
++        assert!(input
++            .try_plain_json_string(
++                key,
++                std::str::from_utf8(&encoded[1..encoded.len() - 1]).unwrap()
++            )
++            .unwrap());
++    }
++    assert!(
++        input.values.is_none(),
++        "warm exact keys build no allocation index"
++    );
++    assert_eq!(input.finish(), Ok(expected));
++    let warm = arithmetic.observation();
++    assert_eq!(warm.input_keys, values.len());
++    assert_eq!(warm.exact_string_hits, values.len());
++    assert_eq!(warm.string_encodings_reused, values.len());
++    assert_eq!(warm.leaf_hashes_computed, 0);
++
++    // Same length and fingerprint, but a changed middle byte is a real miss.
++    // Renaming another key cannot reuse that key's old leaf hash either.
++    let mut changed = values.clone();
++    changed.get_mut(b"shared:0000".as_slice()).unwrap()[2048] = b'y';
++    let renamed = changed.remove(b"shared:0001".as_slice()).unwrap();
++    changed.insert(b"moved:0001".to_vec(), renamed);
++    assert_ne!(calculated(&mut arithmetic, &changed), expected);
++    assert_eq!(arithmetic.observation().leaf_hashes_computed, 2);
++    assert_eq!(arithmetic.observation().exact_string_hits, values.len() - 2);
++    assert_eq!(calculated(&mut arithmetic, &values), expected);
++    assert_eq!(arithmetic.observation().leaf_hashes_computed, 2);
++    calculated(&mut arithmetic, &BTreeMap::new());
++    assert_eq!(arithmetic.retained_payload_bytes(), 0);
++}
++
++#[test]
++fn shared_value_index_collisions_and_unique_values_only_limit_optional_retention() {
++    let first = format!("\"prefix00{}suffix00\"", "a".repeat(96)).into_bytes();
++    let second = format!("\"prefix00{}suffix00\"", "b".repeat(96)).into_bytes();
++    assert!(ValueIndex::from_bytes(&first) == ValueIndex::from_bytes(&second));
++    let values = BTreeMap::from([
++        (b"alpha".to_vec(), first.clone()),
++        (b"beta".to_vec(), second),
++        (b"gamma".to_vec(), first),
++    ]);
++    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
++    let expected = calculated(&mut arithmetic, &values);
++    assert_eq!(arithmetic.observation().retained_string_entries, 3);
++    let material = arithmetic.material.as_ref().unwrap();
++    assert!(Arc::ptr_eq(
++        &material.strings[0].value,
++        &material.strings[2].value
++    ));
++    assert!(!Arc::ptr_eq(
++        &material.strings[0].value,
++        &material.strings[1].value
++    ));
++    assert_eq!(calculated(&mut arithmetic, &values), expected);
++    assert_eq!(arithmetic.observation().exact_string_hits, 3);
++    assert_eq!(arithmetic.observation().leaf_hashes_computed, 0);
++
++    let unique: BTreeMap<_, _> = (0..128)
++        .map(|index| {
++            (
++                format!("unique:{index:04}").into_bytes(),
++                format!("\"{index:04x}{}\"", "z".repeat(500)).into_bytes(),
++            )
++        })
++        .collect();
++    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
++    let expected = calculated(&mut arithmetic, &unique);
++    let retained = arithmetic.observation().retained_string_entries;
++    assert!(retained > 0 && retained < unique.len());
++    let material = arithmetic.material.as_ref().unwrap();
++    let identities: BTreeSet<_> = material
++        .strings
++        .iter()
++        .map(|entry| Arc::as_ptr(&entry.value))
++        .collect();
++    assert_eq!(identities.len(), retained);
++    assert!(arithmetic.retained_payload_bytes() <= 32 * 1024);
++    let mut input = arithmetic.input_builder();
++    for (key, value) in &unique {
++        input.add_encoded(key, value).unwrap();
++    }
++    if let Some(index) = &input.values {
++        assert!(index.len() <= retained + input.pending_strings.len());
++    }
++    assert_eq!(input.finish(), Ok(expected));
++    assert_eq!(arithmetic.observation().exact_string_hits, retained);
++    assert_eq!(
++        arithmetic.observation().leaf_hashes_computed,
++        unique.len() - retained
++    );
++    assert!(arithmetic.retained_payload_bytes() <= 32 * 1024);
++}
++
++#[test]
++fn shared_values_charge_only_selected_allocations_and_migrate_unused_old_values() {
++    let value = format!("\"{}\"", "x".repeat(256)).into_bytes();
++    let long = vec![b'a'; 160];
++    let short = b"z".to_vec();
++    let values = BTreeMap::from([
++        (long.clone(), value.clone()),
++        (short.clone(), value.clone()),
++    ]);
++    assert_ne!(
++        prefix(&hash(b"state-key", &[&long])),
++        prefix(&hash(b"state-key", &[&short]))
++    );
++    let tree = 2 * (std::mem::size_of::<(Hash, Hash)>() + std::mem::size_of::<Partition>());
++    let short_charge = std::mem::size_of::<ExactString>() + short.len();
++    let string_charge = STRING_SET_CHARGE + short_charge + PlainValue::charge_for(value.len());
++    let mut arithmetic = StateRootArithmetic::new(tree + string_charge + 16);
++    let mut input = arithmetic.input_builder();
++    input.add_encoded(&long, &value).unwrap();
++    input.add_encoded(&short, &value).unwrap();
++    assert_eq!(
++        input.pending_strings.len(),
++        2,
++        "both candidates must reach tree-priority trimming"
++    );
++    assert!(Arc::ptr_eq(
++        &input.pending_strings[0].value,
++        &input.pending_strings[1].value
++    ));
++    assert_eq!(input.finish(), state_root(&values));
++    let material = arithmetic.material.as_ref().unwrap();
++    assert_eq!(material.strings.len(), 1);
++    assert_eq!(material.strings[0].key.as_ref(), short.as_slice());
++    // The rejected first entry did not make the later value allocation free.
++    assert_eq!(material.string_charge(), string_charge);
++    assert_eq!(material.retained_payload_bytes(), tree + string_charge);
++
++    let one_tree = tree / 2;
++    let entry_charge = std::mem::size_of::<ExactString>() + 3;
++    let one_charge =
++        one_tree + STRING_SET_CHARGE + entry_charge + PlainValue::charge_for(value.len());
++    let mut arithmetic = StateRootArithmetic::new(one_charge + STRING_SET_CHARGE + entry_charge);
++    let old = BTreeMap::from([(b"old".to_vec(), value.clone())]);
++    calculated(&mut arithmetic, &old);
++    let saved = Arc::downgrade(&arithmetic.material.as_ref().unwrap().strings[0].value);
++    let mut input = arithmetic.input_builder();
++    assert_eq!(input.pending_budget, entry_charge);
++    input.add_encoded(b"new", &value).unwrap();
++    assert_eq!(input.pending_budget, 0);
++    assert_eq!(input.pending_strings.len(), 1);
++    assert_eq!(Arc::as_ptr(&input.pending_strings[0].value), saved.as_ptr());
++    let new = BTreeMap::from([(b"new".to_vec(), value)]);
++    assert_eq!(input.finish(), state_root(&new));
++    let material = arithmetic.material.as_ref().unwrap();
++    assert_eq!(material.strings.len(), 1);
++    assert_eq!(material.strings[0].key.as_ref(), b"new");
++    assert_eq!(Arc::as_ptr(&material.strings[0].value), saved.as_ptr());
++    // No old entry was used. The pending Arc alone keeps its value alive and
++    // the new material charges the payload again, exactly once.
++    assert_eq!(material.retained_payload_bytes(), one_charge);
++    assert_eq!(saved.strong_count(), 1);
++    calculated(&mut arithmetic, &BTreeMap::new());
++    assert!(saved.upgrade().is_none());
++}
++
++#[test]
++fn equal_value_bytes_in_distinct_allocations_are_never_charged_as_one() {
++    let first = format!("\"prefix00{}suffix00\"", "a".repeat(32)).into_bytes();
++    let value = format!("\"prefix00{}suffix00\"", "b".repeat(32)).into_bytes();
++    assert!(ValueIndex::from_bytes(&first) == ValueIndex::from_bytes(&value));
++    let values = BTreeMap::from([
++        (b"a".to_vec(), first),
++        (b"b".to_vec(), value.clone()),
++        (b"c".to_vec(), value.clone()),
++    ]);
++    let partitions: BTreeSet<_> = values
++        .keys()
++        .map(|key| prefix(&hash(b"state-key", &[key])))
++        .collect();
++    let tree = values.len() * std::mem::size_of::<(Hash, Hash)>()
++        + partitions.len() * std::mem::size_of::<Partition>();
++    let entry = std::mem::size_of::<ExactString>() + 1;
++    let each_value = PlainValue::charge_for(value.len());
++    let total = tree + STRING_SET_CHARGE + 3 * entry + 3 * each_value;
++    for budget in [total, total - 1] {
++        let mut arithmetic = StateRootArithmetic::new(budget);
++        let mut input = arithmetic.input_builder();
++        for (key, value) in &values {
++            input.add_encoded(key, value).unwrap();
++        }
++        assert_eq!(input.pending_strings.len(), 3);
++        // The first candidate has different middle bytes. The later two
++        // public inputs therefore acquire independent, equally valid copies.
++        // Neither equal bytes nor equal fingerprints may hide either copy.
++        assert_eq!(
++            input.pending_strings[1].value.bytes,
++            input.pending_strings[2].value.bytes
++        );
++        assert!(!Arc::ptr_eq(
++            &input.pending_strings[1].value,
++            &input.pending_strings[2].value
++        ));
++        assert_eq!(input.finish(), state_root(&values));
++        let material = arithmetic.material.as_ref().unwrap();
++        if budget == total {
++            assert_eq!(material.strings.len(), 3);
++            assert_eq!(material.retained_payload_bytes(), total);
++        } else {
++            assert_eq!(material.strings.len(), 2);
++            assert_eq!(
++                material.retained_payload_bytes(),
++                tree + STRING_SET_CHARGE + 2 * entry + 2 * each_value
++            );
++        }
++        assert!(material.retained_payload_bytes() <= budget);
++    }
++}
++
++#[test]
++fn pending_shared_values_preserve_old_material_and_release_on_every_failed_finish() {
++    let value = br#""old complete value""#.to_vec();
++    let values = BTreeMap::from([(b"old".to_vec(), value.clone())]);
++    let mut arithmetic = StateRootArithmetic::new(32 * 1024);
++    calculated(&mut arithmetic, &values);
++    let prior = arithmetic.observation();
++    let old = Arc::downgrade(&arithmetic.material.as_ref().unwrap().strings[0].value);
++    for failure in 0..3 {
++        let mut input = arithmetic.input_builder();
++        assert!(input
++            .try_plain_json_string(b"old", "old complete value")
++            .unwrap());
++        input.add_encoded(b"renamed", &value).unwrap();
++        input
++            .add_encoded(b"unique", br#""new complete value""#)
++            .unwrap();
++        assert_eq!(input.pending_strings.len(), 2);
++        assert_eq!(Arc::as_ptr(&input.pending_strings[0].value), old.as_ptr());
++        let pending = Arc::downgrade(&input.pending_strings[1].value);
++        match failure {
++            0 => drop(input),
++            1 => {
++                assert_eq!(input.add_encoded(&[0; 161], b"null"), Err(WireError::Limit));
++                assert_eq!(input.finish(), Err(WireError::Limit));
++            }
++            _ => {
++                assert!(input
++                    .try_plain_json_string(b"old", "old complete value")
++                    .unwrap());
++                assert_eq!(input.finish(), Err(WireError::KeyCollision));
++            }
++        }
++        assert_eq!(arithmetic.observation(), prior);
++        assert_eq!(
++            arithmetic.retained_payload_bytes(),
++            prior.retained_payload_bytes
++        );
++        assert_eq!(old.strong_count(), 1);
++        assert!(pending.upgrade().is_none());
++    }
++    let entries = || {
++        [
++            Ok((b"old".as_slice(), value.as_slice())),
++            Ok((b"renamed".as_slice(), value.as_slice())),
++            Ok((b"unique".as_slice(), br#""new complete value""#.as_slice())),
++            Err("CANCELLED"),
++        ]
++    };
++    assert_eq!(
++        arithmetic.root_from_entries(entries()),
++        state_root_from_entries(entries())
++    );
++    assert_eq!(arithmetic.observation(), prior);
++    assert_eq!(old.strong_count(), 1);
++    calculated(&mut arithmetic, &BTreeMap::new());
++    assert!(old.upgrade().is_none());
++}

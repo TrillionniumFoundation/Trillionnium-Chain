@@ -1,0 +1,17 @@
+test_all_176_signed_header_mutations_reject (test_pq_cell_native_verify.NativeCellTests.test_all_176_signed_header_mutations_reject) ... ok
+test_all_217_challenge_bytes_mutation_reject (test_pq_cell_native_verify.NativeCellTests.test_all_217_challenge_bytes_mutation_reject) ... ok
+test_bad_signature_truncation_and_frame_append_reject (test_pq_cell_native_verify.NativeCellTests.test_bad_signature_truncation_and_frame_append_reject) ... ok
+test_chunk_and_merkle_path_mutation_reject (test_pq_cell_native_verify.NativeCellTests.test_chunk_and_merkle_path_mutation_reject) ... ok
+test_no_classical_ed25519_public_key_downgrade (test_pq_cell_native_verify.NativeCellTests.test_no_classical_ed25519_public_key_downgrade) ... ok
+test_real_native_ml_dsa65_matches_exact_independent_sha384_wire (test_pq_cell_native_verify.NativeCellTests.test_real_native_ml_dsa65_matches_exact_independent_sha384_wire) ... ok
+test_self_consistent_signed_attacker_catalog_rejected_by_independent_pin (test_pq_cell_native_verify.NativeCellTests.test_self_consistent_signed_attacker_catalog_rejected_by_independent_pin) ... ok
+test_signed_response_from_another_nonce_and_sequence_not_replayable (test_pq_cell_native_verify.NativeCellTests.test_signed_response_from_another_nonce_and_sequence_not_replayable) ... ok
+test_single_chunk_and_full_one_megabyte_chunk_are_bounded (test_pq_cell_native_verify.NativeCellTests.test_single_chunk_and_full_one_megabyte_chunk_are_bounded) ... ok
+test_symlink_and_foreign_pem_payload_reject (test_pq_cell_native_verify.NativeCellTests.test_symlink_and_foreign_pem_payload_reject) ... ok
+test_wrong_current_identity_and_time_fail_closed (test_pq_cell_native_verify.NativeCellTests.test_wrong_current_identity_and_time_fail_closed) ... ok
+test_zero_width_length_and_odd_last_canonical_reject (test_pq_cell_native_verify.NativeCellTests.test_zero_width_length_and_odd_last_canonical_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 9.835s
+
+OK

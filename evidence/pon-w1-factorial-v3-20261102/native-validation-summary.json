@@ -1,0 +1,496 @@
+{
+  "ignored": 2,
+  "initial_attempt_result": "FAIL",
+  "measured_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+  "notes": [
+    "The initial Node Host lib-test compilation ended with SIGKILL. No Host test result was obtained by that command.",
+    "The owned initial driver was later interrupted to retry with Cargo jobs=1; complete partial output and source guards remain retained.",
+    "Initial driver traceback output follows its finally-written manifest; the archive/bundle index hashes final retained bytes. Original manifest bytes are not rewritten.",
+    "198 distinct selected test invocations comprise the initial successful W1 113 plus the retry 85, not a sum of repeated History/cache controls.",
+    "The History ignored entry is a child-process fixture invoked by its parent control; the protocol ignored entry is a separate explicit paired-cost observation.",
+    "These tests do not qualify SQLite physical I/O, original public Host service, work costs, model efficacy, hardware or production."
+  ],
+  "passed": 198,
+  "production_activation": false,
+  "public_network_ready": false,
+  "public_service_measured": false,
+  "resource_fairness_qualified": false,
+  "result": "PASS-selected-controls",
+  "retained_initial_manifest_final_log_hash_differences": [
+    {
+      "file": "native-runner.log",
+      "final_retained_sha256": "2187d2ae8c53d7621d99e45fac174af9f4f9c3aa501b1bb4bd5ff2a0ccdf59b7",
+      "manifest_sha256": "a7f71a80ecdc259c51abc2ed546e719b45197529584f34766e45b6dd1828713c"
+    }
+  ],
+  "retry_build_jobs": 1,
+  "retry_result": "PASS",
+  "schema": "pon-v3-native-validation-summary-v1",
+  "selected_commands": [
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 108638611351,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 113
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "w1-complete.log",
+      "name": "w1-complete",
+      "observed_count_rows": [
+        [
+          "113",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-initial/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "host_kernel_parent::kernel_parent::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 2137556953,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 19
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "host-parent.log",
+      "name": "host-parent",
+      "observed_count_rows": [
+        [
+          "19",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::history_import::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 13639567941,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 1,
+        "passed": 20
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "history-import.log",
+      "name": "history-import",
+      "observed_count_rows": [
+        [
+          "20",
+          "1"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::w1_negative_cache_is_explicit_bounded_and_never_activated_by_default",
+        "--",
+        "--test-threads=1",
+        "--exact"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 2246480556,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 1
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "cache-explicit.log",
+      "name": "cache-explicit",
+      "observed_count_rows": [
+        [
+          "1",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-protocol",
+        "--lib",
+        "pon_wire::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 3017175444,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 1,
+        "passed": 18
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "protocol-wire.log",
+      "name": "protocol-wire",
+      "observed_count_rows": [
+        [
+          "18",
+          "1"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "work_header_binding",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 18673129348,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 1
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "header-binding.log",
+      "name": "header-binding",
+      "observed_count_rows": [
+        [
+          "1",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_legal_strategy_v3",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 4207176437,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 6
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "factorial-example.log",
+      "name": "factorial-example",
+      "observed_count_rows": [
+        [
+          "6",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::scalar_cpu::completion_tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 4798601963,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 11
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "cpu-completion.log",
+      "name": "cpu-completion",
+      "observed_count_rows": [
+        [
+          "11",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "work_fuzz_semantics",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 5289941710,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 6
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "work-fuzz.log",
+      "name": "work-fuzz",
+      "observed_count_rows": [
+        [
+          "6",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--release",
+        "--target",
+        "x86_64-unknown-linux-gnu",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pon_rejection_cost",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/e08750459604/pon-work",
+      "elapsed_ns": 17751028569,
+      "executed": true,
+      "exit_code": 0,
+      "expected_counts": {
+        "ignored": 0,
+        "passed": 3
+      },
+      "expected_counts_met": true,
+      "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+      "log": "retained-rejection.log",
+      "name": "retained-rejection",
+      "observed_count_rows": [
+        [
+          "3",
+          "0"
+        ]
+      ],
+      "process_exit_code": 0,
+      "receipt": "validation/native-jobs-one/native-manifest.json",
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "strict_clippy": {
+    "command": [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--locked",
+      "--target",
+      "x86_64-unknown-linux-gnu",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-crypto-primitives",
+      "-p",
+      "trnm-pon-node",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/workspace/scratch/e08750459604/pon-work",
+    "elapsed_ns": 153968083217,
+    "executed": true,
+    "exit_code": 0,
+    "expected_source": "2b250859e7c07088e6c3c01f75006372c684de61",
+    "log": "strict-clippy.log",
+    "name": "strict-clippy",
+    "process_exit_code": 0,
+    "source_after_verified": true,
+    "source_before_verified": true,
+    "source_verified": true,
+    "timed_out": false
+  },
+  "work_profile_qualified": false
+}

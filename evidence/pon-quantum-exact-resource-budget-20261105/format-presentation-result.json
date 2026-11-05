@@ -1,0 +1,17 @@
+{
+  "quantum_oracle_resources.py": {
+    "python_compile": "PASS",
+    "final_newline": true,
+    "trailing_whitespace_lines": []
+  },
+  "test_quantum_oracle_resources.py": {
+    "python_compile": "PASS",
+    "final_newline": true,
+    "trailing_whitespace_lines": []
+  },
+  "example_reports_equal": {
+    "False": true,
+    "True": true
+  },
+  "scope": "Syntax, whitespace, and exact equality of both existing example reports; not a full source gate or proof."
+}

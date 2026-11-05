@@ -1,0 +1,9 @@
+{
+  "schema": "TRNM-W1-BATCH-ATTEMPT4-SECURITY-HOLD1",
+  "previous_preregistration_sha256": "bac48f6fcfc358e9332dc3e3cab2d86aeaa9f04597d9c68b6100c28cb1afa30c",
+  "status": "NOT_AUTHORIZED_NOT_STARTED_SUPERSEDED",
+  "reason": "Known ruint advisories in the MSRV-only downgrade candidate. Do not invoke the prepared attempt4 pipeline. Source/lock/compiler identities now require a fresh separately approved declaration.",
+  "attempt4_runtime_cost_seconds": 0,
+  "attempt4_runtime_output_exists": false,
+  "new_compiler_downloaded_or_installed": false
+}

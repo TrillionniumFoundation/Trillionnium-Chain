@@ -1,0 +1,20 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "info",
+    "jobserver@0.1.35",
+    "--registry",
+    "crates-io",
+    "--config",
+    "net.retry=0",
+    "--config",
+    "http.timeout=20"
+  ],
+  "cwd": "/workspace/scratch/abae1861b451/fuzz-lock-repair-20261103",
+  "exit_code": 0,
+  "stdout": "jobserver\nAn implementation of the GNU Make jobserver for Rust.\nversion: 0.1.35\nlicense: MIT OR Apache-2.0\nrust-version: 1.85\ndocumentation: https://docs.rs/jobserver\nhomepage: https://github.com/rust-lang/jobserver-rs\nrepository: https://github.com/rust-lang/jobserver-rs\ncrates.io: https://crates.io/crates/jobserver/0.1.35\n",
+  "stderr": "    Updating crates.io index\n Downloading crates ...\n  Downloaded jobserver v0.1.35\n",
+  "expected_checksum": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+  "actual_checksum": "1c00acbd29eabad4a2392fa0e921c874934dbbf4194312ad20f04a0ed67a3cb3",
+  "checksum_matches": true
+}

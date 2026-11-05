@@ -1,0 +1,63 @@
+PQ 后端可移植性只读审查 r7
+==========================
+
+结论：存在两项独立、尚未关闭的后端契约问题。近期 hosted Clippy 的 E0599 可由已核对的 API 编译条件直接解释；原 e25 原生账户用例的 CLI 失败则只能定位到参照实现调用边界，无法从现有日志进一步确诊旧版 CLI、provider 配置或 PEM 编码。二者都不能写成密码破解漏洞，也不能因本地 Clippy 通过而关闭。
+
+范围与执行边界
+----------------
+审阅源固定为 131f673d9563e72aca7139f3239856957d118d49，树 b8bdd87dca3cd6288c38f63848b24b1a2df6a09d。本报告 JSON 对各审阅文件逐项记录 SHA-256，并核对工作区及本地 4370 Clippy 源的同一文件。报告生成时共享 checkout 已推进，不能把后续 HEAD 的新测试结果偷换成本次观测。
+只读取源码、现存构建输出、原始 CI 日志；没有修改共享源，没有运行 Cargo/Rust/Bazel/OpenSSL，没有执行、准备或触发原生密码/重放验证与 CI。主代理告知此前原生 PQ 路径已遭自动安全检查中断；本报告不绕开该中断，不把相关原生操作移到 CI 执行。
+
+一、Cargo 固定了 Rust 封装，不等于固定原生后端
+------------------------------------------
+Cargo.lock 锁定 openssl 0.10.81 与 openssl-sys 0.9.117。三处 pq-native-openssl 特性沿 trnm-pon-node → trnm-mvcc-fee / trnm-crypto-primitives 传播，依赖为 optional openssl = '=0.10.81'；默认特性为空。锁内未出现 openssl-src，也未声明 vendored。因此 default-feature 原生用例通过不代表 PQ 已参与；all-features 才会暴露这个可选依赖与相关测试。
+本次读取的保留 cargo metadata 只含 25 个 workspace package，resolve 缺省，是 no-deps 清单；没有把它冒称完整 allfeatures 解析图。依赖结论由实际 manifest、锁文件和缓存 upstream 源交叉核对，未新执行 cargo metadata/tree。
+
+缓存 openssl 0.10.81 的 pkey.rs:907 将 PKey::private_key_from_seed 放在 #[cfg(ossl350)] 后。build.rs:128-164 仅当 DEP_OPENSSL_VERSION_NUMBER 达到 0x30500000 时声明 ossl350。该 crate 的版本号存在，不保证编译出来的 API 集合含此方法。OpenSSL 官方 ML-DSA 文档也明确其支持始于 3.5；这里的 32-byte seed 是确定性测试夹具，不是对生产密钥保管的声明。
+上游缓存归属：.cargo_vcs_info.json 的 git SHA 为 db9c9e2f5db2ad7b45fd894e8d297ee15bfd0c7c；相关文件 hash 收入 JSON。
+官方依据：https://docs.openssl.org/3.5/man7/EVP_PKEY-ML-DSA/ （HISTORY、Keygen Parameters）。官方文档说明能力门槛，不能替代实际 CI 的 backend 观测。
+
+二、本地 PASS 的适用范围已明确
+-----------------------------
+保留包装器 /tmp/chain-integrated-check-20261028.py 显式设置：
+  OPENSSL_DIR=/tmp/pure-pon-openssl-3.5.9；OPENSSL_STATIC=1；
+  CARGO_HOME=/tmp/pure-pon-cargo-20261027；
+  CARGO_TARGET_DIR=/tmp/chain-pq-target-56818e4fba76；
+  toolchain bin=/tmp/pure-pon-toolchain-20261027/bin。
+现存 openssl-sys build output 同时记录 version 3_5_9、version_number=30500090、ossl350、静态 ssl/crypto、该前缀的 include 和 lib64。这个既存记录支持“本地显式后端具备所需编译 API”，未进行任何新的密码执行。
+4370f250236d89fb86dab215f862fe7e4d91c648 的保留 Clippy 记录 exit=0，命令覆盖 workspace/all-targets/all-features；native_tests_executed=false，1.7078 秒为暖缓存编译检查。它不等于原生测试通过，不代表 hosted runner/macOS/其他架构使用同一后端，也不证明新源完整账户/网络集成。
+
+三、hosted E0599 是构建契约缺口，确切系统版本未知
+--------------------------------------------
+131f 两条近期 x64 原日志：
+  job 122594446924（head）：02:33:47 UTC，pq_network/tests.rs:7:21，E0599。
+  job 122594447106（prospective merge）：02:36:01 UTC，同一位置、同一方法。
+两日志均下载/编译 openssl-sys 0.9.117；错误直接引用 openssl 0.10.81。全文件各有 96 行 test result、0 行 FAILED，这只是原日志行数，不是去重 selector 数，更不代表 allfeatures 的 PQ 用例执行通过；最终 Clippy 是失败的。
+旧 e25 diagnostic 四条原日志也保留同一 E0599；四个成员的 SHA、错误行在 JSON。
+
+pon-recent-batch-acceptance.yml 与 pon-baseline-diagnostic-readback.yml 的 runner 为 ubuntu-24.04 / ubuntu-24.04-arm，source 为 head / prospective-merge；Rust 固定 1.95.0；它们执行 all-targets/all-features Clippy，却没有 prepare_pq_provider 步骤或 OPENSSL_DIR/STATIC 约束。审阅的三份工作流没有绑定 container/image digest；没有能把这两条失败 lane 归到某一 OCI 底座的 receipt。runner 标签不是具体 OpenSSL 包版本。
+在该已核对的 crate 源下，缺方法说明此构建未暴露 ossl350 对应 API；但原日志没有输出 actual header version、链接库或 cfg dump。不能写“CI 确认用 OpenSSL 3.0.x/3.4.x”，只能写“与本地 3.5.9 构建契约不同，确切 backend 待观测”。
+生产 pq_auth.rs 的 require_provider_version 在运行时拒绝 <3.5；这个 guard 能防止不支持的运行环境继续授权，却不能让 Rust 编译时被 cfg 删掉的方法重新出现。不能把 E0599 称为验签绕过或密码漏洞。
+
+四、原 runtime 失败发生在独立 CLI 边界
+-----------------------------------
+原 e25 runtime jobs 122579371249 与 122579371614 均明确打印已准备 static OpenSSL 3.5.9 并完成 ML-DSA-65 smoke；随后各有 8/8 pq_account_owner 用例失败。失败原文链路为：fixture 中 Python verify_handoff → pq_key_id → _openssl(['openssl', 'pkey', ... '-outform', 'DER']) → 子进程返回非零 → 抛出统一 Reject。
+失败发生在 pq_genesis_handoff.py:71，即返回码检查。严格 SPKI DER/OID/长度/填充检查在第 97 行之后，尚未走到。准确表述是“PEM→DER CLI 调用失败”；不能写成“规范 DER parser 已拒绝正确公钥”，也不能认定原 Rust 导出的 key 已证实无效。
+
+prepare_pq_provider.sh 的 smoke 使用绝对路径 prefix/bin/openssl，并在该函数调用内指定 OPENSSL_CONF=/dev/null、OPENSSL_MODULES。成功后只向 GITHUB_ENV 写 OPENSSL_DIR 与 OPENSSL_STATIC；没有把 prefix/bin 放进 GITHUB_PATH，没有为后续 oracle 导出显式 CLI 路径，也没有传播 smoke 的隔离 config。opensssl-sys 的 OPENSSL_DIR 仅选择 include/lib，它不控制 Python subprocess 对裸 openssl 的 PATH 解析。
+pq_genesis_handoff.py 捕获 stderr，却在非零退出时丢弃其内容和准确返回码。当前日志没有被实际调用 CLI 的绝对路径、版本、provider/config 或 stderr。因此“后续裸 CLI 与刚构建的 3.5.9 不同”是源码证明的未绑定风险；“实际落到旧 CLI、不识别 ML-DSA”是强候选解释，尚未被原始日志确诊。编码问题、配置问题或其他 CLI 错误仍不能排除。requirements 中 cryptography 50.0.2 也不自动决定这个命令或 Rust 的 backend。
+上述 8 个用例共用 fixture，在进入各自 intended 账户、nonce/reorg 断言之前即失败；不是 8 项已证明的生产状态机漏洞，也不是可忽略的 8 个失败。
+
+五、最小后续契约建议（仅设计，未实施）
+------------------------------------
+1. 给所有 PQ-enabled/allfeatures lane 声明同一受支持原生 backend 契约，保留源压缩包 hash、目标架构、header/version/cfg、实际链接库及 provider/config 身份。Cargo.lock 与 runner 标签都不能替代这份约束；源目前已有 3.5.9 精确 pin，可作为后续评审基准。编译失败应在早期明确报 backend 不兼容，不能用 cfg 跳过 PQ tests 形成绿灯。
+2. 独立 Python oracle 使用明确的绝对 CLI 身份及受控 provider/config，并与 Rust library 身份分开记录。保留其独立 transcript/state-root 重建与全部严格 SPKI 检查；若双方共享 OpenSSL，应称“协议/编码交叉验证”，不夸成两个独立密码实现。
+3. 给 CLI 失败保留有界且不含真实秘密的 returncode/stderr，并保留实际 binary path/version 与 Rust cfg/build 输出。后端不支持、输入不规范仍然失败关闭，不能修改格式约束来迁就环境。
+4. 保留原始失败和完整分母。将后续验收按 compile、真实 ML-DSA smoke、PEM/SPKI 互操作、账户迁移/nonce/reorg、网络认证逐项出证据。禁止降低 --all-features，禁止 ignore/skip，禁止经典签名 fallback，禁止以同一 Rust 计算替代独立 oracle 来遮蔽失败。production adapter 仍应维持原生 EVP、固定算法与 key ID、消息上下文及实际验签。
+5. 上述建议没有转成可执行 patch，也没有触发已有 prepare 脚本；该脚本包含真实密钥生成、签名、验签。新的原生验证必须先按主任务解决现有自动安全中断所要求的授权，不能把被中断动作移到 hosted CI 当作绕行。
+
+当前不能宣称 PQ 原生集成完成，也不能据此宣称整个 chain 抗量子。需要关闭的是精确 backend 选择与原始 runtime 诊断证据；正常收紧契约后是否真正通过，仍须新的、允许执行的原生验证。
+
+文件与来源
+----------
+本报告配套 pq-backend-portability-r7.json 包含逐文件 SHA-256、原日志具体字节数、观察时间、完整错误定位、local record、manifest/lock 特性图以及所有未知项。旧原日志 ZIP 为 e25-final-ci-decoded-failed-job-logs-20261028.zip，749046 B，SHA-256 fc2e8e93686c66fd7c3070d1c78ce9391e278e745619e0de67864915dd425441。

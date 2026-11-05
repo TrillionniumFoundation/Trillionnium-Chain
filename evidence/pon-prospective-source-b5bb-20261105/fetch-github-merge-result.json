@@ -1,0 +1,18 @@
+{
+  "command": [
+    "git",
+    "--git-dir=/workspace/scratch/822cc50e24f0/prospective-merge-822cc50e/repository.git",
+    "-c",
+    "protocol.version=2",
+    "fetch",
+    "--no-tags",
+    "--no-auto-maintenance",
+    "--filter=tree:0",
+    "origin",
+    "f135eb867d10ead2058073f78d9d82af2e174f29:refs/checkpoints/github-merge"
+  ],
+  "exit_code": 0,
+  "wall_seconds": 3.0064869800000906,
+  "stdout": "",
+  "stderr": "From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n * [new ref]         f135eb867d10ead2058073f78d9d82af2e174f29 -> refs/checkpoints/github-merge\n"
+}

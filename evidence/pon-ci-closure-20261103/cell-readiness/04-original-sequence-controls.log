@@ -1,0 +1,35 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running unittests src/lib.rs (/workspace/scratch/abae1861b451/cell-ready-target/debug/deps/trnm_data_availability-760dc3a0a84bfcf7)
+
+running 3 tests
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... cell_sequence phase=startup role=silent_trap setup_elapsed_ns=10761305 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=peer setup_elapsed_ns=16366258 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=20500064 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=23220370 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=31447551
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793720821.022712434s) completed_wall=Some(1793720821.030402883s) elapsed_ns=7690959 expiry_seconds=1793721121 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793720821.030425126s) completed_wall=Some(1793720821.037350036s) elapsed_ns=6925120 expiry_seconds=1793721121 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793720821.03737254s) completed_wall=Some(1793720821.072137767s) elapsed_ns=34765598 expiry_seconds=1793721121 failure=Some(Failure { class: "invalid", kind: None, errno: None })
+ok
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... cell_sequence phase=startup role=peer setup_elapsed_ns=12640228 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=expiry_proxy setup_elapsed_ns=12796815 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=16604648 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=19721055 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=26773147
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793720821.116075556s) completed_wall=Some(1793720821.12361111s) elapsed_ns=7536145 expiry_seconds=1793721121 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793720821.123643039s) completed_wall=Some(1793720821.126384618s) elapsed_ns=2741829 expiry_seconds=1793720823 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793720821.126412911s) completed_wall=Some(1793720823.014923757s) elapsed_ns=1888511417 expiry_seconds=1793720823 failure=Some(Failure { class: "io", kind: Some(WouldBlock), errno: None })
+cell_sequence phase=expiry_proxy worker_phase=accept_after_reply connections=1 connected=Some(1793720821.147711563s) request_arrived=Some(1793720821.147716901s) backend_frame_ready=Some(1793720821.152836539s)
+ok
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... cell_sequence phase=startup role=peer setup_elapsed_ns=9419014 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=silent_trap setup_elapsed_ns=9556913 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=12792990 outcome=Ok(Ok(()))
+cell_sequence phase=startup role=rendezvous setup_elapsed_ns=16100776 outcome=Ok(Ok(()))
+cell_sequence phase=setup_complete elapsed_ns=22467241
+cell_sequence phase=announce ordinal=0 started_wall=Some(1793720823.067678394s) completed_wall=Some(1793720823.070554086s) elapsed_ns=2875902 expiry_seconds=1793721123 failure=None
+cell_sequence phase=announce ordinal=1 started_wall=Some(1793720823.070604963s) completed_wall=Some(1793720823.07438966s) elapsed_ns=3784928 expiry_seconds=1793721123 failure=None
+cell_sequence phase=discovery ordinal=0 started_wall=Some(1793720823.074410933s) completed_wall=Some(1793720823.108441068s) elapsed_ns=34031037 expiry_seconds=1793721123 failure=None
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 169 filtered out; finished in 2.13s
+

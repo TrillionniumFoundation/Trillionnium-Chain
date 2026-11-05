@@ -1,0 +1,51 @@
+{
+  "schema": "pn2-single-borrow-encoding-source-check-v1",
+  "checked_utc": "2026-11-01T07:54:42.857552+00:00",
+  "source_parent": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+  "before": {
+    "git_blob": "1eab61000f59568696a46871a776a1e90f7e9b13",
+    "sha256": "c97e4d70bf72a23d0de872d0cdd5130fd5ab9706b70e92afa1381f5fbb51bb5f"
+  },
+  "after": {
+    "git_blob": "c4bb9dbf6854f06b61089aaa01ff918804fbdad0",
+    "sha256": "21a4004783e3b2edc0d140c7a312f3da309eade957e0b64d8cc6680d215f63aa"
+  },
+  "checks": [
+    {
+      "command": [
+        "/tmp/hepta-digital-rust195/bin/rustfmt",
+        "--edition",
+        "2021",
+        "--config",
+        "skip_children=true",
+        "--check",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.05216583600122249
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.02514119700208539
+    }
+  ],
+  "scope": "Source-only removal of the second bounded serialization for the same immutable State within complete(); no native compile, execution, CPU-budget or PN2 qualification result.",
+  "native_compilation_verified": false,
+  "original_cpu_budget_passed": false,
+  "pn2_accepted": false,
+  "required_existing_native_tests": [
+    "store::native_authenticated::arithmetic_cache::tests::",
+    "store::native_authenticated::arithmetic_cache::large_input_tests::",
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+  ],
+  "source_argument": "State is BTreeMap<String, serde_json::Value>. complete() has the only complete_root() call; its FnOnce closure follows accounts(state) at the same root grammar position, with no user serializer or progress callback between the original and reused immutable bytes. Missing bounded bytes keeps the original fallback. No cross-call or cross-transaction result is added."
+}

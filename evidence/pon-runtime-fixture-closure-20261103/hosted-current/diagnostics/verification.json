@@ -1,0 +1,10 @@
+{
+  "schema": "diagnostic-observability-handoff-verification-v1",
+  "original_selected_rows_relocated": 89,
+  "exact_row_value_and_canonical_hash_matches": 89,
+  "all_original_bundle_digests_rechecked": true,
+  "typed_error_and_reactor_sources_unchanged_from_b280": true,
+  "complete_native_tests_or_performance_executed": false,
+  "summary_sha256": "c0c134b107088709b0048e562bbfb5ca8e35da6db5da2bfc7f9b4b3aab8c435f",
+  "readback_sha256": "72deb9444572e8d48f73d657ec1ee263d48fa3c0a9d79471596dfb44095f201d"
+}

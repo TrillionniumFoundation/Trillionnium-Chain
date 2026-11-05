@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "evidence/pon-throughput-continuation-20261104/parent-and-tail/ci/workflow_wiring_static.py",
+    "--expected-pre-write-count",
+    "13",
+    "--output-dir",
+    "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-catalog-fence-static"
+  ],
+  "exit_status": 0,
+  "retained_report": "catalog-fence-static.json",
+  "retained_sha256": "f274c0b2af598869c1a648a392f64479bb175c948ecc8993c0c09dce46be0c69",
+  "schema": "trnm-static-check-retention-v1",
+  "scope": "static workflow/reader/source-name checks only; new ELF registry and native execution are not asserted",
+  "script_sha256": "65a66819ece5d6a4e01cf411da152ccd279e9edc47acefbb51298786f63b4472",
+  "source_report": "/workspace/scratch/7318d5f890d1/throughput-validation/workflow-catalog-fence-static/workflow-wiring-static.json",
+  "source_sha256": "f274c0b2af598869c1a648a392f64479bb175c948ecc8993c0c09dce46be0c69"
+}

@@ -1,0 +1,18 @@
+{
+  "actual_exit_status": "UNKNOWN",
+  "export_window_seconds": 60,
+  "money_return": false,
+  "no_stop_delete_reset_retry_or_explicit_fd_retirement": true,
+  "old_unit_must_never_be_reused": true,
+  "ordinary_exit_will_lose_owner": true,
+  "original_owner_retained_during_window": true,
+  "outcome": "ORIGINAL_ATTEMPT_UNKNOWN_RETAINED",
+  "owner_present_before_ordinary_return": true,
+  "pid": 1233522,
+  "planned_process_exit_code": 30,
+  "probe_completed_successfully": false,
+  "resource_return_proven": false,
+  "source": "37808e86dc1ae753b02f11658e9e2fd6c365e083",
+  "status": "NAMESPACE_EXPERIMENT_ENDING_NO_TERMINAL_FACT",
+  "whole_u_terminal": false
+}

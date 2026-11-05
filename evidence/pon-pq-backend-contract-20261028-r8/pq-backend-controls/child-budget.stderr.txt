@@ -1,0 +1,7 @@
+test_original_deadline_kills_and_reaps_child (test_pq_cell_swarm_deadline.PQCryptoChildBudgetTests.test_original_deadline_kills_and_reaps_child) ... ok
+test_peer_failure_cancel_kills_and_reaps_crypto_child (test_pq_cell_swarm_deadline.PQCryptoChildBudgetTests.test_peer_failure_cancel_kills_and_reaps_crypto_child) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.324s
+
+OK

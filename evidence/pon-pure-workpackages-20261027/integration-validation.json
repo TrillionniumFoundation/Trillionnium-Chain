@@ -1,0 +1,200 @@
+{
+  "actual_foreign_domain_tests": {
+    "binary_sha256": "83e26541b17547ff03a5a590dadc8ed1f506d432b5a5cfb8a4dcbcbe4699ad3f",
+    "failed": 0,
+    "ignored": 0,
+    "loopback_test_actually_executed": true,
+    "passed": 2,
+    "planned": 2,
+    "profile": "test/unoptimized+debuginfo"
+  },
+  "all_inherited_security_findings_closed": false,
+  "ci_contract_tests_passed": 91,
+  "ci_source_integrity_negative_tests_passed": 34,
+  "committed_source_at_final_source_checks": "3eda9238c71e859271ef057f66e1ce87f4253386",
+  "earlier_crypto_protocol_all_features_test_executions_passed": 164,
+  "earlier_crypto_protocol_ignored": 2,
+  "earlier_crypto_protocol_source_scope": "Original source-specific log retained; not a second execution on the report commit.",
+  "full_native_test_suite_passed": false,
+  "hosted_final_source_ci_passed": false,
+  "independent_wan_accepted": false,
+  "invalid_final_invocations_retained": {
+    "integrated-final-check-repository.log": "wrong checker path; command did not execute gate",
+    "integrated-final-source-integrity.log": "wrong discovery pattern; 0 tests, exit5, not a pass"
+  },
+  "logs": [
+    {
+      "bytes": 126,
+      "path": "integration-validation/integrated-clippy.log.gz",
+      "sha256": "9b8d4b05132bca78a1730c3051a5d44f445abf271534e5abfb508548d814f6b1",
+      "uncompressed_bytes": 122,
+      "uncompressed_sha256": "48c333efb94dd71cc7562f6d2deb238b53737f523d6725bd8bb088d0709755c9"
+    },
+    {
+      "bytes": 1221,
+      "path": "integration-validation/integrated-clippy-network.log.gz",
+      "sha256": "3312e6f5ddfd278f44ca150eb28524fc26a6910a4b5311f08d89be40db171562",
+      "uncompressed_bytes": 5041,
+      "uncompressed_sha256": "e675969d06991fa444568189415bcbb5211a081ea0ca568903a07f0caeabd960"
+    },
+    {
+      "bytes": 600,
+      "path": "integration-validation/integrated-clippy-retry.log.gz",
+      "sha256": "2694f55bdf1d6548eb3a9c237e29a20316af1787272abcc6501dbe5dca082e43",
+      "uncompressed_bytes": 1955,
+      "uncompressed_sha256": "34d081bab8711c47e2d7ca0275ed84b2ae6bae11eb22044fc0e5bf7749534ee3"
+    },
+    {
+      "bytes": 322,
+      "path": "integration-validation/integrated-clippy-retry2.log.gz",
+      "sha256": "9e9c2b1ccf65d54374386eba777516208b547c78c0aa0fba2f3d110efd3caea3",
+      "uncompressed_bytes": 1622,
+      "uncompressed_sha256": "7292af16b06b2c2a1e4374a1bd183c8b933fd7229b6bb2e2cff20486a16a9537"
+    },
+    {
+      "bytes": 1433,
+      "path": "integration-validation/integrated-fmt.log.gz",
+      "sha256": "e71fed504da484d8dc4f6e85a16f6a98cf03e3b67beff397dae8f84cb2634f04",
+      "uncompressed_bytes": 5134,
+      "uncompressed_sha256": "3b5cd9740e079423c4c5b3f3225883bd045df8309b37a275c2fa29a41dad5c5e"
+    },
+    {
+      "bytes": 20,
+      "path": "integration-validation/integrated-fmt-retry.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5098,
+      "path": "integration-validation/integrated-crypto-protocol-tests.log.gz",
+      "sha256": "c106010065d5565da394224cd124dd31b4fcb649acb2618e11d84b9de6104539",
+      "uncompressed_bytes": 19286,
+      "uncompressed_sha256": "c8bc112b616cc060c68f1966f34371e55b7d234696f69551204d3acec1728d5e"
+    },
+    {
+      "bytes": 2401,
+      "path": "integration-validation/integrated-ci-contract-tests.log.gz",
+      "sha256": "5b1c4efa2667b1db17d7b303f319f0b996d71cbcd695dcdcd33ca3ee2612ff73",
+      "uncompressed_bytes": 15883,
+      "uncompressed_sha256": "5d5ddfe626666dc7baab5cf2d946470e3d61f03da2e497505665ae818029588a"
+    },
+    {
+      "bytes": 59,
+      "path": "integration-validation/integrated-source-tests.log.gz",
+      "sha256": "1da87e4def7b0384247bbb46740161ca48a57f256de1244ad693ab31af044f4e",
+      "uncompressed_bytes": 108,
+      "uncompressed_sha256": "e70fec2825d9bf206d27463a792768195039599cb39bcca66339f47283f84cce"
+    },
+    {
+      "bytes": 1074,
+      "path": "integration-validation/integrated-source-integrity-tests.log.gz",
+      "sha256": "425576364da83b5e8d1e62cd95c0aa97f79280c29690b717d63e14bff7c37bd6",
+      "uncompressed_bytes": 6053,
+      "uncompressed_sha256": "7402c72c361a6b785658b64528a394e0d8c993dbb29d74cb2cf76b6671dd32d6"
+    },
+    {
+      "bytes": 559,
+      "path": "integration-validation/integrated-pq-source-tests.log.gz",
+      "sha256": "79f81ab045ffa8c4b36c70dae4aa6aba12af054bddeb31e21c3ea00bba20252a",
+      "uncompressed_bytes": 2831,
+      "uncompressed_sha256": "e8f8429175c87d09c0a96a38429a778fa84d69fe0baf395e61f03c76ef8078bc"
+    },
+    {
+      "bytes": 240,
+      "path": "integration-validation/integrated-check-repository.log.gz",
+      "sha256": "f05748db57582ea031e2c12905cfc77108513754b513c4feef12ec25cc9ef53d",
+      "uncompressed_bytes": 306,
+      "uncompressed_sha256": "654617be38aa34474d34a5041001c8dcf45669633e989f66c63a077763f6a743"
+    },
+    {
+      "bytes": 610,
+      "path": "integration-validation/integrated-final-domain-tests-1.log.gz",
+      "sha256": "63de46b3bf247cde8a325715aaa101632d926e75ff61e40dfa28744af25bd680",
+      "uncompressed_bytes": 1870,
+      "uncompressed_sha256": "8b610be630dda767d93337dc57b743dbc966f07b9d07a52a8acc21745bb60251"
+    },
+    {
+      "bytes": 363,
+      "path": "integration-validation/integrated-final-domain-tests-2.log.gz",
+      "sha256": "d632c5153a15ea47a4c63b054bf6a485b66b8c551cef33d605020b16e036c955",
+      "uncompressed_bytes": 492,
+      "uncompressed_sha256": "fb5135b165e33a25eaad69658d76d1d425f46be41ab43c6e8c049a8e46141d7d"
+    },
+    {
+      "bytes": 188,
+      "path": "integration-validation/integrated-final-clippy.log.gz",
+      "sha256": "b960f57b3e5db3f5624daeef2e6f139c6343e26199c0407c661d8998a000d8fc",
+      "uncompressed_bytes": 317,
+      "uncompressed_sha256": "d4c70395232c1768b425b6f1b7b2eb3f8f5605bf95a6273ef85ae2e376c85a6c"
+    },
+    {
+      "bytes": 20,
+      "path": "integration-validation/integrated-final-fmt.log.gz",
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2401,
+      "path": "integration-validation/integrated-final-ci-contract.log.gz",
+      "sha256": "7a9787e919d4c6f16490943848f8f4490115a887ea0cd01ddd8bcf68ef56edc1",
+      "uncompressed_bytes": 15883,
+      "uncompressed_sha256": "6c0a4eeb8ca7c5549294fdfe46b3c9b6a05eb3c928ca649db6d2ac0b9eeaa7a9"
+    },
+    {
+      "bytes": 59,
+      "path": "integration-validation/integrated-final-source-integrity.log.gz",
+      "sha256": "1da87e4def7b0384247bbb46740161ca48a57f256de1244ad693ab31af044f4e",
+      "uncompressed_bytes": 108,
+      "uncompressed_sha256": "e70fec2825d9bf206d27463a792768195039599cb39bcca66339f47283f84cce"
+    },
+    {
+      "bytes": 1075,
+      "path": "integration-validation/integrated-final-source-integrity-corrected.log.gz",
+      "sha256": "41899c5c847a3425cdb79a02ed34818161fd22c0214f4d5724278de6c147d74b",
+      "uncompressed_bytes": 6053,
+      "uncompressed_sha256": "89139e9f4ccae9b1797b849da936512b25435f0cc25f498c8db1ba66d4a88eb7"
+    },
+    {
+      "bytes": 134,
+      "path": "integration-validation/integrated-final-check-repository.log.gz",
+      "sha256": "040ef320c5d9b47949bbc3630803d72b76f49048210163d1adaa8a962a4b2c7f",
+      "uncompressed_bytes": 135,
+      "uncompressed_sha256": "c100b14412d85f0c08bcbb2d9216d8248bff7096bfcfb8d232858157beeaf2d2"
+    },
+    {
+      "bytes": 238,
+      "path": "integration-validation/integrated-final-check-repository-corrected.log.gz",
+      "sha256": "077578f9470465cf63bb2cf0a5f0638ba09fc0e41f2b070cbe6efdb3b15abea1",
+      "uncompressed_bytes": 306,
+      "uncompressed_sha256": "7204ca44db0a2c39ec533fd82c576e953ebca50d64051a36008d9803c2a7bfc6"
+    }
+  ],
+  "m06_detached_prototype_integrated": false,
+  "native_test_build_started_at_commit": "bf175e730f857fd42df2b724f4e702b1320ec287",
+  "native_trillionnium_tree_unchanged_since_test_build_start": true,
+  "native_workspace_format_passed": true,
+  "observation_date": "2026-10-27",
+  "production_activation": false,
+  "repository_check": {
+    "activation": false,
+    "head": "3eda9238c71e859271ef057f66e1ce87f4253386",
+    "local_links": 1232,
+    "normal_dependency_edges": 19,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 955,
+    "source_state": "dirty-candidate",
+    "tree": "765051dfd946eac60a2e3787baa20cf1a4e673af",
+    "workspace_packages": 25
+  },
+  "schema": "trnm-pure-pon-integration-validation-v1",
+  "source_tree": "765051dfd946eac60a2e3787baa20cf1a4e673af",
+  "whole_chain_quantum_security_qualified": false,
+  "whole_locked_native_workspace_all_targets_all_features_strict_clippy": {
+    "commands_retain_D_warnings": true,
+    "elapsed_seconds": 32.68,
+    "passed": true
+  }
+}

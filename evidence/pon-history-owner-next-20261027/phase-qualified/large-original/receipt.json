@@ -1,0 +1,33 @@
+{
+  "schema": "history-frozen-native-control-v2",
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+  "argv": [
+    "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "outer_observer_timeout_seconds": 180,
+  "started_utc": "2026-10-28T00:52:12.135275+00:00",
+  "exit_code": 101,
+  "elapsed_seconds": 26.752375412004767,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 1496,
+    "sha256": "9957c4fca7cd749bd3fd4f1d94855f840a8702ba8a9233a00241f0a595174131"
+  },
+  "stderr.txt": {
+    "bytes": 483,
+    "sha256": "8798e7dd8472edb1ca2663c2d880221c58519fa49ee1e8cbcae49421e09472bf"
+  },
+  "harness_results": [
+    {
+      "outcome": "FAILED",
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0
+    }
+  ]
+}

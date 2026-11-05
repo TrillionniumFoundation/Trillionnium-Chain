@@ -1,0 +1,161 @@
+{
+  "schema": "chain-pq-cold-ledger-recovery-reproduction-v1",
+  "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "red": {
+    "result": "FAIL_EXPECTED",
+    "tests_run": 2,
+    "passed": 0,
+    "failed": 2,
+    "base_production_sha256": {
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "967dfdaa623f252debe1f8d1b680287f1940b275d17b85ddafa9394d3faa1454",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs": "4adf49c36155ebbf4515827bdb61692cc6ab8398418f33c7c4fcaa08b9a8c8d0"
+    },
+    "patch_file": "recovery-regression-only.patch",
+    "patch_sha256": "7d6795d3c3e3536ba3427c8d3c2c6e5aee8c84b2738558530dc80ccecf276fc6",
+    "log_file": "recovery-red-pq.log",
+    "log_sha256": "04f3b4866707e39f89634b0215cd30c9af36c78ef610da9617e3d38e48dd12f2",
+    "command": "cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-native-openssl --lib cold_pq_reopen_rejects_",
+    "runtime_source_sha256": {
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "967dfdaa623f252debe1f8d1b680287f1940b275d17b85ddafa9394d3faa1454",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs": "032a1233b07638ed4aa8f6e1607c1ee02a7f6ef2db7f90016278d1abab6f4f80"
+    },
+    "exit_code": 101
+  },
+  "candidate": {
+    "source_sha256": {
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "1ff59905db66cf478c4840b65529835872e0239b00884a9f371412581a0dd3e8",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs": "b024855d9993baff5381015f9b401c93b2745ff0941818c23dbfcfb8bff06bd3",
+      "config/pon/pq-system-required-tests-v1.json": "e01f5dd331a160d926d029f85a24714ae5c9ccaf3067819692544c115f1a6ebb",
+      ".github/workflows/pon-pq-system-continuation.yml": "32ecb8dc738e80d27fbd40fb05a74f14d8335faff774a40e844d649a4c96d3a9"
+    },
+    "source_commit": "c77d0aa7becceb80fd0b811a7c5387c2fd1f73f0",
+    "mandatory_roster_commit": "b593a5b3a91e2ae25be32d889e89be11913d196e",
+    "cargo_lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+    "patches": [
+      {
+        "file": "recovery-ledger-source.patch",
+        "sha256": "1940eb971ed2024072725836543d5e5a06738f5e0c3305ead349e48072aacafc"
+      },
+      {
+        "file": "recovery-ledger-roster.patch",
+        "sha256": "d99dcd8b9edf63447015898d1ec0316dc763fc2e836a299458de9b22f73fb7b1"
+      }
+    ]
+  },
+  "runner": {
+    "rust_toolchain": "1.95.0-x86_64-unknown-linux-gnu",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_STATIC": "1",
+    "OPENSSL_CONF": "/dev/null",
+    "openssl_version": "3.5.9",
+    "cargo_profiles_modified": false,
+    "runtime_attack_budgets_modified": false,
+    "rustc_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "openssl_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "sparse_checkout_exclusions": [
+      "evidence/",
+      "qualification/"
+    ]
+  },
+  "claim_scope": "Complete PNQ2 cold-ledger row audit only; no whole-effect anti-rollback or whole-system PQ authorization closure.",
+  "excluded_observation": "recovery-red-build.log used no PQ feature and ran zero tests; it is not runtime validation evidence.",
+  "observations": [
+    {
+      "name": "PQ ingress native group",
+      "command": "cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-native-openssl --lib ingress::pq_network::tests::",
+      "exit_code": 0,
+      "tests": 17,
+      "passed": 17,
+      "failed": 0,
+      "result": "PASS",
+      "log": "recovery-green-pq-module.log",
+      "log_sha256": "22c81f25c0c5077b5f99cf7881a618d4af555e5e90f8861b16d3a33337a3f599",
+      "log_bytes": 2456
+    },
+    {
+      "name": "Witness recovery native group",
+      "command": "cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-native-openssl --lib pq_rollback_witness::",
+      "exit_code": 101,
+      "tests": 55,
+      "passed": 52,
+      "failed": 3,
+      "result": "FAIL_ENVIRONMENT",
+      "failed_controls": [
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+        "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+      ],
+      "failure": "Child UnixListener::bind(witness.sock) at store/pq_rollback_witness/combined_tests.rs:330 returns EPERM (Operation not permitted), before witness ready. No waiver, skip or deadline change applied.",
+      "log": "recovery-green-witness.log",
+      "log_sha256": "59f771941702a4d5a918c566cf2142629211f45feef0222ea5aa9f980670b790",
+      "log_bytes": 14292
+    },
+    {
+      "name": "Exact source-commit regression rerun",
+      "source_commit": "c77d0aa7becceb80fd0b811a7c5387c2fd1f73f0",
+      "command": "cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-native-openssl --lib cold_pq_reopen_rejects_",
+      "exit_code": 0,
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "result": "PASS",
+      "log": "recovery-green-committed.log",
+      "log_sha256": "1bcda0af095ef295ebf37ee04bfd8a297cc0c5d67d93bda7d9c9091a56255c29",
+      "log_bytes": 522
+    },
+    {
+      "name": "Strict Clippy all targets with native PQ",
+      "command": "cargo clippy --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --features pq-native-openssl --all-targets -- -D warnings",
+      "exit_code": 0,
+      "result": "PASS",
+      "log": "recovery-clippy.log",
+      "log_sha256": "a2490543c307df7512f42def72820fdc9b8cb958fc40894ccb60d3fb55d1dc03",
+      "log_bytes": 3211
+    },
+    {
+      "name": "Rust format",
+      "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+      "exit_code": 0,
+      "result": "PASS",
+      "log": "recovery-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    {
+      "name": "Source integrity negative tests",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python scripts/ci/test_ci_source_integrity.py",
+      "exit_code": 0,
+      "tests": 34,
+      "result": "PASS",
+      "log": "recovery-source-negatives.log",
+      "log_sha256": "0d3794b4530e67ce161a100ee23b8892e1704896e4e5efcdec86514ebf0c56f5",
+      "log_bytes": 5509
+    },
+    {
+      "name": "Repository link/source check",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python scripts/ci/check_repository.py",
+      "exit_code": 2,
+      "result": "FAIL_SPARSE_CHECKOUT",
+      "failure": "broken link docs/README.md -> ../evidence/pon-v1/README.md; excluded historical evidence unavailable in this sparse clone. Full repository gate not claimed.",
+      "log": "recovery-repository-check.log",
+      "log_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361",
+      "log_bytes": 84
+    }
+  ],
+  "registration": {
+    "base_count": 47,
+    "new_count": 49,
+    "new_controls": [
+      "ingress::pq_network::tests::cold_pq_reopen_rejects_orphan_requests_outside_pinned_peer_roster",
+      "ingress::pq_network::tests::cold_pq_reopen_rejects_extra_resource_rows_outside_singleton"
+    ],
+    "integration_note": "Merge by union with parallel roster changes and update the workflow exact count plus final corpus blobs at root."
+  },
+  "residual_blockers": [
+    "External witness currently commits only PNQ2 resource, peer and request tables; CURRENT, FinalUse, balances and settlements are outside this patch.",
+    "Three independent-process witness controls require the original runner supporting Unix socket bind; retain original250ms exchange limit.",
+    "Whole-repository source/link and final corpus identity gates must run on root final integrated source."
+  ]
+}

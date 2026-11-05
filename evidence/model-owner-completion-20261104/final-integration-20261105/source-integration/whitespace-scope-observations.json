@@ -1,0 +1,45 @@
+{
+  "schema": "model-owner-integration-whitespace-scope-v1",
+  "utc": "2026-11-05T03:02:38.574306+00:00",
+  "initial_check_against_verified_H": {
+    "base": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+    "exit_code": 2,
+    "stdout": "evidence/cell-storage-continuation-20261104/boundary-followup/final/m09-doc.log:15: new blank line at EOF.\nevidence/cell-storage-continuation-20261104/boundary-followup/final/m09-tests.log:162: trailing whitespace.\n+test cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... \nevidence/cell-storage-continuation-20261104/boundary-followup/final/m09-tests.log:255: trailing whitespace.\n+test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... \nevidence/cell-storage-continuation-20261104/boundary-followup/final/m09-tests.log:462: new blank line at EOF.\nevidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.log:162: trailing whitespace.\n+test cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... \nevidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.log:255: trailing whitespace.\n+test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... \nevidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.log:477: new blank line at EOF.\nevidence/cell-storage-continuation-20261104/boundary-followup/red/tensor-old-parser-red.log:11: trailing whitespace.\n+test cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object ... \n",
+    "stderr": ""
+  },
+  "inherited_raw_evidence": [
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/m09-doc.log",
+      "upstream_blob": "30fc9fb19cea07f58cb7e120566f4010f3650683",
+      "staged_blob": "30fc9fb19cea07f58cb7e120566f4010f3650683",
+      "unchanged_from_first_parent": true
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/m09-tests.log",
+      "upstream_blob": "6b3dce544f327701f63ced8e21b610f665c386ba",
+      "staged_blob": "6b3dce544f327701f63ced8e21b610f665c386ba",
+      "unchanged_from_first_parent": true
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.log",
+      "upstream_blob": "8bb6c84f79294efacbfd8ef24aecf7a0d08bf718",
+      "staged_blob": "8bb6c84f79294efacbfd8ef24aecf7a0d08bf718",
+      "unchanged_from_first_parent": true
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/red/tensor-old-parser-red.log",
+      "upstream_blob": "82d4ccd34f035d1ee336882f074fb5382500f933",
+      "staged_blob": "82d4ccd34f035d1ee336882f074fb5382500f933",
+      "unchanged_from_first_parent": true
+    }
+  ],
+  "correct_actual_first_parent_check": {
+    "base": "67097f5add069c49788fc5ba21c35d1db07167c4",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "raw_bytes_trimmed": false,
+  "whitespace_rules_disabled": false,
+  "explanation": "The prepared commit will have current original-PR head 67097f5 as first parent and H as second parent. Checking against H also lists unchanged concurrent raw logs already present in 67097f5. Those exact original bytes are preserved; the new diff against the actual first parent passes."
+}

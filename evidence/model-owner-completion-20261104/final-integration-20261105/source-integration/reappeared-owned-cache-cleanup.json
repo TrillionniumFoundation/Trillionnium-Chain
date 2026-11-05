@@ -1,0 +1,29 @@
+{
+  "schema": "model-owner-owned-reproducible-cache-cleanup-v1",
+  "utc": "2026-11-05T03:04:11.158941+00:00",
+  "reason": "Previously removed task-owned caches were observed present again during final integration and storage was exhausted. Cause of reappearance is not established. All actual trial and native logs were separately retained before this cleanup.",
+  "targets": [
+    {
+      "path": "/workspace/scratch/f4976366a32a/torch-env",
+      "file_count": 27348,
+      "logical_bytes": 1257002620
+    },
+    {
+      "path": "/workspace/scratch/f4976366a32a/native-target",
+      "file_count": 943,
+      "logical_bytes": 251821496
+    }
+  ],
+  "live_cache_users": [],
+  "inventory_raw_sha256": "c7ebd43aeac374c87f65cc945ed1870aa1c7131d4061e9104afc1142a2a080f1",
+  "inventory_gzip_sha256": "bdf697d66db07e5c3f0ecb1c4d0e1e54dbddf840065273f9ec9c9b5647028ada",
+  "before": {
+    "available": 0,
+    "free": 16773120
+  },
+  "after": {
+    "available": 0,
+    "free": 1608466432
+  },
+  "no_source_or_evidence_deleted": true
+}

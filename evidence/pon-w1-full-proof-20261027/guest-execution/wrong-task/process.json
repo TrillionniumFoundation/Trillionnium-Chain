@@ -1,0 +1,12 @@
+{
+  "child_peak_rss_bytes": 110678016,
+  "child_system_cpu_seconds": 0.073061,
+  "child_user_cpu_seconds": 0.10453499999999999,
+  "elapsed_wall_seconds": 0.2010624780004946,
+  "resource_source": "Linux wait4 rusage; peak RSS is not a production budget authority",
+  "returncode": 1,
+  "sigkill_after_timeout": false,
+  "stderr_sha256": "82d5b0ae5ba43ac028a497a47dd7f66685dfccabab99fc825ad80d8ee25d3d7f",
+  "stdout_sha256": "f02e2861cab18efac0ae0cd87c43589af18f2f995e37ea233cd276dd10b3e9f8",
+  "timed_out": false
+}

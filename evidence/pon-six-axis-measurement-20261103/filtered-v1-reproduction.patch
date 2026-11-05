@@ -1,0 +1,357 @@
+diff --git a/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-mvcc-fee/examples/borrowed_non_account_cost.rs
+@@ -0,0 +1,252 @@
++//! Finite allocation and elapsed-time observation of the complete non-account
++//! root component. Both arms consume the same actual State, grammar and limits.
++//! The 2100 x 4080 payload cells match the existing large-parent selector's
++//! shape; this example is not its admitted native parent or a service CPU gate.
++use serde::Serialize;
++use serde_json::{json, Value};
++use std::alloc::{GlobalAlloc, Layout, System};
++use std::cell::Cell;
++use std::time::Instant;
++use trnm_mvcc_fee::pon_executor::{self, BorrowedNonAccountState, State};
++use trnm_protocol::pon_wire::{Hash, StateRootArithmetic, StateRootArithmeticObservation};
++
++const RETAINED_BYTES: usize = 2 * 1024 * 1024;
++const ROUNDS: usize = 16;
++const ORDER: [Arm; 4] = [Arm::Owned, Arm::Borrowed, Arm::Borrowed, Arm::Owned];
++
++#[derive(Clone, Copy, Default, Serialize)]
++struct Allocations {
++    allocation_requests: usize,
++    reallocation_requests: usize,
++    deallocations: usize,
++    requested_bytes: usize,
++}
++
++thread_local! {
++    static ALLOCATIONS: Cell<Option<Allocations>> = const { Cell::new(None) };
++}
++
++fn count_allocation(bytes: usize, allocation: bool, reallocation: bool) {
++    let _ = ALLOCATIONS.try_with(|counter| {
++        if let Some(mut current) = counter.get() {
++            current.allocation_requests += usize::from(allocation);
++            current.reallocation_requests += usize::from(reallocation);
++            current.deallocations += usize::from(!allocation && !reallocation);
++            current.requested_bytes += bytes;
++            counter.set(Some(current));
++        }
++    });
++}
++
++struct ObservedAllocator;
++
++// SAFETY: every operation forwards its unchanged pointer/layout contract to
++// System. Observation uses only a const-initialized thread-local Cell; it never
++// allocates, calls user code, or accesses the allocation being observed.
++unsafe impl GlobalAlloc for ObservedAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        count_allocation(layout.size(), true, false);
++        unsafe { System.alloc(layout) }
++    }
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        count_allocation(layout.size(), true, false);
++        unsafe { System.alloc_zeroed(layout) }
++    }
++    unsafe fn dealloc(&self, pointer: *mut u8, layout: Layout) {
++        count_allocation(0, false, false);
++        unsafe { System.dealloc(pointer, layout) }
++    }
++    unsafe fn realloc(&self, pointer: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        count_allocation(size, false, true);
++        unsafe { System.realloc(pointer, layout, size) }
++    }
++}
++
++#[global_allocator]
++static ALLOCATOR: ObservedAllocator = ObservedAllocator;
++
++#[derive(Clone, Copy)]
++enum Arm {
++    Owned,
++    Borrowed,
++}
++
++impl Arm {
++    fn index(self) -> usize {
++        match self {
++            Self::Owned => 0,
++            Self::Borrowed => 1,
++        }
++    }
++    fn name(self) -> &'static str {
++        match self {
++            Self::Owned => "original_owned_partition",
++            Self::Borrowed => "borrowed_partition",
++        }
++    }
++    fn calculate(self, state: &State, arithmetic: &mut StateRootArithmetic) -> Hash {
++        match self {
++            Self::Owned => pon_executor::root_with_arithmetic(&owned_partition(state), arithmetic),
++            Self::Borrowed => BorrowedNonAccountState::new(state).root_with_arithmetic(arithmetic),
++        }
++        .expect("valid complete component input")
++    }
++}
++
++fn owned_partition(state: &State) -> State {
++    state
++        .iter()
++        .filter(|(key, _)| !key.starts_with("account:"))
++        .map(|(key, value)| (key.clone(), value.clone()))
++        .collect()
++}
++
++struct Sample {
++    elapsed_ns: u128,
++    allocations: Allocations,
++    arithmetic: StateRootArithmeticObservation,
++}
++
++fn observe(
++    arm: Arm,
++    state: &State,
++    arithmetic: &mut StateRootArithmetic,
++    expected: Hash,
++    count: bool,
++) -> Sample {
++    ALLOCATIONS.with(|counter| counter.set(count.then(Allocations::default)));
++    let started = Instant::now();
++    let actual = arm.calculate(std::hint::black_box(state), arithmetic);
++    let elapsed_ns = started.elapsed().as_nanos();
++    let allocations = ALLOCATIONS.with(|counter| counter.take().unwrap_or_default());
++    assert_eq!(actual, expected);
++    assert!(arithmetic.retained_payload_bytes() <= RETAINED_BYTES);
++    Sample {
++        elapsed_ns,
++        allocations,
++        arithmetic: arithmetic.observation(),
++    }
++}
++
++fn fixtures(cells: usize, accounts: usize) -> State {
++    let mut state: State = (0..cells)
++        .map(|index| {
++            (
++                format!("fixture-large-parent:{index:04}"),
++                json!("x".repeat(4080)),
++            )
++        })
++        .collect();
++    for index in 0..accounts {
++        state.insert(
++            format!("account:{index:064x}"),
++            json!({"balance":1,"nonce":index}),
++        );
++    }
++    state.insert("meta:issued".into(), json!(accounts));
++    state.insert("model:current".into(), json!(hex::encode([0; 32])));
++    state
++}
++
++fn median(mut values: Vec<f64>) -> f64 {
++    values.sort_by(f64::total_cmp);
++    (values[(values.len() - 1) / 2] + values[values.len() / 2]) / 2.0
++}
++
++fn p95(values: &[u128]) -> u128 {
++    let mut values = values.to_vec();
++    values.sort_unstable();
++    values[(values.len() * 95).div_ceil(100) - 1]
++}
++
++fn cohort(cells: usize, accounts: usize, warm: bool) -> Value {
++    let state = fixtures(cells, accounts);
++    let reference = owned_partition(&state);
++    let expected = pon_executor::root(&reference).unwrap();
++    let non_account_rows = reference.len();
++    let canonical_payload_bytes: usize = reference
++        .iter()
++        .map(|(key, value)| key.len() + serde_json::to_vec(value).unwrap().len())
++        .sum();
++    drop(reference);
++    let mut caches = [
++        StateRootArithmetic::new(RETAINED_BYTES),
++        StateRootArithmetic::new(RETAINED_BYTES),
++    ];
++    if warm {
++        for arm in [Arm::Owned, Arm::Borrowed] {
++            assert_eq!(arm.calculate(&state, &mut caches[arm.index()]), expected);
++        }
++    }
++    let mut timings: [Vec<u128>; 2] = std::array::from_fn(|_| Vec::with_capacity(2 * ROUNDS));
++    let mut pairs = Vec::with_capacity(ROUNDS);
++    let mut raw = Vec::with_capacity(4 * ROUNDS);
++    let mut last_observations = [None, None];
++    for round in 0..ROUNDS {
++        let mut totals = [0u128; 2];
++        for arm in ORDER {
++            let index = arm.index();
++            if !warm {
++                caches[index] = StateRootArithmetic::new(RETAINED_BYTES);
++            }
++            let sample = observe(arm, &state, &mut caches[index], expected, false);
++            totals[index] += sample.elapsed_ns;
++            timings[index].push(sample.elapsed_ns);
++            last_observations[index] = Some(sample.arithmetic);
++            raw.push(json!({"round":round,"arm":arm.name(),"elapsed_ns":sample.elapsed_ns}));
++        }
++        assert_eq!(last_observations[0], last_observations[1]);
++        pairs.push(totals[1] as f64 / totals[0] as f64);
++    }
++    // Count allocations separately; counter updates cannot create a reported
++    // timing win. Requested bytes are allocator traffic, not live RSS/peak use.
++    let mut allocations = Vec::new();
++    for arm in ORDER {
++        let index = arm.index();
++        if !warm {
++            caches[index] = StateRootArithmetic::new(RETAINED_BYTES);
++        }
++        let sample = observe(arm, &state, &mut caches[index], expected, true);
++        allocations.push(json!({"arm":arm.name(),"counts":sample.allocations}));
++        last_observations[index] = Some(sample.arithmetic);
++    }
++    assert_eq!(last_observations[0], last_observations[1]);
++    let arithmetic = last_observations[0].unwrap();
++    let paired_median = median(pairs.clone());
++    let p95_ratio = p95(&timings[1]) as f64 / p95(&timings[0]) as f64;
++    json!({"payload_cells":cells,"account_rows":accounts,"warm":warm,
++        "actual_non_account_rows":non_account_rows,"canonical_non_account_payload_bytes":canonical_payload_bytes,
++        "reference_root":hex::encode(expected),"retained_limit_bytes":RETAINED_BYTES,
++        "retained_payload_bytes":arithmetic.retained_payload_bytes,
++        "exact_string_hits":arithmetic.exact_string_hits,"reused_partitions":arithmetic.reused_partitions,
++        "allocation_samples":allocations,"wall_samples":raw,"paired_wall_ratios":pairs,
++        "paired_median_wall_ratio":paired_median,"original_wall_p95_ns":p95(&timings[0]),
++        "borrowed_wall_p95_ns":p95(&timings[1]),"p95_wall_ratio":p95_ratio,
++        "wall_component_rule_pass":paired_median <= 0.95 && p95_ratio <= 1.10,
++        "p99":null})
++}
++
++fn main() {
++    assert_eq!(
++        std::env::args().skip(1).collect::<Vec<_>>(),
++        ["--run-component-observation"],
++        "usage: borrowed_non_account_cost --run-component-observation"
++    );
++    // Registered before measurement: all cohorts and all outcomes are retained.
++    let mut results = Vec::new();
++    for (cells, accounts) in [(64, 64), (1024, 64), (2100, 64), (64, 2100)] {
++        for warm in [false, true] {
++            results.push(cohort(cells, accounts, warm));
++        }
++    }
++    println!(
++        "{}",
++        json!({"schema":"borrowed-non-account-component-cost-v1",
++            "primary_observation":"thread allocation requests and requested bytes; deterministic component cost, not live RSS",
++            "timing_observation":"monotonic wall elapsed; allocation counters disabled; allocator wrapper remains installed",
++            "comparison_order":"ABBA","rounds":ROUNDS,
++            "minimum_paired_median_improvement_fraction":0.05,"maximum_p95_regression_fraction":0.10,
++            "all_inputs_match_independent_original_root":true,"component_results":results,
++            "service_cpu_gate_qualified":false,"host_qualified":false,"public_throughput_claim":false})
++    );
++}
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs
+@@ -329,6 +329,68 @@
+     })
+ }
+ 
++/// A borrowed complete non-account partition for pure root calculations. The
++/// immutable source supplies every row; this view accepts no claimed digest,
++/// precomputed leaf or partial update and grants no execution authority.
++#[derive(Clone, Copy)]
++pub struct BorrowedNonAccountState<'a> {
++    state: &'a State,
++    count: usize,
++}
++
++impl<'a> BorrowedNonAccountState<'a> {
++    pub fn new(state: &'a State) -> Self {
++        Self {
++            state,
++            count: state
++                .keys()
++                .filter(|key| !key.starts_with("account:"))
++                .count(),
++        }
++    }
++
++    pub fn len(self) -> usize {
++        self.count
++    }
++
++    pub fn is_empty(self) -> bool {
++        self.count == 0
++    }
++
++    pub fn iter(self) -> impl Iterator<Item = (&'a String, &'a Value)> + Clone {
++        self.state
++            .iter()
++            .filter(|(key, _)| !key.starts_with("account:"))
++    }
++
++    pub fn root(self) -> Result<Hash> {
++        // Keep the independent root's grammar -> count -> wire order over the
++        // exact complete partition, without cloning its keys or JSON values.
++        for (_, value) in self.iter() {
++            validate_canonical(value)?;
++        }
++        if self.count > 65_536 {
++            return Err("LIMIT");
++        }
++        state_root_from_entries(self.iter().map(|(key, value)| {
++            serde_json::to_vec(value)
++                .map(|bytes| (key.as_bytes(), bytes))
++                .map_err(|_| "NONCANONICAL")
++        }))
++        .map_err(|error| match error {
++            StateRootInputError::Input(error) => error,
++            StateRootInputError::Wire(_) => "LIMIT",
++        })
++    }
++
++    pub fn root_with_arithmetic(
++        self,
++        arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
++    ) -> Result<Hash> {
++        arithmetic_root_from_rows(self.iter(), self.count, arithmetic)
++    }
++}
++
+ /// Optional bounded tree arithmetic over the complete actual State. This is a
+ /// root calculation, not a checked execution-parent or admission capability.
+ /// No root claim, partial update or caller-produced leaf hash can enter it.
+@@ -337,16 +399,24 @@
+     state: &State,
+     arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+ ) -> Result<Hash> {
++    arithmetic_root_from_rows(state.iter(), state.len(), arithmetic)
++}
++
++fn arithmetic_root_from_rows<'a>(
++    rows: impl Iterator<Item = (&'a String, &'a Value)> + Clone,
++    count: usize,
++    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
++) -> Result<Hash> {
+     // The complete canonical pass must still precede every wire bound. In
+     // particular, a late invalid number wins over an early oversized key.
+-    for value in state.values() {
++    for (_, value) in rows.clone() {
+         validate_canonical(value)?;
+     }
+-    if state.len() > 65_536 {
++    if count > 65_536 {
+         return Err("LIMIT");
+     }
+     let mut input = arithmetic.input_builder();
+-    for (key, value) in state {
++    for (key, value) in rows {
+         // Only a full current String/key equality can skip encoding. The
+         // builder proves eligibility from its private original wire bytes;
+         // every miss keeps the existing encoder and its actual allocations.

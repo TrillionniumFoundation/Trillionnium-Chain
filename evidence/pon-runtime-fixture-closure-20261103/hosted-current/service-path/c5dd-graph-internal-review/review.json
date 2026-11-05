@@ -1,0 +1,452 @@
+{
+  "schema": "c5dd-account-graph-internals-and-group-commit-source-review-v1",
+  "created_utc": "2026-11-03T23:08:08.723797+00:00",
+  "status": "READ_ONLY_CONDITIONAL_CALL_LOCAL_PROJECTION_NO_IMPLEMENTATION_GROUP_COMMIT_REQUIRES_RECOVERY_CONTRACT_WORK",
+  "scope": "Original c5dd campaign artifact13276003536, three baseline client phases. Source/retained-byte review only. No new native invocation, benchmark, source patch, target mutation or service acceptance.",
+  "evidence": {
+    "raw": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-internal-review/raw-counters-and-state-shapes.json",
+      "bytes": 98104,
+      "sha256": "18814413f21bf6ab89a803b44290d8e4ab8b9659986158c3fdd8f175caaf534d"
+    },
+    "prior_graph_scope": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-graph-scope-review/review.json",
+      "sha256": "0985533fa71a2470c02f74bfa2e8f1d6ae0db0a1670f03abaf7917315c2075ec"
+    },
+    "prior_actor_chain": {
+      "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/c5dd-baseline-critical-path/critical-path-readback.json",
+      "sha256": "57ce0956d1927578cd5b4f1364ca38689a0256bbdba85c981358eb3c3c26e492"
+    },
+    "source_bindings": [
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+        "bytes": 46714,
+        "sha256": "ae959fee2acb706962b3add2625ebac946b5435d2632b9d54870e7b4d6a94913",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "bytes": 29530,
+        "sha256": "5253bd06d8b677652bc5be227c9d7ce1d3dc16dc70e5a569b42ceb7f0fa1ec6b",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_reader.rs",
+        "bytes": 2658,
+        "sha256": "ec5350aff6e8ea735e9bcc5d941e39850e60df0ae64e87a48db55c2ed193a554",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_node_decode.rs",
+        "bytes": 10298,
+        "sha256": "3dd44667ea0181d804a50977add6b9e1995127060e685ccd0ba18be7d59641b0",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+        "bytes": 11867,
+        "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs",
+        "bytes": 63475,
+        "sha256": "152565e9f09ac2c8dfee7958b3fb6012c81fc5f246978e82954e337f66eaf072",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "bytes": 94152,
+        "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+        "bytes": 22051,
+        "sha256": "2300f470a2c6fed43ba7f9e9e49782332f52a0cf45fe27f39c7a201bbbac4e92",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+        "bytes": 17092,
+        "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "bytes": 13538,
+        "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "bytes": 331511,
+        "sha256": "a334ed1aca71058244cfbf42ca8c3b40ccd93cb6e62a063212fe2890828265db",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+        "bytes": 19006,
+        "sha256": "a9d22ca6982afe6677c4d799a137c9e730a54d38d640ef551f9c4e02c4e5df4e",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation/tests.rs",
+        "bytes": 41577,
+        "sha256": "2b914cba0efefed6368a5fc9a659380bfe9b2a4d15379df3cdc9ec72cd5db902",
+        "current_workspace_bytes_equal": true
+      },
+      {
+        "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        "bytes": 26122,
+        "sha256": "78b8541e0d1da0d04239b72137cd99543a0f0882d552e545f3e9fea01bc931d8",
+        "current_workspace_bytes_equal": true
+      }
+    ]
+  },
+  "original_runtime_observations": [
+    {
+      "run": 1,
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 130,
+        "calls": 80327,
+        "exact_hits": 80158,
+        "original_decodes": 169,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.78960996925069,
+      "complete_computations": 38,
+      "complete_hits": 66,
+      "complete_commitment": {
+        "calls": 104,
+        "cpu_known_calls": 104,
+        "cpu_ns": 96220812,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 172976101
+      },
+      "account_graph": {
+        "calls": 71,
+        "cpu_known_calls": 71,
+        "cpu_ns": 4158076380,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 18779180476
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 1256802473,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 5492104119
+      }
+    },
+    {
+      "run": 2,
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 128,
+        "calls": 79633,
+        "exact_hits": 79466,
+        "original_decodes": 167,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.79028794595206,
+      "complete_computations": 38,
+      "complete_hits": 66,
+      "complete_commitment": {
+        "calls": 104,
+        "cpu_known_calls": 104,
+        "cpu_ns": 97434195,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 557521171
+      },
+      "account_graph": {
+        "calls": 71,
+        "cpu_known_calls": 71,
+        "cpu_ns": 4138738739,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 18210224050
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 1257191638,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 5495384845
+      }
+    },
+    {
+      "run": 3,
+      "decode_delta": {
+        "borrow_conflicts": 0,
+        "bounded_probe_refusals": 130,
+        "calls": 80541,
+        "exact_hits": 80372,
+        "original_decodes": 169,
+        "retained": 39
+      },
+      "decode_exact_hit_percent": 99.79016898225748,
+      "complete_computations": 38,
+      "complete_hits": 66,
+      "complete_commitment": {
+        "calls": 104,
+        "cpu_known_calls": 104,
+        "cpu_ns": 95338470,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 247373077
+      },
+      "account_graph": {
+        "calls": 71,
+        "cpu_known_calls": 71,
+        "cpu_ns": 4161674868,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 18709302395
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 1249637619,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 5479369702
+      }
+    }
+  ],
+  "measurement_limits": [
+    "The 71 AccountGraph entries include full and frontier-assisted traversals. No per-role parse/SQL/lift/collection timing exists.",
+    "Decoder counters are complete client-phase deltas, not selected per-activation samples. Cache hits still perform current SQL, exact current blob equality and all graph-relation checks.",
+    "CompleteCommitment and AccountGraph are different original stage scopes. The 95.3–97.4ms CPU for all104 CompleteCommitment calls is useful scale context, not a mathematical upper bound for the second parser or a measured speedup.",
+    "The 29928 Host checkpoints belong to the entire complete sixth-page import. They are not all activation-owned and cannot be declared removable or subtracted across different thread CPU scopes.",
+    "No SQLite commit/fsync-only timings were recorded. Group-commit benefit cannot be estimated by assigning the entire activation wall time to COMMIT."
+  ],
+  "already_implemented_or_required_work": [
+    {
+      "source": "src/account_archive_prototype/native_node_reader.rs:1-59",
+      "finding": "One lazily prepared CachedStatement is retained within a traversal. Each node still runs the bounded original SELECT and decodes a borrowed Blob; Row/Rows reset before progress or the next load. The valid-tree traversal reads each required exposed node once, not a redundant double fetch. Malformed repeated IDs retain original read/decode/progress/error order."
+    },
+    {
+      "source": "src/account_archive_prototype/native_node_decode.rs:8-118; native_store.rs:24-59",
+      "finding": "Exact expected ID+complete current bounded blob decoding and exact path/digest/depth lift arithmetic already have bounded reuse. Client delta exact decode hits are about99.79% in each original run. Adding another decode cache is unsupported as the major remaining fix."
+    },
+    {
+      "source": "src/account_archive_prototype/native_store.rs:383-415; native_scoped_readback.rs:214-326",
+      "finding": "The visited-ID set, retained leaf map, node bound, duplicate-owner error, checked balance and final complete/partial comparison are correctness work. A collection replacement or SQL batching would require parity/error-order evidence; no measured evidence currently identifies them as the dominant removable cost."
+    },
+    {
+      "source": "src/account_archive_prototype.rs:957-977; src/account_archive_execution/state_witness.rs:699-727",
+      "finding": "accounts(state) scans actual immutable State, validates lowercase owner encoding, deserializes balance+nonce with the original Account grammar and constructs a BTreeMap. Complete commitment misses construct this projection before full-root/account-root/conservation/partition work."
+    }
+  ],
+  "call_local_projection_candidate": {
+    "decision": "FEASIBLE_INTERFACE_DIRECTION_BUT_NO_PATCH_OR_IMPLEMENTATION_RECOMMENDATION_WITHOUT_COST_OBSERVATION",
+    "duplicate": "On a successful complete-cache MISS inside verify_state_with_readback, state_witness::commitment_from_complete_state_with_roots constructs account_values from the same immutable State that the subsequent ordinary/scoped graph verifier parses again. This is pure repeated projection, not a SQL graph-validity or authorization result.",
+    "call_chain": [
+      "native_authenticated.rs:688-695 calls ArithmeticCache::complete at the original complete-State comparison",
+      "arithmetic_cache.rs:185-245 preserves exact complete input/context cache lookup; MISS invokes commitment_from_complete_state_with_roots",
+      "state_witness.rs:706 constructs accounts(state), then completes every original root/aggregate/conservation/partition check",
+      "native_authenticated.rs:696-729 checks original scope.matches and selects the real graph path",
+      "native_store.rs:366-373 or native_scoped_readback.rs:189-200 calls accounts on that same immutable State before loading the current root SQL row"
+    ],
+    "bounded_design": "If separately approved, return an operation-local owned projection only from a successful original MISS, bound by a private constructor to the same immutable State borrow. Move or borrow it into the one subsequent graph evaluation. Do not add it to ArithmeticCache entries, retain it across calls, clone it, identify it only by a root, or export an arbitrary-map proof constructor.",
+    "hit_path": "A complete-cache HIT must return no fresh projection. It must not parse accounts early or add a new error/work opportunity merely to fill the projection. The graph verifier continues its original accounts(state) at the original location on that path.",
+    "error_and_authority_boundaries": [
+      "Preserve accounts parsing before full root, account root/count/balance, conservation and non-account root inside the complete MISS. No alternate shortcut may run root errors first.",
+      "Only consume a successful same-call projection after original record.state equality and scope.matches ordering. A failure must return the original typed error without producing authority.",
+      "The projection replaces only the duplicate pure parse/allocation. Current root SQL SELECT still occurs in its original position, before root structural checks. Every node SELECT, exact blob check, path/depth/side/lift check, duplicate and balance check remains.",
+      "Keep GraphAccess private same-State/Record construction. A raw BTreeMap supplied by a caller cannot establish the complete-State binding.",
+      "All original progress callbacks, final progress, partial-source current fence, whole-Root receipt memory and strict last-write/original-owner behavior remain unchanged. accounts itself emits no progress callback.",
+      "Review peak transient map lifetime. Moving an existing map can avoid the second allocation; cloning it or retaining extra maps can erase the intended benefit."
+    ],
+    "cost_coverage": "Each original client phase recorded104 CompleteCommitment calls,38 computations and66 exact complete hits. Existing telemetry does not identify which computations are immediately followed by an eligible actual graph, nor their account parse CPU. At most38 fresh maps can even be available across the whole phase; some complete computations belong to publication or a graph-omitted path. No savings in seconds or request success is established.",
+    "retained_controls": [
+      "arithmetic_cache/root_arithmetic/tests.rs:386 complete_commitment_keeps_account_error_order_with_root_material",
+      "arithmetic_cache.rs original exact bytes/context, numeric encoding, malformed State and fixed retention controls",
+      "native_primitive_tests.rs accounts parser parity including sequence representation, malformed owners, missing/extra fields and numeric forms",
+      "native_node_reader_tests.rs current SQL type/missing-row and callback mutation/error order",
+      "post_write_readback/frontier_tests.rs and store/reorg_readback_tests.rs original partial/nonpromotion, no-row/failed-write, cancellation and transaction-ABA controls"
+    ],
+    "independent_source_review": "hosted_evidence independently read exact c5dd and found no necessary borrow/error-order contradiction under the stated MISS-only, same-State, private-construction bounds. This was static review only and did not approve implementation or measure benefit."
+  },
+  "group_commit_feasibility": {
+    "decision": "NO_DROP_IN_EXISTING_INTERFACE; CHANGES_DURABLE_PROGRESS_AND_RECOVERY_CONTRACT",
+    "actual_workload_correction": {
+      "rows": [
+        {
+          "height": 4,
+          "record_sha256": "5fd8aec3db016a22dec205cfe19769454a7b37d8923657d24dcb2e1aa996189e",
+          "block": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+          "account_root": "d1ae26943d2e07ef1a8768f2b2fbfefed55fd96fc285670f6fb9dc4343737417",
+          "state_root": "297f128981e1cc0086dd238fbe1b9e8437bd09bd121288c841233ed49f0a30e9",
+          "non_account_root": "057173cc466f9e2ac9da5ae61feb7614e71f3197c1e828c9510f9dde62c8f128",
+          "non_account_count": 9,
+          "delta_rows": 259,
+          "account_delta_rows": 257,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 5,
+          "record_sha256": "766482e08e50178b0e37083d6f1f7a69f85a5149b32987ef84de4dcbef8a3bf7",
+          "block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "aa1b069828baa6d8ddf0d51f5da29e0e676efd34be9b552ba41ca1c7d9e003b6",
+          "non_account_root": "e04b2fd1aec6023e6acd8abbd20a120c2081041c9f7f35c1c8732cb5d71fe31f",
+          "non_account_count": 10,
+          "delta_rows": 4,
+          "account_delta_rows": 2,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 6,
+          "record_sha256": "5fe0c5acc7417ccbcbee0a449600e5daa882412e4013975dec9de16ee1949606",
+          "block": "8ef5fe551a5abd2371e14fb78f141c5dc0a5e69de147fbe63557277ef430e3bf",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "498e9e8cc1c27502b59b2451939f344c594431c9c9c28420eababcd13a159736",
+          "non_account_root": "101eb17fa75a8c65a873b8310043758be70baeeb72833d48c0111dacfc9fd12b",
+          "non_account_count": 11,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 7,
+          "record_sha256": "5562f273d550c10bd6da0915a7f042db5553fa79e195034376906a4e412300f3",
+          "block": "108bbb687ecfe3ef7dfa5504d6411cf567fe1de0650f6296e0f80f295ff7a96f",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "1b5b0ab67d865ba0f887966b30c1ebf3556963bd7c563fbcf4c167d5c44a11b6",
+          "non_account_root": "41ff354d6aaece22345acb4e5004f8913b3774714376815d64b80c5fbfb3d99b",
+          "non_account_count": 12,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 8,
+          "record_sha256": "923589e2e2b6b69af62718a03062a8fcb40f4980bf218266ab4cc8c5f2eea6f9",
+          "block": "e3d7f8a5800268feb4548d8df592599d5b211ec5bb38f9858c2a74d14cb0330b",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "c3d9da3afda58b91f7b532a228d6911b418cce782aa92c2732d74912df7cba8e",
+          "non_account_root": "c616e43a2a05d5c78478701e98a68d161e96a4857bf258d04c1da5d3f2e4fb71",
+          "non_account_count": 13,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 9,
+          "record_sha256": "c1a56944bfdc8dde4fca68bc7b94ccf9b2123c1e27bdf834b8bd69e81eb02244",
+          "block": "04754cf13fb5d0cd9ff4b64e9b05889473568d5a37684a338bdc5bc00b32c4f7",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "4d23e3a9b8417487b08672807211118e276d4f057f9a1ee0fe2a0eaf63775f7d",
+          "non_account_root": "8c2838a99439d2992f54fd8c0e195e9fe343b3839fbacad7af1171c300284b76",
+          "non_account_count": 14,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 10,
+          "record_sha256": "513ab082802ebc79869539c3fecd956f5649838de41d205095ac1d71f0c3c41e",
+          "block": "fda06aaf8d12ecf52f22706f1c6f9a35fa8c59a5eb0bbc708b245624a8b4fabf",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "980f6e18e73196b86e81cf61916693bdffcc9cfc31c78c21beb4ddb8009cabb3",
+          "non_account_root": "bc54945857361afd5f6b32d764d64a7944053b2040f5b1e8062b4b4dc8be7f90",
+          "non_account_count": 15,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        },
+        {
+          "height": 11,
+          "record_sha256": "d496d522eafb91806b478ea3dc689e87f3fd6fd0d574fe430614a1fa1c60c53d",
+          "block": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+          "account_root": "11da23f544f80d5f4b4ab117eab63af456c26509d5150d439ae8397a346ff737",
+          "state_root": "b8d2834e8cb1662eac2845ee497d543cb4213d94c6d5ce474c227e030b26cf33",
+          "non_account_root": "c043b7338974fd77da7b591857e283ecadc3fba44432d38b9526402be42b7d77",
+          "non_account_count": 16,
+          "delta_rows": 2,
+          "account_delta_rows": 0,
+          "non_account_delta_rows": 2
+        }
+      ],
+      "finding": "H4→H5 changes two account rows and two non-account rows. H6..H11 each changes two non-account rows. H5..H11 share an account Root, but all H4..H11 complete state roots and non-account roots differ. Account-Root equality does not prove a no-op State transition."
+    },
+    "original_boundaries": [
+      {
+        "source": "store.rs:5228-5288",
+        "boundary": "Intent transaction copies active KV to staging, builds exact detach/attach steps, inserts reorg and lifecycle, checks cursor0 and staging/active/history, then commits. The intent hook is after this durable commit."
+      },
+      {
+        "source": "store.rs:5471-5504;5095-5136",
+        "boundary": "Each of seven original steps has its own BEGIN IMMEDIATE. Every actual delta preimage must match current staging KV (UNDO_ROOT); writes and exact cursor increment are checked; complete resulting staging and original active/history tail are validated; strict original owner/last-write fences precede COMMIT. attach:n hook runs only after that step committed."
+      },
+      {
+        "source": "store.rs:5505-5575",
+        "boundary": "After all steps, original complete target continuity/root is checked. Final publication atomically updates active tip/generation/slot, exact ordered events, reorg done1 and lifecycle outcome1, deletes old KV, then validates final current state and events. published hook runs after durable commit."
+      },
+      {
+        "source": "store.rs:5024-5073;5621-5624",
+        "boundary": "atomic_reorg_with_readback itself owns BEGIN/COMMIT and returns readback from one explicit final-write boundary. Its documented cancellation rule rolls back only the current uncommitted step. Existing callers cannot nest it under another transaction to create a group."
+      }
+    ],
+    "concrete_semantic_changes_if_grouped": [
+      "An error/deadline/cancellation during step j currently leaves earlier committed staging/cursor j-prefix intact. A group transaction would roll back every earlier in-group step and persist the previous group boundary. The resulting pending or cancelled cursor is observably different.",
+      "Existing attach:n hooks are postcommit durable facts. Running them inside a group falsely labels tentative work durable; postponing them until group commit changes error/cancellation timing and trace. Falling back only when a test hook is present does not prove production cancellation parity.",
+      "Typed cancellation or selected CPU-budget failure invokes same-owner termination and records the actual durable cursor as lifecycle.cancelled_cursor. Non-cancellation integrity/storage errors return without terminal cleanup and retain a pending recoverable intent. These are intentionally different outcomes and cannot be normalized into one batch failure.",
+      "A later valid State cannot excuse an earlier bad preimage, bad complete root, corrupt account graph, invalid nonce/debt or illegal intermediate state. Keeping all per-step checks/Host callbacks preserves those checks but does not by itself remove the measured repeated graph work.",
+      "SAVEPOINT/RELEASE is not a substitute for the original durable commits: original TransactionScope rejects savepoint/transaction replacement and detects even no-row/failed potential writes. Existing PostWriteReadback cannot survive the next step write, grouped or not.",
+      "Grouping only physical commits while preserving every per-step validation is a distinct change with unmeasured COMMIT savings; it should not claim the25 activation graph entries or5.49s activation wall as removable. Reducing intermediate graph validation requires a separately justified proof contract, not merely a transaction loop edit.",
+      "Same-operation termination CPU is reserved before intent, tied to the existing bound domain and settled once. Grouping may not create a new account, reset epoch/credit, refresh deadline, use cleanup to write State/active, or enlarge any original service budget.",
+      "A longer writer may hold the original Node mutex/SQLite writer through more work/refill waits. Head-of-line blocking, interruption and lock residency effects need evidence; batch length alone is not a latency proof."
+    ],
+    "current_recovery_and_error_sources": [
+      "store/reorg_cancellation.rs:84-119 resumes the actual pending target only after original activation gates and fresh cancellation reservation/lifecycle checks.",
+      "store/reorg_cancellation.rs:153-226 binds same original CPU operation/domain and pins original active slot/root plus data/schema epochs.",
+      "store/reorg_cancellation.rs:355-377 distinguishes typed cancellation/PublicMutationCpuBudget/OwnerContinuousCpuBudget from storage/integrity failures and preserves the original nonterminal error.",
+      "store/reorg_cancellation.rs:380-483 cleanup uses bounded authorizer-controlled SQL, rereads durable cursor, changes only lifecycle outcome/cursor/reason and reorg.done, retains original active State and does not create a peer ACK.",
+      "store/reorg_readback_tests.rs:167-265 compares exact hook traces, all persisted facts, recovery and cold reopen;530-615 retains final no-row/failed-SQL/DDL/savepoint/ABA refusals and original callback error precedence.",
+      "store/reorg_cancellation/tests.rs:89-257 retains intent/late/published cancellation, durable cursor, unchanged active facts, foreign-write refusal and abandoned-staging rules;359-414 retains same-account reservation and one settlement.",
+      "store/reorg_cancellation/tests.rs:822-1044 includes real SIGKILL cleanup boundaries and durable CPU epoch/unknown-debt restart refusal. A new batching design must add its interior and boundary crash cases while preserving these controls."
+    ],
+    "versioning_scope": "A local bounded batching implementation does not inherently require a changed signed network domain or consensus rule, and the current cursor format can represent a group boundary. It does require an explicitly reviewed change to local persistence/cancellation/recovery semantics and independent fault acceptance. If the chosen implementation changes stored schema or signed domains, existing repository rules require fresh namespaces and exact migration tests. No such design or patch is approved here.",
+    "necessary_design_before_implementation": [
+      "Define which durable cursor positions are valid public/cold-recovery facts and how original postcommit hook semantics are represented without masking production paths.",
+      "Bound group work using actual original operations/bytes and preserve every intermediate preimage/State/root/nonce/debt check, live Host/CPU/deadline check and final atomic generation publication.",
+      "Specify rollback vs terminal cleanup and exact original error precedence at every interior statement, validation, group COMMIT and final publication boundary.",
+      "Specify strict lifetime of each newly created readback. Never carry a consumed receipt across writes or repurpose mathematical material as current graph/authorization proof.",
+      "Exercise crash/SIGKILL, typed cancellation, CPU exhaustion/unknown accounting, malformed intermediate rows, foreign writes and cold recovery at both batch interior and batch commit boundaries under the original workload and budgets."
+    ]
+  },
+  "smallest_missing_observation": [
+    "For the call-local projection question, add only a same-actor original-path counter/timer around accounts projection and identify complete MISS followed by actual graph, with original success/failure/cancel and known/unknown CPU samples. Keep all original work and checkpoints. No parser microbenchmark may substitute for the actual request result.",
+    "For group commit, retain original intent/step/final transaction identity and separately observe BEGIN/COMMIT versus staging validation versus active/history tail, correlated to the existing request/packet/record. Current nested activation totals do not locate commit cost. No new observation was implemented or executed in this review.",
+    "Use these bounded observations in an independently source-bound original workload only if root elects another native comparison. The present report does not start a new campaign or recommend changing test windows, workload, budgets, Host checks or failure denominators."
+  ],
+  "result": "A small pure projection duplication is source-demonstrable and conditionally safe within one immutable call, but its service value is unmeasured. Group commit has potentially broader scope but is not compatible with existing per-step durable semantics as a drop-in change; meaningful graph-work reduction needs further proof/recovery design. No supported immediate large critical-path patch was found.",
+  "original_service_failures_preserved": true,
+  "source_changes": 0,
+  "native_executions": 0,
+  "patch_created": false,
+  "performance_acceptance": false
+}

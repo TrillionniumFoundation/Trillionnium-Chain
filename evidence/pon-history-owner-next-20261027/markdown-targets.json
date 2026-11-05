@@ -1,0 +1,11 @@
+{
+  "schema": "changed-repository-markdown-target-check-v1",
+  "source_commit": "d5a4652d3b3fd3aa4015b747d865aae906933851",
+  "documents": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/pon-history-owner-next-20261027/README.md"
+  ],
+  "checked_count": 136,
+  "failed": [],
+  "scope": "changed Markdown relative file targets; tracked Git objects satisfy sparse source checkout, anchors/external URLs not tested"
+}

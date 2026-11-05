@@ -1,0 +1,83 @@
+{
+  "schema": "model-owner-full-acceptance-gates-v1",
+  "source_commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "intent_commit": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+  "actual_run": 41951536925,
+  "status": "HOLD_NO_GO",
+  "all_blockers_closed": false,
+  "campaign_spent": 1,
+  "campaign_maximum": 1,
+  "actual_required_phases_accepted": 0,
+  "actual_required_phases_total": 12,
+  "automatic_retry_allowed": false,
+  "gates": [
+    {
+      "id": "family_trial_custody",
+      "closed": false,
+      "engineering": "Historical interpretation is immutable; current code changes cannot reinterpret old completions. The published campaign and actual aborted journal retain the spent allowance.",
+      "missing": [
+        "Independent monotonic custody shared across all participating hosts and authorities",
+        "Verified related-identity and whole-family enrollment",
+        "Unseen prospective tasks, statistical design and whole-family multiplicity control"
+      ],
+      "owner_input": "Original evaluation authority and independent custodian with verifiable enrollment and prospective task provenance"
+    },
+    {
+      "id": "independent_evaluation",
+      "closed": false,
+      "engineering": "Inputs, source, receipts and retained observations are bound and reproducible; same-operator checks do not establish independent administration.",
+      "missing": [
+        "Genuinely independent administrator and dataset custodian",
+        "Blind or cross-evaluation evidence and original dispute handling"
+      ],
+      "owner_input": "Evidence from an actual independent management and data-custody party"
+    },
+    {
+      "id": "whole_release",
+      "closed": false,
+      "engineering": "The fixed base loader executed real FP32 forward and greedy decode; strict phase observation failed before any trained candidate or control evaluation.",
+      "missing": [
+        "Same complete base/all-Cells/router/runtime/serving release descriptor and actual artifacts",
+        "Whole composition quality and routing metrics",
+        "Old-task and rare-cohort regressions",
+        "Registered latency, memory and cold/warm loading measurements"
+      ],
+      "owner_input": "Original release owner supplies the exact full composition, serving profile and independently held task strata; this spent pilot cannot be extended"
+    },
+    {
+      "id": "lifecycle_economics",
+      "closed": false,
+      "engineering": "Cost containment and training-receipt consistency are enforced; the failed phase retains observed wall, CPU and RSS without declaring the missing sample complete.",
+      "missing": [
+        "Actual complete lifecycle costs and original selection-owner integration",
+        "Prices, horizon, minimum net benefit and error bounds",
+        "Release-rate and storage-budget enforcement",
+        "Accepted no-update with continued original CURRENT use"
+      ],
+      "owner_input": "Original economic/resource owners supply actual cost observations, thresholds and selection/CURRENT decisions"
+    },
+    {
+      "id": "trained_behavior_and_recovery",
+      "closed": false,
+      "engineering": "Immutable material loading, fixed classes, tensor checks and bounded execution are implemented; no trained candidate was produced by this attempt.",
+      "missing": [
+        "Frozen target-model trigger, poisoning and forgetting probes",
+        "Actual isolation boundary and canary observations",
+        "Revocation, rollback and restart recovery exercises"
+      ],
+      "owner_input": "Target release and original deployment/isolation owners with preregistered behavioral and recovery evidence"
+    },
+    {
+      "id": "deployment_authority",
+      "closed": false,
+      "engineering": "Real pinned Torch base loading does not grant installation or execution authority. Current generation and FinalUse are still owned by the existing consumer.",
+      "missing": [
+        "Existing fleet/agent/generation/home/run-root configuration",
+        "Actual installed executable and original resource-owner authorization",
+        "Current selection, revocation head, CURRENT and FinalUse bound together",
+        "Next-task and restart boundary execution"
+      ],
+      "owner_input": "Existing Hepta deployment owner supplies an authorized non-root runtime and real current-generation/FinalUse chain; no substitute issuer or fabricated keys"
+    }
+  ]
+}

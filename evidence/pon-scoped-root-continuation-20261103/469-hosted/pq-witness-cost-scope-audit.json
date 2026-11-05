@@ -1,0 +1,316 @@
+{
+  "schema": "chain-469-pq-witness-cost-scope-audit-v1",
+  "audit_kind": "read-only published-source and retained-artifact inspection; no build, runtime test, rerun, source edit, commit, or push",
+  "source": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "head": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "tested_actual_merge": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+    "tested_actual_merge_parents": [
+      "9a05cae09b175a51773db398541b14ab76061a39",
+      "469c4d4bb36efb37045d968f35f83cb2c1771933"
+    ],
+    "tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+    "uncommitted_frontier_used": false,
+    "current_later_pr_base_used": false,
+    "fixed_blob_sources": [
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "git_blob": "38412856c827d6c9f400ee9f9dd5519824235564",
+        "relevant_lines": "111-129,150-169,172-205,230-256",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+        "git_blob": "cf232ccfb48f8df1a376c81f62c89b0456c66429",
+        "relevant_lines": "8-13",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+        "git_blob": "8c6fcefe166f88d15d6f1302b1deb421347a3662",
+        "relevant_lines": "36,238-312,456-466,481-559",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+        "git_blob": "ef7aea9c6459f8171baf937a2e57898cf3936bee",
+        "relevant_lines": "Mutation::begin_until,Mutation::commit_with_check,Mutation::drop",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+        "git_blob": "96b23043257e8cc12f1477a48b250fec2af8fca4",
+        "relevant_lines": "5,23-74,207-230,370-394,519-540,671-688,765-814",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+        "git_blob": "a732c668891786c0d50eb8dc14eaf0ebd0f0e799",
+        "relevant_lines": "425-457,481-496,544-651,664-706",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+        "git_blob": "bea4200197a282f2c970dc22f0d0765e64dffa61",
+        "relevant_lines": "217-253,348-429,432-455,458-514",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs"
+      },
+      {
+        "path": "trillionnium/Cargo.toml",
+        "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+        "relevant_lines": "44-78",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/Cargo.toml"
+      },
+      {
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "git_blob": "58b98a2f697a32eb85669479f4083262b5783842",
+        "relevant_lines": "16-30",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/469c4d4bb36efb37045d968f35f83cb2c1771933/trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+      }
+    ]
+  },
+  "selected_control_evidence": {
+    "outcome_report": "pq-selected-controls-outcomes.json",
+    "lanes": [
+      {
+        "lane": "x64_head",
+        "artifact": "pq-controls-13233322979.zip",
+        "artifact_id": 13233322979,
+        "selected_passed": 42,
+        "selected_failed": 1
+      },
+      {
+        "lane": "x64_actual_merge",
+        "artifact": "pq-controls-13234200246.zip",
+        "artifact_id": 13234200246,
+        "selected_passed": 38,
+        "selected_failed": 5
+      },
+      {
+        "lane": "arm_head",
+        "artifact": "pq-controls-13234335725.zip",
+        "artifact_id": 13234335725,
+        "selected_passed": 43,
+        "selected_failed": 0
+      },
+      {
+        "lane": "arm_actual_merge",
+        "artifact": "pq-controls-13233539028.zip",
+        "artifact_id": 13233539028,
+        "selected_passed": 43,
+        "selected_failed": 0
+      }
+    ],
+    "failure_count": 6,
+    "distinct_failed_selectors": 5,
+    "full_library_outcomes": "not independently audited by this report; a subsequent full-suite result cannot replace the selected native failures",
+    "failure_stage_timing_available": false
+  },
+  "provider": {
+    "fixture_key_path": "canonical_tests::key -> public_spki_from_seed -> from_owned_seed -> OwnedSigningBackend::RustCrypto",
+    "witness_request_signing": "RustCrypto ML-DSA-65 deterministic pure signing",
+    "witness_reply_signing": "RustCrypto ML-DSA-65 deterministic pure signing",
+    "all_verification": "canonical RustCrypto ML-DSA-65 pure verification with empty context",
+    "openssl_artifact_scope": "OpenSSL was prepared and all-features compiled its optional adapter; these facts do not select it for the seed-backed witness fixture",
+    "process_spawn_per_witness_operation": false,
+    "signature_self_check": "PqNativeSigningKey::sign_exact_message always calls self.verifier.verify_exact_message before returning",
+    "key_expansion_scope": "The application retains SigningKey and VerifyingKey objects. Their constructors, including fixture key construction, must not be charged to a particular exchange unless they are actually inside its cap."
+  },
+  "operation_counts": {
+    "one_successful_exchange": {
+      "signatures": 2,
+      "canonical_verifications": 4,
+      "stages": [
+        "client request signing",
+        "client request signature canonical self-verification",
+        "service request canonical verification",
+        "service reply signing",
+        "service reply signature canonical self-verification",
+        "client reply canonical verification"
+      ],
+      "additional_work": "fresh challenge read, body construction, transport/fixture mutex, storage identity/schema checks, SQL and optional durable CAS commit",
+      "time_contract": "absolute until=min(original deadline, request entry+250 ms). Current requires the final deadline check. Authenticated matching CAS receipt retains its narrowly scoped late-verification/local-commit exception."
+    },
+    "native_31": {
+      "original_live_deadline_ms": 200,
+      "current_then_cas_same_original_deadline": true,
+      "total_signatures": 4,
+      "total_canonical_verifications": 8,
+      "required_to_reach_intended_delayed_receipt_branch": {
+        "signatures": 4,
+        "canonical_verifications": 7
+      },
+      "explanation": "Current completes 2 signatures+4 verifications. CAS service must complete 2 signatures+3 verifications and its final deadline check before Transport mode 6 sleeps until the deadline plus 2 ms. The eighth verification is the caller's authenticated CAS reply check after the intentional delay.",
+      "observed_merge_failure": "expected LIVE_DEADLINE, got PQ_WITNESS_DEADLINE",
+      "attribution_limit": "The artifact does not establish whether Current, CAS preparation, service authentication/storage/signing, or another deadline check failed; it does not show the intended delayed receipt was reached."
+    }
+  },
+  "actual_build_profiles": {
+    "evidence": "compiler-artifact JSON records in build.log of each of the four retained pq-controls ZIPs",
+    "same_in_all_four_lanes": [
+      {
+        "package": "ml-dsa",
+        "version": "0.1.1",
+        "opt_level": "0",
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "features": [
+          "alloc",
+          "zeroize"
+        ]
+      },
+      {
+        "package": "module-lattice",
+        "version": "0.2.3",
+        "opt_level": "0",
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "features": [
+          "alloc",
+          "ctutils",
+          "zeroize"
+        ]
+      },
+      {
+        "package": "keccak",
+        "version": "0.2.2",
+        "opt_level": "0",
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "features": []
+      },
+      {
+        "package": "trnm-crypto-primitives",
+        "version": "0.1.0",
+        "opt_level": "3",
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ]
+      },
+      {
+        "package": "trnm-pon-node",
+        "version": "0.1.0",
+        "opt_level": "3",
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ]
+      }
+    ],
+    "additionally_verified_both_x64_lanes": {
+      "package": "shake",
+      "version": "0.1.0",
+      "opt_level": "0",
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "features": []
+    },
+    "caveat": "Package profile evidence is not per-stage CPU measurement; generic monomorphization and inlining mean it does not establish that every cryptographic instruction executes at dependency opt-level 0.",
+    "proposal_to_change_profiles": false
+  },
+  "runtime_and_lock_scope": [
+    "The direct failing witness controls call Transport::exchange -> service.lock().handle(request, until) synchronously. There is no async executor or worker queue in that fixture path.",
+    "Selected native commands use --exact --test-threads=1. Direct fixture operations expose no demonstrated competing service-lock owner; mutex contention is not established by these artifacts.",
+    "Node Mutation uses a nonblocking RefCell try_borrow_mut check and holds local SQLite IMMEDIATE across fresh Current, protected-root/permission reads, local writes, external CAS and local commit.",
+    "DurableWitness service connection uses busy_timeout(Duration::ZERO), DELETE journal, synchronous=FULL. Busy-lock waiting is not configured, but storage I/O/commit cost remains possible and unmeasured.",
+    "The native TCP server accepts and handles connections sequentially on its spawned OS thread. lock_live_owner retries try_lock with an absolute live deadline; these logs do not demonstrate contention."
+  ],
+  "failure_callsite_scope": [
+    {
+      "lane": "x64_head",
+      "member": "native-11.log",
+      "line": 211,
+      "scope": "normal ingress charge failed before the test's cold restart"
+    },
+    {
+      "lane": "x64_actual_merge",
+      "member": "native-11.log",
+      "line": 214,
+      "scope": "normal begin request failed before the test's cold restart"
+    },
+    {
+      "lane": "x64_actual_merge",
+      "member": "native-19.log",
+      "line": 376,
+      "scope": "initial normal begin request failed before the deliberate local tamper"
+    },
+    {
+      "lane": "x64_actual_merge",
+      "member": "native-25.log",
+      "line": 538,
+      "scope": "the later fresh normal charge failed; the intentional expired call and intervening state/epoch assertions had already returned"
+    },
+    {
+      "lane": "x64_actual_merge",
+      "member": "native-31.log",
+      "line": 186,
+      "scope": "assertion helper saw PQ_WITNESS_DEADLINE instead of intended LIVE_DEADLINE; delayed authenticated-CAS branch not established"
+    },
+    {
+      "lane": "x64_actual_merge",
+      "member": "native-34.log",
+      "line": 791,
+      "scope": "client send failed with reset104 before accepted=1, reopen, Cached result, and restored-permission tamper assertions"
+    }
+  ],
+  "native_34_observability": {
+    "server_source": "ingress/pq_network.rs:688-698",
+    "fact": "The server collapses read_request/handle/write-frame errors to metrics.refused and then drops the stream; it does not emit the concrete error or stage.",
+    "conclusion": "Connection reset104 is compatible with server refusal/closure but is not proof of PQ_WITNESS_DEADLINE or any particular phase.",
+    "smallest_fix": "Retain a bounded diagnostic stage/error record at the existing refusal branch without sending a detailed error to the peer or changing the result, close, metric, admission, or deadline semantics."
+  },
+  "cache_scope": {
+    "fact": "Each witness request signs a newly generated random challenge and each reply binds it.",
+    "implication": "An exact-message/signature fact cache is not expected to reuse results across distinct witness exchanges with different challenges.",
+    "fixture_caveat": "A process-global cache could hit between a signer self-check and the co-located fixture's opposite-end verification. Independent client/service processes do not share that cache, so passing this fixture through such reuse would not establish an external-witness latency benefit.",
+    "guard": "Retain every canonical self-check, request/reply authentication, exact context and pin check, fresh predecessor check, permission/revocation check, and failed-verification accounting."
+  },
+  "minimum_next_diagnostic": {
+    "objective": "attribute elapsed time and failure stage before choosing a performance fix",
+    "unchanged": [
+      "original 250 ms exchange cap",
+      "original 200 ms late-CAS test",
+      "original Cargo profiles",
+      "exact selected tests and assertions",
+      "canonical signer self-verification",
+      "all authorization checks",
+      "before-send usability vs after-exchange fail-closed distinction",
+      "authenticated matching CAS receipt/local-commit exception"
+    ],
+    "event_fields": [
+      "monotonic operation id",
+      "Current or CAS",
+      "operation entry and original absolute deadline",
+      "stage entered/completed",
+      "wall elapsed",
+      "thread CPU elapsed",
+      "transport_entered flag",
+      "service CAS commit attempted/completed flags",
+      "final error code and last completed stage"
+    ],
+    "stages": [
+      "request challenge/preparation",
+      "request signing primitive",
+      "request canonical self-verification",
+      "transport wait/service mutex",
+      "service request canonical verification",
+      "service storage checks",
+      "service SQL/CAS commit",
+      "reply signing primitive",
+      "reply canonical self-verification",
+      "client reply canonical verification",
+      "local commit and final live check"
+    ],
+    "implementation": "Use bounded per-operation records/RAII spans through the shared client/service/crypto paths; flush after return or failure. Avoid synchronous log I/O inside the deadline. Count instrumentation overhead in the original interval; never restart or subtract from deadlines.",
+    "paired_measurement": "Wall time distinguishes elapsed deadline pressure; thread CPU helps distinguish computation from lock/I/O/descheduling. For a separate service process use its own bounded trace correlated with an operation identifier.",
+    "failure_retention": "Keep existing Result and poisoning behavior; trace guards must emit on early returns without catching errors as success. Native-34 also needs a bounded server refusal stage and concrete error.",
+    "next_fix_boundary": "Only after stage attribution choose a semantics-preserving pure implementation/CPU or storage-path change. This audit does not justify deleting self-checks, relaxing deadlines, removing fresh authorization, changing profiles, or asserting a proven production fix."
+  },
+  "bounded_conclusion": "Published source establishes a substantial synchronous cryptographic workload and the exact provider/profile scope, plus a server-error observability gap. The retained logs do not isolate the cause of any current deadline, establish benign flakiness, or make the six selected native failures acceptable."
+}
+

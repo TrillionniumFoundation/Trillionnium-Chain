@@ -1,0 +1,55 @@
+{
+  "after": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "base_sha": "f8c9419df6ddeb36ff8b522a50219981fb8d9345",
+  "before": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "command": [
+    "just",
+    "test",
+    "--locked",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "-E",
+    "test(real_chain_signed_task_acceptance_confirm_and_reorg)",
+    "--run-ignored",
+    "only",
+    "--no-capture"
+  ],
+  "command_exit_code": 0,
+  "elapsed_seconds": 43.20520223095082,
+  "exit_code": 0,
+  "finished_at": "2026-10-23T07:00:17.680647+00:00",
+  "job": null,
+  "lane": "source-head",
+  "log_bytes": 38763,
+  "log_file": "real_chain_signed_task_acceptance_confirm_and_reorg.json.a53bb69bd1cb44a9b7201fff911ba617.log",
+  "log_sha256": "28a67e1ffed3120480b37acbc6711ce171592519664e5578614e269134bda2e5",
+  "minimum_tests": 1,
+  "observed_failed_tests": 0,
+  "observed_passed_tests": 1,
+  "output_limit_exceeded": false,
+  "returncode": 0,
+  "run_attempt": null,
+  "run_id": null,
+  "schema_version": 1,
+  "source_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "started_at": "2026-10-23T06:59:34.470662+00:00",
+  "status": "passed",
+  "tested_sha": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+  "timed_out": false,
+  "working_directory": "/tmp/trnm-pn-convergence-20261023/hepta-integration"
+}

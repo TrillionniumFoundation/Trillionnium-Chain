@@ -1,0 +1,9 @@
+
+running 4 tests
+test store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 935 filtered out; finished in 0.72s
+

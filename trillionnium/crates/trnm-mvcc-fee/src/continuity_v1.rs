@@ -1,0 +1,534 @@
+//! Explicit revision12 continuity: reserve mandatory state liabilities and bind
+//! an immutable, genesis-defined maintenance task. No work hardness, useful demand,
+//! production authority or legacy/task substitution follows from availability.
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
+use serde_json::{json, Value};
+use std::collections::BTreeSet;
+use trnm_crypto_primitives::pon_work;
+use trnm_protocol::pon_wire::{hash, Hash};
+
+pub const PROFILE: &str = "consensus-maintenance-continuity-dev-v1";
+pub const CONSENSUS_REVISION: u64 = 12;
+pub const MAINTENANCE_KEY: &str = "consensus-maintenance-v1";
+pub const MAX_KEYS: usize = 65_536;
+
+pub fn enabled(cfg: &Config) -> bool {
+    matches!(
+        cfg.task_profile(),
+        PROFILE | crate::growth_profile_v2::PROFILE
+    )
+}
+
+pub(crate) fn configure(params: &mut Value, policy: &str) -> Result<()> {
+    let registry: Value =
+        serde_json::from_str(include_str!("../../../../config/pon/continuity-v1.json"))
+            .map_err(|_| "CONFIG")?;
+    if registry["id"] != PROFILE
+        || registry["consensus_revision"] != CONSENSUS_REVISION
+        || registry["production_eligible"] != false
+        || registry["hardness_accepted"] != false
+        || registry["useful_model_work_accepted"] != false
+        || registry["capacity"]["maximum_keys"] != MAX_KEYS
+        || params["reward_maturity_blocks"] != 20
+    {
+        return Err("CONFIG");
+    }
+    params["consensus_revision"] = json!(CONSENSUS_REVISION);
+    params["work_task_profile"] = json!(PROFILE);
+    params["chain_label"] = json!(format!("trnm-pon-continuity-devnet-12-{policy}"));
+    params["continuity_policy_hash"] = json!(hex::encode(hash(
+        b"consensus-maintenance-continuity-policy-v1",
+        &[&canonical(&registry)?],
+    )));
+    let lifecycle: Value = serde_json::from_str(include_str!(
+        "../../../../config/pon/qualified-task-lifecycle-v4.json"
+    ))
+    .map_err(|_| "CONFIG")?;
+    if lifecycle["id"] != "signed-task-lifecycle-dev-v4"
+        || lifecycle["consensus_revision"] != 9
+        || lifecycle["atomic_overlap_window"] != true
+        || lifecycle["standalone_renew_disabled"] != true
+    {
+        return Err("CONFIG");
+    }
+    params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+        b"qualified-task-registry-v4",
+        &[&canonical(&lifecycle)?],
+    )));
+    Ok(())
+}
+
+/// Exact public bytes selected by the new genesis; different from every old
+/// bootstrap fixture. The work verifier still checks the original full relation.
+pub fn maintenance_matrices() -> (Vec<u32>, Vec<u32>) {
+    (
+        (0..pon_work::CELLS)
+            .map(|i| ((13 * i + 17) % 257) as u32)
+            .collect(),
+        (0..pon_work::CELLS)
+            .map(|i| ((29 * i + 31) % 263) as u32)
+            .collect(),
+    )
+}
+pub fn maintenance_material() -> (Vec<u8>, Vec<u8>) {
+    let (a, b) = maintenance_matrices();
+    (
+        a.iter().flat_map(|n| n.to_le_bytes()).collect(),
+        b.iter().flat_map(|n| n.to_le_bytes()).collect(),
+    )
+}
+pub fn maintenance_task() -> Result<Hash> {
+    let (a, b) = maintenance_matrices();
+    pon_work::task_id(&a, &b).map_err(|_| "CONTINUITY_MATERIAL")
+}
+pub fn maintenance_record(cfg: &Config) -> Result<Value> {
+    if !enabled(cfg) {
+        return Err("CONTINUITY_PROFILE");
+    }
+    let (model, input) = maintenance_material();
+    Ok(json!({
+        "schema":"genesis-consensus-maintenance-v1",
+        "network":hex::encode(cfg.network),
+        "parameters":hex::encode(cfg.parameters),
+        "policy":cfg.params["continuity_policy_hash"],
+        "matrix_task":hex::encode(maintenance_task()?),
+        "model":hex::encode(hash(b"artifact", &[&model])),
+        "input":hex::encode(hash(b"qualified-task-input-v1", &[&input])),
+        "source":"genesis-public-deterministic-maintenance-v1",
+        "purpose":"ledger-continuity-maintenance",
+        "useful_output_credit":0,
+        "hardness_accepted":false,
+        "useful_model_work_accepted":false
+    }))
+}
+pub fn bootstrap_state(cfg: &Config) -> Result<State> {
+    Ok(State::from([(
+        MAINTENANCE_KEY.into(),
+        maintenance_record(cfg)?,
+    )]))
+}
+pub fn check_maintenance(state: &State, task: Hash, cfg: &Config) -> Result<()> {
+    if task != maintenance_task()? || state.get(MAINTENANCE_KEY) != Some(&maintenance_record(cfg)?)
+    {
+        return Err("CONTINUITY_MAINTENANCE");
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Capacity {
+    pub actual_keys: usize,
+    pub credit_account_reserve: usize,
+    pub archive_reserve: usize,
+    pub reward_queue_reserve: usize,
+    pub required_keys: usize,
+}
+fn number(value: &Value, name: &str) -> Result<u64> {
+    value
+        .get(name)
+        .and_then(Value::as_u64)
+        .ok_or("CONTINUITY_STATE")
+}
+fn reserve_owner(
+    state: &State,
+    value: &Value,
+    recipients: &mut BTreeSet<String>,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<()> {
+    let owner = value
+        .get("owner")
+        .and_then(Value::as_str)
+        .ok_or("CONTINUITY_STATE")?;
+    if owner.len() != 64
+        || !owner
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    {
+        return Err("CONTINUITY_STATE");
+    }
+    if let Some(access) = account_access {
+        access(owner)?;
+    }
+    let key = format!("account:{owner}");
+    if !state.contains_key(&key) {
+        recipients.insert(key);
+    }
+    Ok(())
+}
+/// For an accepted state at `height`, reserve every key a later mandatory step
+/// may create. Existing-account maintenance mining keeps this potential constant
+/// or decreases it: reward maturation consumes a recipient reservation, and each
+/// missing queue slot reserves the reward before the maturity queue is full.
+pub fn capacity(state: &State, height: u64, cfg: &Config) -> Result<Capacity> {
+    capacity_with_account_access(state, height, cfg, None)
+}
+pub(crate) fn capacity_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<Capacity> {
+    capacity_with_sources(state, height, cfg, account_access, None)
+}
+/// Maximum inspected rows between capacity-scan cancellation checks. This is
+/// a row bound, not a wall-clock bound for state loading or root construction.
+pub const CAPACITY_PROGRESS_INTERVAL: usize = 256;
+
+/// A cancelled observation says nothing about the validity of its input state.
+/// In particular, a caller's cancellation payload never acquires local storage
+/// corruption authority by sharing the text of a state error.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CapacityScanError<E> {
+    State(&'static str),
+    Cancelled(E),
+}
+impl<E> From<&'static str> for CapacityScanError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::State(error)
+    }
+}
+
+/// The same complete liability calculation as `capacity`, with operation-local
+/// progress checks before each batch and before publishing a complete result.
+/// No partial capacity, resumable token or validation authority is returned.
+pub fn capacity_with_progress<E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    scan_capacity_with_sources(state, height, cfg, None, None, progress)
+}
+
+fn capacity_with_sources(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+) -> Result<Capacity> {
+    let mut progress = || Ok::<(), std::convert::Infallible>(());
+    match scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (
+            liability_rows(monetary.unwrap_or(state)),
+            prefix_rows(state, "contribution:").map(|(key, _)| key),
+        ),
+        &mut progress,
+    ) {
+        Ok(capacity) => Ok(capacity),
+        Err(CapacityScanError::State(error)) => Err(error),
+        Err(CapacityScanError::Cancelled(impossible)) => match impossible {},
+    }
+}
+
+/// The capacity relation reads only these disjoint namespaces. Their lexical
+/// order matches the original complete-State walk, including malformed suffixes
+/// and the first failing liability. Every relevant row is still inspected;
+/// accounts are looked up only when a liability may create one. State length,
+/// imported rewards, account access gates and all reserve checks stay separate.
+fn liability_rows(state: &State) -> impl Iterator<Item = (&String, &Value)> {
+    ["contribution:", "quota:", "release:", "reward:", "task:"]
+        .into_iter()
+        .flat_map(move |prefix| prefix_rows(state, prefix))
+}
+
+fn scan_capacity_with_sources<E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    // Public observations retain their original complete-row callback schedule.
+    // Skipping unrelated rows here could change cancellation/error precedence.
+    // Native validation above has no cancellable callback and can seek directly
+    // to the exact liability namespaces without changing its returned result.
+    scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (monetary.unwrap_or(state).iter(), state.keys()),
+        progress,
+    )
+}
+
+fn scan_capacity_rows<'a, E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+    rows: (
+        impl Iterator<Item = (&'a String, &'a Value)>,
+        impl Iterator<Item = &'a String>,
+    ),
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    if !enabled(cfg) {
+        return Err("CONTINUITY_PROFILE".into());
+    }
+    let maturity = cfg.params["reward_maturity_blocks"]
+        .as_u64()
+        .ok_or("CONFIG")?;
+    let evaluation_enabled = crate::public_evaluation::enabled(cfg);
+    let imported_rewards = crate::pon_executor::pq_accounts_v2::migration::retained_reward_count(
+        monetary.unwrap_or(state),
+        height,
+        cfg,
+    )?;
+    let mut recipients = BTreeSet::new();
+    let mut reward_heights = BTreeSet::new();
+    let mut archives = 0usize;
+    for (index, (key, value)) in rows.0.enumerate() {
+        if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+            progress().map_err(CapacityScanError::Cancelled)?;
+        }
+        if key.starts_with("reward:") {
+            let due = number(value, "maturity")?;
+            if due <= height
+                || due > height.checked_add(maturity).ok_or("RANGE")?
+                || !reward_heights.insert(due)
+            {
+                return Err("CONTINUITY_REWARD_QUEUE".into());
+            }
+            number(value, "amount")?;
+            reserve_owner(state, value, &mut recipients, account_access)?;
+        } else if key.starts_with("task:")
+            || key.starts_with("quota:")
+            || key.starts_with("release:")
+        {
+            if number(value, "remaining")? > 0 {
+                reserve_owner(state, value, &mut recipients, account_access)?;
+            }
+        } else if evaluation_enabled && key.starts_with("contribution:") {
+            let candidate = key
+                .strip_prefix("contribution:")
+                .ok_or("CONTINUITY_STATE")?;
+            if !state.contains_key(&format!("evaluation-archive:{candidate}")) {
+                archives = archives.checked_add(1).ok_or("RANGE")?;
+            }
+        }
+    }
+    if monetary.is_some() && evaluation_enabled {
+        // Monetary certificates do not authenticate this separate cleanup /
+        // future-archive relation. Its complete State reference remains explicit.
+        for (index, key) in rows.1.enumerate() {
+            if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+                progress().map_err(CapacityScanError::Cancelled)?;
+            }
+            if !key.starts_with("contribution:") {
+                continue;
+            }
+            let candidate = key
+                .strip_prefix("contribution:")
+                .ok_or("CONTINUITY_STATE")?;
+            if !state.contains_key(&format!("evaluation-archive:{candidate}")) {
+                archives = archives.checked_add(1).ok_or("RANGE")?;
+            }
+        }
+    }
+    // A generated block leaves exactly one reward for each of the latest M
+    // heights; no gaps or extra maturity rows can manufacture reserve headroom.
+    let expected_rewards = height.min(maturity) as usize;
+    let total_expected = expected_rewards
+        .checked_add(imported_rewards)
+        .ok_or("RANGE")?;
+    if reward_heights.len() != total_expected {
+        return Err("CONTINUITY_REWARD_QUEUE".into());
+    }
+    for offset in 0..expected_rewards {
+        let due = height
+            .checked_add(maturity)
+            .and_then(|n| n.checked_sub(offset as u64))
+            .ok_or("RANGE")?;
+        if !reward_heights.contains(&due) {
+            return Err("CONTINUITY_REWARD_QUEUE".into());
+        }
+    }
+    let queue_reserve = (maturity as usize)
+        .checked_sub(total_expected)
+        .ok_or("CONTINUITY_REWARD_QUEUE")?;
+    let required = state
+        .len()
+        .checked_add(recipients.len())
+        .and_then(|n| n.checked_add(archives))
+        .and_then(|n| n.checked_add(queue_reserve))
+        .ok_or("RANGE")?;
+    progress().map_err(CapacityScanError::Cancelled)?;
+    Ok(Capacity {
+        actual_keys: state.len(),
+        credit_account_reserve: recipients.len(),
+        archive_reserve: archives,
+        reward_queue_reserve: queue_reserve,
+        required_keys: required,
+    })
+}
+/// Old profiles are byte-for-byte unchanged. New state and restored snapshots
+/// require both the immutable maintenance commitment and the capacity invariant.
+pub fn check_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    check_state_with_account_access(state, height, cfg, None)
+}
+pub(crate) fn check_state_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+) -> Result<()> {
+    check_state_with_account_access_and_monetary(state, height, cfg, account_access, None)
+}
+pub(crate) fn check_state_with_account_access_and_monetary(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+) -> Result<()> {
+    if !enabled(cfg) {
+        return Ok(());
+    }
+    check_maintenance(state, maintenance_task()?, cfg)?;
+    let capacity = capacity_with_sources(state, height, cfg, account_access, monetary)?;
+    if crate::growth_profile_v2::enabled(cfg) {
+        let accounts = prefix_rows(state, "account:").count();
+        let working = state.len().checked_sub(accounts).ok_or("RANGE")?;
+        let required_accounts = accounts
+            .checked_add(capacity.credit_account_reserve)
+            .ok_or("RANGE")?;
+        let required_working = working
+            .checked_add(capacity.archive_reserve)
+            .and_then(|count| count.checked_add(capacity.reward_queue_reserve))
+            .ok_or("RANGE")?;
+        if required_accounts > crate::growth_profile_v2::MAX_PERMANENT_ACCOUNTS
+            || required_working > crate::growth_profile_v2::MAX_WORKING_KEYS
+        {
+            return Err("STATE_CAPACITY");
+        }
+    } else if capacity.required_keys > MAX_KEYS {
+        return Err("STATE_CAPACITY");
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+#[path = "continuity_v1/capacity_range_tests.rs"]
+mod capacity_range_tests;
+
+#[cfg(test)]
+mod range_tests {
+    use super::*;
+    use std::sync::Mutex;
+
+    #[test]
+    fn complete_liability_ranges_keep_account_proof_calls_in_canonical_order() {
+        let cfg =
+            Config::installed_with_profiles(crate::public_evaluation::PROFILE, PROFILE).unwrap();
+        let owners: Vec<_> = (0..4).map(|i| format!("{i:064x}")).collect();
+        let state = State::from([
+            ("account:opaque".into(), json!(null)),
+            ("contribution:one".into(), json!(null)),
+            ("quota:one".into(), json!({"remaining":1,"owner":owners[0]})),
+            ("release:zero".into(), json!({"remaining":0})),
+            (
+                "release:one".into(),
+                json!({"remaining":1,"owner":owners[1]}),
+            ),
+            (
+                "reward:zero".into(),
+                json!({"maturity":21,"amount":0,"owner":owners[2]}),
+            ),
+            (
+                "task:future".into(),
+                json!({"remaining":1,"deadline":u64::MAX,"owner":owners[3]}),
+            ),
+        ]);
+        let monetary = state
+            .iter()
+            .filter(|(key, _)| crate::pon_executor::is_monetary_obligation(key))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect::<State>();
+        for selected in [None, Some(&monetary)] {
+            for deny in [None, Some(0usize), Some(2), Some(3)] {
+                let seen = Mutex::new(Vec::new());
+                let access = |owner: &str| {
+                    let mut seen = seen.lock().unwrap();
+                    let position = seen.len();
+                    seen.push(owner.to_owned());
+                    if deny == Some(position) {
+                        Err("MISSING_ACCOUNT_PROOF")
+                    } else {
+                        Ok(())
+                    }
+                };
+                let actual = capacity_with_sources(&state, 1, &cfg, Some(&access), selected);
+                if let Some(position) = deny {
+                    assert_eq!(actual, Err("MISSING_ACCOUNT_PROOF"));
+                    assert_eq!(*seen.lock().unwrap(), owners[..=position]);
+                } else {
+                    assert_eq!(actual, capacity(&state, 1, &cfg));
+                    assert_eq!(*seen.lock().unwrap(), owners);
+                    assert_eq!(actual.unwrap().archive_reserve, 1);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn split_monetary_and_archive_ranges_keep_all_cancellation_cuts() {
+        let cfg =
+            Config::installed_with_profiles(crate::public_evaluation::PROFILE, PROFILE).unwrap();
+        let mut state: State = (0..4096)
+            .map(|i| (format!("account:{i:064x}"), json!({"balance":0,"nonce":17})))
+            .collect();
+        let count = 513usize;
+        for i in 0..count {
+            state.insert(
+                format!("quota:{i:04}"),
+                json!({"remaining":1,"owner":format!("{:064x}", 9999)}),
+            );
+            state.insert(format!("contribution:{i:04}"), json!(null));
+        }
+        let monetary = state
+            .iter()
+            .filter(|(key, _)| crate::pon_executor::is_monetary_obligation(key))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect::<State>();
+        let expected = capacity(&state, 0, &cfg).unwrap();
+        assert_eq!(expected.credit_account_reserve, 1);
+        assert_eq!(expected.archive_reserve, count);
+        let before = state.clone();
+        // The public cancellable scan retains its original complete-row
+        // schedule for each source, even when native capacity uses ranges.
+        let checks = monetary.len().div_ceil(CAPACITY_PROGRESS_INTERVAL)
+            + state.len().div_ceil(CAPACITY_PROGRESS_INTERVAL)
+            + 1;
+        for cut in 0..=checks {
+            let mut seen = 0;
+            let actual =
+                scan_capacity_with_sources(&state, 0, &cfg, None, Some(&monetary), &mut || {
+                    let index = seen;
+                    seen += 1;
+                    if index == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                });
+            if cut < checks {
+                assert_eq!(actual, Err(CapacityScanError::Cancelled(cut)));
+                assert_eq!(seen, cut + 1);
+            } else {
+                assert_eq!(actual, Ok(expected.clone()));
+                assert_eq!(seen, checks);
+            }
+            assert_eq!(state, before);
+        }
+    }
+}

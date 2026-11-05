@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "child_system_seconds": 0.0037709999999999996,
+  "child_user_seconds": 0.03956,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:54:07.144429+00:00",
+  "label": "preflight",
+  "max_child_rss_kib": 13696,
+  "started_at": "2026-11-04T08:54:07.100977+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "f4596f7a46726a8fe6b0b4a0e55488d1b12203c29e5470c6de30f61efc109069",
+  "wall_ns": 43454182
+}

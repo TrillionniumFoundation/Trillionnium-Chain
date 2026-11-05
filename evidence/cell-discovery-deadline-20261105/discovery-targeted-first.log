@@ -1,0 +1,20 @@
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/42d46a663b73/chain/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.95s
+     Running unittests src/lib.rs (/workspace/scratch/42d46a663b73/target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+
+running 12 tests
+test cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 325 filtered out; finished in 2.40s
+

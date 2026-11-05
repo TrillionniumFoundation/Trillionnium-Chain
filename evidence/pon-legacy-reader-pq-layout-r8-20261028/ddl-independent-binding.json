@@ -1,0 +1,25 @@
+{
+  "schema": "legacy-ddl-independent-byte-binding-v1",
+  "method": "read pinned git object literals directly, independently implement Rust TRNM-PON1 length-framed SHA256; do not call evidence extractor",
+  "rows": [
+    {
+      "source_commit": "fc23fa6de10380dd9ce9cae6cddd1db4d87551ce",
+      "ddl_bytes": 4775,
+      "ddl_sha256": "ce0de86674de23181ef1f6fb59f357f94971feeaee0c5503f065dbf45bb5c964",
+      "schema_identity": "8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0",
+      "store_git_blob": "97cb5b57e5dd4ad6572f9a619c4df125e7d8d024",
+      "ancestry_git_blob": "ba54ff267db24e7dc1dbbaddf3561ca4b40f58ac"
+    },
+    {
+      "source_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+      "ddl_bytes": 5404,
+      "ddl_sha256": "a6088860f96f03ce18d126ea7273098e885b0de1b08828ce95f71ed159be1819",
+      "schema_identity": "9cfc36489e0ae98abd0110a9974d5c4f388cab91ebd701f93fba401830fb6658",
+      "store_git_blob": "51f73baed12ba839c965a2e3cb2ffbbd9c6fc131",
+      "ancestry_git_blob": "ba54ff267db24e7dc1dbbaddf3561ca4b40f58ac"
+    }
+  ],
+  "exact_extension_bytes": 629,
+  "extension_source": "8a35529679c3d176fd7586ab1ecf4e004f25af79",
+  "old_bytes_equal_current_minus_exact_extension": true
+}

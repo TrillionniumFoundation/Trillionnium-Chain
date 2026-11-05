@@ -1,0 +1,10 @@
+{
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node",
+  "argv": [
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "store::native_authenticated::post_write_readback::tests::",
+    "--nocapture",
+    "--test-threads=1"
+  ]
+}

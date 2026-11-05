@@ -1,0 +1,3 @@
+$ cargo fmt --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-host-v2 -- --check
+
+exit_code=0

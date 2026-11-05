@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["statement", "methods", "host"]
+exclude = ["methods/guest"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+publish = false
+
+[profile.release]
+debug = 1
+incremental = false
+
+# Research-only composition of already complete W1 proofs. No Node dependency.

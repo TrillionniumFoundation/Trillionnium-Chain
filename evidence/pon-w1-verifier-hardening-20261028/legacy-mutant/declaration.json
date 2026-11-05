@@ -1,0 +1,25 @@
+{
+  "schema": "TRNM-W1-STAGE-MEASUREMENT1",
+  "command": [
+    "/tmp/trnm-w1-r2-target/release/w1-staged-prover",
+    "--r0vm",
+    "/tmp/pure-pon-risc0-3.0.3/r0vm",
+    "lift",
+    "/tmp/w1-controlid-mutation-20261028",
+    "0"
+  ],
+  "cwd": "/workspace/scratch/56818e4fba76/chain-w1-next",
+  "wall_limit_seconds": 30.0,
+  "termination_grace_seconds": 5,
+  "started_unix_ns": 1793148270353372376,
+  "environment": {
+    "RAYON_NUM_THREADS": "1",
+    "RUST_LOG": null,
+    "RISC0_HOME": null
+  },
+  "resource_scope": "wait4 direct child including descendants it has reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not summed peak",
+  "shared_cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  }
+}

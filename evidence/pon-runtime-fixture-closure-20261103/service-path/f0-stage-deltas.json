@@ -1,0 +1,1801 @@
+{
+  "schema": "trnm-b280-f0-native-stage-deltas-readback-v1",
+  "head": "b28098c092dca72165c0d26054fce95a8636d777",
+  "tree": "7c39ccecd82f05a3d68857efdef9e8c67bdf8069",
+  "artifact_id": 13269380609,
+  "archive": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b280-review/b280-f0-13269380609.zip",
+    "bytes": 17510407,
+    "sha256": "ff7797f705eeafd7faeddcfb4b7a64ef695627f288954d3e20ed7a8602897074"
+  },
+  "reader": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/service-path-review/read_f0_stage_deltas.py",
+    "sha256": "19c33dc01630dc6f477193b0d159e68f2db0be44919a29c393d8d6c7afd12ca5"
+  },
+  "scope": "Original recorded before/after native owner snapshots; not a new run, performance comparison, exact per-request attribution or whole-host CPU percentage. Intervals are nested and cannot be added.",
+  "capture_scope_source": {
+    "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+    "before": "446-447: after seed replay and initial active read, before original service starts",
+    "after": "760-767: after original service.finish/join, before final read_active at790-791"
+  },
+  "phases": [
+    {
+      "entry": {
+        "name": "execution/raw/baseline-fixed-root-host-control/phase-result.json",
+        "bytes": 3293025,
+        "sha256": "2166928618de18b739a6ff1dec849f1448279c639f23f58527f3f9f16b73647b"
+      },
+      "mode": "baseline",
+      "state_backend": "authenticated-v1",
+      "receiver": {
+        "original_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "measurement_failure_before": false,
+        "measurement_failure_after": false,
+        "all_deltas_nonnegative_and_known_unknown_cover_calls": true,
+        "stages": [
+          {
+            "stage": "record",
+            "before": {
+              "calls": 147,
+              "cpu_known_calls": 147,
+              "cpu_ns": 1119031,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1188688
+            },
+            "after": {
+              "calls": 1379,
+              "cpu_known_calls": 1379,
+              "cpu_ns": 6628224,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 83474748
+            },
+            "delta": {
+              "calls": 1232,
+              "cpu_known_calls": 1232,
+              "cpu_ns": 5509193,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 82286060
+            }
+          },
+          {
+            "stage": "packet",
+            "before": {
+              "calls": 92,
+              "cpu_known_calls": 92,
+              "cpu_ns": 5667536,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5709053
+            },
+            "after": {
+              "calls": 757,
+              "cpu_known_calls": 757,
+              "cpu_ns": 23388722,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 99994956
+            },
+            "delta": {
+              "calls": 665,
+              "cpu_known_calls": 665,
+              "cpu_ns": 17721186,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 94285903
+            }
+          },
+          {
+            "stage": "delta",
+            "before": {
+              "calls": 88,
+              "cpu_known_calls": 88,
+              "cpu_ns": 20014066,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 170683551
+            },
+            "after": {
+              "calls": 739,
+              "cpu_known_calls": 739,
+              "cpu_ns": 86580056,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 545238696
+            },
+            "delta": {
+              "calls": 651,
+              "cpu_known_calls": 651,
+              "cpu_ns": 66565990,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 374555145
+            }
+          },
+          {
+            "stage": "verify_state",
+            "before": {
+              "calls": 49,
+              "cpu_known_calls": 49,
+              "cpu_ns": 95012467,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 320209000
+            },
+            "after": {
+              "calls": 189,
+              "cpu_known_calls": 189,
+              "cpu_ns": 509189292,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2625220252
+            },
+            "delta": {
+              "calls": 140,
+              "cpu_known_calls": 140,
+              "cpu_ns": 414176825,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2305011252
+            }
+          },
+          {
+            "stage": "verify_history",
+            "before": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 13536294,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 88498915
+            },
+            "after": {
+              "calls": 55,
+              "cpu_known_calls": 55,
+              "cpu_ns": 104217660,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 639538640
+            },
+            "delta": {
+              "calls": 42,
+              "cpu_known_calls": 42,
+              "cpu_ns": 90681366,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 551039725
+            }
+          },
+          {
+            "stage": "publish",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 217788890,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 893676818
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 482788346,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2207645266
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 264999456,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1313968448
+            }
+          },
+          {
+            "stage": "read_active",
+            "before": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 70252168,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 219825939
+            },
+            "after": {
+              "calls": 44,
+              "cpu_known_calls": 44,
+              "cpu_ns": 268502875,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1088083968
+            },
+            "delta": {
+              "calls": 28,
+              "cpu_known_calls": 28,
+              "cpu_ns": 198250707,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 868258029
+            }
+          },
+          {
+            "stage": "state_at",
+            "before": {
+              "calls": 17,
+              "cpu_known_calls": 17,
+              "cpu_ns": 63111016,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 213971709
+            },
+            "after": {
+              "calls": 59,
+              "cpu_known_calls": 59,
+              "cpu_ns": 286713753,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1184438058
+            },
+            "delta": {
+              "calls": 42,
+              "cpu_known_calls": 42,
+              "cpu_ns": 223602737,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 970466349
+            }
+          },
+          {
+            "stage": "execute",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 122525274,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 421154050
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 147164198,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 445802579
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 24638924,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 24648529
+            }
+          },
+          {
+            "stage": "admission",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 407276209,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1686598629
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 1079896384,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4386799051
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 672620175,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2700200422
+            }
+          },
+          {
+            "stage": "activation",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 100462178,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 396992064
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 308120440,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1530331272
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 207658262,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1133339208
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "before": {
+              "calls": 53,
+              "cpu_known_calls": 53,
+              "cpu_ns": 62739593,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 213506312
+            },
+            "after": {
+              "calls": 207,
+              "cpu_known_calls": 207,
+              "cpu_ns": 134477315,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 361567096
+            },
+            "delta": {
+              "calls": 154,
+              "cpu_known_calls": 154,
+              "cpu_ns": 71737722,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 148060784
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "before": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1113918,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1121261
+            },
+            "after": {
+              "calls": 25,
+              "cpu_known_calls": 25,
+              "cpu_ns": 6037527,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6066726
+            },
+            "delta": {
+              "calls": 19,
+              "cpu_known_calls": 19,
+              "cpu_ns": 4923609,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4945465
+            }
+          },
+          {
+            "stage": "account_graph",
+            "before": {
+              "calls": 36,
+              "cpu_known_calls": 36,
+              "cpu_ns": 68864125,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 68911702
+            },
+            "after": {
+              "calls": 124,
+              "cpu_known_calls": 124,
+              "cpu_ns": 428054500,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2242558677
+            },
+            "delta": {
+              "calls": 88,
+              "cpu_known_calls": 88,
+              "cpu_ns": 359190375,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2173646975
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "before": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1687937,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1717258
+            },
+            "after": {
+              "calls": 153,
+              "cpu_known_calls": 153,
+              "cpu_ns": 8651535,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 85165911
+            },
+            "delta": {
+              "calls": 112,
+              "cpu_known_calls": 112,
+              "cpu_ns": 6963598,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 83448653
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 802041,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 805131
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 6776675,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6794400
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 5974634,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5989269
+            }
+          }
+        ]
+      },
+      "independent_client": {
+        "original_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "measurement_failure_before": false,
+        "measurement_failure_after": false,
+        "all_deltas_nonnegative_and_known_unknown_cover_calls": true,
+        "stages": [
+          {
+            "stage": "record",
+            "before": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 1060653,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 76735314
+            },
+            "after": {
+              "calls": 1225,
+              "cpu_known_calls": 1225,
+              "cpu_ns": 8757874,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 84886683
+            },
+            "delta": {
+              "calls": 1082,
+              "cpu_known_calls": 1082,
+              "cpu_ns": 7697221,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 8151369
+            }
+          },
+          {
+            "stage": "packet",
+            "before": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 5155156,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5189391
+            },
+            "after": {
+              "calls": 681,
+              "cpu_known_calls": 681,
+              "cpu_ns": 24791610,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 25064171
+            },
+            "delta": {
+              "calls": 591,
+              "cpu_known_calls": 591,
+              "cpu_ns": 19636454,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19874780
+            }
+          },
+          {
+            "stage": "delta",
+            "before": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 19561177,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 19598799
+            },
+            "after": {
+              "calls": 663,
+              "cpu_known_calls": 663,
+              "cpu_ns": 148473507,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 383031232
+            },
+            "delta": {
+              "calls": 577,
+              "cpu_known_calls": 577,
+              "cpu_ns": 128912330,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 363432433
+            }
+          },
+          {
+            "stage": "verify_state",
+            "before": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 80373754,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 231506648
+            },
+            "after": {
+              "calls": 206,
+              "cpu_known_calls": 206,
+              "cpu_ns": 4042787785,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17682702653
+            },
+            "delta": {
+              "calls": 159,
+              "cpu_known_calls": 159,
+              "cpu_ns": 3962414031,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17451196005
+            }
+          },
+          {
+            "stage": "verify_history",
+            "before": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 13780342,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 89402050
+            },
+            "after": {
+              "calls": 56,
+              "cpu_known_calls": 56,
+              "cpu_ns": 179065404,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 721231704
+            },
+            "delta": {
+              "calls": 43,
+              "cpu_known_calls": 43,
+              "cpu_ns": 165285062,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 631829654
+            }
+          },
+          {
+            "stage": "publish",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 219704496,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 895398983
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 2036390374,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 9068084707
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 1816685878,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 8172685724
+            }
+          },
+          {
+            "stage": "read_active",
+            "before": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 50716134,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 126200405
+            },
+            "after": {
+              "calls": 19,
+              "cpu_known_calls": 19,
+              "cpu_ns": 255430829,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1106365236
+            },
+            "delta": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 204714695,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 980164831
+            }
+          },
+          {
+            "stage": "state_at",
+            "before": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 54799154,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 130291046
+            },
+            "after": {
+              "calls": 58,
+              "cpu_known_calls": 58,
+              "cpu_ns": 1078339349,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4642037959
+            },
+            "delta": {
+              "calls": 42,
+              "cpu_known_calls": 42,
+              "cpu_ns": 1023540195,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4511746913
+            }
+          },
+          {
+            "stage": "execute",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 122564943,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 420083886
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 158777126,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 534531590
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 36212183,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 114447704
+            }
+          },
+          {
+            "stage": "admission",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 409651395,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1610790485
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 4002795712,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17310248049
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 3593144317,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15699457564
+            }
+          },
+          {
+            "stage": "activation",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 102953471,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 401915300
+            },
+            "after": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1487907062,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6598610740
+            },
+            "delta": {
+              "calls": 2,
+              "cpu_known_calls": 2,
+              "cpu_ns": 1384953591,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6196695440
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "before": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 63131338,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 288837334
+            },
+            "after": {
+              "calls": 224,
+              "cpu_known_calls": 224,
+              "cpu_ns": 287528189,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 821346967
+            },
+            "delta": {
+              "calls": 173,
+              "cpu_known_calls": 173,
+              "cpu_ns": 224396851,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 532509633
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "before": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1243833,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1249756
+            },
+            "after": {
+              "calls": 75,
+              "cpu_known_calls": 75,
+              "cpu_ns": 28768327,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 106849803
+            },
+            "delta": {
+              "calls": 69,
+              "cpu_known_calls": 69,
+              "cpu_ns": 27524494,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 105600047
+            }
+          },
+          {
+            "stage": "account_graph",
+            "before": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 55397221,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 55429779
+            },
+            "after": {
+              "calls": 150,
+              "cpu_known_calls": 150,
+              "cpu_ns": 3752485785,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 16779875965
+            },
+            "delta": {
+              "calls": 116,
+              "cpu_known_calls": 116,
+              "cpu_ns": 3697088564,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 16724446186
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "before": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1646070,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1674154
+            },
+            "after": {
+              "calls": 172,
+              "cpu_known_calls": 172,
+              "cpu_ns": 41099924,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 427876898
+            },
+            "delta": {
+              "calls": 131,
+              "cpu_known_calls": 131,
+              "cpu_ns": 39453854,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 426202744
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 792186,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 794325
+            },
+            "after": {
+              "calls": 18,
+              "cpu_known_calls": 18,
+              "cpu_ns": 11550180,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 11616907
+            },
+            "delta": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 10757994,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 10822582
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entry": {
+        "name": "execution/raw/valid-work-root-fixed-root-host-control/phase-result.json",
+        "bytes": 5129506,
+        "sha256": "7c9270aeac4e084f3030fabc53a1529bf33a03cd153ce124909bb5f403ef6854"
+      },
+      "mode": "valid-work-root",
+      "state_backend": "authenticated-v1",
+      "receiver": {
+        "original_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "measurement_failure_before": false,
+        "measurement_failure_after": false,
+        "all_deltas_nonnegative_and_known_unknown_cover_calls": true,
+        "stages": [
+          {
+            "stage": "record",
+            "before": {
+              "calls": 147,
+              "cpu_known_calls": 147,
+              "cpu_ns": 1000997,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1058816
+            },
+            "after": {
+              "calls": 1340,
+              "cpu_known_calls": 1340,
+              "cpu_ns": 15530681,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 98884886
+            },
+            "delta": {
+              "calls": 1193,
+              "cpu_known_calls": 1193,
+              "cpu_ns": 14529684,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 97826070
+            }
+          },
+          {
+            "stage": "packet",
+            "before": {
+              "calls": 92,
+              "cpu_known_calls": 92,
+              "cpu_ns": 5543310,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5581280
+            },
+            "after": {
+              "calls": 717,
+              "cpu_known_calls": 717,
+              "cpu_ns": 32911567,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 274217861
+            },
+            "delta": {
+              "calls": 625,
+              "cpu_known_calls": 625,
+              "cpu_ns": 27368257,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 268636581
+            }
+          },
+          {
+            "stage": "delta",
+            "before": {
+              "calls": 88,
+              "cpu_known_calls": 88,
+              "cpu_ns": 20917605,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 20959988
+            },
+            "after": {
+              "calls": 703,
+              "cpu_known_calls": 703,
+              "cpu_ns": 205590705,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 998813343
+            },
+            "delta": {
+              "calls": 615,
+              "cpu_known_calls": 615,
+              "cpu_ns": 184673100,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 977853355
+            }
+          },
+          {
+            "stage": "verify_state",
+            "before": {
+              "calls": 49,
+              "cpu_known_calls": 49,
+              "cpu_ns": 94234035,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 394709726
+            },
+            "after": {
+              "calls": 474,
+              "cpu_known_calls": 474,
+              "cpu_ns": 3238584744,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 18029184103
+            },
+            "delta": {
+              "calls": 425,
+              "cpu_known_calls": 425,
+              "cpu_ns": 3144350709,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 17634474377
+            }
+          },
+          {
+            "stage": "verify_history",
+            "before": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 14159791,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 14166875
+            },
+            "after": {
+              "calls": 36,
+              "cpu_known_calls": 36,
+              "cpu_ns": 64476814,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 372921221
+            },
+            "delta": {
+              "calls": 23,
+              "cpu_known_calls": 23,
+              "cpu_ns": 50317023,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 358754346
+            }
+          },
+          {
+            "stage": "publish",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 219086452,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 893818112
+            },
+            "after": {
+              "calls": 15,
+              "cpu_known_calls": 15,
+              "cpu_ns": 400495948,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1862987187
+            },
+            "delta": {
+              "calls": 11,
+              "cpu_known_calls": 11,
+              "cpu_ns": 181409496,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 969169075
+            }
+          },
+          {
+            "stage": "read_active",
+            "before": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 66611742,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 66625170
+            },
+            "after": {
+              "calls": 135,
+              "cpu_known_calls": 135,
+              "cpu_ns": 1321084496,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 7144836037
+            },
+            "delta": {
+              "calls": 119,
+              "cpu_known_calls": 119,
+              "cpu_ns": 1254472754,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 7078210867
+            }
+          },
+          {
+            "stage": "state_at",
+            "before": {
+              "calls": 17,
+              "cpu_known_calls": 17,
+              "cpu_ns": 59909140,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 59925337
+            },
+            "after": {
+              "calls": 388,
+              "cpu_known_calls": 388,
+              "cpu_ns": 3745192288,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 21051256694
+            },
+            "delta": {
+              "calls": 371,
+              "cpu_known_calls": 371,
+              "cpu_ns": 3685283148,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 20991331357
+            }
+          },
+          {
+            "stage": "execute",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 124373037,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 646386928
+            },
+            "after": {
+              "calls": 324,
+              "cpu_known_calls": 324,
+              "cpu_ns": 861205396,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4139116382
+            },
+            "delta": {
+              "calls": 320,
+              "cpu_known_calls": 320,
+              "cpu_ns": 736832359,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 3492729454
+            }
+          },
+          {
+            "stage": "admission",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 407999596,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1683357281
+            },
+            "after": {
+              "calls": 357,
+              "cpu_known_calls": 357,
+              "cpu_ns": 5434575214,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 28130904481
+            },
+            "delta": {
+              "calls": 353,
+              "cpu_known_calls": 353,
+              "cpu_ns": 5026575618,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 26447547200
+            }
+          },
+          {
+            "stage": "activation",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 101583280,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 476652855
+            },
+            "after": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 217883757,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1216731279
+            },
+            "delta": {
+              "calls": 10,
+              "cpu_known_calls": 10,
+              "cpu_ns": 116300477,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 740078424
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "before": {
+              "calls": 53,
+              "cpu_known_calls": 53,
+              "cpu_ns": 63121919,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 212878298
+            },
+            "after": {
+              "calls": 483,
+              "cpu_known_calls": 483,
+              "cpu_ns": 223850358,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1016665757
+            },
+            "delta": {
+              "calls": 430,
+              "cpu_known_calls": 430,
+              "cpu_ns": 160728439,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 803787459
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "before": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1266431,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1272838
+            },
+            "after": {
+              "calls": 30,
+              "cpu_known_calls": 30,
+              "cpu_ns": 7771005,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 7805221
+            },
+            "delta": {
+              "calls": 24,
+              "cpu_known_calls": 24,
+              "cpu_ns": 6504574,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 6532383
+            }
+          },
+          {
+            "stage": "account_graph",
+            "before": {
+              "calls": 36,
+              "cpu_known_calls": 36,
+              "cpu_ns": 68716058,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 369183037
+            },
+            "after": {
+              "calls": 430,
+              "cpu_known_calls": 430,
+              "cpu_ns": 2877804796,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15582647440
+            },
+            "delta": {
+              "calls": 394,
+              "cpu_known_calls": 394,
+              "cpu_ns": 2809088738,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 15213464403
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "before": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1653652,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1684314
+            },
+            "after": {
+              "calls": 103,
+              "cpu_known_calls": 103,
+              "cpu_ns": 5666617,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5736491
+            },
+            "delta": {
+              "calls": 62,
+              "cpu_known_calls": 62,
+              "cpu_ns": 4012965,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 4052177
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 662211,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 664701
+            },
+            "after": {
+              "calls": 324,
+              "cpu_known_calls": 324,
+              "cpu_ns": 130649422,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 451363232
+            },
+            "delta": {
+              "calls": 320,
+              "cpu_known_calls": 320,
+              "cpu_ns": 129987211,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 450698531
+            }
+          }
+        ]
+      },
+      "independent_client": {
+        "original_scope": "cumulative actual native owner observations; nested intervals are not additive; current-thread CPU excludes scoped workers; errors and cancelled calls are included; unknown CPU is counted separately",
+        "measurement_failure_before": false,
+        "measurement_failure_after": false,
+        "all_deltas_nonnegative_and_known_unknown_cover_calls": true,
+        "stages": [
+          {
+            "stage": "record",
+            "before": {
+              "calls": 143,
+              "cpu_known_calls": 143,
+              "cpu_ns": 976999,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1033920
+            },
+            "after": {
+              "calls": 145,
+              "cpu_known_calls": 145,
+              "cpu_ns": 1013414,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1071620
+            },
+            "delta": {
+              "calls": 2,
+              "cpu_known_calls": 2,
+              "cpu_ns": 36415,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 37700
+            }
+          },
+          {
+            "stage": "packet",
+            "before": {
+              "calls": 90,
+              "cpu_known_calls": 90,
+              "cpu_ns": 5049702,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5084082
+            },
+            "after": {
+              "calls": 91,
+              "cpu_known_calls": 91,
+              "cpu_ns": 5120275,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 5155175
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 70573,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 71093
+            }
+          },
+          {
+            "stage": "delta",
+            "before": {
+              "calls": 86,
+              "cpu_known_calls": 86,
+              "cpu_ns": 20479029,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 95388890
+            },
+            "after": {
+              "calls": 87,
+              "cpu_known_calls": 87,
+              "cpu_ns": 21079306,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 95989759
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 600277,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 600869
+            }
+          },
+          {
+            "stage": "verify_state",
+            "before": {
+              "calls": 47,
+              "cpu_known_calls": 47,
+              "cpu_ns": 79978028,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 304622311
+            },
+            "after": {
+              "calls": 48,
+              "cpu_known_calls": 48,
+              "cpu_ns": 155870872,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1010564267
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 75892844,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 705941956
+            }
+          },
+          {
+            "stage": "verify_history",
+            "before": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 13994200,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 14000994
+            },
+            "after": {
+              "calls": 13,
+              "cpu_known_calls": 13,
+              "cpu_ns": 13994200,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 14000994
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "stage": "publish",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 216277742,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 890092432
+            },
+            "after": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 216277742,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 890092432
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "stage": "read_active",
+            "before": {
+              "calls": 14,
+              "cpu_known_calls": 14,
+              "cpu_ns": 47137618,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 47147522
+            },
+            "after": {
+              "calls": 15,
+              "cpu_known_calls": 15,
+              "cpu_ns": 126463221,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 756542192
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 79325603,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 709394670
+            }
+          },
+          {
+            "stage": "state_at",
+            "before": {
+              "calls": 16,
+              "cpu_known_calls": 16,
+              "cpu_ns": 50896184,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 122289243
+            },
+            "after": {
+              "calls": 17,
+              "cpu_known_calls": 17,
+              "cpu_ns": 130303911,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 831766527
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 79407727,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 709477284
+            }
+          },
+          {
+            "stage": "execute",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 123412260,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 573071091
+            },
+            "after": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 124493227,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 662412807
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 1080967,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 89341716
+            }
+          },
+          {
+            "stage": "admission",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 404524755,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1677512838
+            },
+            "after": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 486605109,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 2477937024
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 82080354,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 800424186
+            }
+          },
+          {
+            "stage": "activation",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 100586109,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 474901666
+            },
+            "after": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 100586109,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 474901666
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "stage": "complete_commitment",
+            "before": {
+              "calls": 51,
+              "cpu_known_calls": 51,
+              "cpu_ns": 61468124,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 211264849
+            },
+            "after": {
+              "calls": 52,
+              "cpu_known_calls": 52,
+              "cpu_ns": 61733624,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 211531096
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 265500,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 266247
+            }
+          },
+          {
+            "stage": "complete_state_root",
+            "before": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1106287,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1113223
+            },
+            "after": {
+              "calls": 6,
+              "cpu_known_calls": 6,
+              "cpu_ns": 1106287,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1113223
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "stage": "account_graph",
+            "before": {
+              "calls": 34,
+              "cpu_known_calls": 34,
+              "cpu_ns": 55379191,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 205148456
+            },
+            "after": {
+              "calls": 35,
+              "cpu_known_calls": 35,
+              "cpu_ns": 130211690,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 910028629
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 74832499,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 704880173
+            }
+          },
+          {
+            "stage": "persisted_state_root",
+            "before": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1810283,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1840320
+            },
+            "after": {
+              "calls": 41,
+              "cpu_known_calls": 41,
+              "cpu_ns": 1810283,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1840320
+            },
+            "delta": {
+              "calls": 0,
+              "cpu_known_calls": 0,
+              "cpu_ns": 0,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 0
+            }
+          },
+          {
+            "stage": "execution_parent_binding",
+            "before": {
+              "calls": 4,
+              "cpu_known_calls": 4,
+              "cpu_ns": 1056843,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 1062018
+            },
+            "after": {
+              "calls": 5,
+              "cpu_known_calls": 5,
+              "cpu_ns": 1779831,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 90051889
+            },
+            "delta": {
+              "calls": 1,
+              "cpu_known_calls": 1,
+              "cpu_ns": 722988,
+              "cpu_unknown_calls": 0,
+              "unwinding_calls": 0,
+              "wall_ns": 88989871
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

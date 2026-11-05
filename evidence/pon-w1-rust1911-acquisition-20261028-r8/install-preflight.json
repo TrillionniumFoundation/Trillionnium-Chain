@@ -1,0 +1,12 @@
+{
+  "schema": "TRNM-OFFICIAL-COMPILER-INSTALL-PREFLIGHT1",
+  "unix_ns": 1793162598225945781,
+  "free_bytes": 3256991744,
+  "projected_extracted_bytes_NOT_MEASURED": 1744830464,
+  "floor_bytes": 1073741824,
+  "full_real_archive_inventory_still_required_before_extraction": true,
+  "fetch_receipt_sha256": "5c757d8b8bb46b1832761f0e88be79af85fdfa32785a37cec09cc3566e7d827f",
+  "script_sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180",
+  "independent_read_only_review": "history_incremental_r8 inspected pinned source and reported no blocking path/link escape for exact official hash and new owned root; not an untrusted-tar DoS proof; outer guard required",
+  "build_or_prover_authorized": false
+}

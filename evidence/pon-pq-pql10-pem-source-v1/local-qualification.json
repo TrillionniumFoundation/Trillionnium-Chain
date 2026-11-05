@@ -1,0 +1,75 @@
+{
+  "schema": "trnm-pq-pql10-exact-source-evidence-v1",
+  "status": "RESEARCH_ONLY_HOLD_NO_GO",
+  "parent_commit": "8679d86a75b4d5822d89180888bc8c2db4dc64d2",
+  "sources": {
+    "previous_c_blob": "f3aeade9774b1df116fd10c2449404b07ec36afb",
+    "tested_and_pushed_c_blob": "9f4aec3b83176709fd4e09ef5d150c087df7268c",
+    "tested_and_pushed_new_test_blob": "cbcf1766c0115f792f59d643e71df4d385e76310",
+    "inherited_original_test_blob": "1d4fe6a89a44faafadbb5cab1343d5849b66ab2e"
+  },
+  "environment": {
+    "os": "Linux 6.18.55 x86_64 GNU/Linux",
+    "python": "3.13.5",
+    "cc": "Debian GCC 14.2.0-19",
+    "openssl": "3.5.5",
+    "filesystem": "container overlayfs",
+    "rust_available": false
+  },
+  "observed_prepatch_negative": {
+    "selected": 7,
+    "expected_failed": 3,
+    "failed_cases": [
+      "test_preamble_before_pem_rejected",
+      "test_der_trailing_bytes_inside_pem_rejected",
+      "test_pem_suffix_space_is_not_single_canonical_file"
+    ],
+    "unmodified_source_sha1": "f3aeade9774b1df116fd10c2449404b07ec36afb",
+    "raw_log_stored_locally": true
+  },
+  "executed": [
+    {
+      "kind": "patched exact original + 7 new real crypto native tests",
+      "passed": 7,
+      "failed": 0,
+      "sanitized": false,
+      "log": "normal-test.log",
+      "log_blob": "4768863acadbe03d793e615763cf2fe006a3332a"
+    },
+    {
+      "kind": "patched exact original + 7 new real crypto native tests",
+      "passed": 7,
+      "failed": 0,
+      "sanitized": true,
+      "sanitizers": [
+        "ASan",
+        "UBSan",
+        "LeakSan"
+      ],
+      "log": "sanitizer-test.log",
+      "log_blob": "2ada9806d35604801ab9a01d289d8a60867a0cac"
+    },
+    {
+      "kind": "patched exact source + untouched byte-identical 5 upstream tests + 7 new tests",
+      "passed": 12,
+      "failed": 0,
+      "sanitized": false,
+      "log": "combined-test.log",
+      "log_blob": "1d8cd4234d1ae143434d024c8629aaf81014c62a"
+    }
+  ],
+  "not_run": [
+    "cargo",
+    "Rust native protocol test",
+    "full cross-branch PQ research corpus",
+    "independent cryptographic review",
+    "physical power loss",
+    "public WAN",
+    "full Chain consensus activation qualification"
+  ],
+  "production_activation": false,
+  "independent_accepted": false,
+  "main_unchanged": true,
+  "verified_work_authority": false,
+  "final_use_authority": false
+}

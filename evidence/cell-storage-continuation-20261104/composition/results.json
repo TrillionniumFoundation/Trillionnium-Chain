@@ -1,0 +1,114 @@
+{
+  "schema": "trnm.cell.storage-composed-observation.v1",
+  "tested_commit": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+  "tested_tree": "20d41d881353ae7f66f1d15f326274ee811f7c65",
+  "ordered_parents": [
+    "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "f69413581dea0f7e2685bdd444d080ea57fc6630"
+  ],
+  "source_before_after_equal_for_both_receipts": true,
+  "tracked_entries_verified": 8811,
+  "tracked_bytes_verified": 941457721,
+  "m09_library": {
+    "passed": 281,
+    "failed": 0,
+    "ignored": 0
+  },
+  "m09_cli_integration": {
+    "passed": 29,
+    "failed": 0,
+    "ignored": 0
+  },
+  "m06_evaluation_quorum_v2": {
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  "m06_selected_pq_owner": {
+    "name": "pon_executor::pq_accounts_v2::application_v6_tests::actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 119,
+    "whole_m06_library_run": false,
+    "note": "The incoming rejection assertions execute within this one existing test and are not counted as separate test cases."
+  },
+  "m09_compile_fail_documentation": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0
+  },
+  "distinct_native_and_cli_tests_in_this_composition_set": 314,
+  "python_tests": {
+    "ci_source_integrity": 34,
+    "pq_source_integrity": 34,
+    "claim_guard": 22,
+    "authority_surface": 11,
+    "model_root_oracle": 4,
+    "llm_runtime_artifact_loading": 17,
+    "llm_parent_material": 11
+  },
+  "python_tests_total": 133,
+  "python_scope": "NumPy-backed test doubles exercise weight identity and loading control logic; no Torch/Safetensors runtime or actual LLM forward was executed.",
+  "strict_clippy": "PASS: whole workspace, all targets, default features, -D warnings",
+  "format": "PASS: cargo fmt --all -- --check",
+  "native_inventory": "PASS",
+  "source_pins": 424,
+  "required_paths": 338,
+  "repository_checks": {
+    "activation": false,
+    "head": "b110ba5bc1f755e5988c1b1f710243677976bcc8",
+    "local_links": 2490,
+    "normal_dependency_edges": 24,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1118,
+    "source_state": "committed-clean",
+    "tree": "20d41d881353ae7f66f1d15f326274ee811f7c65",
+    "workspace_packages": 26
+  },
+  "workspace_members": 26,
+  "resolved_platform_packages": 175,
+  "lock_packages": 180,
+  "lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+  "executed_binary_observations": [
+    {
+      "scope": "m09_library",
+      "name": "trnm_data_availability-4afa79d63a34aeeb",
+      "bytes": 74969608,
+      "sha256": "ac07d6e0a766bf0f7c40e6d53c15459400fb4982545ac80688a8e6520f55b79d"
+    },
+    {
+      "scope": "m06_evaluation_quorum",
+      "name": "evaluation_quorum_v2-722a82ae8d9a1174",
+      "bytes": 54855632,
+      "sha256": "904dadeb95ddfef465c0c5be20254c8534bbf650faafa9c111ebe2aaffeb6b97"
+    },
+    {
+      "scope": "m06_selected_pq_owner",
+      "name": "trnm_mvcc_fee-649d89314223ac39",
+      "bytes": 71305960,
+      "sha256": "f61df2231c2c8f3195ade8b7d41ef2103d9cc7764043e7b4b6f677452e2b981e"
+    },
+    {
+      "scope": "trnm_cell_cli",
+      "name": "trnm-cell",
+      "bytes": 46192992,
+      "sha256": "f97ea6a05a1bd485963a7454a614f58c6366a6bfda96f6689fd4d459df9fb801"
+    }
+  ],
+  "selected_node_storage_tests_rerun_on_composition": false,
+  "original_node_test_receipt_commit": "3e866c637197339700c93a6b716d20a3968291f1",
+  "production_activation": false,
+  "public_wan_accepted": false,
+  "independent_acceptance": false,
+  "funded_automatic_renewal": false,
+  "new_expert_abi_accepted": false,
+  "current_or_final_use_granted": false,
+  "remote_ci_or_prospective_merge_success_claimed": false,
+  "notes": [
+    "The first composition evidence follow-up ea3fed764e0f6e3196a1a43357ecf77381c13a42 changes only the continuation evidence directory; its implementation, source pins and lockfile retain the C tested commit. Later integration commits are recorded separately.",
+    "Earlier A receipts and failures are preserved with their original source identities.",
+    "No command durations are used as performance comparisons."
+  ]
+}

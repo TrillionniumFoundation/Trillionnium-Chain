@@ -1,0 +1,10 @@
+{
+  "legacy_observation_source": "390617cbe7b169843f60c5622ec26d2531f385d3",
+  "legacy_state_backend": "legacy-v2",
+  "this_source": "4940b7a8072761807c5da75b322eecb05a5f193f",
+  "this_state_backend": "authenticated-v1",
+  "same_original_test_name": true,
+  "reporting_scope": "sequential finite observations, no controlled hardware/host-load equivalence asserted",
+  "owned_closing_finished_before_measurement": true,
+  "wait_seconds": 48.00478680199012
+}

@@ -1,0 +1,343 @@
+{
+  "includes": [
+    {
+      "input_sha256": "2f2da936598864c6b73b96410ed88d3b8f7bd836357fbf7385b681af5591df46",
+      "line": 175,
+      "literal": "../../../../config/pon/checkpoint-tile-task-v1.json",
+      "resolved": "config/pon/checkpoint-tile-task-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs",
+      "source_sha256": "9172d2bd0407e66fc19f0a72fe259762ead06ae3e03bb237f615442283d7f95b"
+    },
+    {
+      "input_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "line": 223,
+      "literal": "../../../../config/pon/ledger-v1.json",
+      "resolved": "config/pon/ledger-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs",
+      "source_sha256": "9172d2bd0407e66fc19f0a72fe259762ead06ae3e03bb237f615442283d7f95b"
+    },
+    {
+      "input_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "line": 226,
+      "literal": "../../../../config/pon/work-profile-v1.json",
+      "resolved": "config/pon/work-profile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_policy_v1.rs",
+      "source_sha256": "9172d2bd0407e66fc19f0a72fe259762ead06ae3e03bb237f615442283d7f95b"
+    },
+    {
+      "input_sha256": "6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821",
+      "line": 24,
+      "literal": "../../../../config/pon/continuity-v1.json",
+      "resolved": "config/pon/continuity-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "source_sha256": "210b7e286acbd4ced43b91684df3fbacd64ba3c82f6fab94827da2e4c19a8b3d"
+    },
+    {
+      "input_sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de",
+      "line": 43,
+      "literal": "../../../../config/pon/qualified-task-lifecycle-v4.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v4.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "source_sha256": "210b7e286acbd4ced43b91684df3fbacd64ba3c82f6fab94827da2e4c19a8b3d"
+    },
+    {
+      "input_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "line": 214,
+      "literal": "../../../../config/pon/ledger-v1.json",
+      "resolved": "config/pon/ledger-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_actors.rs",
+      "source_sha256": "4476798f42019bba9364a57508d5a4029c0a29ca706253d056589f3fc3dac915"
+    },
+    {
+      "input_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "line": 217,
+      "literal": "../../../../config/pon/work-profile-v1.json",
+      "resolved": "config/pon/work-profile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_actors.rs",
+      "source_sha256": "4476798f42019bba9364a57508d5a4029c0a29ca706253d056589f3fc3dac915"
+    },
+    {
+      "input_sha256": "eb7dcd1ada227e3e78a3747e51a89c626ef97b854c056d06dfef7e97c6ffa6ac",
+      "line": 219,
+      "literal": "../../../../config/pon/operator-actors-dev-v1.json",
+      "resolved": "config/pon/operator-actors-dev-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_actors.rs",
+      "source_sha256": "4476798f42019bba9364a57508d5a4029c0a29ca706253d056589f3fc3dac915"
+    },
+    {
+      "input_sha256": "7655e910d97801f4e09ddbf41a2b710fe209cfe7dee8ec823395438101a928b6",
+      "line": 90,
+      "literal": "../../../../config/pon/operator-checkpoint-tile-v1.json",
+      "resolved": "config/pon/operator-checkpoint-tile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs",
+      "source_sha256": "7680680a580445c5e2f52bec28710abf4e7e682f4c0265ed4c6d38b2d21eb42f"
+    },
+    {
+      "input_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "line": 127,
+      "literal": "../../../../config/pon/ledger-v1.json",
+      "resolved": "config/pon/ledger-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs",
+      "source_sha256": "7680680a580445c5e2f52bec28710abf4e7e682f4c0265ed4c6d38b2d21eb42f"
+    },
+    {
+      "input_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "line": 130,
+      "literal": "../../../../config/pon/work-profile-v1.json",
+      "resolved": "config/pon/work-profile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/deployment_checkpoint_tile_v1.rs",
+      "source_sha256": "7680680a580445c5e2f52bec28710abf4e7e682f4c0265ed4c6d38b2d21eb42f"
+    },
+    {
+      "input_sha256": "c2e5479d5230b94f5f5feb1e4ea7f4cfb49be2c59b0edc87bddd52bc70ab88cf",
+      "line": 22,
+      "literal": "../../../../config/pon/growth-reference-v2.json",
+      "resolved": "config/pon/growth-reference-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs",
+      "source_sha256": "509b553965f7e236747e93df6a65d3da34dcd086a27864779fd1da572ee70baf"
+    },
+    {
+      "input_sha256": "57eb5ffc9d62e849718dd9c7a20be0f0141a9d91f2d213ea77dfce3793aa9c6d",
+      "line": 333,
+      "literal": "../../../../tests/vectors/pon/native-growth-reference-v2.json",
+      "resolved": "tests/vectors/pon/native-growth-reference-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/growth_profile_v2.rs",
+      "source_sha256": "509b553965f7e236747e93df6a65d3da34dcd086a27864779fd1da572ee70baf"
+    },
+    {
+      "input_sha256": "7457a42476d943b7f84601433266f5c9ae4fe1ce3838c24f54af58487068b5c3",
+      "line": 15,
+      "literal": "../../../../config/pon/model-composition-v4.json",
+      "resolved": "config/pon/model-composition-v4.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/model_composition_v4.rs",
+      "source_sha256": "a62f9e0b96bc68bae20800514116d9447b1a123f134210c60cc21ad7ea135279"
+    },
+    {
+      "input_sha256": "d665b9aa8f48e0ac90055868e5716ec133f2546497c6fbb4128d6934dfcb5eb0",
+      "line": 22,
+      "literal": "../../../../config/pon/model-evidence-v3.json",
+      "resolved": "config/pon/model-evidence-v3.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "source_sha256": "9055bba1820b307ca3450953370504ee661ff4020151f67f468ce43dc215ad2f"
+    },
+    {
+      "input_sha256": "4a4f0cac92cccf57aa44ef12b736d899e99c9af5bcbe92b29ab4dc80af4f99c7",
+      "line": 16,
+      "literal": "../../../../config/pon/model-evolution-v5.json",
+      "resolved": "config/pon/model-evolution-v5.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+      "source_sha256": "d49801ca533604279c7666ce13173cd839f59e3df6f460962cf17ad12c942549"
+    },
+    {
+      "input_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "line": 390,
+      "literal": "../../../../config/pon/ledger-v1.json",
+      "resolved": "config/pon/ledger-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+      "source_sha256": "9503b0282adb69b74ed0155763f887da63fb777efd79cbd74ed5575a6b895252"
+    },
+    {
+      "input_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "line": 393,
+      "literal": "../../../../config/pon/work-profile-v1.json",
+      "resolved": "config/pon/work-profile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+      "source_sha256": "9503b0282adb69b74ed0155763f887da63fb777efd79cbd74ed5575a6b895252"
+    },
+    {
+      "input_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "line": 534,
+      "literal": "../../../../config/pon/devnet-v1.json",
+      "resolved": "config/pon/devnet-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+      "line": 543,
+      "literal": "../../../../config/pon/evaluation-round-v1.json",
+      "resolved": "config/pon/evaluation-round-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "b4948c9f00f4edcec642d804e06376f6a0633556a7d45e2c6b4b85361eec9ef9",
+      "line": 560,
+      "literal": "../../../../config/pon/public-evaluation-model-evolution-v5.json",
+      "resolved": "config/pon/public-evaluation-model-evolution-v5.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "896978622250af7ecb6f116a21e1167f62f96494d8dd8f8fadb3e9989ca4bbf7",
+      "line": 562,
+      "literal": "../../../../config/pon/public-evaluation-quorum-v2.json",
+      "resolved": "config/pon/public-evaluation-quorum-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c",
+      "line": 564,
+      "literal": "../../../../config/pon/public-evaluation-native-v1.json",
+      "resolved": "config/pon/public-evaluation-native-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "afdceeb7db88e1e8f00c83387d910fa2ed46c1411f8c4facff45f7bb6bd228ee",
+      "line": 652,
+      "literal": "../../../../config/pon/qualified-work-task-v1.json",
+      "resolved": "config/pon/qualified-work-task-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "9f67a8a2e7d16927b1307edee265d76a2fda5c6639125d2e9816c6ec29535948",
+      "line": 676,
+      "literal": "../../../../config/pon/qualified-task-lifecycle-v2.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "33749de1bfceab71623fefe40ed875a73ba99f8a56a943967422c1901a1c5500",
+      "line": 694,
+      "literal": "../../../../config/pon/qualified-task-lifecycle-v3.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v3.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "f3051aaa960406828c2ec905caad4150e6e215204b29653ecdb56cdecf21a2de",
+      "line": 716,
+      "literal": "../../../../config/pon/qualified-task-lifecycle-v4.json",
+      "resolved": "config/pon/qualified-task-lifecycle-v4.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "line": 765,
+      "literal": "../../../../config/pon/model-family-v1.json",
+      "resolved": "config/pon/model-family-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "dd754c4ffaf863522da856cafa892cde0957fcbf7766205e6eb914c73f576923",
+      "line": 782,
+      "literal": "../../../../config/pon/model-family-evolution-v3.json",
+      "resolved": "config/pon/model-family-evolution-v3.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "c2d14962cfe7940f0b46abd721912aec5a7231beda601142e363bbbedc2d7eb8",
+      "line": 806,
+      "literal": "../../../../config/pon/integer-factor-candidate-v2.json",
+      "resolved": "config/pon/integer-factor-candidate-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "4ab81531a4f319ee034cf18bf2f72d3a55f7bd2de27fbb04fc4d99148bf199d2",
+      "line": 859,
+      "literal": "../../../../config/pon/model-family-integer-factor-v2.json",
+      "resolved": "config/pon/model-family-integer-factor-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+      "line": 877,
+      "literal": "../../../../config/pon/model-family-smollm2-135m-v1.json",
+      "resolved": "config/pon/model-family-smollm2-135m-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "line": 974,
+      "literal": "../../../../config/pon/ledger-v1.json",
+      "resolved": "config/pon/ledger-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "line": 978,
+      "literal": "../../../../config/pon/work-profile-v1.json",
+      "resolved": "config/pon/work-profile-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "source_sha256": "7646f1d7d4b2b9b956c70d737ca32240a8013c2ad941fe0b13fb5d83be420c2c"
+    },
+    {
+      "input_sha256": "711a3cbde34f04394b7d995d0f0f1d077743ea1299407572fb3c789f1b3e587d",
+      "line": 35,
+      "literal": "../../../../formal/pon-nakamoto-v1/vectors/evaluation-quorum-v2.json",
+      "resolved": "formal/pon-nakamoto-v1/vectors/evaluation-quorum-v2.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+      "source_sha256": "dd4fdbb63fee52a1ac47ef04635ba9abe6160405ae738ea84146186ef7ca813d"
+    },
+    {
+      "input_sha256": "c572fea49b7ea4c1beee64623c499fe2565ab462bfe431747aeaea0dc27db1e5",
+      "line": 32,
+      "literal": "../../../../formal/pon-nakamoto-v1/vectors/model-evolution-v5.json",
+      "resolved": "formal/pon-nakamoto-v1/vectors/model-evolution-v5.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs",
+      "source_sha256": "c550dd95126679ee63ec39c4feef008075ea48ecd0ee479505efebf2b1647a46"
+    },
+    {
+      "input_sha256": "a96d431758900ac703c92d2035a853ac5df9269b2d91a926e2e57be7049e039a",
+      "line": 37,
+      "literal": "../../../../formal/pon-nakamoto-v1/vectors/model-task-windows-v1.manifest.json",
+      "resolved": "formal/pon-nakamoto-v1/vectors/model-task-windows-v1.manifest.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs",
+      "source_sha256": "c550dd95126679ee63ec39c4feef008075ea48ecd0ee479505efebf2b1647a46"
+    },
+    {
+      "input_sha256": "9fa725df386ee99dfe9292afc10502a038f665204cb8bf6d6fd137a5fe2f0194",
+      "line": 41,
+      "literal": "../../../../formal/pon-nakamoto-v1/vectors/model-task-windows-v1.json",
+      "resolved": "formal/pon-nakamoto-v1/vectors/model-task-windows-v1.json",
+      "source": "trillionnium/crates/trnm-mvcc-fee/tests/model_evolution_v5.rs",
+      "source_sha256": "c550dd95126679ee63ec39c4feef008075ea48ecd0ee479505efebf2b1647a46"
+    },
+    {
+      "input_sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+      "line": 14,
+      "literal": "../fixtures/pq_transfer/public.der",
+      "resolved": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+      "source": "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+      "source_sha256": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1"
+    },
+    {
+      "input_sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+      "line": 14,
+      "literal": "../fixtures/pq_transfer/public.der",
+      "resolved": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+      "source": "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+      "source_sha256": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f"
+    },
+    {
+      "input_sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+      "line": 14,
+      "literal": "../fixtures/pq_transfer/public.der",
+      "resolved": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+      "source": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+      "source_sha256": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa"
+    },
+    {
+      "input_sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61",
+      "line": 14,
+      "literal": "../fixtures/pq_transfer/public.der",
+      "resolved": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+      "source": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+      "source_sha256": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+    }
+  ],
+  "repo_docs_or_evidence_inputs": [],
+  "scope": "Rust source paths from retained depfile superset",
+  "verified_source": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1"
+}

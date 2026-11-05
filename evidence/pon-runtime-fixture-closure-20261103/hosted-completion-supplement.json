@@ -1,0 +1,806 @@
+{
+  "schema": "trnm-original-hosted-completion-supplement-v1",
+  "observed_utc": "2026-11-03 19:20:58 UTC",
+  "source_head": "116a3caf6046dd0db3caf1d0797e636c35c877b8",
+  "actual_merge": "4f10f1858ca9dbf6fdfb55e2abce569bca21acbe",
+  "scope": "GitHub original job and step status readback; not new-source qualification and not a native log count",
+  "all_blockers_closed": false,
+  "job_groups": [
+    {
+      "run_id": 41686753270,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753270",
+      "jobs": [
+        {
+          "id": 126094409224,
+          "name": "PQ network and witness (ubuntu-24.04, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753270/job/126094409224",
+          "started_at": "2026-11-03T18:03:42Z",
+          "completed_at": "2026-11-03T18:48:21Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Prepare exact-source command records",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Preserve native control records before the complete regression",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Preserve the complete original Node library regression suite",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Check strict Clippy without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Preserve complete records including failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409520,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753270/job/126094409520",
+          "started_at": "2026-11-03T18:07:56Z",
+          "completed_at": "2026-11-03T18:49:28Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Prepare exact-source command records",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Preserve native control records before the complete regression",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Preserve the complete original Node library regression suite",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Check strict Clippy without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Preserve complete records including failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409522,
+          "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753270/job/126094409522",
+          "started_at": "2026-11-03T17:53:38Z",
+          "completed_at": "2026-11-03T18:49:55Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Prepare exact-source command records",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Preserve native control records before the complete regression",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Preserve the complete original Node library regression suite",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Check strict Clippy without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Preserve complete records including failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409592,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753270/job/126094409592",
+          "started_at": "2026-11-03T17:42:40Z",
+          "completed_at": "2026-11-03T18:31:21Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Prepare exact-source command records",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Require retained source and claim controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Install the original pinned compiler",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Prepare the independently pinned OpenSSL provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Record compiler, exact locked graph and formatting",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute every required native effect and rejection control",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Preserve native control records before the complete regression",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Preserve the complete original Node library regression suite",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Check strict Clippy without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Preserve complete records including failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 41686753211,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753211",
+      "jobs": [
+        {
+          "id": 126094409068,
+          "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753211/job/126094409068",
+          "started_at": "2026-11-03T17:57:25Z",
+          "completed_at": "2026-11-03T18:26:22Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify unchanged source and original project boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Install the source-pinned native toolchain",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Build the original complete workspace in the unchanged test profile",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute selected arithmetic canonical and reorg semantic controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Observe fixed touched owners across actual account and history growth",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Recheck the same test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Recheck the same M06 test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Reverify exact source after every outcome",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain actual successes and failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409167,
+          "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753211/job/126094409167",
+          "started_at": "2026-11-03T17:57:25Z",
+          "completed_at": "2026-11-03T18:30:51Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify unchanged source and original project boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Install the source-pinned native toolchain",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Build the original complete workspace in the unchanged test profile",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute selected arithmetic canonical and reorg semantic controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Observe fixed touched owners across actual account and history growth",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Recheck the same test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Recheck the same M06 test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Reverify exact source after every outcome",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain actual successes and failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409231,
+          "name": "original workspace test CPU (ubuntu-24.04, head)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753211/job/126094409231",
+          "started_at": "2026-11-03T17:55:27Z",
+          "completed_at": "2026-11-03T18:19:41Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify unchanged source and original project boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Install the source-pinned native toolchain",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Build the original complete workspace in the unchanged test profile",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute selected arithmetic canonical and reorg semantic controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Observe fixed touched owners across actual account and history growth",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Recheck the same test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Recheck the same M06 test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Reverify exact source after every outcome",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain actual successes and failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 126094409318,
+          "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41686753211/job/126094409318",
+          "started_at": "2026-11-03T17:58:13Z",
+          "completed_at": "2026-11-03T18:22:04Z",
+          "steps": [
+            {
+              "number": 1,
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 2,
+              "name": "Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify unchanged source and original project boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 4,
+              "name": "Install the source-pinned native toolchain",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Build the original complete workspace in the unchanged test profile",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute selected arithmetic canonical and reorg semantic controls",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Observe fixed touched owners across actual account and history growth",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Recheck the same test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Recheck the same M06 test ELF after success or failure",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Reverify exact source after every outcome",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain actual successes and failures",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout the exact candidate or actual target merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

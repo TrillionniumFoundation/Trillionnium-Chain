@@ -1,0 +1,353 @@
+   Compiling getrandom v0.4.2
+   Compiling rand_core v0.10.1
+   Compiling crypto-common v0.2.2
+   Compiling openssl-sys v0.9.117
+   Compiling const-oid v0.10.2
+   Compiling der v0.8.3
+   Compiling digest v0.11.3
+   Compiling spki v0.8.1
+   Compiling foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+   Compiling foreign-types v0.3.2
+   Compiling shake v0.1.0
+   Compiling pkcs8 v0.11.0
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling rustix v1.1.4
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-crypto-primitives)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/52b001730263/chain-pq-integration/trillionnium/crates/trnm-mvcc-fee)
+    Finished `release` profile [optimized] target(s) in 2m 54s
+     Running unittests src/lib.rs (/tmp/chain-pq-target/release/deps/trnm_mvcc_fee-f1c6c05a835f7b56)
+
+running 87 tests
+test checkpoint_tile_material_v1::tests::all_finite_bf16_patterns_match_independent_exact_f64_powers_and_even_rounding ... ok
+test checkpoint_tile_material_v1::tests::ieee_integer_rounding_zero_subnormal_ties_clips_and_nonfinite ... ok
+test deterministic_parallel_v1::tests::canonical_indices_and_unique_transaction_ids_are_required ... ok
+test deterministic_parallel_v1::tests::fee_limit_and_worker_bounds_fail_closed ... ok
+test deterministic_parallel_v1::tests::reverted_and_out_of_resource_never_write ... ok
+test deterministic_parallel_v1::tests::undeclared_access_and_noncanonical_sets_fail_closed ... ok
+test deterministic_parallel_v1::tests::worker_count_does_not_change_roots_or_receipts ... ok
+test growth_profile_v2::tests::growth_reference_codec_matches_independent_vector ... ok
+test growth_profile_v2::tests::growth_reference_independent_full_vectors_and_field_mutations ... ok
+test growth_profile_v2::tests::growth_reference_keeps_zero_nonce_history_and_working_bound ... ok
+test growth_profile_v2::tests::growth_reference_root_is_context_bound_and_conserved ... ok
+test model_composition_v4::oracle_observations::native_arithmetic_observations_for_independent_python ... ok
+test model_composition_v4::tests::a_rank_three_sum_has_no_rank_three_ilf2_witness_escape ... ok
+test model_composition_v4::tests::exact_sum_and_ablation_count_a_nonzero_parent_once ... ok
+test model_composition_v4::tests::exact_zero_subset_is_refused_even_when_full_bundle_is_nonzero ... ok
+test model_composition_v4::tests::wide_sum_preserves_cancellation_but_checks_every_ablation_range ... ok
+test pon_commitment::bounded_encoding_tests::actual_state_fallback_encoding_cost ... ignored, explicit whole-test process RSS comparison; no Node or throughput qualification
+test pon_commitment::bounded_encoding_tests::bounded_encoder_discards_full_payload_map_but_keeps_exact_old_charges ... ok
+test pon_commitment::bounded_encoding_tests::bounded_fallback_matches_old_full_map_for_forks_removals_and_every_budget ... ok
+test pon_commitment::bounded_encoding_tests::canonical_buffer_reuse_component_timing ... ignored, explicit encoder allocation A/B; excludes SQLite, roots, execution and networking
+test pon_commitment::bounded_encoding_tests::discarded_cache_never_hides_late_canonical_or_wire_errors_or_invalid_limits ... ok
+test pon_commitment::bounded_encoding_tests::payload_and_workspace_exact_edges_preserve_old_selection_and_root ... ok
+test pon_commitment::bounded_encoding_tests::reused_encoders_preserve_shrinking_values_deletions_and_late_errors ... ok
+test pon_commitment::checked_binding_tests::checked_binding_actual_eight_mib_payload_fallback_keeps_all_bytes ... ok
+test pon_commitment::checked_binding_tests::checked_binding_complete_cost_observation ... ignored, explicit same-operation binding cost; not Node or network throughput
+test pon_commitment::checked_binding_tests::checked_binding_matches_two_steps_for_cold_warm_and_every_budget_fallback ... ok
+test pon_commitment::checked_binding_tests::checked_binding_preserves_wrong_roots_late_errors_and_invalid_limits ... ok
+test pon_commitment::checked_binding_tests::checked_binding_rechecks_actual_values_and_repairs_only_derived_material ... ok
+test pon_commitment::tests::cancelled_panicked_and_partially_started_workers_all_finish_and_join ... ok
+test pon_commitment::tests::cancelled_prepare_apply_and_staged_root_never_publish_output_or_change_parent ... ok
+test pon_commitment::tests::checked_binding_signed_execution_errors_and_cancellation_match_two_steps ... ok
+test pon_commitment::tests::controlled_cancellation_joins_every_started_scoped_worker_before_return ... ok
+test pon_commitment::tests::controlled_previews_preserve_full_state_receipts_and_canonical_errors_for_all_workers ... ok
+test pon_commitment::tests::disjoint_delta_exact_and_overflow_preserve_full_state_and_allocation_order ... ok
+test pon_commitment::tests::immutable_parent_corrupt_tree_fallback_matches_full_execution ... ok
+test pon_commitment::tests::immutable_parent_preview_component_timing ... ignored, explicit component timing; excludes SQLite, M05 and Node lock wait
+test pon_commitment::tests::immutable_parent_previews_match_full_execution_including_failures_and_rebind ... ok
+test pon_commitment::tests::internal_tree_mismatch_uses_complete_root_without_mutating_snapshot ... ok
+test pon_commitment::tests::late_canonical_error_precedes_cache_choice_and_all_change_clones ... ok
+test pon_commitment::tests::resource_fallback_finishes_full_root_before_required_change_clones ... ok
+test pon_commitment::tests::scoped_accounting_preserves_all_workers_state_receipts_and_late_error_parity ... ok
+test pon_commitment::tests::warm_parent_binding_cancellation_preserves_shared_bytes_and_successful_retry ... ok
+test pon_commitment::tests::warm_parent_binding_component_timing ... ignored, explicit binding A/B timing; excludes execution, SQLite and Node locks
+test pon_commitment::tests::warm_parent_binding_preserves_late_canonical_limits_and_context_error_order ... ok
+test pon_commitment::tests::warm_parent_binding_shares_only_after_complete_actual_comparison ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::actual_pq_evaluation_release_and_mature_claim_use_original_economic_owner ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::application_v6_tasks_use_both_current_keys_and_exact_selected_domains ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::historical_equivocation_survives_rotation_and_retains_bounded_verified_chunks ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::invalid_signature_retry_cannot_refill_prefix_verification_capacity ... ok
+test pon_executor::pq_accounts_v2::application_v6_tests::resource_preflight_counts_inner_proofs_and_underpriced_commands_do_no_crypto ... ok
+test pon_executor::pq_accounts_v2::tasks_v4_tests::prepared_pq4_task_rechecks_actual_lease_and_both_authorities_before_any_fee_patch ... ok
+test pon_executor::pq_accounts_v2::tasks_v5_tests::prepared_pq5_atomic_renewal_rechecks_revision_prior_source_and_requester_before_fee_patch ... ok
+test pon_executor::pq_accounts_v2::tests::anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once ... ok
+test pon_executor::pq_accounts_v2::tests::dual_rotation_keeps_stable_task_permissions_and_actual_key_reads ... ok
+test pon_executor::pq_accounts_v2::tests::migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots ... ok
+test pon_executor::pq_accounts_v2::tests::real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_cancel_and_partial_worker_start_join_all_actual_workers ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_failures_preserve_canonical_first_error_and_parent ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_complete_signed_batches_keep_state_receipts_root_and_every_signature ... ok
+test pon_executor::repeated_sender_tests::repeated_sender_tag11_and_cross_sender_funding_keep_complete_canonical_relation ... ok
+test pon_executor::session_tests::invalid_context_transaction_and_sequence_never_publish_session_state ... ok
+test pon_executor::session_tests::session_state_and_receipts_equal_existing_complete_builder ... ok
+test pon_executor::streaming_root_tests::complete_root_encoding_cost ... ignored, explicit paired complete-root cost; synthetic values, not native ledger growth
+test pon_executor::streaming_root_tests::streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits ... ok
+test pon_executor::streaming_root_tests::streamed_m06_root_matches_original_values_removals_and_branch_edits ... ok
+test store::object_delta_tests::object_delta_detects_committed_parent_drift_before_first_write_v1 ... ok
+test store::object_delta_tests::object_delta_empty_initialization_and_noop_have_exact_write_counts_v1 ... ok
+test store::object_delta_tests::object_delta_insert_update_delete_matches_complete_target_v1 ... ok
+test store::object_delta_tests::object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1 ... ok
+test store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1 ... ok
+test store::object_delta_tests::object_delta_unexpected_parent_row_is_not_erased_v1 ... ok
+test tests::committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1 ... ok
+test tests::conflicts_outcomes_resources_and_fee_reduction_are_deterministic ... ok
+test tests::crash_outcomes_reopen_to_exact_source_target_or_fence ... ok
+test tests::exact_replay_and_parent_identity_are_fail_closed ... ok
+test tests::execution_preview_executes_full_fee_path_without_advancing_the_store ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::parallel_execution_tests::hotspot_revert_and_resource_exhaustion_match_sequential_journal_oracle ... ok
+test tests::parallel_execution_tests::multiple_speculative_failures_report_the_canonical_transaction_error ... ok
+test tests::parallel_execution_tests::speculative_insufficient_funds_is_retried_after_predecessor_funds_payer_or_source ... ok
+test tests::parallel_execution_tests::stale_speculative_success_cannot_publish_when_canonical_payer_is_exhausted ... ok
+test tests::parallel_execution_tests::workers_compute_program_meter_fees_and_successors_on_immutable_parent ... ok
+test tests::persistent_parallel_worker_count_bounds_fail_closed ... ok
+test tests::persistent_parallel_worker_counts_reopen_to_identical_canonical_results ... ok
+test tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed ... ok
+test tests::static_access_fee_and_arithmetic_mutants_fail_before_commit ... ok
+test tests::vector_inventory_matches_executable_candidate_assertions ... ok
+
+test result: ok. 81 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 13.91s
+
+     Running tests/capacity_progress.rs (/tmp/chain-pq-target/release/deps/capacity_progress-f4581f6fbe926384)
+
+running 7 tests
+test cancellation_payload_cannot_be_reinterpreted_as_invalid_state ... ok
+test complete_scan_matches_legacy_at_batch_and_capacity_boundaries ... ok
+test complete_scan_preserves_shared_zero_reward_and_archive_reservations ... ok
+test every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry ... ok
+test malformed_state_keeps_original_error_and_cannot_publish_partial_capacity ... ok
+test non_clone_cancellation_payload_keeps_its_identity ... ok
+test wrong_profile_rejects_before_progress_without_upgrading_old_context ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/checkpoint_tile_material_v1.rs (/tmp/chain-pq-target/release/deps/checkpoint_tile_material_v1-ae4f5a6b2f25f801)
+
+running 5 tests
+test actual_hashed_stream_header_must_equal_the_parsed_header ... ok
+test closed_activation_and_descriptor_changes_cannot_select_a_new_recipe ... ok
+test original_checkpoint_unselected_bytes_and_expected_matrix_pins_are_not_claims ... ok
+test strict_header_extents_unknown_fields_duplicates_and_progress_stop ... ok
+test synthetic_codec_fixture_full_relation_and_actual_signed_admission_binding ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/checkpoint_tile_policy_v1.rs (/tmp/chain-pq-target/release/deps/checkpoint_tile_policy_v1-3c76b1182a0766ec)
+
+running 1 test
+test canonical_bounded_policy_false_claims_and_exact_fresh_context ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/continuity_v1.rs (/tmp/chain-pq-target/release/deps/continuity_v1-09fc868e640e4bb2)
+
+running 6 tests
+test all_future_credit_owners_and_archive_rows_are_reserved_once ... ok
+test maturity_queue_gaps_duplicates_and_mutated_maintenance_reject ... ok
+test native_deferred_funded_expiry_at_capacity_consumes_reserved_accounts ... ok
+test native_evaluation_closure_at_capacity_materializes_archive_then_cleans_it ... ok
+test new_profile_has_fresh_context_and_genesis_reserves_the_whole_queue ... ok
+test real_empty_execution_preserves_liability_bound_and_account_nonces ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.84s
+
+     Running tests/evaluation_quorum_v2.rs (/tmp/chain-pq-target/release/deps/evaluation_quorum_v2-c9a8ae70f283fc6d)
+
+running 2 tests
+test fresh_profile_refuses_attested_models_and_cross_version_replay ... ok
+test independent_reference_vectors_match_native_domains_counts_and_records ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/incremental_prefix.rs (/tmp/chain-pq-target/release/deps/incremental_prefix-550f123d0f73ef25)
+
+running 8 tests
+test actual_capacity_rejection_rolls_back_suffix_and_allows_existing_account_transfer ... ok
+test authenticated_mandatory_partition_executes_full_cleanup_refunds_and_maturity ... ok
+test authenticated_mandatory_refusal_prevents_transaction_preparation_and_missing_rows_refuse ... ok
+test changed_actual_parent_bytes_and_forged_root_never_construct_a_prefix ... ok
+test every_suffix_cancellation_and_unwind_restores_the_last_complete_prefix ... ok
+test incremental_signed_prefixes_keep_one_prologue_complete_rewards_receipts_and_roots ... ok
+test invalid_partial_group_and_changed_prefix_leave_prior_nonce_fees_and_state ... ok
+test warm_parent_and_full_root_fallback_keep_the_same_complete_prefix_outputs ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.80s
+
+     Running tests/model_evolution_v5.rs (/tmp/chain-pq-target/release/deps/model_evolution_v5-04970f14f1c4a732)
+
+running 4 tests
+test actual_joint_router_expert_then_base_and_mask_adopt_from_real_successor_parent ... ok
+test external_data_owner_signature_roots_order_and_repeated_content_fail_closed ... ok
+test native_refuses_forged_parent_hash_basis_alias_noop_and_cross_profile ... ok
+test pinned_new_text_windows_select_frozen_roots_and_replay_actual_parent_controls_at_activation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/pon_commitment.rs (/tmp/chain-pq-target/release/deps/pon_commitment-f7cd3ddf489be16c)
+
+running 16 tests
+test actual_workspace_charge_exact_minus_plus_one_preserves_complete_large_deltas ... ok
+test branching_stages_and_unknown_parent_reseed_do_not_advance_base ... ok
+test disabled_cache_still_executes_real_full_rules_and_exact_deltas ... ok
+test explicitly_selected_16384_boundary_is_checked_and_16385_remains_a_full_root_fallback ... ok
+test explicitly_selected_8192_key_and_workspace_limits_remain_full_root_fallbacks ... ok
+test full_actual_difference_checks_removals_empty_values_and_late_bad_value ... ok
+test increasing_the_software_key_budget_does_not_permit_invalid_cache_limits ... ok
+test late_invalid_signature_nonce_and_funds_do_not_mutate_parent_or_snapshot ... ok
+test maximum_keys_and_payload_combination_checks_exact_minus_and_plus_one ... ok
+test payload_budget_fallback_is_explicit_and_real_root_is_unchanged ... ok
+test protocol_bounds_canonical_errors_and_full_key_limit_remain_enforced ... ok
+test real_signed_prefixes_parallel_receipts_and_complete_state_are_identical ... ok
+test same_context_changed_actual_state_wrong_root_and_wrong_snapshot_are_rejected ... ok
+test serial_new_accounts_and_reward_maturity_match_each_actual_successor ... ok
+test signed_large_parent_prefixes_keep_full_rules_roots_receipts_and_exact_delta_parity ... ok
+test workspace_budget_still_falls_back_below_key_and_payload_limits ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.44s
+
+     Running tests/pq2_authority_capacity.rs (/tmp/chain-pq-target/release/deps/pq2_authority_capacity-8f92af8b5e60b7d9)
+
+running 2 tests
+test complete_anchored_claim_bytes_allow_55_and_reject_56_without_reminting ... ok
+test complete_dual_proof_rotation_bytes_allow_56_and_reject_57_without_mutation ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/pq3_quota_authority.rs (/tmp/chain-pq-target/release/deps/pq3_quota_authority-b6265e1ee7c770a1)
+
+running 8 tests
+test actual_dual_pq_quota_conserves_escrow_fee_nonce_and_consumer_identity ... ok
+test both_real_proofs_current_state_consumer_and_nonconsuming_rejections_are_required ... ok
+test consumer_and_provider_rotations_are_exclusive_in_both_block_orders ... ok
+test consumer_registration_and_quota_use_require_separate_parent_authority ... ok
+test full_dual_proof_capacity_allows_71_and_refuses_72_without_mutation ... ok
+test rotated_provider_uses_stable_account_and_rejects_retired_proof_without_spending ... ok
+test same_block_quota_creation_cannot_supply_consumer_authority ... ok
+test v2_cannot_opt_into_quota_and_v3_context_cannot_be_relabelled ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/pq4_task_authority.rs (/tmp/chain-pq-target/release/deps/pq4_task_authority-25d42b55a47dc942)
+
+running 9 tests
+test actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay ... ok
+test actual_two_state_owners_charge_two_proofs_and_retain_four_bounded_witness_leaves ... ok
+test either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee ... ok
+test full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values ... ok
+test legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused ... ok
+test missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize ... ok
+test open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects ... ok
+test retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter ... ok
+test source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+     Running tests/pq5_task_renewal.rs (/tmp/chain-pq-target/release/deps/pq5_task_renewal-11bab56c9acc7593)
+
+running 17 tests
+test actual_signed_nonce_previous_statement_and_parent_lease_bindings_refuse_cross_branch_replay ... ok
+test actual_two_state_owners_charge_two_proofs_and_retain_five_bounded_witness_leaves ... ok
+test atomic_all_five_fragment_boundaries_and_mixed_statement_bytes_fail_cold_authorization ... ok
+test atomic_renewal_bad_each_proof_role_account_nonce_branch_or_prior_spends_nothing ... ok
+test atomic_renewal_exact_codec_two_real_proofs_five_chunks_and_old_profile_refusal ... ok
+test either_bad_inner_or_outer_proof_wrong_account_and_wrong_source_never_spend_nonce_or_fee ... ok
+test full_32_task_slot_capacity_counts_64_real_proofs_and_never_enlarges_state_values ... ok
+test incremental_atomic_renewal_prefix_uses_original_parent_and_rolls_back_rejected_suffix ... ok
+test legacy_commands_old_profiles_wrong_material_and_unsigned_inner_wrappers_are_refused ... ok
+test missing_reordered_duplicate_oversized_and_other_task_witness_fragments_cannot_authorize ... ok
+test open_register_and_revoke_register_pairs_refuse_both_block_orders_without_partial_effects ... ok
+test renew_rotate_revoke_and_register_pairs_refuse_both_orders_then_use_current_authority ... ok
+test renewal_block_may_credit_verified_parent_output_without_granting_pending_future_work ... ok
+test renewal_rejects_expired_gap_wrong_revision_changed_scope_and_changed_material_atomically ... ok
+test requester_only_renewal_is_cold_valid_but_awaits_new_source_and_preserves_past_output ... ok
+test retired_registration_cannot_authorize_work_and_current_dual_proofs_restore_the_same_meter ... ok
+test source_and_requester_rotations_exclude_task_use_in_both_orders_then_accept_current_keys ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+
+     Running tests/pq_account_owner.rs (/tmp/chain-pq-target/release/deps/pq_account_owner-da5daf7f5309d6e6)
+
+running 8 tests
+test account_forks_keep_the_original_state_nonce_owner_without_shared_credits ... ok
+test dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution ... ok
+test dual_possession_does_not_recover_already_compromised_classical_identity ... ok
+test native_parent_rejects_nonce_reset_liability_omission_and_rebound_parameters ... ok
+test pqg1_native_import_preserves_nonces_all_four_liabilities_and_original_m06_transfers ... ok
+test qtx1_from_another_import_context_refuses_even_if_declared_network_reused ... ok
+test real_wrong_signatures_context_nonce_quarantine_and_classical_fallback_refuse ... ok
+test rust_qtx1_matches_original_python_wire_signature_identity_and_exact_fee ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s
+
+     Running tests/qualified_task_lifecycle_v2.rs (/tmp/chain-pq-target/release/deps/qualified_task_lifecycle_v2-cfb8f3f07cdffc9b)
+
+running 8 tests
+test authenticated_revocation_is_terminal_and_preserves_retention ... ok
+test canonical_parallel_execution_tracks_global_generation_and_prefix_conflicts ... ok
+test explicit_genesis_has_real_bound_maintenance_and_old_context_isolated ... ok
+test failed_fee_signature_nonce_and_wrong_profile_do_not_publish_state ... ok
+test more_than_sixteen_demands_recycle_bounded_metadata_and_never_reuse_identity ... ok
+test renewal_requires_new_source_statement_and_preserves_real_output_meter ... ok
+test same_matrix_cannot_authorize_two_active_demands_and_slot_integrity_checked ... ok
+test source_cannot_reset_material_or_statement_sequence ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/qualified_task_lifecycle_v3.rs (/tmp/chain-pq-target/release/deps/qualified_task_lifecycle_v3-9fa6a3be366fc5a6)
+
+running 1 test
+test lifecycle_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/qualified_task_lifecycle_v4.rs (/tmp/chain-pq-target/release/deps/qualified_task_lifecycle_v4-7d929ce5c5fb3e62)
+
+running 3 tests
+test old_v3_keeps_exact_height_and_never_adopts_v4_overlapping_behavior ... ok
+test overlap_owner_writes_exactly_once_after_all_validations_and_never_on_failure ... ok
+test signed_overlap_includes_at900_905_999_but_future_expired_regressing_or_invalid_sources_do_not_write ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/checkpoint_tile_material_v1.rs (/tmp/chain-pq-target/release/examples/checkpoint_tile_material_v1-64040f04944a579c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/continuity_transition_vectors.rs (/tmp/chain-pq-target/release/examples/continuity_transition_vectors-6d37430936d2fd65)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/continuity_vectors.rs (/tmp/chain-pq-target/release/examples/continuity_vectors-38ea7053ca29bc48)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_commitment_resource_bounds.rs (/tmp/chain-pq-target/release/examples/pon_commitment_resource_bounds-9691d695def89567)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_execute.rs (/tmp/chain-pq-target/release/examples/pon_execute-bcc2dd7049c03d58)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_execute_session.rs (/tmp/chain-pq-target/release/examples/pon_execute_session-a9dcd1e3eab6702c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

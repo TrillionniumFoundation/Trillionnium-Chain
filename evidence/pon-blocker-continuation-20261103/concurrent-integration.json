@@ -1,0 +1,15 @@
+{
+  "schema": "pon-blocker-concurrent-parent-integration-v1",
+  "prior_head": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+  "preserved_parent": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "preserved_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+  "changed_remote_files": 20,
+  "local_work_preserved": [
+    "scripts/ci/run_w1_fresh_service_v1.py",
+    "scripts/ci/test_run_w1_fresh_service_v1.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs"
+  ],
+  "exact_remote_tree_and_commit_verified": true,
+  "production_activation": false
+}

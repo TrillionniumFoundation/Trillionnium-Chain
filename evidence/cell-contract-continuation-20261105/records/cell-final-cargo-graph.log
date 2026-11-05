@@ -1,0 +1,1 @@
+{"cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)", "lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be", "metadata_sha256": "6087b9f80f8c2ab991a58292fd02f4b0909c5dba37a51062faa2876d0ed70110", "resolved_nodes": 175, "resolved_packages": 175, "rustc": "rustc 1.95.0 (59807616e 2026-04-14)", "workspace_members": 26}

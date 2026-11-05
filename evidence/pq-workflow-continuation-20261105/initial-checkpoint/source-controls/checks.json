@@ -1,0 +1,94 @@
+[
+  {
+    "name": "source-integrity",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_ci_source_integrity",
+      "test_record_pq_native_command",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/822cc50e24f0/round2-chain-green/scripts/ci",
+    "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "chain_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "runtime_sha": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+    "environment_overrides": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "PATH": "/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+    },
+    "timeout_seconds": 300,
+    "runner_sha256": "f7800ceb0b77484851a767ebfe32631b32ba807a354cab561872c4d848ed398f",
+    "exit_code": 0,
+    "wall_seconds": 4.781307,
+    "log": "source-integrity.log",
+    "log_sha256": "10376c0db0ea58d70f7852ab397e5d06af14796ab7d0d2e909eaaa62c6bf49cd",
+    "log_bytes": 8738,
+    "unittest_count": 47,
+    "head_after": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "status_after": "",
+    "result": "PASS"
+  },
+  {
+    "name": "pq-controls",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_pq_research_integration",
+      "test_pq_chain_claim_guard",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/822cc50e24f0/round2-chain-green/scripts/ci",
+    "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "chain_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "runtime_sha": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+    "environment_overrides": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "PATH": "/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+    },
+    "timeout_seconds": 300,
+    "runner_sha256": "f7800ceb0b77484851a767ebfe32631b32ba807a354cab561872c4d848ed398f",
+    "exit_code": 0,
+    "wall_seconds": 30.497756,
+    "log": "pq-controls.log",
+    "log_sha256": "b64e26322430721c13fbe9bab1fda762c288eb600e0a39a1825a0240f1d799fe",
+    "log_bytes": 8614,
+    "unittest_count": 57,
+    "head_after": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "status_after": "",
+    "result": "PASS"
+  },
+  {
+    "name": "authority-scan-controls",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_pq_authority_surface_scan",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/822cc50e24f0/round2-chain-green/scripts/ci",
+    "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "chain_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "runtime_sha": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+    "environment_overrides": {
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "GIT_OPTIONAL_LOCKS": "0",
+      "PATH": "/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+    },
+    "timeout_seconds": 300,
+    "runner_sha256": "f7800ceb0b77484851a767ebfe32631b32ba807a354cab561872c4d848ed398f",
+    "exit_code": 0,
+    "wall_seconds": 0.215494,
+    "log": "authority-scan-controls.log",
+    "log_sha256": "d5b72dbeeaa76e59457c5bf3a3b379023d084a5c5915e933d266e2f2be3f936b",
+    "log_bytes": 2034,
+    "unittest_count": 11,
+    "head_after": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "status_after": "",
+    "result": "PASS"
+  }
+]

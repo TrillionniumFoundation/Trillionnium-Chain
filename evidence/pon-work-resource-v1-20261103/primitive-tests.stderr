@@ -1,0 +1,68 @@
+ Downloading crates ...
+  Downloaded itoa v1.0.18
+  Downloaded serde_json v1.0.149
+  Downloaded zmij v1.0.21
+  Downloaded memchr v2.8.0
+   Compiling typenum v1.20.1
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling version_check v0.9.5
+   Compiling zeroize v1.8.2
+   Compiling cmov v0.5.4
+   Compiling cfg-if v1.0.4
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.228
+   Compiling semver v1.0.27
+   Compiling ctutils v0.4.6
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+   Compiling rustc_version v0.4.1
+   Compiling thiserror v1.0.69
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling num-traits v0.2.19
+   Compiling curve25519-dalek v4.1.3
+   Compiling keccak v0.2.2
+   Compiling subtle v2.6.1
+   Compiling sponge-cursor v0.1.0
+   Compiling signature v2.2.0
+   Compiling anyhow v1.0.103
+   Compiling serde_json v1.0.149
+   Compiling ed25519 v2.2.3
+   Compiling syn v2.0.117
+   Compiling hybrid-array v0.4.15
+   Compiling hex v0.4.3
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling crypto-common v0.2.2
+   Compiling module-lattice v0.2.3
+   Compiling digest v0.11.3
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling ml-dsa v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/ed36d74e0124/pon-work-security/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/ed36d74e0124/pon-work-security/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.29s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_crypto_primitives-99102bf85b5fd691)
+
+thread '<unnamed>' (1349) panicked at crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs:419:9:
+injected local cache poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread '<unnamed>' (1388) panicked at crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs:339:9:
+injected lock poison
+
+thread 'pon_work::facts::tests::unwind_does_not_leave_a_computing_slot' (1390) panicked at crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs:306:17:
+injected producer unwind
+
+thread '<unnamed>' (1429) panicked at crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs:290:21:
+intentional rejection-cache poison control

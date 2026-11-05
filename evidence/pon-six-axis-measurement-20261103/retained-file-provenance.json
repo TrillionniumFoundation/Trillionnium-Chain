@@ -1,0 +1,104 @@
+{
+  "filtered-v1-raw.json": {
+    "file": "filtered-v1-raw.json",
+    "source": "borrowed-partition-observer.json",
+    "bytes": 44793,
+    "sha256": "b35a81908fc65aa4ceba5888563ab4952571e67903091606e97dcd9e672d4a75"
+  },
+  "filtered-v1-source.json": {
+    "file": "filtered-v1-source.json",
+    "source": "borrowed-partition-observer-source.json",
+    "bytes": 1575,
+    "sha256": "e869a3e8cb021591f0e9fcbc911c65957e0cff63496652630b816346a8320a96"
+  },
+  "filtered-v1-summary.json": {
+    "file": "filtered-v1-summary.json",
+    "source": "borrowed-partition-observer-summary.json",
+    "bytes": 4146,
+    "sha256": "9367c91276b2ea41f3764b5f82afa2946458a89edfd94590b2ceebdd303931ba"
+  },
+  "filtered-v1.stderr": {
+    "file": "filtered-v1.stderr",
+    "source": "borrowed-partition-observer.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "descriptor-v2-wall.jsonl": {
+    "file": "descriptor-v2-wall.jsonl",
+    "source": "borrowed-descriptor-wall-v2.jsonl",
+    "bytes": 462860,
+    "sha256": "2c0cf9618d552dbc1b698d6410df3c12e7be7d08f437122717a4d1bc302814d2"
+  },
+  "descriptor-v2-allocations.jsonl": {
+    "file": "descriptor-v2-allocations.jsonl",
+    "source": "borrowed-descriptor-allocations-v2.jsonl",
+    "bytes": 53734,
+    "sha256": "ef0b8d5e56b9ce177ac2aa7fb3f3e5631563c345aabf4c5dd69e08eabe61c459"
+  },
+  "descriptor-v2-wall.stderr": {
+    "file": "descriptor-v2-wall.stderr",
+    "source": "borrowed-descriptor-wall-v2.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "descriptor-v2-allocations.stderr": {
+    "file": "descriptor-v2-allocations.stderr",
+    "source": "borrowed-descriptor-allocations-v2.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "descriptor-v2-independent-audit.json": {
+    "file": "descriptor-v2-independent-audit.json",
+    "source": "borrowed-descriptor-v2-independent-audit.json",
+    "bytes": 7056,
+    "sha256": "0a8f36b2d31db33cf637db4562d402621fc15e8f7cc6b37abce5c5ffee2eb39e"
+  },
+  "descriptor-v2-independent-reference.json": {
+    "file": "descriptor-v2-independent-reference.json",
+    "source": "borrowed-descriptor-independent-reference.json",
+    "bytes": 2303,
+    "sha256": "ed390915bf39ebc28400f025a32dc45d7d344fce0e139fcd5fe2b841d0c5ca2c"
+  },
+  "production-isolation-identity.json": {
+    "file": "production-isolation-identity.json",
+    "source": "borrowed-isolation-production-identity.json",
+    "bytes": 3870,
+    "sha256": "2e88157ead65701247eaf2bd52dd0f5153cb5c7340e498cb7a2ddc7e2a41439c"
+  },
+  "native-descriptor-control-results.json": {
+    "file": "native-descriptor-control-results.json",
+    "source": "candidate-descriptor-node-controls/results.json",
+    "bytes": 3766,
+    "sha256": "722dc4152a15cdfa2f45178b6db4810b66c7da409cbd530c7093abfe6eb5c6eb"
+  },
+  "native-descriptor-large-parent.log": {
+    "file": "native-descriptor-large-parent.log",
+    "source": "candidate-descriptor-node-controls/large-parent.log",
+    "bytes": 53532,
+    "sha256": "ddd6f20e9419597cca75a72dca80677762d6ad28b3fa9979dc0d58d4744cfcd1"
+  },
+  "native-descriptor-large-parent-auth.log": {
+    "file": "native-descriptor-large-parent-auth.log",
+    "source": "candidate-descriptor-node-controls/large-parent-auth.log",
+    "bytes": 28277,
+    "sha256": "0663c147a98b1204a30d51de4f89369ce19c6d48b3187ccab05e31c63d076a4f"
+  },
+  "native-baseline-large-parent-result.json": {
+    "file": "native-baseline-large-parent-result.json",
+    "source": "large-parent-baseline.json",
+    "bytes": 448,
+    "sha256": "4c9a07971a61b2b08aec0d68e4eb257c49ae8a0d9b8b610360cc1fd01df7ecd8"
+  },
+  "native-baseline-large-parent-auth-result.json": {
+    "file": "native-baseline-large-parent-auth-result.json",
+    "source": "large-parent-auth-baseline.json",
+    "bytes": 441,
+    "sha256": "b46bcbe6b177b47c55f20881272ba0c8f4e48ae2d730c10b88ca6c0a5b1bbdf7"
+  },
+  "native-baseline-cpu-summary.json": {
+    "file": "native-baseline-cpu-summary.json",
+    "source": "baseline-original-cpu-summary.json",
+    "bytes": 6441,
+    "sha256": "9c0a8cb7712272323987cc3140d48aa80514c8db46784f83e3308d025719e9f3"
+  }
+}

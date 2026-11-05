@@ -1,0 +1,19 @@
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/42d46a663b73/chain/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.88s
+     Running unittests src/lib.rs (/workspace/scratch/42d46a663b73/target/debug/deps/trnm_data_availability-4afa79d63a34aeeb)
+
+running 11 tests
+test cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins ... ok
+test cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication ... ok
+test cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target ... ok
+test cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target ... ok
+test cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads ... ok
+test cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success ... ok
+test cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write ... ok
+test cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps ... ok
+test cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused ... ok
+test cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins ... ok
+test cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 326 filtered out; finished in 2.06s
+

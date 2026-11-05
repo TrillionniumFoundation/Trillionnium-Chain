@@ -1,0 +1,68 @@
+{
+  "schema": "trnm-fixture-composed-terminal-summary-v1",
+  "packaged_utc": "2026-11-03T22:18:24.714908+00:00",
+  "status": "COMPLETE_NATIVE_TERMINAL_WITH_FAILURES",
+  "source": {
+    "schema": "trnm-exact-commit-native-byte-association-v1",
+    "commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+    "tree": "30f59a8ec2abdc269bf91e228c58206b23add43d",
+    "native_manifest_sha256": "545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82",
+    "native_paths": 1190,
+    "node_elf_sha256": "34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf",
+    "native_execution_invocation_base": "8ebded733d90bf74e7d8e3adbd2458ad8b572159",
+    "native_executed_after_clean_commit_checkout": false,
+    "exact_commit_gate_native_execution": false,
+    "association": "The original Cargo build and native invocation used the frozen 1190 native bytes. The clean c5dd exact-commit gate verified those bytes while the full native run was still in progress; the native terminal manifest matched the same bytes again after completion. No full native run was launched or repeated from the clean c5dd checkout.",
+    "hosted_ci_result_inherited": false,
+    "exact_commit_gate_finished_utc": "2026-11-03T22:10:08.051381+00:00",
+    "native_driver_terminal_completed_utc": "2026-11-03T22:16:52.525096+00:00"
+  },
+  "registered": 974,
+  "original_registered": 971,
+  "candidate_additions": [
+    "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+    "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection",
+    "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8"
+  ],
+  "original_ignored_preserved": true,
+  "passed": 950,
+  "failed": 1,
+  "ignored": 23,
+  "failed_selectors": [
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+  ],
+  "actual_native_exit_code": 101,
+  "driver_exit_code_from_owner_notice": 0,
+  "timed_out": false,
+  "reader_error": null,
+  "wall_ns": 1384514025368,
+  "native_summary": "test result: FAILED. 950 passed; 1 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1384.48s",
+  "original_supervisor_seconds": 2700,
+  "native_budgets_changed": false,
+  "native_log": {
+    "path": "native.log.gz",
+    "raw_bytes": 7289315,
+    "raw_sha256": "5204bbe992a2a21216aa44ffa521e602d2cd0ec0ca57fe40d8a97f0954ac86a1",
+    "compressed_bytes": 763134,
+    "compressed_sha256": "7b8f4eca199aa1aa59558ab1166a4b8fbc92fe724f61ee973baa02a8afeed73f",
+    "gzip_mtime": 0
+  },
+  "records_bundle": {
+    "path": "terminal-records.json.gz",
+    "entries": 33,
+    "unique_blobs": 26,
+    "raw_bytes": 787930,
+    "raw_sha256": "ab862acc76cc5ffe753e7b2dae21b3aa98a70d721a11e93ccd348f376e82547c",
+    "compressed_bytes": 208652,
+    "compressed_sha256": "06f3a6c5e4a44ae82d6d6c2ac4a31384809e889748c6e020c0135ac8cbbed48f",
+    "gzip_mtime": 0
+  },
+  "prior_diagnostics_only_result_inherited": false,
+  "prior_b280_result_inherited": false,
+  "pending_snapshot_modified": false,
+  "additional_native_executions": 0,
+  "ELF_files_read_or_copied_by_packager": false,
+  "scope": "This exact native-source full registry terminal only. Selected, real-Host, original 4s/F0/campaign and scientific acceptance remain separate.",
+  "all_service_blockers_closed": false,
+  "performance_acceptance": false
+}

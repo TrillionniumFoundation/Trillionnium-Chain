@@ -1,0 +1,1168 @@
+{
+  "schema": "pon-routed-grouped-compact-evidence-v0",
+  "date_utc": "2026-11-05",
+  "published_source_commit": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+  "primary_observation": "grouped-published-e0fc4df",
+  "selection_rule": "The final source-bound run is primary; both earlier observations are retained without choosing the fastest run. Kernel candidate compares only observed hot medians and never changes runtime policy.",
+  "retained_model_adoption": "not_adopted",
+  "retained_model_reward": 0,
+  "real_demand_verified": false,
+  "all_pow_consensus_production_reward_gates_unchanged": true,
+  "observations": {
+    "grouped-diagnostic-v0": {
+      "schema": "pon-grouped-cell-operator-research-v0",
+      "profile": "pon-routed-int257-grouped-research-v0",
+      "status": "retrospective_arithmetic_verified",
+      "execution_identity": {
+        "dirty_porcelain": "M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M docs/development/specs/pon/SHARED_CELL_WORK_V1.md\n M docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md\n M scripts/ci/check_ci_contract.py\n M scripts/ci/ci_job.sh\n M trillionnium/crates/trnm-crypto-primitives/src/lib.rs\n M trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs\n?? docs/development/specs/pon/GROUPED_CELL_OPERATOR_V0.md\n?? formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py\n?? formal/pon-nakamoto-v1/grouped_low_rank_v0.py\n?? formal/pon-nakamoto-v1/grouped_request_batch_v0.py\n?? formal/pon-nakamoto-v1/test_grouped_cell_operator_v0.py\n?? formal/pon-nakamoto-v1/test_grouped_low_rank_v0.py\n?? formal/pon-nakamoto-v1/test_grouped_request_batch_v0.py\n?? trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs\n?? trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+        "git_head": "dda4cc47362065819e9591f11f713933e7a853bf",
+        "git_head_tree": "95fc95096e795e8f7a63d5d8a31e77b43af2e399",
+        "native_runner_sha256": "3f1491d183e201bcc477600dc9097f50bff279db4c40c5093bbe423b974ef203",
+        "source_file_hashes_location": "source-manifest.json: historical_observation_identities.grouped-diagnostic-v0"
+      },
+      "provenance": {
+        "batch_offset": 0,
+        "batch_size": 64,
+        "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+        "independent_administration": false,
+        "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
+        "ordinary_hepta_product_entry": false,
+        "partition": "consumer",
+        "production_activation": false,
+        "prospective_evaluation": false,
+        "public_reward_eligible": false,
+        "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+        "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+        "source_replayed": true,
+        "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10"
+      },
+      "qualification": {
+        "business_credit": 0,
+        "consensus_qualified": false,
+        "model_adoption_changed": false,
+        "model_reward": 0,
+        "pow_qualified": false,
+        "production_activation": false,
+        "public_reward_eligible": false,
+        "semantic_arithmetic_verified": true,
+        "succinct_or_sublinear_proof": false
+      },
+      "demand": {
+        "arrival_trace": null,
+        "batch_fill_wait_ns": null,
+        "deadline_success_fraction": null,
+        "fixture_clock": {
+          "arrival_ns": 0,
+          "deadline_ns": 3600000000000,
+          "now_ns": 1,
+          "use": "transport semantics only"
+        },
+        "kind": "retrospective_fixture",
+        "original_arrival_ns": null,
+        "original_deadline_ns": null,
+        "queue_wait_p95_ns": null,
+        "queue_wait_p99_ns": null,
+        "real_deadline_utility_verified": false,
+        "real_demand_verified": false,
+        "shape_row_occurrences": 85,
+        "shape_windows_overlap": true,
+        "synthetic_rows_added": 0,
+        "unique_corpus_rows": 64
+      },
+      "timing": {
+        "experiment_child_cpu_ns_before_report_write": 1025284000,
+        "experiment_parent_cpu_ns_before_report_write": 766416116,
+        "experiment_wall_ns_before_report_write": 3631380210,
+        "input_decode_and_optional_replay": {
+          "cpu_ns": 668200097,
+          "wall_ns": 2987402835
+        },
+        "ipc_only_wall_ns": null,
+        "ipc_request_serialization": {
+          "cpu_ns": 4600032,
+          "wall_ns": 8608563
+        },
+        "ipc_response_decode": {
+          "cpu_ns": 323362,
+          "wall_ns": 323037
+        },
+        "isolation_limit": "bounded supervisor observes combined startup/transport/handler wall; does not invent isolated IPC or startup time",
+        "native_model_preparation_wall_ns": 106401,
+        "persistent_process_complete_exchange": {
+          "child_cpu_ns": 30643000,
+          "cpu_ns": 1327168,
+          "wall_ns": 63631877
+        },
+        "process_scope": "one actual OS process startup, init once, all commands, benchmark repetitions, full native verification, pipes, output drain, child exit and cleanup",
+        "startup_only_wall_ns": null
+      },
+      "wire": {
+        "input_bytes": 77171,
+        "input_sha256": "13056d923074ab4d598610a74760cf09a5ea5bd07ca61f226b2dec6bdcf260df",
+        "output_bytes": 14790,
+        "output_sha256": "56726af3aa0b7094d718db7f0e44b2e6b2aa9ef8d7ed1a06fcf747016d5d21b4"
+      },
+      "interpretation": [
+        "Full exact native verifier recomputes router plus selected original base/delta arithmetic.",
+        "No lottery/target/noise/trace PoUW is implemented in this research relation.",
+        "Native ordinary/grouped hot ratio compares only disclosed kernel scopes.",
+        "Prior padded W1 end-to-end path performs a different proof workload; no PoUW speedup is inferred.",
+        "Same retained model and partition; no retraining, new adoption decision, or synthetic request fill."
+      ],
+      "original_report_sha256": "34633f8d25d05d676cca0e622e46c280d8fc439bf0837bce53b71196fdfb2783",
+      "original_report_bytes": 67266,
+      "request_parameters": {
+        "batch_sizes": "1,4,16,64",
+        "bundle_hash": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/evaluation-bundle.json",
+        "model": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/model.json",
+        "offset": 0,
+        "out": "/workspace/scratch/78dc81ff67a6/measurements/grouped-diagnostic-v0",
+        "partition": "consumer",
+        "replay_source": true,
+        "runner": "/workspace/scratch/78dc81ff67a6/chain/trillionnium/target/release/examples/pon_routed_int257_grouped",
+        "samples": 100,
+        "tasks": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/consumer.json",
+        "timeout": 60,
+        "warmup": 8
+      },
+      "source_status": "historical-dirty-development-diagnostic",
+      "cases": [
+        {
+          "batch_size": 1,
+          "input_commitment": "1b41cf69b24cf95491065fcc1ad6a3e1b495e62176e0ec6ad01124b6fe9ee718",
+          "statement_commitment": "c0b60da39b78c5d7da9eab879e39a02b8ac19f110617ea8a549e1da117a0b325",
+          "native_full_verifier_macs": 2313,
+          "new_unique_request_ids": 1,
+          "padded_macs": 0,
+          "useful_dense_macs": 1542,
+          "grouped_over_ordinary_hot_kernel_median": 3.3757062146892656,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            0,
+            0
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 1062.0,
+            "minimum_ns": 831,
+            "p95_ns": 1132,
+            "sample_count": 100,
+            "maximum_ns": 23776
+          },
+          "native_hot_grouped": {
+            "median_ns": 3585.0,
+            "minimum_ns": 3114,
+            "p95_ns": 3756,
+            "sample_count": 100,
+            "maximum_ns": 12599
+          },
+          "hot_median_candidate": "two-arm-diagnostic-no-selection"
+        },
+        {
+          "batch_size": 4,
+          "input_commitment": "1f3cdccdff1a49cae31c21a17ac3c4a08b5397d09b3d683e01ab0a3693cc7489",
+          "statement_commitment": "74ab6d8cee3c9bd1a713f5e0eeb2aa8a83763bfbb45d639df0c836dd5f54e860",
+          "native_full_verifier_macs": 9252,
+          "new_unique_request_ids": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 6168,
+          "grouped_over_ordinary_hot_kernel_median": 2.8682303819231243,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            1,
+            2
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 4071.5,
+            "minimum_ns": 3606,
+            "p95_ns": 4246,
+            "sample_count": 100,
+            "maximum_ns": 22784
+          },
+          "native_hot_grouped": {
+            "median_ns": 11678.0,
+            "minimum_ns": 10796,
+            "p95_ns": 11918,
+            "sample_count": 100,
+            "maximum_ns": 12058
+          },
+          "hot_median_candidate": "two-arm-diagnostic-no-selection"
+        },
+        {
+          "batch_size": 16,
+          "input_commitment": "34af532efcafb19e5b6ea8c4dc18444788a1acaf18b1531d2c49082438a6d368",
+          "statement_commitment": "eec45a97716a9ebbf66f4ea2ec442ac74309ef1a264a310132d6a1b39986a5e5",
+          "native_full_verifier_macs": 37008,
+          "new_unique_request_ids": 12,
+          "padded_macs": 0,
+          "useful_dense_macs": 24672,
+          "grouped_over_ordinary_hot_kernel_median": 1.7860195738354807,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            8,
+            7
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 16144.0,
+            "minimum_ns": 13811,
+            "p95_ns": 16494,
+            "sample_count": 100,
+            "maximum_ns": 37136
+          },
+          "native_hot_grouped": {
+            "median_ns": 28833.5,
+            "minimum_ns": 27392,
+            "p95_ns": 29775,
+            "sample_count": 100,
+            "maximum_ns": 58508
+          },
+          "hot_median_candidate": "two-arm-diagnostic-no-selection"
+        },
+        {
+          "batch_size": 64,
+          "input_commitment": "d089d90ad6a6bdebf7a87bb180ae5f7ece2c70ec1e78ebbbcf604739138760f9",
+          "statement_commitment": "636accc3b527e2e26b6ae2b681839fa34e82a7a4dfc4fbb4214fe116391c0bdc",
+          "native_full_verifier_macs": 148032,
+          "new_unique_request_ids": 48,
+          "padded_macs": 0,
+          "useful_dense_macs": 98688,
+          "grouped_over_ordinary_hot_kernel_median": 1.4672064524196573,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            16,
+            17,
+            31
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 63976.0,
+            "minimum_ns": 51338,
+            "p95_ns": 85269,
+            "sample_count": 100,
+            "maximum_ns": 4101826
+          },
+          "native_hot_grouped": {
+            "median_ns": 93866.0,
+            "minimum_ns": 73661,
+            "p95_ns": 115504,
+            "sample_count": 100,
+            "maximum_ns": 4144751
+          },
+          "hot_median_candidate": "two-arm-diagnostic-no-selection"
+        }
+      ],
+      "environment_matches_primary": true,
+      "common_case_scopes": {
+        "hot_comparison_scope": "same process; same cached merged weights; both compute router and selected expert; grouped retains route diagnostics and gather; no verification/serialization/commitment in hot kernels",
+        "native_cpu_scope": "whole handler thread CPU when available; per-phase CPU not observed",
+        "mac_scope": "useful_dense_macs is one forward operator only; verifier independently adds router/base/selected-delta work; cold calls and repeated measurement work also execute",
+        "differential_checks": [
+          "original-coefficient scalar all logits/routes/groups",
+          "model_contract predict_rows",
+          "ordinary selected-expert NumPy",
+          "model/input/statement commitments"
+        ]
+      }
+    },
+    "grouped-final-d95f8c5": {
+      "schema": "pon-grouped-cell-operator-research-v0",
+      "profile": "pon-routed-int257-grouped-research-v0",
+      "status": "retrospective_arithmetic_verified",
+      "execution_identity": {
+        "dirty_porcelain": "",
+        "git_head": "d95f8c5cdadec3530408292f2ab7e160fa3b0f62",
+        "git_head_tree": "8147ca49ddcbd8289b1476fb8ff840d68affcb9f",
+        "native_runner_sha256": "e4e3218a3176f3e6fe55166a35abffb5de884d5b72fd124b985763131bf1984a",
+        "source_file_hashes_location": "source-manifest.json: historical_observation_identities.grouped-final-d95f8c5"
+      },
+      "provenance": {
+        "batch_offset": 0,
+        "batch_size": 64,
+        "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+        "independent_administration": false,
+        "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
+        "ordinary_hepta_product_entry": false,
+        "partition": "consumer",
+        "production_activation": false,
+        "prospective_evaluation": false,
+        "public_reward_eligible": false,
+        "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+        "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+        "source_replayed": true,
+        "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10"
+      },
+      "qualification": {
+        "business_credit": 0,
+        "consensus_qualified": false,
+        "model_adoption_changed": false,
+        "model_reward": 0,
+        "pow_qualified": false,
+        "production_activation": false,
+        "public_reward_eligible": false,
+        "semantic_arithmetic_verified": true,
+        "succinct_or_sublinear_proof": false
+      },
+      "demand": {
+        "arrival_trace": null,
+        "batch_fill_wait_ns": null,
+        "deadline_success_fraction": null,
+        "fixture_clock": {
+          "arrival_ns": 0,
+          "deadline_ns": 3600000000000,
+          "now_ns": 1,
+          "use": "transport semantics only"
+        },
+        "kind": "retrospective_fixture",
+        "original_arrival_ns": null,
+        "original_deadline_ns": null,
+        "queue_wait_p95_ns": null,
+        "queue_wait_p99_ns": null,
+        "real_deadline_utility_verified": false,
+        "real_demand_verified": false,
+        "shape_row_occurrences": 85,
+        "shape_windows_overlap": true,
+        "synthetic_rows_added": 0,
+        "unique_corpus_rows": 64
+      },
+      "timing": {
+        "experiment_child_cpu_ns_before_report_write": 803300000,
+        "experiment_parent_cpu_ns_before_report_write": 557478572,
+        "experiment_wall_ns_before_report_write": 1335496056,
+        "input_decode_and_optional_replay": {
+          "cpu_ns": 454558702,
+          "wall_ns": 1044140131
+        },
+        "ipc_only_wall_ns": null,
+        "ipc_request_serialization": {
+          "cpu_ns": 4952798,
+          "wall_ns": 4961322
+        },
+        "ipc_response_decode": {
+          "cpu_ns": 329371,
+          "wall_ns": 329597
+        },
+        "isolation_limit": "bounded supervisor observes combined startup/transport/handler wall; does not invent isolated IPC or startup time",
+        "native_model_preparation_wall_ns": 75314,
+        "persistent_process_complete_exchange": {
+          "child_cpu_ns": 35194000,
+          "cpu_ns": 766730,
+          "wall_ns": 35536114
+        },
+        "process_scope": "one actual OS process startup, init once, all commands, three-arm benchmark repetitions, packed full native verification, selected fresh-batch producer and full verification, pipes, output drain, child exit and cleanup",
+        "startup_only_wall_ns": null
+      },
+      "wire": {
+        "input_bytes": 77175,
+        "input_sha256": "a4205a44ce06f7959dfb7f5a18dc13a25320d0214193684d6e934bb9f6575dde",
+        "output_bytes": 23680,
+        "output_sha256": "4efebe06df88994464dd063ccaa88a7f56d7c1a6276b6d576e0629109861182c"
+      },
+      "interpretation": [
+        "Full exact native verifier recomputes router plus selected original base/delta arithmetic.",
+        "No lottery/target/noise/trace PoUW is implemented in this research relation.",
+        "Native ordinary/selected/packed hot ratios compare only disclosed kernel scopes; the ordinary control is retained.",
+        "Selected direct and packed grouped bind the same complete Product and pass the same independent verifier.",
+        "A per-shape kernel candidate reflects only these measured medians; no production dispatch, general speedup, or adoption is inferred.",
+        "The selected producer cost is one observed fresh-batch input commitment plus execution, statement and full verification; it is not compared to a hot-only kernel as a speedup.",
+        "Prior padded W1 end-to-end path performs a different proof workload; no PoUW speedup is inferred.",
+        "Same retained model and partition; no retraining, new adoption decision, or synthetic request fill."
+      ],
+      "original_report_sha256": "681cd50d4c3488aace153aaac7148354e5cc62e7af56bacd1ccdef665ef61029",
+      "original_report_bytes": 90430,
+      "request_parameters": {
+        "batch_sizes": "1,4,16,64",
+        "bundle_hash": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/evaluation-bundle.json",
+        "model": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/model.json",
+        "offset": 0,
+        "out": "/workspace/scratch/78dc81ff67a6/measurements/grouped-final-d95f8c5",
+        "partition": "consumer",
+        "replay_source": true,
+        "runner": "/workspace/scratch/78dc81ff67a6/chain/trillionnium/target/release/examples/pon_routed_int257_grouped",
+        "samples": 120,
+        "tasks": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/consumer.json",
+        "timeout": 60,
+        "warmup": 12
+      },
+      "source_status": "local-clean-prepublication-checkpoint",
+      "cases": [
+        {
+          "batch_size": 1,
+          "input_commitment": "1b41cf69b24cf95491065fcc1ad6a3e1b495e62176e0ec6ad01124b6fe9ee718",
+          "statement_commitment": "c0b60da39b78c5d7da9eab879e39a02b8ac19f110617ea8a549e1da117a0b325",
+          "selected_statement_commitment": "c0b60da39b78c5d7da9eab879e39a02b8ac19f110617ea8a549e1da117a0b325",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 2313,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 10405,
+            "observations": 1,
+            "wall_ns": 10976
+          },
+          "new_unique_request_ids": 1,
+          "nonempty_expert_groups": 1,
+          "padded_macs": 0,
+          "useful_dense_macs": 1542,
+          "selected_over_ordinary_hot_kernel_median": 1.117474302496329,
+          "grouped_over_ordinary_hot_kernel_median": 3.161527165932452,
+          "packed_over_selected_hot_kernel_median": 2.8291721419185283,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            0,
+            0
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 681.0,
+            "minimum_ns": 661,
+            "p95_ns": 691,
+            "sample_count": 120,
+            "maximum_ns": 711
+          },
+          "native_hot_selected": {
+            "median_ns": 761.0,
+            "minimum_ns": 731,
+            "p95_ns": 771,
+            "sample_count": 120,
+            "maximum_ns": 63526
+          },
+          "native_hot_grouped": {
+            "median_ns": 2153.0,
+            "minimum_ns": 2073,
+            "p95_ns": 2174,
+            "sample_count": 120,
+            "maximum_ns": 2223
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 4,
+          "input_commitment": "1f3cdccdff1a49cae31c21a17ac3c4a08b5397d09b3d683e01ab0a3693cc7489",
+          "statement_commitment": "74ab6d8cee3c9bd1a713f5e0eeb2aa8a83763bfbb45d639df0c836dd5f54e860",
+          "selected_statement_commitment": "74ab6d8cee3c9bd1a713f5e0eeb2aa8a83763bfbb45d639df0c836dd5f54e860",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 9252,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 22754,
+            "observations": 1,
+            "wall_ns": 23626
+          },
+          "new_unique_request_ids": 3,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 6168,
+          "selected_over_ordinary_hot_kernel_median": 1.050381111730805,
+          "grouped_over_ordinary_hot_kernel_median": 2.576687116564417,
+          "packed_over_selected_hot_kernel_median": 2.4530973451327434,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            1,
+            2
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 2689.5,
+            "minimum_ns": 2584,
+            "p95_ns": 2705,
+            "sample_count": 120,
+            "maximum_ns": 43586
+          },
+          "native_hot_selected": {
+            "median_ns": 2825.0,
+            "minimum_ns": 2774,
+            "p95_ns": 4177,
+            "sample_count": 120,
+            "maximum_ns": 42074
+          },
+          "native_hot_grouped": {
+            "median_ns": 6930.0,
+            "minimum_ns": 6781,
+            "p95_ns": 8764,
+            "sample_count": 120,
+            "maximum_ns": 49235
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 16,
+          "input_commitment": "34af532efcafb19e5b6ea8c4dc18444788a1acaf18b1531d2c49082438a6d368",
+          "statement_commitment": "eec45a97716a9ebbf66f4ea2ec442ac74309ef1a264a310132d6a1b39986a5e5",
+          "selected_statement_commitment": "eec45a97716a9ebbf66f4ea2ec442ac74309ef1a264a310132d6a1b39986a5e5",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 37008,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 164305,
+            "observations": 1,
+            "wall_ns": 165359
+          },
+          "new_unique_request_ids": 12,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 24672,
+          "selected_over_ordinary_hot_kernel_median": 1.0461639714178264,
+          "grouped_over_ordinary_hot_kernel_median": 1.6036103798420458,
+          "packed_over_selected_hot_kernel_median": 1.532848027320931,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            8,
+            7
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 10636.0,
+            "minimum_ns": 10536,
+            "p95_ns": 10656,
+            "sample_count": 120,
+            "maximum_ns": 20100
+          },
+          "native_hot_selected": {
+            "median_ns": 11127.0,
+            "minimum_ns": 10987,
+            "p95_ns": 11167,
+            "sample_count": 120,
+            "maximum_ns": 51207
+          },
+          "native_hot_grouped": {
+            "median_ns": 17056.0,
+            "minimum_ns": 16956,
+            "p95_ns": 29224,
+            "sample_count": 120,
+            "maximum_ns": 67963
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 64,
+          "input_commitment": "d089d90ad6a6bdebf7a87bb180ae5f7ece2c70ec1e78ebbbcf604739138760f9",
+          "statement_commitment": "636accc3b527e2e26b6ae2b681839fa34e82a7a4dfc4fbb4214fe116391c0bdc",
+          "selected_statement_commitment": "636accc3b527e2e26b6ae2b681839fa34e82a7a4dfc4fbb4214fe116391c0bdc",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 148032,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 323893,
+            "observations": 1,
+            "wall_ns": 324670
+          },
+          "new_unique_request_ids": 48,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 98688,
+          "selected_over_ordinary_hot_kernel_median": 1.0447375866459188,
+          "grouped_over_ordinary_hot_kernel_median": 1.3842952798604236,
+          "packed_over_selected_hot_kernel_median": 1.3250172077226001,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            16,
+            17,
+            31
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 42414.0,
+            "minimum_ns": 42324,
+            "p95_ns": 58398,
+            "sample_count": 120,
+            "maximum_ns": 189345
+          },
+          "native_hot_selected": {
+            "median_ns": 44311.5,
+            "minimum_ns": 44147,
+            "p95_ns": 90096,
+            "sample_count": 120,
+            "maximum_ns": 168484
+          },
+          "native_hot_grouped": {
+            "median_ns": 58713.5,
+            "minimum_ns": 56946,
+            "p95_ns": 108774,
+            "sample_count": 120,
+            "maximum_ns": 167723
+          },
+          "hot_median_candidate": "selected_direct"
+        }
+      ],
+      "environment_matches_primary": true,
+      "common_case_scopes": {
+        "hot_comparison_scope": "same prepared model and batch; A ordinary returns routes/logits/predictions; B selected direct and C packed grouped return the same complete Product; packed retains three internal router/gather/expert phase-clock probes absent from ordinary/direct, so differences include that instrumentation as well as gather/contraction; no commitments, verification or transport inside hot kernels",
+        "hot_sampling_order": {
+          "arms": {
+            "ordinary": "ordinary",
+            "packed": "packed_grouped",
+            "selected": "selected_direct"
+          },
+          "complete_cycles": 20,
+          "cycle": [
+            [
+              "ordinary",
+              "selected",
+              "packed"
+            ],
+            [
+              "packed",
+              "selected",
+              "ordinary"
+            ],
+            [
+              "selected",
+              "packed",
+              "ordinary"
+            ],
+            [
+              "ordinary",
+              "packed",
+              "selected"
+            ],
+            [
+              "packed",
+              "ordinary",
+              "selected"
+            ],
+            [
+              "selected",
+              "ordinary",
+              "packed"
+            ]
+          ],
+          "partial_cycle_samples": 0,
+          "remaining_orders": []
+        },
+        "native_cpu_scope": "whole handler thread CPU when available; per-phase CPU not observed",
+        "mac_scope": "useful_dense_macs is one forward operator only; verifier independently adds router/base/selected-delta work; cold calls and repeated measurement work also execute",
+        "differential_checks": [
+          "original-coefficient scalar all logits/routes/groups",
+          "model_contract predict_rows",
+          "ordinary selected-expert NumPy",
+          "model/input/statement commitments",
+          "selected and packed statements equal independent Python oracle"
+        ]
+      },
+      "selected_full_call_scope": {
+        "cost_comparison_to_hot_only_kernel": null,
+        "included": [
+          "fresh batch validation and request copy",
+          "input commitment",
+          "selected direct Product",
+          "statement commitment",
+          "independent full verifier",
+          "completion deadline check"
+        ],
+        "model_preparation_included": false,
+        "observations": 1,
+        "scope": "prepared_model_fresh_batch_input_commit_selected_statement_full_verify",
+        "transport_included": false
+      }
+    },
+    "grouped-published-e0fc4df": {
+      "schema": "pon-grouped-cell-operator-research-v0",
+      "profile": "pon-routed-int257-grouped-research-v0",
+      "status": "retrospective_arithmetic_verified",
+      "execution_identity": {
+        "dirty_porcelain": "",
+        "git_head": "e0fc4df37bed96050db2a07d91d427829921e5fa",
+        "git_head_tree": "7f1b7af0351d87032950e01858ea767074c0d032",
+        "native_runner_sha256": "e4e3218a3176f3e6fe55166a35abffb5de884d5b72fd124b985763131bf1984a",
+        "source_file_hashes_location": "source-manifest.json: execution_identity"
+      },
+      "environment": {
+        "hardware": {
+          "cgroup_observations": {
+            "/proc/self/cgroup": "0::/"
+          },
+          "cpu_affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "cpu_count": 9,
+          "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+          "isolation": "uncontrolled-shared-host; observations are not a performance qualification",
+          "numpy_version": "1.26.4",
+          "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+          "processor": "",
+          "python": "3.12.14",
+          "thread_environment": {
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1"
+          }
+        },
+        "toolchain": {
+          "cargo": {
+            "executable": "/workspace/scratch/78dc81ff67a6/toolchain/cargo/bin/cargo",
+            "version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)"
+          },
+          "packages": {
+            "cryptography": "50.0.2",
+            "numpy": "1.26.4"
+          },
+          "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "python_executable": "/workspace/scratch/78dc81ff67a6/research-env/bin/python",
+          "rustc": {
+            "executable": "/workspace/scratch/78dc81ff67a6/toolchain/cargo/bin/rustc",
+            "version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2"
+          }
+        }
+      },
+      "provenance": {
+        "batch_offset": 0,
+        "batch_size": 64,
+        "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+        "independent_administration": false,
+        "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+        "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
+        "ordinary_hepta_product_entry": false,
+        "partition": "consumer",
+        "production_activation": false,
+        "prospective_evaluation": false,
+        "public_reward_eligible": false,
+        "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+        "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+        "source_replayed": true,
+        "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10"
+      },
+      "qualification": {
+        "business_credit": 0,
+        "consensus_qualified": false,
+        "model_adoption_changed": false,
+        "model_reward": 0,
+        "pow_qualified": false,
+        "production_activation": false,
+        "public_reward_eligible": false,
+        "semantic_arithmetic_verified": true,
+        "succinct_or_sublinear_proof": false
+      },
+      "demand": {
+        "arrival_trace": null,
+        "batch_fill_wait_ns": null,
+        "deadline_success_fraction": null,
+        "fixture_clock": {
+          "arrival_ns": 0,
+          "deadline_ns": 3600000000000,
+          "now_ns": 1,
+          "use": "transport semantics only"
+        },
+        "kind": "retrospective_fixture",
+        "original_arrival_ns": null,
+        "original_deadline_ns": null,
+        "queue_wait_p95_ns": null,
+        "queue_wait_p99_ns": null,
+        "real_deadline_utility_verified": false,
+        "real_demand_verified": false,
+        "shape_row_occurrences": 85,
+        "shape_windows_overlap": true,
+        "synthetic_rows_added": 0,
+        "unique_corpus_rows": 64
+      },
+      "timing": {
+        "experiment_child_cpu_ns_before_report_write": 874543000,
+        "experiment_parent_cpu_ns_before_report_write": 672511971,
+        "experiment_wall_ns_before_report_write": 1509302086,
+        "input_decode_and_optional_replay": {
+          "cpu_ns": 560203534,
+          "wall_ns": 1230409951
+        },
+        "ipc_only_wall_ns": null,
+        "ipc_request_serialization": {
+          "cpu_ns": 4118685,
+          "wall_ns": 4117290
+        },
+        "ipc_response_decode": {
+          "cpu_ns": 341679,
+          "wall_ns": 341835
+        },
+        "isolation_limit": "bounded supervisor observes combined startup/transport/handler wall; does not invent isolated IPC or startup time",
+        "native_model_preparation_wall_ns": 74612,
+        "persistent_process_complete_exchange": {
+          "child_cpu_ns": 39547000,
+          "cpu_ns": 802386,
+          "wall_ns": 39955927
+        },
+        "process_scope": "one actual OS process startup, init once, all commands, three-arm benchmark repetitions, packed full native verification, selected fresh-batch producer and full verification, pipes, output drain, child exit and cleanup",
+        "startup_only_wall_ns": null
+      },
+      "wire": {
+        "input_bytes": 77175,
+        "input_sha256": "a4205a44ce06f7959dfb7f5a18dc13a25320d0214193684d6e934bb9f6575dde",
+        "output_bytes": 23697,
+        "output_sha256": "bb65f86559bf1a7827a90b5b01336da4a4d1f10fe0a637d04f7fecba3e9b60e9"
+      },
+      "interpretation": [
+        "Full exact native verifier recomputes router plus selected original base/delta arithmetic.",
+        "No lottery/target/noise/trace PoUW is implemented in this research relation.",
+        "Native ordinary/selected/packed hot ratios compare only disclosed kernel scopes; the ordinary control is retained.",
+        "Selected direct and packed grouped bind the same complete Product and pass the same independent verifier.",
+        "A per-shape kernel candidate reflects only these measured medians; no production dispatch, general speedup, or adoption is inferred.",
+        "The selected producer cost is one observed fresh-batch input commitment plus execution, statement and full verification; it is not compared to a hot-only kernel as a speedup.",
+        "Prior padded W1 end-to-end path performs a different proof workload; no PoUW speedup is inferred.",
+        "Same retained model and partition; no retraining, new adoption decision, or synthetic request fill."
+      ],
+      "original_report_sha256": "fd011259fd105b19d66f53ba6f9ee392f29340610cd0ce9361e1999096d5a919",
+      "original_report_bytes": 90550,
+      "request_parameters": {
+        "batch_sizes": "1,4,16,64",
+        "bundle_hash": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+        "evaluation_bundle": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/evaluation-bundle.json",
+        "model": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/model.json",
+        "offset": 0,
+        "out": "/workspace/scratch/78dc81ff67a6/measurements/grouped-published-e0fc4df",
+        "partition": "consumer",
+        "replay_source": true,
+        "runner": "/workspace/scratch/78dc81ff67a6/chain/trillionnium/target/release/examples/pon_routed_int257_grouped",
+        "samples": 120,
+        "tasks": "/workspace/scratch/78dc81ff67a6/measurements/frozen-model-inputs/consumer.json",
+        "timeout": 60,
+        "warmup": 12
+      },
+      "source_status": "published-clean-source",
+      "cases": [
+        {
+          "batch_size": 1,
+          "input_commitment": "1b41cf69b24cf95491065fcc1ad6a3e1b495e62176e0ec6ad01124b6fe9ee718",
+          "statement_commitment": "c0b60da39b78c5d7da9eab879e39a02b8ac19f110617ea8a549e1da117a0b325",
+          "selected_statement_commitment": "c0b60da39b78c5d7da9eab879e39a02b8ac19f110617ea8a549e1da117a0b325",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 2313,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 7501,
+            "observations": 1,
+            "wall_ns": 7772
+          },
+          "native_selected_phase_wall_ns": {
+            "execution": 1051,
+            "input_commitment": 1673,
+            "statement_commitment": 521,
+            "validation": 150,
+            "verify": 3376
+          },
+          "native_phase_wall_ns": {
+            "expert": 1593,
+            "gather": 981,
+            "input_commitment": 1943,
+            "router": 661,
+            "statement_commitment": 1101,
+            "validation": 761,
+            "verify": 4006
+          },
+          "new_unique_request_ids": 1,
+          "nonempty_expert_groups": 1,
+          "padded_macs": 0,
+          "useful_dense_macs": 1542,
+          "selected_over_ordinary_hot_kernel_median": 1.117474302496329,
+          "grouped_over_ordinary_hot_kernel_median": 3.1908957415565347,
+          "packed_over_selected_hot_kernel_median": 2.8554533508541393,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            0,
+            0
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 681.0,
+            "minimum_ns": 671,
+            "p95_ns": 792,
+            "sample_count": 120,
+            "maximum_ns": 18408
+          },
+          "native_hot_selected": {
+            "median_ns": 761.0,
+            "minimum_ns": 691,
+            "p95_ns": 851,
+            "sample_count": 120,
+            "maximum_ns": 1703
+          },
+          "native_hot_grouped": {
+            "median_ns": 2173.0,
+            "minimum_ns": 2073,
+            "p95_ns": 3135,
+            "sample_count": 120,
+            "maximum_ns": 131038
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 4,
+          "input_commitment": "1f3cdccdff1a49cae31c21a17ac3c4a08b5397d09b3d683e01ab0a3693cc7489",
+          "statement_commitment": "74ab6d8cee3c9bd1a713f5e0eeb2aa8a83763bfbb45d639df0c836dd5f54e860",
+          "selected_statement_commitment": "74ab6d8cee3c9bd1a713f5e0eeb2aa8a83763bfbb45d639df0c836dd5f54e860",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 9252,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 21913,
+            "observations": 1,
+            "wall_ns": 22184
+          },
+          "native_selected_phase_wall_ns": {
+            "execution": 2915,
+            "input_commitment": 5629,
+            "statement_commitment": 841,
+            "validation": 410,
+            "verify": 11307
+          },
+          "native_phase_wall_ns": {
+            "expert": 4687,
+            "gather": 1332,
+            "input_commitment": 8283,
+            "router": 1422,
+            "statement_commitment": 1182,
+            "validation": 811,
+            "verify": 11968
+          },
+          "new_unique_request_ids": 3,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 6168,
+          "selected_over_ordinary_hot_kernel_median": 1.0519673348181142,
+          "grouped_over_ordinary_hot_kernel_median": 2.6024498886414253,
+          "packed_over_selected_hot_kernel_median": 2.4738884968242765,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            1,
+            2
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 2694.0,
+            "minimum_ns": 2584,
+            "p95_ns": 2714,
+            "sample_count": 120,
+            "maximum_ns": 57427
+          },
+          "native_hot_selected": {
+            "median_ns": 2834.0,
+            "minimum_ns": 2804,
+            "p95_ns": 2845,
+            "sample_count": 120,
+            "maximum_ns": 36936
+          },
+          "native_hot_grouped": {
+            "median_ns": 7011.0,
+            "minimum_ns": 6820,
+            "p95_ns": 11898,
+            "sample_count": 120,
+            "maximum_ns": 106261
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 16,
+          "input_commitment": "34af532efcafb19e5b6ea8c4dc18444788a1acaf18b1531d2c49082438a6d368",
+          "statement_commitment": "eec45a97716a9ebbf66f4ea2ec442ac74309ef1a264a310132d6a1b39986a5e5",
+          "selected_statement_commitment": "eec45a97716a9ebbf66f4ea2ec442ac74309ef1a264a310132d6a1b39986a5e5",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 37008,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 78306,
+            "observations": 1,
+            "wall_ns": 78719
+          },
+          "native_selected_phase_wall_ns": {
+            "execution": 11327,
+            "input_commitment": 21592,
+            "statement_commitment": 1392,
+            "validation": 1713,
+            "verify": 41152
+          },
+          "native_phase_wall_ns": {
+            "expert": 8793,
+            "gather": 3715,
+            "input_commitment": 30156,
+            "router": 5609,
+            "statement_commitment": 1862,
+            "validation": 2323,
+            "verify": 49845
+          },
+          "new_unique_request_ids": 12,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 24672,
+          "selected_over_ordinary_hot_kernel_median": 1.047057164347499,
+          "grouped_over_ordinary_hot_kernel_median": 1.606383978939451,
+          "packed_over_selected_hot_kernel_median": 1.5341893772729314,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            1,
+            8,
+            7
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 10636.0,
+            "minimum_ns": 10536,
+            "p95_ns": 13931,
+            "sample_count": 120,
+            "maximum_ns": 80872
+          },
+          "native_hot_selected": {
+            "median_ns": 11136.5,
+            "minimum_ns": 11007,
+            "p95_ns": 29545,
+            "sample_count": 120,
+            "maximum_ns": 375416
+          },
+          "native_hot_grouped": {
+            "median_ns": 17085.5,
+            "minimum_ns": 16925,
+            "p95_ns": 69384,
+            "sample_count": 120,
+            "maximum_ns": 296117
+          },
+          "hot_median_candidate": "selected_direct"
+        },
+        {
+          "batch_size": 64,
+          "input_commitment": "d089d90ad6a6bdebf7a87bb180ae5f7ece2c70ec1e78ebbbcf604739138760f9",
+          "statement_commitment": "636accc3b527e2e26b6ae2b681839fa34e82a7a4dfc4fbb4214fe116391c0bdc",
+          "selected_statement_commitment": "636accc3b527e2e26b6ae2b681839fa34e82a7a4dfc4fbb4214fe116391c0bdc",
+          "selected_statement_matches_packed": true,
+          "native_full_verifier_macs": 148032,
+          "native_selected_producer_with_verify": {
+            "cpu_ns": 333166,
+            "observations": 1,
+            "wall_ns": 334104
+          },
+          "native_selected_phase_wall_ns": {
+            "execution": 45178,
+            "input_commitment": 85428,
+            "statement_commitment": 3695,
+            "validation": 7562,
+            "verify": 188494
+          },
+          "native_phase_wall_ns": {
+            "expert": 23756,
+            "gather": 23135,
+            "input_commitment": 229736,
+            "router": 22173,
+            "statement_commitment": 5187,
+            "validation": 10006,
+            "verify": 164368
+          },
+          "new_unique_request_ids": 48,
+          "nonempty_expert_groups": 3,
+          "padded_macs": 0,
+          "useful_dense_macs": 98688,
+          "selected_over_ordinary_hot_kernel_median": 1.045101877181398,
+          "grouped_over_ordinary_hot_kernel_median": 1.3952457315347608,
+          "packed_over_selected_hot_kernel_median": 1.335033226901944,
+          "real_deadline_success": null,
+          "real_queue_wait_ns": null,
+          "expert_group_sizes": [
+            16,
+            17,
+            31
+          ],
+          "native_hot_ordinary": {
+            "median_ns": 42404.0,
+            "minimum_ns": 42293,
+            "p95_ns": 121443,
+            "sample_count": 120,
+            "maximum_ns": 368731
+          },
+          "native_hot_selected": {
+            "median_ns": 44316.5,
+            "minimum_ns": 44147,
+            "p95_ns": 126621,
+            "sample_count": 120,
+            "maximum_ns": 1396596
+          },
+          "native_hot_grouped": {
+            "median_ns": 59164.0,
+            "minimum_ns": 56916,
+            "p95_ns": 91228,
+            "sample_count": 120,
+            "maximum_ns": 167232
+          },
+          "hot_median_candidate": "selected_direct"
+        }
+      ],
+      "common_case_scopes": {
+        "hot_comparison_scope": "same prepared model and batch; A ordinary returns routes/logits/predictions; B selected direct and C packed grouped return the same complete Product; packed retains three internal router/gather/expert phase-clock probes absent from ordinary/direct, so differences include that instrumentation as well as gather/contraction; no commitments, verification or transport inside hot kernels",
+        "hot_sampling_order": {
+          "arms": {
+            "ordinary": "ordinary",
+            "packed": "packed_grouped",
+            "selected": "selected_direct"
+          },
+          "complete_cycles": 20,
+          "cycle": [
+            [
+              "ordinary",
+              "selected",
+              "packed"
+            ],
+            [
+              "packed",
+              "selected",
+              "ordinary"
+            ],
+            [
+              "selected",
+              "packed",
+              "ordinary"
+            ],
+            [
+              "ordinary",
+              "packed",
+              "selected"
+            ],
+            [
+              "packed",
+              "ordinary",
+              "selected"
+            ],
+            [
+              "selected",
+              "ordinary",
+              "packed"
+            ]
+          ],
+          "partial_cycle_samples": 0,
+          "remaining_orders": []
+        },
+        "native_cpu_scope": "whole handler thread CPU when available; per-phase CPU not observed",
+        "mac_scope": "useful_dense_macs is one forward operator only; verifier independently adds router/base/selected-delta work; cold calls and repeated measurement work also execute",
+        "differential_checks": [
+          "original-coefficient scalar all logits/routes/groups",
+          "model_contract predict_rows",
+          "ordinary selected-expert NumPy",
+          "model/input/statement commitments",
+          "selected and packed statements equal independent Python oracle"
+        ]
+      },
+      "selected_full_call_scope": {
+        "cost_comparison_to_hot_only_kernel": null,
+        "included": [
+          "fresh batch validation and request copy",
+          "input commitment",
+          "selected direct Product",
+          "statement commitment",
+          "independent full verifier",
+          "completion deadline check"
+        ],
+        "model_preparation_included": false,
+        "observations": 1,
+        "scope": "prepared_model_fresh_batch_input_commit_selected_statement_full_verify",
+        "transport_included": false
+      }
+    }
+  }
+}

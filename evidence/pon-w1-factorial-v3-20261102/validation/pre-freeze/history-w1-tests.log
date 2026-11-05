@@ -1,0 +1,83 @@
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+   Compiling syn v2.0.117
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling cc v1.2.59
+   Compiling bitflags v2.11.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling foldhash v0.2.0
+   Compiling cfg_aliases v0.2.2
+   Compiling libc v0.2.184
+   Compiling borsh v1.8.0
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling once_cell v1.21.4
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling cpufeatures v0.2.17
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling cfg-if v1.0.4
+   Compiling getrandom v0.4.2
+   Compiling rustix v1.1.4
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling libsqlite3-sys v0.37.0
+   Compiling hashlink v0.11.1
+   Compiling digest v0.10.7
+   Compiling linux-raw-sys v0.12.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling sha2 v0.10.9
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling fs2 v0.4.3
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-mempool)
+   Compiling proc-macro-crate v3.5.0
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-transport)
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v1.0.69
+   Compiling borsh-derive v1.8.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling thiserror v1.0.69
+   Compiling tempfile v3.27.0
+   Compiling ed25519-dalek v2.2.0
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-crypto-primitives)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling rusqlite v0.39.0
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2m 41s
+     Running unittests src/lib.rs (/tmp/pon-next-target/release/deps/trnm_pon_node-80e3e393b159c9bd)
+
+running 2 tests
+test ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill ... {"case":"valid","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":285370,"discarded_refill_ns":33887,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1248891,"live_owners":0,"paid_cpu_debit_ns":1250263,"remaining_paid_credit_ns":1999035107,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1250263,"settlement_discard_ns":0,"settlement_residual_cpu_ns":1372,"stored_credit_ns":1999035107,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":false,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1248891,"live_refused":false,"owner_cpu_ns":1250263,"residual_cpu_ns":1372,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1250263},"reference_boundaries":1099,"resource_calls":1099,"schema":"history-w1-host-boundary-count-v1"}
+{"case":"valid","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":274249,"discarded_refill_ns":11175,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1131277,"live_owners":0,"paid_cpu_debit_ns":1131958,"remaining_paid_credit_ns":1999142291,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1131958,"settlement_discard_ns":0,"settlement_residual_cpu_ns":681,"stored_credit_ns":1999142291,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":true,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1131277,"live_refused":false,"owner_cpu_ns":1131958,"residual_cpu_ns":681,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1131958},"reference_boundaries":1099,"resource_calls":1099,"schema":"history-w1-host-boundary-count-v1"}
+{"case":"false-trace","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":210487,"discarded_refill_ns":21303,"initial_credit_ns":2000000000,"live_debited_cpu_ns":885733,"live_owners":0,"paid_cpu_debit_ns":886534,"remaining_paid_credit_ns":1999323953,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":886534,"settlement_discard_ns":0,"settlement_residual_cpu_ns":801,"stored_credit_ns":1999323953,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":false,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":885733,"live_refused":false,"owner_cpu_ns":886534,"residual_cpu_ns":801,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":886534},"reference_boundaries":897,"resource_calls":897,"schema":"history-w1-host-boundary-count-v1"}
+{"case":"false-trace","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":206904,"discarded_refill_ns":8571,"initial_credit_ns":2000000000,"live_debited_cpu_ns":859334,"live_owners":0,"paid_cpu_debit_ns":859895,"remaining_paid_credit_ns":1999347009,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":859895,"settlement_discard_ns":0,"settlement_residual_cpu_ns":561,"stored_credit_ns":1999347009,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":true,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":859334,"live_refused":false,"owner_cpu_ns":859895,"residual_cpu_ns":561,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":859895},"reference_boundaries":897,"resource_calls":897,"schema":"history-w1-host-boundary-count-v1"}
+ok
+test ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account ... 
+thread 'ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account' (1275) panicked at crates/trnm-pon-node/src/ingress/history_import_tests.rs:224:62:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicRequestDeadline), kind: Cancelled, message: "PUBLIC_REQUEST_DEADLINE", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 837 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

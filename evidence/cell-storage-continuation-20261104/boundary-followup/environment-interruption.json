@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-cell-environment-interruption-v1",
+  "observed_utc": "2026-11-05T01:06:09.209195+00:00",
+  "error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+  "recovered_files": true,
+  "original_exec_sessions_resumable": false,
+  "matching_original_command_processes_present": false,
+  "exit_codes_unknown": true,
+  "composition_ctrl_c_requested_before_disconnect": true,
+  "composition_ctrl_c_acknowledged": false,
+  "no_oom_cause_attributed": true,
+  "receipts": [
+    {
+      "receipt": "final/storage-workspace-clippy.json",
+      "receipt_sha256": "de7bc308f443c4f75f847795de5290630a92e88d1f1fa316c3ed02fcc9b4fde2",
+      "raw_status": "running",
+      "raw_exit_code": null,
+      "log_sha256": "1e70919654174b99f1a7e03bb55ba260234871b77df6547607ea61cf2bd91b69",
+      "log_bytes": 5099,
+      "complete_before_after_available": false,
+      "final_outcome": "INCOMPLETE_ENVIRONMENT_TRANSPORT_LOST",
+      "pass_claimed": false
+    },
+    {
+      "receipt": "composition/composition-source-controls.json",
+      "receipt_sha256": "552d92ac37e8036fe96fc5fa4453d0d2cdec03ab995e2ea68fa188fcad248e1a",
+      "raw_status": "running",
+      "raw_exit_code": null,
+      "log_sha256": "7207ac1dfc48b070daffbc0096c859288a5fdc3ec95cc28bc803835ecdbf934c",
+      "log_bytes": 1712,
+      "complete_before_after_available": false,
+      "final_outcome": "INCOMPLETE_ENVIRONMENT_TRANSPORT_LOST",
+      "pass_claimed": false
+    }
+  ]
+}

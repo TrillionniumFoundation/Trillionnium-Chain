@@ -1,0 +1,127 @@
+[
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 0.10607,
+    "log": "ci-contract.log",
+    "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+  },
+  {
+    "name": "pq-corpus",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 1,
+    "wall_seconds": 0.068714,
+    "log": "pq-corpus.log",
+    "log_sha256": "e8fcdebd462321ee1f9b6b174b892083fb66c187f97b037de8736e6550756ba2"
+  },
+  {
+    "name": "pq-controls",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_pq_research_integration",
+      "test_pq_chain_claim_guard",
+      "-v"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 26.001169,
+    "log": "pq-controls.log",
+    "log_sha256": "35b02de1c7217d14df37b43d8e0a88770f52da2983cd725f7e740449ff4157cb"
+  },
+  {
+    "name": "source-inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 0.097696,
+    "log": "source-inventory.log",
+    "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "shell-syntax",
+    "argv": [
+      "bash",
+      "-n",
+      "scripts/ci/ci_job.sh"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 0.006791,
+    "log": "shell-syntax.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "rust-format",
+    "argv": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 14.602554,
+    "log": "rust-format.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "diff-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "env_overrides": {
+      "PYTHONPATH": "scripts/ci",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "exit_code": 0,
+    "wall_seconds": 0.030043,
+    "log": "diff-whitespace.log",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

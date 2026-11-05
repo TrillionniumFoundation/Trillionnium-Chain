@@ -1,0 +1,49 @@
+{
+  "schema": "frontier-intermediate-source-binding-v1",
+  "base_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "changed_compiled_rust_sources": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "sha256": "5253bd06d8b677652bc5be227c9d7ce1d3dc16dc70e5a569b42ceb7f0fa1ec6b",
+      "git_blob": "cb07d1606590b1979a64f8b662c6a8349738226b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "b9f7aa9d535d07abf947612ed05df523f7d29f2faf560cb027cae47856e134e5",
+      "git_blob": "e250df3f9b6bbd792ba186e563677c36c8ba8959"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "git_blob": "ed9c2000d253d7421ec899287012f2602f6f7fc5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "sha256": "04b02127f2cb6e9bfc40261c1b30448e04b5f1fc2ba5bd44cebefc0bfaf53eea",
+      "git_blob": "15684ef0415b37a9829960ed6aa61ca2f9d5ae38"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+      "sha256": "8ce99b8cd82f4a709fd967b8f87cbf04c8084b817b3d77d3681be6d1f69cd35d",
+      "git_blob": "46e4dee2d0aa0952c830066790551794fc86b40f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "git_blob": "fe84e7e93ca593473cf9a69b1bd47745cc014194"
+    }
+  ],
+  "source_committed": false,
+  "original_test_profile": true,
+  "features": [
+    "default"
+  ],
+  "selected_distinct_native_passes": 113,
+  "four_new_frontier_tests_included_in_113": true,
+  "separate_wrong_selector_matched_zero_and_is_invalid": true,
+  "initial_build_no_space_exit": 101,
+  "repeated_build_exit": 0,
+  "final_combined_source_qualification": false,
+  "selected_integration_binaries_built_but_not_executed": true,
+  "test_binary_reclaimed_after_success_due_shared_disk": true
+}

@@ -1,0 +1,18 @@
+{
+  "build_failure": "ENOSPC while building libtrnm_mvcc_fee-8e882c6761a2de92.rlib",
+  "cargo_test_command_exit_code": 101,
+  "clippy": "NOT_RUN",
+  "complete_test_failure_claimed": false,
+  "diagnostic_verified_in_log": true,
+  "logs_preserved": true,
+  "model_trial_affected": false,
+  "native_test_result": "UNKNOWN_NO_TEST_RESULTS",
+  "observed_utc_ns": 1793844194778841740,
+  "preflight_metadata_fmt": "PASS",
+  "qualification": false,
+  "schema": "native-attempt-outcome-readback-v1",
+  "signal_delivery": "UNVERIFIED: attempted stop journal could not be flushed under ENOSPC; process was subsequently absent",
+  "source": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "stop_journal_bytes": 0,
+  "test_summary_count": 0
+}

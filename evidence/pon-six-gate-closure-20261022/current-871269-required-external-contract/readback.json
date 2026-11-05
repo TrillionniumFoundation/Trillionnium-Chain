@@ -1,0 +1,239 @@
+{
+  "causality": {
+    "cause": "Strict checker whole-StateBackend implementation template predates selected_schema_id(&settings); opener pairing and old mutator anchors likewise expect schema_id(). All three relevant Git blobs unchanged871\u219243, so failure is deterministic at current inspected source, but no current43 CI execution is claimed.",
+    "inspected_source": "43f64f01ffe9c9b869c3d436f5150b4bd5ac2f65",
+    "unchanged_old_to_inspected_blobs": {
+      "scripts/ci/check_public_readiness_evidence.py": {
+        "git_blob": "db7777ba4ee0c3d9fb78ee9d31a17ea3b404e4ac",
+        "sha256": "70dbcccbfec0b03af0c0a6ba1f1d30fe734e3a806059a754eea0d60d1482eed0"
+      },
+      "scripts/ci/test_public_readiness_evidence.py": {
+        "git_blob": "e1b4bc55269b0f30a51f32a5f49361b4d234f34a",
+        "sha256": "3a575cf86ebdb8591d1fbd0124016cbafa592e361f440c645ce87e179e6f8a33"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store.rs": {
+        "git_blob": "48da480bf38e609cee830a9cb2c0eccc33f6dfe7",
+        "sha256": "40868959458b6d19379fc73d5761425ddd0a8a0c3d0cc044e212a40ab420060d"
+      }
+    }
+  },
+  "historical": {
+    "jobs": [
+      {
+        "errors": 10,
+        "failed_subtests": 24,
+        "first_failure": "ValueError: durable backend composition/domain during test setup",
+        "full_raw_source_guards": [
+          {
+            "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+            "candidate": "87126992dd5634348cc1a788442126997b28c624",
+            "kind": "prospective-merge",
+            "prospective_merge": "b388ad9a4fc955d5584ea344c0081bec2204c571",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b388ad9a4fc955d5584ea344c0081bec2204c571",
+            "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 682534734,
+            "tracked_entries": 4224,
+            "tracked_worktree_verified": true
+          },
+          {
+            "base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+            "candidate": "87126992dd5634348cc1a788442126997b28c624",
+            "kind": "prospective-merge",
+            "prospective_merge": "b388ad9a4fc955d5584ea344c0081bec2204c571",
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "b388ad9a4fc955d5584ea344c0081bec2204c571",
+            "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 682534734,
+            "tracked_entries": 4224,
+            "tracked_worktree_verified": true
+          }
+        ],
+        "id": 119704319042,
+        "original_result": "FAIL",
+        "original_test_methods": 32,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39739585771/job/119704319042"
+      },
+      {
+        "errors": 10,
+        "failed_subtests": 24,
+        "first_failure": "ValueError: durable backend composition/domain during test setup",
+        "full_raw_source_guards": [
+          {
+            "base": null,
+            "candidate": "87126992dd5634348cc1a788442126997b28c624",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "87126992dd5634348cc1a788442126997b28c624",
+            "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 682534734,
+            "tracked_entries": 4224,
+            "tracked_worktree_verified": true
+          },
+          {
+            "base": null,
+            "candidate": "87126992dd5634348cc1a788442126997b28c624",
+            "kind": "head",
+            "prospective_merge": null,
+            "schema": "trnm-ci-source-v1",
+            "tested_commit": "87126992dd5634348cc1a788442126997b28c624",
+            "tested_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+            "tests_executed_by_identity_check": false,
+            "tracked_bytes": 682534734,
+            "tracked_entries": 4224,
+            "tracked_worktree_verified": true
+          }
+        ],
+        "id": 119704319200,
+        "original_result": "FAIL",
+        "original_test_methods": 32,
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39739585771/job/119704319200"
+      }
+    ],
+    "original_decoded_log_envelopes": [
+      {
+        "bytes": 29828,
+        "decoded_bytes": 142566,
+        "decoded_file": "job-119704319042.original-decoded.log",
+        "decoded_sha256": "66d9b058fea03743a9476a168ab8e642da2634b35cfc8bc43436176aa6437cbb",
+        "file": "job-119704319042.original-decoded.log.gzip.json",
+        "sha256": "2b91ddfe4c7728b94d99d0ffcf6fe7b1080c9b17b61045757dbc4be0036b0bd1"
+      },
+      {
+        "bytes": 30376,
+        "decoded_bytes": 142355,
+        "decoded_file": "job-119704319200.original-decoded.log",
+        "decoded_sha256": "358820a8ee02f0b52e2879f6e65d35a3748cce22316a8bbdd74fcb936e42863d",
+        "file": "job-119704319200.original-decoded.log.gzip.json",
+        "sha256": "8b74e5090a4701b7c2f8619958f0dc97fb26f9f942bef2cb079764f9d451d0dd"
+      }
+    ],
+    "run_id": 39739585771,
+    "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/39739585771",
+    "source": "87126992dd5634348cc1a788442126997b28c624"
+  },
+  "independent_public_acceptance": false,
+  "local_validation": {
+    "captured_logs": [
+      {
+        "bytes": 45858,
+        "file": "whole-external-evidence-contract.stdout",
+        "sha256": "fb38f50298737788b5a05b7bc818145e148c5719cc7df90b5c275fd952a9ca1a"
+      },
+      {
+        "bytes": 36728,
+        "file": "whole-external-evidence-contract.stderr",
+        "sha256": "325695875598435e4dbb89d39cec90099275cae55993e6ea233a5986b17a4f78"
+      },
+      {
+        "bytes": 0,
+        "file": "ci-contract.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 14009,
+        "file": "ci-contract.stderr",
+        "sha256": "f60a5a1a0a7411d30b46a77b7e1d30343c6c628a0bc04a30eee741412e1cbabe"
+      },
+      {
+        "bytes": 484,
+        "file": "source-integrity.stdout",
+        "sha256": "df5fecc1143a96bd30a8fa630400ba11f4ba8728003da45f6fa6ad3e62ac083f"
+      },
+      {
+        "bytes": 4852,
+        "file": "source-integrity.stderr",
+        "sha256": "4126951467d96a1f03a3b09f3d83dfc6301aa90047d17f918e7fef95e7484654"
+      }
+    ],
+    "ci_contract_tests": 85,
+    "commands": [
+      {
+        "argv": [
+          "bash",
+          "scripts/ci/ci_job.sh",
+          "external-evidence-contract"
+        ],
+        "completed_utc": "2026-10-22T12:00:39.378278+00:00",
+        "exit_code": 0,
+        "name": "whole-external-evidence-contract",
+        "started_utc": "2026-10-22T11:54:51.842173+00:00",
+        "stderr_bytes": 36728,
+        "stdout_bytes": 45858
+      },
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "completed_utc": "2026-10-22T12:00:43.241042+00:00",
+        "exit_code": 0,
+        "name": "ci-contract",
+        "started_utc": "2026-10-22T12:00:39.378569+00:00",
+        "stderr_bytes": 14009,
+        "stdout_bytes": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "completed_utc": "2026-10-22T12:00:46.459223+00:00",
+        "exit_code": 0,
+        "name": "source-integrity",
+        "started_utc": "2026-10-22T12:00:43.241247+00:00",
+        "stderr_bytes": 4852,
+        "stdout_bytes": 484
+      }
+    ],
+    "external_unittest_executions": 254,
+    "external_unittest_suite_count": 11,
+    "external_unittest_suite_counts": [
+      38,
+      8,
+      9,
+      20,
+      24,
+      34,
+      18,
+      28,
+      23,
+      20,
+      32
+    ],
+    "native_rust_model_windows_wan_execution": "NOT_RUN by this repair; unchanged Rust cached checks and canonical exact-source validation are separate obligations.",
+    "repository_local_links": 1079,
+    "source_integrity_tests": 33,
+    "source_scope": "Dirty candidate based on inspected_source with exactly the two Python source changes plus original failure envelopes; exact committed-source canonical checks still required after publication."
+  },
+  "production_activation": false,
+  "remaining": "Current required workflow receipt must execute on final published head and actual prospective merge. Original failures remain failures. This component repair does not close W1 cost/service, growth recovery, real model loop, five-budget runtime or independent WAN gates.",
+  "repair": {
+    "added_methods": [
+      "test_growth_selection_is_exact_without_widening_legacy_evidence",
+      "test_selected_settings_cannot_be_mutated_through_fields_or_borrowed"
+    ],
+    "approved_contract": "Exact whole StateBackend impl, independently checked growth byte literal, exact direct selected_schema_id(&settings) opener pair and bounded selected-value readonly guard. Returned durable evidence remains only exact legacy4775-byte V2 schema.",
+    "current_test_methods": 34,
+    "legacy_schema_sha256": "8c2627fa0b06e51742e7e6d40662c61d4b4727e810abc02b24634a8a817dc0e0",
+    "mutants": "All replacements use replace_once with exactly one current-source hit; retain all old negative assertions, add wrong GSC2/default/selector/bypass and settings field/index/reborrow controls.",
+    "native_store_unchanged": {
+      "git_blob": "48da480bf38e609cee830a9cb2c0eccc33f6dfe7",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    "parent": "43f64f01ffe9c9b869c3d436f5150b4bd5ac2f65",
+    "preserved_original_methods": 32,
+    "source_blobs": {
+      "scripts/ci/check_public_readiness_evidence.py": "4099d29ba7670346c95be00495c5b1148be8da12",
+      "scripts/ci/test_public_readiness_evidence.py": "99b771a564893d5aaee3c92a76ce56169143e7c2"
+    }
+  },
+  "schema": "chain-strict-external-evidence-contract-repair-v1",
+  "scope": "Original historical required-job failures plus bounded local Python checker repair; not a current-source required CI or native/model/public acceptance receipt."
+}

@@ -1,0 +1,1551 @@
+{
+  "additional_fast_daa_primary_source_lookup": {
+    "author_bibliography": "https://jagaray.com/publications/",
+    "component_direct_source_unchanged": "author-linked September 15 SJTU slides, pinned in source manifest",
+    "explainer_pages": 2,
+    "explainer_scope": "official overview, not full formal algorithm; constant adjustment time means independent of security parameter",
+    "full_paper_recovered": false,
+    "official_explainer": "https://www.iog.io/api/research/pdf/explainer/CMS48YZX",
+    "official_paper_page": "https://www.iog.io/papers/fast-difficulty-adjustment-in-proof-of-work-consensus",
+    "same_failed_pdf_endpoints_retried": false,
+    "version_equivalence_claimed": false
+  },
+  "artifact_policy": {
+    "large_reports_and_traces_committed": false,
+    "original_run_paths_are_observation_labels": true,
+    "raw_file_hashes_distinct_from_canonical_json_hashes": true,
+    "regeneration_commands": "README.md",
+    "small_setup_traces_committed": true
+  },
+  "environment_interruption": {
+    "core_integration_published_before_loss": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+    "implementation_change_during_recovery": false,
+    "native_strict_clippy_accepted": false,
+    "research_tests_and_replays_completed_before_loss": true
+  },
+  "events": {
+    "all_campaign_sources_committed_at_head": true,
+    "campaigns": {
+      "adversarial": {
+        "artifacts": {
+          "manifest": {
+            "bytes": 5047,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial/manifest.json",
+            "sha256": "ba584c5213a07d8fb779eef9b90822699c645464d23b35242f5febe2c791d469"
+          },
+          "replay_metadata": {
+            "bytes": 781,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial.verify.meta.json",
+            "sha256": "24197e31fbcd2b66619025c980086458ea9e768e3476ec287b90c8d99d5189b6"
+          },
+          "replay_stdout": {
+            "bytes": 201,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial.verify.stdout.json",
+            "sha256": "0bf23563859a0f88a6ecdbefa92a2b17b596ad083f1b82d7b8c22edb9e311e0c"
+          },
+          "report": {
+            "bytes": 447868,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial/report.json",
+            "sha256": "b841e77641702657fac751e04e387264295c32efc3e5b630c7c51126951549ee"
+          },
+          "run_metadata": {
+            "bytes": 756,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial.run.meta.json",
+            "sha256": "faac0bbb4b49ef7172ef4e2228f2c516da7195047181801a3d0fcb263fbc4cd5"
+          },
+          "run_stdout": {
+            "bytes": 173,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial.run.stdout.json",
+            "sha256": "a0948a4ae6ce2470d59f2954d970f7e733506a32121baa5234d897cb46cff991"
+          }
+        },
+        "blocks_created": 6416,
+        "directory": "/workspace/scratch/7d6915ae5ed9/frozen-event-adversarial",
+        "events_processed": 57163,
+        "horizon_completed_runs": 45,
+        "independent_native_arithmetic_readback": {
+          "backward_adjacent_timestamps": 24,
+          "blocks_checked": 6416,
+          "branch_retargets_checked": 449,
+          "native_w1_verified": false
+        },
+        "largest_reorg_runs": [
+          {
+            "confirmation_reversals": 0,
+            "max_reorg_depth": 2,
+            "name": "finite_one_persistent_conditioned",
+            "quantum_iteration_seconds_assumed": 0.15,
+            "quantum_processors": 4,
+            "seed": 5101
+          }
+        ],
+        "max_observed_reorg_depth": 2,
+        "observed_confirmation_reversals": 0,
+        "observed_reorgs_beyond_confirmation_depth": 0,
+        "persistent_zero_domain_controls": [
+          {
+            "completed_candidate_checks": 9468,
+            "domains_created": 1,
+            "quantum_blocks": 0,
+            "quantum_processors": 4,
+            "seed": 5101,
+            "setup_seconds": 0.2,
+            "zero_marked_domains": 1
+          },
+          {
+            "completed_candidate_checks": 9468,
+            "domains_created": 1,
+            "quantum_blocks": 0,
+            "quantum_processors": 4,
+            "seed": 5102,
+            "setup_seconds": 0.2,
+            "zero_marked_domains": 1
+          },
+          {
+            "completed_candidate_checks": 9468,
+            "domains_created": 1,
+            "quantum_blocks": 0,
+            "quantum_processors": 4,
+            "seed": 5103,
+            "setup_seconds": 0.2,
+            "zero_marked_domains": 1
+          }
+        ],
+        "probe_unconfirmed_at_horizon_runs": 3,
+        "replay_child_cpu_seconds": 7.9594640000000005,
+        "replay_receipt": {
+          "global_attack_optimum_claimed": false,
+          "native_w1_verified": false,
+          "quantum_resource_verified": false,
+          "release_ready": false,
+          "result": "ADVERSARIAL_REPLAY_AND_NATIVE_ARITHMETIC_PASS",
+          "runs": 45
+        },
+        "replay_wall_seconds": 28.217809177999698,
+        "reported_simulator_process": {
+          "cpu_seconds": 7.401528976,
+          "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+          "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "scope": "conditional event simulation and serialization; no W1/hardware timing",
+          "wall_seconds": 20.768056145000173
+        },
+        "run_child_cpu_seconds": 7.582469,
+        "run_receipt": {
+          "horizon_completed_runs": 45,
+          "release_ready": false,
+          "result": "BOUNDED_CONDITIONAL_ADVERSARIAL_OBSERVATIONS",
+          "runs": 45,
+          "source_committed": true,
+          "trace_rows": 139936
+        },
+        "run_wall_seconds": 21.46969378599988,
+        "runs": 45,
+        "scenario_count": 15,
+        "scenarios": [
+          "adaptive_future_bound_lead1",
+          "adaptive_future_bound_lead3",
+          "adaptive_retarget_extremes_lead1",
+          "adaptive_retarget_extremes_lead3",
+          "adaptive_wall_lead1",
+          "adaptive_wall_lead3",
+          "finite_binomial_persistent",
+          "finite_binomial_refresh_fixed",
+          "finite_binomial_refresh_rate",
+          "finite_empty_persistent",
+          "finite_one_persistent_conditioned",
+          "private_peak_q1",
+          "private_peak_q4",
+          "private_rate_q1",
+          "private_rate_q4"
+        ],
+        "seeds": [
+          5101,
+          5102,
+          5103
+        ],
+        "trace_rows": 139936,
+        "trace_truncated_runs": 0
+      },
+      "network": {
+        "artifacts": {
+          "manifest": {
+            "bytes": 3462,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network/manifest.json",
+            "sha256": "0fd20fc8298c941f4d1fd45427c238c1cd81f91a9b39f5abe5c5046f2a2f0854"
+          },
+          "replay_metadata": {
+            "bytes": 772,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network.verify.meta.json",
+            "sha256": "f5732619a9efb9c4cf690fedcaf74d420e0ffaaef73edc3c582af3a74c2a28b2"
+          },
+          "replay_stdout": {
+            "bytes": 155,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network.verify.stdout.json",
+            "sha256": "8106d659abf119b1c878ef61a5ce5d153130d1e261b1fcf2e50245ce3237599a"
+          },
+          "report": {
+            "bytes": 166774,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network/report.json",
+            "sha256": "ee80f359a8eb6c7e4a07b91ff1533caa8daf7160e487109bd021ca279b669a5b"
+          },
+          "run_metadata": {
+            "bytes": 760,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network.run.meta.json",
+            "sha256": "e7994df8cf5d3d09073aa0b2c5577daea867fa03b8b72a5b80b5ccab9e1cc793"
+          },
+          "run_stdout": {
+            "bytes": 160,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-network.run.stdout.json",
+            "sha256": "0fd1eda81dc73ce0eec1dfc6318b39d83036423b46e87c921c8fed7c3e0c19ff"
+          }
+        },
+        "blocks_created": 9983,
+        "directory": "/workspace/scratch/7d6915ae5ed9/frozen-event-network",
+        "events_processed": 40434,
+        "horizon_completed_runs": 30,
+        "largest_reorg_runs": [
+          {
+            "confirmation_reversals": 1,
+            "max_reorg_depth": 88,
+            "name": "private_fast_oracle_sensitivity",
+            "quantum_iteration_seconds_assumed": 0.01,
+            "quantum_processors": 1,
+            "seed": 4102
+          }
+        ],
+        "max_observed_reorg_depth": 88,
+        "observed_confirmation_reversals": 3,
+        "observed_reorgs_beyond_confirmation_depth": 3,
+        "probe_unconfirmed_at_horizon_runs": 6,
+        "replay_child_cpu_seconds": 6.028488999999999,
+        "replay_receipt": {
+          "native_w1_verified": false,
+          "quantum_resource_verified": false,
+          "release_ready": false,
+          "result": "SEEDED_REPLAY_AND_INTEGER_READBACK_PASS",
+          "runs": 30
+        },
+        "replay_wall_seconds": 24.427285023999957,
+        "reported_simulator_process": {
+          "cpu_seconds": 5.861540392,
+          "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+          "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+          "scope": "simulator and trace serialization, not W1 or quantum hardware",
+          "wall_seconds": 18.886887527
+        },
+        "run_child_cpu_seconds": 6.022876,
+        "run_receipt": {
+          "horizon_completed_runs": 30,
+          "release_ready": false,
+          "result": "CONDITIONAL_NETWORK_OBSERVATIONS",
+          "runs": 30,
+          "source_committed": true,
+          "trace_rows": 77847
+        },
+        "run_wall_seconds": 19.601445130999764,
+        "runs": 30,
+        "scenario_count": 10,
+        "scenarios": [
+          "asert_mtp_private",
+          "asert_raw_private",
+          "classical_control",
+          "fixed_round_overshoot_sensitivity",
+          "long_proof_and_network_delay",
+          "periodic_honest_grover",
+          "periodic_participation_shocks",
+          "periodic_private_grover",
+          "private_fast_oracle_sensitivity",
+          "private_timestamp_phases_sensitivity"
+        ],
+        "seeds": [
+          4101,
+          4102,
+          4103
+        ],
+        "trace_rows": 77847,
+        "trace_truncated_runs": 0
+      }
+    },
+    "created_utc": "2026-11-05T00:32:27.580126+00:00",
+    "git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "preflight": {
+      "branch": "fix/chain-quantum-daa-review-20261104",
+      "mode": "--dev",
+      "packages": 26,
+      "project": "trillionnium-chain",
+      "remote_policy_mutated": false,
+      "result": "PASS"
+    },
+    "schema": "frozen-event-campaign-summary-v1",
+    "security_boundaries": {
+      "empirical_observations": "Observed reorganizations use the declared synthetic clocks; absence of reversals in the finite expanded grid is not a security bound.",
+      "global_attack_optimum_claimed": false,
+      "native_node_exploited": false,
+      "native_w1_verified": false,
+      "production_consensus_activation": false,
+      "quantum_hardware_executed": false,
+      "quantum_resource_verified": false,
+      "receipt": "Source-consistent deterministic replay, not authenticated hardware execution or a consensus security proof.",
+      "release_ready": false,
+      "scope": "Seeded conditional event simulation and exact required-target/time/integer-work readback. Search clocks, lottery predicates and finite-domain priors remain explicit assumptions.",
+      "security_theorem": false,
+      "statistical_security_threshold": null
+    },
+    "setup_interruption_witness": {
+      "after_git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+      "artifact": {
+        "bytes": 13708,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-before-after.json",
+        "sha256": "f2dd2fca72eaca4082b48761dd5c55f64b376dd610b8ffb0bd2ee2a9b3a31921"
+      },
+      "before_git_head": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+      "comparison": [
+        {
+          "after_candidate_checks": 1,
+          "after_setup_processor_seconds": 2.0,
+          "after_setup_seconds": 2.0,
+          "after_trace": {
+            "bytes": 2071,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-after-p1.jsonl",
+            "sha256": "9c42f80540ef397ed338aad5756fd60d41f25eb99465e11015007a8609cdf77c"
+          },
+          "before_candidate_checks": 3,
+          "before_setup_processor_seconds": 0.5,
+          "before_setup_seconds": 0.5,
+          "before_trace": {
+            "bytes": 3035,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-before-p1.jsonl",
+            "sha256": "bf755b38df1db1a4ee3282edae1bf9e50cb5321ed8f3cad7bbcba8a910891b5c"
+          },
+          "processors": 1,
+          "same_domain_identity": true
+        },
+        {
+          "after_candidate_checks": 4,
+          "after_setup_processor_seconds": 8.0,
+          "after_setup_seconds": 2.0,
+          "after_trace": {
+            "bytes": 2071,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-after-p4.jsonl",
+            "sha256": "9c42f80540ef397ed338aad5756fd60d41f25eb99465e11015007a8609cdf77c"
+          },
+          "before_candidate_checks": 12,
+          "before_setup_processor_seconds": 2.0,
+          "before_setup_seconds": 0.5,
+          "before_trace": {
+            "bytes": 3035,
+            "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-before-p4.jsonl",
+            "sha256": "bf755b38df1db1a4ee3282edae1bf9e50cb5321ed8f3cad7bbcba8a910891b5c"
+          },
+          "processors": 4,
+          "same_domain_identity": true
+        }
+      ],
+      "program": {
+        "bytes": 1937,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-event-setup-witness-program.py",
+        "sha256": "97fc066f1b4b6b78f2d268c90e87df622d28d8c1546d9db45a3a81cf2e0eccef"
+      },
+      "same_three_dependency_files": true
+    },
+    "source_inventory_sha256": "0dce0f16c90cfe084e364ecafbaa49f091dd0729d2dcb207322eea93b2ee1939",
+    "source_remained_clean": true,
+    "source_sha256": {
+      "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py": "84c05396744e67b37547d36ae7bbd017a4ad011b5cc726142c63fd080176b5df",
+      "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py": "72abd0bed908e1a5e0f714cd3e6ff4dc85f252fe8ad67f0e081a5cfbac9ce645",
+      "formal/pon-nakamoto-v1/quantum_adversarial_search.py": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+      "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
+      "formal/pon-nakamoto-v1/quantum_network_sim.py": "c9a94eb87a54dfd2bae641a79d72e55a6b12010a7a9dc82c2ecd1c286780d38a",
+      "formal/pon-nakamoto-v1/reference.py": "5c5e7cba07709ff6fd390eb7eea3e9db1e9d588809a9ad6a06a9884b8856aa71",
+      "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py": "d6f5e0b77909aa0c898fb073fae4b70c88e27f370811c8008e2766d7f252984a",
+      "formal/pon-nakamoto-v1/test_quantum_network_sim.py": "6b0ff17dabaab2bbd62ef71aae7f82117f01fdbb0d9f7e15cf596249f32bbdad",
+      "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+    },
+    "totals": {
+      "blocks_created": 16399,
+      "events_processed": 97597,
+      "horizon_completed_runs": 75,
+      "runs": 75,
+      "trace_rows": 217783,
+      "trace_truncated_runs": 0
+    }
+  },
+  "integration_committed_source_gate": {
+    "command": [
+      "python",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_seconds": 135.48360228538513,
+    "exit_code": 0,
+    "log": "/workspace/scratch/7d6915ae5ed9/integration-committed-source-check.log",
+    "log_sha256": "929c6e76bac419f65cf44ca2bfdc95ed864a216d38f00fd8cbc6371080c4149a",
+    "parsed_output": "{\"activation\": false, \"head\": \"f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c\", \"local_links\": 2654, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1130, \"source_state\": \"committed-clean\", \"tree\": \"82f2a5e3045cf65eb8b4dbfd2a055e5159265ce4\", \"workspace_packages\": 26}\n",
+    "source_commit": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
+  },
+  "integration_parent_preserved": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "joint_suite": {
+    "PYTHONPATH": "formal/pon-nakamoto-v1:scripts/ci",
+    "artifact": {
+      "bytes": 39126,
+      "name": "frozen-joint-tests.log",
+      "sha256": "fc394e7117fa8d28ab4a753b9ce706d3206b59997cd231b18a6cf3835d4dc277"
+    },
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "test_reversible_components",
+      "test_w1_quantum_oracle",
+      "test_quantum_oracle_resources",
+      "test_quantum_resource_clock",
+      "test_quantum_network_sim",
+      "test_quantum_adversarial_search",
+      "test_quantum_daa_model",
+      "test_pq_quantum_daa_scenarios",
+      "test_parallel_variable_ohie",
+      "test_w1_marked_domain",
+      "test_w1_quantum_restricted_oracle",
+      "test_fast_daa_reference_component",
+      "-v"
+    ],
+    "elapsed_seconds": 281.932,
+    "exit_code": 0,
+    "log": "/workspace/scratch/7d6915ae5ed9/frozen-joint-tests.log",
+    "result": "PASS",
+    "source_commit": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "tests_run": 234
+  },
+  "known_prefreeze_regressions": [
+    {
+      "after_source": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+      "before_source": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+      "id": "interrupted-setup-undercharge",
+      "retained_witness": "setup-before-after.json"
+    },
+    {
+      "fixed_shared_cap_bytes": 16777216,
+      "id": "domain-io-cap-rejected-valid-4096-census",
+      "old_cap_bytes": 2000000,
+      "valid_observed_report_bytes": 2236235
+    },
+    {
+      "fix": "restricted campaign owns exact inventory and committed-source routines",
+      "id": "restricted-helper-used-inherited-source-files",
+      "observed_initial_test_failures": 2
+    }
+  ],
+  "literal_domains": {
+    "all_declared_sources_committed_at_head": true,
+    "cases": [
+      {
+        "case": "native-pnh1",
+        "domain_size": 16,
+        "marked_count": 9,
+        "native_shape": true,
+        "native_winning_proofs_verified": 9,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 9
+      },
+      {
+        "case": "native-pgh2",
+        "domain_size": 16,
+        "marked_count": 6,
+        "native_shape": true,
+        "native_winning_proofs_verified": 6,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 6
+      },
+      {
+        "case": "native-pnh1-target-one",
+        "domain_size": 16,
+        "marked_count": 0,
+        "native_shape": true,
+        "native_winning_proofs_verified": 0,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 0
+      },
+      {
+        "case": "reduced-pnh1",
+        "domain_size": 256,
+        "marked_count": 255,
+        "native_shape": false,
+        "native_winning_proofs_verified": 0,
+        "noise_budget_refusals": 1,
+        "restricted_marked_count": 61
+      },
+      {
+        "case": "reduced-pnh1-target-one",
+        "domain_size": 256,
+        "marked_count": 0,
+        "native_shape": false,
+        "native_winning_proofs_verified": 0,
+        "noise_budget_refusals": 1,
+        "restricted_marked_count": 0
+      },
+      {
+        "case": "reduced-pgh2-target-one",
+        "domain_size": 256,
+        "marked_count": 0,
+        "native_shape": false,
+        "native_winning_proofs_verified": 0,
+        "noise_budget_refusals": 1,
+        "restricted_marked_count": 0
+      }
+    ],
+    "declared_source_pins": 20,
+    "failures": [],
+    "files": [
+      {
+        "bytes": 536882,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-campaign.json",
+        "sha256": "5c2be8064e3ae69589601cbbbdcc04a61e5b507713179ea1bea69206efe173f3"
+      },
+      {
+        "bytes": 171,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-campaign.log",
+        "sha256": "59288090e991f9f15091e6ba15a6275e8ac769fb0d255494c83863d517386570"
+      },
+      {
+        "bytes": 396,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-campaign.execution.json",
+        "sha256": "bdbd4d2316ee258a53c4f5ab319d0fbacb0c575d1f40546dcfdedad632594129"
+      },
+      {
+        "bytes": 363,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-replay.json",
+        "sha256": "685ee7cf77a297051165213f2550d86b5fe30c5dfe2a6bd716d54907c941fdf1"
+      },
+      {
+        "bytes": 380,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-replay.log",
+        "sha256": "aec5962e1295c991571b91ed8b5dae5dba7016b9eb70b0889f75376de59716be"
+      },
+      {
+        "bytes": 489,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-domain-replay.execution.json",
+        "sha256": "62acc7474e32d820409f37a4e9ea985231e388a91d4fb0ac2085c381a6c7e9f8"
+      }
+    ],
+    "final_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "limitations": [
+      "Fixed canonical header work relation only; native task, parent, timestamp and expected-target admission not checked.",
+      "Finite low-nonce subspaces; no complete nonce64 distribution or independence claim.",
+      "All clocks in measurement controls are supplied assumptions; observer CPU/wall times are not quantum oracle calibration.",
+      "Native PNW1 winning proof checks are independent scalar verification, not native Node execution."
+    ],
+    "replay": {
+      "campaign_sha256": "efe790920d7eee1b7d3c133ca6db88bc0ec45544640545424a366d77a9a17d14",
+      "literal_cases_replayed": 6,
+      "native_nonces_replayed": 48,
+      "native_winning_proofs_scalar_verified": 15,
+      "recorded_timings_reexecuted_or_attested": false,
+      "reduced_nonces_replayed": 768,
+      "schema": "trnm-w1-literal-domain-replay-v1",
+      "search_controls_replayed": 3,
+      "security_qualified": false
+    },
+    "runtime": {
+      "campaign": {
+        "child_system_cpu_seconds": 0.359542,
+        "child_user_cpu_seconds": 8.342623,
+        "exit_code": 0,
+        "wall_seconds": 26.934270562000165
+      },
+      "replay": {
+        "child_system_cpu_seconds": 0.30712599999999995,
+        "child_user_cpu_seconds": 8.416231,
+        "exit_code": 0,
+        "wall_seconds": 27.30451310699982
+      }
+    },
+    "search_controls": {
+      "native-empty-domain-retries": {
+        "domain_setup_charges": 1,
+        "native_blocks_admitted": 0,
+        "success": false,
+        "trials": 4
+      },
+      "reduced-actual-candidate-measurement": {
+        "domain_setup_charges": 1,
+        "native_blocks_admitted": 0,
+        "success": true,
+        "trials": 1
+      },
+      "reduced-empty-domain-refresh": {
+        "domain_setup_charges": 3,
+        "native_blocks_admitted": 0,
+        "success": false,
+        "trials": 5
+      }
+    },
+    "source_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "uncommitted_declared_sources": []
+  },
+  "merge_preparation": {
+    "base": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+    "concurrent_head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "files": [
+      {
+        "method": "preserved_remote_text_and_inserted_own_section",
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/experiments/w1_marked_domain_campaign.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/fast_daa_reference_component.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/quantum_network_sim.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/test_fast_daa_reference_component.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/test_w1_marked_domain.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/vectors/fast-daa-author-slides-retarget-v1.json"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/w1_marked_domain.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py"
+      },
+      {
+        "method": "unchanged_in_concurrent_head",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py"
+      },
+      {
+        "method": "clean_three_way_merge",
+        "path": "scripts/ci/ci_job.sh"
+      },
+      {
+        "ci_blob": "cf572eb46d453e6661cd74bc764af3a77d7e5cbb",
+        "method": "preserved_all_remote_pins_and_recomputed_merged_ci_blob",
+        "path": "config/pon/pq-cross-branch-corpus-v1.json"
+      }
+    ],
+    "own_source": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c"
+  },
+  "prepared_integration_audit": {
+    "all_frozen_formal_python_files_match_tested_commit": 221,
+    "base": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+    "checks": {
+      "ci-contract": {
+        "artifact": {
+          "bytes": 494,
+          "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-ci-contract.json",
+          "sha256": "6d9642cfadccd947b54540ad75a1467b3070f1b08ba04764e89e2011f8c03456"
+        },
+        "exit_code": 0,
+        "result": {
+          "artifact_comparison_jobs": 1,
+          "head_jobs": 5,
+          "inline_source_pins": 22,
+          "merge_lanes": 5,
+          "native_cost_architectures": 2,
+          "tests_executed": false,
+          "w1_actual_reuse_v3_cells": 4
+        },
+        "wall_seconds": 1.1563894989999426
+      },
+      "ci-shell-syntax": {
+        "artifact": {
+          "bytes": 300,
+          "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-ci-shell-syntax.json",
+          "sha256": "83f77dc135c957e367250cbcff2f12e2bb40d410d479966b493ae8f3fb8a16b4"
+        },
+        "exit_code": 0,
+        "wall_seconds": 0.03384056499999133
+      },
+      "diff-whitespace": {
+        "artifact": {
+          "bytes": 286,
+          "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-diff-whitespace.json",
+          "sha256": "4a3be3ac5054eac9b885d23550a27a6cb690ee5bc0c7b3fdf269ffd61f725590"
+        },
+        "exit_code": 0,
+        "wall_seconds": 1.253898776999904
+      },
+      "pq-source-integrity": {
+        "artifact": {
+          "bytes": 908,
+          "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-pq-source-integrity.json",
+          "sha256": "63fabd907391268bc323aa5c267f61f632ee2b70573073b54d6b06196c244a2f"
+        },
+        "exit_code": 0,
+        "result": {
+          "canonical_default_provider_contract_checked": true,
+          "canonical_pnq2_contract_checked": true,
+          "continuous_npq6_combination_accepted": false,
+          "cryptographic_acceptance": false,
+          "exact_source_blobs": 460,
+          "legacy_qtx1_optional_adapter_contract_checked": true,
+          "native_transfer_account_contract_checked": true,
+          "native_transport_contract_checked": true,
+          "node_activated": false,
+          "production_confidentiality_accepted": false,
+          "schema": "trnm-pq-cross-branch-check-v1",
+          "status": "HOLD_NO_GO",
+          "upstream_heads": 6,
+          "whole_native_authorization_migrated": false
+        },
+        "wall_seconds": 6.241271392999806
+      }
+    },
+    "completed_utc": "2026-11-05T00:39:03.684860+00:00",
+    "concurrent_added_formal_python": [
+      "formal/pon-nakamoto-v1/pq_seed_recovery_v1.py",
+      "formal/pon-nakamoto-v1/test_pq_seed_recovery_v1.py"
+    ],
+    "concurrent_head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "concurrent_nonoverlap_files_retained": 16,
+    "detected_and_explained_document_change": {
+      "bytes": 593,
+      "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-detected-doc-change.json",
+      "sha256": "b6b0b9ff2b0c401702e4b8b00204e367ed31fd7ef16b90e2f9c66e77fae93a56"
+    },
+    "disclosed_evidence_additions": {
+      "original_witness_program_and_four_traces_preserved": true,
+      "paths_observed": [
+        "evidence/pon-quantum-domain-20261104/README.md",
+        "evidence/pon-quantum-domain-20261104/reproduction.json",
+        "evidence/pon-quantum-domain-20261104/setup-after-p1.jsonl",
+        "evidence/pon-quantum-domain-20261104/setup-after-p4.jsonl",
+        "evidence/pon-quantum-domain-20261104/setup-before-after.json",
+        "evidence/pon-quantum-domain-20261104/setup-before-p1.jsonl",
+        "evidence/pon-quantum-domain-20261104/setup-before-p4.jsonl",
+        "evidence/pon-quantum-domain-20261104/setup_interruption_witness.py"
+      ],
+      "readme_and_reproduction_scope": "Root is completing the evidence directory and final source/link gate. Its final prose and report inventory are outside this implementation-byte audit."
+    },
+    "head_observed_after_audit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "implementation_test_ci_config_bytes_unchanged_during_checks": true,
+    "initial_byte_audit": {
+      "bytes": 41609,
+      "path": "/workspace/scratch/7d6915ae5ed9/integration-audit-bytes.json",
+      "sha256": "e970de76993fa342ba50bdd19cf5e2ac42b5f6ea3eb39c5b72432dbd5d13002a"
+    },
+    "native_changes_relative_to_concurrent_head": [],
+    "overlaps": {
+      "ci": {
+        "concurrent_seed_recovery_and_three_new_quantum_commands_each_once": true,
+        "independent_three_way_merge_exact": true,
+        "merged_git_blob": "cf572eb46d453e6661cd74bc764af3a77d7e5cbb",
+        "merged_sha256": "4e161438dc5a45042489643e7c9caad0be98f0da44043ebee8deed7438f39728"
+      },
+      "corpus": {
+        "all_assertions_false": true,
+        "all_remote_pins_preserved_except_ci": true,
+        "merged_ci_pin": "cf572eb46d453e6661cd74bc764af3a77d7e5cbb",
+        "merged_sha256": "23f449e22f37f2f15bff15fb87472095ff1993ca04f62b27f36ec94f090ca5b5",
+        "old_ci_pin": "629c0db258722c74f6566cf79384b66dca820ddc",
+        "pinned_blobs_count": 460,
+        "remote_bytes_preserved_except_single_ci_pin": true
+      },
+      "plan": {
+        "additional_evidence_pointer_lines": 3,
+        "merged_sha256": "5c7d8ff5fae43e040895cfe8878c9f602853a47db03a0014e962e4f01cfb481d",
+        "own_section_lines": 20,
+        "remote_text_exact_after_removing_both_insertions": true
+      }
+    },
+    "own_nonoverlap_files_match_tested_commit": 13,
+    "preflight": {
+      "branch": "fix/chain-quantum-daa-integrate-20261104",
+      "packages": 26,
+      "result": "PASS"
+    },
+    "preserved_regular_file_modes_checked": 29,
+    "qualification": {
+      "boundary": "Exact source preservation, source-integrity assertions and CI wiring; not native migration execution or release qualification.",
+      "exact_future_commit_tested": false,
+      "hosted_ci_executed": false,
+      "native_migration_tests_rerun": false,
+      "prepared_worktree_audited": true,
+      "production_activation": false,
+      "quantum_security_qualified": false
+    },
+    "regressions_found": [],
+    "result": "PASS",
+    "schema": "prepared-integration-audit-summary-v1",
+    "tested_own_source": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "worktree": "/workspace/scratch/7d6915ae5ed9/chain-quantum-integration",
+    "worktree_delta_exactly_own_paths_plus_disclosed_evidence_subtree": true
+  },
+  "published_integration_checkpoint": {
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "draft": true,
+    "force_push": false,
+    "hosted_ci_waited": false,
+    "lease_expected_sha": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "parents": [
+      "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c"
+    ],
+    "pr_number": 688,
+    "protected_base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "published_commit": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+    "remote_changed_file_count": 24,
+    "remote_changed_file_set_exact": true,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "schema": "trnm-quantum-integration-publication-v1",
+    "tree": "82f2a5e3045cf65eb8b4dbfd2a055e5159265ce4"
+  },
+  "qualification": {
+    "activation": false,
+    "attacker_minimum_proved": false,
+    "complete_fast_daa_protocol": false,
+    "issues_629_639_closed": false,
+    "native_node_executed": false,
+    "physical_resource_calibrated": false,
+    "quantum_hardware_executed": false,
+    "release_ready": false,
+    "security_qualified": false
+  },
+  "research_parent": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "research_source_commit": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+  "research_source_tree": "96c075e9aa71ff32c6d9c43e9da22b710b343f4d",
+  "restricted_construction": {
+    "actual_reduced_gate_controls": [
+      {
+        "case": "reduced_prefix_losses",
+        "clean_ancillas": true,
+        "execution_scope": "actual leaf gate schedules executed by a classical basis interpreter on reduced parameters",
+        "inverse_executed": true,
+        "leaf_gates_executed": 9370516,
+        "macro_calls_executed": 68,
+        "mode": "gates",
+        "native_shape": false,
+        "nonce": 4,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": 3,
+        "phase": -1,
+        "prefix_all_accepted": true,
+        "quantum_hardware_executed": false,
+        "total_gates_executed": 9370519,
+        "winner": true
+      },
+      {
+        "case": "reduced_prefix_losses",
+        "clean_ancillas": true,
+        "execution_scope": "actual leaf gate schedules executed by a classical basis interpreter on reduced parameters",
+        "inverse_executed": true,
+        "leaf_gates_executed": 9370516,
+        "macro_calls_executed": 68,
+        "mode": "gates",
+        "native_shape": false,
+        "nonce": 0,
+        "nonce_preserved": true,
+        "outer_X_Z_gates_executed": 3,
+        "phase": 1,
+        "prefix_all_accepted": false,
+        "quantum_hardware_executed": false,
+        "total_gates_executed": 9370519,
+        "winner": false
+      }
+    ],
+    "artifacts": {
+      "manifest.json": {
+        "bytes": 143,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-restricted/manifest.json",
+        "sha256": "1a05563c5e4c021e47f2254857c7cdda0189f747b9c2a25266efe2d32514d169"
+      },
+      "replay_receipt.json": {
+        "bytes": 266,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-restricted-replay.json",
+        "sha256": "708930017506cfdaf0e34c35a810233de55806d989de7206da11f35587bdfa81"
+      },
+      "report.json": {
+        "bytes": 215865,
+        "path": "/workspace/scratch/7d6915ae5ed9/frozen-restricted/report.json",
+        "sha256": "d37da6ebb9681090f9b987c3e1c45b21f46ddd971b1d847f0eeb52fd69d16ada"
+      }
+    },
+    "campaign_assertions": {
+      "attacker_minimum_cost_or_consensus_security_proved": false,
+      "cost_ratios_are_constructive_census_ratios_only": true,
+      "full_relation_checked_for_every_native_shape_winner": true,
+      "matched_classical_quantum_speedup_measured": false,
+      "native_macro_execution_is_not_leaf_gate_execution": true,
+      "native_node_or_quantum_hardware_executed": false,
+      "production_activation": false,
+      "subset_may_discard_full_legal_winners": true,
+      "unfiltered_low_nonce_superposition_dimension_retained": true,
+      "uniform_tickets_or_prefix_ticket_independence_proved": false
+    },
+    "cases": [
+      {
+        "canonical_prefix_count": 4,
+        "discarded_full_winners": 0,
+        "domain_sha256": "6a2b5f562fec9e3a937cc0b6ffc3270188f93728576a91e5d10635bc43c33e87",
+        "domain_size": 4,
+        "enumerated_low_nonce_bits": 2,
+        "full_marked_count": 2,
+        "name": "native_pnh1",
+        "native_PNW1_scalar_verified": 2,
+        "native_shape": true,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 2,
+        "template_sha256": "07b7671a4839205cb5fd670de85b32688b9212289259b27fbc8b9eebe37ca26c",
+        "unsearched_nonce_bits": 62
+      },
+      {
+        "canonical_prefix_count": 4,
+        "discarded_full_winners": 0,
+        "domain_sha256": "ffd49922f6baae5e49952163602ee050dad25661a34aba82d4bb723030b6d109",
+        "domain_size": 4,
+        "enumerated_low_nonce_bits": 2,
+        "full_marked_count": 0,
+        "name": "native_pnh1_changed_target",
+        "native_PNW1_scalar_verified": 0,
+        "native_shape": true,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 0,
+        "template_sha256": "f8998eb3d8b0ff94d1e25332972c37214885e0602292ad6d299c243c3fb6e8da",
+        "unsearched_nonce_bits": 62
+      },
+      {
+        "canonical_prefix_count": 4,
+        "discarded_full_winners": 0,
+        "domain_sha256": "b855a923c8bd134edb95a295d64757f50a8559e39e57a354b426ade36de031ab",
+        "domain_size": 4,
+        "enumerated_low_nonce_bits": 2,
+        "full_marked_count": 1,
+        "name": "native_pgh2",
+        "native_PNW1_scalar_verified": 1,
+        "native_shape": true,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 1,
+        "template_sha256": "b4bba3f8f6f208a4742039da5b54baaae8488bdabc6fca790d35a7e8cef01838",
+        "unsearched_nonce_bits": 62
+      },
+      {
+        "canonical_prefix_count": 7,
+        "discarded_full_winners": 25,
+        "domain_sha256": "e922405d6373e6336d62a251483d30c9e285d9cd4c7701cf352fd66814ed7c0f",
+        "domain_size": 32,
+        "enumerated_low_nonce_bits": 5,
+        "full_marked_count": 32,
+        "name": "reduced_prefix_losses",
+        "native_PNW1_scalar_verified": 0,
+        "native_shape": false,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 7,
+        "template_sha256": "dcaa2eac6832a9f906e7f73f914a12b62b0812a036840e6c925e12672ee5380f",
+        "unsearched_nonce_bits": 59
+      },
+      {
+        "canonical_prefix_count": 2,
+        "discarded_full_winners": 0,
+        "domain_sha256": "e439de42c87ff0ce73685ad1c6c5ae9285a8a0c207fa507e0eb6b3b6b86cb506",
+        "domain_size": 16,
+        "enumerated_low_nonce_bits": 4,
+        "full_marked_count": 0,
+        "name": "reduced_zero_marked",
+        "native_PNW1_scalar_verified": 0,
+        "native_shape": false,
+        "noise_budget_refusals": 0,
+        "restricted_marked_count": 0,
+        "template_sha256": "66e03e2f9feb62d3d76e94bd8db100c3f542ae4cc13918fdd0ef1ea14f6aa61f",
+        "unsearched_nonce_bits": 60
+      }
+    ],
+    "changed_target_aligned_domain_observation": {
+      "aligned_nonces": 4,
+      "matching_challenges": 0,
+      "matching_tickets": 0,
+      "ticket_independence_inferred": false
+    },
+    "commands": {
+      "cwd": "/workspace/scratch/7d6915ae5ed9/chain-quantum",
+      "preflight": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "replay": [
+        "python",
+        "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+        "--verify",
+        "/workspace/scratch/7d6915ae5ed9/frozen-restricted"
+      ],
+      "run": [
+        "python",
+        "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+        "--out",
+        "/workspace/scratch/7d6915ae5ed9/frozen-restricted"
+      ]
+    },
+    "conditional_iid_raw_word_retention_approx": 0.9999976158170497,
+    "creation_scope": "serialization of previously observed run/replay results; no experiment rerun",
+    "full_nonce64_resource_census": [
+      {
+        "metrics": {
+          "forward_gate_count": {
+            "absolute_reduction": 862923880,
+            "full": 8859008357,
+            "reduction_percent_decimal": "9.7406373854",
+            "restricted": 7996084477,
+            "restricted_over_full": {
+              "denominator": 8859008357,
+              "numerator": 7996084477
+            }
+          },
+          "logical_qubits": {
+            "absolute_reduction": 223232,
+            "full": 22253173,
+            "reduction_percent_decimal": "1.0031468321",
+            "restricted": 22029941,
+            "restricted_over_full": {
+              "denominator": 22253173,
+              "numerator": 22029941
+            }
+          },
+          "phase_oracle_depth_upper_bound": {
+            "absolute_reduction": 867802176,
+            "full": 1969835151,
+            "reduction_percent_decimal": "44.0545583502",
+            "restricted": 1102032975,
+            "restricted_over_full": {
+              "denominator": 5170171,
+              "numerator": 2892475
+            }
+          },
+          "phase_oracle_gate_count": {
+            "absolute_reduction": 1725847760,
+            "full": 17718016715,
+            "reduction_percent_decimal": "9.7406373849",
+            "restricted": 15992168955,
+            "restricted_over_full": {
+              "denominator": 506229049,
+              "numerator": 456919113
+            }
+          }
+        },
+        "native_full_nonce64_executed": false,
+        "nonce_bits": 64,
+        "profile": "PNH1",
+        "restricted_construction_sha256": "51f112f644f0c8abd2f429f9783227823a87067049c1a13ecf2c0d159d207227",
+        "scope": "construction resource census only; depth is a serial upper bound, not measured hardware latency"
+      },
+      {
+        "metrics": {
+          "forward_gate_count": {
+            "absolute_reduction": 862923880,
+            "full": 8859397919,
+            "reduction_percent_decimal": "9.7402090739",
+            "restricted": 7996474039,
+            "restricted_over_full": {
+              "denominator": 8859397919,
+              "numerator": 7996474039
+            }
+          },
+          "logical_qubits": {
+            "absolute_reduction": 223232,
+            "full": 22253429,
+            "reduction_percent_decimal": "1.0031352921",
+            "restricted": 22030197,
+            "restricted_over_full": {
+              "denominator": 22253429,
+              "numerator": 22030197
+            }
+          },
+          "phase_oracle_depth_upper_bound": {
+            "absolute_reduction": 867802176,
+            "full": 1969864925,
+            "reduction_percent_decimal": "44.0538924769",
+            "restricted": 1102062749,
+            "restricted_over_full": {
+              "denominator": 1969864925,
+              "numerator": 1102062749
+            }
+          },
+          "phase_oracle_gate_count": {
+            "absolute_reduction": 1725847760,
+            "full": 17718795839,
+            "reduction_percent_decimal": "9.7402090734",
+            "restricted": 15992948079,
+            "restricted_over_full": {
+              "denominator": 17718795839,
+              "numerator": 15992948079
+            }
+          }
+        },
+        "native_full_nonce64_executed": false,
+        "nonce_bits": 64,
+        "profile": "PGH2",
+        "restricted_construction_sha256": "e71cdc7b24b63b755aa0456ff1f161e682f94095a1b7849b540ed6f8bfea336f",
+        "scope": "construction resource census only; depth is a serial upper bound, not measured hardware latency"
+      }
+    ],
+    "native_proof_verification": {
+      "distinct_proof_sha256_count": 3,
+      "method": "complete native-parameter PNW1 verification by separate scalar work_oracle.verify",
+      "native_Rust_node_executed": false,
+      "native_parent_time_target_admission_checked": false,
+      "proofs": [
+        {
+          "case": "native_pnh1",
+          "nonce": 0,
+          "proof_sha256": "8825cf4f32d57187be312e6c71a5c2b787bc6b485fdf6aa711198ed464523012"
+        },
+        {
+          "case": "native_pnh1",
+          "nonce": 3,
+          "proof_sha256": "ae3a1a56a35f9206c019560f8d2bcb835e6bcbd94d061b9931a8701a16464cf1"
+        },
+        {
+          "case": "native_pgh2",
+          "nonce": 1,
+          "proof_sha256": "c34f271ee98c63cbb78b01e533c9692f2e3966567aa3ef7e82733d2d0e3eb695"
+        }
+      ]
+    },
+    "post_replay_observed_git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+    "post_replay_observed_git_status_short": "",
+    "preflight_before_replay": "PASS",
+    "preflight_before_run": "PASS",
+    "replay_exit_code": 0,
+    "replay_receipt": {
+      "actual_reduced_gate_controls": 2,
+      "cases": 5,
+      "discarded_full_winners": 25,
+      "literal_nonces": 60,
+      "native_PNW1_winners_verified": 3,
+      "production_activation": false,
+      "result": "RESTRICTED_W1_DIFFERENTIAL_REPLAY_PASS",
+      "security_qualified": false
+    },
+    "replay_receipt_provenance": {
+      "observed_stdout_line": "{\"actual_reduced_gate_controls\": 2, \"cases\": 5, \"discarded_full_winners\": 25, \"literal_nonces\": 60, \"native_PNW1_winners_verified\": 3, \"production_activation\": false, \"result\": \"RESTRICTED_W1_DIFFERENTIAL_REPLAY_PASS\", \"security_qualified\": false}",
+      "origin": "captured from previously observed tool output; not emitted to disk by the campaign",
+      "persisted_receipt_path": "/workspace/scratch/7d6915ae5ed9/frozen-restricted-replay.json",
+      "receipt_values_were_not_recomputed": true,
+      "tool": "functions.exec calling tools.write_stdin",
+      "tool_output_chunk_id": "1b37c1"
+    },
+    "retention_scope": "iid uniform raw words only; no proven independence from ticket success and no inferred mining success probability",
+    "review": {
+      "false_security_qualification_found_in_campaign_assertions_or_observed_records": false,
+      "full_nonce64_search_executed": false,
+      "full_predicate_equivalence_claimed": false,
+      "matched_classical_quantum_speedup_measured": false,
+      "minimum_attacker_cost_proved": false,
+      "native_shape_macro_execution_is_not_actual_leaf_gate_execution": true,
+      "production_activation": false,
+      "review_scope": "logical consistency and explicit claim boundaries; not a consensus security proof or independent hardware certification"
+    },
+    "run_exit_code": 0,
+    "run_result": "RESTRICTED_W1_DIFFERENTIAL_OBSERVED",
+    "schema": "trnm-w1-prefix-restricted-independent-summary-v1",
+    "source": {
+      "all_sources_committed_at_head": true,
+      "git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+      "source_sha256": {
+        "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py": "b3a0cd0916a1e17cff3a011c6942acae7b05aa053aefbc2a882bfe4f63012d0a",
+        "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5",
+        "formal/pon-nakamoto-v1/quantum_adversarial_search.py": "1d6833b0cc52abc549e6169d8da70c774a3f779d7ce0d7f6381590d37e096387",
+        "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "b188820f229ff0b094018747648443f48b1fe52e96fff9d91d6a9d1cfb106a4e",
+        "formal/pon-nakamoto-v1/reversible_components.py": "f518669b0b4ac41a442986ff779da618227b375ef69bdb17db0eacc505908fe0",
+        "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py": "3e1ed86090092e59da120916f69e923dd2a88c6caedf740ea0585c3f06085c78",
+        "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f",
+        "formal/pon-nakamoto-v1/vectors/header.bin": "af1eb43700a2ac269c7360e21acd6be5f21f9d7e0400b4a62e07f4ee6b12e71b",
+        "formal/pon-nakamoto-v1/vectors/work.bin": "35de8899201fd8a30f32f440d2e9145b4fef867d0d331efc271de1f1be822fc0",
+        "formal/pon-nakamoto-v1/w1_marked_domain.py": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460",
+        "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
+        "formal/pon-nakamoto-v1/w1_quantum_primitives.py": "1d1f0a800e24e1d82aab1794ec0cf207ed845e7a7080bacd41b0d0c575f98ac1",
+        "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
+        "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "e6eb2c0dddc4a59add47cb295c8c66397956cd94bff729a7472d52653a427b5f",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "95944c121362223f43f5d1cea61972ce65330a65ae36903255d8b3fdead58727",
+        "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+        "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+      },
+      "uncommitted_source_files": []
+    },
+    "source_file_count": 18,
+    "timing": {
+      "physical_mining_performance_measured": false,
+      "replay_timing_provenance": "previously observed wrapper JSON in tool output chunk 1b37c1",
+      "replay_wrapper_observed": {
+        "child_system_seconds": 3.34846,
+        "child_user_seconds": 105.49205,
+        "exit_code": 0,
+        "wall_seconds": 274.8552040200002
+      },
+      "replay_wrapper_scope": "perf_counter around subprocess.run of the stated replay CLI; getrusage(RUSAGE_CHILDREN) read after completion in a fresh wrapper with no previous child processes. Includes the verification subprocess startup/imports, source validation, recomputation and CLI output; excludes wrapper CPU. Its scope differs from the run internal observer.",
+      "run_internal_observer": {
+        "cpu_seconds": 102.459945713,
+        "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+        "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+        "scope": "classical Python census/verification; not mining hardware",
+        "wall_seconds": 249.16074109400006
+      },
+      "run_internal_observer_scope": "perf_counter and process_time start immediately before measure(); end after the following source-hash recheck while observer metadata is constructed. Excludes initial source_record() and final JSON serialization/writing; this is not whole-command wall time."
+    }
+  },
+  "result": "FROZEN_RESEARCH_REPLAYED_NATIVE_CLIPPY_UNCLOSED",
+  "rust_gates": {
+    "correct_workspace": "trillionnium",
+    "observations": [
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd_relative_to_repo": "trillionnium",
+        "elapsed_seconds": 54.832,
+        "exit_code": 0,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-workspace-rust-gate-0.log",
+        "observed_log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1",
+          "--no-deps"
+        ],
+        "cwd_relative_to_repo": "trillionnium",
+        "elapsed_seconds": 0.994,
+        "exit_code": 0,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-workspace-rust-gate-1.log",
+        "observed_log": {
+          "bytes": 164170,
+          "sha256": "83700b83abcf5ab57b6753a686a557de22ec74323852e81b9744df9e49e13b3d"
+        }
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd_relative_to_repo": "trillionnium",
+        "elapsed_seconds": 600.013,
+        "exit_code": 124,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-workspace-rust-gate-2.log",
+        "observed_log": {
+          "bytes": 3986,
+          "sha256": "74b8febd59f96930e5f5aeb8dc11fcec1f1ae2cad82e446a819cc20f3456ebc3"
+        }
+      }
+    ],
+    "prior_wrong_directory_attempts": [
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "elapsed_seconds": 0.343,
+        "exit_code": 1,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-rust-gate-0.log"
+      },
+      {
+        "command": [
+          "cargo",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1",
+          "--no-deps"
+        ],
+        "elapsed_seconds": 0.241,
+        "exit_code": 101,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-rust-gate-1.log"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "elapsed_seconds": 0.321,
+        "exit_code": 101,
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-rust-gate-2.log"
+      }
+    ],
+    "strict_clippy_result": "NOT_QUALIFIED_FIRST_TIMEOUT_RETRY_EXIT_UNKNOWN",
+    "strict_clippy_retry": {
+      "actual_final_wall_seconds": null,
+      "exit_code": null,
+      "last_saved_log": {
+        "bytes": 1968,
+        "sha256": "e97e11ea1c0cbe35c268dd2ec02ab7a240dbe41be6c642e1e3690594a620e62f"
+      },
+      "last_successful_progress_observation": {
+        "completion_record_present": false,
+        "elapsed_seconds": 979.5,
+        "log_bytes": 1968,
+        "tail_target": "trnm-worker-agent"
+      },
+      "not_a_passing_or_timeout_receipt": true,
+      "process_group_cleanup_completed": null,
+      "restored_read_only_recovery": {
+        "completion_record_present": false,
+        "existing_session": 70143,
+        "new_build_started": false,
+        "response": "Unknown process id 70143"
+      },
+      "restored_source_observation": {
+        "frozen_worktree_clean": true,
+        "integration_changes_only_evidence_readme_and_json": true,
+        "scope": "readback after environment restoration, not a subprocess completion receipt"
+      },
+      "result": "UNKNOWN_AFTER_EXECUTOR_ENVIRONMENT_LOSS",
+      "start_record": {
+        "build_environment": {
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": null,
+          "CARGO_TARGET_DIR": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null
+        },
+        "cargo_executable": "/root/.cargo/bin/cargo",
+        "command": [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/7d6915ae5ed9/chain-quantum/trillionnium",
+        "environment_overrides": {
+          "CARGO_BUILD_JOBS": "1",
+          "PATH_prepended": "/root/.cargo/bin"
+        },
+        "execution_timeout_seconds": 1200,
+        "git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+        "git_tree": "96c075e9aa71ff32c6d9c43e9da22b710b343f4d",
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-clippy-retry.log",
+        "new_session": true,
+        "pid": 44,
+        "prior_attempt": {
+          "command": [
+            "cargo",
+            "clippy",
+            "--workspace",
+            "--all-targets",
+            "--locked",
+            "--offline",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "cwd_relative_to_repo": "trillionnium",
+          "elapsed_seconds": 600.013,
+          "exit_code": 124,
+          "log": "/workspace/scratch/7d6915ae5ed9/frozen-workspace-rust-gate-2.log"
+        },
+        "prior_cleanup_needed": false,
+        "prior_log_sha256": "74b8febd59f96930e5f5aeb8dc11fcec1f1ae2cad82e446a819cc20f3456ebc3",
+        "prior_process_inspection": "/workspace/scratch/7d6915ae5ed9/frozen-clippy-retry-process-inspection.json",
+        "process_group": 44,
+        "runner_sha256": "480bc5e07a5ab92eaccfc8c6bc69538de03081470c10540b63ab50a35079c7b5",
+        "schema": "frozen-clippy-retry-start-v1",
+        "started_utc": "2026-11-05T00:43:42.402211+00:00",
+        "versions": {
+          "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+          "rustc": "rustc 1.95.0 (59807616e 2026-04-14)"
+        }
+      },
+      "timed_out": null,
+      "transport_error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s"
+    }
+  },
+  "schema": "trnm-quantum-literal-domain-reproduction-v1",
+  "source_files_changed_from_parent": [
+    {
+      "bytes": 84026,
+      "git_blob": "20d235531a7f346bfacbf3cd354166fb59714e9c",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "sha256": "8800245398847e2c6208000806f990fe969830e33d74b6458d55d92956a88873"
+    },
+    {
+      "bytes": 489772,
+      "git_blob": "3a01d8eebd5a3518b82adc75268a88beb1b95fc1",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "sha256": "d3781442f17c9c0980da2a5f7d504efabd46cb7237fa1ed9de54fe54701be4b0"
+    },
+    {
+      "bytes": 46318,
+      "git_blob": "42c0091199f7e93456c3a4a995a4771e62d4bfeb",
+      "path": "formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md",
+      "sha256": "7b12b965e9da38b864d1235a2d73db83dfde414b331a609b8ef42371f79a9097"
+    },
+    {
+      "bytes": 14455,
+      "git_blob": "1b029f4ffe446472df42bee78e15be2a75db6568",
+      "path": "formal/pon-nakamoto-v1/experiments/w1_marked_domain_campaign.py",
+      "sha256": "b19d8cd84802c498cab33b57019c46b69981fdcc0c10dd40414571cc774d34d2"
+    },
+    {
+      "bytes": 12461,
+      "git_blob": "4b1b1a2ab5a1d4cdc664b58255180673e4d4c556",
+      "path": "formal/pon-nakamoto-v1/experiments/w1_restricted_oracle_campaign.py",
+      "sha256": "876c732404602439117aaec1b100409501c245129bc55885d1886877e170f6f5"
+    },
+    {
+      "bytes": 7525,
+      "git_blob": "544b0945834ff5a0342df8ea74ff491064c7e1e8",
+      "path": "formal/pon-nakamoto-v1/fast_daa_reference_component.py",
+      "sha256": "a4f10c2929e9ff511ced9db125a7a10f1623105cd05f00af4ef94267eb598f47"
+    },
+    {
+      "bytes": 59849,
+      "git_blob": "687e9b044e76a6445abe6f451c69371002c825fa",
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "sha256": "c9a94eb87a54dfd2bae641a79d72e55a6b12010a7a9dc82c2ecd1c286780d38a"
+    },
+    {
+      "bytes": 7377,
+      "git_blob": "f6f0c6e58e5d0fb5f41356ad15b828244a3c7e15",
+      "path": "formal/pon-nakamoto-v1/test_fast_daa_reference_component.py",
+      "sha256": "0fe5c36c5d8ed6b4da7283add817875e93d7c6babbe95fb6f842a66cb22447ef"
+    },
+    {
+      "bytes": 36937,
+      "git_blob": "7fae9b900d0598efde22f38bc8631e2538c76ec6",
+      "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "sha256": "6b0ff17dabaab2bbd62ef71aae7f82117f01fdbb0d9f7e15cf596249f32bbdad"
+    },
+    {
+      "bytes": 17379,
+      "git_blob": "da4943d63573cd602431e6cf107beaa2688b41a0",
+      "path": "formal/pon-nakamoto-v1/test_w1_marked_domain.py",
+      "sha256": "b5753c4ed23b098db91f00b58761233f1e50676ac624312d98b6b863fdf0b388"
+    },
+    {
+      "bytes": 11225,
+      "git_blob": "8f63c0ceb2335e92ccc60be81af000c4fe862dd1",
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_restricted_oracle.py",
+      "sha256": "6d3ebffc20dc2a1dada6e03841a5fd387fe7d6164a30eac5eb6000c052e6e74f"
+    },
+    {
+      "bytes": 3538,
+      "git_blob": "7301aeaf0e6effdbcc81299ae3a6d921611e9e80",
+      "path": "formal/pon-nakamoto-v1/vectors/fast-daa-author-slides-retarget-v1.json",
+      "sha256": "652b5841df7625d2f3011b9a2eb59015fb546c73fc0a2283a1a2bee8f18fb4a8"
+    },
+    {
+      "bytes": 17332,
+      "git_blob": "2ac5f5b1bec12e14a8098f8ff032a0d1f6380054",
+      "path": "formal/pon-nakamoto-v1/w1_marked_domain.py",
+      "sha256": "1a34e85ad780dc89af40f8dfe31ab310fd2d289473bb3473d347c7f8fc347460"
+    },
+    {
+      "bytes": 37767,
+      "git_blob": "f8a14f707e8088488470cd0b2d211ba30aa01676",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99"
+    },
+    {
+      "bytes": 10893,
+      "git_blob": "0797be9cb0e97433a74d04f24fbe617bad4ab259",
+      "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py",
+      "sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702"
+    },
+    {
+      "bytes": 23279,
+      "git_blob": "fb91f720eecbbe9166a88afb9ea7d5237e29e9a9",
+      "path": "scripts/ci/ci_job.sh",
+      "sha256": "3247833760df21094f02760aad65f1b0151b741d32b28c3f5266da37a40e4ed0"
+    }
+  ],
+  "source_gates": [
+    {
+      "artifact": {
+        "bytes": 307,
+        "name": "frozen-source-gate-0.log",
+        "sha256": "f5aa310a7c7c3ddc6b17db5a6042f2b7cb91cdb1472f22e324e4365e24cc02ed"
+      },
+      "command": [
+        "python",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_seconds": 211.517,
+      "exit_code": 0,
+      "log": "/workspace/scratch/7d6915ae5ed9/frozen-source-gate-0.log",
+      "source_commit": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c"
+    },
+    {
+      "artifact": {
+        "bytes": 6054,
+        "name": "frozen-source-gate-1.log",
+        "sha256": "2179f40f9ea24c8bcd7cfcbe390395eacd6f218d359cf6aa891384d6b730837f"
+      },
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "elapsed_seconds": 12.446,
+      "exit_code": 0,
+      "log": "/workspace/scratch/7d6915ae5ed9/frozen-source-gate-1.log",
+      "source_commit": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+      "tests_run": 34
+    }
+  ]
+}

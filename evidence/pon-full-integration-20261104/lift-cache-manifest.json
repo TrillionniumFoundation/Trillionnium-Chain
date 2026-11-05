@@ -1,0 +1,186 @@
+{
+  "schema": "pon-native-lift-cache-evidence-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "baseline_harness_commit": "3e75f75f6afe9c34989530493826b8e33d339ed0",
+  "candidate_commit": "04ed0f37e082061499efa30af7e262a15d67cb38",
+  "candidate_tree": "6769f67636abb5dca5de5ac1b314c1a98220d4cc",
+  "source_path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+  "baseline_source_sha256": "9e6a2c39f6c32df6a7aaecda5516ff5b37daa26487d4aa4dbc8d1f4d0ab46ffa",
+  "candidate_source_sha256": "9ad7b72aa9b8a8a54a1e48e7d92b936e411256a4ab54fcf862c17512637a044a",
+  "binaries": {
+    "baseline": {
+      "path": "/workspace/scratch/8a53368149fe/lift-clear-baseline-tests.bin",
+      "sha256": "3c62103a5e80beb52fd34fdc06399369a3dc6c59c2a56be025317e54f25682e2",
+      "bytes": 412818888
+    },
+    "candidate": {
+      "path": "/workspace/scratch/8a53368149fe/lift-replacement-candidate-tests.bin",
+      "sha256": "00d60afdb6ff05317614389d3d9c4e2ca2f2d9c8c0c288031825fa0ec25ab3f8",
+      "bytes": 412719128
+    }
+  },
+  "binary_archive_policy": "Binaries retained at exact source paths with SHA256 and byte counts; excluded from this compact evidence archive.",
+  "timing": {
+    "traversals_per_arm": 510,
+    "cases": 5,
+    "cold_per_case": 2,
+    "warm_per_case": 100,
+    "scope": "Same real full-account graph, generic sha2 base6f dependencies, same local host; cache-only delta. This is not original hardware/attack/deadline business qualification or touched-state complexity closure."
+  },
+  "validation": {
+    "native_account_archive": {
+      "pass": 31,
+      "ignored": 7,
+      "fail": 0
+    },
+    "native_authenticated": {
+      "pass": 90,
+      "ignored": 1,
+      "fail": 0
+    },
+    "cost_diagnostic": {
+      "pass": 1,
+      "fail": 0
+    },
+    "strict_all_targets_clippy": "PASS",
+    "cargo_fmt": "PASS",
+    "locked_offline_metadata": "PASS",
+    "exact_committed_raw_source_identity": "PASS",
+    "source_integrity_negative": {
+      "pass": 34
+    },
+    "evidence_sources_negative": {
+      "pass": 38
+    },
+    "whole_repository": "FAIL: old inline source pin in .github/workflows/pon-branch-encoding-acceptance.yml:53; parent owns final integration pin update"
+  },
+  "failures_retained": {
+    "lift-clear-baseline.log": "Initial missing exported OPENSSL_DIR; rerun succeeded with pinned provider exports. No feature/provider downgrade.",
+    "lift-clear-red.log": "Intentional old-policy regression:8193rd exactinput clears8192 entries to1; expected8192.",
+    "lift-candidate-clippy.log": "Initial strictlint errors corrected without suppressions; finalalltargets passed.",
+    "lift-candidate-repository-check.log": "Old source pin intentionally not changed in child-owned source-only patch; root handles exact final tree."
+  },
+  "files": [
+    {
+      "name": "README.md",
+      "bytes": 5518,
+      "sha256": "5ebdd1e81cc7099ec4732b93916f6eb1e319aa1ff1ed1cd498e22f4c398ab71f"
+    },
+    {
+      "name": "chain-native-lift-cache.patch",
+      "bytes": 14644,
+      "sha256": "dfab637e3ae0ceb9579f400740635edfead8b960b3fdc21bbcab0c96b7f7d9ce"
+    },
+    {
+      "name": "compare_lift_cache.py",
+      "bytes": 5310,
+      "sha256": "f9688f918b3a42a5f704c07e689ad89fec060de65ee4db76503cbf88f2bf845e"
+    },
+    {
+      "name": "lift-cache-comparison.json",
+      "bytes": 13342,
+      "sha256": "71bdad979e791a3de7e0909a49e71167b30838c20cb197b3e1a6a1b131ecf13a"
+    },
+    {
+      "name": "lift-cache-host.json",
+      "bytes": 865,
+      "sha256": "012abc97b0170b81a4a1580bc704a8913abf6fc52d99d19e9446687990d2af0e"
+    },
+    {
+      "name": "lift-candidate-account-archive-final-tests.log",
+      "bytes": 5580,
+      "sha256": "3ae9e52c1842b75323ee7292f14a34463764398a296ea5532766ee2c4f997629"
+    },
+    {
+      "name": "lift-candidate-account-archive-tests.log",
+      "bytes": 5958,
+      "sha256": "b98cb021d8fd8366b0f51b8b0aefecad91a2f58be1eff1107c131185da87ddb5"
+    },
+    {
+      "name": "lift-candidate-cargo-metadata.json",
+      "bytes": 832369,
+      "sha256": "a6ebe3f4623547b379661eecd9a9c6f471c1042fe102c0d66099c990ceff2ec1"
+    },
+    {
+      "name": "lift-candidate-cargo-metadata.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "lift-candidate-clippy-final.log",
+      "bytes": 193,
+      "sha256": "44f35e458ca0695a38580894f7fc1a5e851d8c72b5bece0e2e9da3d5e888e8f2"
+    },
+    {
+      "name": "lift-candidate-clippy.log",
+      "bytes": 1577,
+      "sha256": "f1266c981e74210f836b5473e50d10ef68533c10bf4d0f20a0685f3ff694b656"
+    },
+    {
+      "name": "lift-candidate-exact-source.json",
+      "bytes": 421,
+      "sha256": "146962a66eb992f477534659a5a836df2f153a7bc89f9e0dd3cc75e5a31ee806"
+    },
+    {
+      "name": "lift-candidate-exact-source.log",
+      "bytes": 421,
+      "sha256": "146962a66eb992f477534659a5a836df2f153a7bc89f9e0dd3cc75e5a31ee806"
+    },
+    {
+      "name": "lift-candidate-fmt-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "lift-candidate-native-authenticated-final-tests.log",
+      "bytes": 12675,
+      "sha256": "4350e74ef3018407143c1a7dcd9e00e15e5c802228ec477041dc4f649cad92d3"
+    },
+    {
+      "name": "lift-candidate-repository-check.log",
+      "bytes": 304,
+      "sha256": "83d398ad6280b12ccb4a5f694adea9806d53fb36a0ca7d16e3227e46273d3864"
+    },
+    {
+      "name": "lift-clear-baseline-provider.log",
+      "bytes": 1008,
+      "sha256": "1c9dcd8fec2fbe38b08cef83cab94d393fac1692cb0bf31a53d58b8a48488f43"
+    },
+    {
+      "name": "lift-clear-baseline.jsonl",
+      "bytes": 175486,
+      "sha256": "5f589dc9031a314776a0b40ea1c2319d4b60e782b741f934a11fc404f23e73d3"
+    },
+    {
+      "name": "lift-clear-baseline.log",
+      "bytes": 8143,
+      "sha256": "468c35f91407f77f7da3bc38623d21ede9bc8e96d2522ef0151aaa852409bbad"
+    },
+    {
+      "name": "lift-clear-red.log",
+      "bytes": 1276,
+      "sha256": "f6e06d78c6312495916f8f7bb218de9b0d43761ee7d00bbb0f8c63d53decf2f4"
+    },
+    {
+      "name": "lift-evidence-sources-negative.log",
+      "bytes": 6158,
+      "sha256": "ca31e689363ffff9b0ac6851030b81d6994054c9fe9c00f338e91d9f89f50304"
+    },
+    {
+      "name": "lift-replacement-candidate.jsonl",
+      "bytes": 175635,
+      "sha256": "c83fc05dd76ba2a5af575e1c3c5f0b91891e68e845ca5d4d156b90b365efb98b"
+    },
+    {
+      "name": "lift-replacement-candidate.log",
+      "bytes": 548,
+      "sha256": "8511be7669e4cdc4df26df6f0b934b16a5c267d6ce17c7e8beffb7e97b5df83b"
+    },
+    {
+      "name": "lift-source-integrity-negative.log",
+      "bytes": 5509,
+      "sha256": "a9a94fa40bce2e15b8c44360939d5d0e4fd45bb5b413a84e01b069f9fed4be27"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "native-liveness-publication-enospc-v1",
+  "observed_utc": "2026-11-04T14:24:25.342576+00:00",
+  "observed_errors": [
+    "git add of reviewed retained raw logs: unable to write loose object file, ENOSPC",
+    "git commit: index.lock write error, out of disk space; HEAD remained 1470e4e166945e8eb4ce4aed4706e1c2b36dc97b",
+    "final-publication-source launcher could not write its initial receipt; verifier was not started",
+    "upload-inventory write failed with ENOSPC"
+  ],
+  "remote_ref_mutated": false,
+  "successful_check_results_relabelled": false,
+  "cleanup_scope": "/workspace/scratch/e537ad232c79/target",
+  "cleanup_material": "rebuildable completed Clippy target cache; no measured native executable retained here",
+  "estimated_cache_bytes_removed": 379925542,
+  "free_bytes_before": 16777216,
+  "free_bytes_after": 314417152,
+  "raw_measurement_logs_retained": true,
+  "source_history_retained": true,
+  "original_report_retained": true
+}

@@ -1,0 +1,39 @@
+{
+  "base_sha": "",
+  "before": {
+    "commit": "3e9efb15faa261a4dc3ffc3205cd259aaee41a3f",
+    "dirty": false,
+    "parents": [
+      "50e9a5f9654dcc360af2d0467f00c413c1203526"
+    ],
+    "tree": "559c14b1857ad3ca57234323d54a2173b9c2692e"
+  },
+  "command": [
+    "just",
+    "test",
+    "--locked",
+    "-p",
+    "codex-hepta-agentd",
+    "--lib",
+    "-E",
+    "test(real_growth_chain_submit_lost_ack_confirm_reorg_cold_reopen)",
+    "--run-ignored",
+    "only",
+    "--no-capture"
+  ],
+  "command_exit_code": null,
+  "elapsed_seconds": 1.0235281869536266,
+  "error": "invalid source_sha",
+  "exit_code": 2,
+  "finished_at": "2026-10-23T06:36:47.045951+00:00",
+  "job": null,
+  "lane": "",
+  "run_attempt": null,
+  "run_id": null,
+  "schema_version": 1,
+  "source_sha": "",
+  "started_at": "2026-10-23T06:36:46.014540+00:00",
+  "status": "rejected",
+  "tested_sha": "",
+  "working_directory": "/tmp/trnm-pn-convergence-20261023/hepta-integration"
+}

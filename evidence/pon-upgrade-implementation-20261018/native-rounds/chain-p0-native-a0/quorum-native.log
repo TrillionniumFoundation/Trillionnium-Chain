@@ -1,0 +1,15 @@
+   Compiling libc v0.2.184
+   Compiling rustix v1.1.4
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+    Finished `test` profile [unoptimized] target(s) in 17.89s
+     Running tests/evaluation_quorum_v2.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain/debug/deps/evaluation_quorum_v2-4c65d6782bcff0f6)
+
+running 2 tests
+test fresh_profile_refuses_attested_models_and_cross_version_replay ... ok
+test independent_reference_vectors_match_native_domains_counts_and_records ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+

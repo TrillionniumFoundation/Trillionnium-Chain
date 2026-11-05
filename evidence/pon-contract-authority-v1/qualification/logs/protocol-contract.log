@@ -1,0 +1,409 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.42s
+     Running unittests src/lib.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/trnm_checkpoint_types-d12db91daf936dba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/trnm_crypto_primitives-17840c73d1b2ed7a)
+
+running 11 tests
+test pon_work::tests::bad_proof_never_gains_a_verified_type ... ok
+test pon_work::tests::decoded_output_is_the_real_matrix_product ... ok
+test pon_work::tests::exact_length_and_field_are_required ... ok
+test pon_work::tests::expansion_cannot_exceed_fixed_hash_budget ... ok
+test pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof ... ok
+test pon_work::tests::work_binds_challenge_and_inputs ... ok
+test tests::domain_hash_is_framed_and_domain_separated ... ok
+test tests::ed25519_roundtrip_rejects_tamper ... ok
+test tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence ... ok
+test tests::fixed_hash_text_reproduces_every_byte_value_without_normalization ... ok
+test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s
+
+     Running unittests examples/pon_adversarial_cost.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_adversarial_cost-a811fa312438a0cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_cost.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_cost-9d6a1f7aaab08f36)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_work.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_work-7a1b89afd0c58435)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_work_io.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_work_io-f2ad345d877dbfe7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/trnm_verification_profiles-0ad85bc3a70e62ef)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/profiles.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/profiles-4f05b0dc06fb805c)
+
+running 6 tests
+test disabled_expired_revoked_and_unknown_profiles_do_not_fallback ... ok
+test duplicate_challenge_is_rejected_and_lifecycle_is_forward_only ... ok
+test exact_resolution_and_evidence_precede_backend ... ok
+test subjective_profiles_cannot_escalate_objective_authority ... ok
+test verified_rejected_and_unavailable_are_distinct_and_non_authoritative ... ok
+test withdrawal_and_expiry_close_without_economic_or_order_authority ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling syn v2.0.117
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-protocol)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.23s
+     Running unittests src/lib.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/trnm_protocol-da746e062ac52911)
+
+running 8 tests
+test pon_wire::tests::contribution_without_signed_round_is_not_revision3_wire ... ok
+test pon_wire::tests::every_tx_tag_has_an_exact_payload ... ok
+test pon_wire::tests::header_exact_and_context_bound ... ok
+test pon_wire::tests::release_payload_is_bounded_and_sorted ... ok
+test pon_wire::tests::sparse_root_is_order_independent_and_value_sensitive ... ok
+test tests::identifiers_and_decimal_values_are_canonical ... ok
+test tests::object_namespaces_do_not_collide ... ok
+test tests::result_commitment_binds_every_field ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests examples/pon_wire.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_wire-e330ac53a426aa6f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling cfg-if v1.0.4
+   Compiling syn v2.0.117
+   Compiling typenum v1.19.0
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling semver v1.0.27
+   Compiling cpufeatures v0.2.17
+   Compiling rustc_version v0.4.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling anyhow v1.0.103
+   Compiling subtle v2.6.1
+   Compiling hex v0.4.3
+   Compiling signature v2.2.0
+   Compiling zeroize v1.8.2
+   Compiling ed25519 v2.2.3
+   Compiling zerocopy v0.8.48
+   Compiling serde_core v1.0.228
+   Compiling ed25519-dalek v2.2.0
+   Compiling ahash v0.8.12
+   Compiling find-msvc-tools v0.1.9
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling shlex v1.3.0
+   Compiling once_cell v1.21.4
+   Compiling hashbrown v0.16.1
+   Compiling cc v1.2.59
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-crypto-primitives)
+   Compiling thiserror v1.0.69
+   Compiling vcpkg v0.2.15
+   Compiling zmij v1.0.21
+   Compiling serde v1.0.228
+   Compiling pkg-config v0.3.32
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.30.1
+   Compiling thiserror-impl v1.0.69
+   Compiling serde_derive v1.0.228
+   Compiling bitflags v2.11.0
+   Compiling libc v0.2.184
+   Compiling serde_json v1.0.149
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+   Compiling hashbrown v0.14.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling getrandom v0.4.2
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling rustix v1.1.4
+   Compiling borsh-derive v1.8.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-protocol)
+   Compiling hashlink v0.9.1
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.15.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling rusqlite v0.32.1
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-mvcc-fee)
+    Finished `release` profile [optimized] target(s) in 1m 41s
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/Documents/chain-pon-contract-authority-20260929/trillionnium/crates/trnm-transport)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.88s
+     Running unittests src/lib.rs (/tmp/pon-contract-authority-20260929/target/debug/deps/trnm_transport-645689ec6fba8248)
+
+running 5 tests
+test proof_admission::tests::duplicate_and_per_peer_bound_are_before_work ... ok
+test proof_admission::tests::panic_unwind_releases_capacity ... ok
+test proof_admission::tests::public_duplicate_cannot_pin_a_locally_requested_recovery_digest ... ok
+test proof_admission::tests::public_flood_cannot_consume_reserved_recovery_capacity ... ok
+test proof_admission::tests::stop_resume_does_not_erase_outstanding_work ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running unittests examples/pon_admission_load.rs (/tmp/pon-contract-authority-20260929/target/debug/examples/pon_admission_load-8ce1d2d01c1e33b8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+test_allocation_proof_root_and_payee_are_bound (__main__.CodecTests.test_allocation_proof_root_and_payee_are_bound) ... ok
+test_fixed_vectors_without_native_dependency (__main__.CodecTests.test_fixed_vectors_without_native_dependency) ... ok
+test_header_mutations_bind_all_fields (__main__.CodecTests.test_header_mutations_bind_all_fields) ... ok
+test_json_float_and_duplicate_rejected (__main__.CodecTests.test_json_float_and_duplicate_rejected) ... ok
+test_sparse_root_absence_empty_and_order (__main__.CodecTests.test_sparse_root_absence_empty_and_order) ... ok
+test_every_reorg_process_crash_cut_recovers_exactly (__main__.DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly) ... ok
+test_false_parameter_context_rejects_and_releases_owner (__main__.DiskReorgTests.test_false_parameter_context_rejects_and_releases_owner) ... ok
+test_foreign_database_rejected_without_schema_writes (__main__.DiskReorgTests.test_foreign_database_rejected_without_schema_writes) ... ok
+test_root_substitution_rejects_before_persistence (__main__.DiskReorgTests.test_root_substitution_rejects_before_persistence) ... ok
+test_same_work_keeps_existing_tip (__main__.DiskReorgTests.test_same_work_keeps_existing_tip) ... ok
+test_two_writer_admission_is_rejected (__main__.DiskReorgTests.test_two_writer_admission_is_rejected) ... ok
+test_cancel_and_late_receipt_are_monotonic (__main__.ExecutionTests.test_cancel_and_late_receipt_are_monotonic) ... ok
+test_contribution_cannot_swap_parent_family_or_claim_self_eval (__main__.ExecutionTests.test_contribution_cannot_swap_parent_family_or_claim_self_eval) ... ok
+test_expiry_fee_balance_rejections (__main__.ExecutionTests.test_expiry_fee_balance_rejections) ... ok
+test_free_consumer_is_not_charged_or_implicitly_authorized (__main__.ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized) ... ok
+test_mandatory_expiry_returns_reserved_funds (__main__.ExecutionTests.test_mandatory_expiry_returns_reserved_funds) ... ok
+test_signature_nonce_and_no_write_on_reject (__main__.ExecutionTests.test_signature_nonce_and_no_write_on_reject) ... ok
+test_task_receipt_does_not_self_settle (__main__.ExecutionTests.test_task_receipt_does_not_self_settle) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 11.486s
+
+OK
+test_full_history_window_reopens_without_old_signed_replay (__main__.CandidateWindowTests.test_full_history_window_reopens_without_old_signed_replay) ... ok
+test_positive_evaluation_expires_and_cannot_be_adopted_late (__main__.CandidateWindowTests.test_positive_evaluation_expires_and_cannot_be_adopted_late) ... ok
+test_round_is_part_of_contribution_and_signature_identity (__main__.CandidateWindowTests.test_round_is_part_of_contribution_and_signature_identity) ... ok
+test_expiry_releases_capacity_without_dropping_current_parent_nullifier (__main__.CapacityTests.test_expiry_releases_capacity_without_dropping_current_parent_nullifier) ... ok
+test_generation_retirement_keeps_claim_authority_in_release_root (__main__.CapacityTests.test_generation_retirement_keeps_claim_authority_in_release_root) ... ok
+test_zero_score_history_does_not_consume_pending_capacity (__main__.CapacityTests.test_zero_score_history_does_not_consume_pending_capacity) ... ok
+test_short_envelope_rejects_before_proof (__main__.CheapAdmissionTests.test_short_envelope_rejects_before_proof) ... ok
+test_transaction_count_rejects_before_root_or_work_replay (__main__.CheapAdmissionTests.test_transaction_count_rejects_before_root_or_work_replay) ... ok
+test_exact_verified_duplicate_does_not_repeat_expensive_work (__main__.DuplicateAdmissionTests.test_exact_verified_duplicate_does_not_repeat_expensive_work) ... ok
+test_same_block_id_with_changed_certificate_never_uses_valid_cache (__main__.DuplicateAdmissionTests.test_same_block_id_with_changed_certificate_never_uses_valid_cache) ... ok
+test_crash_after_entry_commit_rejects_replay (__main__.EffectLinearizationTests.test_crash_after_entry_commit_rejects_replay) ... ok
+test_revoke_committed_first_prevents_entry (__main__.EffectLinearizationTests.test_revoke_committed_first_prevents_entry) ... ok
+test_revoker_cannot_commit_inside_entry_transaction (__main__.EffectLinearizationTests.test_revoker_cannot_commit_inside_entry_transaction) ... ok
+test_every_initialization_cut_recovers_only_our_exact_intent (__main__.InitializationTests.test_every_initialization_cut_recovers_only_our_exact_intent) ... ok
+test_injected_trigger_rejects_before_writable_open (__main__.InitializationTests.test_injected_trigger_rejects_before_writable_open) ... ok
+test_unmarked_empty_database_is_not_reinitialized (__main__.InitializationTests.test_unmarked_empty_database_is_not_reinitialized) ... ok
+test_wrong_initialization_context_is_rejected (__main__.InitializationTests.test_wrong_initialization_context_is_rejected) ... ok
+test_admitted_before_activation_is_selected_on_restart (__main__.RestartForkTests.test_admitted_before_activation_is_selected_on_restart) ... ok
+test_append_retains_one_physical_state_slot (__main__.RestartForkTests.test_append_retains_one_physical_state_slot) ... ok
+test_storage_replay_beyond_4096_does_not_invent_finality (__main__.RestartForkTests.test_storage_replay_beyond_4096_does_not_invent_finality) ... ok
+test_missing_checkpoints_spill_and_cancel_without_height_veto (__main__.StreamingReplayTests.test_missing_checkpoints_spill_and_cancel_without_height_veto) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 35.711s
+
+OK
+test_duplicate_task_and_partition_overlap_reject (__main__.ModelGateTests.test_duplicate_task_and_partition_overlap_reject) ... ok
+test_improving_over_base_but_losing_to_control_is_not_rewarded (__main__.ModelGateTests.test_improving_over_base_but_losing_to_control_is_not_rewarded) ... ok
+test_positive_cluster_result_does_not_mint_future_acceptance (__main__.ModelGateTests.test_positive_cluster_result_does_not_mint_future_acceptance) ... ok
+test_reference_cannot_silently_omit_a_control (__main__.ModelGateTests.test_reference_cannot_silently_omit_a_control) ... ok
+test_snippets_from_one_file_do_not_become_independent_samples (__main__.ModelGateTests.test_snippets_from_one_file_do_not_become_independent_samples) ... ok
+test_stronger_single_control_not_weak_base_is_selected (__main__.ModelGateTests.test_stronger_single_control_not_weak_base_is_selected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+OK
+test_changed_reference_file_produces_no_evaluation_artifact (__main__.EvaluationWorkerTests.test_changed_reference_file_produces_no_evaluation_artifact) ... ok
+test_legacy_unbound_reference_cannot_authorize_evaluation (__main__.EvaluationWorkerTests.test_legacy_unbound_reference_cannot_authorize_evaluation) ... ok
+test_normal_evaluation_worker_consumes_exact_bundle (__main__.EvaluationWorkerTests.test_normal_evaluation_worker_consumes_exact_bundle) ... ok
+test_candidate_file_identity_and_parent_are_distinct (__main__.FrozenEvaluationTests.test_candidate_file_identity_and_parent_are_distinct) ... ok
+test_changed_calibration_data_cannot_be_substituted (__main__.FrozenEvaluationTests.test_changed_calibration_data_cannot_be_substituted) ... ok
+test_control_current_must_be_actual_parent (__main__.FrozenEvaluationTests.test_control_current_must_be_actual_parent) ... ok
+test_control_digest_cannot_be_changed_even_with_new_plan_hash (__main__.FrozenEvaluationTests.test_control_digest_cannot_be_changed_even_with_new_plan_hash) ... ok
+test_cross_partition_exact_content_overlap_rejects (__main__.FrozenEvaluationTests.test_cross_partition_exact_content_overlap_rejects) ... ok
+test_cross_partition_source_group_overlap_rejects (__main__.FrozenEvaluationTests.test_cross_partition_source_group_overlap_rejects) ... ok
+test_cross_partition_task_id_overlap_rejects (__main__.FrozenEvaluationTests.test_cross_partition_task_id_overlap_rejects) ... ok
+test_duplicate_json_keys_fail (__main__.FrozenEvaluationTests.test_duplicate_json_keys_fail) ... ok
+test_duplicate_task_and_content_within_partition_reject (__main__.FrozenEvaluationTests.test_duplicate_task_and_content_within_partition_reject) ... ok
+test_every_control_parameter_is_bound_before_inference (__main__.FrozenEvaluationTests.test_every_control_parameter_is_bound_before_inference) ... ok
+test_exact_bundle_drives_actual_integer_inference (__main__.FrozenEvaluationTests.test_exact_bundle_drives_actual_integer_inference) ... ok
+test_input_label_content_identity_and_group_substitution_reject (__main__.FrozenEvaluationTests.test_input_label_content_identity_and_group_substitution_reject) ... ok
+test_materialized_controls_equal_original_inference_modes (__main__.FrozenEvaluationTests.test_materialized_controls_equal_original_inference_modes) ... ok
+test_model_shape_and_numeric_ranges_are_checked (__main__.FrozenEvaluationTests.test_model_shape_and_numeric_ranges_are_checked) ... ok
+test_noncanonical_or_partial_bundle_fails (__main__.FrozenEvaluationTests.test_noncanonical_or_partial_bundle_fails) ... ok
+test_oversize_input_rejected_before_parser (__main__.FrozenEvaluationTests.test_oversize_input_rejected_before_parser) ... ok
+test_policy_multiplicity_cannot_be_lowered (__main__.FrozenEvaluationTests.test_policy_multiplicity_cannot_be_lowered) ... ok
+test_reduced_fraction_only_for_calibration_scores (__main__.FrozenEvaluationTests.test_reduced_fraction_only_for_calibration_scores) ... ok
+test_self_consistent_rehashed_calibration_score_still_requires_actual_replay (__main__.FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay) ... ok
+test_source_group_alias_cannot_amplify_sample_count (__main__.FrozenEvaluationTests.test_source_group_alias_cannot_amplify_sample_count) ... ok
+test_training_or_calibration_cannot_be_reported_as_evaluation (__main__.FrozenEvaluationTests.test_training_or_calibration_cannot_be_reported_as_evaluation) ... ok
+test_unknown_and_fabricated_authority_fields_reject (__main__.FrozenEvaluationTests.test_unknown_and_fabricated_authority_fields_reject) ... ok
+test_weak_reference_replacement_rejects (__main__.FrozenEvaluationTests.test_weak_reference_replacement_rejects) ... ok
+test_write_once_plan_survives_readback_and_cannot_be_overwritten (__main__.FrozenEvaluationTests.test_write_once_plan_survives_readback_and_cannot_be_overwritten) ... ok
+test_wrong_network_rejects (__main__.FrozenEvaluationTests.test_wrong_network_rejects) ... ok
+test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward (__main__.SettlementObservationTests.test_mutating_both_summary_and_evaluator_score_does_not_authorize_reward) ... ok
+test_observed_results_are_recomputed_before_signed_settlement (__main__.SettlementObservationTests.test_observed_results_are_recomputed_before_signed_settlement) ... ok
+test_undeclared_bundle_cannot_be_read_from_summary_as_authority (__main__.SettlementObservationTests.test_undeclared_bundle_cannot_be_read_from_summary_as_authority) ... ok
+test_zero_marginal_candidate_creates_no_ledger_or_reward (__main__.SettlementObservationTests.test_zero_marginal_candidate_creates_no_ledger_or_reward) ... ok
+test_calibration_weights_source_groups_not_number_of_snippets (__main__.StatisticalBoundaryTests.test_calibration_weights_source_groups_not_number_of_snippets) ... ok
+test_caller_cannot_lower_statistical_gate (__main__.StatisticalBoundaryTests.test_caller_cannot_lower_statistical_gate) ... ok
+test_caller_future_flag_is_not_observation_or_reward (__main__.StatisticalBoundaryTests.test_caller_future_flag_is_not_observation_or_reward) ... ok
+test_labels_and_predictions_do_not_accept_boolean_aliases (__main__.StatisticalBoundaryTests.test_labels_and_predictions_do_not_accept_boolean_aliases) ... ok
+test_positive_direction_majority_with_negative_mean_is_rejected (__main__.StatisticalBoundaryTests.test_positive_direction_majority_with_negative_mean_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 8.040s
+
+OK
+test_exact_expected_artifact_not_mutable_path (__main__.ArtifactBindingTests.test_exact_expected_artifact_not_mutable_path) ... ok
+test_loader_size_is_bounded_before_json_decode (__main__.ArtifactBindingTests.test_loader_size_is_bounded_before_json_decode) ... ok
+test_shapes_fields_and_noncanonical_bytes_reject (__main__.ArtifactBindingTests.test_shapes_fields_and_noncanonical_bytes_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.023s
+
+OK
+test_duplicate_or_implicit_receipt_fields_reject (__main__.InferenceBindingTests.test_duplicate_or_implicit_receipt_fields_reject) ... ok
+test_every_service_identity_is_bound (__main__.InferenceBindingTests.test_every_service_identity_is_bound) ... ok
+test_expected_boolean_counter_alias_rejects (__main__.InferenceBindingTests.test_expected_boolean_counter_alias_rejects) ... ok
+test_expected_cost_nonce_and_returned_output_cannot_be_omitted (__main__.InferenceBindingTests.test_expected_cost_nonce_and_returned_output_cannot_be_omitted) ... ok
+test_oversized_receipt_rejects_before_json (__main__.InferenceBindingTests.test_oversized_receipt_rejects_before_json) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.043s
+
+OK
+test_child_failure_is_not_success_or_reference_fallback (__main__.BoundedProcessTests.test_child_failure_is_not_success_or_reference_fallback) ... ok
+test_concurrent_pipe_drain_before_large_input (__main__.BoundedProcessTests.test_concurrent_pipe_drain_before_large_input) ... ok
+test_exact_output_boundary (__main__.BoundedProcessTests.test_exact_output_boundary) ... ok
+test_missing_binary_is_explicit (__main__.BoundedProcessTests.test_missing_binary_is_explicit) ... ok
+test_stderr_flood_rejected (__main__.BoundedProcessTests.test_stderr_flood_rejected) ... ok
+test_stdout_flood_is_killed_and_reaped (__main__.BoundedProcessTests.test_stdout_flood_is_killed_and_reaped) ... ok
+test_timeout_reaps_own_child (__main__.BoundedProcessTests.test_timeout_reaps_own_child) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.295s
+
+OK
+test_expected_hash_and_shapes_are_checked_before_inference (__main__.PublicModelContractTests.test_expected_hash_and_shapes_are_checked_before_inference) ... ok
+test_input_shape_type_batch_and_ranges_are_bounded (__main__.PublicModelContractTests.test_input_shape_type_batch_and_ranges_are_bounded) ... ok
+test_integer_prediction_and_lowest_index_ties (__main__.PublicModelContractTests.test_integer_prediction_and_lowest_index_ties) ... ok
+test_numpy_and_scalar_integer_outputs_match (__main__.PublicModelContractTests.test_numpy_and_scalar_integer_outputs_match) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.111s
+
+OK
+test_missing_native_path_does_not_use_oracle (__main__.NativeWorkBridgeTests.test_missing_native_path_does_not_use_oracle) ... ok
+test_proof_bytes_and_verified_product_equal_oracle (__main__.NativeWorkBridgeTests.test_proof_bytes_and_verified_product_equal_oracle) ... ok
+test_wrong_statement_and_bad_trace_reject_without_fallback (__main__.NativeWorkBridgeTests.test_wrong_statement_and_bad_trace_reject_without_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.567s
+
+OK
+test_all_declared_order_eight_points_reject (__main__.StrictSignatureTests.test_all_declared_order_eight_points_reject) ... ok
+test_native_and_reference_reject_weak_sender_without_state_change (__main__.StrictSignatureTests.test_native_and_reference_reject_weak_sender_without_state_change) ... ok
+test_rfc8032_known_vector (__main__.StrictSignatureTests.test_rfc8032_known_vector) ... ok
+test_signature_scalar_and_R_rejections (__main__.StrictSignatureTests.test_signature_scalar_and_R_rejections) ... ok
+test_small_order_and_noncanonical_point_rejections (__main__.StrictSignatureTests.test_small_order_and_noncanonical_point_rejections) ... ok
+test_weak_consumer_cannot_authorize_quota (__main__.StrictSignatureTests.test_weak_consumer_cannot_authorize_quota) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.037s
+
+OK
+test_all_twelve_tags_match_for_1_2_4_8_workers (__main__.NativeExecutionTests.test_all_twelve_tags_match_for_1_2_4_8_workers) ... ok
+test_bad_signature_rejects_entire_block_without_parent_mutation (__main__.NativeExecutionTests.test_bad_signature_rejects_entire_block_without_parent_mutation) ... ok
+test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict (__main__.NativeExecutionTests.test_block_scoped_workers_and_no_duplicate_main_signature_on_conflict) ... ok
+test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots (__main__.NativeExecutionTests.test_capacity_prefix_commands_do_not_speculate_unbounded_snapshots) ... ok
+test_funding_dependency_replays_state_not_main_signature (__main__.NativeExecutionTests.test_funding_dependency_replays_state_not_main_signature) ... ok
+test_hot_recipient_conflict_reexecutes_once_in_canonical_order (__main__.NativeExecutionTests.test_hot_recipient_conflict_reexecutes_once_in_canonical_order) ... ok
+test_hot_sender_degrades_to_serial_without_speculation (__main__.NativeExecutionTests.test_hot_sender_degrades_to_serial_without_speculation) ... ok
+test_independent_senders_commit_without_false_conflicts (__main__.NativeExecutionTests.test_independent_senders_commit_without_false_conflicts) ... ok
+test_later_invalid_signature_does_not_change_canonical_error (__main__.NativeExecutionTests.test_later_invalid_signature_does_not_change_canonical_error) ... ok
+test_missing_native_binary_is_not_reference_fallback (__main__.NativeExecutionTests.test_missing_native_binary_is_not_reference_fallback) ... ok
+test_native_round_boundary_retires_history_and_rejects_old_signature (__main__.NativeExecutionTests.test_native_round_boundary_retires_history_and_rejects_old_signature) ... ok
+test_single_signature_context_cannot_be_reused_for_another_payload (__main__.NativeExecutionTests.test_single_signature_context_cannot_be_reused_for_another_payload) ... ok
+test_spent_quota_retirement_preserves_consent_identity (__main__.NativeExecutionTests.test_spent_quota_retirement_preserves_consent_identity) ... ok
+test_terminal_task_retirement_cannot_reopen_same_resource_id (__main__.NativeExecutionTests.test_terminal_task_retirement_cannot_reopen_same_resource_id) ... ok
+test_three_signed_release_generations_preserve_payout_and_retirement (__main__.NativeExecutionTests.test_three_signed_release_generations_preserve_payout_and_retirement) ... ok
+test_unclaimed_release_budget_refunds_at_reserved_deadline (__main__.NativeExecutionTests.test_unclaimed_release_budget_refunds_at_reserved_deadline) ... ok
+test_wrong_native_context_rejects_even_an_empty_block (__main__.NativeExecutionTests.test_wrong_native_context_rejects_even_an_empty_block) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 10.176s
+
+OK
+test_allocation_proof_root_and_payee_are_bound (__main__.CodecTests.test_allocation_proof_root_and_payee_are_bound) ... ok
+test_fixed_vectors_without_native_dependency (__main__.CodecTests.test_fixed_vectors_without_native_dependency) ... ok
+test_header_mutations_bind_all_fields (__main__.CodecTests.test_header_mutations_bind_all_fields) ... ok
+test_json_float_and_duplicate_rejected (__main__.CodecTests.test_json_float_and_duplicate_rejected) ... ok
+test_sparse_root_absence_empty_and_order (__main__.CodecTests.test_sparse_root_absence_empty_and_order) ... ok
+test_every_reorg_process_crash_cut_recovers_exactly (__main__.DiskReorgTests.test_every_reorg_process_crash_cut_recovers_exactly) ... ok
+test_false_parameter_context_rejects_and_releases_owner (__main__.DiskReorgTests.test_false_parameter_context_rejects_and_releases_owner) ... ok
+test_foreign_database_rejected_without_schema_writes (__main__.DiskReorgTests.test_foreign_database_rejected_without_schema_writes) ... ok
+test_root_substitution_rejects_before_persistence (__main__.DiskReorgTests.test_root_substitution_rejects_before_persistence) ... ok
+test_same_work_keeps_existing_tip (__main__.DiskReorgTests.test_same_work_keeps_existing_tip) ... ok
+test_two_writer_admission_is_rejected (__main__.DiskReorgTests.test_two_writer_admission_is_rejected) ... ok
+test_cancel_and_late_receipt_are_monotonic (__main__.ExecutionTests.test_cancel_and_late_receipt_are_monotonic) ... ok
+test_contribution_cannot_swap_parent_family_or_claim_self_eval (__main__.ExecutionTests.test_contribution_cannot_swap_parent_family_or_claim_self_eval) ... ok
+test_expiry_fee_balance_rejections (__main__.ExecutionTests.test_expiry_fee_balance_rejections) ... ok
+test_free_consumer_is_not_charged_or_implicitly_authorized (__main__.ExecutionTests.test_free_consumer_is_not_charged_or_implicitly_authorized) ... ok
+test_mandatory_expiry_returns_reserved_funds (__main__.ExecutionTests.test_mandatory_expiry_returns_reserved_funds) ... ok
+test_signature_nonce_and_no_write_on_reject (__main__.ExecutionTests.test_signature_nonce_and_no_write_on_reject) ... ok
+test_task_receipt_does_not_self_settle (__main__.ExecutionTests.test_task_receipt_does_not_self_settle) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 11.070s
+
+OK
+test_all_command_tags (__main__.InteropTests.test_all_command_tags) ... ok
+test_header (__main__.InteropTests.test_header) ... ok
+test_independent_sparse_tree_directions_agree (__main__.InteropTests.test_independent_sparse_tree_directions_agree) ... ok
+test_native_generation_reproduces_python_bytes (__main__.InteropTests.test_native_generation_reproduces_python_bytes) ... ok
+test_native_rejects_changed_context_and_output (__main__.InteropTests.test_native_rejects_changed_context_and_output) ... ok
+test_rejection_vectors (__main__.InteropTests.test_rejection_vectors) ... ok
+test_work_certificate_parity (__main__.InteropTests.test_work_certificate_parity) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.248s
+
+OK
+test_actual_application_accepts_exact_block_and_state (__main__.AcceptedBlockTests.test_actual_application_accepts_exact_block_and_state) ... ok
+test_genesis_and_post_state_match_native_sparse_root (__main__.AcceptedBlockTests.test_genesis_and_post_state_match_native_sparse_root) ... ok
+test_header_transaction_and_work_validate_natively (__main__.AcceptedBlockTests.test_header_transaction_and_work_validate_natively) ... ok
+test_mutated_body_cannot_commit (__main__.AcceptedBlockTests.test_mutated_body_cannot_commit) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.462s
+
+OK

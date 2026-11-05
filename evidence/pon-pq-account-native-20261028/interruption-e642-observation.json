@@ -1,0 +1,23 @@
+{
+  "schema": "pq-native-execution-interruption-observation-v1",
+  "source": "e6429b9a226ac43682f11ecb5f760ef0243c35a7",
+  "reason": "execution agent stopped by automatic safety check reporting possible cybersecurity risk",
+  "completed_native_process_receipt_observed": false,
+  "cargo_build_finished_observed": false,
+  "post_fix_native_qualification": false,
+  "whole_chain_pq_accepted": false,
+  "clippy_receipt": "clippy-e642.record.json",
+  "log_files": [
+    {
+      "path": "node-build-e642.stdout.txt",
+      "bytes": 90341,
+      "sha256": "00bfefeff6a6bac1391d66bc908e5d6987b2fd692a38bca65b4f125b54401ba5"
+    },
+    {
+      "path": "node-build-e642.stderr.txt",
+      "bytes": 232,
+      "sha256": "3ff2aacc95c17b6c25386baf079773319e7a339f1f995c2b5fa5c04524499ed5"
+    }
+  ],
+  "recorded_at_utc": "2026-10-28T00:57:16.201224+00:00"
+}

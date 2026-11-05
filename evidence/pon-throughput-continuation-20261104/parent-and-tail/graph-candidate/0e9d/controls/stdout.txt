@@ -1,0 +1,42 @@
+
+running 36 tests
+test store::native_authenticated::post_write_readback::tests::a_current_child_record_with_another_node_cannot_borrow_the_parent_graph ... ok
+test store::native_authenticated::post_write_readback::tests::actual_admission_reuses_graphs_and_keeps_original_state_packet_and_reopen ... ok
+test store::native_authenticated::post_write_readback::tests::actual_original_writer_excludes_an_independent_database_writer ... ok
+test store::native_authenticated::post_write_readback::tests::actual_stored_graph_damage_is_reread_after_a_receipt ... ok
+test store::native_authenticated::post_write_readback::tests::another_actual_connection_cannot_use_the_original_write_scope ... ok
+test store::native_authenticated::post_write_readback::tests::changed_schema_or_namespace_never_creates_a_new_scope ... ok
+test store::native_authenticated::post_write_readback::tests::consumed_active_reader_refuses_a_last_callback_write ... ok
+test store::native_authenticated::post_write_readback::tests::cross_record_reuse_keeps_current_nonce_existence_grammar_and_working_state_checks ... ok
+test store::native_authenticated::post_write_readback::tests::current_complete_state_remains_mandatory_on_a_graph_hit ... ok
+test store::native_authenticated::post_write_readback::tests::different_current_records_share_only_the_exact_account_graph_in_one_writer ... ok
+test store::native_authenticated::post_write_readback::tests::fences::cross_record_matches_preserve_boundary_cancellation_and_final_write_fencing ... ok
+test store::native_authenticated::post_write_readback::tests::fences::final_callback_after_a_first_match_falls_back_to_the_actual_original_graph ... ok
+test store::native_authenticated::post_write_readback::tests::fences::four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt ... ok
+test store::native_authenticated::post_write_readback::tests::fences::trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence ... ok
+test store::native_authenticated::post_write_readback::tests::first_graph_callback_write_cannot_mint_a_result_or_reenable_it ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::final_callback_deletion_and_later_outer_write_cannot_use_partial_availability ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::callback_damage_to_certified_untouched_nodes_keeps_original_error ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::callback_no_row_write_after_parent_seal_cannot_continue_its_frontier ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::conflicting_node_inserts_abandon_parent_proof_and_keep_original_publication ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::delete_restore_callback_keeps_bytes_but_cannot_restore_parent_proof ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::native_publish_continuation_paired_real_sql_cost_observation ... ignored, explicit real-SQL publish ABBA; excludes ingress, independent W1 replay, durable commit and public confirmation
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::publication_cancellation_preserves_parent_and_final_real_checkpoints ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::publish_continuation_preserves_real_sql_and_reduces_graph_callbacks ... real_native_publish_graph_callbacks reference=335 continued=239
+ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_final_catalog_fence_rejects_readonly_configuration_and_attachment_drift ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_prepare_only_resets_keep_only_normalized_unchanged_graphs ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::publisher_resets_preexisting_catalog_and_prepared_vm_divergence ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::trigger_during_native_append_cannot_inherit_parent_graph ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::working_only_publication_reuses_only_the_fully_checked_parent_root ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::pre_write::writer_aba_after_parent_seal_retains_original_callback_failure ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::real_different_roots_use_bounded_subtrees_without_promoting_partial_results ... ok
+test store::native_authenticated::post_write_readback::tests::frontier::reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges ... ok
+test store::native_authenticated::post_write_readback::tests::no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope ... ok
+test store::native_authenticated::post_write_readback::tests::original_cancellation_before_and_after_a_match_is_preserved ... ok
+test store::native_authenticated::post_write_readback::tests::original_transaction_owner_refuses_commit_begin_and_savepoint_aba ... ok
+test store::native_authenticated::post_write_readback::tests::prepare_only_schema_reset_preserves_the_normalized_writer ... ok
+
+test result: ok. 35 passed; 0 failed; 1 ignored; 0 measured; 994 filtered out; finished in 3.79s
+

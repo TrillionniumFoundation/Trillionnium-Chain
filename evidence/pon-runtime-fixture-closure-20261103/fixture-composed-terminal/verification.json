@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-fixture-native-terminal-independent-verification-v1",
+  "verified_utc": "2026-11-03T22:24:45.555161+00:00",
+  "source_manifest_sha256": "545222b5d1baa03ca3403375170c30416b8351fdc570e5d994603c3fb2fcaa82",
+  "node_elf_sha256": "34bd6631d69e093be42a35e89ce3d989d60f7cee4f7eb75d1c0f0527c43d7acf",
+  "registered": 974,
+  "original971_plus_exact3": true,
+  "original23_ignored": true,
+  "actual_named_counts": {
+    "passed": 950,
+    "failed": 1,
+    "ignored": 23
+  },
+  "actual_native_exit_code": 101,
+  "driver_exit_code": 0,
+  "complete_unique_disjoint_named_registry": true,
+  "original_driver_and_independent_reader_agree": true,
+  "raw_log_bytes": 7289315,
+  "raw_log_sha256": "5204bbe992a2a21216aa44ffa521e602d2cd0ec0ca57fe40d8a97f0954ac86a1",
+  "original_records": 33,
+  "all_original_record_bytes_decoded_verified": true,
+  "source_before_after_final_terminal_equal": true,
+  "clean_exact_commit_native_byte_association": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "clean_commit_gate_occurred_while_native_run_in_progress": true,
+  "chronology_draft_v1_preserved_losslessly": true,
+  "parser_and_registry_AST_unchanged_by_wording_correction": true,
+  "parser_preparation_controls": {
+    "passed": 13,
+    "positive": 3,
+    "negative": 10
+  },
+  "prior_PENDING_snapshot_unchanged": true,
+  "prior_result_inherited": false,
+  "additional_native_or_cargo_executions": 0,
+  "real_Host_or_performance_acceptance": false
+}

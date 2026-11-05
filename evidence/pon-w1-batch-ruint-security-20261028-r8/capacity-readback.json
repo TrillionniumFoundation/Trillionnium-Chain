@@ -1,0 +1,14 @@
+{
+  "schema": "TRNM-W1-COMPILER-UPGRADE-CAPACITY-READBACK1",
+  "free_bytes_now": 1181396992,
+  "minimum_free_floor_bytes": 1073741824,
+  "old_restored_compiler_bytes_allocated": 1518985216,
+  "old_restored_compiler_logical_bytes": 1518201915,
+  "old_restored_compiler_file_count": 321,
+  "old_authenticated_archive_preserved_bytes": 490849318,
+  "new_latest_official_archive_bytes": 528796425,
+  "new_archive_sha256": "100b597d605b706bec94e1d32bfaaf5851df8d75173f986d4b56a3e90916be53",
+  "new_extracted_size_known": false,
+  "no_cleanup_or_download_performed": true,
+  "constraint": "Cannot establish capacity for keeping both compiler trees plus new archive under 1GiB floor. Any reclaim of old restored compiler, streaming extraction, target cleanup or upgraded installation needs a separate concrete reviewed plan; old official archive/proofs/source remain preserved."
+}

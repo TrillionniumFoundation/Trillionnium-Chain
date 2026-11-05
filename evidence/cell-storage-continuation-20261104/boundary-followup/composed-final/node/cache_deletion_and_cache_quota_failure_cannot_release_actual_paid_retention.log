@@ -1,0 +1,8 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/73305aff6ced/validation-a9b860/trillionnium/crates/trnm-pon-node)

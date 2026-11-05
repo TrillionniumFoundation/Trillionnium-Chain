@@ -1,0 +1,22 @@
+{
+  "scope": "Original actual tool outputs retained after source owner began fixes; no model execution or successful admission",
+  "metadata": {
+    "helper_sha256": "8cbb3074e40b6c0df9018ea991fbb8de4fd800371bc31188a8dac5782ce29773",
+    "before_guard": "1.2.3",
+    "after_guard": {
+      "error": "PackageNotFoundError",
+      "message": "No package metadata was found for review-dist"
+    }
+  },
+  "startup_zip": {
+    "helper_sha256": "6f63a6564e06ba39f68f11bc5717867adf2a0735815d48306a8f69b1b1a8cc55",
+    "before_exit": 0,
+    "after_exit": 1,
+    "zip_canary_executed": true,
+    "actual_canary_trace": true,
+    "managed_inventory_unchanged": true,
+    "inventory_count": 998,
+    "declared_interpreter_bytes_unchanged": true,
+    "zip_is_under_pinned_prefix_or_stdlib": false
+  }
+}

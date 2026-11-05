@@ -1,0 +1,11 @@
+--- a/.github/workflows/pon-w1-work-security.yml
++++ b/.github/workflows/pon-w1-work-security.yml
+@@ -395,7 +395,7 @@
+           if test "$SOURCE_KIND" = prospective-merge; then
+             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+           fi
+-          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
++          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
+           bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+       - name: Install original pinned compiler
+         run: rustup toolchain install 1.95.0 --profile minimal

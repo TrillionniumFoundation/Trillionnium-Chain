@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+    "tested_tree": "b3fbdc280fb0df800e2126539bbcbf926cb0ebd3",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963184773,
+    "tracked_entries": 9970,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "bash",
+    "-c",
+    "set -e\npython3 -B scripts/ci/test_ci_source_integrity.py\npython3 -B scripts/ci/test_pq_research_integration.py\npython3 -B scripts/ci/test_ci_contract.py\npython3 -B scripts/ci/test_pq_chain_claim_guard.py\npython3 -B scripts/ci/check_repository.py\npython3 -B scripts/refresh_distributed_source_inventory.py --check\ncargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+    "tested_tree": "b3fbdc280fb0df800e2126539bbcbf926cb0ebd3",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 963184773,
+    "tracked_entries": 9970,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/768fd621f7e2/chain",
+  "elapsed_ns": 169441692844,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/768fd621f7e2/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "log_bytes": 23814,
+  "log_file": "chain-source-contracts.log",
+  "log_sha256": "6d3911a059686489fd9ccc5c4ef87169211bed5f037fe010c6f33a85198527ee",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-05T08:51:24.128119+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

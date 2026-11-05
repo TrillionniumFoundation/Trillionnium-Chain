@@ -1,0 +1,337 @@
+diff --git a/.github/workflows/pon-native-campaign-qualification.yml b/.github/workflows/pon-native-campaign-qualification.yml
+index eb1b7b72d..c23226bd7 100644
+--- a/.github/workflows/pon-native-campaign-qualification.yml
++++ b/.github/workflows/pon-native-campaign-qualification.yml
+@@ -11,6 +11,7 @@ on:
+       - scripts/pon_public_v3_phase_read.py
+       - scripts/pon_public_v3_policy_read.py
+       - scripts/ci/test_pon_public_v3_policy_read.py
++      - scripts/ci/test_pon_public_v3_phase_read.py
+       - scripts/project-preflight.sh
+       - scripts/ci/verify_ci_source.py
+       - scripts/ci/run_native_phase_host.py
+@@ -68,6 +69,7 @@ jobs:
+           from run_pon_w1_native_campaign import validate_build_environment
+           validate_build_environment(os.environ)
+           PY
++          python3 -m unittest discover -s scripts/ci -p 'test_pon_public_v3*.py' -v 2>&1 | tee "$OUT/policy-reader-controls.log"
+       - name: Install the source-pinned compiler and fetch locked dependencies
+         id: toolchain
+         shell: bash
+diff --git a/scripts/ci/test_pon_public_v3_phase_read.py b/scripts/ci/test_pon_public_v3_phase_read.py
+index b2cbeb10d..d51da6f2a 100644
+--- a/scripts/ci/test_pon_public_v3_phase_read.py
++++ b/scripts/ci/test_pon_public_v3_phase_read.py
+@@ -100,6 +100,36 @@ def arithmetic_report():
+ 
+ 
+ class ReaderTests(unittest.TestCase):
++    def test_r14_policy_preserves_failures_and_cannot_relabel_r13_phases(self):
++        report = arithmetic_report()
++        report['public_resource_policy'] = arithmetic_policy('r14')
++        with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
++            reader.analyze(report)
++        for phase in report['phases']:
++            phase['public_resource_policy'] = arithmetic_policy('r14')
++        result = reader.analyze(report)
++        self.assertEqual(result['public_resource_policy']['resource_revision'],
++                         'r14-arithmetic-facts-v1')
++        self.assertEqual([p['confirmed_rounds'] for p in result['phases']], [0, 0, 0])
++        self.assertFalse(result['native_finite_experiment_criteria_met'])
++        self.assertFalse(result['scope']['original_r13_campaign_qualified'])
++        for phase in report['phases']:
++            phase['public_resource_policy'] = observation('r14')
++            del phase['work_profile']
++            del phase['work_arithmetic_owner']
++            for row in phase['receiver_observation']['records']:
++                row.pop('work_arithmetic', None)
++        report['schema'] = 'native-public-v3-separate-process-campaign-v2'
++        report['public_resource_policy'] = observation('r14')
++        del report['work_profile']
++        raw_result = reader.analyze(report)
++        self.assertEqual([p['public_resource_policy']['resource_revision']
++                          for p in raw_result['phases']], ['r14'] * 3)
++        self.assertEqual([p['confirmed_rounds'] for p in raw_result['phases']], [0, 0, 0])
++        del report['phases'][0]['completion_work_observation']
++        with self.assertRaisesRegex(ValueError, 'completion-work observation'):
++            reader.analyze(report)
++
+     def test_original_native_raw_report_remains_historical_and_cannot_claim_arithmetic(self):
+         path = Path(__file__).resolve().parents[2] / 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json'
+         original = 'c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233'
+diff --git a/scripts/ci/test_pon_public_v3_policy_read.py b/scripts/ci/test_pon_public_v3_policy_read.py
+index 2626d07cf..577b910e6 100644
+--- a/scripts/ci/test_pon_public_v3_policy_read.py
++++ b/scripts/ci/test_pon_public_v3_policy_read.py
+@@ -23,12 +23,20 @@ EXPECTED = {
+             '56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15',
+             '0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973'],
+     'r13': ['c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2', 'af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607', 'e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176'],
++    'r14': ['6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f',
++            'ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258',
++            '82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8'],
+ }
+ ARITHMETIC_EXPECTED = [
+     '14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3',
+     '05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b',
+     '8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd',
+ ]
++CURRENT_ARITHMETIC_EXPECTED = [
++    'c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825',
++    '0d462bce59800e8a2e4cfe348d0db06bf9771caa4f9a56df36a7d8b59fe3b507',
++    '4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f',
++]
+ 
+ 
+ def observation(revision='r13'):
+@@ -37,8 +45,9 @@ def observation(revision='r13'):
+                 policy_id=EXPECTED[revision][0], ticket_bits=8, lifetime_ms=2000)
+ 
+ 
+-def arithmetic_observation():
+-    return {**observation(), 'policy_id': ARITHMETIC_EXPECTED[0]}
++def arithmetic_observation(revision='r13'):
++    expected = {'r13': ARITHMETIC_EXPECTED, 'r14': CURRENT_ARITHMETIC_EXPECTED}[revision]
++    return {**observation(revision), 'policy_id': expected[0]}
+ 
+ 
+ class PolicyReaderTests(unittest.TestCase):
+@@ -46,12 +55,17 @@ class PolicyReaderTests(unittest.TestCase):
+         config = reader.load_profiles()
+         entry = config['arithmetic_profile']
+         self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000)
+-                          for bits in (8, 12, 16)], ARITHMETIC_EXPECTED)
+-        value = reader.identify_observation(arithmetic_observation())
+-        self.assertEqual((value['resource_revision'], value['base_resource_revision'],
+-                          value['work_profile']),
+-                         ('r13-arithmetic-facts-v1', 'r13', 'arithmetic-facts-v1'))
+-        self.assertNotEqual(value['policy_id'], observation()['policy_id'])
++                          for bits in (8, 12, 16)], CURRENT_ARITHMETIC_EXPECTED)
++        for revision, expected in (('r13', ARITHMETIC_EXPECTED),
++                                   ('r14', CURRENT_ARITHMETIC_EXPECTED)):
++            self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000,
++                                                         base_revision=revision)
++                              for bits in (8, 12, 16)], expected)
++            value = reader.identify_observation(arithmetic_observation(revision))
++            self.assertEqual((value['resource_revision'], value['base_resource_revision'],
++                              value['work_profile']),
++                             (revision + '-arithmetic-facts-v1', revision, 'arithmetic-facts-v1'))
++            self.assertNotEqual(value['policy_id'], observation(revision)['policy_id'])
+         source = (reader.CONFIG.parents[2] / entry['source']).read_text()
+         self.assertIn('b"' + entry['hash_domain'] + '"', source)
+         self.assertEqual(re.findall(r'b"(fresh-empty-server-local-owner/[^\"]+)"', source),
+@@ -89,20 +103,40 @@ class PolicyReaderTests(unittest.TestCase):
+                 with self.assertRaises(ValueError):
+                     reader.load_profiles(path)
+ 
+-    def test_independent_r10_r11_r12_r13_vectors_recompute_exactly(self):
++    def test_independent_r10_through_r14_vectors_recompute_exactly(self):
+         config = reader.load_profiles()
+         for revision, expected in EXPECTED.items():
+             self.assertEqual([reader.policy_id(config, revision, bits, 2000)
+                               for bits in (8, 12, 16)], expected)
+             self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],
+                              revision)
+-        self.assertEqual(config['current_revision'], 'r13')
++        self.assertEqual(config['current_revision'], 'r14')
+ 
+     def test_current_rust_contract_and_independent_config_are_byte_identical(self):
+         config = reader.load_profiles()
+         source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'
+-        contracts = re.findall(r'b"(resource-revision-r13/[^\"]+)"', source.read_text())
+-        self.assertEqual(contracts, [config['revisions']['r13']['resource_contract']])
++        contracts = re.findall(r'b"(resource-revision-r14/[^\"]+)"', source.read_text())
++        self.assertEqual(contracts, [config['revisions']['r14']['resource_contract']])
++
++    def test_historical_arithmetic_cannot_be_omitted_or_relabelled(self):
++        config = reader.load_profiles()
++        for edit in (
++            lambda c: c.update(historical_arithmetic_profiles={}),
++            lambda c: c['historical_arithmetic_profiles'].update(r14=c['arithmetic_profile']),
++            lambda c: c['historical_arithmetic_profiles']['r13'].update(base_revision='r14'),
++            lambda c: c['historical_arithmetic_profiles']['r13'].update(resource_revision='r14-arithmetic-facts-v1'),
++            lambda c: c['historical_arithmetic_profiles']['r13']['vectors'][0].update(policy_id=CURRENT_ARITHMETIC_EXPECTED[0]),
++            lambda c: c['revisions'].pop('r13'),
++        ):
++            changed = copy.deepcopy(config)
++            edit(changed)
++            with tempfile.TemporaryDirectory() as directory:
++                path = Path(directory) / 'profiles.json'
++                path.write_text(json.dumps(changed))
++                with self.subTest(edit=edit), self.assertRaises(ValueError):
++                    reader.load_profiles(path)
++        with self.assertRaisesRegex(ValueError, 'unknown historical'):
++            reader.arithmetic_policy_id(config, 8, 2000, base_revision='r12')
+ 
+     def test_wrong_parameters_unknown_digest_and_claimed_revision_refuse(self):
+         for fields in ({'ticket_bits': 12}, {'lifetime_ms': 1999}, {'ticket_bits': True},
+diff --git a/scripts/pon_public_v3_phase_read.py b/scripts/pon_public_v3_phase_read.py
+index e27b3784e..c056584a4 100644
+--- a/scripts/pon_public_v3_phase_read.py
++++ b/scripts/pon_public_v3_phase_read.py
+@@ -19,7 +19,7 @@ from pathlib import Path
+ import re
+ import sys
+ 
+-from pon_public_v3_policy_read import ARITHMETIC_PROFILE, ARITHMETIC_REVISION, identify_observation
++from pon_public_v3_policy_read import ARITHMETIC_PROFILE, ARITHMETIC_REVISIONS, identify_observation
+ 
+ PHASES = ('decode', 'context_owner_wait', 'context', 'work',
+           'admission_owner_wait', 'admission', 'submit_result')
+@@ -231,7 +231,7 @@ def phase_summary(phase):
+     if 'public_resource_policy' in phase:
+         policy = identify_observation(phase['public_resource_policy'])
+         base['public_resource_policy'] = policy
+-    arithmetic_profile = policy is not None and policy['resource_revision'] == ARITHMETIC_REVISION
++    arithmetic_profile = policy is not None and policy['resource_revision'] in ARITHMETIC_REVISIONS
+     require((phase.get('work_profile') == ARITHMETIC_PROFILE if arithmetic_profile
+              else 'work_profile' not in phase and 'work_arithmetic_owner' not in phase),
+             'explicit matching arithmetic phase profile required')
+@@ -242,12 +242,12 @@ def phase_summary(phase):
+     if base['startup_or_campaign_error'] is not None:
+         base.update(observations_available=False, confirmed_rounds=None)
+         return base
+-    if policy is not None and policy['resource_revision'] in ('r13', ARITHMETIC_REVISION):
++    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14'):
+         base['completion_work_observation'] = completion_work_observation(
+             phase.get('completion_work_observation'))
+     else:
+         require('completion_work_observation' not in phase,
+-                'completion-work observation requires explicit r13 policy')
++                'completion-work observation requires explicit r13 or r14 policy')
+     if arithmetic_profile:
+         owner = phase.get('work_arithmetic_owner')
+         require(type(owner) is dict and set(owner) == {'schema', 'initial_state', 'slots',
+@@ -282,7 +282,8 @@ def phase_summary(phase):
+                        'public-v3-local-request-resource-observation-v3'), 'unknown observer schema')
+     instrumented = schema.endswith(('-v2', '-v3'))
+     if policy is not None:
+-        require(schema.endswith('-v3') is (policy['resource_revision'] in ('r11', 'r12', 'r13', ARITHMETIC_REVISION)),
++        require(schema.endswith('-v3') is (policy.get('base_resource_revision', policy['resource_revision'])
++                                         in ('r11', 'r12', 'r13', 'r14')),
+                 'public policy and observed CPU scope disagree')
+     if schema.endswith('-v3'):
+         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
+@@ -356,7 +357,7 @@ def analyze(report):
+             'mixed backend observations')
+     if 'public_resource_policy' in report:
+         policy = identify_observation(report['public_resource_policy'])
+-        require(arithmetic_profile is (policy['resource_revision'] == ARITHMETIC_REVISION),
++        require(arithmetic_profile is (policy['resource_revision'] in ARITHMETIC_REVISIONS),
+                 'campaign schema and arithmetic policy disagree')
+         require(all(row.get('public_resource_policy') == report['public_resource_policy']
+                     for row in report['phases'] if row.get('startup_or_campaign_error') is None),
+diff --git a/scripts/pon_public_v3_policy_read.py b/scripts/pon_public_v3_policy_read.py
+index 242007373..6b2ea6dc2 100644
+--- a/scripts/pon_public_v3_policy_read.py
++++ b/scripts/pon_public_v3_policy_read.py
+@@ -2,7 +2,7 @@
+ """Exact signed-policy identifiers, not signature/host/native execution evidence.
+ 
+ Retained observation schemas do not imply a resource revision. In particular,
+-r11, r12 and r13 all use the paid-envelope v3 observer. Missing policy stays unknown.
++r11 through r14 use the paid-envelope v3 observer. Missing policy stays unknown.
+ """
+ from __future__ import annotations
+ 
+@@ -15,7 +15,8 @@ import struct
+ CONFIG = Path(__file__).resolve().parents[1] / 'config/pon/public-resource-profile-vectors-v1.json'
+ OBSERVATION_SCHEMA = 'public-protected-resource-policy-observation-v1'
+ ARITHMETIC_PROFILE = 'arithmetic-facts-v1'
+-ARITHMETIC_REVISION = 'r13-arithmetic-facts-v1'
++ARITHMETIC_REVISION = 'r14-arithmetic-facts-v1'
++ARITHMETIC_REVISIONS = frozenset(('r13-arithmetic-facts-v1', ARITHMETIC_REVISION))
+ 
+ 
+ def require(value, message):
+@@ -46,8 +47,14 @@ def policy_id(config, revision, ticket_bits, lifetime_ms):
+     return domain_hash(config['hash_domain'], parts)
+ 
+ 
+-def arithmetic_policy_id(config, ticket_bits, lifetime_ms):
+-    entry = config['arithmetic_profile']
++def arithmetic_policy_id(config, ticket_bits, lifetime_ms, *, base_revision=None):
++    current = config['arithmetic_profile']
++    if base_revision is None or base_revision == current['base_revision']:
++        entry = current
++    else:
++        require(base_revision in config['historical_arithmetic_profiles'],
++                'unknown historical arithmetic base revision')
++        entry = config['historical_arithmetic_profiles'][base_revision]
+     return domain_hash(entry['hash_domain'], [
+         bytes.fromhex(policy_id(config, entry['base_revision'], ticket_bits, lifetime_ms)),
+         entry['resource_contract'].encode('ascii'), struct.pack('<Q', entry['slots']),
+@@ -67,13 +74,13 @@ def load_profiles(path=CONFIG):
+ 
+     config = json.loads(raw, object_pairs_hook=unique)
+     require(config['schema'] == 'pon-public-resource-profile-vectors-v1'
+-            and config['current_revision'] == 'r13'
++            and config['current_revision'] == 'r14'
+             and config['transport_profile'] == 'public-protected-development-v3'
+             and config['hash_domain'] == 'public-protected-profile-v3'
+             and [config[key] for key in ('burst_ns', 'refill_ns_per_second',
+                                         'start_reserve_ns', 'worker_limit')]
+                 == [2_000_000_000, 250_000_000, 100_000_000, 2]
+-            and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13'}
++            and set(config['revisions']) == {'r10', 'r11', 'r12', 'r13', 'r14'}
+             and config['source_vectors_are_native_acceptance'] is False,
+             'original resource numbers and explicit profile history required')
+     for revision, entry in config['revisions'].items():
+@@ -84,12 +91,16 @@ def load_profiles(path=CONFIG):
+         for row in entry['vectors']:
+             require(policy_id(config, revision, row['ticket_bits'], row['lifetime_ms'])
+                     == row['policy_id'], 'public policy vector hash mismatch')
+-    entry = config['arithmetic_profile']
+-    require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',
++    require(set(config['historical_arithmetic_profiles']) == {'r13'},
++            'exact historical arithmetic profile set required')
++    arithmetic_profiles = [('r14', config['arithmetic_profile']),
++                           *config['historical_arithmetic_profiles'].items()]
++    for revision, entry in arithmetic_profiles:
++        require(set(entry) == {'work_profile', 'resource_revision', 'base_revision', 'hash_domain',
+             'source', 'resource_contract', 'slots', 'maximum_software_bytes', 'vectors'}
+             and entry['work_profile'] == ARITHMETIC_PROFILE
+-            and entry['resource_revision'] == ARITHMETIC_REVISION
+-            and entry['base_revision'] == 'r13'
++            and entry['resource_revision'] == revision + '-arithmetic-facts-v1'
++            and entry['base_revision'] == revision
+             and entry['hash_domain'] == 'public-protected-profile-v3-arithmetic-facts-v1'
+             and entry['source'] == 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs'
+             and type(entry['slots']) is int and entry['slots'] == 64
+@@ -97,10 +108,11 @@ def load_profiles(path=CONFIG):
+             and entry['maximum_software_bytes'] == 4 * 1024 * 1024
+             and [(row['ticket_bits'], row['lifetime_ms']) for row in entry['vectors']]
+                 == [(8, 2000), (12, 2000), (16, 2000)],
+-            'explicit separate arithmetic profile and original r13 bounds required')
+-    for row in entry['vectors']:
+-        require(arithmetic_policy_id(config, row['ticket_bits'], row['lifetime_ms']) == row['policy_id'],
+-                'arithmetic policy vector hash mismatch')
++            'explicit separate arithmetic profile and original bounds required')
++        for row in entry['vectors']:
++            require(arithmetic_policy_id(config, row['ticket_bits'], row['lifetime_ms'],
++                                         base_revision=revision) == row['policy_id'],
++                    'arithmetic policy vector hash mismatch')
+     return config
+ 
+ 
+@@ -113,12 +125,14 @@ def identify_observation(value):
+             and type(value['policy_id']) is str
+             and re.fullmatch('[0-9a-f]{64}', value['policy_id']),
+             'canonical public policy observation required')
+-    matches = [revision for revision in config['revisions']
++    matches = [{'resource_revision': revision} for revision in config['revisions']
+                if policy_id(config, revision, value['ticket_bits'], value['lifetime_ms'])
+                    == value['policy_id']]
+-    if arithmetic_policy_id(config, value['ticket_bits'], value['lifetime_ms']) == value['policy_id']:
+-        require(not matches, 'ambiguous public policy identifier')
+-        return {**value, 'resource_revision': ARITHMETIC_REVISION,
+-                'base_resource_revision': 'r13', 'work_profile': ARITHMETIC_PROFILE}
++    for entry in (config['arithmetic_profile'], *config['historical_arithmetic_profiles'].values()):
++        if arithmetic_policy_id(config, value['ticket_bits'], value['lifetime_ms'],
++                                base_revision=entry['base_revision']) == value['policy_id']:
++            matches.append({'resource_revision': entry['resource_revision'],
++                            'base_resource_revision': entry['base_revision'],
++                            'work_profile': ARITHMETIC_PROFILE})
+     require(len(matches) == 1, 'unrecognized or mismatched public policy identifier')
+-    return {**value, 'resource_revision': matches[0]}
++    return {**value, **matches[0]}

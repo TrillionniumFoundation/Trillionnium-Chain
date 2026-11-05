@@ -1,0 +1,824 @@
+{
+  "all_harness_summary_observations": [
+    {
+      "line": 684,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "parsed": {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1120,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "status": "ok"
+      },
+      "target": "unittests src/lib.rs",
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1120 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 690,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "parsed": {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1120,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "status": "ok"
+      },
+      "target": "unittests src/lib.rs",
+      "text": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1120 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 1200,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "parsed": {
+        "elapsed_seconds_text": "1640.98",
+        "failed": 3,
+        "filtered_out": 0,
+        "ignored": 28,
+        "measured": 0,
+        "passed": 1090,
+        "status": "FAILED"
+      },
+      "target": "unittests src/lib.rs",
+      "text": "test result: FAILED. 1090 passed; 3 failed; 28 ignored; 0 measured; 0 filtered out; finished in 1640.98s"
+    },
+    {
+      "line": 1217,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "parsed": {
+        "elapsed_seconds_text": "5.77",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 10,
+        "status": "ok"
+      },
+      "target": "tests/pool_mining.rs",
+      "text": "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.77s"
+    },
+    {
+      "line": 50,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "parsed": {
+        "elapsed_seconds_text": "10.29",
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 12,
+        "status": "FAILED"
+      },
+      "target": "tests/architecture_delivery_compare.rs",
+      "text": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.29s"
+    }
+  ],
+  "all_three_pre_post_path_sha256_length_equal": true,
+  "build_only_executed_tests": 0,
+  "build_only_native_pass_count": 0,
+  "exec_time_attestation": false,
+  "independent_deployment_qualified": false,
+  "input_observations": {
+    "post": {
+      "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-final-post-execution-observation.json",
+      "sha256": "05ef57bdb6672006783d6f89bace65cabf8ceb48f1cfd61aae9246a7da940770"
+    },
+    "pre": {
+      "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-final-pre-execution-observation.json",
+      "sha256": "811c87e25bfa025c6572b30eed06298e72dd909d09da7485f8b13a4b71f5a7ed"
+    },
+    "roster": {
+      "path": "/workspace/scratch/768fd621f7e2/evidence-prep/chain-observation-roster-corrected.json",
+      "sha256": "65bacc4498148df53662ce46147f285aa272090960606fd38eb2c68148f13500"
+    }
+  },
+  "native_commands": [
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--test",
+        "pool_mining",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "log_bytes": 146066,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "log_sha256": "5f30d2dd4db337c3b5d948ef005b07501be129b60a35defe21f2da94e094d223",
+      "receipt_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.json",
+      "receipt_sha256": "9295b8ac6a092180d6e224796308b4aeb15269a6479915b18f82aabecf145133",
+      "status": "command_failed"
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "architecture_delivery_compare",
+        "--all-features",
+        "--no-fail-fast",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "log_bytes": 7563,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "log_sha256": "f42afc0a08c95bb37370560b08a28ec204b3ba351ede9259adde02fffa11ae30",
+      "receipt_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.json",
+      "receipt_sha256": "e1aa6e85e3c100d0831b4d6eb2db573c9215cc2fcbd1698a8c872c90d8dc744b",
+      "status": "command_failed"
+    }
+  ],
+  "new_test_observations": [
+    {
+      "log_lines": [
+        {
+          "line": 27,
+          "name": "account_archive_prototype::multiproof::tests::native_constructed_query_preserves_every_cancellation_boundary_without_writes",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_preserves_every_cancellation_boundary_without_writes"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 28,
+          "name": "account_archive_prototype::multiproof::tests::native_constructed_query_rechecks_context_and_storage_on_each_operation",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_rechecks_context_and_storage_on_each_operation"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 29,
+          "name": "account_archive_prototype::multiproof::tests::native_constructed_query_retains_one_full_verification_and_identical_facts",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_retains_one_full_verification_and_identical_facts"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 264,
+          "name": "ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "target": "lib",
+      "test": "ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 742,
+          "name": "store::error_boundary_tests::mining_wall_time_reads_eleven_headers_and_checks_the_boundary_parent",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_reads_eleven_headers_and_checks_the_boundary_parent"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 743,
+          "name": "store::error_boundary_tests::mining_wall_time_retains_current_parent_full_packet_validation",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_retains_current_parent_full_packet_validation"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 744,
+          "name": "store::error_boundary_tests::mining_wall_time_retains_genesis_record_and_original_error_checks",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_retains_genesis_record_and_original_error_checks"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 773,
+          "name": "store::growth::difference_tests::ordered_growth_difference_control_checks_unchanged_keys_and_final_boundary",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/difference_tests.rs",
+      "target": "lib",
+      "test": "store::growth::difference_tests::ordered_growth_difference_control_checks_unchanged_keys_and_final_boundary"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 778,
+          "name": "store::growth::tests::header_timestamp::growth_header_timestamp_controls_real_pq_m06_expiry_at_the_input_boundary",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "target": "lib",
+      "test": "store::growth::tests::header_timestamp::growth_header_timestamp_controls_real_pq_m06_expiry_at_the_input_boundary"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 779,
+          "name": "store::growth::tests::header_timestamp::growth_header_timestamp_preserves_classic_outputs_admission_and_retained_replay",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "target": "lib",
+      "test": "store::growth::tests::header_timestamp::growth_header_timestamp_preserves_classic_outputs_admission_and_retained_replay"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 786,
+          "name": "store::growth::tests::materialization_control::native_growth_v2_materialization_controls_preserve_state_and_original_errors",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs",
+      "target": "lib",
+      "test": "store::growth::tests::materialization_control::native_growth_v2_materialization_controls_preserve_state_and_original_errors"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 825,
+          "name": "store::growth::tests::parallel_preparation::growth_parallel_preparation_keeps_dependent_task_settlement_spends_and_reward_canonical",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+      "target": "lib",
+      "test": "store::growth::tests::parallel_preparation::growth_parallel_preparation_keeps_dependent_task_settlement_spends_and_reward_canonical"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 829,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_account_queries_refuse_foreign_commit_inside_read_snapshot",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_account_queries_refuse_foreign_commit_inside_read_snapshot"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 830,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_autocommit_queries_recheck_foreign_epoch_after_read",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_autocommit_queries_recheck_foreign_epoch_after_read"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 831,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 832,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_read_snapshot_hides_foreign_epoch_until_release",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_read_snapshot_hides_foreign_epoch_until_release"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 833,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_successful_payment_rechecks_epoch_after_read_snapshot",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_successful_payment_rechecks_epoch_after_read_snapshot"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 834,
+          "name": "store::growth::tests::read_epoch::native_growth_v2_working_queries_refuse_foreign_commit_inside_read_snapshot",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_working_queries_refuse_foreign_commit_inside_read_snapshot"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 962,
+          "name": "store::native_authenticated::post_write_readback::tests::cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "target": "lib",
+      "test": "store::native_authenticated::post_write_readback::tests::cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 981,
+          "name": "store::native_authenticated::post_write_readback::tests::warm_catalog_statement_never_hides_temp_objects_or_database_attachments",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "target": "lib",
+      "test": "store::native_authenticated::post_write_readback::tests::warm_catalog_statement_never_hides_temp_objects_or_database_attachments"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1128,
+          "name": "store::reverse_path::tests::reverse_spool_batches_io_without_skipping_a_locator",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_batches_io_without_skipping_a_locator"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1129,
+          "name": "store::reverse_path::tests::reverse_spool_does_not_hide_truncated_spill",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_does_not_hide_truncated_spill"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1130,
+          "name": "store::reverse_path::tests::reverse_spool_preserves_every_locator_across_original_long_chain",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_preserves_every_locator_across_original_long_chain"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1131,
+          "name": "store::reverse_path::tests::reverse_spool_propagates_failed_write_before_reusing_buffer",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_propagates_failed_write_before_reusing_buffer"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 5,
+          "name": "absolute_deadline_dissemination_keeps_complete_material_in_all_three_modes",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "target": "architecture_delivery_compare",
+      "test": "absolute_deadline_dissemination_keeps_complete_material_in_all_three_modes"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 15,
+          "name": "dissemination_cancellation_preserves_original_sender_and_receiver_failures",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "target": "architecture_delivery_compare",
+      "test": "dissemination_cancellation_preserves_original_sender_and_receiver_failures"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1214,
+          "name": "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "target": "pool_mining",
+      "test": "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 1215,
+          "name": "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "target": "pool_mining",
+      "test": "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 6,
+          "name": "architecture_deadline::tests::cancellation_wakes_a_waiting_receiver",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::cancellation_wakes_a_waiting_receiver"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 7,
+          "name": "architecture_deadline::tests::cancelled_writer_does_not_send_a_new_frame",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::cancelled_writer_does_not_send_a_new_frame"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 8,
+          "name": "architecture_deadline::tests::continued_fragment_progress_cannot_renew_frame_deadline",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::continued_fragment_progress_cannot_renew_frame_deadline"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 9,
+          "name": "architecture_deadline::tests::empty_completion_still_observes_expiry_and_cancellation",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::empty_completion_still_observes_expiry_and_cancellation"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 10,
+          "name": "architecture_deadline::tests::expired_frame_does_not_consume_available_bytes",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::expired_frame_does_not_consume_available_bytes"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 11,
+          "name": "architecture_deadline::tests::fragmented_frame_completes_within_one_original_budget",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::fragmented_frame_completes_within_one_original_budget"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 12,
+          "name": "architecture_deadline::tests::header_and_body_reads_share_the_original_frame_end",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::header_and_body_reads_share_the_original_frame_end"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 13,
+          "name": "architecture_deadline::tests::partial_eof_remains_an_error",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::partial_eof_remains_an_error"
+    },
+    {
+      "log_lines": [
+        {
+          "line": 14,
+          "name": "architecture_deadline::tests::stalled_writer_ends_under_original_deadline",
+          "outcome_text": "ok"
+        }
+      ],
+      "result": "observed_pass",
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::stalled_writer_ends_under_original_deadline"
+    }
+  ],
+  "new_test_outcome_counts": {
+    "observed_pass": 37
+  },
+  "new_test_roster_size": 37,
+  "observed_utc": "2026-11-05T11:35:47.865406+00:00",
+  "pre_post_executable_bindings": [
+    {
+      "file_identity_equal": true,
+      "path_sha256_and_length_equal": true,
+      "post": [
+        {
+          "bytes": 202422880,
+          "ctime_ns": 1793875593667529662,
+          "device": 27,
+          "elf_class_bits": 64,
+          "elf_endian": "little",
+          "elf_machine": 62,
+          "elf_machine_name": "x86_64",
+          "inode": 3445171,
+          "mode": "0o755",
+          "mtime_ns": 1793875593647529316,
+          "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/architecture_delivery_compare-4678277dbc448539",
+          "sha256": "5947b15474a1a2aa77e4b6285505aa8f00386ca855d81ad7d689cd1f974c6678"
+        }
+      ],
+      "post_invocations": 1,
+      "pre": {
+        "bytes": 202422880,
+        "ctime_ns": 1793875593667529662,
+        "device": 27,
+        "elf_class_bits": 64,
+        "elf_endian": "little",
+        "elf_machine": 62,
+        "elf_machine_name": "x86_64",
+        "inode": 3445171,
+        "mode": "0o755",
+        "mtime_ns": 1793875593647529316,
+        "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/architecture_delivery_compare-4678277dbc448539",
+        "sha256": "5947b15474a1a2aa77e4b6285505aa8f00386ca855d81ad7d689cd1f974c6678"
+      },
+      "target": "tests/architecture_delivery_compare.rs"
+    },
+    {
+      "file_identity_equal": true,
+      "path_sha256_and_length_equal": true,
+      "post": [
+        {
+          "bytes": 198028432,
+          "ctime_ns": 1793875636231591839,
+          "device": 27,
+          "elf_class_bits": 64,
+          "elf_endian": "little",
+          "elf_machine": 62,
+          "elf_machine_name": "x86_64",
+          "inode": 3445276,
+          "mode": "0o755",
+          "mtime_ns": 1793875636215591724,
+          "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/pool_mining-cc0741c5553beb4a",
+          "sha256": "c79be812dc1015ba4d6e70b2fefe364c00e5847d3cb51a4fdfc33cfc0ae92329"
+        }
+      ],
+      "post_invocations": 1,
+      "pre": {
+        "bytes": 198028432,
+        "ctime_ns": 1793875636231591839,
+        "device": 27,
+        "elf_class_bits": 64,
+        "elf_endian": "little",
+        "elf_machine": 62,
+        "elf_machine_name": "x86_64",
+        "inode": 3445276,
+        "mode": "0o755",
+        "mtime_ns": 1793875636215591724,
+        "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/pool_mining-cc0741c5553beb4a",
+        "sha256": "c79be812dc1015ba4d6e70b2fefe364c00e5847d3cb51a4fdfc33cfc0ae92329"
+      },
+      "target": "tests/pool_mining.rs"
+    },
+    {
+      "file_identity_equal": true,
+      "path_sha256_and_length_equal": true,
+      "post": [
+        {
+          "bytes": 436666472,
+          "ctime_ns": 1793876564340954808,
+          "device": 27,
+          "elf_class_bits": 64,
+          "elf_endian": "little",
+          "elf_machine": 62,
+          "elf_machine_name": "x86_64",
+          "inode": 3445346,
+          "mode": "0o755",
+          "mtime_ns": 1793876564288954125,
+          "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/trnm_pon_node-411f55f039b2c3b6",
+          "sha256": "a2c70e8508ced69c6fdde88bc915dc9d7224ddd429ba27b0e812109aca5c375c"
+        }
+      ],
+      "post_invocations": 1,
+      "pre": {
+        "bytes": 436666472,
+        "ctime_ns": 1793876564340954808,
+        "device": 27,
+        "elf_class_bits": 64,
+        "elf_endian": "little",
+        "elf_machine": 62,
+        "elf_machine_name": "x86_64",
+        "inode": 3445346,
+        "mode": "0o755",
+        "mtime_ns": 1793876564288954125,
+        "path": "/workspace/scratch/768fd621f7e2/target/debug/deps/trnm_pon_node-411f55f039b2c3b6",
+        "sha256": "a2c70e8508ced69c6fdde88bc915dc9d7224ddd429ba27b0e812109aca5c375c"
+      },
+      "target": "unittests src/lib.rs"
+    }
+  ],
+  "primary_harness_summaries": [
+    {
+      "earlier_nested_or_intermediate_summary_count": 2,
+      "last_observed_summary": {
+        "line": 1200,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+        "parsed": {
+          "elapsed_seconds_text": "1640.98",
+          "failed": 3,
+          "filtered_out": 0,
+          "ignored": 28,
+          "measured": 0,
+          "passed": 1090,
+          "status": "FAILED"
+        },
+        "target": "unittests src/lib.rs",
+        "text": "test result: FAILED. 1090 passed; 3 failed; 28 ignored; 0 measured; 0 filtered out; finished in 1640.98s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "primary_declared_tests": 1121,
+      "target": "unittests src/lib.rs"
+    },
+    {
+      "earlier_nested_or_intermediate_summary_count": 0,
+      "last_observed_summary": {
+        "line": 1217,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+        "parsed": {
+          "elapsed_seconds_text": "5.77",
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 10,
+          "status": "ok"
+        },
+        "target": "tests/pool_mining.rs",
+        "text": "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.77s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-node-and-mining.log",
+      "primary_declared_tests": 10,
+      "target": "tests/pool_mining.rs"
+    },
+    {
+      "earlier_nested_or_intermediate_summary_count": 0,
+      "last_observed_summary": {
+        "line": 50,
+        "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+        "parsed": {
+          "elapsed_seconds_text": "10.29",
+          "failed": 1,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 12,
+          "status": "FAILED"
+        },
+        "target": "tests/architecture_delivery_compare.rs",
+        "text": "test result: FAILED. 12 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.29s"
+      },
+      "last_summary_counts_match_primary_declaration": true,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-final-architecture-delivery.log",
+      "primary_declared_tests": 13,
+      "target": "tests/architecture_delivery_compare.rs"
+    }
+  ],
+  "schema": "chain-fixed-source-native-observation-summary-v1",
+  "scope": "original native outcomes plus named new-test and local pre/post byte observations",
+  "source_commit": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "source_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "whole_chain_quantum_security_qualified": false
+}
