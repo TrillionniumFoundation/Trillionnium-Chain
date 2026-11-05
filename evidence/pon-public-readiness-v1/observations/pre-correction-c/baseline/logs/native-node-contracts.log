@@ -1,0 +1,119 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling cfg-if v1.0.4
+   Compiling typenum v1.19.0
+   Compiling generic-array v0.14.7
+   Compiling syn v2.0.117
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling semver v1.0.27
+   Compiling zerocopy v0.8.48
+   Compiling serde_core v1.0.228
+   Compiling cpufeatures v0.2.17
+   Compiling rustc_version v0.4.1
+   Compiling ahash v0.8.12
+   Compiling equivalent v1.0.2
+   Compiling shlex v1.3.0
+   Compiling hashbrown v0.16.1
+   Compiling winnow v1.0.4
+   Compiling once_cell v1.21.4
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.59
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling indexmap v2.13.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling serde v1.0.228
+   Compiling vcpkg v0.2.15
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling thiserror v1.0.69
+   Compiling libc v0.2.184
+   Compiling pkg-config v0.3.32
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libsqlite3-sys v0.30.1
+   Compiling serde_derive v1.0.228
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling thiserror-impl v1.0.69
+   Compiling zeroize v1.8.2
+   Compiling zmij v1.0.21
+   Compiling subtle v2.6.1
+   Compiling signature v2.2.0
+   Compiling anyhow v1.0.103
+   Compiling cfg_aliases v0.2.2
+   Compiling bitflags v2.11.0
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling hashbrown v0.14.5
+   Compiling proc-macro-crate v3.5.0
+   Compiling hex v0.4.3
+   Compiling getrandom v0.4.2
+   Compiling serde_json v1.0.149
+   Compiling rustix v1.1.4
+   Compiling borsh-derive v1.8.0
+   Compiling trnm-protocol v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-protocol)
+   Compiling hashlink v0.9.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling rusqlite v0.32.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-verification-profiles v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling fs2 v0.4.3
+   Compiling trnm-transport v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.78s
+     Running tests/native_node.rs (trillionnium/target/debug/deps/native_node-de0d6d063a1b0db2)
+
+running 25 tests
+test abrupt_child ... ignored, owned subprocess helper, invoked by the process-cut tests
+test test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner ... ok
+test test_authentication_options_are_scoped_to_network_commands ... ok
+test test_cached_work_never_reuses_an_old_clock_verdict ... ok
+test test_confirmed_transfer_is_removed_by_a_real_heavier_fork ... ok
+test test_every_reorg_process_cut_and_admission_gap_recovers_once ... actual child exit86 at admitted
+actual child exit86 at intent
+actual child exit86 at detach:0
+actual child exit86 at detach:1
+actual child exit86 at attach:2
+actual child exit86 at attach:3
+actual child exit86 at attach:4
+actual child exit86 at before-publish
+actual child exit86 at published
+ok
+test test_existing_output_path_cannot_publish_a_new_cli_block ... ok
+test test_full_transaction_pages_use_byte_limits_and_recover_all_native_state ... ok
+test test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent ... ok
+test test_initialization_process_cuts_recover_only_the_owned_context ... actual child exit86 at init-intent
+actual child exit86 at init-schema
+actual child exit86 at init-before-commit
+actual child exit86 at init-committed
+ok
+test test_lower_height_higher_required_work_wins_after_native_retarget ... ok
+test test_malformed_work_and_changed_duplicate_never_mutate_state ... ok
+test test_native_batch_actual_heavier_reorg_removes_all_confirmations ... ok
+test test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache ... ok
+test test_native_batch_checks_one_history_and_one_shared_body ... ok
+test test_native_batch_cli_uses_the_real_persisted_owner ... ok
+test test_native_batch_generation_change_is_detected_before_any_response ... ok
+test test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success ... ok
+test test_native_batch_rechecks_future_ancestor_below_all_inclusions ... ok
+test test_native_body_membership_is_still_checked_after_header_projection ... ok
+test test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend ... ok
+test test_native_header_projection_rejects_changed_header_or_trace ... ok
+test test_native_writer_and_namespace_fences_are_not_optional ... ok
+test test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry ... actual native loopback: 32 ticket-passing false transcripts rejected; 16 four-query batches served; not public/Sybil qualification
+ok
+test test_socket_history_uses_real_native_validation_and_separate_stores ... ok
+
+test result: ok. 24 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 80.05s
+
