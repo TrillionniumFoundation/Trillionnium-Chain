@@ -25,7 +25,7 @@ hex = "0.4"
 ed25519-dalek = "2"
 trnm-protocol = { version = "=0.1.0", path = "../trnm-protocol" }
 openssl = { version = "=0.10.81", optional = true }
-zeroize = "=1.8.2"
+zeroize = "=1.9.1"
 ml-dsa = { version = "=0.1.1", default-features = false, features = ["alloc", "zeroize"] }
 
 serde_json = "1"
