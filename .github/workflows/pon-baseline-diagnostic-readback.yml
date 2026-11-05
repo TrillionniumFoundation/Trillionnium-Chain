@@ -1,0 +1,154 @@
+name: PoN baseline diagnostic readback
+on:
+  pull_request:
+    paths:
+      - .github/workflows/pon-baseline-diagnostic-readback.yml
+      - trillionnium/**
+permissions:
+  contents: read
+  actions: read
+jobs:
+  retained-failure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Read the exact failed baseline without executing repository code
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUT: ${{ runner.temp }}/baseline-diagnostic-readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$OUT"
+          api=https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 60 --max-filesize 1048576 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/runs/37861647184" -o "$OUT/run.json"
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 60 --max-filesize 1048576 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/jobs/113599036245" -o "$OUT/job.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['OUT'])
+          run = json.loads((root / 'run.json').read_text())
+          job = json.loads((root / 'job.json').read_text())
+          assert run['id'] == job['run_id'] == 37861647184
+          assert run['head_sha'] == '544dc613753ac7760af97d378d84da3e2db4e3ff'
+          assert job['id'] == 113599036245 and job['conclusion'] == 'failure'
+          PY
+          # curl does not forward Authorization to another host on a redirect.
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --retry 2 --max-time 120 --max-filesize 67108864 -H "Authorization: Bearer $GH_TOKEN" "$api/actions/jobs/113599036245/logs" -o "$OUT/failed-baseline.log"
+          python3 - <<'PY'
+          import hashlib, json, os, re
+          from pathlib import Path
+          root = Path(os.environ['OUT'])
+          raw = (root / 'failed-baseline.log').read_bytes()
+          assert raw and len(raw) <= 64 * 1024 * 1024
+          lines = raw.decode('utf-8', errors='replace').splitlines()
+          selected = set()
+          for i, line in enumerate(lines):
+              if re.search(r'error(?:\[[^]]+\])?:|panicked at|Caused by:', line):
+                  selected.update(range(max(0, i - 3), min(len(lines), i + 14)))
+          excerpt = '\n'.join(lines[i] for i in sorted(selected)[-180:])[-24000:]
+          (root / 'diagnostic-excerpt.txt').write_text(excerpt + '\n')
+          record = dict(schema='pon-retained-baseline-diagnostic-v1',
+                        source='544dc613753ac7760af97d378d84da3e2db4e3ff',
+                        run=37861647184, job=113599036245,
+                        log_sha256=hashlib.sha256(raw).hexdigest(), log_bytes=len(raw),
+                        source_tests_executed=False, acceptance_granted=False)
+          (root / 'readback.json').write_text(json.dumps(record, indent=2) + '\n')
+          print(json.dumps(record))
+          print(excerpt)
+          PY
+      - name: Preserve original failure and bounded diagnostic excerpt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: retained-baseline-diagnostic-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/baseline-diagnostic-readback/
+          if-no-files-found: error
+          retention-days: 30
+  native-boundary:
+    name: native boundary (${{ matrix.runner }}, ${{ matrix.source }})
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_MERGE: ${{ github.sha }}
+      SOURCE_KIND: ${{ matrix.source }}
+    steps:
+      - name: Checkout exact current source or actual target merge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source and original project boundary
+        id: source
+        run: |
+          set -euo pipefail
+          export TRNM_CI_RECEIPT_DIR="$RUNNER_TEMP/native-boundary"
+          mkdir "$TRNM_CI_RECEIPT_DIR"
+          echo "TRNM_CI_RECEIPT_DIR=$TRNM_CI_RECEIPT_DIR" >> "$GITHUB_ENV"
+          echo "CARGO_HOME=$RUNNER_TEMP/cargo-boundary" >> "$GITHUB_ENV"
+          echo "CARGO_TARGET_DIR=$RUNNER_TEMP/target-boundary" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$TRNM_CI_RECEIPT_DIR/source.json"
+          bash scripts/project-preflight.sh --audit
+      - name: Install source-pinned compiler and lint tools
+        id: tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Preserve exact formatter diagnostics without changing source
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/format.log"
+      - name: Execute strict native all-target Clippy before long campaigns
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-targets --all-features -- -D warnings 2>&1 | tee "$TRNM_CI_RECEIPT_DIR/clippy.log"
+      - name: Execute original accounting and new cooffered depletion regressions
+        if: ${{ !cancelled() && steps.source.outcome == 'success' && steps.tools.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          # The original transcript validator requires exactly one named invocation.
+          # Execute all four original/current tests once, each with its own full log.
+          for selector in \
+            actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed \
+            real_observer_capacity_overflow_does_not_refuse_concurrent_honest_reads \
+            actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen \
+            actual_depletion::depleted_domain_serves_honest_block_during_rotating_public_false_work; do
+            log="$TRNM_CI_RECEIPT_DIR/accounting-${selector//::/-}.log"
+            cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_request_accounting "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"
+            python3 scripts/ci/check_required_native_test.py "$log" --test "$selector"
+          done
+      - name: Reverify unchanged tested source
+        if: always()
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}"
+      - name: Retain current native results including every failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-boundary-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-boundary/
+          if-no-files-found: error
+          retention-days: 30

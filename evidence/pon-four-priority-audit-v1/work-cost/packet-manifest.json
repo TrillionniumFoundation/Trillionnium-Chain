@@ -1,0 +1,33 @@
+{
+  "diagnostic_exit": 2,
+  "files": {
+    "README.md": "e705f5f01053785e6bcb5f08bca2f9e80cca5c0ed33adc8fe9914aaf0611d812",
+    "build.log": "7f5058c173eabdad14a4e6d7422581eeff38f95403c7a839c1ca567124f862c3",
+    "collect_prepared_fresh.py": "b1df7c410a6e32bb4d787cf56f0f81ada3e49592d14e59d054a7f059a6b9fcc0",
+    "collector-stdout.log": "28582d9aed8e7f70c3be58c0107862d1642e47f6a2f233c1a8ef1e7462810d9e",
+    "diagnostic.exit": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3",
+    "diagnostic.json": "21cda8003d594b13e0828f9417f58512043ca7f2764833906a500e4fe871dda8",
+    "execution.json": "ff133c76e14676b81236c397452c6b64d5c8b06ed2f12c407139c450bacab20a",
+    "manifest.json": "61172155ec1c3d5bce350aa47fbff86c49a3c23102e55a9cd10460344a1941c9",
+    "native-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-verification.json": "71157772887f96fd7f929b398d95f4a3d14294b8991d98bdd51efd7e85c24938",
+    "native-work.json": "6543c219bfe46e860649fcb7268acf03bd6b71b9dceeb1a6f786c10abf52814b",
+    "paired-collector-stdout.log": "c81db019e05a556621acc8baa3da294cae7983c9f12d6c9714559c158fe4e6ee",
+    "paired-verification.json": "9d3f21752faf8f25650d418444173acc8b9d0117083ad7ec4cd6a1a5e5056011",
+    "paired/build.log": "d8ef264203aeae4c5f25ca59330843132310f12cc898066590c70adbc17536d3",
+    "paired/execution.json": "ee99fc75b76d209f818524706884707f9c5705849012b90bf5f76c7576bd349d",
+    "paired/manifest.json": "5ef1f62b2c414b01702fb67a68be8c8ec0bb0464ad8ee4614cb88d17494b2d14",
+    "paired/prepared-cost.json": "d4e3058d0948954a8875e424a092eb40a1632a51dc9da741d47ac76377ba08af",
+    "paired/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "summary.json": "74178dc5f494e5a70d8d0f977c0ff6aea69d5a39e16231fd4b1b19bb3a1d1baf"
+  },
+  "fresh_native_costs_collected": true,
+  "honest_service": "unmeasured",
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "schema": "pon-work-security-observation-packet-v1",
+  "source_commit": "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+  "source_tree": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+  "work_hardness_accepted": false
+}

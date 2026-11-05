@@ -1,0 +1,57 @@
+{
+  "schema": "integer-linear-factor-family-v2",
+  "version": 2,
+  "classes": [
+    "M00",
+    "M04",
+    "M10"
+  ],
+  "dimensions": 257,
+  "experts": 3,
+  "logit_outputs": 3,
+  "feature": "signed-token-hash-256-clipped8-plus-bias-v1",
+  "token_regex": "[a-zA-Z_][a-zA-Z_0-9]*",
+  "lowercase": true,
+  "max_tokens": 1024,
+  "excluded_tokens": [
+    "m00",
+    "m04",
+    "m10"
+  ],
+  "excluded_prefixes": [
+    "trnm"
+  ],
+  "hash_feature": "SHA256 token; LE16 bytes0:2 modulo256; positive sign iff byte2&1",
+  "count_clip": 8,
+  "bias": 8,
+  "weight_scale": 1024,
+  "weight_min": -32767,
+  "weight_max": 32767,
+  "activation": "argmax with lowest index on ties; router selects one delta; logits=(base+delta[route])*x",
+  "artifact_max_bytes": 65536,
+  "tensor_shapes": {
+    "base": [
+      3,
+      257
+    ],
+    "router": [
+      3,
+      257
+    ],
+    "deltas": [
+      3,
+      3,
+      257
+    ]
+  },
+  "training_optimizer": "float64 deterministic full-batch gradient; export integer rint ties-even, clipped; training numerics are not consensus",
+  "numeric_bridge": "signed-field input |x|<=128, |w|<=32767; a 64-coordinate contraction <q/2; prove only the declared partial layer",
+  "consensus_authority": false,
+  "artifact_encoding": "ILM2-le-i16-complete-model-v2",
+  "artifact_exact_bytes": 7756,
+  "genesis_model": "canonical-full-zero-model-v2",
+  "native_factor_rank_min": 1,
+  "native_factor_rank_max": 2,
+  "general_model_equivalence": false,
+  "model_utility_qualified": false
+}
