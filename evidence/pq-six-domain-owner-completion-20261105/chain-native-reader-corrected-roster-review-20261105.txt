@@ -1,0 +1,70 @@
+Chain final-native reader: corrected roster review
+
+This is a new review of these exact bytes, not a relabeling of the earlier
+bf259550 reader review:
+
+  actual reader: chain-observation-final-native.py
+  SHA256 1ba10a71ec4e9596a84b18ff7e0ea1e6d16d4c8af82f9034894fac8ebae917a1
+  corrected roster: chain-observation-roster-corrected.json
+  SHA256 65bacc4498148df53662ce46147f285aa272090960606fd38eb2c68148f13500
+  correction record: chain-observation-roster-correction.json
+  SHA256 31767e30d6ddfd071cf42e9fb17abc09e2f806bc5700224feca3959adf0154a3
+
+All paths above are in /workspace/scratch/768fd621f7e2/evidence-prep/.
+The source remains commit 1d6a9f9b5e8abd9e86457f45199a4922f9376360,
+tree 4a0314e72ebc45659986d03e7ca2f96cab9399ea.
+
+Conclusion: the one incorrect parent-module qualifier has been corrected using
+the fixed source blob and actual Cargo output. No remaining blocker was found
+in this correction and the previously reviewed receipt/projection binding scope.
+This conclusion does not adjudicate a complete native command as passing.
+
+1. Preserve the earlier observation
+   chain-observation-roster.json is unchanged at SHA256
+   59e338f744de93a61b50b3bb59e0c58c8bb81bd0f9f978b6d1af1d1dd2732b1b.
+   chain-observation-final-native-before-roster-correction.py preserves the exact
+   earlier reader at SHA256
+   bf2595501c478d6d6b2dd7afda5801868aef76efa04002b6b9070742f0577574.
+   The earlier review note is also retained. Its source-name inspection proved
+   the terminal function existed; it did not establish this full module-qualified
+   name. The old name would be reported as not_observed by that reader.
+
+2. Establish the actual source module and observed name
+   Git resolves the fixed source path
+   trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+   to blob 891ec08f59a6e2346735bd08b1bf363466fe38a3.
+   The old tests module closes at line 7985. Line 7987 applies
+   cfg(all(test, target_os = "linux")); line 7988 opens the top-level
+   paid_settlement_consistency_tests module. The target function begins at 8056.
+   Its correct full name is:
+   ingress::public_v3::paid_settlement_consistency_tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement
+   Original log chain-receipts/chain-final-node-and-mining.log line 264 contains
+   this exact name with outcome 'ok', under Cargo Running unittests src/lib.rs.
+   Only that raw line and its preceding Cargo target were read for this check;
+   no final command-status inference was made from it.
+
+3. Confirm that the required test set has not changed
+   Deep JSON comparison proves the sole roster change is new_tests[3].test.
+   Its terminal function name, source path, source blob, target, ignored flag,
+   coverage flag and every other field are unchanged. The other 36 entries and
+   all top-level fields are exactly equal. The corrected roster contains 37
+   distinct (target,test) identities: 24 lib, 2 pool_mining and
+   11 architecture_delivery_compare. No test was added, removed or substituted.
+
+4. Bind the new reader to the corrected input
+   Exact byte comparison proves the new reader differs from the preserved
+   earlier reader solely in FIXED_ROSTER_SHA256, which now equals the actual
+   corrected roster digest. Python AST parsing succeeds. Every referenced
+   digest in the correction record matches the actual file bytes.
+   Raw receipt/log identity checks, original-log line/Running-region replay,
+   pre/post source checks, unique roster checks, and child/main summary handling
+   are therefore byte-for-byte unchanged. Command failure status remains
+   separate from an individual test's observed 'ok'. The reader still does not
+   sum nested child summaries into the main harness total or claim execution-time
+   binary attestation, independent deployment, or whole-chain qualification.
+
+Work performed: read-only file/digest comparison, Python AST parsing, fixed Git
+blob reads and raw-log prefix inspection. Only this new scratch review note was
+written. No repository source, index, ref, native command, acceptance threshold,
+original log/receipt, executable, published private package, roster or reader was
+modified by this review. No reader, native build or native test was executed.

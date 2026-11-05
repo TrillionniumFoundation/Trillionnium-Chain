@@ -7068,3 +7068,69 @@ Full model architecture/expert ABI, device/VRAM ownership, an ordinary multi-Cel
 model-use loop, independent long WAN/fairness, real coin lock/payment, automated
 paid renewal and long-term independent custody remain unaccepted. No local
 journal, parser, self-reported version or passing byte test closes those gates.
+
+
+### 2026-11-05 fixed-source six-domain owner and recovery observations
+
+This continuation records Chain native source
+`1d6a9f9b5e8abd9e86457f45199a4922f9376360` (tree
+`4a0314e72ebc45659986d03e7ca2f96cab9399ea`) and private Hepta tested source
+`9438a6c27a5e2f25169445f39499631db4e00529` (tree
+`a9cba014de26164f0285c6c886fb071b19a04845`). The
+[fixed-source execution record](../../evidence/pq-six-domain-owner-completion-20261105/README.md)
+keeps each command, test selection, original budget, terminal outcome and failed
+attempt under its actual source identity. Scoped owner controls and source
+checks do not replace the original complete-system acceptance.
+
+The scoped work covers native MTP11 clock readiness, original Growth request
+controls during working-set/difference/witness materialization, provider
+invocation history in recovery, explicit recovery namespace versions, and
+refusal of malformed stored fields or weakened pagination keys. These changes
+retain original signed state, deadlines, nonces, liabilities and error owners.
+
+On fixed Chain `1d6a9f9`, 365 source/research/ELF controls and complete-workspace,
+all-target, all-feature strict Clippy passed. The original Node library returned
+1090 passed, 3 failed and 28 existing ignored; pool mining returned 10 passed;
+the complete architecture target returned 12 passed and 1 failed. All 37 newly
+inventoried controls were observed passing within those runs; this subset is
+already contained in the harness counts and does not make the failed commands
+successful. Three witness-process failures preserve Unix socket bind EPERM.
+The architecture business comparison preserves 18 of 18 fixed-Host parent
+refusals. Its bounded console rows survive; the complete temporary report was
+not retained. No replacement full report is reconstructed. All three actual
+Cargo Running paths match their pre/post ELF byte lengths and SHA-256 values;
+these local debug-artifact observations are not execution-time attestation or
+independent release builds. Build-only execution contributes zero test passes.
+
+On fixed Hepta `9438a6c`, 120 source controls, exact 17 owner, 14 dispatcher and
+11 signed selections passed. The complete evidence library returned 155 passed
+with one existing excluded fixture; its contained 17 controls are not added
+again. Original product execution returned 0 passed/3 failed; recovery product
+execution returned 2 passed/2 failed. The failed processes retain Unix bind
+EPERM. Scoped fix exited zero with warnings and unchanged source; the subsequent
+original fmt command found no changed files and was not a full-repository audit.
+The original compile errors, timeout and interrupted observations remain intact.
+
+The Chain publication base `a16a89f92a0db5ff6af9c1d7790f201841f079aa`
+(tree `1bd822500863b843d7625402258c49c52a529e69`) and Runtime evidence
+publication `1556a4df6e279055fd8196f81a4ca2fe0f19384a` preserve additional
+peer source changes. Their trees differ from the tested sources above and do
+not inherit those native outcomes. The new plan/evidence append changes no
+production source. A separately sourced
+[fresh W1 v2 complete proof](../../evidence/pon-w1-full-v2-20261105/README.md)
+and 58 real receipt controls are retained in that concurrent history, with
+original budgets, prior failures, explicit fixture/build exclusions and their
+own source/image identities. One full proof trial does not establish PQ128,
+all later accepted statements, p99 resource cost, native admission, WAN
+propagation or independent operation.
+
+All six system domains remain **HOLD (0/6 closed)**: complete current-root
+authorization, native relation/proof security, mining and fork choice,
+history/migration/rollback, hostile PQ-wire capacity, and independent deployment.
+Recovery snapshots do not close the external monotonic-consumption crash window.
+The original four-second/16-hostile acceptance, separate fixed-Host F0 obligations,
+and 4,105-block/1,800-second campaign remain unchanged. Independent acceptance
+still requires at least three independently administered operators and failure
+domains with a preregistered, frozen WAN campaign of at least 72 hours. This minimum
+coverage is not sufficient production security. No threshold, denominator,
+resource budget, activation flag or protection is relaxed.
