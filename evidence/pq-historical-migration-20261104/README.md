@@ -145,6 +145,55 @@ of whole-workspace byte equivalence. Fresh restored-source checks are recorded
 separately in the reproduction manifest as they complete. The original unit-build
 and all-target lint failures remain explicit; no missing raw log is invented.
 
+## Restored-source native verification
+
+The actual published candidate `7a88207db3c50d2789787ff3af6f3b8ff7620ac5` has tree `7ba537d62dbbd81966c0db19b6ff0942fc5fb738`.
+The restored-source Python checks ran on local commit `3e683e515afe4065218f2e3c96fa285965416d70`
+with this exact same tree. All native checks below then executed on the published
+commit itself, with clean unchanged source before and after every command.
+Final evidence packaging changes only this README and the reproduction manifest,
+on top of preserved integration parent `44ebe1ae95bd27cfc9eee3a9be27f0e06a084771`.
+Later concurrent M09, Node, CI and research changes are preserved. The results in
+this table belong to `7a88207db3c50d2789787ff3af6f3b8ff7620ac5`; they do not certify the later whole workspace.
+The manifest includes the complete wrapper script and its explicit environment values,
+so the recorded commands do not depend on an omitted local wrapper. It records
+these overrides separately from the inherited process environment. Original
+`source_inputs` remain an immutable snapshot at the tested commit, including the
+old README; updated evidence-file identities are listed separately.
+
+| Executed control | Actual restored-source result |
+| --- | --- |
+| M06 all targets / all features | 236 passed, 7 original explicit experiments ignored, 0 failed |
+| Public Node inventory target / all features | 5 passed, 0 ignored, 0 failed |
+| Strict Clippy | M06 all targets/all features and Node library/public inventory target/all features: both exit 0 with `-D warnings` |
+| Python source and request controls | 208 passed, 0 failed, 0 errors, 0 skipped |
+| Locked offline Cargo graph | 26 workspace members, 180 resolved packages |
+| Source inventory and repository check | 460 exact pins; 2,641 local links checked; formatting and diff checks passed |
+
+The fixed Rust compiler is 1.95.0 (`59807616e1fa2540724bfbac14d7976d7e4a3860`).
+The restored OpenSSL 3.5.9 CLI has SHA-256
+`08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955`;
+its header/static-library identity and an actual ML-DSA-65 sign/verify/refuse
+control were checked. This is a different local provider build from the earlier
+recorded CLI, and its hashes are kept separately. The independent Cargo cache
+uses the original locked archive checksums. The initial shared-cache waiting
+attempt was cancelled with exit 130 before any test executed and remains recorded.
+The first restored Node run lost its execution session while the retained log
+still showed dependency compilation. Its exit code is unknown and no completed
+test result was observed. After reconnection, the original process was absent;
+its log was preserved separately, preflight passed again, and the five Node tests
+and the subsequent lint/format checks were executed successfully. The 236-test
+M06 run was not repeated. Original source receipts and logs survived this later
+connection interruption, and their recorded byte lengths and hashes were checked.
+Wall times in the manifest include compilation and are not throughput benchmarks.
+
+The public Node target keeps the explicit local opt-level 0/debug 0 compile
+overrides above, with debug assertions and overflow checks retained. No repository
+profile or production threshold was changed. These results do not turn the older
+full Node unit-build or full Node all-target lint failures into passes. Those
+broader gates, deployed-state obligations, source retirement, activation/reorg
+semantics and reviewed seed-proof execution remain open.
+
 ## Recorded scoped local results before workspace reset
 
 The local commit used for the recorded pre-reset runtime/source validation is

@@ -1,6 +1,6 @@
 {
   "schema": "pq-historical-migration-reproduction-v1",
-  "status": "SCOPED_CONTROLS_PASS_WITH_RETAINED_NODE_UNIT_BUILD_AND_LINT_FAILURES",
+  "status": "RESTORED_SCOPED_CONTROLS_PASS_WITH_RETAINED_FULL_NODE_GAPS",
   "qualification": "HOLD_NO_GO",
   "production_activation": false,
   "source_network_retired": false,
@@ -19,19 +19,31 @@
       "d4816ca5d1375347d8ed341a434158e350c29bbc",
       "a9b8602706b66adba82655c3c2ce90bde88620a2"
     ],
-    "complete_m06_test_commit": "0723b501e4941a8c13c28683957c03da23232422",
+    "complete_m06_test_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
     "own_final_evidence_changes": [
       "evidence/pq-historical-migration-20261104/README.md",
       "evidence/pq-historical-migration-20261104/reproduction.json"
     ],
-    "post_runtime_preserved_head": "03163dcb849a15cd267fcaf704a533a88cd54131",
-    "post_runtime_production_workspace_and_ci_entrypoint_unchanged": true,
     "pre_reset_runtime_validation_commit": "2d6b02ecc7b78d3fbd9047592a8972cdd28d1e6c",
     "pre_reset_runtime_validation_tree": "63ca4f6103f601c24c590b1a8ebc8ddee9a63643",
     "restored_git_tree": "0c12f5df05653df71cc34c202c84c7dca43fbeab",
     "recovery_commit": "9d8193ee7b12ee38ab754d85a27b8dadc682b588",
     "restored_onto_integration_head": "a9b8602706b66adba82655c3c2ce90bde88620a2",
-    "post_runtime_production_workspace_and_ci_entrypoint_unchanged_scope": "Only c156c231 to 03163dcb, not subsequent Cell/model/throughput additions."
+    "pre_reset_complete_m06_test_commit": "0723b501e4941a8c13c28683957c03da23232422",
+    "evidence_delivery_parent": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+    "evidence_delivery_changes": [
+      "evidence/pq-historical-migration-20261104/README.md",
+      "evidence/pq-historical-migration-20261104/reproduction.json"
+    ],
+    "historical_w1_preservation": {
+      "from": "c156c2310346d1367b8f9b1111171f412b5ffce2",
+      "to": "03163dcb849a15cd267fcaf704a533a88cd54131",
+      "production_workspace_and_ci_entrypoint_unchanged": true
+    },
+    "restored_native_validation_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "restored_native_validation_tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+    "restored_source_only_local_commit": "3e683e515afe4065218f2e3c96fa285965416d70",
+    "restored_source_only_local_tree_equals_published_tree": true
   },
   "environment": {
     "rust": "1.95.0",
@@ -70,7 +82,6 @@
       "sha256": "780b1a96c5b73058705a267eab3e132abea8d4acbbf788672fbbf174d282a780"
     }
   ],
-  "m06_source_subtree_unchanged_after_full_run": false,
   "source_inputs": [
     {
       "path": ".github/workflows/pon-recent-batch-acceptance.yml",
@@ -668,5 +679,1348 @@
     "recorded_digests_and_outcomes_preserved": true,
     "raw_logs_reconstructed": false
   },
-  "restored_source_checks": []
+  "restored_source_checks": {
+    "schema": "trnm-restored-source-validation-summary-v1",
+    "result": "PASS",
+    "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+    "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+    "dirty_before": false,
+    "dirty_after": false,
+    "all_source_unchanged": true,
+    "stages_completed": 10,
+    "stages_passed": 10,
+    "all_log_hashes_verified": true,
+    "testcounts": {
+      "total": 208,
+      "passed": 208,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "started_at_utc": "2026-11-05T00:12:09.486381+00:00",
+    "ended_at_utc": "2026-11-05T00:16:18.282461+00:00",
+    "wall_clock_span_seconds": 248.79608,
+    "scope": "Executed Python/source checks only; no Cargo run, cryptographic verifier, native runtime or release acceptance is claimed.",
+    "stages": [
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "00_preflight",
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "command_display": "bash scripts/project-preflight.sh",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:09.486381+00:00",
+        "ended_at_utc": "2026-11-05T00:12:09.729828+00:00",
+        "exit": 0,
+        "duration_seconds": 0.243414,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/00_preflight.stdout.log",
+          "bytes": 174,
+          "sha256": "e4cbe6df17121ec421718146b79122f7f9bbffe860ff9f9959582665cf8bad32"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/00_preflight.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "testcounts": {
+          "reported": false,
+          "framework": null,
+          "total": null,
+          "passed": null,
+          "failed": null,
+          "errors": null,
+          "skipped": null
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "01_seed_recovery",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "formal/pon-nakamoto-v1",
+          "-p",
+          "test_pq_seed_recovery_v1.py",
+          "-v"
+        ],
+        "command_display": "python3 -B -m unittest discover -s formal/pon-nakamoto-v1 -p test_pq_seed_recovery_v1.py -v",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.525908+00:00",
+        "ended_at_utc": "2026-11-05T00:12:21.916152+00:00",
+        "exit": 0,
+        "duration_seconds": 0.390214,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/01_seed_recovery.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/01_seed_recovery.stderr.log",
+          "bytes": 3775,
+          "sha256": "42940342ad265c845d514e056b2bc61e2ea5e8057795bbae9899bd33b7bc8b7b"
+        },
+        "testcounts": {
+          "reported": true,
+          "framework": "unittest",
+          "total": 19,
+          "passed": 19,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0,
+          "framework_duration_seconds": 0.147,
+          "summary": "OK"
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "02_research_integration",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "command_display": "python3 -B scripts/ci/check_pq_research_integration.py",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.428989+00:00",
+        "ended_at_utc": "2026-11-05T00:12:22.502561+00:00",
+        "exit": 0,
+        "duration_seconds": 1.073546,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/02_research_integration.stdout.log",
+          "bytes": 557,
+          "sha256": "5a60d35f1ac4303d69d1e92fe06718897d47d523eee0d5652c175955215811bc"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/02_research_integration.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "testcounts": {
+          "reported": false,
+          "framework": null,
+          "total": null,
+          "passed": null,
+          "failed": null,
+          "errors": null,
+          "skipped": null
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "03_distributed_inventory",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "command_display": "python3 -B scripts/refresh_distributed_source_inventory.py --check",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.329660+00:00",
+        "ended_at_utc": "2026-11-05T00:12:21.653284+00:00",
+        "exit": 0,
+        "duration_seconds": 0.323598,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/03_distributed_inventory.stdout.log",
+          "bytes": 35,
+          "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/03_distributed_inventory.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "testcounts": {
+          "reported": false,
+          "framework": null,
+          "total": null,
+          "passed": null,
+          "failed": null,
+          "errors": null,
+          "skipped": null
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "04_source_integrity_tests",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_source_integrity.py",
+          "-v"
+        ],
+        "command_display": "python3 -B scripts/ci/test_ci_source_integrity.py -v",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.692500+00:00",
+        "ended_at_utc": "2026-11-05T00:12:32.271937+00:00",
+        "exit": 0,
+        "duration_seconds": 10.579409,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/04_source_integrity_tests.stdout.log",
+          "bytes": 484,
+          "sha256": "9bb0217875144c9f24fe0650aa584810c5bc360c71b8ae4d6c25a5abe3f40c33"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/04_source_integrity_tests.stderr.log",
+          "bytes": 5026,
+          "sha256": "b5719bd511ba9c12f9e20bbdf6104e844cee00425a45b8705ede1fbe1bea8d6f"
+        },
+        "testcounts": {
+          "reported": true,
+          "framework": "unittest",
+          "total": 34,
+          "passed": 34,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0,
+          "framework_duration_seconds": 10.014,
+          "summary": "OK"
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "05_research_integration_tests",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_pq_research_integration.py",
+          "-v"
+        ],
+        "command_display": "python3 -B scripts/ci/test_pq_research_integration.py -v",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.706547+00:00",
+        "ended_at_utc": "2026-11-05T00:13:50.363179+00:00",
+        "exit": 0,
+        "duration_seconds": 88.656604,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/05_research_integration_tests.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/05_research_integration_tests.stderr.log",
+          "bytes": 5006,
+          "sha256": "012406ca7ed0c503b57973d98dd83ab89465aeae8f2bc18c5fbd70089b00adfc"
+        },
+        "testcounts": {
+          "reported": true,
+          "framework": "unittest",
+          "total": 35,
+          "passed": 35,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0,
+          "framework_duration_seconds": 88.305,
+          "summary": "OK"
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "06_claim_guard_tests",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_pq_chain_claim_guard.py",
+          "-v"
+        ],
+        "command_display": "python3 -B scripts/ci/test_pq_chain_claim_guard.py -v",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.412742+00:00",
+        "ended_at_utc": "2026-11-05T00:12:22.572894+00:00",
+        "exit": 0,
+        "duration_seconds": 1.16012,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/06_claim_guard_tests.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/06_claim_guard_tests.stderr.log",
+          "bytes": 2633,
+          "sha256": "32914fb98835c03c37179cecdf5d5888e81cc36f7d16749178b67b93e6760d9a"
+        },
+        "testcounts": {
+          "reported": true,
+          "framework": "unittest",
+          "total": 22,
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0,
+          "framework_duration_seconds": 0.904,
+          "summary": "OK"
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "07_ci_contract_tests",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/test_ci_contract.py",
+          "-v"
+        ],
+        "command_display": "python3 -B scripts/ci/test_ci_contract.py -v",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.769936+00:00",
+        "ended_at_utc": "2026-11-05T00:13:01.775606+00:00",
+        "exit": 0,
+        "duration_seconds": 40.005564,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/07_ci_contract_tests.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/07_ci_contract_tests.stderr.log",
+          "bytes": 16318,
+          "sha256": "c44b9ae39c9bc4a9c7a2d57a508561a90dd9dbc1fa0d26b95d2271363316349e"
+        },
+        "testcounts": {
+          "reported": true,
+          "framework": "unittest",
+          "total": 98,
+          "passed": 98,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "expected_failures": 0,
+          "unexpected_successes": 0,
+          "framework_duration_seconds": 39.522,
+          "summary": "OK"
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "08_repository",
+        "command": [
+          "python3",
+          "-B",
+          "scripts/ci/check_repository.py"
+        ],
+        "command_display": "python3 -B scripts/ci/check_repository.py",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.802665+00:00",
+        "ended_at_utc": "2026-11-05T00:16:18.282461+00:00",
+        "exit": 0,
+        "duration_seconds": 236.479766,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/08_repository.stdout.log",
+          "bytes": 307,
+          "sha256": "a9e3162dfb27528c127f42ef77fd5d3d3bf7f78050d16f01b9003ae6633c0890"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/08_repository.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "testcounts": {
+          "reported": false,
+          "framework": null,
+          "total": null,
+          "passed": null,
+          "failed": null,
+          "errors": null,
+          "skipped": null
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      },
+      {
+        "schema": "trnm-restored-source-stage-receipt-v1",
+        "stage": "09_diff_check",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "command_display": "git diff --check",
+        "cwd": "/workspace/scratch/7181e37ea4bd/chain",
+        "environment_overrides": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty_before": false,
+        "status_before": [],
+        "source_after": {
+          "head": "3e683e515afe4065218f2e3c96fa285965416d70",
+          "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+          "dirty": false,
+          "status_porcelain": []
+        },
+        "source_unchanged": true,
+        "started_at_utc": "2026-11-05T00:12:21.666103+00:00",
+        "ended_at_utc": "2026-11-05T00:12:21.720423+00:00",
+        "exit": 0,
+        "duration_seconds": 0.054293,
+        "stdout": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/09_diff_check.stdout.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/workspace/scratch/7181e37ea4bd/validation-restored/source/09_diff_check.stderr.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "testcounts": {
+          "reported": false,
+          "framework": null,
+          "total": null,
+          "passed": null,
+          "failed": null,
+          "errors": null,
+          "skipped": null
+        },
+        "scope": "Executed source checks only; no Cargo invocation or runtime/release certification."
+      }
+    ]
+  },
+  "environment_scope": "Pre-reset executions only. Restored executions use restored_environment.",
+  "source_inputs_scope": {
+    "commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+    "meaning": "Immutable changed-input snapshot of the tested published source, including its original README. Subsequent evidence edits and concurrent upstream changes do not rewrite these measured inputs."
+  },
+  "restored_source_receipts_rechecked": {
+    "schema": "trnm-source-receipts-recheck-v1",
+    "result": "PASS",
+    "rechecked_at_utc": "2026-11-05T01:14:53.932276+00:00",
+    "method": "Read original receipts and logs; recompute hashes and byte lengths; compare embedded and individual stage JSON; parse unittest terminal summaries; compare published Git objects and current bytes. No tests or Cargo commands were rerun.",
+    "original_test_head": "3e683e515afe4065218f2e3c96fa285965416d70",
+    "published_head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "shared_tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+    "published_head_equals_original_test_head": false,
+    "published_tree_equals_original_test_tree": true,
+    "current_source_before": {
+      "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+      "dirty": false
+    },
+    "current_source_after": {
+      "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+      "dirty": false
+    },
+    "summary_sha256": "2c24f2e695577af563e8ede812c68daf5c80d537eaf051419f73c346197e567e",
+    "sha256sums_sha256": "c9862a856a1857e536d5ce222d14c4c5bf4569bae0f24429b9ecd730acc126f5",
+    "sha256sums_entries_verified": 32,
+    "individual_stage_receipts_verified": 10,
+    "original_log_files_verified": 20,
+    "all_exits_zero": true,
+    "all_original_stage_source_bindings_valid": true,
+    "testcounts": {
+      "total": 208,
+      "passed": 208,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0
+    },
+    "stages": [
+      {
+        "stage": "00_preflight",
+        "exit": 0,
+        "tests": null,
+        "receipt_sha256": "0baf46fa610abf955140fd9b5267e7e8417da4702ffd3ec76edc591bf1fd9116",
+        "stdout_sha256": "e4cbe6df17121ec421718146b79122f7f9bbffe860ff9f9959582665cf8bad32",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "01_seed_recovery",
+        "exit": 0,
+        "tests": 19,
+        "receipt_sha256": "590e2115b8c44818c6282bed8da579804cbf74f3506c32865d9ff721efe84537",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "42940342ad265c845d514e056b2bc61e2ea5e8057795bbae9899bd33b7bc8b7b"
+      },
+      {
+        "stage": "02_research_integration",
+        "exit": 0,
+        "tests": null,
+        "receipt_sha256": "1c35473eeeaf95f2c83559b6a0d65b064a5dcc27860ea4044da798ba627a2f65",
+        "stdout_sha256": "5a60d35f1ac4303d69d1e92fe06718897d47d523eee0d5652c175955215811bc",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "03_distributed_inventory",
+        "exit": 0,
+        "tests": null,
+        "receipt_sha256": "bde5278ba866255ae5f35bc06e559e3ded524b2686e95c45ee799c43cb9b884a",
+        "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "04_source_integrity_tests",
+        "exit": 0,
+        "tests": 34,
+        "receipt_sha256": "91feb881740f3c82f75b7673e05f5190e0a960529d1b34f0bd6fe6a224567502",
+        "stdout_sha256": "9bb0217875144c9f24fe0650aa584810c5bc360c71b8ae4d6c25a5abe3f40c33",
+        "stderr_sha256": "b5719bd511ba9c12f9e20bbdf6104e844cee00425a45b8705ede1fbe1bea8d6f"
+      },
+      {
+        "stage": "05_research_integration_tests",
+        "exit": 0,
+        "tests": 35,
+        "receipt_sha256": "b429d05f6a17c88adde02a5097e5f36c00426399a8d579f6e9080fd4763daffd",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "012406ca7ed0c503b57973d98dd83ab89465aeae8f2bc18c5fbd70089b00adfc"
+      },
+      {
+        "stage": "06_claim_guard_tests",
+        "exit": 0,
+        "tests": 22,
+        "receipt_sha256": "094fde0cf36085c8d0734710739034b4afcff27e3fc95d92da8522e5078889ce",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "32914fb98835c03c37179cecdf5d5888e81cc36f7d16749178b67b93e6760d9a"
+      },
+      {
+        "stage": "07_ci_contract_tests",
+        "exit": 0,
+        "tests": 98,
+        "receipt_sha256": "60ce400a3fb8140e44dc22b9540e7452c13356762078466d88b387461ddfa951",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "c44b9ae39c9bc4a9c7a2d57a508561a90dd9dbc1fa0d26b95d2271363316349e"
+      },
+      {
+        "stage": "08_repository",
+        "exit": 0,
+        "tests": null,
+        "receipt_sha256": "74e3ccdbc27927dfd1a7dc8a91faaa001ff27bd4eee9ec214efcdeda24f70be2",
+        "stdout_sha256": "a9e3162dfb27528c127f42ef77fd5d3d3bf7f78050d16f01b9003ae6633c0890",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "09_diff_check",
+        "exit": 0,
+        "tests": null,
+        "receipt_sha256": "995f3d077794bc5c4c18237ba00dcfdcfc42ee1dba5ae713dd77cd395224fdb4",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "source_inputs_check": {
+      "reproduction_json_sha256": "d4acd93915330743f1a774ae8cbaf3e5bc0d41413e2d85ec18b4d957b80273d4",
+      "restored_base": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+      "changed_files": 19,
+      "listed_files": 18,
+      "matching_git_blob_sha256_size_and_worktree": 18,
+      "readme_hash_matches": true,
+      "unlisted_changed_files": [
+        "evidence/pq-historical-migration-20261104/reproduction.json"
+      ],
+      "listed_unchanged_files": [],
+      "hash_or_coverage_errors": []
+    },
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "locked_closure_record_checks": [
+      {
+        "root_package": "trnm-mvcc-fee",
+        "packages": 138,
+        "sha256": "37f140b09d77d6656a8762f0e7b1c945746e2dc9399bc096918384e95d535508",
+        "matches_recorded_lock_records": true
+      },
+      {
+        "root_package": "trnm-pon-node",
+        "packages": 149,
+        "sha256": "780b1a96c5b73058705a267eab3e132abea8d4acbbf788672fbbf174d282a780",
+        "matches_recorded_lock_records": true
+      }
+    ],
+    "scope_notes": [
+      "Original source checks executed on 3e683e51; 7a88207d has exactly the same root tree. Original receipts are preserved and not relabeled as new executions on 7a88207d.",
+      "source_inputs covers this continuation's changed files, excluding reproduction.json itself. It is not a full workspace or transitive-source manifest.",
+      "The published reproduction.json still has an empty restored_source_checks array; the 208 restored-source results currently reside in the original external receipts pending the coordinator's evidence update.",
+      "Matching Cargo.lock closure records do not establish matching runtime source or rerun historical M06/Node tests; those runs keep their own source bindings."
+    ],
+    "tests_reexecuted": false,
+    "cargo_invoked": false,
+    "repository_modified": false
+  },
+  "restored_native_checks": [
+    {
+      "stage": "preflight",
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 0.65303,
+      "log_sha256": "e4cbe6df17121ec421718146b79122f7f9bbffe860ff9f9959582665cf8bad32",
+      "log_bytes": 174,
+      "test_summaries": []
+    },
+    {
+      "stage": "metadata",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 3.442167,
+      "log_sha256": "4adec502f844333056184a070868e2cdc0f0c25a5f8c44ecd80a4602cbc59292",
+      "log_bytes": 852620,
+      "test_summaries": []
+    },
+    {
+      "stage": "m06-all",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 1658.267183,
+      "log_sha256": "cf5865a1b2e42d4b3614988a54536ee2b3a47da39b0075a0663e78f0b18cdcd3",
+      "log_bytes": 35214,
+      "test_summaries": [
+        "test result: ok. 126 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 65.86s",
+        "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s",
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.99s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.86s",
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s",
+        "test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 159.45s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.24s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.78s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.50s",
+        "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.50s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.70s",
+        "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "stage": "node-public",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--config",
+        "profile.test.package.trnm-pon-node.opt-level=0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "pq_migration_inventory",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 115.846859,
+      "log_sha256": "cc4fd08b8633f622b394acf57171d10ccb01a7c29b9da3699fb6ffaa28e95632",
+      "log_bytes": 1760,
+      "test_summaries": [
+        "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s"
+      ]
+    },
+    {
+      "stage": "clippy-m06",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 41.593128,
+      "log_sha256": "9dc9680b396fc659b2936d5b566068cea228b8fd7446aff6db475871f98be1cd",
+      "log_bytes": 2439,
+      "test_summaries": []
+    },
+    {
+      "stage": "clippy-node",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--lib",
+        "--test",
+        "pq_migration_inventory",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 42.501578,
+      "log_sha256": "207c251db98a2853d1b1ae1db69233cb0be4e01c10530e7493e7201718a2068d",
+      "log_bytes": 1665,
+      "test_summaries": []
+    },
+    {
+      "stage": "format",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-isolated.sh",
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "source_before": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_after": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "source_unchanged": true,
+      "exit_code": 0,
+      "elapsed_seconds": 14.090083,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "test_summaries": []
+    }
+  ],
+  "restored_resume_preflight": {
+    "stage": "resume-preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "source_before": {
+      "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+      "dirty": false
+    },
+    "source_after": {
+      "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+      "dirty": false
+    },
+    "source_unchanged": true,
+    "exit_code": 0,
+    "elapsed_seconds": 0.09575,
+    "log_sha256": "e4cbe6df17121ec421718146b79122f7f9bbffe860ff9f9959582665cf8bad32",
+    "log_bytes": 174,
+    "test_summaries": []
+  },
+  "restored_native_published_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "reverse_patch_reconstruction_after_restore": {
+    "source_commit": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "patch_sha256": "bfa8d5ce074e8575cb0cee83edd3a967a5be1f278bbabe4c0cc2b7477165019f",
+    "command": [
+      "git",
+      "apply",
+      "--unidiff-zero",
+      "registered-nonce-green-to-red.patch"
+    ],
+    "exit_code": 0,
+    "reconstructed_sha256": {
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "dce2a581fa3fc50b862cafef3c454103af6713a7d084e8e80d502f33d98ec176",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "8f246a148324d82a39e6e28a9e734c159e4eb288b7e77b7ccd1a4a36764e81ed"
+    },
+    "native_tests_executed": false,
+    "scope": "Exact two-file historical negative input reconstruction, not a new execution of that historical test."
+  },
+  "restored_native_tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+  "restored_native_counts": {
+    "m06_passed": 236,
+    "m06_failed": 0,
+    "m06_original_ignored": 7,
+    "public_node_passed": 5,
+    "python_passed": 208,
+    "source_pins": 460,
+    "m06_targets": 25
+  },
+  "restored_environment": {
+    "rust": "1.95.0",
+    "rust_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "provider": [
+      {
+        "bytes": 8933400,
+        "relative_path": "bin/openssl",
+        "sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+      },
+      {
+        "bytes": 3449,
+        "relative_path": "include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "relative_path": "include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12380600,
+        "relative_path": "lib/libcrypto.a",
+        "sha256": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08"
+      },
+      {
+        "bytes": 2123050,
+        "relative_path": "lib/libssl.a",
+        "sha256": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+      }
+    ],
+    "static_identity": "header=OpenSSL 3.5.9 29 Sep 2026\nruntime=OpenSSL 3.5.9 29 Sep 2026\nheader_number=30500090\nruntime_number=30500090\nssl_method_available=1\n",
+    "provider_checks": [
+      {
+        "command": [
+          "cc",
+          "-I/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/include",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/provider-identity.c",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib/libssl.a",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib/libcrypto.a",
+          "-ldl",
+          "-pthread",
+          "-o",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/provider-identity"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "provider-static-probe-build"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/provider-identity"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a3be49aeab8dd47cc08c7d9c15f09dd935e19f18f3f4118e4240337307b57001",
+        "name": "provider-static-identity"
+      },
+      {
+        "command": [
+          "readelf",
+          "-d",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/provider-identity"
+        ],
+        "exit_code": 0,
+        "log_sha256": "0fc9363ec8e56d91e8150dfdd60165968fed274d86da85055e84a02ad4a21eb5",
+        "name": "provider-static-needed"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "version",
+          "-a"
+        ],
+        "exit_code": 0,
+        "log_sha256": "2dfd23730dbdb5782c0699563b5f7694904996d19222ccfece56122c92f20c94",
+        "name": "provider-cli-version"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "genpkey",
+          "-provider",
+          "default",
+          "-algorithm",
+          "ML-DSA-65",
+          "-out",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/private.pem"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "provider-smoke-key"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "pkey",
+          "-provider",
+          "default",
+          "-in",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/private.pem",
+          "-pubout",
+          "-out",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/public.pem"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "provider-smoke-public"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "pkeyutl",
+          "-provider",
+          "default",
+          "-sign",
+          "-rawin",
+          "-inkey",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/private.pem",
+          "-in",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/message",
+          "-out",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/signature.bin"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "provider-smoke-sign"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "pkeyutl",
+          "-provider",
+          "default",
+          "-verify",
+          "-rawin",
+          "-pubin",
+          "-inkey",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/public.pem",
+          "-in",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/message",
+          "-sigfile",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/signature.bin"
+        ],
+        "exit_code": 0,
+        "log_sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79",
+        "name": "provider-smoke-verify"
+      },
+      {
+        "command": [
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+          "pkeyutl",
+          "-provider",
+          "default",
+          "-verify",
+          "-rawin",
+          "-pubin",
+          "-inkey",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/public.pem",
+          "-in",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/wrong-message",
+          "-sigfile",
+          "/workspace/scratch/7181e37ea4bd/runtime-recovered/fresh-provider-smoke/signature.bin"
+        ],
+        "exit_code": 1,
+        "log_sha256": "6da6281d5264eb89d99f7bdad87c5e32ec10736d344abf7dcf846ffac2ccb0be",
+        "name": "provider-smoke-wrong-message"
+      }
+    ],
+    "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+    "workspace_members": 26,
+    "resolved_packages": 180,
+    "cargo_locked": true,
+    "cargo_offline": true,
+    "build_jobs": 1,
+    "test_threads": 1,
+    "wrapper_sha256": "ce5ad51675792fff711084d462384c233d52a3eb54afd8fdca2ac50e67c63a5e",
+    "wrapper_script": "#!/usr/bin/env bash\nset -euo pipefail\nexport PATH=/root/.cargo/bin:\"$PATH\"\nexport CARGO_HOME=/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo\nexport CARGO_NET_OFFLINE=true\nexport RUSTUP_HOME=/root/.rustup\nexport RUSTUP_TOOLCHAIN=1.95.0-x86_64-unknown-linux-gnu\nexport CARGO_TARGET_DIR=/workspace/scratch/7181e37ea4bd/target-restored\nexport CARGO_BUILD_JOBS=1\nexport CARGO_INCREMENTAL=0\nexport RUST_TEST_THREADS=1\nexport PYTHONDONTWRITEBYTECODE=1\nexport GIT_OPTIONAL_LOCKS=0\nexport OPENSSL_DIR=/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9\nexport OPENSSL_STATIC=1\nexport OPENSSL_LIB_DIR=/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib\nexport OPENSSL_INCLUDE_DIR=/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/include\nexport TRNM_PQ_OPENSSL=/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl\nexport TRNM_PQ_OPENSSL_SHA256=08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955\nexport TRNM_PQ_OPENSSL_VERSION=3.5.9\nexport OPENSSL_CONF=/dev/null\nexport OPENSSL_MODULES=/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib/ossl-modules\nunset RUSTC RUSTDOC RUSTC_WRAPPER RUSTC_WORKSPACE_WRAPPER\nexec \"$@\"\n",
+    "node_public_test_profile_overrides": {
+      "opt-level": 0,
+      "debug": 0,
+      "debug-assertions": true,
+      "overflow-checks": true
+    },
+    "isolated_cache": {
+      "archive_bytes": 33669742,
+      "cargo_home": "/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo",
+      "copy_mode": "Independent file copies, no hardlinks or shared mutable databases",
+      "elapsed_seconds": 1.815,
+      "excluded_root_mutable": [
+        ".package-cache",
+        ".package-cache-mutate",
+        ".global-cache",
+        ".global-cache-journal",
+        ".global-cache-shm",
+        ".global-cache-wal"
+      ],
+      "lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "packages": 154,
+      "source_strategy": "Cargo will unpack private sources from SHA256-verified locked archives. No unverified shared source tree copied.",
+      "sparse_crate_entries": 139,
+      "status": "FROZEN_ARCHIVES_AND_REQUIRED_SPARSE_INDEX"
+    },
+    "isolated_cache_receipt_sha256": "b970c7fb165fa4334d390df9066c7a00af4e48d0d7fd822db195f2074177900a",
+    "isolated_cache_archive_entries": 154,
+    "isolated_cache_note": "Full per-archive checksums are the original Cargo.lock checksums; the complete local freeze receipt retains all checked archive paths and digests.",
+    "explicit_overrides": {
+      "exports": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_HOME": "/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_NET_OFFLINE": "true",
+        "CARGO_TARGET_DIR": "/workspace/scratch/7181e37ea4bd/target-restored",
+        "GIT_OPTIONAL_LOCKS": "0",
+        "OPENSSL_CONF": "/dev/null",
+        "OPENSSL_DIR": "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9",
+        "OPENSSL_INCLUDE_DIR": "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/include",
+        "OPENSSL_LIB_DIR": "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib",
+        "OPENSSL_MODULES": "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/lib/ossl-modules",
+        "OPENSSL_STATIC": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "RUSTUP_HOME": "/root/.rustup",
+        "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/7181e37ea4bd/runtime-recovered/openssl-3.5.9/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "path_prefix": "/root/.cargo/bin",
+      "unset": [
+        "RUSTC",
+        "RUSTDOC",
+        "RUSTC_WRAPPER",
+        "RUSTC_WORKSPACE_WRAPPER"
+      ]
+    },
+    "provider_identity_probe_source": "#include <stdio.h>\n#include <openssl/crypto.h>\n#include <openssl/ssl.h>\n#include <openssl/opensslv.h>\nint main(void) {\n    unsigned long runtime = OpenSSL_version_num();\n    int has_ssl_method = TLS_method() != NULL;\n    printf(\"header=%s\\nruntime=%s\\nheader_number=%lx\\nruntime_number=%lx\\nssl_method_available=%d\\n\",\n           OPENSSL_VERSION_TEXT, OpenSSL_version(OPENSSL_VERSION),\n           (unsigned long)OPENSSL_VERSION_NUMBER, runtime, has_ssl_method);\n    return OPENSSL_VERSION_NUMBER == 0x30500090L && runtime == 0x30500090L && has_ssl_method ? 0 : 1;\n}\n",
+    "provider_identity_probe_source_sha256": "beac706010481ff3d80e6ef0b36285918b455e68a5423307f8bc80e556cd4ec3",
+    "scope": "Explicit wrapper configuration, provider files and locked dependencies; not a full dump of inherited process environment."
+  },
+  "restored_cancelled_observations": [
+    {
+      "stage": "m06-all-shared-cache-wait",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-restored.sh",
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-mvcc-fee",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "--test-threads=1"
+      ],
+      "source_commit": "3e683e515afe4065218f2e3c96fa285965416d70",
+      "source_tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+      "pipeline_exit_code": 130,
+      "reason": "Assistant cancelled its own pipeline after it remained blocked on shared package-cache locks; rerun uses an isolated checksum-verified cache.",
+      "tests_executed": 0,
+      "elapsed_seconds": null,
+      "log_sha256": "e237bf68452f394ffe54e018832419d40907390b5a98d44e8939943ca20bf452",
+      "log_bytes": 104
+    },
+    {
+      "status": "CANCELLED_WHILE_WAITING_FOR_SHARED_PACKAGE_CACHE",
+      "command": [
+        "/workspace/scratch/7181e37ea4bd/run-migration-restored.sh",
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--all-features",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 130,
+      "exit_source": "write_stdin session 30667 Ctrl-C returned exit_code 130",
+      "reason": "Parent directed cancellation of this task only to isolate package cache. No other process or lock was touched.",
+      "stdout_path": "/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo-metadata-restored.json",
+      "stderr_path": "/workspace/scratch/7181e37ea4bd/runtime-recovered/cargo-metadata-restored.stderr.log",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4c9eb667b06d15fae0587960059a48122a7acc60b10acd07c1b3eee2e2167a76"
+    }
+  ],
+  "restored_interrupted_observations": [
+    {
+      "stage": "node-public-environment-interrupted",
+      "command_scope": "node-public command in run-rust-restored.py",
+      "source_at_start": {
+        "head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+        "tree": "7ba537d62dbbd81966c0db19b6ff0942fc5fb738",
+        "dirty": false
+      },
+      "exit_code": null,
+      "elapsed_seconds": null,
+      "status": "NO_COMPLETION_RECEIPT_ENVIRONMENT_DISCONNECTED",
+      "observation": "No prior runner, Cargo or Rust compiler was found for this workspace after reconnection. The retained log ends while compiling trnm-data-availability; no completed test summary was observed. This does not establish the process exit code.",
+      "log_sha256": "18c15900ea7357475aa644e76559008197fed77c213623b104a7f214944c8130",
+      "log_bytes": 1001,
+      "test_summaries": [],
+      "original_later_stage_outcomes": {
+        "clippy-m06": "NOT_OBSERVED",
+        "clippy-node": "NOT_OBSERVED",
+        "format": "NOT_OBSERVED"
+      }
+    }
+  ],
+  "locked_closure_equivalence_scope": "Historical 0723 to pre-reset runtime composition only; not a later whole-workspace equivalence claim.",
+  "pre_reset_m06_source_subtree_unchanged_after_full_run": false,
+  "restored_native_source_unchanged_after_run": true,
+  "evidence_readme_identity": {
+    "path": "evidence/pq-historical-migration-20261104/README.md",
+    "git_blob": "ce1ad11872091ca485478eaf4574f0d04bd89752",
+    "sha256": "d64146425a9ebcba18edc6c9238d8cdd5cfc8b3f98f5c8437f15dea5b4a5964a",
+    "bytes": 16886
+  },
+  "restored_raw_log_retention": {
+    "source_and_completed_native_logs_rechecked": true,
+    "connection_interruption_did_not_reset_restored_files": true,
+    "pre_reset_logs_remain_unavailable": true,
+    "scope": "Restored logs were read directly and their hashes verified before packaging. The manifest embeds receipts; raw build logs and binaries are not added to this repository."
+  }
 }
