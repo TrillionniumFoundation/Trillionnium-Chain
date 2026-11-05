@@ -316,6 +316,37 @@ class BindingAndLocalCostTests(unittest.TestCase):
                     local.serialize(FROZEN / "input.bin", FROZEN / "succinct.bin", path, 2, temp / f"out-{length}")
 
 
+class ReceiptJournalLocationTests(unittest.TestCase):
+    # Wire-layout fixtures only, never cryptographic proof evidence.
+    def fixture(self):
+        journal = receipt_controls.DOMAIN + bytes(receipt_controls.JOURNAL_BYTES - len(receipt_controls.DOMAIN))
+        seal = receipt_controls.DOMAIN + bytes((-len(receipt_controls.DOMAIN)) % 4)
+        prefix = (1).to_bytes(4, "little") + (len(seal) // 4).to_bytes(8, "little") + seal
+        inner = len(journal).to_bytes(8, "little") + journal
+        receipt = prefix + inner + len(journal).to_bytes(8, "little") + journal + bytes(32)
+        return receipt, journal
+
+    def test_outer_journal_not_identical_inner_or_seal_marker(self):
+        receipt, journal = self.fixture()
+        location = receipt_controls.locate_journal(receipt, bytes(318), bytes(64))
+        self.assertEqual(receipt.count(receipt_controls.DOMAIN), 3)
+        self.assertEqual(location["journal_end"], len(receipt) - 32)
+        self.assertEqual(receipt[location["journal_start"]:location["journal_end"]], journal)
+        mutated = bytearray(receipt)
+        mutated[location["journal_start"]] ^= 1
+        with self.assertRaisesRegex(ValueError, "outer journal domain"):
+            receipt_controls.locate_journal(mutated, bytes(318), bytes(64))
+
+    def test_suffix_length_truncation_and_trailing_bytes_fail_closed(self):
+        receipt, _ = self.fixture()
+        start = len(receipt) - 32 - receipt_controls.JOURNAL_BYTES
+        length = bytearray(receipt)
+        length[start - 8] ^= 1
+        for data in (receipt[:-1], receipt + b"x", bytes(length), receipt[:32]):
+            with self.subTest(length=len(data)), self.assertRaises(ValueError):
+                receipt_controls.locate_journal(data, bytes(318), bytes(64))
+
+
 class ReceiptControlReportTests(unittest.TestCase):
     def setUp(self):
         # Report-parser controls only: no receipt verification or proof evidence
