@@ -4,7 +4,7 @@
   "base_tree": "3f04db65a66724a09b8981854e03eddeb7a19f08",
   "runtime_candidate_sha": "484ce165522026d915c4cf526cd7df2effab632c",
   "source_identity": "immutable commit containing this record",
-  "validation_at_publication": "PENDING_FOR_NEW_GROWTH_COMPOSITION",
+  "validation_at_publication": "GENERATOR_FORMAT_WHITESPACE_PASS_ON_CORRECTION; CLEAN_COMMIT_REEXECUTION_PENDING",
   "previous_validated_input": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
   "files": [
     {
@@ -57,15 +57,15 @@
     },
     {
       "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
-      "bytes": 337693,
-      "git_blob": "7c4e2a35bbf96dc83d01e6191b5474ca30f05f10",
-      "sha256": "9bc9ef4110efa79e3ce2c6186bd7603e87da0af300657dfada83f4ebaa36724a"
+      "bytes": 337763,
+      "git_blob": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e",
+      "sha256": "45c21a33728b2b8027c02a01da57b3dabb0c65850b9f02e904b0e8fa004cf7c6"
     },
     {
       "path": "config/pon/pq-cross-branch-corpus-v1.json",
       "bytes": 86614,
-      "git_blob": "2c640d16a42f56974108648dcaf8d9c159fd751e",
-      "sha256": "31b5c6c65b57ad7eaf9fd21bce3faf46377abc330a9e08d99a0c083ad5992cac"
+      "git_blob": "f7949392d9819682764859e9a18e1707b7469689",
+      "sha256": "ba8f1e926ae71e2325eb9b2c312c0b8f28db05aa121635b13c20c65f764aed2e"
     }
   ],
   "pin_changes": [
@@ -82,7 +82,7 @@
     {
       "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
       "before": "961c313a510fbc1d95268ad77d32c83e6f77da60",
-      "after": "7c4e2a35bbf96dc83d01e6191b5474ca30f05f10"
+      "after": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e"
     }
   ],
   "claims": {
@@ -90,5 +90,6 @@
     "whole_chain_pq_accepted": false,
     "performance_accepted": false,
     "independent_accepted": false
-  }
+  },
+  "corrected_from": "81da33e609cb64b319e8cfcca7059e5c30d39044"
 }

@@ -9,3 +9,7 @@ The 47 source/record controls, 63 quantum controls, 57 PQ controls and four nati
 **At this checkpoint's creation, the newly combined native source is pending validation.** The next execution must use the immutable commit containing this record, not a moving branch. Later evidence must name that commit explicitly; an evidence-only follow-up does not change the selected code identity. No previous pass is silently transferred across the incoming Growth/Node changes.
 
 The runtime endpoint repair has source and repository format checks; host native tests remain NOT_RUN because the observed environment refuses Unix IPC. All deployment, original 4-second/16-producer, quantum security, proof-benefit and independent-acceptance gates remain HOLD.
+
+## Corrected successor
+
+The original checkpoint `81da33e609cb64b319e8cfcca7059e5c30d39044` contained a generated-inventory integration error. [The correction record](inventory-correction/README.md) retains the failed checks and the generator/format/whitespace passes after repair. This successor commit, containing the repaired inventory and matching source pin, supersedes 81da33e as the intended code checkpoint. Clean-commit native and source checks must bind to the successor; 81da33e remains historical.
