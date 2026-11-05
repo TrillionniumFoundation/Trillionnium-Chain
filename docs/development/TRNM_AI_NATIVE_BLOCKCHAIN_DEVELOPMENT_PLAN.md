@@ -48,6 +48,20 @@ their results with the new Chain candidate. The same-source PQ/Growth/public/rec
 combination, host-wide capacity isolation, original 4s/16 and 4,105-block gates
 remain required. No qualification or activation flag changes.
 
+**Service/research value separation, 2026-11-05 America/New_York:** Continue the
+existing #688 candidate through `2a8fee974b41fab6e2c4e662dcce1807fcd19bdd`,
+preserving its concurrent Growth epoch and timestamp repairs.
+The [M12 owner adapter](specs/pon/NATIVE_BUDGET_ADAPTER_V1.md) distinguishes
+commissioned training/evaluation and ordinary serving fees from release
+improvement rewards. A completed `NoGain` contract may record an already
+executed native fee; invalid/unknown/cancelled work and release/mining rewards
+do not inherit that permission. Prepaid source/subject/operation binding,
+conservation and non-rewinding effect history remain mandatory. The
+[value observation channels](../protocol/pon-nakamoto-v1/ECONOMICS.md) separately
+retain timely use, planned research and positive-gain use; none authenticates
+independent future benefit or adds chainwork. Independent model adoption,
+funded production operation and external acceptance remain open.
+
 **Schema readback preparation, 2026-11-05:** Reuse only the SQLite program for
 same-transaction catalog SELECTs, retaining fresh result rows, both freshly
 prepared PRAGMAs, all original scope/State/graph/Host checks and schema-reset
