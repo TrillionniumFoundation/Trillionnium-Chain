@@ -1,0 +1,161 @@
+{
+  "environment": {
+    "numpy": "2.3.5",
+    "omp_threads": "1",
+    "openblas_threads": "1",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "full_system_cost": null,
+  "grouped_pow_qualified": false,
+  "production_activation": false,
+  "same_original_resource_gate_qualified": false,
+  "schema": "pon-grouped-local-delivery-cost-v1",
+  "scope": {
+    "actual_execution": "Python/NumPy integer producer, canonical wire, independent full scalar verifier",
+    "journal_fsync": "experiment evidence persistence is outside per-request delivery timing",
+    "loading": "model/tasks/bundle read and validated and merged weights prepared on every arm; OS page cache uncontrolled",
+    "phase_rule": "phase costs are subsets of total and never added to total again",
+    "waiting": "finite retrospective burst; actual external queue and batch-fill wait unobserved"
+  },
+  "succinct_proof_executed": false,
+  "summary": {
+    "by_batch_size": [
+      {
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 356931508,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 6,
+            "planned_cases": 6,
+            "planned_request_occurrences": 6,
+            "wall_ns_all_observed": 364095878,
+            "wall_ns_median_all_observed": 53095043.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 590394502,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 6,
+            "planned_cases": 6,
+            "planned_request_occurrences": 6,
+            "wall_ns_all_observed": 591492915,
+            "wall_ns_median_all_observed": 63592283.5
+          }
+        },
+        "batch_size": 1,
+        "packed_over_direct_total_cpu_median": 0.9288567351628432,
+        "paired_complete_quality_and_local_deadline": true,
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification"
+      },
+      {
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 592791673,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 24,
+            "planned_cases": 6,
+            "planned_request_occurrences": 24,
+            "wall_ns_all_observed": 592891747,
+            "wall_ns_median_all_observed": 61288737.0
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 438168477,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 24,
+            "planned_cases": 6,
+            "planned_request_occurrences": 24,
+            "wall_ns_all_observed": 438212381,
+            "wall_ns_median_all_observed": 63006937.0
+          }
+        },
+        "batch_size": 4,
+        "packed_over_direct_total_cpu_median": 0.9636591976871223,
+        "paired_complete_quality_and_local_deadline": true,
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification"
+      },
+      {
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 500752257,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 96,
+            "planned_cases": 6,
+            "planned_request_occurrences": 96,
+            "wall_ns_all_observed": 501129097,
+            "wall_ns_median_all_observed": 71187244.0
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 455234042,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 96,
+            "planned_cases": 6,
+            "planned_request_occurrences": 96,
+            "wall_ns_all_observed": 455277557,
+            "wall_ns_median_all_observed": 67687970.5
+          }
+        },
+        "batch_size": 16,
+        "packed_over_direct_total_cpu_median": 1.0569561708481088,
+        "paired_complete_quality_and_local_deadline": true,
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification"
+      },
+      {
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 1389255574,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 384,
+            "planned_cases": 6,
+            "planned_request_occurrences": 384,
+            "wall_ns_all_observed": 1391433597,
+            "wall_ns_median_all_observed": 94369045.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 593964547,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 384,
+            "planned_cases": 6,
+            "planned_request_occurrences": 384,
+            "wall_ns_all_observed": 594345901,
+            "wall_ns_median_all_observed": 89285513.0
+          }
+        },
+        "batch_size": 64,
+        "packed_over_direct_total_cpu_median": 1.0652837916833822,
+        "paired_complete_quality_and_local_deadline": true,
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification"
+      }
+    ],
+    "distinct_retrospective_input_rows": 64,
+    "missing_indices": [],
+    "observed_cases": 48,
+    "planned_cases": 48,
+    "planned_request_occurrences": 1020,
+    "repeats_and_arm_copies_are_new_demand": false
+  },
+  "unmeasured": [
+    "process_startup_and_import",
+    "external_queue_and_batch_fill",
+    "WAN_transport",
+    "device_loading",
+    "PoN_proof_generation_and_verification",
+    "independent_confirmation",
+    "energy"
+  ]
+}

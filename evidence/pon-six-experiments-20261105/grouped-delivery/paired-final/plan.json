@@ -1,0 +1,308 @@
+{
+  "budget_ns": 4000000000,
+  "budget_scope": "declared local corpus replay diagnostic; not original F0 service SLO",
+  "cases": [
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 0,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 1,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 2,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 3,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 4,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 5,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 6,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 7,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 8,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 9,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 10,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 11,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 12,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 13,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 14,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 15,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 16,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 17,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 18,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 19,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 20,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 21,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 22,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 23,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 24,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 25,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 26,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 27,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 28,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 29,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 30,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 31,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 32,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 33,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 34,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 35,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 36,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 37,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 38,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 39,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 40,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 41,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 42,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 43,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 44,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 45,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 46,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 47,
+      "repeat": 5
+    }
+  ],
+  "input_sha256": {
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/consumer.json": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/model.json": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e"
+  },
+  "native_backend_executed": false,
+  "production_activation": false,
+  "real_demand_authenticated": false,
+  "schema": "pon-grouped-local-delivery-cost-v1",
+  "source_replayed_from_git": false,
+  "source_sha256": {
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_delivery_cost_v1.py": "3c5a82b1dbe84215b2ad45a528b9400f62ce68782f0b217659c17937c69b3fde"
+  }
+}

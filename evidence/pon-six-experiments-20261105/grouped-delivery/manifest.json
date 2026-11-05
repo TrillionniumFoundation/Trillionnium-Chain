@@ -1,0 +1,19 @@
+{
+  "base_source_commit": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+  "files_sha256": {
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/observations.jsonl": "3652c8b9abb2ae9dda47987b6f52e2e469c7abf11436f63f3f83033624cfd82c",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/plan.json": "fbc36348466d683dcd24861e853a7b76bcd945daebe5a1adeb48cf77dadafd18",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/report.json": "e6be039ea6364e1dd98570908339f178b752fe35b55e2a2da0fa652d296cdbf5",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/observations.jsonl": "1f1583c3770c0bc11d56b8ab4af3b0531c91a825f15ac3ee3c9502881142093c",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/plan.json": "83d2397fb0332ec77c435aa6016ddd266fcd5e9f0a295eabbb161bf92893b206",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/report.json": "c6ae1ee3d83826c3d73f50e6c1da1a18252b54fa39074e7b0b9147be5574084b",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/observations.jsonl": "0c6c2ba69260f796c213682bd5b60a2cb66090e046f0317e45c39cd29c3fe9b1",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/plan.json": "9e1b754c31362abe0a070c831ba2ea2a1ab28adfc6b200204f0375528e9b48c0",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/report.json": "239ae120e72dcd56d1d83431552b622bd2cf8b03b2a5610792e0485d84d0d57e"
+  },
+  "native_grouped_executed": false,
+  "ordinary_hepta_executed": false,
+  "original_host_resource_gate_qualified": false,
+  "production_activation": false,
+  "schema": "pon-six-experiment-4-local-evidence-v1"
+}

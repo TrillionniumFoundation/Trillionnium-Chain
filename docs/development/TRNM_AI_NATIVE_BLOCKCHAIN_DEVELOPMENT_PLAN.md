@@ -7134,3 +7134,24 @@ still requires at least three independently administered operators and failure
 domains with a preregistered, frozen WAN campaign of at least 72 hours. This minimum
 coverage is not sufficient production security. No threshold, denominator,
 resource budget, activation flag or protection is relaxed.
+
+
+### 2026-11-05 six requested experiments: complete local grouped-delivery costs
+
+The existing M01 grouped relation now has a paired Python/NumPy complete local
+delivery observer and nine denominator/identity/deadline controls, included by
+the existing grouped CI discovery. The [retained experiment 4 record](../../evidence/pon-six-experiments-20261105/grouped-delivery/README.md)
+keeps all 48 final-source arm executions, 1,020 processing occurrences and 64
+distinct retrospective inputs. Both legal arms reload and validate the frozen
+model/tasks/bundle, prepare material, bind the full statement, serialize/decode
+and pass independent full scalar recomputation. All complete within the declared
+local diagnostic budget. Six paired repetitions show broad uncertainty and no
+stable end-to-end packed advantage; both medians and aggregate costs are kept.
+The initial observation and a separate eight-case late-output negative control
+are preserved. No failed or missing case disappears from its planned denominator.
+
+This is not native Rust/CUDA, ordinary Hepta, original F0 resource service, a
+succinct proof, or a measured external request stream. Startup/import, actual
+queue/fill waits, device load, WAN, PoN proof costs, independent confirmation and
+energy remain unknown. Existing budgets, owners, relations, rewards and activation
+flags are unchanged. Experiment 4 original-resource acceptance remains HOLD.

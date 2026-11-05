@@ -1,0 +1,217 @@
+{
+  "environment": {
+    "numpy": "2.3.5",
+    "omp_threads": "1",
+    "openblas_threads": "1",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "full_system_cost": null,
+  "grouped_pow_qualified": false,
+  "production_activation": false,
+  "same_original_resource_gate_qualified": false,
+  "schema": "pon-grouped-local-delivery-cost-v1",
+  "scope": {
+    "actual_execution": "Python/NumPy integer producer, canonical wire, independent full scalar verifier",
+    "journal_fsync": "experiment evidence persistence is outside per-request delivery timing",
+    "loading": "model/tasks/bundle read and validated and merged weights prepared on every arm; OS page cache uncontrolled",
+    "phase_rule": "phase costs are subsets of total and never added to total again",
+    "waiting": "finite retrospective burst; actual external queue and batch-fill wait unobserved"
+  },
+  "succinct_proof_executed": false,
+  "summary": {
+    "by_batch_size": [
+      {
+        "aggregate_packed_over_direct_cpu": 1.5434022924971187,
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 1330348336,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 6,
+            "planned_cases": 6,
+            "planned_request_occurrences": 6,
+            "wall_ns_all_observed": 1363757576,
+            "wall_ns_median_all_observed": 138161393.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 861958248,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 6,
+            "planned_cases": 6,
+            "planned_request_occurrences": 6,
+            "wall_ns_all_observed": 867450544,
+            "wall_ns_median_all_observed": 130936789.5
+          }
+        },
+        "batch_size": 1,
+        "packed_over_direct_total_cpu_median": 1.1039139808411522,
+        "paired_complete_quality_and_local_deadline": true,
+        "paired_total_cpu_ratio_range": [
+          0.5001464242329667,
+          6.6952032042037635
+        ],
+        "paired_total_cpu_ratios": [
+          1.2085057736567189,
+          1.0209941076602043,
+          0.5001464242329667,
+          6.6952032042037635,
+          1.1868338540221,
+          0.8119946790663854
+        ],
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+        "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+      },
+      {
+        "aggregate_packed_over_direct_cpu": 0.40554109974146807,
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 490025468,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 24,
+            "planned_cases": 6,
+            "planned_request_occurrences": 24,
+            "wall_ns_all_observed": 490781118,
+            "wall_ns_median_all_observed": 75566468.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 1208325046,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 24,
+            "planned_cases": 6,
+            "planned_request_occurrences": 24,
+            "wall_ns_all_observed": 1209364430,
+            "wall_ns_median_all_observed": 91282998.0
+          }
+        },
+        "batch_size": 4,
+        "packed_over_direct_total_cpu_median": 0.8622665106098584,
+        "paired_complete_quality_and_local_deadline": true,
+        "paired_total_cpu_ratio_range": [
+          0.092134604407986,
+          1.2510438118945608
+        ],
+        "paired_total_cpu_ratios": [
+          1.2470574522587947,
+          0.905293602375921,
+          0.092134604407986,
+          0.8192394188437956,
+          0.7368631104026447,
+          1.2510438118945608
+        ],
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+        "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+      },
+      {
+        "aggregate_packed_over_direct_cpu": 1.0836513819390177,
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 651698237,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 96,
+            "planned_cases": 6,
+            "planned_request_occurrences": 96,
+            "wall_ns_all_observed": 652538499,
+            "wall_ns_median_all_observed": 95866837.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 601391045,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 96,
+            "planned_cases": 6,
+            "planned_request_occurrences": 96,
+            "wall_ns_all_observed": 607786012,
+            "wall_ns_median_all_observed": 98054244.0
+          }
+        },
+        "batch_size": 16,
+        "packed_over_direct_total_cpu_median": 0.99817371655224,
+        "paired_complete_quality_and_local_deadline": true,
+        "paired_total_cpu_ratio_range": [
+          0.9080832112799633,
+          1.488031875564373
+        ],
+        "paired_total_cpu_ratios": [
+          0.9080832112799633,
+          0.9306699669750671,
+          1.488031875564373,
+          0.9808127259494627,
+          1.1562602428267081,
+          1.0155347071550174
+        ],
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+        "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+      },
+      {
+        "aggregate_packed_over_direct_cpu": 1.8470939360220102,
+        "arms": {
+          "packed_grouped": {
+            "cpu_ns_all_observed": 2261364863,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 384,
+            "planned_cases": 6,
+            "planned_request_occurrences": 384,
+            "wall_ns_all_observed": 2261894143,
+            "wall_ns_median_all_observed": 165315824.5
+          },
+          "selected_direct": {
+            "cpu_ns_all_observed": 1224282544,
+            "missing_indices": [],
+            "observed_cases": 6,
+            "on_time_exact_cases": 6,
+            "on_time_exact_request_occurrences": 384,
+            "planned_cases": 6,
+            "planned_request_occurrences": 384,
+            "wall_ns_all_observed": 1236691084,
+            "wall_ns_median_all_observed": 162385433.5
+          }
+        },
+        "batch_size": 64,
+        "packed_over_direct_total_cpu_median": 1.2011406155738178,
+        "paired_complete_quality_and_local_deadline": true,
+        "paired_total_cpu_ratio_range": [
+          0.7621043353115644,
+          2.9658079514215823
+        ],
+        "paired_total_cpu_ratios": [
+          1.5647495602070722,
+          2.9658079514215823,
+          1.3419820281832733,
+          0.9920152475446753,
+          1.0602992029643623,
+          0.7621043353115644
+        ],
+        "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+        "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+      }
+    ],
+    "distinct_retrospective_input_rows": 64,
+    "missing_indices": [],
+    "observed_cases": 48,
+    "planned_cases": 48,
+    "planned_request_occurrences": 1020,
+    "repeats_and_arm_copies_are_new_demand": false
+  },
+  "unmeasured": [
+    "process_startup_and_import",
+    "external_queue_and_batch_fill",
+    "WAN_transport",
+    "device_loading",
+    "PoN_proof_generation_and_verification",
+    "independent_confirmation",
+    "energy"
+  ]
+}
