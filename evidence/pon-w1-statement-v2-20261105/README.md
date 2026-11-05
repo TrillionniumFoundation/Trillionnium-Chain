@@ -58,9 +58,12 @@ release build. Seventeen staged-observer tests subsequently passed using an
 explicit owned tmpfs temporary directory while retaining the original 1 GiB
 free-space floor. Disk-floor failures on the overlay filesystem remain recorded.
 A follow-up audit repaired unknown process membership being mistaken for an
-empty session. The expanded [21 controls](lifecycle21-direct.log) actually pass;
-permission/parse errors and unknown group probes now fail closed with retained
-errors and cleanup attempts. Normal ENOENT/ESRCH exit races remain distinct.
+empty session. The [21-control execution summary](lifecycle21-result.json)
+records exit code 0. The raw `lifecycle21-direct.log` referenced by earlier
+notes is not present in this committed source, so this summary cannot substitute
+for independently inspectable stdout/stderr. Permission/parse errors and unknown
+group probes still require fail-closed behavior with retained errors and cleanup
+attempts. Normal ENOENT/ESRCH exit races remain distinct.
 The pre-proof native observation contains 1,000 full replays, but no new proof.
 This source checkpoint still requires the fresh complete proof and its 58 actual
 saved-receipt controls; creating those controls does not count as executing them.
