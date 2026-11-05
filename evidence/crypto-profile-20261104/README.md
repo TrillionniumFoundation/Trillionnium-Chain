@@ -1,6 +1,8 @@
 # 密码配置与 ML-DSA 参数观测证据
 
-The [fixed 59f continuation](continuation-59f75acd/README.md) preserves its own raw records, source comparison and fresh parameter observations. The original ad081 observations below remain historical. The later effective-retirement fix requires separate validation at its own committed source.
+最新结果见[可信退休与固定 53a90ad6 源码验证](retirement-53a90ad6/README.md)：原始配置 ID 在可信退休后保持不变；245 项密码／协议测试、59 项账户测试、2 项 doctest、106 项 Python 测试和完整严格 Clippy 通过，另有新的 65／87 参数观测与真实双向互操作。Node 测试构建未成功，现行 49 项控制及 network／continuous owner 未执行，状态仍为 **HOLD**。该目录绑定自己的精确 commit、tree、成功／失败／未知原始记录，不能将组件结果当作整链验收。
+
+The [fixed 59f continuation](continuation-59f75acd/README.md) preserves its separate raw records, source comparison and parameter observations. The original ad081 observations below remain historical. Neither earlier phase supplies execution credit to the later retirement source.
 
 本目录保存[密码配置安全契约](../../docs/security/CRYPTO_PROFILE_V1_20261104.md)
 对应的实现观测、命令记录和独立重算工具。本轮确实完成了核心组件、M06、源码检查和

@@ -6308,3 +6308,57 @@ M15 root identity/checkpoint remain SHA-256 and its fixed ML-DSA-65 release suit
 is separate; candidate SHA-512 commitments do not qualify those boundaries.
 Current/FinalUse, complete monotonic recovery, original-budget capacity/WAN and
 independent W1 security remain open. Preserve all six UNQUALIFIED gates and HOLD.
+
+
+### 2026-11-04 trusted-retirement source validation and bounded parameter evidence
+
+The [53a90ad6 evidence](../../evidence/crypto-profile-20261104/retirement-53a90ad6/README.md)
+binds every valid native command receipt to commit
+`53a90ad66b224db9d5095ba3efdadc7319ad8423`, tree
+`6e8ed831672296129672df51f814abba05ea3355`, and the complete 8,926-entry,
+945,979,239-byte tracked worktree before and after execution. That source retains
+the immutable trusted-retirement fix, all concurrent `ac2402e4` recovery/current
+publication/SDK changes and their separately retained incomplete observations.
+A later documentation/evidence commit does not become the source of these runs.
+
+There are 32 valid terminal command receipts: 30 exit 0 and two Node build retries
+exit 101. The crypto/protocol command reports 143 + 102 passed and the two existing
+ignored cost observations; all eight new retirement controls pass. Protocol
+doctests report two passes. The selected M06 PQ unit module reports 15 passes
+and five integration targets report 44 passes on the successful retry. The
+five Python suites report 106 passes. Full locked offline workspace and fuzz
+graphs contain 180 and 147 nodes. Formatting, 466 source pins, inventory, claim
+guard, repository links and the original complete workspace/all-target/all-feature
+Clippy command with `-D warnings` pass.
+
+The fresh release observation retains 32 cases, 288 measurements and 18,432 raw
+samples, with an independent statistical readback. Its TRNMCPB1 frame is separate
+from CPQ1 and the existing runtime messages. Sixty-four samples, fixed input and
+order, and uncontrolled shared load do not qualify production tails or a stable
+65/87 speed ratio. Actual RustCrypto/OpenSSL 3.5.9 interoperability covers both
+parameters and four message lengths in both directions: 16 valid accepts and
+64 mathematical negative refusals, plus four separately classified empty-message
+CLI frontend limits. The linked EVP path covers empty-message mathematics. Its
+121 inner commands, 74 public fixtures, 242 output files and independent readback
+are preserved; this is finite interoperability, not certification or activation.
+
+The first M06 integration attempt and first Node build lost their final receipt
+to recording failures; their two original zero-byte JSON files and logs remain
+unknown, with no native success credit. The later M06 retry succeeds separately.
+Node retry1 has a complete exit-101 receipt and explicit LLVM output ENOSPC;
+retry2 has a complete exit-101 receipt and rustc SIGKILL. Its root cause remains
+unknown; shared cgroup OOM counters cannot attribute that process death.
+No Node test executable succeeded, so network, continuous owner and all 49
+required controls remain unexecuted. Strict Clippy success does not replace them.
+No budget, selector, compiler profile, original recorder or sandbox permission
+was relaxed. Reproducible outputs owned by this task were retired only after
+identity records and terminal results were retained; shared caches and providers
+were preserved.
+
+Native acceptance remains incomplete, ML-DSA-87 is not activated and all six
+whole-chain domains stay UNQUALIFIED. Complete the exact retained Node/49 controls
+on sufficient resources, then the actual profile-governed effect-owner migration,
+CURRENT/FinalUse/recovery composition, key custody and independent capacity/work
+qualification. Height-valid historical observations still require separately
+authenticated accepted records and a durably authenticated retirement schedule.
+Native W1 challenge, ticket and complete relation remain unchanged.

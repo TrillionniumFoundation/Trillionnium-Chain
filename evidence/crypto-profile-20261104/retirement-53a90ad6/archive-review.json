@@ -1,0 +1,3066 @@
+{
+  "archive_integrity": {
+    "artifact_manifest": {
+      "bytes": 63684,
+      "sha256": "cfa58e9e5e98f3c462299c3d49b630f3f6efd317d451c53b9f7d977118ca573f"
+    },
+    "compiled_binaries_or_private_key_headers": [],
+    "duplicate_names": [],
+    "individually_manifested_members": 374,
+    "manifest_self_hash_scope": "the manifest itself is covered by the whole-archive SHA-256; its 374 payload members have explicit individual entries",
+    "member_count": 375,
+    "members": [
+      {
+        "bytes": 19471,
+        "match": true,
+        "member": "external/assemble_retirement_evidence.py",
+        "sha256": "79bff6cbb4e955f0f040a703949e098ccd6fe485b5910981fbbb767fbf6454c6"
+      },
+      {
+        "bytes": 902,
+        "match": true,
+        "member": "external/continuation-loss-notice.json",
+        "sha256": "ae5045d0644335e9b73883b3f799b8b96f53364cfd9faed40ba46986c3242662"
+      },
+      {
+        "bytes": 3981,
+        "match": true,
+        "member": "external/interop-preparation/candidate_driver.rs",
+        "sha256": "8db6ed50de36323afa2dd5e5bd6048eb5c91a7ef487378ac7efa75286ce04790"
+      },
+      {
+        "bytes": 5858,
+        "match": true,
+        "member": "external/interop-preparation/empty_message_evp.c",
+        "sha256": "483f873a691c346a946ce08c579292ab34f1747a8be3dedf9dfcdeda49104e03"
+      },
+      {
+        "bytes": 25610,
+        "match": true,
+        "member": "external/interop-preparation/run_candidate_interop.py",
+        "sha256": "b830b268875477dcd7eea3a2f938627be6b0fd88c413c36a03959e1947f0de4f"
+      },
+      {
+        "bytes": 6951,
+        "match": true,
+        "member": "external/prepare_retirement_cache.py",
+        "sha256": "a76c5219602974fb63211da70c1990ba1081a45ffa6afccf2bdd551962237f6c"
+      },
+      {
+        "bytes": 9984,
+        "match": true,
+        "member": "external/prepare_retirement_execution.py",
+        "sha256": "68abeed12fec1fddcfe825df12f16300a0aa8a0a32a86102c296f902dae06245"
+      },
+      {
+        "bytes": 19415,
+        "match": true,
+        "member": "external/restore-profile-checkout-receipt.json",
+        "sha256": "2b457cc91c04cdbbeee7f271d8f545eb1e5798bf710e1987c651368d497017f2"
+      },
+      {
+        "bytes": 421,
+        "match": true,
+        "member": "external/restore-profile-source-verification.json",
+        "sha256": "f8a4d06b7d2e0cdf0afd2ebabc94a388f144458f9e927e510557919380395cff"
+      },
+      {
+        "bytes": 33645,
+        "match": true,
+        "member": "external/retirement-cache/Cargo.lock.snapshot",
+        "sha256": "398cf378bd7b3bb67d0e8b0a3f303d00f981374685808428ba2138b930f051c9"
+      },
+      {
+        "bytes": 248177,
+        "match": true,
+        "member": "external/retirement-cache/cache-complete.json",
+        "sha256": "cc0a0704fb403148daf93d765ae2753acbfe274b5f800b04627282829f44cd3f"
+      },
+      {
+        "bytes": 13889,
+        "match": true,
+        "member": "external/retirement-execution-generation.json",
+        "sha256": "9ae6d7ff192c234eacc102f54952febc02ce9ac171bc5559e795f45e13ffe628"
+      },
+      {
+        "bytes": 1063,
+        "match": true,
+        "member": "external/run-current-pq.sh",
+        "sha256": "21986adc86819c17cde990a0b755a52acddac4a7b2d9f5ade5456e76ec75525c"
+      },
+      {
+        "bytes": 1362,
+        "match": true,
+        "member": "external/run_retirement_exact.py",
+        "sha256": "ca041e497a030fa06378603eafaad19781f2368b82469f379c68506978bfba7f"
+      },
+      {
+        "bytes": 3330,
+        "match": true,
+        "member": "external/run_retirement_parameter_observation.py",
+        "sha256": "92e2dd4d8cfb010b21ff9b19312b184ed80aa7398b50ca687b5b0c6e3858bd97"
+      },
+      {
+        "bytes": 10347,
+        "match": true,
+        "member": "external/run_retirement_required_controls.py",
+        "sha256": "bae0333528ce80b19445ee906160947cc6ddab69ca71d03655f6bf35043dbd9e"
+      },
+      {
+        "bytes": 262193,
+        "match": true,
+        "member": "records/auxiliary/build-output-relocation.json",
+        "sha256": "04dec818831383556d66366265238173bbc984dc32c492c1d939d18a0dc8c00d"
+      },
+      {
+        "bytes": 917,
+        "match": true,
+        "member": "records/auxiliary/completed-component-cache-retirement.json",
+        "sha256": "ddb032eb66d697fc4329d8ea12077a36964d7cfd7d0c138623bddc0d3e07b35e"
+      },
+      {
+        "bytes": 743,
+        "match": true,
+        "member": "records/auxiliary/completed-fuzz-cache-retirement.json",
+        "sha256": "cba66e7d303a9c9d9e34b2f009ec01e48a03a9b950708db1484db0298c4e0cd3"
+      },
+      {
+        "bytes": 830,
+        "match": true,
+        "member": "records/auxiliary/completed-interop-observer-cache-retirement.json",
+        "sha256": "70b03d148932e2f35e003479b369c474127d9eec9eb3889386459dac4b800287"
+      },
+      {
+        "bytes": 1743,
+        "match": true,
+        "member": "records/auxiliary/completed-m06-integration-cache-retirement.json",
+        "sha256": "0811161045706d6dc467ab1d7ed435f9bd04df45006eecc1b31305d7e06c1c19"
+      },
+      {
+        "bytes": 735,
+        "match": true,
+        "member": "records/auxiliary/completed-m06-unit-cache-retirement.json",
+        "sha256": "6d06efa3da4a4d9ab8cd8a3ff56951945bbe2035ac696583c985e4ec43a54f7c"
+      },
+      {
+        "bytes": 1098355,
+        "match": true,
+        "member": "records/auxiliary/completed-native-target-cache-retirement.json",
+        "sha256": "3eda4ad3f32b69f56894cd3e0ab3b0b5a311d48a12d1e1a0bc5fc249da1859b6"
+      },
+      {
+        "bytes": 165759,
+        "match": true,
+        "member": "records/auxiliary/completed-release-and-old-variants-retirement.json",
+        "sha256": "7e3cf3d5d1aaa32a85c82110c53a18c825774a76c59a1c378333138d0718c190"
+      },
+      {
+        "bytes": 1494,
+        "match": true,
+        "member": "records/auxiliary/failed-node-retry2-object-retirement.json",
+        "sha256": "407d3e1f8bacd182eaad5db88e9c557e0941b4aa21b3931db1bfe73315454552"
+      },
+      {
+        "bytes": 2207,
+        "match": true,
+        "member": "records/auxiliary/low-resource-dispatch.log",
+        "sha256": "c3badd63bf113b4094521070860c5e1e50c7a97481c0bd132e2871cfa86815c9"
+      },
+      {
+        "bytes": 14929,
+        "match": true,
+        "member": "records/auxiliary/low-resource-gates-summary.json",
+        "sha256": "45571a342766b1efff77da36eecadfcb4ee9f8d70d1182598b5e890618016fa3"
+      },
+      {
+        "bytes": 773,
+        "match": true,
+        "member": "records/auxiliary/m06-integration-recording-failure.json",
+        "sha256": "b686f2026873bd0bbf8a5aafdab5d1d4ad7cce62fbf0992076b628d6c3b25a60"
+      },
+      {
+        "bytes": 1705,
+        "match": true,
+        "member": "records/auxiliary/native-build-resource-context.jsonl",
+        "sha256": "163b96f14367a0b6d5c5ef8b4b1d399d422284b21ef3aa4ade721cac908e67ac"
+      },
+      {
+        "bytes": 825,
+        "match": true,
+        "member": "records/auxiliary/node-build-recording-failure.json",
+        "sha256": "059643351eeb8faf87b1e224a8cc9931d7b236d374fb014f105a5c7a780c1ef1"
+      },
+      {
+        "bytes": 54586,
+        "match": true,
+        "member": "records/auxiliary/observation-buffer-relocation.json",
+        "sha256": "75d4696614f85495ffb0adca07d6b7e8f3cfe25d33def1ee41a5bb2886f9ca5f"
+      },
+      {
+        "bytes": 9778,
+        "match": true,
+        "member": "records/auxiliary/pre-buffer-target-cache-retirement.json",
+        "sha256": "2fa6ac6e5d9f9f86e08522acec95d1a3206a3bb59c3453f57f6a3f90de182641"
+      },
+      {
+        "bytes": 775,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/import-disk-failure.json",
+        "sha256": "f5282fd085965827e238fa16ca298bec10919a3583244314b3b78a1b28edd9a5"
+      },
+      {
+        "bytes": 1162,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/initial-checks.json",
+        "sha256": "4f130033106b193eccc968888cd2c15bd9d853a268850056c964d86577b474c5"
+      },
+      {
+        "bytes": 989,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/retirement-doc-provenance-files.json",
+        "sha256": "500438f75571ab4b2478183508625bb8e21345026f1dd5a69bf333e33422278b"
+      },
+      {
+        "bytes": 1957,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/retirement-final-source-commit.json",
+        "sha256": "c7a8a8b278d5c754a6d9b8567d4889466180d26a8815c31795f5f2a9ee7ec079"
+      },
+      {
+        "bytes": 8690,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/retirement-publication-files.json",
+        "sha256": "8b6db7b8f2e50c1f2f1a3bdde2dc61d5d6d997500be0651e2fb404fc25f53dda"
+      },
+      {
+        "bytes": 2182,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/retirement-source-commit.json",
+        "sha256": "f8c7acd330ff1e0a9b26853196e56b219d67045ab6b61f32f1200d54e0572cf5"
+      },
+      {
+        "bytes": 446,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/source-advance.json",
+        "sha256": "8b5d4a0ef975a876ac01a4d535ce3072c281e224d2a13adffe30b652c67a34be"
+      },
+      {
+        "bytes": 4368,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/source-advance.log",
+        "sha256": "1f7fa78a28aeb3f51fc219bbbef5fdfa8f725f9fbc40b7f4c65a5ea304220a27"
+      },
+      {
+        "bytes": 514,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/source-final-advance.log",
+        "sha256": "832b6f93a85ed225877246fac27aea5d5805b10ee6653e1184fd5cdaac62ec3d"
+      },
+      {
+        "bytes": 239,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/staged-final.json",
+        "sha256": "6869d4fb8a3ee301da5918b8bd13dab6621a9c77f4fce8b0376fc8149c4b8f73"
+      },
+      {
+        "bytes": 174,
+        "match": true,
+        "member": "records/auxiliary/publication-preparation/staged-final.log",
+        "sha256": "a1cb18a9830363432d32fb8da73b4487576fcd6ebb092f4acfaad9f03ba42faf"
+      },
+      {
+        "bytes": 2569,
+        "match": true,
+        "member": "records/benchmark-build.json",
+        "sha256": "b3e385348efe85c912a6e14ac0d0ef5588aa0707cdfb5b2c5c0aae8b34f855d9"
+      },
+      {
+        "bytes": 59249,
+        "match": true,
+        "member": "records/benchmark-build.log",
+        "sha256": "58e112920cc813fdebd0dbc0be66e3d02e7bfdd06e85dcb0ca80d10642111463"
+      },
+      {
+        "bytes": 2493,
+        "match": true,
+        "member": "records/benchmark-reader.json",
+        "sha256": "d730e909cda868c96baf087540b1012c57bc050ed237441748d590f5315355fd"
+      },
+      {
+        "bytes": 269,
+        "match": true,
+        "member": "records/benchmark-reader.log",
+        "sha256": "246d4769a600137149c00f4d4eba8c4f3e047635256ec3df317d2168bd76d4f3"
+      },
+      {
+        "bytes": 2573,
+        "match": true,
+        "member": "records/benchmark-run.json",
+        "sha256": "7af2df9255852ed426efa54a33c495b3cca7013cda4c1dab89cb1a78d7ac5578"
+      },
+      {
+        "bytes": 214,
+        "match": true,
+        "member": "records/benchmark-run.log",
+        "sha256": "8fa5cdb91ddc3eec5889dfb40bf8c1812f943b853e14e319a66173c6498e9ab8"
+      },
+      {
+        "bytes": 2344,
+        "match": true,
+        "member": "records/cargo-version.json",
+        "sha256": "aa0a43a4fdf314881562143033f17ba4bdbe153ae1ae5b2ea96954b719c9a43c"
+      },
+      {
+        "bytes": 36,
+        "match": true,
+        "member": "records/cargo-version.log",
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      {
+        "bytes": 2374,
+        "match": true,
+        "member": "records/ci-contract.json",
+        "sha256": "5d1f740d1a8b085540c4a7cdbe621191d08f368b969aca7de48cb26778f0483b"
+      },
+      {
+        "bytes": 180,
+        "match": true,
+        "member": "records/ci-contract.log",
+        "sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+      },
+      {
+        "bytes": 2378,
+        "match": true,
+        "member": "records/claim-guard.json",
+        "sha256": "93b9262e30b2e5bc1722ea427c3f4bcb6586acc772de2301038527e47a72fa0f"
+      },
+      {
+        "bytes": 3333,
+        "match": true,
+        "member": "records/claim-guard.log",
+        "sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+      },
+      {
+        "bytes": 2530,
+        "match": true,
+        "member": "records/clippy.json",
+        "sha256": "e21e8550b0bb712c31173ea2919193b5ac777fd66351c1ed3afba3a028e5b203"
+      },
+      {
+        "bytes": 5847,
+        "match": true,
+        "member": "records/clippy.log",
+        "sha256": "b3c36b03ab9079445019578162c976b98dbf74540e7368ac9aa203f1f93080f7"
+      },
+      {
+        "bytes": 2341,
+        "match": true,
+        "member": "records/compiler.json",
+        "sha256": "861d9e2b8677b018c2d8378bffcdfc3d988f4d349aa26382d9d5d6f553040f3e"
+      },
+      {
+        "bytes": 196,
+        "match": true,
+        "member": "records/compiler.log",
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      {
+        "bytes": 2541,
+        "match": true,
+        "member": "records/components.json",
+        "sha256": "c21cdb77b1e87ba0d2d02dab9c41f5135471d360ad752a9382026bdfa92ddbe3"
+      },
+      {
+        "bytes": 26484,
+        "match": true,
+        "member": "records/components.log",
+        "sha256": "e0476a3d7f8124c95f4dc459c6b1cce8cd10c496dc8ba0af51e2dece11dbc36b"
+      },
+      {
+        "bytes": 2427,
+        "match": true,
+        "member": "records/fmt.json",
+        "sha256": "66656822810699679d1f7cb5080366cfd289ce7109509557d20490ce193bc893"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 2587,
+        "match": true,
+        "member": "records/fuzz-locked-graph.json",
+        "sha256": "864b20e269e91ba54bb74474e27b905164cf17edf5de3a6a3291452168a94c1b"
+      },
+      {
+        "bytes": 726850,
+        "match": true,
+        "member": "records/fuzz-locked-graph.log",
+        "sha256": "64737386a1a02629247045fb75655acdc97f0c38c684ec200f284cfa7d667e20"
+      },
+      {
+        "bytes": 3081,
+        "match": true,
+        "member": "records/interop.json",
+        "sha256": "ddcd2d3ab5e65239c99e5b364a9c9376a91be0077892ea36ffe2c94b2a64a239"
+      },
+      {
+        "bytes": 209,
+        "match": true,
+        "member": "records/interop.log",
+        "sha256": "8ca12a437e96fee5e5fcf978cc4d27f4533defccb0299e5e7b957b916dd2c24b"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/alternate-public-key-65.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 56,
+        "match": true,
+        "member": "records/interop/alternate-public-key-65.stdout.txt",
+        "sha256": "8c7b9068f753624c509cbe79b44f7deb9ca2c6e5d4b7d31b9f65fe1d07f09ae2"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/alternate-public-key-87.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 56,
+        "match": true,
+        "member": "records/interop/alternate-public-key-87.stdout.txt",
+        "sha256": "7aa5f190a4dd10ba8792598b7add434b1844b899a7dd891cdc1ea9a2a246e6de"
+      },
+      {
+        "bytes": 3981,
+        "match": true,
+        "member": "records/interop/candidate_driver.rs",
+        "sha256": "8db6ed50de36323afa2dd5e5bd6048eb5c91a7ef487378ac7efa75286ce04790"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/cc-version.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 264,
+        "match": true,
+        "member": "records/interop/cc-version.stdout.txt",
+        "sha256": "3fe5a5280ea5e228b69ed7f59fcec4ed6146228a5120306d37c656307725c2a0"
+      },
+      {
+        "bytes": 67,
+        "match": true,
+        "member": "records/interop/cli-empty-sign-65.stderr.txt",
+        "sha256": "d24fc6d6b1c68c3ae128afc297383726ff3767f3a9e486815d180ff3467fba8e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/cli-empty-sign-65.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 67,
+        "match": true,
+        "member": "records/interop/cli-empty-sign-87.stderr.txt",
+        "sha256": "d24fc6d6b1c68c3ae128afc297383726ff3767f3a9e486815d180ff3467fba8e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/cli-empty-sign-87.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 67,
+        "match": true,
+        "member": "records/interop/cli-empty-verify-65.stderr.txt",
+        "sha256": "d24fc6d6b1c68c3ae128afc297383726ff3767f3a9e486815d180ff3467fba8e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/cli-empty-verify-65.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 67,
+        "match": true,
+        "member": "records/interop/cli-empty-verify-87.stderr.txt",
+        "sha256": "d24fc6d6b1c68c3ae128afc297383726ff3767f3a9e486815d180ff3467fba8e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/cli-empty-verify-87.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 139029,
+        "match": true,
+        "member": "records/interop/commands.jsonl",
+        "sha256": "dddda7984f94ff3b8b78c623bcbde37c5c412986fe9f3516f7e2d89ee417bade"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/compile-evp-observer.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/compile-evp-observer.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/compile-rust-observer.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/compile-rust-observer.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 23123,
+        "match": true,
+        "member": "records/interop/completed-checks.json",
+        "sha256": "bd4ea8b8eda2f8a807b7674447194c0b22154f79deb16f3a7b61a28485e64f4d"
+      },
+      {
+        "bytes": 5858,
+        "match": true,
+        "member": "records/interop/empty_message_evp.c",
+        "sha256": "483f873a691c346a946ce08c579292ab34f1747a8be3dedf9dfcdeda49104e03"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/evp-linked-version.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 26,
+        "match": true,
+        "member": "records/interop/evp-linked-version.stdout.txt",
+        "sha256": "6b246f0cf76e9153ea7e92f087a0b9e01bff4be56b81a0906169676ae0288880"
+      },
+      {
+        "bytes": 5427,
+        "match": true,
+        "member": "records/interop/independent-readback.json",
+        "sha256": "4186528a33d30e0b4c8b440ac0fb6aa3c2ee3b6caa81d25be4227b127b10bd9e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/keygen-65.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/keygen-65.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/keygen-87.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/keygen-87.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 35533,
+        "match": true,
+        "member": "records/interop/manifest.json",
+        "sha256": "cd390ff5ba1eb0c5675bc15d24511aeff9aaa838276b04de919c1d2e6e86fcb6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 18,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-0.stdout.txt",
+        "sha256": "5df18b3ff6c312712e10d4c9225fabd3de16c2c69895f5d1572e5ab79ce1b293"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-176.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-4096.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-65-65536.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 18,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-0.stdout.txt",
+        "sha256": "5df18b3ff6c312712e10d4c9225fabd3de16c2c69895f5d1572e5ab79ce1b293"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-176.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-4096.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-context-sign-87-65536.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 18,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-0.stdout.txt",
+        "sha256": "5df18b3ff6c312712e10d4c9225fabd3de16c2c69895f5d1572e5ab79ce1b293"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-176.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-4096.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-65-65536.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 18,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-0.stdout.txt",
+        "sha256": "5df18b3ff6c312712e10d4c9225fabd3de16c2c69895f5d1572e5ab79ce1b293"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-176.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-4096.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-sign-87-65536.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-signature-list.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 4468,
+        "match": true,
+        "member": "records/interop/openssl-signature-list.stdout.txt",
+        "sha256": "d64eed0b12bde6e8943d6f54e8665a8f63d0ac53ab6b8e1b7cfc64238ca6b5e1"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-65-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-late-invalid-signature-87-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-65-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-nonempty-context-87-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-0.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-176.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-4096.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-65-65536.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-0.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-176.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-4096.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-valid-87-65536.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-65-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-key-87-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-65-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-176.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-4096.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/openssl-to-rust-wrong-message-87-65536.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/openssl-version.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 63,
+        "match": true,
+        "member": "records/interop/openssl-version.stdout.txt",
+        "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+      },
+      {
+        "bytes": 3077,
+        "match": true,
+        "member": "records/interop/provider-preparation-receipt.json",
+        "sha256": "1ad692642c60fc6153427198e97c376e783f188bc413237e0d39091833610a9a"
+      },
+      {
+        "bytes": 493755,
+        "match": true,
+        "member": "records/interop/public-fixtures.json",
+        "sha256": "a2ab9167aa33128e876fd724433891e4a8dd1c2a32c072a2a60126f02a432296"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/public-key-65.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/public-key-65.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/public-key-87.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/public-key-87.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 12301,
+        "match": true,
+        "member": "records/interop/review_observations.py",
+        "sha256": "30cc46a9f530b854801653920b6b70071fdc88d4c8a65671a497e1dbf7cf949e"
+      },
+      {
+        "bytes": 25610,
+        "match": true,
+        "member": "records/interop/run_candidate_interop.py",
+        "sha256": "b830b268875477dcd7eea3a2f938627be6b0fd88c413c36a03959e1947f0de4f"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 56,
+        "match": true,
+        "member": "records/interop/rust-sign-65-0.stdout.txt",
+        "sha256": "8c7b9068f753624c509cbe79b44f7deb9ca2c6e5d4b7d31b9f65fe1d07f09ae2"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 58,
+        "match": true,
+        "member": "records/interop/rust-sign-65-176.stdout.txt",
+        "sha256": "8c972d1d8d80ac5b4c44e60860894582e9cb8fbc4d9a02bf746cb22793f46908"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 59,
+        "match": true,
+        "member": "records/interop/rust-sign-65-4096.stdout.txt",
+        "sha256": "9f7c518b7720ee0fa1d3188fc55bb3979f7849f6f85c23ca87d25980e04250b8"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 60,
+        "match": true,
+        "member": "records/interop/rust-sign-65-65536.stdout.txt",
+        "sha256": "84e2025ac304d1971704f86052c1f973ea5446536c69a050d8b4fdbdae0c24f2"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 56,
+        "match": true,
+        "member": "records/interop/rust-sign-87-0.stdout.txt",
+        "sha256": "7aa5f190a4dd10ba8792598b7add434b1844b899a7dd891cdc1ea9a2a246e6de"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 58,
+        "match": true,
+        "member": "records/interop/rust-sign-87-176.stdout.txt",
+        "sha256": "e02b8bf3168a638c403750bf898da7444b3459a20abb6065ac2023a96c6d39db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 59,
+        "match": true,
+        "member": "records/interop/rust-sign-87-4096.stdout.txt",
+        "sha256": "72d63e0ee9f1a4f91a7884e92f6a813edc883e172d47c4eec5fc892e6807dd54"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-sign-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 60,
+        "match": true,
+        "member": "records/interop/rust-sign-87-65536.stdout.txt",
+        "sha256": "e368fba790ad28532c1c921ff848730b07c62342f8e26ab4df26d9310df929b6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-176.stderr.txt",
+        "sha256": "e0a8ddbf46dec963850a98165366c79af3e28fcf8b33ef427f3af0d2a6c33e6b"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-4096.stderr.txt",
+        "sha256": "2e4f0c3368f2d19e6b4d2f0ae40bb2f8bb1576dd15daa304926982b6ff038ab4"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-65536.stderr.txt",
+        "sha256": "f3772dff5d6a8979599b388d11eb3451d2607469f4dc98054b53556b84424250"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-65-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-176.stderr.txt",
+        "sha256": "60fd89e83a020ce97bbab1b692cc24852720a49e1702e3f7847ef13766e407c6"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-4096.stderr.txt",
+        "sha256": "e48078565e3e64f422a6ff6a9ae55e7de664da23d044f6a4d2514ceea3a00d85"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-65536.stderr.txt",
+        "sha256": "132d6b3b1be9592167ead77c205a4cd692b195f005cb92bab74d553f57191066"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-late-invalid-signature-87-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-176.stderr.txt",
+        "sha256": "0004a7c72c586905f0c598b5fdb77a49c4bc1abb7aaf81b1d091f8e9d9169cba"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-4096.stderr.txt",
+        "sha256": "4f2a994537445d2606c352fc4c29bc491bb861d647335c3a003670b3f6d33901"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-65536.stderr.txt",
+        "sha256": "65e13ee34655a907035394454a5752f8005607d38a83428554b47062b405d438"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-65-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-176.stderr.txt",
+        "sha256": "2649ead611857df2c5691b3273bcb1f66d839495661c0503f0edb5adfaaa31eb"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-4096.stderr.txt",
+        "sha256": "26a2b6494eeef0cdb4dd4b7ecf16a5aed752fd4177033a12534b223c00f7e74c"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-65536.stderr.txt",
+        "sha256": "3c4fed77de7b2d20034933f1a270e26086167ba69375fad082bdbd47a011916d"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-nonempty-context-87-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-0.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-176.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-4096.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-65-65536.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 7,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-0.stdout.txt",
+        "sha256": "61164e4570e18a9dd311a91e9d09db84f5f556c753a9aa35b60e2031bb0067db"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-176.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-176.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-4096.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-4096.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-65536.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 32,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-valid-87-65536.stdout.txt",
+        "sha256": "0fd23954193f64e60f5b4b5f381cd1ea9d580aece00a6bbbc98e664302ce6b79"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-176.stderr.txt",
+        "sha256": "a57565e9dca05ad5f73bc5bed001ee1c1910e200e5c4d22c055ab9a333ca6bb4"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-4096.stderr.txt",
+        "sha256": "c8011e39438f37fa6bcdd9a783e2e7b6453d780d776f38abe3b1c16b32c41f10"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-65536.stderr.txt",
+        "sha256": "490ccc2224c70a8ccb0645fbe6961ac352783dce05c36d3d84622586b8bf39e4"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-65-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-176.stderr.txt",
+        "sha256": "eebe6fb6457174505e1291157299da91916994bf0762c5cde3b1b19c230af221"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-4096.stderr.txt",
+        "sha256": "80a9a19e5d2d108aadad87d402b85fdad0cf87e59ee4aa993efae4eacf701534"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-65536.stderr.txt",
+        "sha256": "4c0eec3ce003e18745b8ebafe8381d1d125b1887336868dd329b15e39d413783"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-key-87-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-176.stderr.txt",
+        "sha256": "af208f787e0f79a3b904a7c616c0cc1e253f335332153101638fd8e3609af80b"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-4096.stderr.txt",
+        "sha256": "3ae2e2d967e41ba69bd19929c727883a3501c47179b45682a7a5fb26281cef53"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-65536.stderr.txt",
+        "sha256": "83d3ef1230e38eccb8769e9a62821e74f4c01aa6923f6a9a454acd7563522c03"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-65-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-0.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 17,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-0.stdout.txt",
+        "sha256": "64e802f2ee20282d9921696542d0883a57c6a012d656d8107383d5b0813870c6"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-176.stderr.txt",
+        "sha256": "d085a742fb6adeca8793a51916e972f9a081882bafbe2ae2672c37af59ccb1fb"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-176.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-4096.stderr.txt",
+        "sha256": "e1f99abc51eef849ff017b2ba1b1b1518cedaa450ecf99d56bb0d069ede023c8"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-4096.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 153,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-65536.stderr.txt",
+        "sha256": "2c4165e7de69bafc454b97d56721c0b8f675fe44f5c1de73fd6ad4afbcf8b392"
+      },
+      {
+        "bytes": 31,
+        "match": true,
+        "member": "records/interop/rust-to-openssl-wrong-message-87-65536.stdout.txt",
+        "sha256": "b7421958d341d888f2ea2df54dac32d4503795ee523e2e6fe6eab8efbd67d88c"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/interop/rustc-version.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 196,
+        "match": true,
+        "member": "records/interop/rustc-version.stdout.txt",
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      {
+        "bytes": 2402,
+        "match": true,
+        "member": "records/inventory.json",
+        "sha256": "275ff777c352a3e51ab4845a08999a69f51a6bd451253746d97ac491d7bf41e2"
+      },
+      {
+        "bytes": 35,
+        "match": true,
+        "member": "records/inventory.log",
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "bytes": 2495,
+        "match": true,
+        "member": "records/locked-graph.json",
+        "sha256": "7a68042c47e0f77640d61aa177c37b8317a9b900c9468ded397f5ec3408de1e1"
+      },
+      {
+        "bytes": 843417,
+        "match": true,
+        "member": "records/locked-graph.log",
+        "sha256": "bd5b8aea52d9179212d949fdc9c3b2040480c39eefbf1a1ce02f23f87c39939d"
+      },
+      {
+        "bytes": 2701,
+        "match": true,
+        "member": "records/m06-integrations-retry1.json",
+        "sha256": "3d3a7afe50d6f9e607254e92beb9e4cd1ce9026438bdd1d9ebca47a0b5c31a86"
+      },
+      {
+        "bytes": 7065,
+        "match": true,
+        "member": "records/m06-integrations-retry1.log",
+        "sha256": "0feb089e06adae657971edd990f2dd556f90b124a18904c260b7dca9b4f69b9e"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/m06-integrations.json",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 3842,
+        "match": true,
+        "member": "records/m06-integrations.log",
+        "sha256": "e209c6259ec896642ded0d84c3d79373fbf57bce96724f80043df23e961b50ec"
+      },
+      {
+        "bytes": 2521,
+        "match": true,
+        "member": "records/m06-units.json",
+        "sha256": "897673df4e1a3093d5187061fda7ba6367fed47c7ebd0c2c11d0d4d21a3b9614"
+      },
+      {
+        "bytes": 4023,
+        "match": true,
+        "member": "records/m06-units.log",
+        "sha256": "80fb73ee72936014b1fcd3ca81cc89079b9e475164d0c4ff3076ee7d3447d032"
+      },
+      {
+        "bytes": 2553,
+        "match": true,
+        "member": "records/node-build-retry1.json",
+        "sha256": "071042ba445c2a847bcff48dc8c58df79364f695a38df6b76f9cfa0108e84c37"
+      },
+      {
+        "bytes": 114831,
+        "match": true,
+        "member": "records/node-build-retry1.log",
+        "sha256": "1e28e4ec0e26105c5d425fd20c35e6d3e6c76f6624b1bfb562d1b402e5eeff31"
+      },
+      {
+        "bytes": 2553,
+        "match": true,
+        "member": "records/node-build-retry2.json",
+        "sha256": "9e6015697425ff289f843e8f1031920aeb4689ec9c3d38d779e01b1766edb8cb"
+      },
+      {
+        "bytes": 114768,
+        "match": true,
+        "member": "records/node-build-retry2.log",
+        "sha256": "8740688602da7f02ae721e1cd3f2f3774168d9bf896565c0aff13d5ba1c1f7ea"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/node-build.json",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 113694,
+        "match": true,
+        "member": "records/node-build.log",
+        "sha256": "c2654e07b3c388ec540bc6940e52b0f93184367cc7cb83152a193475d0e2b884"
+      },
+      {
+        "bytes": 296038,
+        "match": true,
+        "member": "records/parameter-observations.jsonl",
+        "sha256": "ce91124749cfb4afb0b6391a3706f07261a1ac77bae4544b70e97144eb2f1eb6"
+      },
+      {
+        "bytes": 0,
+        "match": true,
+        "member": "records/parameter-observations.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 3740,
+        "match": true,
+        "member": "records/parameter-run.json",
+        "sha256": "615a7e9d6bbbbf318a4d0241946298bf9999fb3c8f2b468fa8e36690890f02c2"
+      },
+      {
+        "bytes": 2373,
+        "match": true,
+        "member": "records/preflight-clippy.json",
+        "sha256": "465406ec44e48aa885df6182a09f9555d11e539a0a165d735c0d0f987957c6ec"
+      },
+      {
+        "bytes": 171,
+        "match": true,
+        "member": "records/preflight-clippy.log",
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "bytes": 2379,
+        "match": true,
+        "member": "records/preflight-native-retry.json",
+        "sha256": "025f5dbd8b88685c9fbc4eba70f7c4fd8160760734bbdebfe76295f8ac5fd090"
+      },
+      {
+        "bytes": 171,
+        "match": true,
+        "member": "records/preflight-native-retry.log",
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "bytes": 2384,
+        "match": true,
+        "member": "records/preflight-node-buffer-retry.json",
+        "sha256": "49a09969fa3e6ce8ec4977018d16d7a6953ae1ee85a07dd01a3d325fcd7b2133"
+      },
+      {
+        "bytes": 171,
+        "match": true,
+        "member": "records/preflight-node-buffer-retry.log",
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "bytes": 2377,
+        "match": true,
+        "member": "records/preflight-node-retry.json",
+        "sha256": "f868e191f4bc235caaf7d19c213a7c7053a079e9cb59149dd9ac66bf07ff4b43"
+      },
+      {
+        "bytes": 171,
+        "match": true,
+        "member": "records/preflight-node-retry.log",
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "bytes": 2366,
+        "match": true,
+        "member": "records/preflight.json",
+        "sha256": "196ca25df98545bcf5b2b06f039fd6665daac0353331c827c105d10ccbbf2274"
+      },
+      {
+        "bytes": 171,
+        "match": true,
+        "member": "records/preflight.log",
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "bytes": 2404,
+        "match": true,
+        "member": "records/profile-oracle.json",
+        "sha256": "2cc01ba61c62b043a319746344395136cf95184c5bbc79dc81344b92f2f0cbfe"
+      },
+      {
+        "bytes": 2958,
+        "match": true,
+        "member": "records/profile-oracle.log",
+        "sha256": "b48ce2c9b6ef983b5e395bf86f50b1ab8a4043180f9e2eda24f2a4e9b8b8faf8"
+      },
+      {
+        "bytes": 2478,
+        "match": true,
+        "member": "records/protocol-doc.json",
+        "sha256": "0356ef7c6e73f768cbee02519d6484b0759677019afc5ac9a3495f74723397cc"
+      },
+      {
+        "bytes": 620,
+        "match": true,
+        "member": "records/protocol-doc.log",
+        "sha256": "1af6f8302cebf57f2e9d07a2572c45aca25edb9c9052c900b6aba7849256e7b7"
+      },
+      {
+        "bytes": 2373,
+        "match": true,
+        "member": "records/repository.json",
+        "sha256": "f8641af474a0ad4e6e352cde722b89b00575abb97a1304fc2f32ee097104c990"
+      },
+      {
+        "bytes": 307,
+        "match": true,
+        "member": "records/repository.log",
+        "sha256": "de964337dcbea15ae50fa16f532735497540c8a52babe45e78b15118d090339c"
+      },
+      {
+        "bytes": 2386,
+        "match": true,
+        "member": "records/source-pins.json",
+        "sha256": "ab727c83e646977808d2b4c417cfc21328c466ec3a013c0e796d0d9725083d9e"
+      },
+      {
+        "bytes": 557,
+        "match": true,
+        "member": "records/source-pins.log",
+        "sha256": "ede96fb4793c31852a8170c1df9213a8d0490c9e3a69593cef2734f4b051082e"
+      },
+      {
+        "bytes": 2474,
+        "match": true,
+        "member": "records/test-ci-source-integrity.json",
+        "sha256": "528609f9cc1f99db63dc23b6bf5c9390103b0aa0eac268dd6808096431c18eb0"
+      },
+      {
+        "bytes": 6053,
+        "match": true,
+        "member": "records/test-ci-source-integrity.log",
+        "sha256": "1dad14b4db4a7fbdd66a273f4b92ebeb15a79fd795fade0c7a765fb5b567f72e"
+      },
+      {
+        "bytes": 2486,
+        "match": true,
+        "member": "records/test-pq-authority-surface-scan.json",
+        "sha256": "9208940df2f7a8b4cdd9cc48a4f1172dc310adc154e66ff36b3d6821e1330a85"
+      },
+      {
+        "bytes": 2034,
+        "match": true,
+        "member": "records/test-pq-authority-surface-scan.log",
+        "sha256": "cab90eb127d77679a857ba6fe0e7c60e81b17a03ea1a553a15bfdfaaa37af719"
+      },
+      {
+        "bytes": 2476,
+        "match": true,
+        "member": "records/test-pq-chain-claim-guard.json",
+        "sha256": "5aca3fa735aa598fe96a3bac50a589231e59046e9ac1a353ac560a36a15236b3"
+      },
+      {
+        "bytes": 3007,
+        "match": true,
+        "member": "records/test-pq-chain-claim-guard.log",
+        "sha256": "660e481d14c601f959bb811b72a1b82eaae76d213b159cc9b6875dfb0ca611fe"
+      },
+      {
+        "bytes": 2483,
+        "match": true,
+        "member": "records/test-pq-research-integration.json",
+        "sha256": "90ba21025d1abe06b4e3fae52344353e962c8591aa48c2113cc8325e9fba8bd5"
+      },
+      {
+        "bytes": 5706,
+        "match": true,
+        "member": "records/test-pq-research-integration.log",
+        "sha256": "7d6a3612f3839658363702e08dbaca255445694df4c00a9ce56a27ab4b6eaf36"
+      },
+      {
+        "bytes": 2484,
+        "match": true,
+        "member": "records/test-record-pq-native-command.json",
+        "sha256": "f213cc07e3af65d5e6bfda9849a983d69121ae452a772d08029e9e96d390c60d"
+      },
+      {
+        "bytes": 1250,
+        "match": true,
+        "member": "records/test-record-pq-native-command.log",
+        "sha256": "484a26986e6b0e46cb470faa7d6236ddb5950e3c849e810a8c70dc29735a875b"
+      },
+      {
+        "bytes": 1286,
+        "match": true,
+        "member": "source-contracts/AGENTS.md",
+        "sha256": "3b856784057789dd600615f752364012d9ef8965d884352795b9590e0f121b91"
+      },
+      {
+        "bytes": 560,
+        "match": true,
+        "member": "source-contracts/commit.raw",
+        "sha256": "e2f485acaa1cc9b9644dc5ac8a0be22becc7d6448e69af0bc226f1cd90eb0209"
+      },
+      {
+        "bytes": 5668,
+        "match": true,
+        "member": "source-contracts/config/pon/pq-system-required-tests-v1.json",
+        "sha256": "e01f5dd331a160d926d029f85a24714ae5c9ccaf3067819692544c115f1a6ebb"
+      },
+      {
+        "bytes": 7180,
+        "match": true,
+        "member": "source-contracts/evidence/crypto-profile-20261104/recompute_benchmark.py",
+        "sha256": "dda1656c265a9436f6e902cb5d760eec152fbbc1c3a0e2e255dd35e02636220b"
+      },
+      {
+        "bytes": 2928,
+        "match": true,
+        "member": "source-contracts/scripts/ci/check_required_native_test.py",
+        "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+      },
+      {
+        "bytes": 4581,
+        "match": true,
+        "member": "source-contracts/scripts/ci/record_pq_native_command.py",
+        "sha256": "3cf16e76cae957cb34226a0d2118ac15bbe2d1946d3758efc9426c25612cdc39"
+      },
+      {
+        "bytes": 40033,
+        "match": true,
+        "member": "source-contracts/trillionnium/Cargo.lock",
+        "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+      },
+      {
+        "bytes": 2204,
+        "match": true,
+        "member": "source-contracts/trillionnium/Cargo.toml",
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      }
+    ],
+    "nonregular_members": [],
+    "unmanifested_payload_members": [],
+    "unsafe_names": []
+  },
+  "benchmark_archive": {
+    "collector_reader_exit_code": 0,
+    "original_runtime_exit_code": 0,
+    "production_tail_qualified": false,
+    "raw_bytes": 296038,
+    "raw_sha256": "ce91124749cfb4afb0b6391a3706f07261a1ac77bae4544b70e97144eb2f1eb6",
+    "reader_reexecuted_in_this_review": false,
+    "standalone_equals_archived": true
+  },
+  "cache_proof_scope": {
+    "archived_downloaded_crates": false,
+    "checksum_comparisons_consistent": true,
+    "current_cache_or_registry_files_rehashed": false,
+    "locked_registry_packages": 135
+  },
+  "crypto_reexecuted": false,
+  "finished_utc": "2026-11-05T02:49:08.260389+00:00",
+  "full_fuzz_graph": {
+    "exit_code": 0,
+    "no_deps_used": false,
+    "packages": 147
+  },
+  "interop": {
+    "actual_exit_counts": {
+      "0": 53,
+      "1": 28,
+      "3": 40
+    },
+    "actual_invalid_signature_rejections": 64,
+    "binary_retention_scope": "compiled observers/libraries are represented by archived original identities and command evidence; this archive review does not require their current filesystem presence",
+    "commands": 121,
+    "crypto_library_identity": {
+      "bytes": 2417518,
+      "path": "/workspace/scratch/9d99fced0bf1/target-current/release/deps/libtrnm_crypto_primitives-8af021b217f58373.rlib",
+      "sha256": "b0c8adf8a70ae8be7eb9a4c550483a348a7a9cf12bc3bbcacf0ab8a207802951"
+    },
+    "current_binary_reexecution_or_rehash_claimed": false,
+    "live_executables_required_or_checked": false,
+    "observer_identities": {
+      "evp": {
+        "bytes": 6303696,
+        "path": "/workspace/scratch/9d99fced0bf1/interop-work/empty-message-evp",
+        "sha256": "f95a2749e2fee82a31e4d9ab87c179d888285427138fecec2f14d3aa9822de0b"
+      },
+      "rust": {
+        "bytes": 4685296,
+        "path": "/workspace/scratch/9d99fced0bf1/interop-work/candidate-driver",
+        "sha256": "7db9f4526754a059fe0634044162f5490c75f4886bfdf9fe60f00aef3f926854"
+      }
+    },
+    "outer_exit_code": 0,
+    "post_run_cache_cleanup_changes_original_result": false,
+    "prior_independent_readback_retained_and_consistent": true,
+    "provider_identities": {
+      "libcrypto": {
+        "bytes": 12380600,
+        "path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/lib/libcrypto.a",
+        "sha256": "fda16ed5c2188f643f8edc1574966efa56f1685a640705eba602c2242c02ce08"
+      },
+      "openssl": {
+        "bytes": 8933400,
+        "path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "sha256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955"
+      },
+      "receipt": {
+        "bytes": 3077,
+        "path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/observations/pq-provider/provider.json",
+        "sha256": "1ad692642c60fc6153427198e97c376e783f188bc413237e0d39091833610a9a"
+      },
+      "source_archive": {
+        "bytes": 53279637,
+        "path": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/openssl-3.5.9.tar.gz",
+        "sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+      },
+      "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a"
+    },
+    "public_fixture_checks": [
+      {
+        "bytes": 3309,
+        "name": "65-0-openssl-context.sig",
+        "sha256": "d4cb7b19b824ad923b77b09892b2e6faf5bddc8a707c91e11e02f17e41c78d9a"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-0-openssl-late-invalid.sig",
+        "sha256": "5176db5ae368d35aec4f8a781da180911aef51ffdb449e18c8484e6f9604b942"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-0-openssl.sig",
+        "sha256": "8eb824b4c9b8a483d05e79ba5d261c6aebe12d12977e3a9e997902ee8f4aaa22"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-0-rust-late-invalid.sig",
+        "sha256": "201be071a7342138b5e98a738b51c622b49283ba7f490d50b496c0a658556eea"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-0-rust-public.der",
+        "sha256": "d3ebf3fe7197ecce3b4be69ef0f218ecad78c413c93dd0acc3a01c57110031cb"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-0-rust-public.raw",
+        "sha256": "2f40048b7202cf1d33e0af88f0695e076d00fea5be3d201d667021afe09c23c1"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-0-rust.sig",
+        "sha256": "be693a7e900c1891f5486e9cb39d00779f6e0aba3e2df1c140ec8bc9bdf7b910"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-176-openssl-context.sig",
+        "sha256": "862f78fad97e71a6d3618966c9de474d3dc40236508cb8df1a3dba2339fcb01e"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-176-openssl-late-invalid.sig",
+        "sha256": "e0890a0000762002f7a77d5e50cf962d652c0bf91d401883c455964859aa12ba"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-176-openssl.sig",
+        "sha256": "78bb8baa92752ef58e9b978cea743699b7559b44003b518e2eabc74c308718ad"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-176-rust-late-invalid.sig",
+        "sha256": "2faf6815006fd3792330c44be230d56eca482957cdb9f1448cc1f8b6ca8a6860"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-176-rust-public.der",
+        "sha256": "d3ebf3fe7197ecce3b4be69ef0f218ecad78c413c93dd0acc3a01c57110031cb"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-176-rust-public.raw",
+        "sha256": "2f40048b7202cf1d33e0af88f0695e076d00fea5be3d201d667021afe09c23c1"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-176-rust.sig",
+        "sha256": "f77c6613a2643022f80b1625a12b97b194478cff5da4d1256c160cf8beb8cffc"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-4096-openssl-context.sig",
+        "sha256": "a064e24370d367e3de815752ec02c12cae1ffe04009843e886fc81e79489adbb"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-4096-openssl-late-invalid.sig",
+        "sha256": "3e03d79fd0ec4e84abd35f2be24aec30b80886842df2e81cc02b051f5dd5f45a"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-4096-openssl.sig",
+        "sha256": "0248c3ff458bd6318de8fccb545032a8d049bb2c5c28343a8c4558375b5e28b4"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-4096-rust-late-invalid.sig",
+        "sha256": "9091ea3dbd34a55c8ff500e0cff2c3d0426a8a5f080698bb55d89ba69ed0768e"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-4096-rust-public.der",
+        "sha256": "d3ebf3fe7197ecce3b4be69ef0f218ecad78c413c93dd0acc3a01c57110031cb"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-4096-rust-public.raw",
+        "sha256": "2f40048b7202cf1d33e0af88f0695e076d00fea5be3d201d667021afe09c23c1"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-4096-rust.sig",
+        "sha256": "6e0df837b91f92f60c9e73b8aa4eee7b9342271b40e0960afb580dcd365bb8ec"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-65536-openssl-context.sig",
+        "sha256": "ca642bf263844fc0f2aa37b5dfb35d96a2fd2e29163c74e061e28c128e42b57e"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-65536-openssl-late-invalid.sig",
+        "sha256": "6b0624b29eb668543c855e5405a7526bcdd32ab52695f22f200fa96f6f7a099f"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-65536-openssl.sig",
+        "sha256": "8bc5034904abc1e9d22fea80ccdb288f8ebd149f845320b06b95079c1689b067"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-65536-rust-late-invalid.sig",
+        "sha256": "47ca02f0f390acbfc8b416e32c6e3c6669be19ad013a39639a3451af72f7025f"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-65536-rust-public.der",
+        "sha256": "d3ebf3fe7197ecce3b4be69ef0f218ecad78c413c93dd0acc3a01c57110031cb"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-65536-rust-public.raw",
+        "sha256": "2f40048b7202cf1d33e0af88f0695e076d00fea5be3d201d667021afe09c23c1"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-65536-rust.sig",
+        "sha256": "fc2f159b245f01a62cbc4bd78c7396d613d626454696b01d40d4d03e66aecc1d"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-openssl-public.der",
+        "sha256": "78f308882c275522482a233190bb6e23ce526ec769dfda4f36714b42d2c96927"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-openssl-public.raw",
+        "sha256": "4f0d8a97337c3fcc3cce1b6f953369b5f246521284c455d21d99e081058ba050"
+      },
+      {
+        "bytes": 3309,
+        "name": "65-wrong-key-empty.sig",
+        "sha256": "46e18c2da9091c6b305f6af6d0504ef155188136412ef5b94fba7c63a663424d"
+      },
+      {
+        "bytes": 1974,
+        "name": "65-wrong-public.der",
+        "sha256": "5da96eed509623fe229d656e6cee55373ae65071b57295a4cdcb1447fb58826a"
+      },
+      {
+        "bytes": 1952,
+        "name": "65-wrong-public.raw",
+        "sha256": "c9b0d9b20fd7eb9762dae958d94ad98e7023d5926e61c352f32d33811c301daf"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-0-openssl-context.sig",
+        "sha256": "8b2bc7caeb392fbf6a7c644fc3b3c0a0293984189ca1c607d606905016d43b36"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-0-openssl-late-invalid.sig",
+        "sha256": "7a39aa3f1e4fd1380fbdcb1ad292f47588c7a13a4ac5b9b339c6fa58661f6099"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-0-openssl.sig",
+        "sha256": "35ffd4c35136e71c04efc2cdcdfc5d2952b78a94caa46e17a0e9c70c2976444f"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-0-rust-late-invalid.sig",
+        "sha256": "e41e19a649945446951c3df148445349d041979d4fd932a2c4d3d3515de0a083"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-0-rust-public.der",
+        "sha256": "abf1ac233b20ca8074503e7c25ab3a27b9d85c7e92b396d3670798066f271fbc"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-0-rust-public.raw",
+        "sha256": "45a9a541defc3959ee916f5fa0a692dd5fb2141256e8ae59d700cf1fea16aafa"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-0-rust.sig",
+        "sha256": "1cb511cb5f56f7e9ecb388e3162ec3bf917e6664851bd0ba79c281e1c91ef80d"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-176-openssl-context.sig",
+        "sha256": "d28a3e42ceccc3aed5eb64be5a00be67b1215c8d47ea2558a0154d7a76bb95a5"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-176-openssl-late-invalid.sig",
+        "sha256": "097610dbcc1b244cf0a7ab718989ce8a907cd11c0fee7331982a41b19190538d"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-176-openssl.sig",
+        "sha256": "fbaadc88a2c3ff4a07beeaa84168ece6e63a471b1f65e20865c747bfa38777a5"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-176-rust-late-invalid.sig",
+        "sha256": "5bbf7a0566e280b6f8c2689b669e1c51f716ed0470d465097a250cb6ce01695a"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-176-rust-public.der",
+        "sha256": "abf1ac233b20ca8074503e7c25ab3a27b9d85c7e92b396d3670798066f271fbc"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-176-rust-public.raw",
+        "sha256": "45a9a541defc3959ee916f5fa0a692dd5fb2141256e8ae59d700cf1fea16aafa"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-176-rust.sig",
+        "sha256": "2f8b2f6a3840a129793b847e9651f8a8332fef6cc8fac4d1b0aded69e5ef9c99"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-4096-openssl-context.sig",
+        "sha256": "f877bed665ac66dc0726d63c858d594f9b08863a66ffc139899ec6f9c80e42f0"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-4096-openssl-late-invalid.sig",
+        "sha256": "7ae2412bc467649ba3d7a1fcb888a47f535835bce2aad61c7888d6de06238e52"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-4096-openssl.sig",
+        "sha256": "e9d90f769f35e8e26f5b0a17d89dcb5db5ae1e894c1e66fa0ef4ba44f022123c"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-4096-rust-late-invalid.sig",
+        "sha256": "439353dc43f929867b0a5cce4e8a650a55e5ff05c8689fb63c54fd9001b71937"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-4096-rust-public.der",
+        "sha256": "abf1ac233b20ca8074503e7c25ab3a27b9d85c7e92b396d3670798066f271fbc"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-4096-rust-public.raw",
+        "sha256": "45a9a541defc3959ee916f5fa0a692dd5fb2141256e8ae59d700cf1fea16aafa"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-4096-rust.sig",
+        "sha256": "188b38a27b6c43210afdd3fc5e9117e9cba36cc6167b5e7c5dbe866be7c278c1"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-65536-openssl-context.sig",
+        "sha256": "2d2401398db8f0b407e19e97af50e9ea6bdd28f0bdd8365843becf869cfd75cb"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-65536-openssl-late-invalid.sig",
+        "sha256": "296048d46bc8eecfe83d10cca7e9b9afefa3b9894bafcd31eda5c6c071d2a64b"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-65536-openssl.sig",
+        "sha256": "a276b70d229d8660315ab8464867b593fe49c0b77c128f9baf2bd8f4fe04bf29"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-65536-rust-late-invalid.sig",
+        "sha256": "430bd3f8e8917b5e8790358f09282bdaf685807d4236ccd7b77b12facf176f2c"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-65536-rust-public.der",
+        "sha256": "abf1ac233b20ca8074503e7c25ab3a27b9d85c7e92b396d3670798066f271fbc"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-65536-rust-public.raw",
+        "sha256": "45a9a541defc3959ee916f5fa0a692dd5fb2141256e8ae59d700cf1fea16aafa"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-65536-rust.sig",
+        "sha256": "7289e7a5ade650a2f04cf5df90d1fc446ae606fb01afa817036cd2d473224f5e"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-openssl-public.der",
+        "sha256": "07562b76f85f45e0d9cb4214eceec922f1cfff2f7d8ac8787eaa9c84d9948a27"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-openssl-public.raw",
+        "sha256": "1e4fd00dbbaf231a8c49b18320b5fa384c1aea08137ccb8619a80da62589be0d"
+      },
+      {
+        "bytes": 4627,
+        "name": "87-wrong-key-empty.sig",
+        "sha256": "be51f5e56d25f17889920c1b53bde275a60974057a3e736041a594ec7e78fa09"
+      },
+      {
+        "bytes": 2614,
+        "name": "87-wrong-public.der",
+        "sha256": "ef5012870b0256b69307daf56144f3a472dab0ea2fe769afbdb62f8fc7dbb535"
+      },
+      {
+        "bytes": 2592,
+        "name": "87-wrong-public.raw",
+        "sha256": "e8ac1536c17ff146aa2ebe5fcd1f34063d111e254d1e0284ef18158537f7fe7b"
+      },
+      {
+        "bytes": 0,
+        "name": "message-0.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 176,
+        "name": "message-176.bin",
+        "sha256": "b20dc034fde356c7256af3a56a6d76467f6462e8a0aeb8ba0cfe3566326edecc"
+      },
+      {
+        "bytes": 4096,
+        "name": "message-4096.bin",
+        "sha256": "699d02c2828b1d41d3ef7e3910a025609911a897e4ea0d50278800ca4a01e4e7"
+      },
+      {
+        "bytes": 65536,
+        "name": "message-65536.bin",
+        "sha256": "b8d2543cb5061ac23b5a939480f1955749d9885b42f7b1eb364a32cdec982410"
+      },
+      {
+        "bytes": 1,
+        "name": "wrong-message-0.bin",
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      },
+      {
+        "bytes": 176,
+        "name": "wrong-message-176.bin",
+        "sha256": "fb7877d05cdf953b54d76f48e88b518abbf0e58ad38a7ee1d94510c309211229"
+      },
+      {
+        "bytes": 4096,
+        "name": "wrong-message-4096.bin",
+        "sha256": "225bccf03a021b159a3788d5a4d67f24e8bf4b552c1843031e91e273d62e2d9f"
+      },
+      {
+        "bytes": 65536,
+        "name": "wrong-message-65536.bin",
+        "sha256": "9ed6a700df1e820abb7a92e6afb3cdfbb779292b197b9907556d9d5c5c8a16a1"
+      }
+    ],
+    "public_fixtures": 74,
+    "separate_cli_frontend_limitations": 4,
+    "status": "FINITE_INTEROPERABILITY_OBSERVED_HOLD",
+    "stdout_stderr_files_checked": 242,
+    "three_external_source_snapshots": {
+      "candidate_driver.rs": {
+        "bytes": 3981,
+        "sha256": "8db6ed50de36323afa2dd5e5bd6048eb5c91a7ef487378ac7efa75286ce04790"
+      },
+      "empty_message_evp.c": {
+        "bytes": 5858,
+        "sha256": "483f873a691c346a946ce08c579292ab34f1747a8be3dedf9dfcdeda49104e03"
+      },
+      "run_candidate_interop.py": {
+        "bytes": 25610,
+        "sha256": "b830b268875477dcd7eea3a2f938627be6b0fd88c413c36a03959e1947f0de4f"
+      }
+    },
+    "unexpected_outcomes": [],
+    "unique_matrix_checks": 80,
+    "valid_acceptances": 16
+  },
+  "native_commands_run": false,
+  "native_group_terminals": {
+    "components": [
+      "test result: ok. 143 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.66s",
+      "test result: ok. 102 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 21.12s"
+    ],
+    "m06-integrations-retry1": [
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.70s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.35s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.41s",
+      "test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.09s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.02s"
+    ],
+    "m06-units": [
+      "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 105 filtered out; finished in 12.95s"
+    ],
+    "protocol-doc": [
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    ]
+  },
+  "native_receipts": {
+    "all_sources_and_logs_match": true,
+    "count": 32,
+    "exit_counts": {
+      "0": 30,
+      "101": 2
+    },
+    "failed_labels": [
+      "node-build-retry1",
+      "node-build-retry2"
+    ],
+    "node_continuous_owner": "not_executed",
+    "node_failures": {
+      "node-build-retry1": {
+        "build_finished_success": false,
+        "cargo_exit_code": 101,
+        "observed_diagnostic": "rustc-LLVM ERROR: IO failure on output stream: No space left on device"
+      },
+      "node-build-retry2": {
+        "build_finished_success": false,
+        "cargo_exit_code": 101,
+        "observed_diagnostic": "signal: 9, SIGKILL: kill",
+        "out_of_memory_cause_claimed": false,
+        "root_cause": "not established by retained evidence"
+      }
+    },
+    "node_network": "not_executed",
+    "original_zero_byte_receipts": [
+      {
+        "bytes": 0,
+        "file": "m06-integrations.json",
+        "native_execution_status": "unknown",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 0,
+        "file": "node-build.json",
+        "native_execution_status": "unknown",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "receipts": [
+      {
+        "exit_code": 0,
+        "label": "benchmark-build",
+        "log_bytes": 59249,
+        "log_sha256": "58e112920cc813fdebd0dbc0be66e3d02e7bfdd06e85dcb0ca80d10642111463"
+      },
+      {
+        "exit_code": 0,
+        "label": "benchmark-reader",
+        "log_bytes": 269,
+        "log_sha256": "246d4769a600137149c00f4d4eba8c4f3e047635256ec3df317d2168bd76d4f3"
+      },
+      {
+        "exit_code": 0,
+        "label": "benchmark-run",
+        "log_bytes": 214,
+        "log_sha256": "8fa5cdb91ddc3eec5889dfb40bf8c1812f943b853e14e319a66173c6498e9ab8"
+      },
+      {
+        "exit_code": 0,
+        "label": "cargo-version",
+        "log_bytes": 36,
+        "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      {
+        "exit_code": 0,
+        "label": "ci-contract",
+        "log_bytes": 180,
+        "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+      },
+      {
+        "exit_code": 0,
+        "label": "claim-guard",
+        "log_bytes": 3333,
+        "log_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+      },
+      {
+        "exit_code": 0,
+        "label": "clippy",
+        "log_bytes": 5847,
+        "log_sha256": "b3c36b03ab9079445019578162c976b98dbf74540e7368ac9aa203f1f93080f7"
+      },
+      {
+        "exit_code": 0,
+        "label": "compiler",
+        "log_bytes": 196,
+        "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      {
+        "exit_code": 0,
+        "label": "components",
+        "log_bytes": 26484,
+        "log_sha256": "e0476a3d7f8124c95f4dc459c6b1cce8cd10c496dc8ba0af51e2dece11dbc36b"
+      },
+      {
+        "exit_code": 0,
+        "label": "fmt",
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "exit_code": 0,
+        "label": "fuzz-locked-graph",
+        "log_bytes": 726850,
+        "log_sha256": "64737386a1a02629247045fb75655acdc97f0c38c684ec200f284cfa7d667e20"
+      },
+      {
+        "exit_code": 0,
+        "label": "interop",
+        "log_bytes": 209,
+        "log_sha256": "8ca12a437e96fee5e5fcf978cc4d27f4533defccb0299e5e7b957b916dd2c24b"
+      },
+      {
+        "exit_code": 0,
+        "label": "inventory",
+        "log_bytes": 35,
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "exit_code": 0,
+        "label": "locked-graph",
+        "log_bytes": 843417,
+        "log_sha256": "bd5b8aea52d9179212d949fdc9c3b2040480c39eefbf1a1ce02f23f87c39939d"
+      },
+      {
+        "exit_code": 0,
+        "label": "m06-integrations-retry1",
+        "log_bytes": 7065,
+        "log_sha256": "0feb089e06adae657971edd990f2dd556f90b124a18904c260b7dca9b4f69b9e"
+      },
+      {
+        "exit_code": 0,
+        "label": "m06-units",
+        "log_bytes": 4023,
+        "log_sha256": "80fb73ee72936014b1fcd3ca81cc89079b9e475164d0c4ff3076ee7d3447d032"
+      },
+      {
+        "exit_code": 101,
+        "label": "node-build-retry1",
+        "log_bytes": 114831,
+        "log_sha256": "1e28e4ec0e26105c5d425fd20c35e6d3e6c76f6624b1bfb562d1b402e5eeff31"
+      },
+      {
+        "exit_code": 101,
+        "label": "node-build-retry2",
+        "log_bytes": 114768,
+        "log_sha256": "8740688602da7f02ae721e1cd3f2f3774168d9bf896565c0aff13d5ba1c1f7ea"
+      },
+      {
+        "exit_code": 0,
+        "label": "preflight",
+        "log_bytes": 171,
+        "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "exit_code": 0,
+        "label": "preflight-clippy",
+        "log_bytes": 171,
+        "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "exit_code": 0,
+        "label": "preflight-native-retry",
+        "log_bytes": 171,
+        "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "exit_code": 0,
+        "label": "preflight-node-buffer-retry",
+        "log_bytes": 171,
+        "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "exit_code": 0,
+        "label": "preflight-node-retry",
+        "log_bytes": 171,
+        "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      {
+        "exit_code": 0,
+        "label": "profile-oracle",
+        "log_bytes": 2958,
+        "log_sha256": "b48ce2c9b6ef983b5e395bf86f50b1ab8a4043180f9e2eda24f2a4e9b8b8faf8"
+      },
+      {
+        "exit_code": 0,
+        "label": "protocol-doc",
+        "log_bytes": 620,
+        "log_sha256": "1af6f8302cebf57f2e9d07a2572c45aca25edb9c9052c900b6aba7849256e7b7"
+      },
+      {
+        "exit_code": 0,
+        "label": "repository",
+        "log_bytes": 307,
+        "log_sha256": "de964337dcbea15ae50fa16f532735497540c8a52babe45e78b15118d090339c"
+      },
+      {
+        "exit_code": 0,
+        "label": "source-pins",
+        "log_bytes": 557,
+        "log_sha256": "ede96fb4793c31852a8170c1df9213a8d0490c9e3a69593cef2734f4b051082e"
+      },
+      {
+        "exit_code": 0,
+        "label": "test-ci-source-integrity",
+        "log_bytes": 6053,
+        "log_sha256": "1dad14b4db4a7fbdd66a273f4b92ebeb15a79fd795fade0c7a765fb5b567f72e"
+      },
+      {
+        "exit_code": 0,
+        "label": "test-pq-authority-surface-scan",
+        "log_bytes": 2034,
+        "log_sha256": "cab90eb127d77679a857ba6fe0e7c60e81b17a03ea1a553a15bfdfaaa37af719"
+      },
+      {
+        "exit_code": 0,
+        "label": "test-pq-chain-claim-guard",
+        "log_bytes": 3007,
+        "log_sha256": "660e481d14c601f959bb811b72a1b82eaae76d213b159cc9b6875dfb0ca611fe"
+      },
+      {
+        "exit_code": 0,
+        "label": "test-pq-research-integration",
+        "log_bytes": 5706,
+        "log_sha256": "7d6a3612f3839658363702e08dbaca255445694df4c00a9ce56a27ab4b6eaf36"
+      },
+      {
+        "exit_code": 0,
+        "label": "test-record-pq-native-command",
+        "log_bytes": 1250,
+        "log_sha256": "484a26986e6b0e46cb470faa7d6236ddb5950e3c849e810a8c70dc29735a875b"
+      }
+    ],
+    "required_controls": {
+      "executed": 0,
+      "not_executed": 49,
+      "passed": 0,
+      "required": 49
+    },
+    "required_controls_group": "not_executed"
+  },
+  "production_activation": false,
+  "review_mode": "read-only frozen archive consistency; no native, crypto, archived-reader or source-verifier execution",
+  "schema": "trnm-final-retirement-archive-independent-review-v1",
+  "source": {
+    "archived_commit_object_sha1_verified": true,
+    "base": null,
+    "candidate": "53a90ad66b224db9d5095ba3efdadc7319ad8423",
+    "kind": "head",
+    "new_worktree_verification_performed": false,
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "53a90ad66b224db9d5095ba3efdadc7319ad8423",
+    "tested_tree": "6e8ed831672296129672df51f814abba05ea3355",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 945979239,
+    "tracked_entries": 8926,
+    "tracked_worktree_verified": true
+  },
+  "source_helpers_records_archive_modified": false,
+  "source_verifier_executed": false,
+  "started_utc": "2026-11-05T02:49:08.096287+00:00",
+  "status": "ARCHIVE_INTEGRITY_CONSISTENT_HOLD",
+  "strict_clippy": {
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "coverage_claim": "exact command receipt; no full Node test execution inferred",
+    "exit_code": 0
+  },
+  "tar_extracted_to_filesystem": false,
+  "three_deliverable_files": {
+    "parameter-observations.jsonl": {
+      "bytes": 296038,
+      "sha256": "ce91124749cfb4afb0b6391a3706f07261a1ac77bae4544b70e97144eb2f1eb6"
+    },
+    "raw-observations.tar.gz": {
+      "bytes": 830679,
+      "sha256": "65d95ac910ae19748f13a66d0d152e2c0bb60b71c1d8db64a36100be2f210ced"
+    },
+    "reproduction.json": {
+      "bytes": 231447,
+      "sha256": "890b3c7cc03f6e027453127e94c82f9ba5f181f029f0171335287778b1b2fc3e"
+    }
+  },
+  "three_deliverable_files_unchanged_after_review": true,
+  "three_external_cache_proof_files": {
+    "prepare_retirement_cache.py": {
+      "bytes": 6951,
+      "sha256": "a76c5219602974fb63211da70c1990ba1081a45ffa6afccf2bdd551962237f6c"
+    },
+    "retirement-cache/Cargo.lock.snapshot": {
+      "bytes": 33645,
+      "sha256": "398cf378bd7b3bb67d0e8b0a3f303d00f981374685808428ba2138b930f051c9"
+    },
+    "retirement-cache/cache-complete.json": {
+      "bytes": 248177,
+      "sha256": "cc0a0704fb403148daf93d765ae2753acbfe274b5f800b04627282829f44cd3f"
+    }
+  },
+  "whole_chain_pq_qualified": false
+}
