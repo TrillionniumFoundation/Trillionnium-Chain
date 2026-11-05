@@ -1,0 +1,40 @@
+{
+  "native_rust_checks_run": false,
+  "production_activation": false,
+  "schema": "pon-proof-recovery-increment-validation-v1",
+  "scope": "Python arithmetic/parser and real local SQLite/process/loopback controls. No new succinct proof, model training, real generation installation, CURRENT or FinalUse execution.",
+  "source_sha256": {
+    "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py": "562bf6b566d6896daa95a06173b89ab990bfc66473bb9ee4d8761be02e1c477d",
+    "scripts/ci/test_w1_staged_observer.py": "0ba52bc67c0086310f44cd11b18e6885b9614b5d88583e3b33acc17cc8032209",
+    "scripts/llm_runtime_pilot.py": "861bb61c1758ff2d7b0c9b0678d2f47c303cc3b293b8470f1c95cd421e023457",
+    "scripts/llm_runtime_trial_ledger.py": "56d04adad59a365ba832e4297e25b39d667dbd54b6bb9e356e62e077c6507d83",
+    "scripts/test_llm_runtime_trial_ledger.py": "e0e8fc0d765b4778e569d6383b7a3a1a16a2702dd6351c117ba5af96e1acc474"
+  },
+  "tests_total": 78,
+  "validations": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts -p test_llm_runtime_trial_ledger.py -v",
+      "log": "trial-ledger-tests.log",
+      "outcome": "PASS",
+      "sha256": "e4826c074c0e6fc18c62f027594bf0296a015370088294e3aa7fdd49389f239b",
+      "tests": 24,
+      "wall_seconds": 3.841
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts -p test_llm_runtime_trial_replay.py -v",
+      "log": "trial-replay-tests.log",
+      "outcome": "PASS",
+      "sha256": "6660001a917d92f35319410bca3742372ebb574b571584e2eef3d247e88737e6",
+      "tests": 20,
+      "wall_seconds": 27.296
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/ci -p test_w1_staged_observer.py -v",
+      "log": "proof-observer-tests.log",
+      "outcome": "PASS",
+      "sha256": "d5f041589c956e752b7d980aa21e04f744454810e071ee691821b90f1e514a33",
+      "tests": 34,
+      "wall_seconds": 4.065
+    }
+  ]
+}

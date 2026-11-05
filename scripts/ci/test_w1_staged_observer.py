@@ -316,6 +316,83 @@ class BindingAndLocalCostTests(unittest.TestCase):
                     local.serialize(FROZEN / "input.bin", FROZEN / "succinct.bin", path, 2, temp / f"out-{length}")
 
 
+
+class ObservedCostComparisonTests(unittest.TestCase):
+    def setUp(self):
+        # Arithmetic/parser controls only. These are never proof observations,
+        # never run the coordinator's verifier and are never emitted as evidence.
+        identity = {name: 'a' * 64 for name in ('work_id', 'input_sha256', 'header_sha256',
+                    'external_artifacts_sha256', 'receipt_sha256')}
+        identity.update(image_id=list(coordinator.V2_IMAGE_ID), receipt_bytes=200)
+        benchmarks = {}
+        for kind, count, ns in (('native', 1000, 10), ('transparent', 100, 20), ('fresh', 1, 30)):
+            benchmarks[kind] = dict(schema='TRNM-W1-V2-NATIVE1' if kind == 'native' else 'TRNM-W1-V2-FULL-VERIFY1',
+                iterations=count, samples_ns=[ns] * count, profile_id=coordinator.V2_PROFILE_ID)
+        payloads, local_rows = {}, {}
+        for kind, size in (('native', 100), ('transparent', 200)):
+            digest = 'a' * 64 if kind == 'transparent' else 'b' * 64
+            payloads[kind] = dict(body_bytes=size, body_sha256=digest, payload_bytes=size + 10,
+                payload_sha256=digest, envelope_encode_ns=1, durable_local_file_write_ns=2)
+            local_rows[kind] = dict(schema='TRNM-W1-LOCAL-TCP-TRANSFER1', byte_roundtrip_complete=True,
+                payload_bytes=size + 10, payload_sha256=digest, offered_bytes_per_second=1000,
+                send_receive_and_durable_write_seconds=(size + 10) / 1000,
+                receiver=dict(error=None, received_bytes=size + 10, received_sha256=digest))
+        local_rows['serialization'] = dict(schema='TRNM-W1-LOCAL-PAYLOAD1', statement_version=2,
+            payloads=payloads, **{name: identity[name] for name in
+                ('input_sha256', 'header_sha256', 'external_artifacts_sha256')})
+        self.result = dict(statement_version=2, complete_proof_claim=True, end_to_end_observation_complete=True,
+            independent_full_proof_trials_observed=1, identity=identity, benchmarks=benchmarks,
+            local_observations=local_rows, fresh_proof_pipeline_seconds=100,
+            aggregate_process_tree_peak_rss_bytes=None)
+
+    def test_costs_keep_one_proof_trial_and_do_not_promote_a_benefit(self):
+        summary = coordinator.observed_cost_comparison(self.result)
+        self.assertEqual(summary['transparent_over_native_median_verify_ratio'], 2)
+        self.assertAlmostEqual(summary['transparent_over_native_payload_bytes_ratio'], 210 / 110)
+        self.assertEqual(summary['independent_full_proof_trials_observed'], 1)
+        self.assertEqual(summary['reused_receipt_replays'], 100)
+        self.assertIsNone(summary['benefit_gate_passed'])
+        self.assertIsNone(summary['aggregate_process_tree_peak_rss_bytes'])
+        for field in ('complete_cell_relation_proven', 'minimum_node_configuration_measured',
+                      'full_delivery_cost_complete', 'production_qualification', 'consensus_admission'):
+            self.assertIs(summary[field], False)
+        self.result['benchmarks']['transparent']['samples_ns'] = [1] * 100
+        summary = coordinator.observed_cost_comparison(self.result)
+        self.assertEqual(summary['transparent_over_native_median_verify_ratio'], .1)
+        self.assertIsNone(summary['benefit_gate_passed'])
+
+    def test_partial_failed_or_relabelled_trials_cannot_have_a_comparison(self):
+        for field, value in (('complete_proof_claim', False), ('end_to_end_observation_complete', False),
+                             ('statement_version', 1), ('independent_full_proof_trials_observed', True),
+                             ('independent_full_proof_trials_observed', 100)):
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                coordinator.observed_cost_comparison({**self.result, field: value})
+        self.result['identity']['image_id'][0] ^= 1
+        with self.assertRaisesRegex(ValueError, 'image'):
+            coordinator.observed_cost_comparison(self.result)
+
+    def test_changed_samples_or_profile_fail_before_ratios(self):
+        for field, value in (('samples_ns', [True] * 100), ('samples_ns', [0] * 100),
+                             ('samples_ns', [1.0] * 100), ('samples_ns', [1]),
+                             ('iterations', True), ('profile_id', 'other-profile')):
+            damaged = copy.deepcopy(self.result)
+            damaged['benchmarks']['transparent'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                coordinator.observed_cost_comparison(damaged)
+
+    def test_substituted_incomplete_or_unmatched_transfers_cannot_be_compared(self):
+        for field, value in (('offered_bytes_per_second', 1001), ('byte_roundtrip_complete', False),
+                             ('payload_sha256', 'c' * 64), ('send_receive_and_durable_write_seconds', float('nan')),
+                             ('send_receive_and_durable_write_seconds', True)):
+            damaged = copy.deepcopy(self.result)
+            damaged['local_observations']['transparent'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                coordinator.observed_cost_comparison(damaged)
+        self.result['local_observations']['serialization']['external_artifacts_sha256'] = 'c' * 64
+        with self.assertRaisesRegex(ValueError, 'binding'):
+            coordinator.observed_cost_comparison(self.result)
+
+
 class ReceiptJournalLocationTests(unittest.TestCase):
     # Wire-layout fixtures only, never cryptographic proof evidence.
     def fixture(self):

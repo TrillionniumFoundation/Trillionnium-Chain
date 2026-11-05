@@ -7155,3 +7155,29 @@ succinct proof, or a measured external request stream. Startup/import, actual
 queue/fill waits, device load, WAN, PoN proof costs, independent confirmation and
 energy remain unknown. Existing budgets, owners, relations, rewards and activation
 flags are unchanged. Experiment 4 original-resource acceptance remains HOLD.
+
+
+### 2026-11-05 experiments 5/6: complete-W1 cost and anchored Unknown readback
+
+The existing staged W1 coordinator now derives a bounded cost comparison after
+its original complete v2 verification and delivery checks. The [independent
+experiment records](../../evidence/pon-proof-recovery-six-experiments-20261105/README.md)
+retain one archived complete proof, 100 reuses of that receipt and 1,000 native
+replays without turning them into independent proof trials. The archived
+verification median is 28.8823595 ms versus native 0.9549835 ms (30.243831x),
+with 5.189787x local envelope bytes and 5.069296x same-rate loopback time.
+The earlier 7,200-second failed observation remains separate. This turn does
+not regenerate or cryptographically reverify that archived proof. Full Cell
+coverage, minimum-node configuration and complete-system proof economics stay HOLD.
+
+The existing SQLite TrialLedger gains exact trial/plan reconciliation against an
+externally retained checkpoint. It accepts an authentic successor history and
+rejects a restored journal that lacks the checkpoint. Committed child/roster/
+terminal identities are reported without another event, refund or effect retry.
+A missing reservation retains UNKNOWN external effects; it is never permission
+to rerun. The pilot recovery command no longer imports current model/native
+dependencies just to parse historical ledger readback. Twenty-four ledger,
+twenty immutable-history and thirty-four proof-observer controls passed, including
+actual SQLite/child-process and TCP loopback cases. CURRENT, FinalUse, actual
+installed-generation next-task use and native recovery remain unproved. Existing
+allowances, immutable history interpretation, owners and activation flags remain.

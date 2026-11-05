@@ -354,7 +354,7 @@
     "scripts/llm_runtime_parent_step.py": "4798f2be0cdbe0f243ed9b298f5c28c9c9bfac75",
     "scripts/llm_runtime_parent_step_task_v2.py": "c32382b23b691543d312ae307add178d474bc2ff",
     "scripts/llm_runtime_parent_step_v2.py": "e9c85feed960cf38ba7619f493cc445f8570301e",
-    "scripts/llm_runtime_pilot.py": "e681b1aba19f9a2838e337f2aabb91372fc6f864",
+    "scripts/llm_runtime_pilot.py": "61763f98330eaf414f3952ceb7a9648c86559c3a",
     "scripts/llm_runtime_release.py": "c1cc08ce8189364dfc45666e6af5793eac81f8fc",
     "scripts/pon_public_v3_phase_read.py": "1f5a5fa2e1c95719553b0de0cd20464a0d15310a",
     "scripts/pon_w1_cost_matrix_reader.py": "fe710e05048916145180cf1cf8870bc31a94dec8",
