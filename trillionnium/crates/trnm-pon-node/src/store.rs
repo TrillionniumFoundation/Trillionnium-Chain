@@ -144,6 +144,22 @@ fn bytes64(bytes: Vec<u8>) -> Result<[u8; 64]> {
 const STORED_PACKET_SQL: &str = "SELECT
  CASE WHEN typeof(packet)='blob' AND length(packet)>1048576 THEN substr(packet,1,1048577) ELSE packet END AS packet
  FROM blocks WHERE id=?";
+// Digest-only owner gates must hash the complete stored packet, including any
+// oversized tail. Borrow SQLite's BLOB while hashing rather than copying it into
+// a Rust Vec. Using FromSql via row.get preserves the original required-BLOB
+// conversion errors, including the column index/name/type for SQL NULL.
+// The pure SHA-256 helper runs while the row/statement is alive, rather than
+// after query_row has returned an owned copy; it does not reenter SQLite. The
+// statement is released normally when query_row returns. This is not a shorter
+// lock-lifetime, SQLite-memory or full-hash CPU bound.
+struct SqlPacketDigest(String);
+impl rusqlite::types::FromSql for SqlPacketDigest {
+    fn column_result(value: rusqlite::types::ValueRef<'_>) -> rusqlite::types::FromSqlResult<Self> {
+        Ok(Self(crate::operator_task_policy::digest_bytes(
+            value.as_blob()?,
+        )))
+    }
+}
 // Retain at most one byte beyond a fixed field's expected width. This is a
 // copy bound, not validation authority: the original shape check still runs in
 // its original order after all SQL conversions. Empty BLOB and SQL NULL remain

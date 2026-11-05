@@ -705,11 +705,7 @@ impl Node {
             } else {
                 let prior: Option<Vec<u8>> = self
                     .db
-                    .query_row(
-                        "SELECT packet FROM blocks WHERE id=?",
-                        [packet.id()?.as_slice()],
-                        |r| r.get(0),
-                    )
+                    .query_row(STORED_PACKET_SQL, [packet.id()?.as_slice()], |r| r.get(0))
                     .optional()?;
                 ensure(
                     prior.as_deref() == Some(packet.encode()?.as_slice()),
@@ -728,14 +724,13 @@ impl Node {
                 active.permit.facts.purpose == Purpose::Activate,
                 "OWNER_MINING_ACTIVATE_PURPOSE_REQUIRED",
             )?;
-            let raw: Vec<u8> = self.db.query_row(
+            let digest: SqlPacketDigest = self.db.query_row(
                 "SELECT packet FROM blocks WHERE id=?",
                 [target.as_slice()],
                 |r| r.get(0),
             )?;
             ensure(
-                active.permit.facts.payload_sha256
-                    == crate::operator_task_policy::digest_bytes(&raw),
+                active.permit.facts.payload_sha256 == digest.0,
                 "OWNER_MINING_ACTIVATE_PACKET",
             )?;
             active.permit.progress().map_err(mining_error)?;
@@ -1053,11 +1048,9 @@ impl Node {
             owner.cpu.shares_domain_with(cpu),
             "OWNER_MINING_CPU_EPOCH_CHANGED",
         )?;
-        let raw: Vec<u8> = self.db.query_row(
-            "SELECT packet FROM blocks WHERE id=?",
-            [tip.as_slice()],
-            |r| r.get(0),
-        )?;
+        let raw: Vec<u8> = self
+            .db
+            .query_row(STORED_PACKET_SQL, [tip.as_slice()], |r| r.get(0))?;
         let decoded = Packet::decode(&raw)?;
         ensure(
             hex::encode(decoded.header.work_task) == owner.view.body.task.native_task,
@@ -1150,6 +1143,230 @@ mod tests {
         let mut node = Node::open(&root.path().join("native"), settings, 1).unwrap();
         attach_owner(&mut node, journal.path()).unwrap();
         (root, journal, node)
+    }
+    fn packet_values() -> Vec<rusqlite::types::Value> {
+        use rusqlite::types::Value;
+        vec![
+            Value::Null,
+            Value::Integer(7),
+            Value::Real(7.5),
+            Value::Text("not a packet".into()),
+            Value::Blob(vec![]),
+            Value::Blob(vec![0x31; 1_048_576]),
+            Value::Blob(vec![0x31; 1_048_577]),
+            Value::Blob(vec![0x31; 4 * 1024 * 1024]),
+        ]
+    }
+    fn same_packet_error(before: Error, after: Error) {
+        use std::error::Error as _;
+        assert_eq!(after.to_string(), before.to_string());
+        assert_eq!(after.code(), before.code());
+        assert_eq!(after.kind(), before.kind());
+        assert_eq!(after.requires_owner_stop(), before.requires_owner_stop());
+        match (before.source(), after.source()) {
+            (Some(old), Some(new)) => assert_eq!(
+                new.downcast_ref::<rusqlite::Error>().unwrap(),
+                old.downcast_ref::<rusqlite::Error>().unwrap(),
+            ),
+            (None, None) => {}
+            _ => panic!("owner packet error source changed"),
+        }
+    }
+    #[test]
+    fn mining_owner_packet_reads_preserve_gates_errors_and_journal() {
+        let root = tempfile::tempdir().unwrap();
+        let journal = tempfile::tempdir().unwrap();
+        fs::set_permissions(journal.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let settings = Settings::development(Some(crate::ingress::now().unwrap() - 100)).unwrap();
+        let mut node = Node::open(&root.path().join("native"), settings, 1).unwrap();
+        let before = node.active().unwrap();
+        // Wire-valid guard fixture only. No full Work or native admission is claimed.
+        let packet = Packet {
+            header: Header {
+                network: node.settings.network(),
+                parameters: node.settings.parameters(),
+                parent: before.0,
+                height: 1,
+                timestamp: 1,
+                target: [0xff; 32],
+                miner: [0x11; 32],
+                transactions: sequence_root("transactions", &[]),
+                state: [0; 32],
+                receipts: [0; 32],
+                work_task: [0x11; 32],
+                nonce: 1,
+            },
+            transactions: Vec::new(),
+            proof: vec![0; pon_work::PROOF_BYTES],
+        };
+        let raw = packet.encode().unwrap();
+        let digest = crate::operator_task_policy::digest_bytes(&raw);
+        let id = packet.id().unwrap();
+        let mut body = view();
+        body.context.network = hex::encode(node.settings.network());
+        body.context.parameters = hex::encode(node.settings.parameters());
+        body.context.actual_parent = hex::encode(before.0);
+        let search = &mut body.permissions[0];
+        search.operation_id = policy::operation_id(
+            &body.context,
+            &search.purpose,
+            &search.operation_nonce,
+            &search.payload_sha256,
+        )
+        .unwrap();
+        let search = search.clone();
+        for purpose in [Purpose::WinnerValidation, Purpose::Activate] {
+            let mut grant = search.clone();
+            grant.purpose = purpose;
+            grant.search = None;
+            grant.related_search_operation = Some(search.operation_id.clone());
+            grant.payload_sha256 = digest.clone();
+            body.permissions.push(grant);
+        }
+        attach_owner_with_view(&mut node, journal.path(), body).unwrap();
+        same_packet_error(
+            "OWNER_MINING_EXPLICIT_VALIDATION_REQUIRED".into(),
+            node.mining_packet_gate(&packet).unwrap_err(),
+        );
+        node.db.execute(
+            "INSERT INTO blocks(id,parent,height,chainwork,packet,state_root) VALUES(?,?,1,?,?,?)",
+            params![id.as_slice(), before.0.as_slice(), [0u8; 64].as_slice(), &raw, [0u8; 32].as_slice()],
+        ).unwrap();
+        node.mining_packet_gate(&packet).unwrap();
+        let cpu = node.mining_owner.as_ref().unwrap().cpu.clone();
+        for value in packet_values() {
+            node.db.execute_batch("SAVEPOINT owner_packet").unwrap();
+            node.db
+                .execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![value, id.as_slice()],
+                )
+                .unwrap();
+            let original: Result<()> = (|| {
+                let prior: Option<Vec<u8>> = node
+                    .db
+                    .query_row(
+                        "SELECT packet FROM blocks WHERE id=?",
+                        [id.as_slice()],
+                        |row| row.get(0),
+                    )
+                    .optional()?;
+                ensure(
+                    prior.as_deref() == Some(raw.as_slice()),
+                    "OWNER_MINING_EXPLICIT_VALIDATION_REQUIRED",
+                )
+            })();
+            same_packet_error(
+                original.unwrap_err(),
+                node.mining_packet_gate(&packet).unwrap_err(),
+            );
+            let original: Result<Packet> = (|| {
+                let bytes: Vec<u8> = node.db.query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |row| row.get(0),
+                )?;
+                Packet::decode(&bytes)
+            })();
+            same_packet_error(
+                original.unwrap_err(),
+                node.activate_owned_mining_winner(id, 100_000, &cpu)
+                    .err()
+                    .unwrap(),
+            );
+            assert_eq!(
+                node.mining_owner
+                    .as_ref()
+                    .unwrap()
+                    .journal
+                    .borrow()
+                    .claim_count(),
+                0
+            );
+            node.db
+                .execute_batch("ROLLBACK TO owner_packet; RELEASE owner_packet")
+                .unwrap();
+            node.mining_packet_gate(&packet).unwrap();
+        }
+        let owner = node.mining_owner.as_ref().unwrap();
+        let search_permit = owner
+            .permission(Purpose::Search, search.payload_sha256, before.1)
+            .unwrap();
+        // Exercise the existing reservation/result checks, not a forged active
+        // permit. This mechanism fixture still does not assert qualified Work.
+        owner
+            .journal
+            .borrow_mut()
+            .record_search(
+                &owner.view,
+                &search_permit.reservation,
+                &search_permit.facts,
+                Some(&raw),
+                1,
+            )
+            .unwrap();
+        let permit = owner
+            .permission(Purpose::Activate, digest.clone(), before.1)
+            .unwrap();
+        let operation = owner.cpu.begin().unwrap();
+        let scope = owner
+            .enter(permit, operation.checkpoint_handle(), None, None, None)
+            .unwrap();
+        node.mining_activation_gate(id).unwrap();
+        let claims = owner.journal.borrow().claim_count();
+        for value in packet_values() {
+            node.db.execute_batch("SAVEPOINT owner_digest").unwrap();
+            node.db
+                .execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![value, id.as_slice()],
+                )
+                .unwrap();
+            let original: Result<()> = (|| {
+                let bytes: Vec<u8> = node.db.query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |row| row.get(0),
+                )?;
+                ensure(
+                    crate::operator_task_policy::digest_bytes(&bytes) == digest,
+                    "OWNER_MINING_ACTIVATE_PACKET",
+                )
+            })();
+            same_packet_error(
+                original.unwrap_err(),
+                node.mining_activation_gate(id).unwrap_err(),
+            );
+            assert_eq!(owner.journal.borrow().claim_count(), claims);
+            node.db
+                .execute_batch("ROLLBACK TO owner_digest; RELEASE owner_digest")
+                .unwrap();
+            node.mining_activation_gate(id).unwrap();
+        }
+        same_packet_error(
+            rusqlite::Error::QueryReturnedNoRows.into(),
+            node.mining_activation_gate([0xee; 32]).unwrap_err(),
+        );
+        assert_eq!(node.active().unwrap(), before);
+        assert!(node.mining_epoch_cancellation().unwrap().cancel());
+        same_packet_error(
+            mining_error(policy::PolicyError::ExternalContext),
+            node.mining_activation_gate(id).unwrap_err(),
+        );
+        // Digest mismatch still precedes the existing final progress/epoch check.
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=zeroblob(4194304) WHERE id=?",
+                [id.as_slice()],
+            )
+            .unwrap();
+        same_packet_error(
+            "OWNER_MINING_ACTIVATE_PACKET".into(),
+            node.mining_activation_gate(id).unwrap_err(),
+        );
+        assert_eq!(owner.journal.borrow().claim_count(), claims);
+        drop(scope);
+        assert!(!operation.finish().accounting_unavailable);
     }
     #[test]
     fn cancelling_installed_epoch_cannot_start_an_unused_old_view_permission() {

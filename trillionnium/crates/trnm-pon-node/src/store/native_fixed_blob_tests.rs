@@ -1,5 +1,5 @@
 //! Retained block fields and packets must be bounded before owned decoding.
-use super::super::STORED_PACKET_SQL;
+use super::super::{SqlPacketDigest, STORED_PACKET_SQL};
 use super::*;
 use crate::Node;
 use rusqlite::types::Value as SqlValue;
@@ -412,6 +412,70 @@ fn stored_packet_blob_copy_bound_preserves_sql_types_and_boundary() {
         }
     }
     // Only retained Rust payload bytes are measured, not SQLite cell/page memory.
+}
+
+#[test]
+fn stored_packet_digest_borrows_full_blob_and_preserves_conversion_errors() {
+    let db = Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE blocks(id INTEGER PRIMARY KEY,packet BLOB); INSERT INTO blocks VALUES(1,NULL)").unwrap();
+    for value in attack_values(MAX_STORED_PACKET_BYTES) {
+        db.execute("UPDATE blocks SET packet=? WHERE id=1", [&value])
+            .unwrap();
+        let old = db.query_row("SELECT packet FROM blocks WHERE id=?", [1], |row| {
+            row.get::<_, Vec<u8>>(0)
+        });
+        let new = db.query_row("SELECT packet FROM blocks WHERE id=?", [1], |row| {
+            row.get::<_, SqlPacketDigest>(0).map(|digest| digest.0)
+        });
+        match (old, new) {
+            (Ok(bytes), Ok(digest)) => {
+                assert_eq!(digest, crate::operator_task_policy::digest_bytes(&bytes));
+                assert_eq!(digest.len(), 64);
+                if bytes.len() > MAX_STORED_PACKET_BYTES + 1 {
+                    let clipped: Vec<u8> = db
+                        .query_row(STORED_PACKET_SQL, [1], |row| row.get(0))
+                        .unwrap();
+                    assert_ne!(digest, crate::operator_task_policy::digest_bytes(&clipped));
+                }
+            }
+            (Err(old), Err(new)) => same_packet_error(old.into(), new.into()),
+            _ => panic!("required digest conversion changed"),
+        }
+    }
+    // Matching retained prefixes must not become matching owner payload hashes.
+    let mut bytes = vec![0x31; 4 * 1024 * 1024];
+    let mut digests = Vec::new();
+    for tail in [0x61, 0x62] {
+        bytes[MAX_STORED_PACKET_BYTES + 1..].fill(tail);
+        db.execute("UPDATE blocks SET packet=? WHERE id=1", [&bytes])
+            .unwrap();
+        let digest: SqlPacketDigest = db
+            .query_row("SELECT packet FROM blocks WHERE id=?", [1], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        assert_eq!(digest.0, crate::operator_task_policy::digest_bytes(&bytes));
+        let clipped: Vec<u8> = db
+            .query_row(STORED_PACKET_SQL, [1], |row| row.get(0))
+            .unwrap();
+        assert_eq!(clipped, vec![0x31; MAX_STORED_PACKET_BYTES + 1]);
+        digests.push(digest.0);
+    }
+    assert_ne!(digests[0], digests[1]);
+    let old = db.query_row("SELECT packet FROM blocks WHERE id=?", [2], |row| {
+        row.get::<_, Vec<u8>>(0)
+    });
+    let new = db.query_row("SELECT packet FROM blocks WHERE id=?", [2], |row| {
+        row.get::<_, SqlPacketDigest>(0).map(|digest| digest.0)
+    });
+    same_packet_error(old.unwrap_err().into(), new.unwrap_err().into());
+    assert!(db
+        .query_row(STORED_PACKET_SQL, [2], |row| row.get::<_, Vec<u8>>(0))
+        .optional()
+        .unwrap()
+        .is_none());
+    // No packet Vec is produced by the production digest conversion. Complete
+    // hashing still reads every byte; SQLite memory and CPU costs are not capped.
 }
 
 fn packet_read_controls(node: &mut Node, packet: &Packet, clock: u64) {

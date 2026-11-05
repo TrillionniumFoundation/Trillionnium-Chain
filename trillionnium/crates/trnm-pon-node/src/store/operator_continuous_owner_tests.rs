@@ -26,6 +26,167 @@ fn node() -> (tempfile::TempDir, tempfile::TempDir, Node) {
     });
     (root, dir, node)
 }
+fn same_packet_error(before: Error, after: Error) {
+    use std::error::Error as _;
+    assert_eq!(after.to_string(), before.to_string());
+    assert_eq!(after.code(), before.code());
+    assert_eq!(after.kind(), before.kind());
+    assert_eq!(after.requires_owner_stop(), before.requires_owner_stop());
+    match (before.source(), after.source()) {
+        (Some(old), Some(new)) => assert_eq!(
+            new.downcast_ref::<rusqlite::Error>().unwrap(),
+            old.downcast_ref::<rusqlite::Error>().unwrap(),
+        ),
+        (None, None) => {}
+        _ => panic!("owner packet error source changed"),
+    }
+}
+#[test]
+fn continuous_owner_packet_reads_preserve_gates_errors_and_journal() {
+    use rusqlite::types::Value;
+    let (_root, _journal, mut node) = node();
+    let before = node.active().unwrap();
+    let journal = node.continuous_journal_head().unwrap();
+    // Legal wire only, not qualified Work. The real owner gates must not infer
+    // new execution authority from a matching retained row.
+    let packet = Packet {
+        header: Header {
+            network: node.settings.network(),
+            parameters: node.settings.parameters(),
+            parent: before.0,
+            height: 1,
+            timestamp: crate::ingress::now().unwrap(),
+            target: [0xff; 32],
+            miner: [1; 32],
+            transactions: sequence_root("transactions", &[]),
+            state: [0; 32],
+            receipts: [0; 32],
+            work_task: [0x10; 32],
+            nonce: 1,
+        },
+        transactions: Vec::new(),
+        proof: vec![0; pon_work::PROOF_BYTES],
+    };
+    let id = packet.id().unwrap();
+    let raw = packet.encode_for_settings(&node.settings).unwrap();
+    same_packet_error(
+        "OWNER_CONTINUOUS_EXPLICIT_SCOPE_REQUIRED".into(),
+        node.continuous_packet_gate(&packet).unwrap_err(),
+    );
+    same_packet_error(
+        rusqlite::Error::QueryReturnedNoRows.into(),
+        node.activate_owned_continuous_packet(id, false, 100_000)
+            .err()
+            .unwrap(),
+    );
+    // The existing unchanged-active-tip exception precedes the required scope.
+    node.continuous_activation_gate(before.0).unwrap();
+    node.db
+        .execute(
+            "INSERT INTO blocks(id,parent,height,chainwork,packet,state_root) VALUES(?,?,1,?,?,?)",
+            params![
+                id.as_slice(),
+                before.0.as_slice(),
+                [0u8; 64].as_slice(),
+                &raw,
+                [0u8; 32].as_slice()
+            ],
+        )
+        .unwrap();
+    node.continuous_packet_gate(&packet).unwrap();
+    let domain = node.continuous_cpu_domain().unwrap();
+    let operation = domain.begin().unwrap();
+    assert!(node
+        .begin_continuous_public_scope(&packet, operation.checkpoint_handle())
+        .unwrap()
+        .is_none());
+    assert!(!operation.finish().accounting_unavailable);
+    for value in [
+        Value::Null,
+        Value::Integer(7),
+        Value::Real(7.5),
+        Value::Text("not a packet".into()),
+        Value::Blob(vec![]),
+        Value::Blob(vec![0x31; 1_048_576]),
+        Value::Blob(vec![0x31; 1_048_577]),
+        Value::Blob(vec![0x31; 4 * 1024 * 1024]),
+    ] {
+        node.db.execute_batch("SAVEPOINT owner_packet").unwrap();
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![value, id.as_slice()],
+            )
+            .unwrap();
+        let original: Result<()> = (|| {
+            let prior: Option<Vec<u8>> = node
+                .db
+                .query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |row| row.get(0),
+                )
+                .optional()?;
+            ensure(
+                prior.as_deref() == Some(raw.as_slice()),
+                "OWNER_CONTINUOUS_EXPLICIT_SCOPE_REQUIRED",
+            )
+        })();
+        same_packet_error(
+            original.unwrap_err(),
+            node.continuous_packet_gate(&packet).unwrap_err(),
+        );
+        let original: Result<Packet> = (|| {
+            let bytes: Vec<u8> = node.db.query_row(
+                "SELECT packet FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |row| row.get(0),
+            )?;
+            Packet::decode_for_settings(&bytes, &node.settings)
+        })();
+        same_packet_error(
+            original.unwrap_err(),
+            node.activate_owned_continuous_packet(id, false, 100_000)
+                .err()
+                .unwrap(),
+        );
+        let original: Result<()> = (|| {
+            let prior: Option<Vec<u8>> = node
+                .db
+                .query_row(
+                    "SELECT packet FROM blocks WHERE id=?",
+                    [id.as_slice()],
+                    |row| row.get(0),
+                )
+                .optional()?;
+            assert_ne!(prior.as_deref(), Some(raw.as_slice()));
+            node.continuous_owner
+                .as_ref()
+                .unwrap()
+                .view
+                .permission(
+                    "receiver-validation",
+                    &crate::operator_task_policy::digest_bytes(&raw),
+                )
+                .map_err(continuous_error)?;
+            Ok(())
+        })();
+        let operation = domain.begin().unwrap();
+        same_packet_error(
+            original.unwrap_err(),
+            node.begin_continuous_public_scope(&packet, operation.checkpoint_handle())
+                .err()
+                .unwrap(),
+        );
+        assert!(!operation.finish().accounting_unavailable);
+        assert_eq!(node.continuous_journal_head().unwrap(), journal);
+        assert_eq!(node.active().unwrap(), before);
+        node.db
+            .execute_batch("ROLLBACK TO owner_packet; RELEASE owner_packet")
+            .unwrap();
+        node.continuous_packet_gate(&packet).unwrap();
+    }
+}
 #[test]
 fn mode4_unknown_packet_is_rejected_before_missing_parent_state_or_work() {
     let (_root, _journal, mut node) = node();
