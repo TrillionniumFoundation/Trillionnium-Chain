@@ -1021,25 +1021,32 @@ pub(crate) fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
         {
             observation.rows += 1;
         }
-        let Some(owner) = key.strip_prefix("account:") else {
-            continue;
-        };
-        if owner.len() != 64
-            || !owner
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-        {
-            return Err(ArchiveError::InvalidState);
-        }
-        let mut address = [0; 32];
-        hex::decode_to_slice(owner, &mut address).map_err(|_| ArchiveError::InvalidState)?;
-        let account = Account::deserialize(value).map_err(|_| ArchiveError::InvalidState)?;
+        let (address, account) = account_row(key, value)?;
         if out.insert(address, account).is_some() {
             return Err(ArchiveError::InvalidState);
         }
     }
     Ok(out)
 }
+/// Decode one account row without constructing or scanning a temporary State.
+/// Both complete-State traversal and native delta decoding use this exact grammar.
+fn account_row(key: &str, value: &serde_json::Value) -> Result<(Hash, Account)> {
+    let owner = key
+        .strip_prefix("account:")
+        .ok_or(ArchiveError::InvalidState)?;
+    if owner.len() != 64
+        || !owner
+            .bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    {
+        return Err(ArchiveError::InvalidState);
+    }
+    let mut address = [0; 32];
+    hex::decode_to_slice(owner, &mut address).map_err(|_| ArchiveError::InvalidState)?;
+    let account = Account::deserialize(value).map_err(|_| ArchiveError::InvalidState)?;
+    Ok((address, account))
+}
+
 fn ordered_accounts(values: &BTreeMap<Hash, Account>) -> Result<Vec<(Hash, Hash, Account)>> {
     let mut ordered: Vec<_> = values
         .iter()

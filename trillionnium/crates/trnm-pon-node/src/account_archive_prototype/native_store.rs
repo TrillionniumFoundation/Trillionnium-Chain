@@ -254,12 +254,10 @@ fn lookup(
 fn account(key: &str, bytes: &[u8]) -> Result<(Hash, Account)> {
     let value =
         serde_json::from_slice(bytes).map_err(|error| Error::from(error).local_integrity())?;
-    let state = State::from([(key.to_owned(), value)]);
-    let mut values = super::accounts(&state).map_err(storage)?;
-    crate::ensure(values.len() == 1, "NATIVE_ACCOUNT_ROW").map_err(Error::local_integrity)?;
-    values
-        .pop_first()
-        .ok_or_else(|| Error::from("NATIVE_ACCOUNT_ROW").local_integrity())
+    // Preserve the old empty-prefix result for callers outside apply_bounded.
+    crate::ensure(key.starts_with("account:"), "NATIVE_ACCOUNT_ROW")
+        .map_err(Error::local_integrity)?;
+    super::account_row(key, &value).map_err(storage)
 }
 
 /// Merge sorted changed leaves into the compressed parent tree. Every persisted
@@ -729,6 +727,66 @@ mod tests {
     use super::*;
     use serde_json::json;
     use trnm_protocol::pon_wire::hash;
+
+    #[test]
+    fn native_delta_row_decode_matches_complete_parser_without_temporary_state() {
+        fn previous(key: &str, bytes: &[u8]) -> Result<(Hash, Account)> {
+            let value = serde_json::from_slice(bytes)
+                .map_err(|error| Error::from(error).local_integrity())?;
+            let state = State::from([(key.to_owned(), value)]);
+            let mut values = super::super::accounts(&state).map_err(storage)?;
+            crate::ensure(values.len() == 1, "NATIVE_ACCOUNT_ROW")
+                .map_err(Error::local_integrity)?;
+            values
+                .pop_first()
+                .ok_or_else(|| Error::from("NATIVE_ACCOUNT_ROW").local_integrity())
+        }
+        let mut keys = vec![
+            String::new(),
+            "account;".into(),
+            "account:".into(),
+            format!("account:{}", "0".repeat(63)),
+            format!("account:{}", "f".repeat(65)),
+            format!("account:{}", "A".repeat(64)),
+            format!("account:{}", "é".repeat(32)),
+            format!("account:{}", "0".repeat(64)),
+            format!("account:{}", "f".repeat(64)),
+        ];
+        for byte in 0u8..=127 {
+            keys.push(format!("account:{}{}", char::from(byte), "0".repeat(63)));
+        }
+        let mut values = vec![
+            b"{".to_vec(),
+            b"null".to_vec(),
+            b"[]".to_vec(),
+            b"{}".to_vec(),
+            br#"{"balance":0}"#.to_vec(),
+            br#"{"balance":0,"nonce":0,"extra":true}"#.to_vec(),
+            br#"{"balance":-1,"nonce":0}"#.to_vec(),
+            br#"{"balance":0.0,"nonce":0}"#.to_vec(),
+            br#"{"balance":0,"nonce":null}"#.to_vec(),
+            br#"{"balance":0,"nonce":18446744073709551616}"#.to_vec(),
+        ];
+        for balance in [0, 1, u64::MAX] {
+            for nonce in [0, 1, u64::MAX] {
+                values.push(
+                    serde_json::to_vec(&json!({"balance": balance, "nonce": nonce})).unwrap(),
+                );
+            }
+        }
+        for key in keys {
+            for bytes in &values {
+                let expected = previous(&key, bytes).map_err(|error| error.to_string());
+                super::super::take_account_parse_observation();
+                assert_eq!(
+                    account(&key, bytes).map_err(|error| error.to_string()),
+                    expected,
+                    "key={key:?}, bytes={bytes:?}"
+                );
+                assert_eq!(super::super::take_account_parse_observation(), (0, 0));
+            }
+        }
+    }
 
     #[test]
     fn native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity() {
