@@ -62,9 +62,12 @@ fn signed_release_binds_every_byte_without_chunk_signatures() {
     assert_eq!(raw.len(), 3509);
     let expected = expectation(&pin);
     let proof = auth.verify_at(&release, &expected).unwrap();
-    assert_eq!(proof.release_at(300).unwrap().id(), release.id());
-    assert!(proof.release_at(299).is_err());
-    assert!(proof.release_at(900).is_err());
+    assert_eq!(proof.release_at(&expected).unwrap().id(), release.id());
+    let mut current = expectation(&pin);
+    current.now = 299;
+    assert!(proof.release_at(&current).is_err());
+    current.now = 900;
+    assert!(proof.release_at(&current).is_err());
     for index in 0..200 {
         let mut forged = raw.clone();
         forged[index] ^= 1;
@@ -153,4 +156,58 @@ fn authority_roster_is_strict_bounded_and_commits_revocation() {
     let mut bad = pin;
     bad.spki[17] ^= 1;
     assert!(CellPqKeyPinsV2::new(vec![bad]).is_err());
+}
+
+#[test]
+fn cached_release_rechecks_current_retirement_rotation_scope_and_sequence() {
+    let (_, pin, release, auth) = fixture();
+    let checked = auth.verify_at(&release, &expectation(&pin)).unwrap();
+    let mut changed = pin.clone();
+    changed.revoked_at = Some(301);
+    let mut current = expectation(&changed);
+    current.now = 301;
+    assert!(checked.release_at(&current).is_err());
+    changed = pin.clone();
+    changed.generation += 1;
+    assert!(checked.release_at(&expectation(&changed)).is_err());
+    changed = pin.clone();
+    changed.not_before = 301;
+    assert!(checked.release_at(&expectation(&changed)).is_err());
+    changed = pin.clone();
+    changed.expires_at = 300;
+    assert!(checked.release_at(&expectation(&changed)).is_err());
+    changed = pin.clone();
+    changed.spki[17] ^= 1;
+    assert!(checked.release_at(&expectation(&changed)).is_err());
+    let mut current = expectation(&pin);
+    current.sequence += 1;
+    assert!(checked.release_at(&current).is_err());
+    current = expectation(&pin);
+    current.network[0] ^= 1;
+    assert!(checked.release_at(&current).is_err());
+    current = expectation(&pin);
+    current.parameters[0] ^= 1;
+    assert!(checked.release_at(&current).is_err());
+    assert_eq!(
+        checked.release_at(&expectation(&pin)).unwrap().id(),
+        release.id()
+    );
+}
+
+#[test]
+fn selecting_old_content_requires_a_new_owner_approved_sequence() {
+    let (key, pin, release, auth) = fixture();
+    let old = auth.verify_at(&release, &expectation(&pin)).unwrap();
+    let mut current = expectation(&pin);
+    current.sequence = 5;
+    assert!(old.release_at(&current).is_err());
+    assert!(auth.verify_at(&release, &current).is_err());
+    // Re-selecting identical content is allowed only with a fresh signed
+    // sequence supplied by the external owner, never by lowering its floor.
+    let mut selected = auth.statement().clone();
+    selected.sequence = 5;
+    let renewed = CellPqReleaseAuthorizationV2::sign(selected, &key).unwrap();
+    let checked = renewed.verify_at(&release, &current).unwrap();
+    assert_eq!(checked.release_at(&current).unwrap().id(), release.id());
+    assert!(checked.release_at(&expectation(&pin)).is_err());
 }

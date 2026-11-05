@@ -10,6 +10,7 @@ import hashlib
 import json
 import platform
 from pathlib import Path
+import re
 import resource
 import subprocess
 import sys
@@ -59,14 +60,16 @@ def load_json(path: Path) -> object:
 
 
 def source_record() -> dict:
-    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    head = subprocess.check_output(
+        ["git", "--no-replace-objects", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     changed = subprocess.check_output(
-        ["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT, text=True
+        ["git", "--no-replace-objects", "status", "--porcelain", "--untracked-files=no"],
+        cwd=ROOT, text=True
     ).splitlines()
     files = {name: digest(ROOT / name) for name in SOURCE_FILES}
     uncommitted = []
     for name in SOURCE_FILES:
-        old = subprocess.run(["git", "show", head + ":" + name], cwd=ROOT,
+        old = subprocess.run(["git", "--no-replace-objects", "show", head + ":" + name], cwd=ROOT,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
         if old.returncode or hashlib.sha256(old.stdout).hexdigest() != files[name]:
             uncommitted.append(name)
@@ -78,6 +81,36 @@ def source_record() -> dict:
         "source_sha256": files,
         "untracked_non_source_files": "excluded; neither inputs nor attested by this receipt",
     }
+
+
+def validate_source_record(record: object) -> None:
+    """Bind the enumerated model bytes and commitment claims to a real commit.
+
+    A report digest only binds bytes to other caller-supplied bytes. Resolve the
+    claimed immutable commit and independently derive which model files differ.
+    Read original objects even when local replacement refs are installed.
+    This still does not attest historical execution or unrelated tree dirtiness.
+    """
+    if not isinstance(record, dict) or not isinstance(record.get("git_head"), str) or not re.fullmatch(
+            r"[0-9a-f]{40}", record["git_head"]):
+        raise ValueError("SOURCE_HEAD")
+    head = record["git_head"]
+    resolved = subprocess.run(["git", "--no-replace-objects", "cat-file", "-t", head], cwd=ROOT,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
+    if resolved.returncode or resolved.stdout.strip() != "commit":
+        raise ValueError("SOURCE_HEAD")
+    files = {name: digest(ROOT / name) for name in SOURCE_FILES}
+    if record.get("source_sha256") != files:
+        raise ValueError("SOURCE_DIGEST")
+    uncommitted = []
+    for name in SOURCE_FILES:
+        old = subprocess.run(["git", "--no-replace-objects", "show", head + ":" + name], cwd=ROOT,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+        if old.returncode or hashlib.sha256(old.stdout).hexdigest() != files[name]:
+            uncommitted.append(name)
+    if (record.get("uncommitted_model_source_files") != uncommitted
+            or record.get("all_model_source_files_committed_at_head") is not (not uncommitted)):
+        raise ValueError("SOURCE_COMMITMENT_CLAIM")
 
 
 def write_rows(path: Path, rows: list[dict]) -> None:
@@ -217,9 +250,8 @@ def verify_campaign(out: Path) -> dict:
         raise ValueError("REPORT_SCHEMA")
     if report.get("assumptions") != ASSUMPTIONS:
         raise ValueError("ASSUMPTION_SUBSTITUTION")
-    source = report.get("source", {})
-    if source.get("source_sha256") != {name: digest(ROOT / name) for name in SOURCE_FILES}:
-        raise ValueError("SOURCE_DIGEST")
+    source = report.get("source")
+    validate_source_record(source)
     observations = report.get("observations")
     if not isinstance(observations, list) or len(observations) != len(cases):
         raise ValueError("OBSERVATION_INVENTORY")
