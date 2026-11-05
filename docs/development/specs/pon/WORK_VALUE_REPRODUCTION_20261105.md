@@ -7,14 +7,20 @@ No deployment, real payment, model-efficacy or consensus-security acceptance.
 
 The first inspected integration source was PR #688 at
 `dda4cc47362065819e9591f11f713933e7a853bf`, tree
-`95fc95096e795e8f7a63d5d8a31e77b43af2e399`. The final candidate is stacked on
+`95fc95096e795e8f7a63d5d8a31e77b43af2e399`. The initial verified candidate is stacked on
 the subsequent six commits through
 `2a8fee974b41fab6e2c4e662dcce1807fcd19bdd`, tree
 `b9627a51026e8d16a206b3952c3cda1d058d40ec`.
 The latter's Growth payment epoch, timestamp, preparation, public-cost and
-runtime-release changes are retained. Plan text was combined; the latest
+runtime-release changes are retained. Plan text was combined; the then-current
 492-entry PQ source manifest was preserved with only the three changed Rust
 file hashes refreshed. No lockfile or consensus profile changed.
+
+That initial validation applies to tree
+`efffe58265aaf46269c46426c89f03ae8e5f6244`, committed locally as
+`2075893eadb11a819fad615d88dfbd2ec9e9040c` and published without content changes
+as `5ce402bfca2a7c35a16a13a53bd7dab58c96d6d1`. The fixed-base merge validation
+below retains this earlier receipt rather than attributing it to later sources.
 
 The original negative control, with the new M12 regression and old production
 source, ran one test and failed with `BUDGET_NATIVE_SOURCE_LANE`. The old
@@ -71,19 +77,19 @@ The graph contains 26 workspace members and 175 resolved packages. The unchanged
 `trillionnium/Cargo.lock` SHA-256 is
 `39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be`.
 
-## Observations
+## Initial observations
 
 | Check | Observed result |
 | --- | --- |
 | Initial native funding-source regression | FAIL, one test; retained above |
-| M12 full crate, all targets/features, final composition | PASS, 48 tests |
-| Native funding/payment bridge, final composition | PASS, 6 tests |
+| M12 full crate, all targets/features, initial composition | PASS, 48 tests |
+| Native funding/payment bridge, initial composition | PASS, 6 tests |
 | Whole-workspace formatting | PASS |
 | M12/Node strict Clippy, all targets/features | PASS with `-D warnings` |
 | Utility V2, including retained V1 behavior | PASS, 19 tests |
 | Raw-source integrity negative controls | PASS, 43 tests |
 | PQ source-integrity negative controls | PASS, 35 tests |
-| Latest source-pin contract | PASS, 492 pins; status remains `HOLD_NO_GO` |
+| Initial source-pin contract | PASS, 492 pins; status remains `HOLD_NO_GO` |
 | Changed Markdown references | 271 local references resolve in the exact base tree or candidate files |
 
 The first all-feature Clippy attempt stopped because the offline cache lacked
@@ -108,6 +114,76 @@ does not materialize all historical binary evidence linked from unchanged
 Markdown files. Changed links were checked against the exact Git tree instead;
 no placeholder evidence was created. Native component tests do not upgrade the
 separate SQLite I/O-boundary qualification or full release/host acceptance.
+
+## Fixed-base merge continuation
+
+The published candidate was then merged normally with the fixed concurrent
+PR #688 source `1d6a9f9b5e8abd9e86457f45199a4922f9376360`, tree
+`4a0314e72ebc45659986d03e7ca2f96cab9399ea`. The merge's ordered parents are
+`5ce402bfca2a7c35a16a13a53bd7dab58c96d6d1` and
+`1d6a9f9b5e8abd9e86457f45199a4922f9376360`; their common ancestor is the
+initial `2a8fee974b41fab6e2c4e662dcce1807fcd19bdd` source. No rebase, force
+update, boundary change or later upstream snapshot is part of this composition.
+
+Only adjacent entries in the source manifest conflicted. Its resolved bytes
+are exactly the fixed upstream manifest with this candidate's three Rust pins
+substituted: funding tests, M12 native budget and M12 native budget tests. All
+502 source pins and the upstream 420 required paths are retained. The plan's
+independent 14-line work-value and 17-line architecture additions both survive.
+The eight other candidate files and 35 other upstream files were independently
+checked against their respective parent blobs before this note was extended.
+Historical binary evidence uses its existing upstream blobs without modification.
+
+The upstream Growth materialization progress checks are on the native funding
+test's Growth backend path. Its mining change uses the actual wall clock with
+the native MTP11 window. In addition to the commands above, the following seven
+tests directly cover those merged changes:
+
+```bash
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --lib native_growth_v2_materialization_controls_preserve_state_and_original_errors \
+  -- --test-threads=1
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --lib ordered_growth_difference_control_checks_unchanged_keys_and_final_boundary \
+  -- --test-threads=1
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --lib store::error_boundary_tests::mining_wall_time \
+  -- --test-threads=1
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-pon-node --test pool_mining wall_clock_miner_ -- --test-threads=1
+```
+
+The merged executable source, configuration and tests remain byte-identical
+through finalization; only this reproduction note was extended after testing.
+
+| Fixed-merge check | Observed result |
+| --- | --- |
+| Original development preflight | PASS, 26 packages; no remote-policy mutation |
+| Cargo graph and original lockfile | PASS, 26 members / 175 packages; same lock SHA-256 |
+| Whole-workspace formatting | PASS |
+| M12 full crate, all targets/features | PASS, 48 tests |
+| Native funding/payment bridge | PASS, 6 tests |
+| Growth materialization and delta-comparison controls | PASS, 1 + 1 tests |
+| Native MTP11 and pool wall-clock regressions | PASS, 3 + 2 tests |
+| M12/Node strict Clippy, all targets/features | PASS with `-D warnings` |
+| Utility V2 and retained behavior | PASS, 19 tests |
+| Raw-source integrity negative controls | PASS, 43 tests |
+| PQ source-integrity negative controls | PASS, 35 tests |
+| Merged source-pin contract | PASS, 502 pins; status remains `HOLD_NO_GO` |
+| Changed Markdown references | PASS, 298 local references in 8 changed files resolve in the merged Git tree |
+
+The Node test build retained its separate warning, `trnm SQLite I/O boundary
+UNQUALIFIED: normal Cargo loader directory set incomplete`. Passing the component
+tests and strict Clippy does not convert that observation into an I/O-boundary
+qualification. The whole repository checker remains outside the claimed passes
+for the historical sparse-evidence reason recorded above.
+
+These scoped regressions do not rerun the upstream architecture/GHOSTDAG/OHIE
+campaigns or the whole workspace test suite. Their retained historical receipts
+are not reclassified as measurements of this merge. Growth callbacks do not
+claim interruption inside bulk map construction, serde or hashing; no public
+CPU/SLO, SQLite I/O qualification, model efficacy or release gate is promoted.
+Any subsequent movement of the PR base is outside this fixed validation scope.
 
 ## Remaining acceptance requirements
 

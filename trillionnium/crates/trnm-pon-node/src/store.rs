@@ -3369,6 +3369,40 @@ impl Node {
         }
         Ok(out)
     }
+    /// The pool miner uses actual wall time, but admissibility is the native
+    /// parent-first median rule. One legal future-dated tip must not stall a
+    /// child whose current wall time is already above that branch's median.
+    pub(crate) fn mining_wall_time_ready(&self, parent: Hash, now: u64) -> Result<bool> {
+        // Preserve the original immediate-parent record and full packet checks.
+        // A header projection alone cannot validate the retained packet body,
+        // and stopping at genesis must not skip its record's shape checks.
+        if self.parent_height(parent)? != 0 {
+            self.packet(parent)?;
+        }
+        // This check also runs while waiting for the clock. Read only its MTP11
+        // window, retaining the native per-link and final-parent record checks.
+        let mut times = [0; 11];
+        let mut count = 0;
+        let (next, _) = self.visit_header_batch_limited(parent, 11, &mut |_, link| {
+            times[count] = link.header.timestamp;
+            count += 1;
+            Ok(())
+        })?;
+        if next == self.settings.genesis() && count < times.len() {
+            times[count] = self.settings.genesis_time();
+            count += 1;
+        }
+        match consensus::check_time(
+            now,
+            &times[..count],
+            now,
+            self.settings.limit("future_skew_seconds")?,
+        ) {
+            Ok(()) => Ok(true),
+            Err(error) if error.to_string() == "TIME" => Ok(false),
+            Err(error) => Err(error),
+        }
+    }
     pub fn expected_target(&self, parent: Hash) -> Result<Hash> {
         if self.state_backend == StateBackend::PermanentAccountGrowthV2 {
             return self.growth_expected_target(parent);
@@ -6791,6 +6825,135 @@ mod error_boundary_tests {
         assert_eq!(actual.to_string(), expected.to_string());
         assert_eq!(actual.kind(), expected.kind());
         assert_eq!(actual.requires_owner_stop(), expected.requires_owner_stop());
+    }
+
+    #[test]
+    fn mining_wall_time_retains_current_parent_full_packet_validation() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let block = packet(&node, settings.genesis(), 11, 0);
+        let parent = node.admit(&block, 100_000).unwrap();
+        node.activate_observed(parent, 100_000).unwrap();
+        let active = node.active().unwrap();
+        let raw = block.encode().unwrap();
+        let mut corrupt = raw.clone();
+        let header_bytes = node.settings.packet_header_length();
+        corrupt[header_bytes..header_bytes + 2].copy_from_slice(&257_u16.to_le_bytes());
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![corrupt, parent.as_slice()],
+            )
+            .unwrap();
+        // Prefix, final trace, length and row bindings are intact. The original
+        // full packet parser still rejects this malformed retained body.
+        node.stored_header(parent).unwrap();
+        local(node.packet(parent).unwrap_err(), "TRANSACTION_LIMIT");
+        local(
+            node.mining_wall_time_ready(parent, 100_000).unwrap_err(),
+            "TRANSACTION_LIMIT",
+        );
+        assert_eq!(node.active().unwrap(), active);
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![raw, parent.as_slice()],
+            )
+            .unwrap();
+        assert!(node.mining_wall_time_ready(parent, 100_000).unwrap());
+    }
+
+    #[test]
+    fn mining_wall_time_retains_genesis_record_and_original_error_checks() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+        let genesis = settings.genesis();
+        let record = node.record(genesis).unwrap();
+        assert!(node.mining_wall_time_ready(genesis, 100_000).unwrap());
+        node.db
+            .execute(
+                "UPDATE blocks SET height=1 WHERE id=?",
+                [genesis.as_slice()],
+            )
+            .unwrap();
+        let expected = node.packet(genesis).unwrap_err();
+        let error = node.mining_wall_time_ready(genesis, 100_000).unwrap_err();
+        assert_eq!(error.to_string(), "GENESIS_HAS_NO_PACKET");
+        assert_eq!(error.to_string(), expected.to_string());
+        assert_eq!(error.kind(), expected.kind());
+        assert_eq!(error.requires_owner_stop(), expected.requires_owner_stop());
+        node.db
+            .execute(
+                "UPDATE blocks SET height=0,state_root=? WHERE id=?",
+                params![vec![0_u8; 3], genesis.as_slice()],
+            )
+            .unwrap();
+        local(node.parent_height(genesis).unwrap_err(), "STORAGE_HASH");
+        local(
+            node.mining_wall_time_ready(genesis, 100_000).unwrap_err(),
+            "STORAGE_HASH",
+        );
+        node.db
+            .execute(
+                "UPDATE blocks SET state_root=? WHERE id=?",
+                params![record.root.as_slice(), genesis.as_slice()],
+            )
+            .unwrap();
+        assert!(node.mining_wall_time_ready(genesis, 100_000).unwrap());
+    }
+
+    #[test]
+    fn mining_wall_time_reads_eleven_headers_and_checks_the_boundary_parent() {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings, 1).unwrap();
+        let ids = recent_chain(&mut node, 12);
+        let counters0 = node.history_read_counters();
+        assert!(node.mining_wall_time_ready(ids[12], 100_000).unwrap());
+        let counters1 = node.history_read_counters();
+        assert_eq!(
+            counters1.header_link_queries - counters0.header_link_queries,
+            1
+        );
+        assert_eq!(
+            counters1.header_trace_bytes - counters0.header_trace_bytes,
+            11 * (node.settings.packet_header_length() as u64 + 32)
+        );
+        // The twelfth header is outside the clock window. Its record still
+        // bounds the final visited link; full-history validation reads its header.
+        let raw: Vec<u8> = node
+            .db
+            .query_row(
+                "SELECT packet FROM blocks WHERE id=?",
+                [ids[1].as_slice()],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let mut corrupt = raw.clone();
+        corrupt[0] ^= 0xff;
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![corrupt, ids[1].as_slice()],
+            )
+            .unwrap();
+        assert!(node.mining_wall_time_ready(ids[12], 100_000).unwrap());
+        local(
+            node.check_observed_history(ids[12], 100_000).unwrap_err(),
+            "HEADER_CODEC",
+        );
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=?,height=999 WHERE id=?",
+                params![raw, ids[1].as_slice()],
+            )
+            .unwrap();
+        local(
+            node.mining_wall_time_ready(ids[12], 100_000).unwrap_err(),
+            "ANCESTRY_HEIGHT",
+        );
     }
 
     #[test]

@@ -71,6 +71,23 @@ This reduces one local preparation cost; original fixed-Host four-second/16-work
 confirmation, PQ, whole-workspace and independent acceptance remain separate.
 No deadline, safety check or qualification flag is relaxed.
 
+**Permissionless architecture continuation, 2026-11-05 America/New_York:**
+Continue the existing #688 candidate from
+`6ee529046d295e3175f09112492abee373f1f54c`. The
+[existing comparison contract](../protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md)
+now covers Bitcoin-NG, Prism, OHIE and GHOSTDAG explicitly. Repair the bounded
+OHIE model's invalid-prefix proposal starvation while preserving reorganization
+eligibility. Reject contradictory whole-business timing, frame-byte and signed
+payload observations. Preserve original TCP/frame/campaign budgets with absolute
+deadline checks and cooperative cancellation. Add a separately named uniform-work
+GHOSTDAG ordering reference with independent finite differential controls.
+[Exact reproduction and failures](../../evidence/pon-architecture-continuation-20261105/README.md)
+retain each source scope. Three delivery arms remain the same native PoN;
+the new ordering kernel and OHIE synthetic ledger are not complete successor
+backends. Full PQ/W1/state execution, congested WAN/late predecessors, native
+recovery and original four-second/16-worker and 4,105-block acceptance remain
+open. No consensus choice, protected main or activation flag is changed.
+
 **PQ owner-boundary continuation, 2026-11-04 America/New_York:** Continue the
 existing #688/#4812 candidates from Chain `ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155`
 and hepta-private-ci runtime `3558ced0fd983603a3082a42359e8da63dfc8418`.
