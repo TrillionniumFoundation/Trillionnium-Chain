@@ -6781,3 +6781,30 @@ the frozen `b5bb` results to that different tree. Current combined-head validati
 remains open. One finite scheduling wait subsequently observed a new shared OOM,
 ended after 160.165350 seconds and started no native process; it does not add a
 test result or alter the prior attempt receipts.
+
+### 2026-11-05 bounded reverse ancestry spool continuation
+
+Inactive-State reconstruction now buffers up to 128 ancestry locators (4096
+bytes) in an operation-local reverse spool. Older locators spill to the same
+private temporary file in complete batches. No State, root, signature or validity
+verdict survives an operation. The caller retains every original ancestor,
+delta, commitment, continuity, authenticated graph and cancellation check in the
+same order. Snapshot cadence, retention, fixed Host limits and public budgets do
+not change. The extra bounded buffer is ordinary measured process memory, not an
+exemption from resource accounting.
+
+Four same-source standard-library unit controls pass at the original 4105
+locator scale and around every 128-locator boundary. They check exact reverse
+identity, truncated spill refusal, failed-write propagation and batch IO counts:
+4105 locators use 32 complete writes, 32 seeks and 32 reads instead of per-locator
+file calls. This is an IO operation count, not a native end-to-end speedup claim.
+The first original-profile Cargo build was deliberately interrupted before Node
+compilation to avoid concurrent worker memory exhaustion; it is not a pass.
+Full-workspace/all-target/all-feature strict Clippy, formatting, both locked
+Linux architecture graphs, 43 source-integrity controls and 38 evidence-source
+controls pass. The first Clippy attempt caught two now-unused imports; removing
+only those imports and refreshing their exact source pins fixed the failure.
+Full native State replay and the original 4105-block 1800-second public service
+campaign still require separate exact-source observations.
+The historical 2345-returned-import/connection-refused failure remains intact.
+All six P0 domains, independent acceptance, release and activation remain HOLD.
