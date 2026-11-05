@@ -12,6 +12,7 @@ use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, Unverifie
 
 pub mod application_v6;
 pub mod migration;
+pub mod migration_inventory_v1;
 pub mod task_migration_v1;
 pub mod tasks_v4;
 pub mod tasks_v5;
@@ -37,6 +38,9 @@ pub(crate) struct Profile {
     wire_profile: wire::AccountProfile,
     context: ChainContext,
     config_digest: Hash,
+    // The descriptor already commits these identities. Only they received
+    // authority without consuming a REGISTER nonce in the native transition.
+    initial_accounts: BTreeSet<Hash>,
     anchor: Option<Arc<TrustedMigrationAnchor>>,
 }
 
@@ -353,6 +357,7 @@ fn build_genesis_profile(
             genesis: [0; 32],
         },
         config_digest: config_digest(&cfg)?,
+        initial_accounts: sorted.keys().copied().collect(),
         anchor: anchor.clone(),
     }));
     let mut state = State::from([
@@ -475,6 +480,12 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
                 state.contains_key(&auth_key(name)),
                 "PQ2_IMPORT_CLAIM_AUTHORITY",
             )?;
+            // CLAIM atomically installs authority and consumes the next source
+            // nonce. Retained authority cannot coexist with a pre-CLAIM nonce.
+            require(
+                field(account, "nonce")? > imported.original_nonce,
+                "PQ2_IMPORT_CLAIM_NONCE",
+            )?;
         }
         let Some(auth) = state.get(&auth_key(name)) else {
             require(
@@ -487,6 +498,21 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
         require(
             (1..=MAX_GENERATIONS).contains(&generation),
             "PQ2_GENERATION",
+        )?;
+        // Each retained rotation consumed one nonce. Imported generation one
+        // consumed CLAIM above the source checkpoint; a permissionless account
+        // consumed REGISTER. Only descriptor-bound initial authority was free.
+        let minimum_nonce = match imported {
+            Some(imported) => imported
+                .original_nonce
+                .checked_add(generation)
+                .ok_or("PQ2_AUTHORITY_NONCE")?,
+            None if profile.initial_accounts.contains(&id) => generation - 1,
+            None => generation,
+        };
+        require(
+            field(account, "nonce")? >= minimum_nonce,
+            "PQ2_AUTHORITY_NONCE",
         )?;
         expected.insert(auth_key(name));
         let mut used = BTreeSet::new();

@@ -1,0 +1,46 @@
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs
+@@ -41,3 +40,0 @@
+-    // The descriptor already commits these identities. Only they received
+-    // authority without consuming a REGISTER nonce in the native transition.
+-    initial_accounts: BTreeSet<Hash>,
+@@ -360 +356,0 @@
+-        initial_accounts: sorted.keys().copied().collect(),
+@@ -503,2 +499 @@
+-        // consumed CLAIM above the source checkpoint; a permissionless account
+-        // consumed REGISTER. Only descriptor-bound initial authority was free.
++        // additionally consumed the CLAIM nonce above the source checkpoint.
+@@ -510,2 +505 @@
+-            None if profile.initial_accounts.contains(&id) => generation - 1,
+-            None => generation,
++            None => generation - 1,
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
+@@ -162,27 +161,0 @@
+-        ),
+-        (Err("PQ2_AUTHORITY_NONCE"), true)
+-    );
+-    let next = Key::public_test_seed(105);
+-    let rotate = rotation(&cfg, &active.state, new.id, 2, 1, &new, &next);
+-    let rotated = execute(&active.state, &cfg, 3, new.id, &[rotate], Some(1003)).unwrap();
+-    assert_eq!(
+-        rotated.state[&auth_key(&name)],
+-        authority(2, next.id, false)
+-    );
+-    assert_eq!(rotated.state[&format!("account:{name}")]["nonce"], 2);
+-    let mut restored_registration_nonce = rotated.state.clone();
+-    restored_registration_nonce
+-        .get_mut(&format!("account:{name}"))
+-        .unwrap()["nonce"] = json!(1);
+-    assert_eq!(
+-        (
+-            validate_state(&restored_registration_nonce, &cfg),
+-            execute(
+-                &restored_registration_nonce,
+-                &cfg,
+-                4,
+-                new.id,
+-                &[],
+-                Some(1004)
+-            )
+-            .is_err()

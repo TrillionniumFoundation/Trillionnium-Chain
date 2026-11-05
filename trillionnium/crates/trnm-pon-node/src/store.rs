@@ -23,6 +23,7 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+mod pq_migration_inventory;
 pub(crate) mod pq_network;
 pub(crate) mod pq_rollback_witness;
 #[cfg(test)]
