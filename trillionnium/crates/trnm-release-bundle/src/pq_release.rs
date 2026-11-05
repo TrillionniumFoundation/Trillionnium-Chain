@@ -345,8 +345,65 @@ impl PqReleaseAuthorityV1 {
     pub fn role_version(&self, role: PqReleaseRoleV1) -> u64 {
         self.versions.get(&role).copied().unwrap_or(0)
     }
+    /// Historical state observation. This does not check publication lifetime,
+    /// the current root generation, or an independent recovery frontier.
     pub fn current_content(&self, role: PqReleaseRoleV1) -> Option<ReleaseDigestV1> {
         self.current.get(&role).map(|release| release.content)
+    }
+
+    /// Recheck one publication against the owner's current authorization state.
+    ///
+    /// `expected_checkpoint` must come from the independently fresh owner channel,
+    /// not this journal, a cached observation, or the release being checked. `now`
+    /// must come from the owner's trusted clock. Reads do not advance or persist
+    /// the clock floor; a later clock rollback is the clock owner's responsibility.
+    ///
+    /// Success is only a current check at this call. It neither verifies installed
+    /// artifact bytes nor proves that owner state was durably committed, and it
+    /// does not return an execution capability. The installer must retain those
+    /// boundaries and repeat this check at the actual use boundary.
+    pub fn check_current(
+        &self,
+        role: PqReleaseRoleV1,
+        content: ReleaseDigestV1,
+        expected_checkpoint: ReleaseDigestV1,
+        now: u64,
+    ) -> Result<(), PqReleaseErrorV1> {
+        if self.checkpoint != expected_checkpoint {
+            return Err(PqReleaseErrorV1::CheckpointConflict);
+        }
+        if now < self.time_floor {
+            return Err(PqReleaseErrorV1::ClockRollback);
+        }
+        if self.root.expires_at <= now {
+            return Err(PqReleaseErrorV1::Expired);
+        }
+        let current = self
+            .current
+            .get(&role)
+            .ok_or(PqReleaseErrorV1::NotCurrent)?;
+        if current.content != content {
+            return Err(PqReleaseErrorV1::NotCurrent);
+        }
+        if current.root_generation != self.root.generation {
+            return Err(PqReleaseErrorV1::WrongAuthority);
+        }
+        if current.expires_at <= now {
+            return Err(PqReleaseErrorV1::Expired);
+        }
+        if role == PqReleaseRoleV1::CellActivation {
+            let manifest = self
+                .current
+                .get(&PqReleaseRoleV1::CellManifest)
+                .ok_or(PqReleaseErrorV1::UnpublishedActivation)?;
+            if manifest.content != content
+                || manifest.root_generation != self.root.generation
+                || manifest.expires_at <= now
+            {
+                return Err(PqReleaseErrorV1::UnpublishedActivation);
+            }
+        }
+        Ok(())
     }
 
     /// Both the previously trusted root quorum and the proposed root quorum sign
@@ -628,6 +685,7 @@ pub enum PqReleaseErrorV1 {
     Expired,
     WrongAuthority,
     CheckpointConflict,
+    NotCurrent,
     VersionRollback,
     InvalidContent,
     RollbackApproval,

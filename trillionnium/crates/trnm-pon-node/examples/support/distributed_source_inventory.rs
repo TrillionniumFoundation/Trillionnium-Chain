@@ -6217,6 +6217,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
