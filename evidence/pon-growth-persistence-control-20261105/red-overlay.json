@@ -1,0 +1,18 @@
+{
+  "phase": "red",
+  "head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+  "status": "M trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs\n?? trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+  "diff_check_exit_code": 0,
+  "diff_check_output": "",
+  "files": {
+    "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs": {
+      "bytes": 30901,
+      "sha256": "c4f6c1840b6439519b2298da7071fa336ae27bcaf92400460d423ead236535d0"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs": {
+      "bytes": 9286,
+      "sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+    Finished `test` profile [unoptimized] target(s) in 0.08s
+     Running tests/growth_persistence_cancellation.rs (/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target/debug/deps/growth_persistence_cancellation-024c97be0142f6a9)
+
+running 2 tests
+test growth_admission_delta_readback_control_rolls_back_and_retries_after_cold_open ... 
+thread 'growth_admission_delta_readback_control_rolls_back_and_retries_after_cold_open' (59) panicked at crates/trnm-pon-node/tests/growth_persistence_cancellation.rs:162:14:
+the original caller control must abort admission before commit: [36, 248, 5, 156, 229, 119, 167, 59, 151, 42, 58, 238, 222, 84, 72, 111, 141, 197, 33, 239, 251, 194, 229, 62, 149, 82, 210, 203, 180, 135, 33, 39]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test growth_admission_delta_write_control_rolls_back_and_retries_after_cold_open ... 
+thread 'growth_admission_delta_write_control_rolls_back_and_retries_after_cold_open' (60) panicked at crates/trnm-pon-node/tests/growth_persistence_cancellation.rs:162:14:
+the original caller control must abort admission before commit: [36, 248, 5, 156, 229, 119, 167, 59, 151, 42, 58, 238, 222, 84, 72, 111, 141, 197, 33, 239, 251, 194, 229, 62, 149, 82, 210, 203, 180, 135, 33, 39]
+FAILED
+
+failures:
+
+failures:
+    growth_admission_delta_readback_control_rolls_back_and_retries_after_cold_open
+    growth_admission_delta_write_control_rolls_back_and_retries_after_cold_open
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+error: test failed, to rerun pass `-p trnm-pon-node --test growth_persistence_cancellation`

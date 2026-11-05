@@ -1652,6 +1652,81 @@ class ReceiveClockObservationTests(unittest.TestCase):
                 self.summarize(edit)
 
 
+class ConfirmedObservationBindingTests(unittest.TestCase):
+    """Reject contradictory positive claims without requiring the other phase."""
+
+    summarize = CompleteConfirmationObservationTests.summarize
+
+    def test_wrong_required_transaction_context_or_reorg_cannot_supply_positive_metrics(self):
+        for field, value in (
+                ('reorged', True), ('reorged', None), ('transaction', '00'*32),
+                ('network', '00'*32), ('parameters', '00'*32), ('genesis', '00'*32),
+                ('included_block', '00'*32), ('observed_tip', '00'*32),
+                ('included_height', 2), ('observed_height', 8),
+                ('work_delta', '00'*64), ('required_work_delta', '00'*64)):
+            def edit(doc):
+                phase = ReceiveClockObservationTests.receive_clock(doc)
+                phase['independent_client_confirmation'][field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                self.summarize(edit)
+
+    def test_binding_is_required_even_without_optional_receive_clock(self):
+        for field, value in (('reorged', True), ('transaction', '00'*32), ('network', '00'*32)):
+            def edit(doc):
+                doc['phases'][0]['independent_client_confirmation'][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.summarize(edit)
+        with self.assertRaises(ValueError):
+            self.summarize(lambda doc: doc['phases'][0]['independent_final_confirmation_stage'].update(
+                observation_returned=False))
+
+    def test_unreturned_missing_or_contradictory_final_stage_cannot_supply_confirmation(self):
+        mutations = (
+            lambda phase: phase['independent_final_confirmation_stage'].update(observation_returned=False),
+            lambda phase: phase.update(independent_final_confirmation_stage=None),
+            lambda phase: phase['independent_final_confirmation_stage'].update(confirmation_started_ns=1001),
+            lambda phase: phase['independent_final_confirmation_stage'].update(confirmation_started_ns=100,
+                confirmation_wall_ns=68),
+            lambda phase: phase['independent_final_confirmation_stage'].update(confirmation_ended_ns=1001,
+                confirmation_wall_ns=834),
+            lambda phase: phase['independent_final_confirmation_stage'].update(confirmation_wall_ns=2),
+            lambda phase: phase['independent_final_confirmation_stage'].update(clock_scope='remote-clock'),
+        )
+        for mutation in mutations:
+            def edit(doc):
+                mutation(ReceiveClockObservationTests.receive_clock(doc))
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.summarize(edit)
+
+    def test_passing_baseline_keeps_confirmed_rate_when_original_pressure_phase_fails(self):
+        def edit(doc):
+            ReceiveClockObservationTests.receive_clock(doc)
+            ConfirmationObservationTests.fail_pressure(doc)
+        result = self.summarize(edit)
+        self.assertFalse(result['original_gate_validated'])
+        baseline, pressure = result['phases']
+        self.assertEqual(baseline['request_clock']['receiver_to_independent_confirmation_ns'], 900)
+        self.assertEqual(baseline['product_metrics']['confirmation']['finite_offer_transactions_per_second'], .25)
+        self.assertEqual(pressure['product_metrics']['confirmation']['finite_offer_transactions_per_second'], 0)
+
+    def test_positive_binding_does_not_rewrite_explicit_v1_failed_readback(self):
+        for mutation in (
+            lambda phase: phase['independent_client_confirmation'].update(reorged=True),
+            lambda phase: phase['independent_client_confirmation'].update(transaction='00'*32),
+            lambda phase: phase['independent_client_confirmation'].update(network='00'*32),
+            lambda phase: phase['independent_final_confirmation_stage'].update(observation_returned=False),
+        ):
+            def edit(doc):
+                mutation(ReceiveClockObservationTests.receive_clock(doc))
+            with self.subTest(mutation=mutation):
+                legacy = self.summarize(edit, observation_version=1)
+                self.assertEqual(legacy['schema'], 'trnm-original-confirmation-observation-v1')
+                self.assertFalse(legacy['original_gate_validated'])
+                self.assertNotIn('product_metrics', legacy['phases'][0])
+                self.assertEqual(legacy['phases'][0]['business'][
+                    'independent_confirmed_transactions_per_window_second'], .25)
+
+
 class ConfirmationReportTests(unittest.TestCase):
     def validate(self, edit=lambda doc: None):
         document = simulated_confirmation_report()

@@ -575,11 +575,22 @@ impl PublicRequestObserver {
                 let (phases, phase_failures) = cell.phases.snapshot();
                 value.submit_phases = phases;
                 value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
-                value.task_created = cell.task_created.load(Ordering::Acquire);
                 value.task_closed = cell.task_closed.load(Ordering::Acquire);
-                value.lifecycle.connection_closed_ns =
-                    cell.connection_closed_ns.get().copied().flatten();
-                value.lifecycle.task_closed_ns = cell.task_closed_ns.get().copied().flatten();
+                // A task-close acquire observes the preceding creation store.
+                // Reading creation first could combine an older false with a
+                // newly published close in this explicitly live snapshot.
+                value.task_created = cell.task_created.load(Ordering::Acquire);
+                // Closure publishes its clock before the release flag. If this
+                // snapshot acquired false, a subsequently visible clock must
+                // stay hidden until a later snapshot observes that close too.
+                value.lifecycle.connection_closed_ns = value
+                    .connection_closed
+                    .then(|| cell.connection_closed_ns.get().copied().flatten())
+                    .flatten();
+                value.lifecycle.task_closed_ns = value
+                    .task_closed
+                    .then(|| cell.task_closed_ns.get().copied().flatten())
+                    .flatten();
                 value.observation_failed =
                     cell.failed.load(Ordering::Acquire) || phase_failures != 0;
                 value.complete = value.connection_closed
@@ -1202,6 +1213,52 @@ mod tests {
         assert!(cell.connection_closed_ns.get().unwrap().is_some());
         drop(held);
         assert!(observer.snapshot().records[1].complete);
+    }
+
+    #[test]
+    fn lifecycle_snapshot_hides_clocks_until_their_close_publication_is_observed() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let cell = connection.cell.clone();
+        let task = connection.task();
+        drop(connection);
+        drop(task);
+        let connection_closed_ns = *cell.connection_closed_ns.get().unwrap();
+        let task_closed_ns = *cell.task_closed_ns.get().unwrap();
+        assert!(connection_closed_ns.is_some() && task_closed_ns.is_some());
+
+        // Replay the precise permitted publication boundary deterministically:
+        // OnceLock clocks are already visible, but a live snapshot acquired the
+        // earlier false flags. The real owners above supplied the timestamps;
+        // this private fixture supplies the interleaving, not a timed race.
+        cell.connection_closed.store(false, Ordering::Release);
+        cell.task_closed.store(false, Ordering::Release);
+        let pending = observer.snapshot();
+        let row = &pending.records[0];
+        assert!(row.task_created && !row.connection_closed && !row.task_closed);
+        assert!(row.lifecycle.connection_closed_ns.is_none());
+        assert!(row.lifecycle.task_closed_ns.is_none());
+        assert!(!row.complete && !row.observation_failed);
+
+        cell.connection_closed.store(true, Ordering::Release);
+        let connection_only = observer.snapshot();
+        let row = &connection_only.records[0];
+        assert!(row.connection_closed && !row.task_closed && !row.complete);
+        assert_eq!(row.lifecycle.connection_closed_ns, connection_closed_ns);
+        assert!(row.lifecycle.task_closed_ns.is_none());
+
+        cell.task_closed.store(true, Ordering::Release);
+        let completed = observer.snapshot();
+        assert!(completed.coverage_complete());
+        assert_eq!(completed.measurement_failures, 0);
+        assert_eq!(
+            completed.records[0].lifecycle.connection_closed_ns,
+            connection_closed_ns
+        );
+        assert_eq!(
+            completed.records[0].lifecycle.task_closed_ns,
+            task_closed_ns
+        );
     }
 
     #[test]

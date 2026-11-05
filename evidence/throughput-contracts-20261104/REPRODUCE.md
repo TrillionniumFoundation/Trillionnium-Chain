@@ -30,6 +30,8 @@ outlive a disconnected client, or complete while response output still owns the
 connection. Both timestamps remain distinct. Once-only clock publication avoids
 waiting for the snapshot's row mutex. Unknown clocks remain unknown and make
 measurement coverage incomplete; observations never authorize native effects.
+Live snapshots expose a closure timestamp only after acquiring its close flag;
+observing task closure also observes the earlier task-creation publication.
 
 The original finite signed-confirmation test adds a same-process clock binding
 after the unchanged traffic window. It retains the first business packet's exact
@@ -38,6 +40,12 @@ to the observer epoch. A Hello digest is a peer claim, not authenticated body
 receipt. Every matching retry and every unbound or unretained connection must be
 kept. The final verifier method may return an unconfirmed observation; a timestamp
 alone never establishes successful confirmation.
+Positive v2 confirmation observations additionally bind the actual required
+transaction, network/parameters/genesis, included block, six-deep tip/work,
+non-reorg status, returned final observation and final accepted History replay.
+These report consistency checks do not replace native signature/work checks or
+require another phase to pass. Contradictory positive claims are refused, not
+silently converted to successful observations or measured zero.
 
 The v2 report keeps client statuses, receiver dispatch outcomes, typed terminal
 causes, late returns, unfinished observations and missing records separately.
@@ -56,16 +64,20 @@ hash must accompany all-feature runs. A reused local provider must still match
 its retained preparation receipt. Keep outputs outside the checkout and preserve
 failed, cancelled and incomplete attempts. Never substitute a different source
 or host result for this composition.
+The provider preparation script requires existing absolute `RUNNER_TEMP` and
+`GITHUB_ENV` paths and writes the environment keys to `GITHUB_ENV`; a local caller
+must explicitly load and export those recorded keys before invoking Cargo.
 
 ```sh
 bash scripts/project-preflight.sh
-cargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --format-version 1
+cargo metadata --locked --offline --manifest-path trillionnium/Cargo.toml --all-features --format-version 1
 cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --all-targets --all-features -- --test-threads=1
 cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-features --lib request_observation::tests -- --test-threads=1
 cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-features --lib intake_domain_tests -- --test-threads=1
 cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-features --lib parallel_preparation -- --test-threads=1
+cargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --all-features --test public_v3_from_zero --no-run
 python3 -m unittest discover -s scripts/ci -p 'test_run_from_zero_native.py' -v
-python3 -m unittest discover -s scripts/ci -p 'test_run_from_zero_host.py' -v
+python3 -m unittest discover -s scripts/ci -p 'test_from_zero_host_ci.py' -v
 python3 -m unittest discover -s scripts/ci -p 'test_run_w1_fresh_service_v1.py' -v
 python3 scripts/refresh_distributed_source_inventory.py --check
 python3 scripts/ci/check_pq_research_integration.py
@@ -81,6 +93,20 @@ These commands are a reproduction recipe, not a claim that every command ran.
 Exact executed commands, input source identity, exits and remaining gates belong
 in the accompanying verification record. Compile affinity or one compiler job
 are build settings and cannot stand in for the original acceptance Host.
+
+For mandatory single-test execution identity, invoke each complete libtest name
+with `--exact --format pretty --color never`, preserve its Cargo exit and complete
+log, then run `scripts/ci/check_required_native_test.py LOG --test FULL_NAME`.
+That checker requires exactly one passed, nonignored invocation. Module-filter
+exit zero alone is not proof that its expected tests ran.
+
+The native clock binding is exercised only by the original
+`public_v3_from_zero` integration test named
+`from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline`.
+Compiling that target or running Python reader controls does not execute the
+original fixed-Host baseline/pressure acceptance. Use its existing Host runner
+and unchanged eligibility checks on an eligible host; do not provision this
+shared development container as a replacement acceptance Host.
 
 ## Metric boundaries and outstanding gates
 

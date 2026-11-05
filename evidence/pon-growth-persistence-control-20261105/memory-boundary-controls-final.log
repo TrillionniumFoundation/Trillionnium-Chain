@@ -1,0 +1,12 @@
+test_dirty_and_writeback_pages_are_not_available (__main__.AvailableMemoryTests.test_dirty_and_writeback_pages_are_not_available) ... ok
+test_host_available_caps_reclaim_estimate (__main__.AvailableMemoryTests.test_host_available_caps_reclaim_estimate) ... ok
+test_missing_required_fields_fail_closed (__main__.AvailableMemoryTests.test_missing_required_fields_fail_closed) ... ok
+test_negative_or_malformed_fields_fail_closed (__main__.AvailableMemoryTests.test_negative_or_malformed_fields_fail_closed) ... ok
+test_no_cache_uses_hard_headroom (__main__.AvailableMemoryTests.test_no_cache_uses_hard_headroom) ... ok
+test_oom_or_oom_kill_increment_is_detected (__main__.AvailableMemoryTests.test_oom_or_oom_kill_increment_is_detected) ... ok
+test_shmem_is_not_reclaimable_file_budget (__main__.AvailableMemoryTests.test_shmem_is_not_reclaimable_file_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK

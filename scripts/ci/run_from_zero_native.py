@@ -883,7 +883,75 @@ def validate_request_lifecycle(row: dict) -> bool:
     return True
 
 
-def business_receive_observation(doc: dict, phase: dict, receiver: dict | None) -> dict | None:
+def validate_v2_confirmed_observation(doc: dict, phase: dict) -> bool:
+    """Bind a positive v2 observation to this phase's actual required business.
+
+    This deliberately does not require the other phase or the complete hostile
+    gate to pass. A malformed positive claim is refused instead of being turned
+    into either a successful rate/latency or a fabricated measured zero. Zero and
+    missing counts retain the existing failed/unknown observation semantics.
+    These are report consistency checks, not native signature/work verification.
+    """
+    if phase.get('client_confirmed_transactions') != 1:
+        return False
+    number = ConfirmationReportChecks.number
+    hexadecimal = ConfirmationReportChecks.hexadecimal
+    require(type(phase['client_confirmed_transactions']) is int
+            and phase.get('client_confirmed_before_original_window_end') is True,
+            'CONFIRMATION_V2_POSITIVE_COUNT')
+    start, end = number(phase.get('business_started_ns')), number(phase.get('confirmation_ended_ns'))
+    require(number(phase.get('requested_window_ns')) == 4_000_000_000 and start < end < 4_000_000_000
+            and number(phase.get('client_confirmation_latency_ns')) == end - start,
+            'CONFIRMATION_V2_POSITIVE_TIME')
+    context = {key: hexadecimal(doc.get(key), 32) for key in
+               ('network', 'parameters', 'genesis', 'target', 'task')}
+    require(context['target'] != bytes(32) and phase.get('target') == doc['target']
+            and phase.get('task') == doc['task'] and phase.get('initial_tip') == doc['genesis'],
+            'CONFIRMATION_V2_CONTEXT')
+    packets = doc.get('signed_honest_packets')
+    require(isinstance(packets, list) and len(packets) == 7, 'CONFIRMATION_V2_REQUIRED_PACKETS')
+    metadata = [ConfirmationReportChecks.packet_metadata(packet) for packet in packets]
+    parent = context['genesis']
+    for height, (header, transactions, block_id) in enumerate(metadata, 1):
+        require(all(header[key] == context[key] for key in ('network', 'parameters', 'target'))
+                and header['work_task'] == context['task'] and header['height'] == height
+                and header['parent'] == parent and len(transactions) == (1 if height == 1 else 0),
+                'CONFIRMATION_V2_REQUIRED_PACKETS')
+        parent = block_id
+    native = phase.get('independent_client_confirmation')
+    require(isinstance(native, dict) and native.get('confirmed') is True
+            and all(native.get(key) is False for key in ('reorged', 'finalized', 'execution_authority')),
+            'CONFIRMATION_V2_NATIVE_STATUS')
+    require(all(native.get(key) == doc[key] for key in ('network', 'parameters', 'genesis'))
+            and native.get('transaction') == H('tx-id', metadata[0][1][0]).hex()
+            and native.get('included_block') == metadata[0][2].hex()
+            and native.get('observed_tip') == metadata[-1][2].hex()
+            and number(native.get('included_height')) == 1
+            and number(native.get('observed_height')) == 7 and number(native.get('depth')) == 6,
+            'CONFIRMATION_V2_NATIVE_BINDING')
+    required = (6 * ((1 << 256) // (int.from_bytes(context['target'], 'big') + 1))).to_bytes(64, 'big')
+    require(hexadecimal(native.get('required_work_delta'), 64) == required
+            and hexadecimal(native.get('work_delta'), 64) == required, 'CONFIRMATION_V2_NATIVE_WORK')
+    final = phase.get('independent_final_confirmation_stage')
+    require(isinstance(final, dict) and final.get('observation_returned') is True
+            and final.get('clock_scope') == 'independent verifier caller thread; no consensus/host time claim',
+            'CONFIRMATION_V2_FINAL_RETURN')
+    final_start, final_end = (number(final.get(key)) for key in
+                              ('confirmation_started_ns', 'confirmation_ended_ns'))
+    require(start <= final_start <= final_end <= end
+            and number(final.get('confirmation_wall_ns')) == final_end - final_start,
+            'CONFIRMATION_V2_FINAL_TIME')
+    replays = phase.get('independent_history_page_replay')
+    require(isinstance(replays, list) and 1 <= len(replays) <= 16 and isinstance(replays[-1], dict)
+            and replays[-1].get('replay_accepted') is True
+            and replays[-1].get('next_after') == metadata[-1][2].hex()
+            and number(replays[-1].get('replay_ended_ns')) <= final_start,
+            'CONFIRMATION_V2_FINAL_REPLAY_BINDING')
+    return True
+
+
+def business_receive_observation(doc: dict, phase: dict, receiver: dict | None,
+                                 *, confirmed: bool) -> dict | None:
     """Bind an optional same-process clock to all matching Hello claims.
 
     Hello is peer-controlled. Even a fully covered matching-claim clock does not
@@ -949,12 +1017,6 @@ def business_receive_observation(doc: dict, phase: dict, receiver: dict | None) 
             matched.append(received)
     known_receives = [time for time in matched if time is not None]
     earliest = min(known_receives) if known_receives else None
-    native = phase.get('independent_client_confirmation')
-    confirmed = (phase.get('client_confirmed_transactions') == 1
-                 and phase.get('client_confirmed_before_original_window_end') is True
-                 and isinstance(native, dict) and native.get('confirmed') is True
-                 and native.get('finalized') is False and native.get('execution_authority') is False
-                 and type(native.get('depth')) is int and native['depth'] == 6)
     observed_final_latency = final - earliest if final is not None and earliest is not None and final >= earliest else None
     covered = (receiver is not None and receiver['all_seen_records_closed_and_retained']
                and not missing_binding and not missing_lifecycle and not missing_receive_clock and bool(matched))
@@ -1027,6 +1089,7 @@ def complete_confirmation_observation(doc: dict, report: dict) -> dict:
                          'late flags overlap status counts; missing calls cannot be reconstructed'}
 
     for phase, measured in zip(doc['phases'], report['phases']):
+        confirmed = validate_v2_confirmed_observation(doc, phase)
         for source, destination in (('honest_submissions', 'signed_submit_ack'),
                                     ('honest_history', 'history_response'),
                                     ('honest_heads', 'head_response')):
@@ -1134,7 +1197,7 @@ def complete_confirmation_observation(doc: dict, report: dict) -> dict:
             'scope': 'in-window independent confirmation only; reported late returns retain their timestamp without success credit; '
                      'no receiver arrival can be joined to the client confirmation from this report',
         }
-        receive = business_receive_observation(doc, phase, receiver)
+        receive = business_receive_observation(doc, phase, receiver, confirmed=confirmed)
         measured['request_clock']['business_receive_observation'] = receive
         if receive is not None:
             measured['request_clock'].update(
