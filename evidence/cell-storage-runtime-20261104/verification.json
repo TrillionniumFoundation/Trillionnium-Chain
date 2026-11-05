@@ -1,45 +1,31 @@
 {
-  "schema": "trnm-cell-storage-runtime-verification-v1",
-  "status": "development_observations_retained_exact_source_verification_pending",
-  "original_source_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
-  "concurrent_evidence_parent_preserved": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
-  "original_cancellation_failure": {
-    "baseline": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
-    "scope": "working-tree test-only regression on original source",
-    "selector": "cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels",
-    "result": "FAIL",
-    "passed": 0,
-    "failed": 1,
-    "expected_and_observed_failure": "original prefetch acquired second payload after external cancellation",
-    "input_files": {
-      "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs": "6032171ccb22582e3f4c70704282616824ee03e9840fe3abba9bcaa65f341078",
-      "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "1c0c626f1c9671106ca559925e948e290c8c67086f8565c1c76c83de2b3248a5",
-      "trillionnium/crates/trnm-data-availability/src/cell/residency.rs": "83eac45643808a0fc579c7b8642f35af0e6d4d671564daa15162da5a2f37ee72",
-      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
-      "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
-    },
-    "logs": {
-      "cancellation-red.log": "70c5e3356e4e4baf0d15daa2333b6995c7acba17cd6f15f283ffa0fa313eb55e",
-      "cancellation-red.patch": "68d0100eca88559fe446b39593d9caf951e417d57fd66997ef1b45dbd450c7d2"
-    }
+  "attempt_files": {
+    "cell-runtime-checks.json": "af1335dfc1bdd06daa5e1d1c5ac7097e6fc64ba1b3555ee2020131b886fe1eb8",
+    "cell-runtime-checks.log": "4691556b01eb8547b8f183bfa89f3a62e500bacbe0e7e89602455bff3cf0314e",
+    "cell-runtime-clippy-canonical.json": "893790366aefc04da7da1e876c868235f97cf20db8c832c3080be79af7ed5490",
+    "cell-runtime-clippy-canonical.log": "d38da737ec06bccc612352e87cc9c50158b17697d95b4b434e6357ea448b6485",
+    "cell-runtime-native-canonical.json": "0c18b5034f6a5955806f6475f2be7ce374dd2c25d977ba49a260c6fce92f60ae",
+    "cell-runtime-native-canonical.log": "1c9b0e46b5913d07648904ad6012319c2f2ba6c3cab42f720a2588c03036ac15",
+    "node-storage-development.log": "24eb2f84563aed8b8a79df894784e428175299dbe2a48c7153cf76f59c3df112",
+    "object-recovery.json": "50a35d415d8c5bc66dc7cb9e3f906b2c53068195b9daae77472428902ab4300a",
+    "source-after-object-recovery.json": "4df3536a25afefd526f2e29b62fba65aabd4b8506b9aaf1357742192eaf0b3d2",
+    "sqlite-canonical-build.log": "a2913e2f4ad50a6871f47beeebf5f7262cfcff2bbd95dd7592d89f5a969afe4f",
+    "sqlite-rustup-build.log": "71b9ebdaf71c12f76856c238472c74db68712926cdfe1a5c711bb0b336d2141e"
   },
+  "concurrent_evidence_parent_preserved": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "concurrent_source_preserved": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
   "development_m09": {
-    "scope": "working-tree development, not final committed source",
-    "passed": 350,
     "failed": 0,
     "ignored": 0,
-    "log_sha256": "c95dd1139f38cb315c4829420d18cf028365874813308c54ccc337fa4c9b3f7a"
+    "log_sha256": "c95dd1139f38cb315c4829420d18cf028365874813308c54ccc337fa4c9b3f7a",
+    "passed": 350,
+    "scope": "working-tree development, not final committed source"
   },
   "development_workloads": {
-    "scope": "finite synthetic loopback, not final committed source",
-    "source_sha256": "0498e64644c31c62c10ced7ce7c77d16349b55c017c336b6cd47f62085e13ea5",
-    "status": "complete",
     "groups": [
       {
-        "workload": "identical",
-        "status": "passed",
-        "versions": 9,
         "baseline_payload_bytes": 2359296,
+        "provider_response_bytes": 0,
         "receiver_cache": {
           "closed_cache_file_length_sum_bytes": 331776,
           "closed_cache_files": {
@@ -63,13 +49,13 @@
           "unique_chunk_rows": 16,
           "unique_payload_bytes": 262144
         },
-        "provider_response_bytes": 0
-      },
-      {
-        "workload": "single-chunk-sparse-change",
         "status": "passed",
         "versions": 9,
+        "workload": "identical"
+      },
+      {
         "baseline_payload_bytes": 2359296,
+        "provider_response_bytes": 131144,
         "receiver_cache": {
           "closed_cache_file_length_sum_bytes": 495840,
           "closed_cache_files": {
@@ -93,13 +79,13 @@
           "unique_chunk_rows": 24,
           "unique_payload_bytes": 393216
         },
-        "provider_response_bytes": 131144
-      },
-      {
-        "workload": "chunk-reordering",
         "status": "passed",
         "versions": 9,
+        "workload": "single-chunk-sparse-change"
+      },
+      {
         "baseline_payload_bytes": 2359296,
+        "provider_response_bytes": 0,
         "receiver_cache": {
           "closed_cache_file_length_sum_bytes": 360600,
           "closed_cache_files": {
@@ -123,13 +109,13 @@
           "unique_chunk_rows": 16,
           "unique_payload_bytes": 262144
         },
-        "provider_response_bytes": 0
-      },
-      {
-        "workload": "one-to-eight-byte-shift",
         "status": "passed",
         "versions": 9,
+        "workload": "chunk-reordering"
+      },
+      {
         "baseline_payload_bytes": 2359296,
+        "provider_response_bytes": 2098304,
         "receiver_cache": {
           "closed_cache_file_length_sum_bytes": 2536368,
           "closed_cache_files": {
@@ -153,13 +139,13 @@
           "unique_chunk_rows": 144,
           "unique_payload_bytes": 2359296
         },
-        "provider_response_bytes": 2098304
-      },
-      {
-        "workload": "dense-full-change",
         "status": "passed",
         "versions": 9,
+        "workload": "one-to-eight-byte-shift"
+      },
+      {
         "baseline_payload_bytes": 2359296,
+        "provider_response_bytes": 2098304,
         "receiver_cache": {
           "closed_cache_file_length_sum_bytes": 2536368,
           "closed_cache_files": {
@@ -183,49 +169,629 @@
           "unique_chunk_rows": 144,
           "unique_payload_bytes": 2359296
         },
-        "provider_response_bytes": 2098304
+        "status": "passed",
+        "versions": 9,
+        "workload": "dense-full-change"
       }
-    ]
+    ],
+    "scope": "finite synthetic loopback, not final committed source",
+    "source_sha256": "0498e64644c31c62c10ced7ce7c77d16349b55c017c336b6cd47f62085e13ea5",
+    "status": "complete"
   },
-  "qualifications": {
-    "whole_model_semantics": false,
-    "ordinary_model_runtime": false,
-    "device_residency": false,
-    "independent_wan": false,
-    "mature_dht_and_independent_administration": false,
-    "automatic_funded_renewal": false,
-    "independent_holding_proof": false,
-    "native_coin_lock_or_payout": false,
-    "production_activation": false
+  "exact_composed_sources": {
+    "55257c61c46a2687669a0ed6b317b7263db0bd5a": {
+      "checks": {
+        "fuzz_metadata_executed": false,
+        "python_controls_passed": 138,
+        "receipt": "exact-55257c61/cell-runtime-checks.json",
+        "status": "PASS",
+        "workspace_members": 26,
+        "workspace_packages": 175
+      },
+      "clippy": {
+        "receipt": "exact-55257c61/cell-runtime-clippy.json",
+        "scope": "workspace/all-targets/default-features -D warnings",
+        "status": "PASS"
+      },
+      "commit": "55257c61c46a2687669a0ed6b317b7263db0bd5a",
+      "native": {
+        "failed": 0,
+        "ignored": 0,
+        "m06_selected_passed": 5,
+        "m09_compile_fail_docs_passed": 9,
+        "m09_passed": 350,
+        "m12_passed": 46,
+        "named_execution_controls": [
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::capacity_ranges_match_full_state_and_authenticated_monetary_sources"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::capacity_ranges_preserve_first_error_and_exact_account_access_order"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::ordinary_capacity_keeps_full_key_limit_and_profile_error_precedence"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "pon_executor::prefix_scan_tests::funds_ranges_keep_complete_supply_and_malformed_namespace_boundaries"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "pon_executor::prefix_scan_tests::funds_ranges_keep_global_first_error_before_later_overflow_or_bad_types"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::growth::tests::native_growth_v2_activation_cancellation_precedes_sql_even_for_noop_or_unknown_target"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::growth::tests::native_growth_v2_activation_rechecks_foreign_epoch_after_transaction_begin"
+          }
+        ],
+        "node_activation_selected_passed": 2,
+        "node_release_subset_passed": 6,
+        "node_storage_passed": 15,
+        "receipt": "exact-55257c61/cell-runtime-native-retry.json",
+        "release_test_names": [
+          "store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents",
+          "store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch",
+          "store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct",
+          "store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects"
+        ],
+        "status": "PASS"
+      },
+      "source_verified_before_and_after_every_command": true,
+      "tracked_bytes": 959342904,
+      "tracked_entries": 9756,
+      "tree": "c53b7bb6568127cfe2b6923151165849636c218a",
+      "workloads": {
+        "delta_materializations": 40,
+        "groups": 5,
+        "local_initial_bases": 5,
+        "maximum_reconstruction_depth": 1,
+        "observation": "exact-55257c61/cell-runtime-workloads.log",
+        "receipt": "exact-55257c61/cell-runtime-workloads.json",
+        "source_sha256": "46ccb76a9f3f6d3cd70f98c33dc1b4469fabb9bb8078e800aa9099fefbe6ed8f",
+        "status": "PASS",
+        "versions_per_group": 9
+      }
+    },
+    "fc86ed8e927a8eb4e048b160437126a6c0b96c0d": {
+      "additional_owner_regressions": {
+        "groups": [
+          {
+            "failed": 0,
+            "group": "capacity_progress",
+            "ignored": 0,
+            "passed": 9,
+            "receipt": "cell-runtime-overlap-capacity-progress.json",
+            "tests": [
+              "cancellation_payload_cannot_be_reinterpreted_as_invalid_state",
+              "malformed_state_keeps_original_error_and_cannot_publish_partial_capacity",
+              "complete_scan_preserves_shared_zero_reward_and_archive_reservations",
+              "non_clone_cancellation_payload_keeps_its_identity",
+              "wrong_profile_rejects_before_progress_without_upgrading_old_context",
+              "complete_namespace_ranges_preserve_full_map_results_with_future_and_boundary_rows",
+              "namespace_seeks_keep_lexical_rejection_precedence_and_original_queue_checks",
+              "every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry",
+              "complete_scan_matches_legacy_at_batch_and_capacity_boundaries"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "continuity_new_range_tests",
+            "ignored": 0,
+            "passed": 2,
+            "receipt": "cell-runtime-overlap-continuity-new-range-tests.json",
+            "tests": [
+              "continuity_v1::range_tests::complete_liability_ranges_keep_account_proof_calls_in_canonical_order",
+              "continuity_v1::range_tests::split_monetary_and_archive_ranges_keep_all_cancellation_cuts"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "growth_new_range_tests",
+            "ignored": 0,
+            "passed": 3,
+            "receipt": "cell-runtime-overlap-growth-new-range-tests.json",
+            "tests": [
+              "pon_executor::growth::range_tests::borrowed_working_ranges_preserve_all_nonaccount_keys_and_pointer_identity",
+              "pon_executor::growth::range_tests::proved_account_aggregation_keeps_malformed_suffix_rows_overflow_and_error_order",
+              "pon_executor::growth::range_tests::mandatory_owner_ranges_keep_shared_future_zero_and_lexical_capacity_errors"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "listener_domain_admission",
+            "ignored": 0,
+            "passed": 1,
+            "receipt": "cell-runtime-overlap-listener-domain-admission.json",
+            "tests": [
+              "ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "startup_epoch_cancellation",
+            "ignored": 0,
+            "passed": 1,
+            "receipt": "cell-runtime-overlap-startup-epoch-cancellation.json",
+            "tests": [
+              "ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "mandatory_owner_funding_path",
+            "ignored": 0,
+            "passed": 1,
+            "receipt": "cell-runtime-overlap-mandatory-owner-funding-path.json",
+            "tests": [
+              "store::growth::tests::mandatory_capacity::native_growth_v2_mandatory_owner_cap_excludes_new_miner_but_refunds_and_matures"
+            ]
+          },
+          {
+            "failed": 0,
+            "group": "diagnostic_lifecycle_publication",
+            "ignored": 0,
+            "passed": 4,
+            "receipt": "cell-runtime-overlap-diagnostic-lifecycle-publication.json",
+            "tests": [
+              "ingress::public_v3::request_observation::tests::lifecycle_keeps_task_and_connection_closure_order_independent",
+              "ingress::public_v3::request_observation::tests::lifecycle_retains_disconnect_until_actual_task_owner_exits",
+              "ingress::public_v3::request_observation::tests::lifecycle_snapshot_hides_clocks_until_their_close_publication_is_observed",
+              "ingress::public_v3::request_observation::tests::lifecycle_unknown_clock_is_not_zero_and_snapshot_cannot_block_closure"
+            ]
+          }
+        ],
+        "native_model_or_pq_qualification": false,
+        "passed": 21,
+        "receipt_directory": "exact-fc86ed8e",
+        "schema": "trnm-cell-concurrent-owner-execution-v1",
+        "source_commit": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+        "source_tree": "bd26fb15aa023cbd090662384c25fa52f52b0bc8",
+        "status": "PASS",
+        "summary_file": "exact-fc86ed8e/concurrent-owner-executions.json"
+      },
+      "additional_python_regressions": {
+        "cell-runtime-from-zero-python": {
+          "passed": 140,
+          "receipt": "exact-fc86ed8e/cell-runtime-from-zero-python.json"
+        },
+        "cell-runtime-shared-cell-python": {
+          "passed": 9,
+          "receipt": "exact-fc86ed8e/cell-runtime-shared-cell-python.json"
+        },
+        "cell-runtime-staged-python": {
+          "passed": 26,
+          "receipt": "exact-fc86ed8e/cell-runtime-staged-python.json"
+        }
+      },
+      "checks": {
+        "fuzz_metadata_executed": false,
+        "python_controls_passed": 138,
+        "receipt": "exact-fc86ed8e/cell-runtime-checks.json",
+        "status": "PASS",
+        "workspace_members": 26,
+        "workspace_packages": 175
+      },
+      "clippy": {
+        "receipt": "exact-fc86ed8e/cell-runtime-clippy.json",
+        "scope": "workspace/all-targets/default-features -D warnings",
+        "status": "PASS"
+      },
+      "commit": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+      "native": {
+        "failed": 0,
+        "ignored": 0,
+        "m06_selected_passed": 5,
+        "m09_compile_fail_docs_passed": 9,
+        "m09_passed": 350,
+        "m12_passed": 46,
+        "named_execution_controls": [
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::capacity_ranges_match_full_state_and_authenticated_monetary_sources"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::capacity_ranges_preserve_first_error_and_exact_account_access_order"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "continuity_v1::capacity_range_tests::ordinary_capacity_keeps_full_key_limit_and_profile_error_precedence"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "pon_executor::prefix_scan_tests::funds_ranges_keep_complete_supply_and_malformed_namespace_boundaries"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "pon_executor::prefix_scan_tests::funds_ranges_keep_global_first_error_before_later_overflow_or_bad_types"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::growth::tests::native_growth_v2_activation_cancellation_precedes_sql_even_for_noop_or_unknown_target"
+          },
+          {
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "named-libtest-execution-only",
+            "test": "store::growth::tests::native_growth_v2_activation_rechecks_foreign_epoch_after_transaction_begin"
+          }
+        ],
+        "node_activation_selected_passed": 2,
+        "node_release_subset_passed": 6,
+        "node_storage_passed": 15,
+        "receipt": "exact-fc86ed8e/cell-runtime-native.json",
+        "release_test_names": [
+          "store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents",
+          "store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation",
+          "store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct",
+          "store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch",
+          "store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+          "store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects"
+        ],
+        "status": "PASS"
+      },
+      "source_verified_before_and_after_every_command": true,
+      "total_selected_native_and_compile_fail_docs_passed": 448,
+      "total_selected_python_passed": 313,
+      "tracked_bytes": 959668688,
+      "tracked_entries": 9766,
+      "tree": "bd26fb15aa023cbd090662384c25fa52f52b0bc8",
+      "workloads": {
+        "delta_materializations": 40,
+        "groups": 5,
+        "local_initial_bases": 5,
+        "maximum_reconstruction_depth": 1,
+        "observation": "exact-fc86ed8e/cell-runtime-workloads.log",
+        "receipt": "exact-fc86ed8e/cell-runtime-workloads.json",
+        "source_sha256": "46ccb76a9f3f6d3cd70f98c33dc1b4469fabb9bb8078e800aa9099fefbe6ed8f",
+        "status": "PASS",
+        "versions_per_group": 9
+      }
+    }
   },
-  "concurrent_source_preserved": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+  "exact_evidence_files": {
+    "exact-55257c61/cell-runtime-checks.json": {
+      "bytes": 2077,
+      "sha256": "087ad323679de3619b7661a910dd779e1a0571ec22b1903796db936cceb7c014"
+    },
+    "exact-55257c61/cell-runtime-checks.log.gz": {
+      "bytes": 70044,
+      "encoding": "gzip; original raw log recovered byte-for-byte",
+      "original_bytes": 834244,
+      "original_name": "cell-runtime-checks.log",
+      "original_sha256": "08935e600a617e1fa9ed5bb4e42443e3fd4d11a9137be4998a6260ba294c6c7b",
+      "sha256": "d6f3968e8dfd4661bfe7df1112ca129d5b6bfd3a1c8982778aaae6855bc23421"
+    },
+    "exact-55257c61/cell-runtime-clippy.json": {
+      "bytes": 2074,
+      "sha256": "80da6f45eef9e1bcf42fd3c161f40407696a11267027b7cadddd36412bc93416"
+    },
+    "exact-55257c61/cell-runtime-clippy.log": {
+      "bytes": 475,
+      "sha256": "b768c49a46b1f0ab4d1389f3dabd3704a1177df508d84569085381a77cea4ff3"
+    },
+    "exact-55257c61/cell-runtime-native-retry.json": {
+      "bytes": 2082,
+      "sha256": "19e6b8b3a433edb57f19a79cff18e6c83d3892e6cf9c0d07ee083df67fe6253d"
+    },
+    "exact-55257c61/cell-runtime-native-retry.log": {
+      "bytes": 53366,
+      "sha256": "f1c929ed0a5c0cb160405360dd90b0161064d09a4c8736f7f9d6d5f6b8c91092"
+    },
+    "exact-55257c61/cell-runtime-native.json": {
+      "bytes": 2075,
+      "sha256": "6a625641eccecac70e7562256cc405e2f364456ddc217ebd62e26037851e8b31"
+    },
+    "exact-55257c61/cell-runtime-native.log": {
+      "bytes": 53877,
+      "sha256": "79b7f88dcca51e35467b7c03e69e0cbb2f187309c41a4085a5953ef9caabf813"
+    },
+    "exact-55257c61/cell-runtime-workloads.json": {
+      "bytes": 2212,
+      "sha256": "3ddc69d100224293f3f8356163af744f24c40babf2264a92f345b79ef0f839b8"
+    },
+    "exact-55257c61/cell-runtime-workloads.log": {
+      "bytes": 68888,
+      "sha256": "7dc7b8450051841096f7643590e67bcef76341657aba013105886f54ae6444b8"
+    },
+    "exact-fc86ed8e/cell-runtime-checks.json": {
+      "bytes": 2077,
+      "sha256": "2ce73c33efee3bbe9c7b59edd0c17218df49675967a5b3ff36c25ae7be534944"
+    },
+    "exact-fc86ed8e/cell-runtime-checks.log.gz": {
+      "bytes": 70093,
+      "encoding": "gzip; original raw log recovered byte-for-byte",
+      "original_bytes": 834988,
+      "original_name": "cell-runtime-checks.log",
+      "original_sha256": "4c09838c9063b502b635629fdce5271909f75b403f07f9b127879e771ed1b97b",
+      "sha256": "9f6f4e64fcb7130bb0922fbc3dbd425cac09ab5443c3a0e323e1934e18f84b16"
+    },
+    "exact-fc86ed8e/cell-runtime-clippy.json": {
+      "bytes": 2074,
+      "sha256": "182c2c32c18cec5991ead69ab10d8ece6f1ca75618e1bde0d447aa42eb2c5eb8"
+    },
+    "exact-fc86ed8e/cell-runtime-clippy.log": {
+      "bytes": 609,
+      "sha256": "b53cb14f5d39a5432d822df73f0acd253e0290a2c4c9a549eb696d5abb5e00b7"
+    },
+    "exact-fc86ed8e/cell-runtime-from-zero-python.json": {
+      "bytes": 2141,
+      "sha256": "7cea1123cc21e3c4701e757f16a123ac780b34ade6d1762f498bb3325cf05008"
+    },
+    "exact-fc86ed8e/cell-runtime-from-zero-python.log": {
+      "bytes": 25327,
+      "sha256": "93fc5d85f0d55dec94b9034f6f5e6659c55a322fd787bdba82820940b91299ce"
+    },
+    "exact-fc86ed8e/cell-runtime-native.json": {
+      "bytes": 2077,
+      "sha256": "bd49ea5263ba6cd258e438ebd30806fce3c5de66fd88114fb8b4f8b5f5efaea5"
+    },
+    "exact-fc86ed8e/cell-runtime-native.log": {
+      "bytes": 53870,
+      "sha256": "cd9c818ae159e62e27bd10b4987ba77a11f9e64f46b746bc4e6d84f9e618fc2d"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-capacity-progress.json": {
+      "bytes": 2207,
+      "sha256": "f36e09a85f3ce280d5eba3ddab0f20e240394bccfc982c014f12dd67492f4406"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-capacity-progress.log": {
+      "bytes": 1153,
+      "sha256": "c9bd5ce3fc1acf1cca1c3dbd0662c81d3b729903fe64cbc04b5854800a7628c4"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-continuity-new-range-tests.json": {
+      "bytes": 2224,
+      "sha256": "0fcd1bcae837364b6812c784e85a03da07242962b6864693c04192e2ca7cf8fa"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-continuity-new-range-tests.log": {
+      "bytes": 516,
+      "sha256": "c6e8a7acc660477e5504f36affe35370a0528813983a0699a200f0b404068c2e"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-diagnostic-lifecycle-publication.json": {
+      "bytes": 2260,
+      "sha256": "ceb479e4faaf67a954b35f3d0e8048006d2e80a77d5ee3374eb86ad0551e9d54"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-diagnostic-lifecycle-publication.log": {
+      "bytes": 811,
+      "sha256": "7cd17c340433bb9fcfc2bc92110e67719940973baf13dc0bfddf1c12e0845261"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-growth-new-range-tests.json": {
+      "bytes": 2227,
+      "sha256": "3b55ef1dcff068a7310a3a3b47d1984e303275ad9413aad16f4fbb9a5a94b33a"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-growth-new-range-tests.log": {
+      "bytes": 675,
+      "sha256": "7260be465aee80fe190105a7ed25e01db916baf4a0c9f74ce4e0fe45dfab33f1"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-listener-domain-admission.json": {
+      "bytes": 2332,
+      "sha256": "57e99a46598a5d9bca4be2b6e5637fb93ee4a41dfe07776e2a506bdb06e0ae4d"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-listener-domain-admission.log": {
+      "bytes": 430,
+      "sha256": "d857c8786c90c24a06f63a506b73170d2ee81e432e0ec3fa824534f014684385"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-mandatory-owner-funding-path.json": {
+      "bytes": 2344,
+      "sha256": "e4fdc521b754c5a3759f8ecfe320963f88d7eae2e3aeed715a5794acd8a43622"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-mandatory-owner-funding-path.log": {
+      "bytes": 439,
+      "sha256": "8ef89eea5ae050f252d92921b9308dacc23f80ef1bcb902bd288c58f69f198f3"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-startup-epoch-cancellation.json": {
+      "bytes": 2333,
+      "sha256": "6e21ed44c2d3442c142c581cc43cc3dedd07675eaab330b698d4e9cf783ee141"
+    },
+    "exact-fc86ed8e/cell-runtime-overlap-startup-epoch-cancellation.log": {
+      "bytes": 430,
+      "sha256": "c0e71a1bcbc998c06fff0cbbfb7417ac07a06b1cd2ef3725c4ff572f3fb9897c"
+    },
+    "exact-fc86ed8e/cell-runtime-owner-python.json": {
+      "bytes": 2129,
+      "sha256": "9a4b35f7a2c5e64ca7c1df08706895204858369b976a74bb9a99899188437f75"
+    },
+    "exact-fc86ed8e/cell-runtime-owner-python.log": {
+      "bytes": 5837,
+      "sha256": "5047c8d0b3abee9cfc27ba7f7943b9bc0cf3ea06ffc60074defa24fd42e1b917"
+    },
+    "exact-fc86ed8e/cell-runtime-shared-cell-python.json": {
+      "bytes": 2157,
+      "sha256": "87d963b51f54b757970aca9d67ede744d7cd4718b77815510d34a24b575410eb"
+    },
+    "exact-fc86ed8e/cell-runtime-shared-cell-python.log": {
+      "bytes": 1568,
+      "sha256": "95a9e3378c58850c2003f52cb3edf501a1709ff5f82965cc3ea4a6705c2afb0d"
+    },
+    "exact-fc86ed8e/cell-runtime-staged-python.json": {
+      "bytes": 2135,
+      "sha256": "6b76c8eeb0955022678b35a3a825d80205c8c1f141709e7b2f55319f4cb362dc"
+    },
+    "exact-fc86ed8e/cell-runtime-staged-python.log": {
+      "bytes": 4677,
+      "sha256": "6d3ca27c274d46ace8537e59d953bce9992f70faddd53f9f0d1faa45408e5d26"
+    },
+    "exact-fc86ed8e/cell-runtime-workloads.json": {
+      "bytes": 2212,
+      "sha256": "f36ee5229167931eb11308561b74482024604abf278785bf1cf98f3d345c57b5"
+    },
+    "exact-fc86ed8e/cell-runtime-workloads.log": {
+      "bytes": 68888,
+      "sha256": "7dc7b8450051841096f7643590e67bcef76341657aba013105886f54ae6444b8"
+    },
+    "exact-fc86ed8e/concurrent-owner-executions.json": {
+      "bytes": 3932,
+      "sha256": "d9dea3127eb8a9dde7f7434b38d07a2c4ce616d2df130fd7b947b1cb0ccfceef"
+    },
+    "publication-70df2c64/cell-publication-checks.json": {
+      "bytes": 2081,
+      "sha256": "5414ae452a8d75df66e494ddb4b7ef5d75ce256ed0804cc9269b860ca4307a74"
+    },
+    "publication-70df2c64/cell-publication-checks.log.gz": {
+      "bytes": 70091,
+      "encoding": "gzip; original raw log recovered byte-for-byte",
+      "original_bytes": 834988,
+      "original_name": "cell-publication-checks.log",
+      "original_sha256": "4c7565f2c5a9bcfaca7a32bfa91702c329bbfcd84d8d3fc9062222e0d4df83bb",
+      "sha256": "442ed2f238bfece01190a8cf5978f0993af7aca1ed8d1077e621d979bde4f756"
+    },
+    "publication-70df2c64/cell-publication-clippy.json": {
+      "bytes": 2078,
+      "sha256": "bdf41f9fb7a682717d26c3045735a5127917d9ea4f5f4cec608bd8bd777f3fff"
+    },
+    "publication-70df2c64/cell-publication-clippy.log": {
+      "bytes": 869,
+      "sha256": "075cddd331ea73dfab29fde08a8fb7b7990abd8a79920184a86756674cf778ee"
+    }
+  },
+  "later_shared_branch_policy": "Results remain bound to the exact commits recorded here. Later parallel source changes are preserved and are not qualified by inheriting these native outcomes.",
+  "native_release_fixture_scope": {
+    "files": 3,
+    "full_success_backends": [
+      "AuthenticatedV1",
+      "PermanentAccountGrowthV2"
+    ],
+    "other_new_release_test_backend": "PermanentAccountGrowthV2",
+    "payload_bytes": 651,
+    "pq_joint_qualification": false,
+    "reopen": "normal drop/reopen; not process crash or power loss",
+    "retention": "actual local SQLite/arena obligations; no independent provider custody or payment",
+    "tensor_model": null,
+    "transaction_identity": "development_public DEV Ed25519"
+  },
+  "native_validation_source": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+  "original_cancellation_failure": {
+    "baseline": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+    "expected_and_observed_failure": "original prefetch acquired second payload after external cancellation",
+    "failed": 1,
+    "input_files": {
+      "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "1c0c626f1c9671106ca559925e948e290c8c67086f8565c1c76c83de2b3248a5",
+      "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs": "6032171ccb22582e3f4c70704282616824ee03e9840fe3abba9bcaa65f341078",
+      "trillionnium/crates/trnm-data-availability/src/cell/residency.rs": "83eac45643808a0fc579c7b8642f35af0e6d4d671564daa15162da5a2f37ee72"
+    },
+    "logs": {
+      "cancellation-red.log": "70c5e3356e4e4baf0d15daa2333b6995c7acba17cd6f15f283ffa0fa313eb55e",
+      "cancellation-red.patch": "68d0100eca88559fe446b39593d9caf951e417d57fd66997ef1b45dbd450c7d2"
+    },
+    "passed": 0,
+    "result": "FAIL",
+    "scope": "working-tree test-only regression on original source",
+    "selector": "cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels"
+  },
+  "original_model_cold_transfer": {
+    "aggregate_deadline_seconds": 35,
+    "prior_consumer_bytes": 0,
+    "prior_failed_payload_bytes": 272189990,
+    "prior_failure_remains_open": true,
+    "prior_first_manifest_header_failure_seconds": 2.041,
+    "reason": "Exact original parent/material bytes and complete invocation were not recovered; a differently sized research cohort is not substituted",
+    "status": "NOT_RUN"
+  },
+  "original_source_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
   "precomposition_source": {
-    "commit": "7f766ae867ddb73653cc98d386c74e21bb4d3b48",
-    "tree": "094208d174a571aed90910aead625fa7bb7ccd4c",
     "clippy": "PASS workspace/all-targets -D warnings",
-    "python_controls": 138,
-    "native_m09_passed": 350,
+    "commit": "7f766ae867ddb73653cc98d386c74e21bb4d3b48",
     "native_docs_passed": 9,
-    "native_m12_passed": 46,
-    "node_tests_executed": 0,
     "native_exit_code": 101,
+    "native_m09_passed": 350,
+    "native_m12_passed": 46,
     "native_recorder_status": "record_failed",
     "node_compile_signal": "SIGKILL",
-    "shared_cgroup_oom_kill_before": 4,
+    "node_tests_executed": 0,
+    "python_controls": 138,
+    "scope": "precomposition observations only; no composed-source native acceptance",
     "shared_cgroup_oom_kill_after": 5,
-    "scope": "precomposition observations only; no composed-source native acceptance"
+    "shared_cgroup_oom_kill_before": 4,
+    "tree": "094208d174a571aed90910aead625fa7bb7ccd4c"
   },
-  "attempt_files": {
-    "cell-runtime-checks.json": "af1335dfc1bdd06daa5e1d1c5ac7097e6fc64ba1b3555ee2020131b886fe1eb8",
-    "cell-runtime-clippy-canonical.json": "893790366aefc04da7da1e876c868235f97cf20db8c832c3080be79af7ed5490",
-    "cell-runtime-clippy-canonical.log": "d38da737ec06bccc612352e87cc9c50158b17697d95b4b434e6357ea448b6485",
-    "cell-runtime-native-canonical.json": "0c18b5034f6a5955806f6475f2be7ce374dd2c25d977ba49a260c6fce92f60ae",
-    "cell-runtime-native-canonical.log": "1c9b0e46b5913d07648904ad6012319c2f2ba6c3cab42f720a2588c03036ac15",
-    "node-storage-development.log": "24eb2f84563aed8b8a79df894784e428175299dbe2a48c7153cf76f59c3df112",
-    "object-recovery.json": "50a35d415d8c5bc66dc7cb9e3f906b2c53068195b9daae77472428902ab4300a",
-    "source-after-object-recovery.json": "4df3536a25afefd526f2e29b62fba65aabd4b8506b9aaf1357742192eaf0b3d2",
-    "sqlite-canonical-build.log": "a2913e2f4ad50a6871f47beeebf5f7262cfcff2bbd95dd7592d89f5a969afe4f",
-    "sqlite-rustup-build.log": "71b9ebdaf71c12f76856c238472c74db68712926cdfe1a5c711bb0b336d2141e",
-    "cell-runtime-checks.log": "4691556b01eb8547b8f183bfa89f3a62e500bacbe0e7e89602455bff3cf0314e"
-  }
+  "publication_preservation": {
+    "base_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "evidence_update_scope": "evidence/cell-storage-runtime-20261104 only; every other publication-base path retained",
+    "native_execution_performed_on_publication_base": false,
+    "native_results_inherited_to_later_parallel_source": false,
+    "native_validation_anchor": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+    "source_and_build_checks": {
+      "cell-publication-checks": {
+        "receipt": "publication-70df2c64/cell-publication-checks.json",
+        "status": "PASS",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855"
+      },
+      "cell-publication-clippy": {
+        "receipt": "publication-70df2c64/cell-publication-clippy.json",
+        "status": "PASS",
+        "tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855"
+      }
+    }
+  },
+  "qualification_status": "HOLD",
+  "qualifications": {
+    "automatic_funded_renewal": false,
+    "cross_store_crash_consistency": false,
+    "device_residency": false,
+    "independent_holding_proof": false,
+    "independent_wan": false,
+    "mature_dht_and_independent_administration": false,
+    "native_coin_lock_or_payout": false,
+    "ordinary_model_runtime": false,
+    "production_activation": false,
+    "real_model_cold_transfer": false,
+    "remote_ci_acceptance": false,
+    "sustainable_long_term_funding": false,
+    "whole_model_semantics": false,
+    "whole_node_business_suite": false
+  },
+  "retained_composed_failure": {
+    "exit_code": 101,
+    "node_tests_executed": 0,
+    "original_cargo_profiles_and_lockfile_unchanged_for_retry": true,
+    "reason": "ENOSPC (os error 28)",
+    "receipt": "exact-55257c61/cell-runtime-native.json",
+    "source": "55257c61c46a2687669a0ed6b317b7263db0bd5a",
+    "stage": "trnm-pon-node lib-test compilation"
+  },
+  "retained_python_invocation_failure": {
+    "cause": "dotted unittest import could not resolve run_from_zero_native; 26 staged observer tests executed and the from-zero suite did not import",
+    "receipt": "exact-fc86ed8e/cell-runtime-owner-python.json",
+    "resolution": "Original unittest discovery invocation executed all 140 from-zero and 26 staged tests, unchanged source; separate completed receipts retained",
+    "source": "fc86ed8e927a8eb4e048b160437126a6c0b96c0d",
+    "status": "command_failed"
+  },
+  "schema": "trnm-cell-storage-runtime-verification-v1",
+  "status": "exact_component_verification_passed_product_qualification_HOLD"
 }
