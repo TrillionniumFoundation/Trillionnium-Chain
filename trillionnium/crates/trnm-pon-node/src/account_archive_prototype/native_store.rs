@@ -30,16 +30,26 @@ type LiftInput = (Hash, Hash, usize, usize);
 // every established input at once, while still admitting a new working set.
 // The index is only a bounded lookup hint. All fields of LiftInput must match.
 const LIFT_WAYS: usize = 8;
+const LIFT_BUCKETS: usize = LiftCache::MAX_ENTRIES / LIFT_WAYS;
 type LiftEntry = (LiftInput, Hash);
+type LiftPage = [Option<LiftEntry>; LIFT_WAYS];
+type LiftPageDirectory = Box<[Option<Box<LiftPage>>]>;
 #[derive(Default)]
 struct LiftEntries {
-    slots: Option<Box<[Option<LiftEntry>]>>,
+    // A missing page is an empty eight-way bucket. Neither the directory nor
+    // a page exists until an insertion needs it; lookup never allocates.
+    pages: Option<LiftPageDirectory>,
     retained: usize,
     replacement: u64,
 }
-const LIFT_SOFTWARE_CHARGE: usize = LiftCache::MAX_ENTRIES
-    * std::mem::size_of::<Option<LiftEntry>>()
-    + std::mem::size_of::<RefCell<LiftEntries>>();
+const LIFT_MAX_SLOT_BYTES: usize = LIFT_BUCKETS * std::mem::size_of::<LiftPage>();
+const LIFT_MAX_DIRECTORY_BYTES: usize = LIFT_BUCKETS * std::mem::size_of::<Option<Box<LiftPage>>>();
+// Charge every allocated page, the directory and its RefCell owner. The full
+// table adds one pointer per bucket over eager storage; the 1 MiB ceiling is
+// unchanged. This is not an RSS bound: allocator metadata, temporary allocations,
+// stacks, SQLite, the compiled empty table and the decoder/other caches are excluded.
+const LIFT_SOFTWARE_CHARGE: usize =
+    LIFT_MAX_SLOT_BYTES + LIFT_MAX_DIRECTORY_BYTES + std::mem::size_of::<RefCell<LiftEntries>>();
 const _: () = assert!(LIFT_SOFTWARE_CHARGE <= 1024 * 1024);
 const _: () = assert!(LiftCache::MAX_ENTRIES.is_multiple_of(LIFT_WAYS));
 
@@ -53,9 +63,9 @@ impl LiftEntries {
     }
 
     fn get(&self, key: &LiftInput) -> Option<&Hash> {
-        let slots = self.slots.as_ref()?;
         let start = Self::bucket(key);
-        slots[start..start + LIFT_WAYS]
+        self.pages.as_ref()?[start / LIFT_WAYS]
+            .as_ref()?
             .iter()
             .flatten()
             .find_map(|(input, value)| (input == key).then_some(value))
@@ -63,10 +73,11 @@ impl LiftEntries {
 
     fn insert(&mut self, key: LiftInput, value: Hash) {
         let start = Self::bucket(&key);
-        let slots = self
-            .slots
-            .get_or_insert_with(|| vec![None; LiftCache::MAX_ENTRIES].into_boxed_slice());
-        for entry in &mut slots[start..start + LIFT_WAYS] {
+        let pages = self
+            .pages
+            .get_or_insert_with(|| vec![None; LIFT_BUCKETS].into_boxed_slice());
+        let page = pages[start / LIFT_WAYS].get_or_insert_with(|| Box::new([None; LIFT_WAYS]));
+        for entry in page.iter_mut() {
             match entry {
                 Some((input, output)) if *input == key => {
                     *output = value;
@@ -90,12 +101,33 @@ impl LiftEntries {
             .wrapping_mul(6_364_136_223_846_793_005)
             .wrapping_add(1_442_695_040_888_963_407);
         let victim = (self.replacement >> 32) as usize % LIFT_WAYS;
-        slots[start + victim] = Some((key, value));
+        page[victim] = Some((key, value));
     }
 
     #[cfg(test)]
     fn len(&self) -> usize {
         self.retained
+    }
+
+    #[cfg(test)]
+    fn allocated_pages(&self) -> usize {
+        self.pages
+            .as_ref()
+            .map_or(0, |pages| pages.iter().flatten().count())
+    }
+
+    #[cfg(test)]
+    fn directory_bytes(&self) -> usize {
+        self.pages.as_ref().map_or(0, |pages| {
+            pages.len() * std::mem::size_of::<Option<Box<LiftPage>>>()
+        })
+    }
+
+    #[cfg(test)]
+    fn software_charge(&self) -> usize {
+        self.directory_bytes()
+            + self.allocated_pages() * std::mem::size_of::<LiftPage>()
+            + std::mem::size_of::<RefCell<Self>>()
     }
 }
 
@@ -728,6 +760,327 @@ mod tests {
     use serde_json::json;
     use trnm_protocol::pon_wire::hash;
 
+    // Frozen eager algorithm from 36c8effa32f004fdde30c139eab206af7f4fad8f.
+    // Keep addressing, scan order and replacement independent of paged helpers.
+    #[derive(Default)]
+    struct EagerLiftOracle {
+        slots: Option<Box<[Option<LiftEntry>]>>,
+        retained: usize,
+        replacement: u64,
+    }
+
+    impl EagerLiftOracle {
+        fn bucket(key: &LiftInput) -> usize {
+            let lane = u16::from_le_bytes([key.0[0], key.0[1]])
+                ^ u16::from_le_bytes([key.1[0], key.1[1]])
+                ^ (key.2 as u16).rotate_left(3)
+                ^ (key.3 as u16).rotate_left(7);
+            (usize::from(lane) % (8192 / 8)) * 8
+        }
+
+        fn get(&self, key: &LiftInput) -> Option<&Hash> {
+            let slots = self.slots.as_ref()?;
+            let start = Self::bucket(key);
+            slots[start..start + 8]
+                .iter()
+                .flatten()
+                .find_map(|(input, value)| (input == key).then_some(value))
+        }
+
+        fn insert(&mut self, key: LiftInput, value: Hash) {
+            let start = Self::bucket(&key);
+            let slots = self
+                .slots
+                .get_or_insert_with(|| vec![None; 8192].into_boxed_slice());
+            for entry in &mut slots[start..start + 8] {
+                match entry {
+                    Some((input, output)) if *input == key => {
+                        *output = value;
+                        return;
+                    }
+                    None => {
+                        *entry = Some((key, value));
+                        self.retained += 1;
+                        return;
+                    }
+                    _ => (),
+                }
+            }
+            self.replacement = self
+                .replacement
+                .wrapping_mul(6_364_136_223_846_793_005)
+                .wrapping_add(1_442_695_040_888_963_407);
+            let victim = (self.replacement >> 32) as usize % 8;
+            slots[start + victim] = Some((key, value));
+        }
+    }
+
+    fn lift_page_key(bucket: usize, index: u64) -> LiftInput {
+        let mut path = [0; 32];
+        path[..2].copy_from_slice(&(bucket as u16).to_le_bytes());
+        path[24..].copy_from_slice(&index.to_le_bytes());
+        (path, [0; 32], 256, 0)
+    }
+
+    fn assert_lift_bucket_matches(actual: &LiftEntries, eager: &EagerLiftOracle, key: &LiftInput) {
+        let start = EagerLiftOracle::bucket(key);
+        assert_eq!(LiftEntries::bucket(key), start);
+        assert_eq!(actual.get(key), eager.get(key));
+        assert_eq!(actual.len(), eager.retained);
+        assert_eq!(actual.replacement, eager.replacement);
+        for way in 0..8 {
+            let actual_slot = actual
+                .pages
+                .as_ref()
+                .and_then(|pages| pages[start / 8].as_ref())
+                .and_then(|page| page[way].as_ref());
+            let eager_slot = eager
+                .slots
+                .as_ref()
+                .and_then(|slots| slots[start + way].as_ref());
+            assert_eq!(actual_slot, eager_slot, "logical slot {}", start + way);
+        }
+    }
+
+    #[test]
+    fn native_lift_pages_exact_inputs_and_scan_order_match_frozen_eager() {
+        let mut actual = LiftEntries::default();
+        let mut eager = EagerLiftOracle::default();
+        let base = lift_page_key(0, 0);
+        let mut keys = [base; 7];
+        keys[1].0[31] = 1;
+        keys[2].1[31] = 1;
+        keys[3].2 = 128;
+        keys[4].3 = 8;
+        keys[5].2 += 1 << 16;
+        keys[6].3 += 1 << 16;
+        for (index, key) in keys.iter().enumerate() {
+            assert_eq!(LiftEntries::bucket(key), LiftEntries::bucket(&base));
+            assert_eq!(actual.get(key), None);
+            assert_lift_bucket_matches(&actual, &eager, key);
+            let value = [index as u8; 32];
+            actual.insert(*key, value);
+            eager.insert(*key, value);
+            assert_lift_bucket_matches(&actual, &eager, key);
+        }
+        // Overwrite every exact input before the vacant last slot, without
+        // changing occupancy, allocating another page or advancing the sampler.
+        for key in &keys {
+            actual.insert(*key, [0xfe; 32]);
+            eager.insert(*key, [0xfe; 32]);
+            assert_lift_bucket_matches(&actual, &eager, key);
+        }
+        assert_eq!(actual.allocated_pages(), 1);
+        assert_eq!(actual.len(), keys.len());
+        assert_eq!(actual.replacement, 0);
+
+        // A synthetic hole before a later exact match checks the original
+        // vacancy-before-overwrite order as well as first-match lookup order.
+        actual.pages.as_mut().unwrap()[0].as_mut().unwrap()[0] = None;
+        eager.slots.as_mut().unwrap()[0] = None;
+        actual.retained -= 1;
+        eager.retained -= 1;
+        actual.insert(keys[5], [0xff; 32]);
+        eager.insert(keys[5], [0xff; 32]);
+        assert_lift_bucket_matches(&actual, &eager, &keys[5]);
+        assert_eq!(actual.get(&keys[5]), Some(&[0xff; 32]));
+        assert_eq!(actual.len(), keys.len());
+        assert_eq!(actual.replacement, 0);
+    }
+
+    #[test]
+    fn native_lift_pages_collision_victims_and_wrapping_match_frozen_eager() {
+        let mut actual = LiftEntries::default();
+        let mut eager = EagerLiftOracle::default();
+        for bucket in [0, 1023] {
+            for index in 0..8 {
+                let key = lift_page_key(bucket, index);
+                actual.insert(key, [index as u8; 32]);
+                eager.insert(key, [index as u8; 32]);
+                assert_lift_bucket_matches(&actual, &eager, &key);
+            }
+        }
+        let victims = [
+            6, 1, 2, 1, 2, 6, 0, 6, 1, 7, 6, 4, 5, 2, 0, 4, 3, 4, 7, 7, 5, 2, 7, 5, 2, 6, 2, 6, 7,
+            4, 2, 0,
+        ];
+        for (index, victim) in victims.into_iter().enumerate() {
+            let bucket = if index % 2 == 0 { 0 } else { 1023 };
+            let key = lift_page_key(bucket, index as u64 + 8);
+            let value = [index as u8 + 8; 32];
+            let before = *actual.pages.as_ref().unwrap()[bucket].as_deref().unwrap();
+            actual.insert(key, value);
+            eager.insert(key, value);
+            assert_lift_bucket_matches(&actual, &eager, &key);
+            let after = actual.pages.as_ref().unwrap()[bucket].as_deref().unwrap();
+            for way in 0..8 {
+                assert_eq!(
+                    after[way],
+                    if way == victim {
+                        Some((key, value))
+                    } else {
+                        before[way]
+                    }
+                );
+                if let Some((previous_key, _)) = before[way] {
+                    assert_eq!(actual.get(&previous_key), eager.get(&previous_key));
+                }
+            }
+        }
+        // Exercise the wrapping state boundary explicitly, then mixed hits,
+        // overwrites and replacements across both independently allocated pages.
+        actual.replacement = u64::MAX;
+        eager.replacement = u64::MAX;
+        for index in 0..4096u64 {
+            let bucket = if index % 3 == 0 { 0 } else { 1023 };
+            let key = lift_page_key(bucket, (index * 17) % 43);
+            assert_eq!(actual.get(&key), eager.get(&key));
+            actual.insert(key, [index as u8; 32]);
+            eager.insert(key, [index as u8; 32]);
+            assert_lift_bucket_matches(&actual, &eager, &key);
+        }
+        assert_eq!(actual.allocated_pages(), 2);
+        assert_eq!(actual.len(), 16);
+    }
+
+    #[test]
+    fn native_lift_pages_sparse_full_storage_and_charge_are_bounded() {
+        let mut actual = LiftEntries::default();
+        let mut eager = EagerLiftOracle::default();
+        let owner_bytes = std::mem::size_of::<RefCell<LiftEntries>>();
+        assert_eq!(actual.software_charge(), owner_bytes);
+        for bucket in 0..LIFT_BUCKETS {
+            let key = lift_page_key(bucket, 0);
+            assert_lift_bucket_matches(&actual, &eager, &key);
+        }
+        assert!(actual.pages.is_none());
+        assert_eq!(actual.allocated_pages(), 0);
+        assert_eq!(actual.directory_bytes(), 0);
+
+        for index in 0..LIFT_WAYS {
+            // First allocate one slot per bucket, then fill all eight ways.
+            // Unoccupied slots in an allocated page count fully; missing pages
+            // count zero.
+            for bucket in 0..LIFT_BUCKETS {
+                let key = lift_page_key(bucket, index as u64);
+                actual.insert(key, [index as u8; 32]);
+                eager.insert(key, [index as u8; 32]);
+                assert_lift_bucket_matches(&actual, &eager, &key);
+                let pages = if index == 0 { bucket + 1 } else { LIFT_BUCKETS };
+                assert_eq!(actual.allocated_pages(), pages);
+                assert_eq!(actual.directory_bytes(), LIFT_MAX_DIRECTORY_BYTES);
+                assert_eq!(
+                    actual.software_charge(),
+                    owner_bytes
+                        + LIFT_MAX_DIRECTORY_BYTES
+                        + pages * std::mem::size_of::<LiftPage>()
+                );
+                assert!(actual.software_charge() <= LIFT_SOFTWARE_CHARGE);
+                if index == 0 && bucket == 0 {
+                    let charge = actual.software_charge();
+                    assert_eq!(actual.get(&lift_page_key(1023, 0)), None);
+                    assert_eq!(actual.software_charge(), charge);
+                    if cfg!(target_pointer_width = "64") {
+                        assert_eq!(charge, 9192);
+                    }
+                }
+            }
+        }
+        assert_eq!(actual.len(), LiftCache::MAX_ENTRIES);
+        assert_eq!(actual.software_charge(), LIFT_SOFTWARE_CHARGE);
+        assert_eq!(actual.replacement, 0);
+        let eager_charge = 8192 * std::mem::size_of::<Option<LiftEntry>>()
+            + std::mem::size_of::<RefCell<EagerLiftOracle>>();
+        assert_eq!(
+            LIFT_SOFTWARE_CHARGE,
+            eager_charge + LIFT_MAX_DIRECTORY_BYTES
+        );
+        if cfg!(target_pointer_width = "64") {
+            assert_eq!(eager_charge, 983080);
+            assert_eq!(LIFT_SOFTWARE_CHARGE, 991272);
+        }
+        // Fully populated replacement/overwrite never changes allocation.
+        for bucket in 0..LIFT_BUCKETS {
+            let key = lift_page_key(bucket, 8);
+            for value in [[8; 32], [9; 32]] {
+                actual.insert(key, value);
+                eager.insert(key, value);
+                assert_lift_bucket_matches(&actual, &eager, &key);
+                assert_eq!(actual.software_charge(), LIFT_SOFTWARE_CHARGE);
+            }
+        }
+        eprintln!(
+            "pon_native_lift_page_charge {}",
+            json!({
+                "storage": "lazy-eight-way-bucket-pages",
+                "allocated_pages": actual.allocated_pages(),
+                "allocated_slots": actual.allocated_pages() * LIFT_WAYS,
+                "occupied_slots": actual.len(),
+                "allocated_slot_bytes": actual.allocated_pages() * std::mem::size_of::<LiftPage>(),
+                "allocated_directory_bytes": actual.directory_bytes(),
+                "owner_size_bytes": owner_bytes,
+                "retained_software_charge_bytes": actual.software_charge(),
+                "maximum_software_charge_bytes": LIFT_SOFTWARE_CHARGE,
+                "hard_software_charge_ceiling_bytes": 1024 * 1024,
+                "charge_is_process_rss_bound": false,
+                "excluded": "allocator metadata, temporary allocations, stacks, SQLite, compiled empty table, decoder and other caches",
+                "has_consensus_authority": false,
+            })
+        );
+    }
+
+    #[test]
+    fn native_lift_pages_identity_and_borrow_fallback_do_not_allocate() {
+        let cache = LiftCache::default();
+        let node = Node::account(
+            [0x39; 32],
+            Account {
+                balance: 23,
+                nonce: 5,
+            },
+        );
+        let empty = empty_hashes();
+        let owner_bytes = cache.0.borrow().software_charge();
+        for depth in [0, 1, 128, 256] {
+            assert_eq!(
+                cache.lift_parts(node.path, node.digest, depth, depth),
+                node.digest
+            );
+        }
+        assert_eq!(cache.lift(&node, node.depth), node.digest);
+        {
+            let entries = cache.0.borrow();
+            assert_eq!(cache.lift(&node, 255), node.lift(255, &empty));
+            assert_eq!(entries.software_charge(), owner_bytes);
+            assert!(entries.pages.is_none());
+        }
+        {
+            let entries = cache.0.borrow_mut();
+            assert_eq!(cache.lift(&node, 0), node.lift(0, &empty));
+            assert_eq!(cache.lift(&node, node.depth), node.digest);
+            assert_eq!(entries.software_charge(), owner_bytes);
+            assert!(entries.pages.is_none());
+            assert_eq!((entries.len(), entries.replacement), (0, 0));
+        }
+        assert_eq!(cache.lift(&node, 255), node.lift(255, &empty));
+        let charge = cache.0.borrow().software_charge();
+        {
+            let entries = cache.0.borrow();
+            assert_eq!(cache.lift(&node, 255), node.lift(255, &empty));
+            assert_eq!(cache.lift(&node, 254), node.lift(254, &empty));
+            assert_eq!(entries.software_charge(), charge);
+            assert_eq!((entries.len(), entries.replacement), (1, 0));
+        }
+        {
+            let entries = cache.0.borrow_mut();
+            assert_eq!(cache.lift(&node, 255), node.lift(255, &empty));
+            assert_eq!(cache.lift(&node, 254), node.lift(254, &empty));
+            assert_eq!(entries.software_charge(), charge);
+            assert_eq!((entries.len(), entries.replacement), (1, 0));
+        }
+        assert_eq!(cache.1.observation()["retained"]["allocated_pages"], 0);
+    }
+
     #[test]
     fn native_delta_row_decode_matches_complete_parser_without_temporary_state() {
         fn previous(key: &str, bytes: &[u8]) -> Result<(Hash, Account)> {
@@ -900,14 +1253,14 @@ mod tests {
         drop(locked);
         let independent = LiftCache::default();
         assert_eq!(independent.0.borrow().len(), 0);
-        assert!(independent.0.borrow().slots.is_none());
+        assert!(independent.0.borrow().pages.is_none());
         assert_eq!(
             independent.lift_parts(other.path, other.digest, other.depth, other.depth),
             other.digest
         );
-        assert!(independent.0.borrow().slots.is_none());
+        assert!(independent.0.borrow().pages.is_none());
         assert_eq!(independent.lift(&other, other.depth), other.digest);
-        assert!(independent.0.borrow().slots.is_none());
+        assert!(independent.0.borrow().pages.is_none());
     }
 
     #[test]

@@ -7,9 +7,9 @@ from check_native_constants_roster import EXPECTED, validate
 
 
 def transcript():
-    return ['running 9 tests'] + [f'test {name} ... {outcome}'
+    return ['running 13 tests'] + [f'test {name} ... {outcome}'
                                 for name, outcome in EXPECTED.items()] + [
-        'test result: ok. 7 passed; 0 failed; 2 ignored; 0 measured; 1070 filtered out; finished in 0.08s']
+        'test result: ok. 11 passed; 0 failed; 2 ignored; 0 measured; 1070 filtered out; finished in 0.08s']
 
 
 class RosterTests(unittest.TestCase):
@@ -27,20 +27,20 @@ class RosterTests(unittest.TestCase):
 
     def test_reject_missing_or_duplicate_each_identity(self):
         original = transcript()
-        for i in range(1, 10):
+        for i in range(1, 14):
             for changed in (original[:i] + original[i+1:], original[:i] + [original[i]] + original[i:]):
                 with self.subTest(index=i, changed=changed), self.assertRaises(ValueError):
                     validate(changed)
 
     def test_reject_substitution_even_with_same_total(self):
-        for i in range(1, 10):
+        for i in range(1, 14):
             lines = transcript()
             lines[i] = lines[i].replace('::tests::', '::unrelated::')
             with self.subTest(index=i), self.assertRaises(ValueError):
                 validate(lines)
 
     def test_reject_changed_outcomes(self):
-        for i in range(1, 10):
+        for i in range(1, 14):
             for outcome in ('FAILED', 'ok', 'ignored'):
                 lines = transcript()
                 old = lines[i].split(' ... ')[1]
@@ -51,7 +51,7 @@ class RosterTests(unittest.TestCase):
                     validate(lines)
 
     def test_reject_wrong_summary(self):
-        for old, new in [('7 passed', '6 passed'), ('0 failed', '1 failed'),
+        for old, new in [('11 passed', '10 passed'), ('0 failed', '1 failed'),
                          ('2 ignored', '1 ignored'), ('0 measured', '1 measured'),
                          ('result: ok', 'result: FAILED')]:
             lines = transcript()
@@ -66,6 +66,13 @@ class RosterTests(unittest.TestCase):
                         [lines[1]] + lines, [lines[-1]]):
             with self.subTest(changed=changed), self.assertRaises(ValueError):
                 validate(changed)
+
+    def test_reject_previous_roster_without_page_controls(self):
+        lines = [line for line in transcript() if '::native_lift_pages_' not in line]
+        lines[0] = 'running 9 tests'
+        lines[-1] = lines[-1].replace('11 passed', '7 passed')
+        with self.assertRaises(ValueError):
+            validate(lines)
 
     def test_workflow_keeps_original_gate_and_uses_roster(self):
         root = Path(__file__).resolve().parents[2]

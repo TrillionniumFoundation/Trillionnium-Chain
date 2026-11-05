@@ -20,6 +20,10 @@ PASSED = (
     'native_empty_constants_parallel_callers_keep_independent_values',
     'native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity',
     'native_lift_cache_collisions_keep_exact_math_and_bounded_replacement',
+    'native_lift_pages_collision_victims_and_wrapping_match_frozen_eager',
+    'native_lift_pages_exact_inputs_and_scan_order_match_frozen_eager',
+    'native_lift_pages_identity_and_borrow_fallback_do_not_allocate',
+    'native_lift_pages_sparse_full_storage_and_charge_are_bounded',
 )
 IGNORED = (
     'native_empty_constants_paired_cost_observation',
@@ -28,7 +32,7 @@ IGNORED = (
 EXPECTED = {PREFIX + name: 'ok' for name in PASSED} | {
     PREFIX + name: 'ignored' for name in IGNORED}
 SUMMARY = re.compile(
-    r'test result: ok\. 7 passed; 0 failed; 2 ignored; 0 measured; '
+    r'test result: ok\. 11 passed; 0 failed; 2 ignored; 0 measured; '
     r'[0-9]+ filtered out; finished in [0-9]+(?:\.[0-9]+)?s')
 
 
@@ -38,8 +42,8 @@ def validate(lines):
     for raw in lines:
         line = raw.rstrip('\r\n')
         if line.startswith('running '):
-            if state != 'before' or line != 'running 9 tests':
-                raise ValueError('expected exactly one nine-test invocation')
+            if state != 'before' or line != 'running 13 tests':
+                raise ValueError('expected exactly one thirteen-test invocation')
             state = 'running'
         elif line.startswith('test result:'):
             if state != 'running' or seen != set(EXPECTED) or not SUMMARY.fullmatch(line):
