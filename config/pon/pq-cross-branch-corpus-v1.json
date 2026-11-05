@@ -729,7 +729,7 @@
     "trillionnium/crates/trnm-pon-node/Cargo.toml": "eb44e7bc91a36b54ae025e5c1f1629e548af204f",
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_cost_matrix_v2.rs": "e3a3c2a893eb1c7ee99dd93d2993e8b26ce2d2e3",
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs": "92f1e2a9e971af5abe9e43b1ddfb976c41da9be4",
-    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "7c4e2a35bbf96dc83d01e6191b5474ca30f05f10",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e",
     "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "d5dca8c623748172c3e910f9da7c24212aeb26ad",
     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": "4ec279243a13ba92369fe7cb01d5ef72c469cbf7",
