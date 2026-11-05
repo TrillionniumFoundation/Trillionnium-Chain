@@ -12,6 +12,20 @@ pub enum GrowthProgress {
     /// Existing full W1 replay boundaries; these do not certify a public CPU budget.
     Work(pon_work::VerificationProgress),
     Execution(pon_executor::ExecutionProgress),
+    /// Before each retained working entry is copied, then once at completion.
+    WorkingCopy {
+        index: usize,
+    },
+    /// Before each original proof account is materialized, then at completion.
+    WitnessAccount {
+        index: usize,
+    },
+    /// Before each ordered union key is compared/encoded, then at completion.
+    DeltaComparison {
+        index: usize,
+    },
+    BeforeDeltaEncoding,
+    AfterDeltaEncoding,
     BeforePersistence,
     /// Before each original admission-delta INSERT, in canonical delta order.
     AdmissionDeltaWrite {

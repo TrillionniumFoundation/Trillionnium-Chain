@@ -206,3 +206,46 @@ fn ordered_growth_difference_fixed_changes_retains_stage_cost_samples() {
         );
     }
 }
+
+#[test]
+fn ordered_growth_difference_control_checks_unchanged_keys_and_final_boundary() {
+    // A sparse mutation must not bypass the control while comparing unchanged
+    // keys; the final boundary must also run for an empty or unchanged result.
+    for keys in [0, 1, 257, 4096] {
+        let before: State = (0..keys)
+            .map(|index| (format!("working:{index:05}"), json!([index, {"v": 1}])))
+            .collect();
+        let mut after = before.clone();
+        if keys != 0 {
+            after.insert(format!("working:{:05}", keys - 1), json!([keys, {"v": 2}]));
+        }
+        let seen = Mutex::new(Vec::new());
+        let actual = difference_with_progress(&before, &after, &|point| {
+            seen.lock().unwrap().push(point);
+            Ok(())
+        })
+        .unwrap();
+        assert_eq!(actual, original(&before, &after).unwrap());
+        assert_eq!(
+            seen.into_inner().unwrap(),
+            (0..=keys)
+                .map(|index| GrowthProgress::DeltaComparison { index })
+                .collect::<Vec<_>>()
+        );
+        for cut in [0, keys / 2, keys] {
+            let calls = std::sync::atomic::AtomicUsize::new(0);
+            let error = difference_with_progress(&before, &after, &|point| {
+                let index = calls.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                assert_eq!(point, GrowthProgress::DeltaComparison { index });
+                if index == cut {
+                    Err(Error::new(crate::ErrorCode::PublicMutationCpuBudget))
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err();
+            assert!(error.is(crate::ErrorCode::PublicMutationCpuBudget));
+            assert_eq!(calls.load(std::sync::atomic::Ordering::Relaxed), cut + 1);
+        }
+    }
+}
