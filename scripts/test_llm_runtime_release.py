@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import platform
 import shutil
+import struct
 import subprocess
 import sys
 import sysconfig
@@ -29,6 +30,30 @@ def put(path, raw):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(raw)
     path.chmod(0o644)
+
+
+def with_pie_marker(raw):
+    """Change only the PIE dynamic flag on an actual fixture ELF object."""
+    raw = bytearray(raw)
+    if struct.unpack_from("<H", raw, 16)[0] != 3:
+        raise AssertionError("the fixture must be an actual ET_DYN object")
+    offset = struct.unpack_from("<Q", raw, 32)[0]
+    width, count = struct.unpack_from("<HH", raw, 54)
+    for index in range(count):
+        kind, _, position, _, _, size, _, _ = struct.unpack_from("<IIQQQQQQ", raw, offset + index * width)
+        if kind != 2:
+            continue
+        for cursor in range(position, position + size, 16):
+            tag, value = struct.unpack_from("<qQ", raw, cursor)
+            if tag == 0x6FFFFFFB:  # DT_FLAGS_1.
+                struct.pack_into("<Q", raw, cursor + 8, value | 0x08000000)
+                return raw
+            if tag == 0:
+                if cursor + 32 <= position + size and raw[cursor + 16:cursor + 32] == bytes(16):
+                    struct.pack_into("<qQ", raw, cursor, 0x6FFFFFFB, 0x08000000)
+                    return raw
+                break
+    raise AssertionError("the actual fixture has no FLAGS_1 or spare dynamic record")
 
 
 def runtime_fixture(root):
@@ -197,6 +222,56 @@ class RuntimeMaterialTests(unittest.TestCase):
         spec["native_search_paths"].append("shadow")
         with self.assertRaisesRegex(ValueError, "NATIVE_DEPENDENCY"):
             self.declare(spec)
+
+    def test_native_dependency_cannot_be_a_plain_file_with_the_expected_name(self):
+        put(self.root / "lib/libc.so.6", b"present but not an ELF shared object\n")
+        with self.assertRaisesRegex(ValueError, "RUNTIME_NATIVE_DEPENDENCY_NOT_ELF"):
+            self.declare()
+
+    def test_native_interpreter_cannot_be_a_plain_file_with_the_expected_name(self):
+        put(self.root / self.loader, b"present but not an ELF interpreter\n")
+        (self.root / self.loader).chmod(0o755)
+        with self.assertRaisesRegex(ValueError, "RUNTIME_NATIVE_LOADER_NOT_ELF"):
+            self.declare()
+
+    def test_native_interpreter_must_keep_its_execution_mode(self):
+        (self.root / self.loader).chmod(0o644)
+        with self.assertRaisesRegex(ValueError, "RUNTIME_NATIVE_LOADER_NOT_EXECUTABLE"):
+            self.declare()
+
+    def test_native_dependency_cannot_relabel_an_executable_as_a_shared_object(self):
+        path = self.root / "lib/libc.so.6"
+        raw = bytearray(path.read_bytes())
+        self.assertEqual(struct.unpack_from("<H", raw, 16)[0], 3)
+        struct.pack_into("<H", raw, 16, 2)  # ET_EXEC is not a DT_NEEDED shared object.
+        put(path, raw)
+        with self.assertRaisesRegex(ValueError, "RUNTIME_NATIVE_DEPENDENCY_NOT_SHARED_OBJECT"):
+            self.declare()
+
+    def test_native_dependency_cannot_be_a_pie_executable_despite_et_dyn(self):
+        path = self.root / "lib/libc.so.6"
+        put(path, with_pie_marker(path.read_bytes()))
+        with self.assertRaisesRegex(ValueError, "RUNTIME_NATIVE_DEPENDENCY_IS_PIE"):
+            self.declare()
+
+    def test_native_nonruntime_elf_type_cannot_enter_the_closure(self):
+        path = self.root / "lib/libc.so.6"
+        raw = bytearray(path.read_bytes())
+        struct.pack_into("<H", raw, 16, 4)  # ET_CORE is not a runnable runtime member.
+        put(path, raw)
+        with self.assertRaisesRegex(ValueError, "RUNTIME_ELF_TYPE"):
+            self.declare()
+
+    def test_native_dependency_class_byte_order_and_machine_match_the_profile(self):
+        path = self.root / "lib/libc.so.6"
+        original = path.read_bytes()
+        for label, offset, value in (("class", 4, b"\x01"), ("byte-order", 5, b"\x02"),
+                ("machine", 18, struct.pack("<H", 183 if platform.machine() == "x86_64" else 62))):
+            raw = bytearray(original)
+            raw[offset:offset + len(value)] = value
+            put(path, raw)
+            with self.subTest(profile_field=label), self.assertRaisesRegex(ValueError, "RUNTIME_ELF_PROFILE"):
+                self.declare()
 
     def test_installed_wheel_change_or_undeclared_distribution_refuse(self):
         path = self.root / "lib/python3.12/site-packages/pon_closure_probe/__init__.py"
