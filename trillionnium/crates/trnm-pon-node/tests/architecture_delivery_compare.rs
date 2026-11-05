@@ -1,5 +1,7 @@
 //! Signed reference-DAG dissemination feeding the unchanged native PoN owners.
 //! This is not a Conflux, Narwhal, Bullshark or Mysticeti consensus implementation.
+#[path = "support/architecture_deadline.rs"]
+mod architecture_deadline;
 #[path = "support/current_elf_host.rs"]
 mod current_elf_host;
 use serde::{Deserialize, Serialize};
@@ -7,7 +9,7 @@ use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
-    io::{Read, Write},
+    io::Write,
     net::{SocketAddr, TcpListener, TcpStream},
     path::Path,
     sync::{
@@ -245,6 +247,9 @@ fn disseminate(
     mode: usize,
     settings: &Settings,
 ) -> Result<(Vec<Cell>, Value), String> {
+    let started = Instant::now();
+    let end = started + ROUND_LIMIT;
+    let cancelled = Arc::new(AtomicBool::new(false));
     fs::create_dir(path).map_err(|error| error.to_string())?;
     let listener = TcpListener::bind("127.0.0.1:0").map_err(|error| error.to_string())?;
     listener
@@ -253,34 +258,41 @@ fn disseminate(
     let address = listener.local_addr().unwrap();
     let receiver_path = path.to_path_buf();
     let receiver_settings = settings.clone();
-    let receiver = thread::spawn(move || -> Result<(Vec<Cell>, usize), String> {
-        let end = Instant::now() + ROUND_LIMIT;
+    let receiver_cancelled = cancelled.clone();
+    let receive = move || -> Result<(Vec<Cell>, usize), String> {
         let mut incoming = Vec::new();
         let mut bytes = 0;
-        while incoming.len() < 8 && Instant::now() < end {
+        while incoming.len() < 8 {
+            architecture_deadline::remaining(end, &receiver_cancelled)
+                .map_err(|error| error.to_string())?;
             match listener.accept() {
                 Ok((mut stream, _)) => {
-                    stream
-                        .set_read_timeout(Some(CALL_LIMIT))
-                        .map_err(|error| error.to_string())?;
-                    stream
-                        .set_write_timeout(Some(CALL_LIMIT))
-                        .map_err(|error| error.to_string())?;
+                    let frame_end = end.min(Instant::now() + CALL_LIMIT);
                     let mut length = [0; 4];
-                    stream
-                        .read_exact(&mut length)
-                        .map_err(|error| error.to_string())?;
+                    architecture_deadline::read_exact(
+                        &mut stream,
+                        &mut length,
+                        frame_end,
+                        &receiver_cancelled,
+                    )
+                    .map_err(|error| error.to_string())?;
                     let length = u32::from_be_bytes(length) as usize;
                     if length > CELL_LIMIT {
                         return Err("CELL_FRAME_LIMIT".into());
                     }
                     let mut raw = vec![0; length];
-                    stream
-                        .read_exact(&mut raw)
-                        .map_err(|error| error.to_string())?;
+                    architecture_deadline::read_exact(
+                        &mut stream,
+                        &mut raw,
+                        frame_end,
+                        &receiver_cancelled,
+                    )
+                    .map_err(|error| error.to_string())?;
                     let cell: Cell =
                         serde_json::from_slice(&raw).map_err(|error| error.to_string())?;
                     cell.complete(&receiver_settings)?;
+                    architecture_deadline::remaining(frame_end, &receiver_cancelled)
+                        .map_err(|error| error.to_string())?;
                     let file = receiver_path.join(format!("{}.json", hex::encode(cell.id())));
                     let mut output = fs::OpenOptions::new()
                         .create_new(true)
@@ -292,9 +304,16 @@ fn disseminate(
                     fs::File::open(&receiver_path)
                         .and_then(|directory| directory.sync_all())
                         .map_err(|error| error.to_string())?;
-                    stream
-                        .write_all(b"stored-not-confirmed")
-                        .map_err(|error| error.to_string())?;
+                    // A completed durable copy remains a fact if fsync overran.
+                    // It cannot become a late successful ACK. Filesystem stalls
+                    // are not preempted by these cooperative socket budgets.
+                    architecture_deadline::write_all(
+                        &mut stream,
+                        b"stored-not-confirmed",
+                        frame_end,
+                        &receiver_cancelled,
+                    )
+                    .map_err(|error| error.to_string())?;
                     bytes += length + 4 + 20;
                     incoming.push(cell);
                 }
@@ -304,43 +323,57 @@ fn disseminate(
                 Err(error) => return Err(error.to_string()),
             }
         }
-        if incoming.len() != 8 {
-            return Err("CELL_DISSEMINATION_DEADLINE".into());
-        }
+        architecture_deadline::remaining(end, &receiver_cancelled)
+            .map_err(|error| error.to_string())?;
         Ok((incoming, bytes))
+    };
+    let failed_receiver = cancelled.clone();
+    let receiver = thread::spawn(move || {
+        let result = receive();
+        if result.is_err() {
+            failed_receiver.store(true, Ordering::Release);
+        }
+        result
     });
     let send = |cell: &Cell| -> Result<(), String> {
+        let frame_end = end.min(Instant::now() + CALL_LIMIT);
         let raw = serde_json::to_vec(cell).map_err(|error| error.to_string())?;
         if raw.len() > CELL_LIMIT {
             return Err("CELL_FRAME_LIMIT".into());
         }
+        let left = architecture_deadline::remaining(frame_end, &cancelled)
+            .map_err(|error| error.to_string())?;
         let mut stream =
-            TcpStream::connect_timeout(&address, CALL_LIMIT).map_err(|error| error.to_string())?;
-        stream
-            .set_write_timeout(Some(CALL_LIMIT))
-            .map_err(|error| error.to_string())?;
-        stream
-            .set_read_timeout(Some(CALL_LIMIT))
-            .map_err(|error| error.to_string())?;
-        stream
-            .write_all(&(raw.len() as u32).to_be_bytes())
-            .and_then(|_| stream.write_all(&raw))
-            .map_err(|error| error.to_string())?;
+            TcpStream::connect_timeout(&address, left).map_err(|error| error.to_string())?;
+        architecture_deadline::write_all(
+            &mut stream,
+            &(raw.len() as u32).to_be_bytes(),
+            frame_end,
+            &cancelled,
+        )
+        .and_then(|_| architecture_deadline::write_all(&mut stream, &raw, frame_end, &cancelled))
+        .map_err(|error| error.to_string())?;
         let mut ack = [0; 20];
-        stream
-            .read_exact(&mut ack)
+        architecture_deadline::read_exact(&mut stream, &mut ack, frame_end, &cancelled)
             .map_err(|error| error.to_string())?;
         if &ack != b"stored-not-confirmed" {
             return Err("CELL_ACK".into());
         }
         Ok(())
     };
-    let started = Instant::now();
+    let send_or_cancel = |cell: &Cell| {
+        let result = send(cell);
+        if result.is_err() {
+            cancelled.store(true, Ordering::Release);
+        }
+        result
+    };
     let mut failures = Vec::new();
     if mode == 0 {
         for cell in source {
-            if let Err(error) = send(cell) {
+            if let Err(error) = send_or_cancel(cell) {
                 failures.push(error);
+                break;
             }
         }
     } else {
@@ -349,7 +382,7 @@ fn disseminate(
             // arm reverses rounds to exercise missing-parent staging explicitly.
             let handles = (0..4)
                 .map(|proposer| {
-                    let send = &send;
+                    let send = &send_or_cancel;
                     scope.spawn(move || {
                         let order = if mode == 2 {
                             [proposer + 4, proposer]
@@ -364,14 +397,28 @@ fn disseminate(
                 })
                 .collect::<Vec<_>>();
             for handle in handles {
-                failures.extend(handle.join().unwrap());
+                match handle.join() {
+                    Ok(errors) => failures.extend(errors),
+                    Err(_) => {
+                        cancelled.store(true, Ordering::Release);
+                        failures.push("CELL_SENDER_PANIC".into());
+                    }
+                }
             }
         });
     }
-    let (received, application_bytes) = receiver.join().map_err(|_| "CELL_RECEIVER_PANIC")??;
+    let receiver_result = receiver
+        .join()
+        .unwrap_or_else(|_| Err("CELL_RECEIVER_PANIC".into()));
     if !failures.is_empty() {
-        return Err(format!("CELL_CLIENT_FAILURES:{failures:?}"));
+        // A derivative receiver cancellation must not erase the sender's
+        // original error (for example an oversized frame).
+        return Err(format!(
+            "CELL_CLIENT_FAILURES:{failures:?};receiver_error:{:?}",
+            receiver_result.as_ref().err()
+        ));
     }
+    let (received, application_bytes) = receiver_result?;
     // Read back the exact persisted material before constructing any pool input.
     let recovered = received
         .iter()
@@ -381,6 +428,7 @@ fn disseminate(
             serde_json::from_slice::<Cell>(&raw).map_err(|error| error.to_string())
         })
         .collect::<Result<Vec<_>, String>>()?;
+    architecture_deadline::remaining(end, &cancelled).map_err(|error| error.to_string())?;
     Ok((
         recovered,
         json!({"wall_ns": elapsed(started), "application_frame_bytes": application_bytes,
@@ -789,6 +837,56 @@ fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_con
             .all(|sample| sample["cold_reopen_equal"] == true && sample["errors"] == json!([])),
         "retained native delivery/replay invariants failed"
     );
+}
+
+#[test]
+fn dissemination_cancellation_preserves_original_sender_and_receiver_failures() {
+    let settings = Settings::development(Some(1_750_000_000)).unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let mut oversized = cells(&settings, true);
+    oversized[0].transactions.as_mut().unwrap()[0] = "ff".repeat(CELL_LIMIT);
+    let error = disseminate(
+        &directory.path().join("oversized"),
+        &oversized,
+        0,
+        &settings,
+    )
+    .unwrap_err();
+    assert!(error.contains("CELL_FRAME_LIMIT"), "{error}");
+    assert!(error.contains("CELL_CANCELLED"), "{error}");
+
+    let mut invalid = cells(&settings, true);
+    invalid[0].signature = "00".repeat(64);
+    let error = disseminate(&directory.path().join("invalid"), &invalid, 2, &settings).unwrap_err();
+    assert!(error.contains("CELL_SIGNATURE"), "{error}");
+}
+
+#[test]
+fn absolute_deadline_dissemination_keeps_complete_material_in_all_three_modes() {
+    let settings = Settings::development(Some(1_750_000_000)).unwrap();
+    let original = cells(&settings, true);
+    let directory = tempfile::tempdir().unwrap();
+    let mut expected_bytes = None;
+    for mode in 0..MODES.len() {
+        let (received, report) = disseminate(
+            &directory.path().join(mode.to_string()),
+            &original,
+            mode,
+            &settings,
+        )
+        .unwrap();
+        let ordered = ordered_complete(&received, &settings).unwrap();
+        assert_eq!(
+            serde_json::to_vec(&ordered).unwrap(),
+            serde_json::to_vec(&original).unwrap()
+        );
+        let bytes = report["application_frame_bytes"].as_u64().unwrap();
+        assert!(bytes > 0);
+        assert!(expected_bytes.is_none_or(|previous| previous == bytes));
+        expected_bytes = Some(bytes);
+        assert_eq!(report["signed_cells"], 8);
+        assert_eq!(report["quorum_availability_certified"], false);
+    }
 }
 
 #[test]

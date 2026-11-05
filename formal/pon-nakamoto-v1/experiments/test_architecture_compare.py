@@ -52,6 +52,8 @@ def simulated_report():
     samples = []
     for workload in workloads:
         expected = comparison.workload_identity(workload, CONTEXT)
+        payload_bytes = sum(len(bytes.fromhex(raw)) for cell in workload['cells']
+                            for raw in cell['transactions'])
         for sample in range(3):
             for position in range(3):
                 request = dict(ok=True, error=None, reply=dict(ok=True), wall_ns=1)
@@ -62,8 +64,9 @@ def simulated_report():
                     quorum_data_availability_qualified=False, wan_tested=False, independent_operators=False,
                     work_profile_qualified=False, production_activation=False,
                     consensus_profile='unchanged-pon-nakamoto-v1', errors=[],
-                    signed_transaction_count=32, confirmed_transactions=32, full_business_latency_ns=10,
-                    whole_trial_wall_ns_including_cold_reopen=12, whole_trial_process_cpu_ns=1,
+                    signed_transaction_count=32, confirmed_transactions=32,
+                    application_payload_bytes=payload_bytes, full_business_latency_ns=100,
+                    whole_trial_wall_ns_including_cold_reopen=120, whole_trial_process_cpu_ns=1,
                     cold_proof_acquisition_wall_ns=1, cold_proof_acquisition_process_cpu_ns=1,
                     work_attempts_including_target_misses=7,
                     dissemination=dict(signed_cells=8, durable_copy_count=1,
@@ -190,6 +193,92 @@ class ReaderTests(unittest.TestCase):
             self.validate(lambda value: value['samples'][0]['service'].update(mutation_cpu_charged_ns=3))
         with self.assertRaisesRegex(ValueError, 'ARCHITECTURE_WORK_CLOSURE'):
             self.validate(lambda value: value['samples'][0]['service'].update(work_finished=6))
+
+    def test_component_wall_cannot_exceed_complete_business_interval(self):
+        edits = (
+            ('proof', lambda row: row.update(cold_proof_acquisition_wall_ns=101)),
+            ('dissemination', lambda row: row['dissemination'].update(wall_ns=101)),
+            ('pool', lambda row: row['pool_calls'][0].update(wall_ns=101)),
+            ('block', lambda row: row['block_submissions'][0].update(wall_ns=101)),
+            ('history', lambda row: row['history_calls'][0].update(wall_ns=101)),
+        )
+        for stage, edit in edits:
+            with self.subTest(stage=stage), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_WALL_CONTAINMENT'):
+                self.validate(lambda value: edit(value['samples'][0]))
+
+    def test_sequential_observations_must_fit_without_counting_unmeasured_gaps(self):
+        def acquisition_and_dissemination(row):
+            row['cold_proof_acquisition_wall_ns'] = 45
+            row['dissemination']['wall_ns'] = 45
+
+        def serial_pool(row):
+            for call in row['pool_calls']: call['wall_ns'] = 12
+
+        def serial_blocks(row):
+            for call in row['block_submissions']: call['wall_ns'] = 14
+
+        def serial_history(row):
+            row['history_calls'] = [dict(ok=True, error=None, reply=dict(ok=True), wall_ns=50)
+                                    for _ in range(2)]
+
+        for edit in (acquisition_and_dissemination, serial_pool, serial_blocks, serial_history):
+            with self.subTest(stage=edit.__name__), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_WALL_CONTAINMENT'):
+                self.validate(lambda value: edit(value['samples'][0]))
+
+    def test_parallel_pool_waiter_totals_are_not_added_to_request_wall(self):
+        def edit(value):
+            for row in value['samples']:
+                if row['mode'] in comparison.MODES[1:]:
+                    # 320 ns of overlapping calls fit in two 40 ns rounds.
+                    for call in row['pool_calls']: call['wall_ns'] = 40
+        self.assertTrue(self.validate(edit)['finite_target_met'])
+
+    def test_parallel_pool_rounds_are_sequential_even_when_each_round_overlaps(self):
+        for mode in comparison.MODES[1:]:
+            def edit(value):
+                row = next(row for row in value['samples'] if row['mode'] == mode)
+                for call, wall in zip(row['pool_calls'], (50, 2, 3, 4, 1, 60, 2, 3), strict=True):
+                    call['wall_ns'] = wall
+            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_WALL_CONTAINMENT'):
+                self.validate(edit)
+
+    def test_zero_or_unequal_same_workload_frames_are_not_comparable(self):
+        with self.assertRaisesRegex(ValueError, 'ARCHITECTURE_FRAME_BYTES'):
+            self.validate(lambda value: value['samples'][0]['dissemination'].update(application_frame_bytes=0))
+        for sample_index in (0, 1, 4, 8):
+            with self.subTest(sample_index=sample_index), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_FRAME_BYTES'):
+                self.validate(lambda value: value['samples'][sample_index]['dissemination'].update(application_frame_bytes=2))
+
+    def test_frame_equality_is_per_workload_not_between_distinct_workloads(self):
+        def edit(value):
+            for row in value['samples']:
+                if row['scenario'] == 'hot-recipient':
+                    row['dissemination']['application_frame_bytes'] = 2
+        self.assertTrue(self.validate(edit)['finite_target_met'])
+
+    def test_payload_bytes_are_bound_to_original_signed_transaction_bytes(self):
+        for offset in (-1, 1):
+            def edit(value):
+                value['samples'][0]['application_payload_bytes'] += offset
+            with self.subTest(offset=offset), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_PAYLOAD_BYTES'):
+                self.validate(edit)
+        with self.assertRaisesRegex(ValueError, 'ARCHITECTURE_NUMBER'):
+            self.validate(lambda value: value['samples'][0].pop('application_payload_bytes'))
+
+    def test_integer_observations_reject_numeric_aliases(self):
+        edits = (
+            ('sample-count', lambda value: value.update(samples_per_workload_and_mode=3.0)),
+            ('cell-count', lambda value: value['samples'][0]['dissemination'].update(signed_cells=8.0)),
+            ('copy-count', lambda value: value['samples'][0]['dissemination'].update(durable_copy_count=True)),
+            ('frame-bytes', lambda value: value['samples'][0]['dissemination'].update(application_frame_bytes=True)),
+            ('payload-bytes', lambda value: value['samples'][0].update(application_payload_bytes=float(value['samples'][0]['application_payload_bytes']))),
+            ('depth', lambda value: value['samples'][0]['independent_confirmations'][0].update(depth=6.0)),
+            ('included-height', lambda value: value['samples'][0]['independent_confirmations'][0].update(included_height=True)),
+            ('observed-height', lambda value: value['samples'][0]['independent_confirmations'][0].update(observed_height=7.0)),
+        )
+        for field, edit in edits:
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'ARCHITECTURE_NUMBER'):
+                self.validate(edit)
 
     def test_bounded_reader_rejects_symlink_or_oversized_input(self):
         with tempfile.TemporaryDirectory() as temporary:
