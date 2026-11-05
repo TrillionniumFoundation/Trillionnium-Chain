@@ -15,7 +15,13 @@ consume these owners; it must not construct a second artifact registry or traine
    identities, real outcome scope, and independently validated role claims.
 3. kernel.operations owns durable submit intent/outbox, attempt identity and lost-ACK
    reconciliation. The chain adapter submits a contribution and observes current chain
-   inclusion/confirmation without turning it into a local final-use token.
+   inclusion/confirmation without turning it into a local final-use token. The native
+   `packet-status` command is a read-only reconciliation primitive over an already
+   existing Node namespace: it decodes the caller-retained exact packet, recomputes its
+   BlockId, and reports whether identical bytes are durably stored. It never submits,
+   replays work, activates a branch or creates a second operation ledger. A local
+   not-found observation is not proof of global non-execution and therefore cannot
+   authorize blind resubmission.
 4. Consumer checks exact release/family/bytes, current local selection and generation,
    reserves real inference resources, then records model/request/input/output receipt.
 5. Reorg withdraws branch entitlement, not already executed local history. Query original
@@ -95,3 +101,76 @@ reference and task identities. This implements their boundary but does not insta
 Agentd PoN destination. The repository owner has authorized development, not fabricated
 past task records or independent evaluator identities. Normal integration must preserve
 these distinctions while mapping the existing typed publication and operation APIs.
+
+
+## Current compiled effect boundary and required recovery locator
+
+A later upstream inspection fixes the ordinary product path at Hepta main
+`78fdb0cf8537e3a84fc6e0a849707559c80881e8`, with the pending revocation-owner
+correction in `a48b99ec46995f70f50c173c9ab358d603c6d115` (PR1429).
+The compiled effect host is `AgentdAutomationEffectHost` in
+`codex-rs/hepta-agentd/src/automation_effect_host.rs`, not the historical
+unconnected `AgentdOperationsHost` file discussed above. This is a source
+inspection, not a successful Hepta build or ordinary PoN integration claim.
+
+The host currently selects a pinned HTTP provider contract, preserves TaskFlow's
+durable effect-attempt owner, and delegates final-use revocation/nonce authority
+to `FinalUseAuthority`. Its provider key is derived from provider scope/run/step;
+its payload digest is Hepta SHA-256 of the exact transmitted bytes. A chain block,
+transaction or authenticated-session identity uses a different domain. None may
+be obtained by casting one digest into another.
+
+The upstream boundary has since advanced through Hepta PR1430/PR1431. The existing
+TaskFlow effect-attempt owner now persists the exact provider-effect key and exact
+wire payload before provider contact, and the reconciliation adapter seam receives
+those durable bytes. That closes the earlier information-loss prerequisite without
+adding a PoN journal. Legacy attempt rows still carry no exact bytes and must remain
+Unknown/Indeterminate for any adapter that needs packet identity.
+
+On the chain side, `packet-status` accepts exactly one bounded packet source (file
+or stdin), so the Hepta owner can hand off its already durable bytes without creating
+another mutable packet file. The read-only observation reports exact durable storage
+separately from current active-chain membership and active depth. A packet retained
+after a heavier reorganization therefore remains `stored_exact=true` while
+`active_chain_member=false`. The same command works with the explicit authenticated
+local state backend. These are local observations only: absence is not global
+NotDispatched, active membership is not confirmation/finality, and neither creates
+local final-use authority.
+
+In particular, chain mempool acceptance, durable publication, current branch
+membership and probabilistic confirmation are distinct observations. A local
+TaskFlow terminal receipt cannot be erased after a chain reorganization, and a
+missing chain lookup cannot become proof of NotDispatched. Before local adoption,
+the existing selection/final-use owner must recheck its actual current generation
+and withdrawal head. Simply pointing the existing HTTP config at a native TCP
+port, accepting a claimed recovery digest, or replaying a new operation identity
+would not implement this boundary. No such fallback is installed here.
+
+## Current stacked Agentd PoN adapter and branch-state observation
+
+The cross-repository development stack has now advanced beyond the earlier prerequisite
+inspection.  Hepta PR1432 installs a concrete `trillionnium-pon-local-v1` adapter in the
+compiled `AgentdAutomationEffectHost`.  It keeps the existing TaskFlow attempt owner and
+`FinalUseAuthority`, hash-pins the selected local Chain binary, requires an existing
+canonical Node namespace, passes the already-durable exact effect bytes to `submit`, and
+uses those same bytes for `packet-status` reconciliation.  It does not add a second
+operation journal.
+
+The follow-on Hepta PR1433 carries the Chain packet observation separately from the
+terminal local effect fact.  This continuation advances that observation to v3 and adds the
+exact 512-bit cumulative chainwork of the retained block and active tip plus their checked
+difference when the retained block is on the active ancestry.  A previously completed effect
+may therefore be reported with `stored_exact=true` and `active_chain_member=false` after a
+heavier reorganization, while an active member carries both height depth and cumulative-work
+depth.  The terminal TaskFlow fact is not rewound and local absence still cannot authorize
+blind redispatch.  Chain unavailability removes only the optional current observation, not
+the already durable local receipt.
+
+This closes the ordinary local **submit + lost-ACK reconciliation + current branch
+observation** seam with a Nakamoto-relevant work-distance fact rather than height alone.  The
+work distance is still only a local current-chain observation: it is not a probabilistic
+confirmation/finality certificate and does not authorize model adoption.  A
+release/selection/final-use owner must independently recheck the current
+artifact/withdrawal/generation authority and an explicit confirmation policy before adopting
+a model.  That remaining owner decision must not be encoded by changing the provider-effect
+receipt or by treating a raw work delta as a final-use capability.

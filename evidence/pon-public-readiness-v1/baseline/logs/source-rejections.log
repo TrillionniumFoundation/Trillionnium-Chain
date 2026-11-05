@@ -1,0 +1,55 @@
+test_acyclic (__main__.DependencyTests.test_acyclic) ... ok
+test_cycle_rejected (__main__.DependencyTests.test_cycle_rejected) ... ok
+test_self_cycle_rejected (__main__.DependencyTests.test_self_cycle_rejected) ... ok
+test_undeclared_dependency_rejected (__main__.DependencyTests.test_undeclared_dependency_rejected) ... ok
+test_current_claims_are_unactivated (__main__.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok
+test_duplicate_json_claims (__main__.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok
+test_explicit_missing_native_core (__main__.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok
+test_false_is_not_integer_zero (__main__.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok
+test_no_release_from_nested_report (__main__.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok
+test_no_runtime_claim (__main__.EvidenceBoundaryTests.test_no_runtime_claim) ... ok
+test_no_work_qualification_from_reference (__main__.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok
+test_old_protocol_is_not_supported (__main__.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok
+test_actual_source (__main__.RepositoryMutants.test_actual_source) ... ok
+test_algorithm_cannot_be_replaced_with_tbd (__main__.RepositoryMutants.test_algorithm_cannot_be_replaced_with_tbd) ... ok
+test_broken_navigation (__main__.RepositoryMutants.test_broken_navigation) ... ok
+test_candidate_profile_is_not_production_qualified (__main__.RepositoryMutants.test_candidate_profile_is_not_production_qualified) ... ok
+test_duplicate_package (__main__.RepositoryMutants.test_duplicate_package) ... ok
+test_every_job_has_runner_stage_cargo_isolation (__main__.RepositoryMutants.test_every_job_has_runner_stage_cargo_isolation) ... ok
+test_external_path_dependency (__main__.RepositoryMutants.test_external_path_dependency) ... ok
+test_fake_public_model_efficacy (__main__.RepositoryMutants.test_fake_public_model_efficacy) ... ok
+test_fake_qualified_primitive (__main__.RepositoryMutants.test_fake_qualified_primitive) ... ok
+test_fault_harness_isolation_remains_explicit (__main__.RepositoryMutants.test_fault_harness_isolation_remains_explicit) ... ok
+test_job_env_cannot_use_unallocated_runner_context (__main__.RepositoryMutants.test_job_env_cannot_use_unallocated_runner_context) ... ok
+test_legacy_appendix_cannot_return (__main__.RepositoryMutants.test_legacy_appendix_cannot_return) ... ok
+test_missing_implementation_axis (__main__.RepositoryMutants.test_missing_implementation_axis) ... ok
+test_missing_module_contract (__main__.RepositoryMutants.test_missing_module_contract) ... ok
+test_missing_native_contract_test_is_rejected (__main__.RepositoryMutants.test_missing_native_contract_test_is_rejected) ... ok
+test_missing_procedure_commit_is_rejected (__main__.RepositoryMutants.test_missing_procedure_commit_is_rejected) ... ok
+test_missing_runtime_claim_is_not_false_evidence (__main__.RepositoryMutants.test_missing_runtime_claim_is_not_false_evidence) ... ok
+test_no_automatic_fallback (__main__.RepositoryMutants.test_no_automatic_fallback) ... ok
+test_no_checkout_credential_persistence (__main__.RepositoryMutants.test_no_checkout_credential_persistence) ... ok
+test_no_persistent_runner_for_untrusted_pr (__main__.RepositoryMutants.test_no_persistent_runner_for_untrusted_pr) ... ok
+test_no_privileged_pr_event (__main__.RepositoryMutants.test_no_privileged_pr_event) ... ok
+test_no_write_permission_for_untrusted_pr (__main__.RepositoryMutants.test_no_write_permission_for_untrusted_pr) ... ok
+test_omitted_package (__main__.RepositoryMutants.test_omitted_package) ... ok
+test_owner_unknown (__main__.RepositoryMutants.test_owner_unknown) ... ok
+test_quality_cannot_be_work (__main__.RepositoryMutants.test_quality_cannot_be_work) ... ok
+test_reference_does_not_imply_native_product_integration (__main__.RepositoryMutants.test_reference_does_not_imply_native_product_integration) ... ok
+test_removed_core_cannot_return_as_dependency (__main__.RepositoryMutants.test_removed_core_cannot_return_as_dependency) ... ok
+test_removed_decoder_requirement_cannot_return (__main__.RepositoryMutants.test_removed_decoder_requirement_cannot_return) ... ok
+test_removed_vote_symbol (__main__.RepositoryMutants.test_removed_vote_symbol) ... ok
+test_required_job_not_dropped (__main__.RepositoryMutants.test_required_job_not_dropped) ... ok
+test_review_policy_matches_owner_decision (__main__.RepositoryMutants.test_review_policy_matches_owner_decision) ... ok
+test_source_authority_cannot_be_issued (__main__.RepositoryMutants.test_source_authority_cannot_be_issued) ... ok
+test_undeclared_crate_directory (__main__.RepositoryMutants.test_undeclared_crate_directory) ... ok
+test_unknown_concrete_work_profile_rejected (__main__.RepositoryMutants.test_unknown_concrete_work_profile_rejected) ... ok
+test_unknown_implementation_axis (__main__.RepositoryMutants.test_unknown_implementation_axis) ... ok
+test_vote_cannot_return (__main__.RepositoryMutants.test_vote_cannot_return) ... ok
+test_wrong_fork_choice (__main__.RepositoryMutants.test_wrong_fork_choice) ... ok
+test_wrong_wire_width_is_rejected (__main__.RepositoryMutants.test_wrong_wire_width_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 50 tests in 22.668s
+
+OK

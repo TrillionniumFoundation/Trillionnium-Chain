@@ -1,0 +1,11 @@
+{
+  "current_measured_inputs_match": true,
+  "experiment_reexecuted_by_verifier": false,
+  "honest_public_service_measured": false,
+  "independent_accepted": false,
+  "production_activation": false,
+  "public_network_tested": false,
+  "retained_observations_verified": true,
+  "source_commit": "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+  "work_hardness_accepted": false
+}
