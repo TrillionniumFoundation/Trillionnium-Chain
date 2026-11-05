@@ -7,6 +7,8 @@ on:
       - trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**
+      - scripts/ci/check_native_constants_roster.py
+      - scripts/ci/test_native_constants_roster.py
       - .github/workflows/pon-branch-encoding-acceptance.yml
 permissions:
   contents: read

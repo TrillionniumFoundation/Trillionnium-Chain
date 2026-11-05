@@ -4929,6 +4929,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

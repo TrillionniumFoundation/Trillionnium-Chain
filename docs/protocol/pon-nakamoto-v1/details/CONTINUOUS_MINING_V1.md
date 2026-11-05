@@ -40,8 +40,11 @@ before its requested runtime or block limit; neither is an indefinite liveness c
 
 1. Check the monotonic runtime/stop budget and wait for the configured pause.
 2. Acquire the shared Node owner without indefinitely blocking shutdown. Read the
-   actual active parent/generation and local wall-clock seconds. If the parent
-   timestamp is not earlier than the current clock, wait for the real clock.
+   actual active parent/generation and local wall-clock seconds. Apply the native
+   parent-first median-of-up-to-11 rule to that current branch. If the median
+   is not earlier than the current clock, wait for the real clock. A single
+   admissible future-dated tip does not impose an extra wait when the median
+   already permits a current-wall-time child. Never synthesize a future timestamp.
 3. Reconcile and select complete retained queue groups with actual M05 admission
    and M06 execution. Bind the exact parent/generation, pool context and miner.
    Check stop/deadline after selection and again after the configured miner check;
