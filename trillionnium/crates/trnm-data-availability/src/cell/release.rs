@@ -565,5 +565,9 @@ fn publish_marker(wire: &[u8], output: &Path, deadline: Instant) -> CellResultV1
     let cleanup = fs::remove_file(&temporary);
     result?;
     cleanup?;
-    Ok(())
+    // Publication may have completed while a blocking filesystem operation
+    // crossed the original deadline. Finish durability and owned cleanup, then
+    // refuse a late success. The exact published marker remains available for
+    // reconciliation; an expired acknowledgement cannot undo that fact.
+    check_deadline(deadline)
 }

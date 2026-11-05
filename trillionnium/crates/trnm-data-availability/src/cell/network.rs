@@ -948,7 +948,7 @@ impl ResponseBudget {
             .map_err(|_| io::Error::other("cell response budget poisoned"))
     }
 
-    fn require_remaining(&self) -> io::Result<()> {
+    pub(super) fn require_remaining(&self) -> io::Result<()> {
         if self.received()? == self.maximum {
             return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED"));
         }

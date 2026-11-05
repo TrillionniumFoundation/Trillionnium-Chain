@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+
+running 1 test
+
+thread 'cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial' (49) panicked at crates/trnm-data-availability/src/cell/discovery/pq/tests.rs:591:9:
+assertion `left == right` failed: byte refusal must precede a new attempt
+  left: CellDiscoveryObservationV2 { connection_attempts: 1, received_response_bytes: 0, record_validation_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0 }
+ right: CellDiscoveryObservationV2 { connection_attempts: 0, received_response_bytes: 0, record_validation_attempts: 0, rejected_records: 0, capacity_rejections: 0, rejected_bootstraps: 0 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial ... FAILED
+
+failures:
+
+failures:
+    cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 304 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

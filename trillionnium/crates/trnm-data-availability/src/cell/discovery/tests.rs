@@ -1135,3 +1135,85 @@ fn cache_config() -> crate::cell::CellCacheConfigV4 {
         max_manifest_rows: 256,
     }
 }
+
+#[test]
+fn discovery_actual_response_exhaustion_stops_before_dial() {
+    // Exercise no allowance, a partial header and one complete empty-directory
+    // response. In every case connection capacity deliberately remains: it must
+    // not be used after the shared actual byte allowance has been spent.
+    for budget in [0, 8, 10] {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let attempts = AtomicU64::new(4);
+        let responses = ResponseBudget::new(budget);
+        let transport = RequestContext {
+            timeout: Duration::from_secs(2),
+            overall: deadline(),
+            requests_left: &attempts,
+            responses: &responses,
+        };
+        let mut observed = CellDiscoveryObservationV1::default();
+        let body = request([11; 32]).encode();
+        if budget > 0 {
+            let server_listener = listener.try_clone().unwrap();
+            let server = thread::spawn(move || {
+                server_listener.set_nonblocking(true).unwrap();
+                let accept_deadline = Instant::now() + Duration::from_secs(3);
+                let mut stream = loop {
+                    assert!(
+                        Instant::now() < accept_deadline,
+                        "bootstrap accept deadline"
+                    );
+                    match server_listener.accept() {
+                        Ok((stream, _)) => break stream,
+                        Err(error)
+                            if matches!(
+                                error.kind(),
+                                std::io::ErrorKind::WouldBlock | std::io::ErrorKind::Interrupted
+                            ) =>
+                        {
+                            thread::sleep(Duration::from_millis(1));
+                        }
+                        Err(error) => panic!("bootstrap accept: {error}"),
+                    }
+                };
+                stream.set_nonblocking(false).unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                let mut query = [0; 199];
+                stream.read_exact(&mut query).unwrap();
+                assert_eq!(&query[..4], b"CDQ1");
+                let mut reply = b"CDS1\0".to_vec();
+                reply.extend(1u32.to_be_bytes());
+                reply.push(0);
+                stream.write_all(&reply).unwrap();
+            });
+            let result = transport::exchange(address, 1, &body, 1, &transport, &mut observed);
+            server.join().unwrap();
+            if budget == 10 {
+                assert_eq!(result.unwrap(), vec![0]);
+            } else {
+                assert!(result.is_err(), "a partial header must stay incomplete");
+            }
+        }
+        assert_eq!(responses.received().unwrap(), budget);
+        let before = observed.clone();
+        let left = attempts.load(Ordering::Relaxed);
+        listener.set_nonblocking(true).unwrap();
+        let failure =
+            transport::exchange(address, 1, &body, 1, &transport, &mut observed).unwrap_err();
+        assert!(
+            matches!(failure, CellErrorV1::Io(ref error)
+                if error.to_string().contains("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED")),
+            "{failure:?}"
+        );
+        assert_eq!(observed, before, "byte refusal must precede a new attempt");
+        assert_eq!(attempts.load(Ordering::Relaxed), left);
+        assert!(
+            matches!(listener.accept(), Err(ref error)
+                if error.kind() == std::io::ErrorKind::WouldBlock),
+            "exhausted byte capacity must not dial another bootstrap"
+        );
+    }
+}
