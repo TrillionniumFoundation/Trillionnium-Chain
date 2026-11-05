@@ -478,6 +478,444 @@ fn plain(path: &Path) -> Result<()> {
         Err(e) => Err(e.into()),
     }
 }
+fn read_initialization_marker(path: &Path, expected_len: usize) -> Result<Vec<u8>> {
+    // The earlier pathname check is not authority for the descriptor opened
+    // here. Refuse symlink substitution and avoid blocking on a replaced FIFO
+    // before rechecking the regular-file/single-link requirement on that fd.
+    let file = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_NONBLOCK | libc::O_CLOEXEC)
+        .open(path)?;
+    let metadata = file.metadata()?;
+    ensure(metadata.is_file() && metadata.nlink() == 1, "NAMESPACE")?;
+    Ok(bounded_initialization_marker_bytes(file, expected_len)?)
+}
+fn bounded_initialization_marker_bytes(
+    reader: impl Read,
+    expected_len: usize,
+) -> std::io::Result<Vec<u8>> {
+    // One excess byte rejects every oversized prefix alias without reading or
+    // retaining its tail. Exact canonical equality remains the caller's check;
+    // no length metadata, parsed JSON or cached verdict can authorize recovery.
+    let mut bytes = Vec::new();
+    reader
+        .take(expected_len as u64 + 1)
+        .read_to_end(&mut bytes)?;
+    Ok(bytes)
+}
+
+#[cfg(test)]
+mod init_marker_tests {
+    use super::*;
+    use std::io::{self, Cursor};
+    use std::process::{Command, Stdio};
+    use std::time::Instant;
+
+    fn open(
+        directory: &Path,
+        settings: &Settings,
+        authenticated: bool,
+        hook: Option<&mut Hook<'_>>,
+    ) -> Result<Node> {
+        if authenticated {
+            Node::open_with_authenticated_state_and_fault(directory, settings.clone(), 1, hook)
+        } else {
+            Node::open_with_fault(directory, settings.clone(), 1, hook)
+        }
+    }
+
+    fn expected_marker(settings: &Settings, authenticated: bool) -> Vec<u8> {
+        let backend = if authenticated {
+            StateBackend::AuthenticatedV1
+        } else {
+            StateBackend::Legacy
+        };
+        canonical(&serde_json::json!({
+            "schema": hex::encode(backend.selected_schema_id(settings)),
+            "parameters": hex::encode(settings.parameters()),
+            "genesis": hex::encode(settings.genesis()),
+        }))
+        .unwrap()
+    }
+
+    struct CountedReader<R> {
+        inner: R,
+        consumed: usize,
+        largest_request: usize,
+        interrupt_once: bool,
+    }
+
+    impl<R: Read> Read for CountedReader<R> {
+        fn read(&mut self, bytes: &mut [u8]) -> io::Result<usize> {
+            self.largest_request = self.largest_request.max(bytes.len());
+            if std::mem::take(&mut self.interrupt_once) {
+                return Err(io::ErrorKind::Interrupted.into());
+            }
+            let count = self.inner.read(bytes)?;
+            self.consumed += count;
+            Ok(count)
+        }
+    }
+
+    struct FailingReader;
+
+    impl Read for FailingReader {
+        fn read(&mut self, _: &mut [u8]) -> io::Result<usize> {
+            Err(io::Error::new(
+                io::ErrorKind::PermissionDenied,
+                "initialization marker test read failure",
+            ))
+        }
+    }
+
+    #[test]
+    fn initialization_marker_read_is_bounded_and_propagates_io_errors() {
+        let expected = b"{\"genesis\":\"fixed\"}";
+        // Count actual Read consumption, rather than inferring a bound from
+        // refusal. A finite excess tail makes a missing cap fail promptly too.
+        let mut reader = CountedReader {
+            inner: Cursor::new(expected).chain(io::repeat(0).take(4096)),
+            consumed: 0,
+            largest_request: 0,
+            interrupt_once: false,
+        };
+        let retained = bounded_initialization_marker_bytes(&mut reader, expected.len()).unwrap();
+        assert_eq!(retained.len(), expected.len() + 1);
+        assert_eq!(&retained[..expected.len()], expected);
+        assert_eq!(reader.consumed, expected.len() + 1);
+        assert!(reader.largest_request <= expected.len() + 1);
+
+        let mut interrupted = CountedReader {
+            inner: Cursor::new(expected),
+            consumed: 0,
+            largest_request: 0,
+            interrupt_once: true,
+        };
+        assert_eq!(
+            bounded_initialization_marker_bytes(&mut interrupted, expected.len()).unwrap(),
+            expected
+        );
+        assert_eq!(interrupted.consumed, expected.len());
+        // A complete-looking prefix does not hide a read error while checking
+        // for its excess byte. IO errors are not context mismatches or success.
+        let error = bounded_initialization_marker_bytes(
+            Cursor::new(expected).chain(FailingReader),
+            expected.len(),
+        )
+        .unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::PermissionDenied);
+        let directory = tempfile::tempdir().unwrap();
+        let error = read_initialization_marker(&directory.path().join("missing"), expected.len())
+            .unwrap_err();
+        assert_eq!(error.kind(), crate::ErrorKind::Transport);
+        assert_eq!(
+            std::error::Error::source(&error)
+                .unwrap()
+                .downcast_ref::<io::Error>()
+                .unwrap()
+                .kind(),
+            io::ErrorKind::NotFound
+        );
+    }
+
+    #[test]
+    fn initialization_marker_preserves_exact_context_errors() {
+        let settings = Settings::development(Some(1)).unwrap();
+        for authenticated in [false, true] {
+            let expected = expected_marker(&settings, authenticated);
+            for initialized in [false, true] {
+                for damage in ["empty", "truncated", "different", "trailing", "oversized"] {
+                    let directory = tempfile::tempdir().unwrap();
+                    if initialized {
+                        drop(open(directory.path(), &settings, authenticated, None).unwrap());
+                    } else {
+                        let mut stop = |point: &str| {
+                            assert_eq!(point, "init-intent");
+                            Err("TEST_INIT_INTERRUPTED".into())
+                        };
+                        let error =
+                            open(directory.path(), &settings, authenticated, Some(&mut stop))
+                                .err()
+                                .expect("the real initialization cut must fail");
+                        assert_eq!(error.to_string(), "TEST_INIT_INTERRUPTED");
+                    }
+                    let marker = directory.path().join("initializing.json");
+                    let mut bytes = expected.clone();
+                    match damage {
+                        "empty" => bytes.clear(),
+                        "truncated" => {
+                            bytes.pop();
+                        }
+                        "different" => bytes[0] ^= 1,
+                        "trailing" => bytes.push(b'\n'),
+                        "oversized" => bytes.push(0),
+                        _ => unreachable!(),
+                    }
+                    fs::write(&marker, &bytes).unwrap();
+                    if damage == "oversized" {
+                        // A sparse canonical-prefix fixture avoids allocating
+                        // the untrusted 64 MiB tail in the test itself.
+                        OpenOptions::new()
+                            .write(true)
+                            .open(&marker)
+                            .unwrap()
+                            .set_len(64 * 1024 * 1024)
+                            .unwrap();
+                    }
+                    let before = fs::metadata(&marker).unwrap();
+                    assert_eq!(
+                        read_initialization_marker(&marker, expected.len()).unwrap(),
+                        bytes
+                    );
+                    let dbpath = directory.path().join("native.sqlite");
+                    let database_before = initialized.then(|| fs::read(&dbpath).unwrap());
+                    let mut cuts = Vec::new();
+                    let mut record = |point: &str| {
+                        cuts.push(point.to_owned());
+                        Ok(())
+                    };
+                    let error = open(
+                        directory.path(),
+                        &settings,
+                        authenticated,
+                        Some(&mut record),
+                    )
+                    .err()
+                    .expect("unequal regular marker bytes must not authorize startup");
+                    assert_eq!(error.to_string(), "INITIALIZATION_CONTEXT", "{damage}");
+                    assert!(cuts.is_empty());
+                    let after = fs::metadata(&marker).unwrap();
+                    assert_eq!((before.ino(), before.len()), (after.ino(), after.len()));
+                    assert_eq!(
+                        database_before,
+                        dbpath.exists().then(|| fs::read(&dbpath).unwrap())
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn initialization_marker_recovery_and_cold_reopen_preserve_state() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let other_settings = Settings::development(Some(2)).unwrap();
+        let cuts = [
+            "init-intent",
+            "init-schema",
+            "init-before-commit",
+            "init-committed",
+        ];
+        for authenticated in [false, true] {
+            for (index, target) in cuts.iter().enumerate() {
+                let directory = tempfile::tempdir().unwrap();
+                let mut visited = Vec::new();
+                let mut stop = |point: &str| {
+                    visited.push(point.to_owned());
+                    if point == *target {
+                        Err("TEST_INIT_INTERRUPTED".into())
+                    } else {
+                        Ok(())
+                    }
+                };
+                let error = open(directory.path(), &settings, authenticated, Some(&mut stop))
+                    .err()
+                    .expect("the selected initialization cut must fail");
+                assert_eq!(error.to_string(), "TEST_INIT_INTERRUPTED");
+                assert_eq!(visited, cuts[..=index]);
+                let marker = directory.path().join("initializing.json");
+                let expected = expected_marker(&settings, authenticated);
+                assert_eq!(fs::read(&marker).unwrap(), expected);
+                assert_eq!(
+                    read_initialization_marker(&marker, expected.len()).unwrap(),
+                    expected
+                );
+                assert_eq!(
+                    open(directory.path(), &other_settings, authenticated, None)
+                        .err()
+                        .expect("a different context must not recover")
+                        .to_string(),
+                    "INITIALIZATION_CONTEXT"
+                );
+                assert_eq!(fs::read(&marker).unwrap(), expected);
+                let node = open(directory.path(), &settings, authenticated, None).unwrap();
+                let active = node.read_active().unwrap();
+                assert_eq!(active, (settings.genesis(), 0, settings.initial.clone()));
+                assert_eq!(node.stats().unwrap()["height"], 0);
+                assert!(!marker.exists());
+                drop(node);
+                let mut visited = Vec::new();
+                let mut record = |point: &str| {
+                    visited.push(point.to_owned());
+                    Ok(())
+                };
+                let node = open(
+                    directory.path(),
+                    &settings,
+                    authenticated,
+                    Some(&mut record),
+                )
+                .unwrap();
+                assert_eq!(node.read_active().unwrap(), active);
+                assert!(visited.is_empty());
+                assert!(!marker.exists());
+            }
+        }
+    }
+
+    fn replace_marker(marker: &Path, retained: &Path, kind: &str) {
+        fs::rename(marker, retained).unwrap();
+        match kind {
+            "fifo" => rustix::fs::mknodat(
+                File::open(marker.parent().unwrap()).unwrap(),
+                marker.file_name().unwrap(),
+                rustix::fs::FileType::Fifo,
+                rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+                0,
+            )
+            .unwrap(),
+            "directory" => fs::create_dir(marker).unwrap(),
+            "hardlink" => fs::hard_link(retained, marker).unwrap(),
+            "symlink" => std::os::unix::fs::symlink(retained, marker).unwrap(),
+            _ => unreachable!(),
+        }
+    }
+
+    fn assert_substitution_error(error: Error, kind: &str) {
+        if kind == "symlink" {
+            assert_eq!(error.kind(), crate::ErrorKind::Transport);
+            assert_eq!(
+                std::error::Error::source(&error)
+                    .unwrap()
+                    .downcast_ref::<io::Error>()
+                    .unwrap()
+                    .raw_os_error(),
+                Some(libc::ELOOP)
+            );
+        } else {
+            assert_eq!(error.to_string(), "NAMESPACE");
+        }
+    }
+
+    #[test]
+    #[ignore = "run only by the bounded subprocess regression"]
+    fn initialization_marker_special_file_child() {
+        // The parent supplies a private cwd, not global environment variables.
+        // All child files remain removable by the parent even after timeout.
+        let work = std::env::current_dir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        for authenticated in [false, true] {
+            let expected = expected_marker(&settings, authenticated);
+            for kind in ["fifo", "directory", "hardlink", "symlink"] {
+                for during_startup in [false, true] {
+                    println!("special marker: {kind}, authenticated={authenticated}, startup={during_startup}");
+                    let fixture = tempfile::tempdir_in(&work).unwrap();
+                    let directory = fixture.path().join("store");
+                    let marker = directory.join("initializing.json");
+                    let retained = fixture.path().join("retained.json");
+                    if during_startup {
+                        let mut cuts = Vec::new();
+                        let mut replace = |point: &str| {
+                            cuts.push(point.to_owned());
+                            assert_eq!(point, "init-intent");
+                            assert_eq!(fs::read(&marker).unwrap(), expected);
+                            replace_marker(&marker, &retained, kind);
+                            Ok(())
+                        };
+                        let error = open(&directory, &settings, authenticated, Some(&mut replace))
+                            .err()
+                            .expect("post-precheck substitution must not authorize startup");
+                        assert_substitution_error(error, kind);
+                        assert_eq!(cuts, ["init-intent"]);
+                    } else {
+                        fs::create_dir(&directory).unwrap();
+                        fs::write(&marker, &expected).unwrap();
+                        plain(&marker).unwrap();
+                        replace_marker(&marker, &retained, kind);
+                        assert_substitution_error(
+                            read_initialization_marker(&marker, expected.len()).unwrap_err(),
+                            kind,
+                        );
+                        // Already-present special files still fail at the
+                        // original precheck, before owner locking or SQLite.
+                        assert_eq!(
+                            open(&directory, &settings, authenticated, None)
+                                .err()
+                                .expect("a special marker must fail the startup precheck")
+                                .to_string(),
+                            "NAMESPACE"
+                        );
+                        assert!(!directory.join("owner.lock").exists());
+                    }
+                    assert_eq!(fs::read(&retained).unwrap(), expected);
+                    assert!(!directory.join("native.sqlite").exists());
+                    if kind == "directory" {
+                        fs::remove_dir(&marker).unwrap();
+                    } else {
+                        fs::remove_file(&marker).unwrap();
+                    }
+                    fs::rename(&retained, &marker).unwrap();
+                    let node = open(&directory, &settings, authenticated, None).unwrap();
+                    assert_eq!(
+                        node.read_active().unwrap(),
+                        (settings.genesis(), 0, settings.initial.clone())
+                    );
+                    assert!(!marker.exists());
+                }
+            }
+        }
+        fs::write(
+            work.join("child-complete"),
+            b"all special-file cases passed",
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn initialization_marker_rejects_special_files_and_post_precheck_substitution() {
+        let directory = tempfile::tempdir().unwrap();
+        let log_path = directory.path().join("child.log");
+        let log = File::create(&log_path).unwrap();
+        let mut child = Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--ignored",
+                "--exact",
+                "store::init_marker_tests::initialization_marker_special_file_child",
+                "--nocapture",
+                "--test-threads=1",
+            ])
+            .current_dir(directory.path())
+            .stdout(Stdio::from(log.try_clone().unwrap()))
+            .stderr(Stdio::from(log))
+            .spawn()
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(30);
+        let status = loop {
+            if let Some(status) = child.try_wait().unwrap() {
+                break status;
+            }
+            if Instant::now() >= deadline {
+                child.kill().unwrap();
+                child.wait().unwrap();
+                panic!(
+                    "special-file initialization reader timed out: {}",
+                    fs::read_to_string(&log_path).unwrap()
+                );
+            }
+            std::thread::sleep(Duration::from_millis(10));
+        };
+        assert!(
+            status.success(),
+            "special-file child failed: {}",
+            fs::read_to_string(&log_path).unwrap()
+        );
+        // A zero-test subprocess exit must never masquerade as test success.
+        assert_eq!(
+            fs::read(directory.path().join("child-complete")).unwrap(),
+            b"all special-file cases passed"
+        );
+    }
+}
+
 fn sync_dir(path: &Path) -> Result<()> {
     File::open(path)?.sync_all()?;
     Ok(())
@@ -1435,7 +1873,10 @@ impl Node {
         }
         let intent = marker.exists();
         if intent {
-            ensure(fs::read(&marker)? == expected, "INITIALIZATION_CONTEXT")?;
+            ensure(
+                read_initialization_marker(&marker, expected.len())? == expected,
+                "INITIALIZATION_CONTEXT",
+            )?;
         }
         let expected_db = Connection::open_in_memory()?;
         expected_db.execute_batch(&ddl)?;
