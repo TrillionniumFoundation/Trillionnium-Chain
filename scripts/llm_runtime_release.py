@@ -234,6 +234,8 @@ def elf_dependencies(fd, size, machine):
     header = read(0, 64)
     require(header[4:7] == b"\x02\x01\x01" and struct.unpack_from("<H", header, 18)[0]
             == {"x86_64": 62, "aarch64": 183}[machine], "RUNTIME_ELF_PROFILE")
+    elf_type = struct.unpack_from("<H", header, 16)[0]
+    require(elf_type in {2, 3}, "RUNTIME_ELF_TYPE")  # ET_EXEC or ET_DYN.
     offset = struct.unpack_from("<Q", header, 32)[0]
     width, count = struct.unpack_from("<HH", header, 54)
     require(width == 56 and 1 <= count <= 128, "RUNTIME_ELF_PROGRAM_HEADERS")
@@ -253,8 +255,12 @@ def elf_dependencies(fd, size, machine):
         if kind == 0:
             break
         values.setdefault(kind, []).append(value)
+    # ET_DYN also includes position-independent executables. An observed
+    # DT_FLAGS_1 / DF_1_PIE bit cannot be erased by a later duplicate flag tag.
+    is_pie = any(value & 0x08000000 for value in values.get(0x6FFFFFFB, []))
     if not values:
-        return {"needed": [], "search": [], "interpreter": interpreter}
+        return {"needed": [], "search": [], "interpreter": interpreter,
+                "elf_type": elf_type, "is_pie": is_pie}
     require(len(values.get(5, [])) == len(values.get(10, [])) == 1, "RUNTIME_ELF_STRING_TABLE")
     address, length = values[5][0], values[10][0]
     require(0 < length <= 1024 * 1024, "RUNTIME_ELF_STRING_TABLE")
@@ -278,22 +284,27 @@ def elf_dependencies(fd, size, machine):
 
     return {"needed": [string(i) for i in values.get(1, [])],
             "search": [string(i) for tag in (15, 29) for i in values.get(tag, [])],
-            "interpreter": interpreter}
+            "interpreter": interpreter, "elf_type": elf_type, "is_pie": is_pie}
 
 
 def native_closure(root_fd, files, spec):
-    paths = {row["path"] for row in files}
-    result = []
+    members = {row["path"]: row for row in files}
+    native_files = {}
     for row in files:
         fd = open_member(root_fd, row["path"])
         try:
             native = elf_dependencies(fd, row["size"], spec["platform"]["machine"])
         finally:
             os.close(fd)
-        if native is None:
-            continue
+        if native is not None:
+            native_files[row["path"]] = native
+    # Resolve edges only after every candidate has passed the selected ELF
+    # class/byte-order/machine profile. A named regular file alone cannot close
+    # a native dependency; the closure must include its actual ELF descriptor.
+    result = []
+    for path, native in native_files.items():
         search = list(spec["native_search_paths"])
-        parent = row["path"].split("/")[:-1]
+        parent = path.split("/")[:-1]
         for group in native["search"]:
             for item in group.split(":"):
                 require(item.startswith("$ORIGIN/") or item == "$ORIGIN", "RUNTIME_ELF_AMBIENT_SEARCH")
@@ -311,13 +322,20 @@ def native_closure(root_fd, files, spec):
         dependencies = []
         for name in native["needed"]:
             require(relative(name) == name and "/" not in name, "RUNTIME_ELF_NEEDED_NAME")
-            candidates = sorted({directory + "/" + name for directory in search if directory + "/" + name in paths})
+            candidates = sorted({directory + "/" + name for directory in search if directory + "/" + name in members})
             require(len(candidates) == 1, "RUNTIME_NATIVE_DEPENDENCY_MISSING_OR_AMBIGUOUS:" + name)
-            dependencies.append({"name": name, "path": candidates[0]})
+            target = candidates[0]
+            require(target in native_files, "RUNTIME_NATIVE_DEPENDENCY_NOT_ELF:" + name)
+            require(native_files[target]["elf_type"] == 3,
+                    "RUNTIME_NATIVE_DEPENDENCY_NOT_SHARED_OBJECT:" + name)
+            require(not native_files[target]["is_pie"], "RUNTIME_NATIVE_DEPENDENCY_IS_PIE:" + name)
+            dependencies.append({"name": name, "path": target})
         loader = native["interpreter"]
         if loader is not None:
-            require(loader.startswith("/") and relative(loader[1:]) in paths, "RUNTIME_NATIVE_LOADER_MISSING")
-        result.append({"path": row["path"], "interpreter": loader, "dependencies": dependencies})
+            require(loader.startswith("/") and relative(loader[1:]) in members, "RUNTIME_NATIVE_LOADER_MISSING")
+            require(loader[1:] in native_files, "RUNTIME_NATIVE_LOADER_NOT_ELF")
+            require(members[loader[1:]]["mode"] & 0o111, "RUNTIME_NATIVE_LOADER_NOT_EXECUTABLE")
+        result.append({"path": path, "interpreter": loader, "dependencies": dependencies})
     require(spec["interpreter"] in {row["path"] for row in result}, "RUNTIME_INTERPRETER_NOT_ELF")
     return result
 
