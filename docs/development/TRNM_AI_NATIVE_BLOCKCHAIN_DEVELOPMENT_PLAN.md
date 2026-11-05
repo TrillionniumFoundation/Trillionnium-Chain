@@ -6258,6 +6258,21 @@ changes do not create funding, independent custody, CURRENT or FinalUse authorit
 Execution receipts, including unsuccessful attempts, retain their exact source
 identities in the follow-up record; no prior result is relabeled as a new pass.
 
+Frozen implementation `211e330f` executes 295 M09 library, 29 CLI and eight
+compile-fail documentation tests, with 106 distinct Python controls. Composition
+`568c9759` separately passes all-target whole-workspace strict Clippy and the
+same 106 source controls; 460 exact pins and complete retained test names are
+verified. The old-parser counterexample executes one real failure on `8992e87a`
+and the identical test passes on the implementation. Original failed selectors,
+loader-cache diagnostics and interrupted environment observations are retained.
+The corrected original Node test-profile build fails with LLVM ENOSPC, exit 101,
+before any of the 12 selected tests executes; Node runtime acceptance stays open.
+Original profiles, selectors, deadlines and qualification guards remain intact.
+The evidence delivery preserves the concurrent `c57c2432` documentation history;
+no local result grants funded renewal, independent custody, public WAN or actual
+CURRENT/FinalUse acceptance. Hosted CI was started and is not counted as passed.
+
+
 ### 2026-11-04 independently pinned recovery, PQ release roles and fixed hybrid TLS
 
 Continue the existing integration candidate with the
@@ -6476,3 +6491,17 @@ sponge model. Component error estimates are neither quantum attack costs nor a
 complete recursive QROM theorem. Formal theorem conditions, concrete losses,
 whole accepted-program coverage and actual end-to-end benefit remain HOLD;
 this continuation does not activate the candidate or replace native W1.
+
+### 2026-11-05 Storage boundary evidence and shared-source integration
+
+The [storage boundary follow-up](../../evidence/cell-storage-continuation-20261104/boundary-followup/README.md)
+preserves the actual C native results (295 library, 29 CLI and 8 compile-fail
+checks), N's 106 source controls and strict default-feature workspace Clippy,
+and the original N Node build failure (ENOSPC, exit 101, zero tests executed).
+D's later source-only checkpoint and all failed/interrupted attempts remain
+separate observations. Incoming `81da33e6` and its `d9954903` inventory correction
+change the combined native source. The final input uses 464 pins and 43 source
+integrity controls; prior C/N/D passes do not transfer to it. Both plan histories,
+all concurrent source and the exact old-parser RED parent are retained. Fresh
+static execution requires its own exact-commit receipt; combined native, Node,
+funded renewal, independent custody, CURRENT/FinalUse and activation stay HOLD.
