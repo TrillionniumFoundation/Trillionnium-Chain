@@ -2,10 +2,13 @@
 
 Status: **Draft / HOLD**. The original profile implementation was developed on
 `5a5ddbd4577207af7f7771a4a50c76620f32940f` and recorded at `ad081dac` in PR #698.
-This delivery composes that implementation with the later trusted branch head
+The original `885b6e82` delivery composed that implementation with branch head
 `04be4748e653a30fae2d66275b4bed83e6eabb8b`, preserving its `7eba9107` integration
-and separate fuzz-lock repair. It does not activate a network, migrate deployed
-keys, change PoN work through this profile increment, or qualify whole-chain PQ.
+and separate fuzz-lock repair. Later increments retain that history and add the
+trusted retirement API described below. The [evidence index](../../evidence/crypto-profile-20261104/README.md)
+attributes each execution to its exact source; earlier results do not validate
+later changes. This profile work does not activate a network, migrate deployed
+keys, change PoN work, or qualify whole-chain PQ.
 The [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 owns the remaining engineering order. The original
 [six-domain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md) remains binding.
