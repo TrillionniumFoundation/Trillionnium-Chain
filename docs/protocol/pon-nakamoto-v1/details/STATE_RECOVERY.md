@@ -110,3 +110,99 @@ The storage-only4102-record regression labels its premise explicitly. The separa
 `long_history.py` campaign creates actual proofs and signed transactions above4096 and
 performs a shallow competing fork; its logical clock and real SQLite evidence are reported
 separately from the physical-host UTC campaign. Neither establishes physical power loss.
+
+## M08 procedure boundary and retry contract
+
+`M08.PlanReorg` is the planning phase of `Ledger.activate(target, cut=None)`, not a
+separate exported plan constructor. The target is an already admitted block identifier;
+callers cannot supply its work or replacement undo steps. Existing pending intent is
+completed first. Equal/lower work returns the active tip without new events. Ordinary
+extension without a fault callback updates deltas/head/generation/event in one transaction
+on the existing slot. An actual fork finds the common ancestor and persists the staging
+copy plus exact detach/attach intent before any fork step. The current ancestry lists
+are in memory and staging is a full copy: native bounded planning is still work to do.
+
+`M08.RecoverAndPublish` is `Ledger._recover_intent(cut=None)`. It requires
+`active == (old_tip, next_generation - 1)`, applies each step with its cursor transaction,
+checks the final root, and publishes the active tuple/events/done/slot retirement together.
+`Ledger.recover` then separately selects the best verified stored work. Do not conflate
+completion of an existing intent with discovery and activation of a later heavier tip.
+
+| Interruption or rejection | Durable state and required next action |
+|---|---|
+| Before staging commit | Old published state remains; caller may recompute the same target plan. |
+| After intent commit | Old published state remains; resume this exact persisted intent before new admission. |
+| During a delta transaction | Either prior cursor/state or next cursor/state survives; never advance one without the other. |
+| Wrong before-image / generation / target root | Retain committed evidence and fence admission; diagnose corruption instead of deleting intent or manufacturing a new root. |
+| Before final publication commit | Old active view remains; replay cursor/root check and retry publication. |
+| After publication, before return/ACK | Done marker and events already exist; repeat recovery returns current tip, without duplicate events or effects. |
+| After admission, before activation intent | Startup recovery inspects stored fully verified tips and activates strictly heavier work. |
+
+`UNKNOWN_PARENT`, `GENERATION`, `SCHEMA`, `UNDO_ROOT`, `ROOT` and underlying SQLite/I/O
+errors are not interchangeable. SQLite error or local capacity exhaustion is not proof
+that the remote block is invalid. A process exception is not proof of a remote API effect.
+No recovery operation clears `EffectJournal` or creates a local Hepta final-use token.
+The concrete module contract and retained crash tests are linked from
+[M08](../../../modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md).
+
+## Incoming history consumer at the existing owner
+
+N2 in NETWORK_CLIENT defines the bounded page producer/receiver. It imports actual
+header/body/proof records through Ledger.admit, never through the local checkpoint
+trust premise. A per-page failure can retain a fully verified prefix; retry or reopen
+uses those immutable records. Transport completion, local active-tip selection and
+current transaction confirmation are separate observations. No new tables, authority
+owner, genesis parameters or schema migration are introduced by this client continuation.
+
+## Native compute caches do not replace this durable owner
+
+The optional M06 native session and M00 compressed commitment tree are disposable
+in-memory caches. `Ledger` remains the only block/delta/reorg/active-pointer SQLite owner.
+A crash or ambiguous compute reply closes the cache. Restart recovers this same durable
+namespace, selects the verified branch, and opens a new root-bound compute session.
+Different parent state resets the session; no session sequence is a commit receipt,
+undo checkpoint, authorization or evidence that a physical effect happened.
+
+The native commitment updates changed paths, but durable maps, ancestry, application
+scans and Python verification still have complete-state costs. Native paged storage,
+state lifetime economics, the 16 MiB bridge capacity gap and physical power-loss testing
+remain open. Existing M08 crash/reorg tests run with the explicit session backend too;
+this tests composition with the reference persistent owner, not a complete native node.
+
+## Native branch owner continuation
+
+The M15 `trnm-pon-node` composition implements M07/M08 in `src/store.rs` without
+opening the reference Ledger's database. Its fresh `native.sqlite` owns metadata,
+blocks, before/after deltas, active generation/slot, KV, reorg intent/cursor, ordered
+steps/events and root-checked local snapshots. A 512-bit big-endian indexed work value
+is derived at native admission; no peer-supplied work total enters this table.
+
+Initialization writes and syncs an exact context/schema intent before creating schema
+and genesis in one SQLite transaction. Reopen checks the schema and context read-only
+before a writable connection. Unknown empty stores, extra triggers, mismatched genesis
+and duplicate native writers reject. WAL/FULL, owner file locks and inode/symlink checks
+are implemented; full descriptor/sidecar race protection and coherent disk rollback
+anchors remain unqualified. No process-exit test is called a physical power-cut test.
+
+Block plus deltas commit together. A direct extension applies its deltas, checks its
+root and publishes tip/generation/event atomically without copying all persistent KV.
+A real fork prepares a separate slot and disk-backed ordered detach/attach steps in one
+transaction. Each step validates before-images and advances its cursor atomically.
+Only a matching final root permits one atomic active/events/done/old-slot publication.
+Recovery completes the intent, then selects any strictly heavier verified stored block;
+this includes an admission committed before its activation intent. Equal work retains
+the current chain. Corrupt generation, steps, root or delta preconditions remain fenced.
+
+Reconstruction spools ancestor identities on disk and checks snapshots/deltas/roots;
+retention is not a finality threshold. Full maps/root computations and long history
+remain resource costs. No Hepta operation journal, provider effect or user database is
+inside this chain namespace or its undo transaction.
+
+### Metadata-only native ancestry access
+
+The existing native owner now separates metadata retrieval from full packet retrieval.
+Ancestry/DAA/current-clock traversal uses block-ID-bound header projections, while work
+admission and queried transaction inclusion still check complete packets. No stored
+schema, genesis, reward, rollback or root rule changes. This removes repeated Rust-side
+packet materialization but does not turn the complete-state root into persistent
+incremental authenticated storage or qualify physical power loss.
