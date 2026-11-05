@@ -751,6 +751,29 @@ def validate(root: Path = ROOT) -> dict:
         key = (package['name'], package.get('source'))
         require(key not in resolved or package['version'] in resolved[key],
                 'fuzz must instrument the same shared dependency versions as the native lockfile: ' + package['name'])
+    # A lock may preserve every version yet omit a newly required dependency
+    # edge of a local crate. Check unconditional nonoptional normal dependencies;
+    # dev/target/optional edges remain Cargo's responsibility, not inferred here.
+    workspace = tomllib.loads((root / 'trillionnium/Cargo.toml').read_text())
+    inherited = workspace.get('workspace', {}).get('dependencies', {})
+    local = {}
+    for member in workspace['workspace']['members']:
+        manifest = tomllib.loads((root / 'trillionnium' / member / 'Cargo.toml').read_text())
+        local[manifest['package']['name']] = manifest
+    for package in fuzz:
+        if package.get('source') is not None or package['name'] not in local:
+            continue
+        edges = {edge.split(' ', 1)[0] for edge in package.get('dependencies', [])}
+        for alias, specification in local[package['name']].get('dependencies', {}).items():
+            detail = specification if isinstance(specification, dict) else {}
+            if detail.get('optional', False):
+                continue
+            parent_detail = inherited.get(alias, {}) if detail.get('workspace', False) else {}
+            parent_detail = parent_detail if isinstance(parent_detail, dict) else {}
+            dependency = detail.get('package', parent_detail.get('package', alias))
+            require(dependency in edges,
+                    'fuzz lock missing required local dependency edge: '
+                    + package['name'] + ' -> ' + dependency)
     return {'head_jobs': len(required), 'merge_lanes': len(required),
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
