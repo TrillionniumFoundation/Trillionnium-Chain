@@ -165,22 +165,9 @@ def require(value, code):
 
 def verify_materials(directory):
     """Recheck the retained exact snapshot, including non-weight file hashes."""
-    directory = Path(directory)
-    manifest = read_json(directory / 'material-manifest.json')
-    require(manifest['model'] == MODEL and manifest['revision'] == REVISION,
-            'RUNTIME_SNAPSHOT_CONTEXT')
-    required = set(PUBLIC_FILES)
-    require(set(manifest['files']) == required, 'RUNTIME_MATERIAL_SET')
-    for name, item in manifest['files'].items():
-        path = directory / name
-        require(type(item['size']) is int and
-                (item['size'], item['sha256']) == PUBLIC_FILES[name], 'RUNTIME_PUBLIC_FILE_ROOT')
-        require(path.is_file() and not path.is_symlink() and path.stat().st_size == item['size'] and
-                file_sha(path) == item['sha256'], 'RUNTIME_MATERIAL_HASH')
-        require(item['revision'] == REVISION, 'RUNTIME_MATERIAL_REVISION')
-    require(manifest['files']['model.safetensors']['sha256'] == WEIGHT_SHA,
-            'RUNTIME_PUBLIC_WEIGHT_ROOT')
-    config = read_json(directory / 'config.json')
+    from llm_base_material import capture
+    material = capture(directory, PUBLIC_FILES, MODEL, REVISION, WEIGHT_SHA)
+    manifest, config = material.manifest(), material.document('config.json')
     for key, expected in [('model_type', 'llama'), ('num_hidden_layers', 30),
                           ('hidden_size', 576), ('intermediate_size', 1536),
                           ('num_attention_heads', 9), ('num_key_value_heads', 3),
@@ -188,6 +175,7 @@ def verify_materials(directory):
                           ('tie_word_embeddings', True), ('attention_bias', False),
                           ('mlp_bias', False), ('torch_dtype', 'bfloat16')]:
         require(type(config[key]) is type(expected) and config[key] == expected, 'RUNTIME_CONFIG_PROFILE')
+    architecture(config)
     return manifest, config
 
 
@@ -280,7 +268,7 @@ def run_components():
     # These are the changed runner dependencies, not a full release closure.
     return {name: file_sha(REPOSITORY / 'scripts' / name) for name in (
         'llm_runtime_pilot.py', 'llm_runtime_trial_ledger.py',
-        'llm_runtime_assessment.py', 'llm_parent_material.py')}
+        'llm_runtime_assessment.py', 'llm_parent_material.py', 'llm_base_material.py')}
 
 
 def validate_plan(plan):
@@ -568,33 +556,47 @@ def backbone_tensors(model, shapes):
 
 
 def architecture(config):
+    from fractions import Fraction
+    require(type(config) is dict and all(name in config for name in
+        ('rope_theta', 'rms_norm_eps', 'hidden_act', 'attention_dropout', 'rope_scaling',
+         'attention_bias', 'mlp_bias', 'tie_word_embeddings')), 'RUNTIME_CONFIG_PROFILE')
+    require(config['hidden_act'] == 'silu' and config['attention_dropout'] == 0 and
+            config['rope_scaling'] is None and config.get('rope_interleaved', False) is False and
+            config['attention_bias'] is False and config['mlp_bias'] is False and
+            type(config['tie_word_embeddings']) is bool, 'RUNTIME_CONFIG_PROFILE')
+    numeric = []
+    for name in ('rope_theta', 'rms_norm_eps'):
+        value = config[name]
+        require(type(value) in (int, float) and math.isfinite(value) and value > 0,
+                'RUNTIME_CONFIG_PROFILE')
+        rational = Fraction(str(value))
+        numeric.append([rational.numerator, rational.denominator])
     return dict(schema='pon-decoder-rms-rope-gqa-swiglu-v1', layers=config['num_hidden_layers'],
                 hidden=config['hidden_size'], intermediate=config['intermediate_size'],
                 attention_heads=config['num_attention_heads'], kv_heads=config['num_key_value_heads'],
                 vocabulary=config['vocab_size'], context=config['max_position_embeddings'],
-                rope_theta=[100000, 1], rms_epsilon=[1, 100000], tied_embeddings=True, bias=False)
+                rope_theta=numeric[0], rms_epsilon=numeric[1],
+                tied_embeddings=config['tie_word_embeddings'], bias=False)
 
 
 def load_model(materials, plan, imports):
-    torch, device, AutoModel, AutoTokenizer, safe_open, _, _ = imports
-    with safe_open(str(materials/'model.safetensors'), framework='pt', device='cpu') as handle:
-        inventory = {name: dict(shape=list(handle.get_slice(name).get_shape()),
-                               dtype=handle.get_slice(name).get_dtype()) for name in handle.keys()}
-    config = read_json(materials/'config.json')
+    from llm_base_material import capture, tokenizer_from_material, model_from_material, bind_loaded
+    torch, device, _, _, _, _, _ = imports
+    # Preflight is an earlier observation. This sole capture both rechecks the
+    # exact pins and supplies every byte used below; no parser reopens a path.
+    material = capture(materials, PUBLIC_FILES, MODEL, REVISION, WEIGHT_SHA)
+    require(identity(material.manifest()) == plan['snapshot'], 'RUNTIME_SNAPSHOT_CHANGED')
+    config = material.document('config.json')
     shapes = contract_module().architecture_shapes(architecture(config))
-    require(set(inventory) == set(shapes) and all(inventory[name]['shape'] == shape and
-            inventory[name]['dtype'] == 'BF16' for name, shape in shapes.items()), 'RUNTIME_BF16_INVENTORY')
-    tokenizer = AutoTokenizer.from_pretrained(str(materials), local_files_only=True,
-                                             trust_remote_code=False, use_fast=True)
-    tokenizer.padding_side = 'left'
-    model = AutoModel.from_pretrained(str(materials), local_files_only=True, trust_remote_code=False,
-                                     dtype=torch.float32, attn_implementation='eager')
+    tokenizer = tokenizer_from_material(material)
+    model, inventory = model_from_material(material, shapes, torch)
     model.to(device); model.eval()
     require(sum(p.numel() for p in model.parameters()) == 134515008 and
             all(p.dtype == torch.float32 and p.device.type == device.type for p in model.parameters()),
             'RUNTIME_LOADED_PARAMETERS')
     require(tokenizer.bos_token_id == 1 and tokenizer.eos_token_id == tokenizer.pad_token_id == 2 and
             len(tokenizer) == 49152, 'RUNTIME_TOKENIZER_PROFILE')
+    bind_loaded(material, model, tokenizer)
     return model, tokenizer, shapes, inventory
 
 
@@ -607,9 +609,14 @@ def prompt_tokens(tokenizer, row, maximum):
 
 
 def make_contract(model, tokenizer, shapes, materials, manifest, plan):
+    from llm_base_material import loaded_config
+    # The path remains in the public helper signature for existing callers; the
+    # contract uses the actual loaded objects and their captured input binding.
+    config = loaded_config(model, tokenizer, manifest)
+    require(architecture(model.config.to_dict()) == architecture(config),
+            'RUNTIME_BASE_CONFIG_BINDING')
     index = {name: tensor_descriptor(tensor) for name, tensor in backbone_tensors(model, shapes).items()}
-    return contract_from_inventory(index, tokenizer.chat_template,
-                                   read_json(materials/'config.json'), manifest, plan)
+    return contract_from_inventory(index, tokenizer.chat_template, config, manifest, plan)
 
 
 def contract_from_inventory(index, chat_template, config, manifest, plan):
@@ -648,7 +655,8 @@ def contract_from_inventory(index, chat_template, config, manifest, plan):
             runtime_qualification='required-not-executed', prospective_accepted=False,
             independent_accepted=False, public_reward_eligible=False), scope=c.SCOPE)
     family = verify_family(read_json(FAMILY_PATH))
-    require(contract['backbone']['index_root'] == family['material_pins']['fp32_backbone_index_root'] and
+    require(contract['architecture'] == family['architecture'] and
+            contract['backbone']['index_root'] == family['material_pins']['fp32_backbone_index_root'] and
             contract['tokenizer']['files_root'] == family['material_pins']['tokenizer_files_root'],
             'RUNTIME_FAMILY_DERIVED_MATERIAL')
     raw, cid = c.freeze_target_contract(contract)

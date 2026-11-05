@@ -1,0 +1,42 @@
+{
+  "scope": "tiny-component-regressions-no-pretrained-trial",
+  "command": [
+    "/workspace/scratch/f4976366a32a/torch-env/bin/python",
+    "-m",
+    "unittest",
+    "test_llm_base_material",
+    "test_llm_base_material_torch",
+    "-v"
+  ],
+  "source": {
+    "scripts/llm_base_material.py": {
+      "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+      "bytes": 10405
+    },
+    "scripts/llm_runtime_pilot.py": {
+      "sha256": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+      "bytes": 122588
+    },
+    "scripts/test_llm_base_material.py": {
+      "sha256": "eb66c8cd0f0ba2d33a4d1ba7d37f0ad1f0691352b542fd7ac6afd1c8a0bff5e9",
+      "bytes": 7833
+    },
+    "scripts/test_llm_base_material_torch.py": {
+      "sha256": "7740f63d1346a21f915a53152f3b873bb3a6f6a3e2375d994c3b9290bef08d5d",
+      "bytes": 13121
+    },
+    "scripts/test_llm_runtime_pilot.py": {
+      "sha256": "2778aa5877673c005d4de3bae29ed627170532c1d9734957b6852850acea3cce",
+      "bytes": 13521
+    },
+    "scripts/test_llm_runtime_parent_step.py": {
+      "sha256": "9d2cb839665253c218c2e3049c8a555c6518683f3febd9abffa70a5c7e6e6c16",
+      "bytes": 21904
+    }
+  },
+  "started_ns": 1793838185769735318,
+  "qualification": false,
+  "exit_code": 0,
+  "finished_ns": 1793838217954721517,
+  "source_unchanged": true
+}

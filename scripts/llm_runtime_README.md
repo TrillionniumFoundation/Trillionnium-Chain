@@ -43,6 +43,17 @@ TRNM_ACTUAL_DECODER_TENSOR_TESTS=1 python -m unittest discover \
 
 ## Execution
 
+The [snapshot/history continuation](../evidence/model-owner-completion-20261104/REPRODUCE.md)
+retains two actual tiny-model counterexamples to the old base-loader identity
+binding and their correction. The loader now captures the exact seven members
+once for each actual load, consumes immutable config/tokenizer/BF16 bytes through
+fixed classes, and verifies the loaded configuration and tokenizer state before
+constructing the original contract. It does not reopen the directory through
+automatic model, adapter or template discovery. Actual RoPE/RMS values enter the
+architecture identity. The new helper belongs to every current direct or
+transitive execution-source roster, including inherited, parent-step and Cell
+handoff paths; old source profiles are not silently rebound.
+
 Use a fresh output directory, one pre-created persistent trial authority outside
 that directory, and retained exact `material-manifest.json` with the
 seven pinned public files. The source hashes are checked against code constants,
@@ -53,7 +64,7 @@ No model code is downloaded/executed. Only safetensors are loaded,
 ```sh
 # Bootstrap this authority once. Recovery must open it, never initialize a replacement.
 python scripts/llm_runtime_pilot.py trial-ledger-init \
-  --ledger /isolated/evaluator/pilot.sqlite3 --max-attempts 4
+  --ledger /isolated/evaluator/pilot.sqlite3 --max-attempts 1
 # Pin the returned policy_id and checkpoint through the controlling owner.
 python scripts/llm_runtime_pilot.py run --materials /isolated/materials \
   --output /isolated/runs/cpu-pilot-unique --backend cpu --threads 4 --steps 10 \
@@ -77,6 +88,51 @@ preceding phase, with the in-flight phase unknown. A crash or unknown COMMIT
 acknowledgement leaves the debit in place. Readback reports pending work; it does
 not authorize rerunning its effects. There is no refund,
 reset or automatic pending-to-success operation.
+
+Historical replay is separate from current effect admission. A changed live
+family file or runner must not reinterpret an old terminal result or release its
+allowance. The ledger retains known legacy rules and gives new reservations an
+explicit versioned replay selector. Unknown historical formats/family digests
+refuse. New phase, receipt, roster and completion writes still check the current
+source; an old pending attempt can be aborted after an upgrade but cannot become
+successful through that upgrade.
+
+The cooperating campaign `model-owner-completion-20261104-once-v1` uses the
+[hosted entry](ci/llm_hosted_once.py) to publish one immutable registration on the
+dedicated execution branch `fix/chain-model-owner-hosted-once-20261105`.
+This freezes the experiment while PR #688 continues to accept concurrent work;
+its fixes and observations still integrate through that original Draft PR.
+Create the execution branch at clean source S without an intent, then publish
+its registration child I as a normal, non-created push. The offline
+`register` command reads an already-created empty one-attempt authority and the
+original material manifest; it embeds their exact bytes, complete policy,
+checkpoint, original CPU/four-thread/ten-step strict-v1 plan and source closure.
+The registration commit I has exactly one parent S and adds only that intent.
+Publishing I spends the campaign opportunity, including setup failure, missing
+artifacts, cancellation or an unknown model exit. It does not reset the SQLite
+debit or authorize another identity, filename, database or workflow attempt.
+
+This campaign is now spent. The [actual retained attempt](../evidence/model-owner-completion-20261104/hosted-run-41951536925/README.md)
+published intent `6bdaf9598d72c118798eb51a03db2e1c0e7c8507` from frozen
+source `f388f46d9df150a3599b9d961b48918b3ff1fb48`. Its first real pretrained
+loader returned child outputs but strict-v1 supervision failed on a missing
+RSS observation. The journal records spent 1 of 1 and aborted; the remaining
+eleven phases never started. The later exit diagnostic does not fill that
+sample. No retry, complete assessment or accepted no-update follows.
+
+The [push-only workflow](../.github/workflows/pon-smollm-hosted-once.yml) validates
+the event, first run attempt, full fetched heads/tags history, source bytes,
+authority and plan before setup/download/model work. It uses the retained
+31-distribution hash lock and seven pinned public files. The original supervisor
+keeps every phase budget. The wrapper gives the pilot no separate subprocess
+timeout that could kill its supervisor while leaving a model child alive; the
+whole hosted job retains its 300-minute limit. Bounded allowlisted observations
+are collected on success or failure, with weights and environments excluded.
+An unobserved exit or hot database journal stays UNKNOWN and cannot be recovered
+or refunded by collection. Git history and platform run numbers here are
+cooperative controls: deleted unreachable history, pull-only refs, malicious
+administrators and duplicate platform delivery are outside their guarantee.
+They do not establish independent custody or hidden prospective evaluation.
 
 Registered `run` uses the new `llm-runtime-registered-public-pilot-plan-v1`
 namespace, binding the policy, attempt and changed runner-component hashes. The
@@ -116,9 +172,17 @@ wall/RSS caps and thread count; this does not assert equal actual consumption.
 Missing controls, subprocess failure, time/RSS exhaustion, wrong material or replay
 context cause explicit abort with no adoption/reward and retained partial records.
 
-The V2 assessment now rechecks all twelve monitored child returns and their
+The V3 assessment rechecks all twelve monitored child returns and their
 actual cost-event inventories. Missing required CPU/RSS, failed receipts, wrong
 artifact/contract, duplicate/missing stages or unreaped children cause abort.
+It also rejects contradictory child/stage/terminal CPU, RSS and wall values,
+invalid per-role training receipts and unequal reported training counts. The
+three trained roles must match the frozen steps and reported token counts; the
+two untrained controls must report the exact zero-training shape. Finite loss
+traces use exact decimal sign validation, including negative-underflow refusal.
+V3 names this evidence as reported-count agreement and explicitly leaves actual
+per-step token-schedule verification false. Legacy V2 terminal bytes retain their
+original historical interpretation through the ledger's versioned reader.
 Optional IO/accelerator timing remains null when unavailable. Sequential wall
 and CPU totals have separate scopes, and RSS aggregates use maxima rather than
 adding peaks. Positive output-byte gain does not establish net utility: the

@@ -9,7 +9,13 @@ import test_llm_runtime_exit_worker_observation as fixtures
 
 
 class WorkerFrontierTests(unittest.TestCase):
-    def setUp(self): self.fixture=fixtures.WorkerPidfdTests()
+    def setUp(self):
+        self.fixture=fixtures.WorkerPidfdTests()
+        # Every procfs/task record in this class is synthetic. Construction
+        # scans the same bounded set as recheck(), so both need the fixture
+        # clock. Deadline tests below explicitly advance the original clock.
+        clock=patch.object(worker.time,'monotonic_ns',return_value=1_000_000_000)
+        clock.start();self.addCleanup(clock.stop)
 
     @contextlib.contextmanager
     def counts(self, observed, values):

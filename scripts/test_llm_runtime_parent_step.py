@@ -31,7 +31,8 @@ class ParentStepTests(unittest.TestCase):
             for name, (size, sha) in runtime.PUBLIC_FILES.items()})
         self.config = dict(num_hidden_layers=30, hidden_size=576, intermediate_size=1536,
             num_attention_heads=9, num_key_value_heads=3, vocab_size=49152,
-            max_position_embeddings=8192, tie_word_embeddings=True)
+            max_position_embeddings=8192, tie_word_embeddings=True, attention_bias=False, mlp_bias=False,
+            rope_theta=100000, rms_norm_eps=1e-5, hidden_act='silu', attention_dropout=0.0, rope_scaling=None)
         self.materials = self.root / 'materials'
         self.materials.mkdir()
         runtime.save(self.materials / 'config.json', self.config)

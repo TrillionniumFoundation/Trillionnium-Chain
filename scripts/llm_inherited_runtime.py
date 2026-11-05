@@ -39,6 +39,7 @@ def checked_json(path, expected, maximum=MAX_INPUT_BYTES):
 def source_pins():
     return {path.name: runtime.file_sha(path) for path in
             (Path(__file__), Path(runtime.__file__), Path(parent_material.__file__),
+             Path(runtime.__file__).with_name('llm_base_material.py'),
              Path(runtime.contract_module().__file__), runtime.FAMILY_PATH)}
 
 

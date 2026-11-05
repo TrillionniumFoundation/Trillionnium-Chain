@@ -249,6 +249,75 @@ four-second/16-attacker business and 4,105-block History requirements, complete
 nonce/debt/supply/expiry/reorg rules, and independent host/model/PQ acceptance.
 All qualification and activation flags remain unchanged.
 
+#### Snapshot-bound loading and replay-stable trial history — 2026-11-04
+
+Continue the same PR #688 from `a9b8602706b66adba82655c3c2ce90bde88620a2`.
+The base loader must construct configuration, tokenizer and weight state from
+the same bounded immutable bytes that passed the public-file pins. Reopening
+model paths after verification previously accepted a changed tokenizer or
+RoPE/RMS behavior while preserving the declared identity and weight root;
+real tiny-model forward counterexamples are retained. Automatic discovery of
+adapter, template, index or pickle sidecars cannot enter this path. Actual
+configuration and complete tokenizer state are rechecked before contract
+construction, and every current execution-source roster includes the new helper.
+
+Cost records must satisfy physical containment, not only individual numeric
+bounds: stage sums fit the child interval, child wall fits supervision, and
+stage/child/terminal RSS peaks are ordered. Only the bounded conversion error
+of wait4 CPU is allowed. Training-step and reported-token-count agreement must
+be checked from the actual receipts; those counts do not prove a complete
+per-step token schedule or independent useful work.
+
+Historical trial interpretation must survive a runner or family-file upgrade.
+Retain the immutable legacy interpretation and use a fresh reservation namespace
+with an explicit replay selector for new effects. New writes still require the
+current source and validation rules. Old pending attempts may be aborted but
+cannot gain completion through changed code; old completed records and their
+spent allowance remain unchanged. No replacement authority, refund or automatic
+resume is introduced. Independent antirollback custody and global family/identity
+enrollment remain separate from these cooperative local controls.
+
+Publish the sole real-model attempt through a first-attempt push-only hosted
+entry after freezing source S. Its one-file registration child I embeds the
+pre-created empty one-attempt authority, exact manifest, source closure and
+original plan. Publication consumes this cooperating campaign even when setup
+fails or the platform provides no usable observations. Validate full fetched
+heads/tags history before effects; do not initialize a new ledger on the runner,
+retry the job, delete/re-add an intent or resume an unknown phase. Preserve
+bounded artifacts and report hot-journal/unobserved-exit readback as UNKNOWN.
+This does not establish global related-identity or independent antirollback
+custody, and no outer subprocess timeout may orphan the original supervisor's
+model child.
+
+Freeze this attempt on `fix/chain-model-owner-hosted-once-20261105` because the
+shared PR branch continues to receive concurrent changes. Create that branch
+at source S without an intent, then normally push the sole registration child I.
+Keep the original campaign, policy, trial ID, manifest, metrics and budget;
+the branch change does not supply another allowance. Integrate the same fixes
+and retained result into PR #688 without opening a replacement PR or activating
+a release. A source-bound trial result cannot qualify later composed sources.
+
+The [actual hosted attempt](../../evidence/model-owner-completion-20261104/hosted-run-41951536925/README.md)
+has now returned on 2026-11-05: source `f388f46d`, intent `6bdaf959`, run
+`41951536925`, attempt 1. It loaded the real 134,515,008-parameter base and
+returned eight training-fixture forward/greedy outputs, but the original
+strict-v1 supervisor rejected a missing RSS sample in the first loader.
+Retain the zero child exit code alongside the failed supervision, three-event
+aborted journal and spent 1/1 allowance. Eleven later phases never started;
+no accepted phase, candidate comparison, assessment or valid no-update was
+produced. Preserve the complete small artifact and portable immutable replay.
+A later zombie/exit diagnostic cannot retroactively fill the sample or
+authorize another attempt. All six full-acceptance gates remain unclosed.
+
+The [continuation evidence](../../evidence/model-owner-completion-20261104/REPRODUCE.md)
+retains original counterexamples, development failures, real tensor controls,
+official-tokenizer parity and exact-source verification. Its pretrained attempt
+keeps the original CPU/four-thread/ten-step strict-v1 semantics and one-attempt
+budget. Independent data custody, complete release/router/serving evaluation,
+lifecycle economics, behavioral quarantine/rollback and the existing Hepta
+CURRENT/FinalUse consumer still require their own actual evidence. All adoption,
+reward and activation qualifications remain false.
+
 #### Persisted public-pilot attempts and validated local costs — 2026-11-04
 
 Continue PR #688 from `d0737cf5434894ce47fad8082376fc417313c2cb` using the existing
