@@ -1,0 +1,70 @@
+{
+  "exec_time_attestation": false,
+  "independent_deployment_qualified": false,
+  "observed_utc": "2026-11-05T10:25:13.204620+00:00",
+  "receipts": [
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/768fd621f7e2/chain",
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/768fd621f7e2/target",
+        "GITHUB_RUN_ATTEMPT": null,
+        "GITHUB_RUN_ID": null,
+        "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": null,
+        "RUSTC": null,
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "executions": [],
+      "exit_code": 0,
+      "log_bytes": 5505,
+      "log_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-integrated-workspace-clippy.log",
+      "log_sha256": "72864193091e5fc0da791bc057766713dbabb9346e4bad1f921b911d12065fcf",
+      "receipt_path": "/workspace/scratch/768fd621f7e2/chain-receipts/chain-integrated-workspace-clippy.json",
+      "receipt_sha256": "9d6817f0209fa435143ddecf504180726dca92b611119ae9048a8755c5bf5740",
+      "source": {
+        "base": null,
+        "candidate": "bbc940cbdbdd6092158f735565004812ee834281",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "bbc940cbdbdd6092158f735565004812ee834281",
+        "tested_tree": "591ebbaef4bde2344d2117bc87759a0ab85d0a25",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 963479031,
+        "tracked_entries": 10009,
+        "tracked_worktree_verified": true
+      },
+      "status": "command_succeeded"
+    }
+  ],
+  "schema": "chain-post-command-executable-observation-v1",
+  "scope": "current bytes at actual Cargo Running paths; original receipt/log hashes verified",
+  "source_commit": "bbc940cbdbdd6092158f735565004812ee834281",
+  "source_tree": "591ebbaef4bde2344d2117bc87759a0ab85d0a25",
+  "whole_chain_quantum_security_qualified": false
+}

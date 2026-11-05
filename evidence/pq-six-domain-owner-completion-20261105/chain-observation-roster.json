@@ -1,0 +1,316 @@
+{
+  "architecture_retained_preexisting_nonignored_tests": [
+    "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+    "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+  ],
+  "architecture_total_nonignored_tests": 13,
+  "comparison_base": "6ee529046d295e3175f09112492abee373f1f54c",
+  "counts": {
+    "architecture_delivery_compare": 11,
+    "lib": 24,
+    "pool_mining": 2
+  },
+  "new_tests": [
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "source_blob": "b9c1178ded8ac279ef0d96f4feda1dba65923233",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_preserves_every_cancellation_boundary_without_writes"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "source_blob": "b9c1178ded8ac279ef0d96f4feda1dba65923233",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_rechecks_context_and_storage_on_each_operation"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+      "source_blob": "b9c1178ded8ac279ef0d96f4feda1dba65923233",
+      "target": "lib",
+      "test": "account_archive_prototype::multiproof::tests::native_constructed_query_retains_one_full_verification_and_identical_facts"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "source_blob": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+      "target": "lib",
+      "test": "ingress::public_v3::tests::cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_blob": "48674a83dde3f8ea6721e93cd5f52cab8a28fa63",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_reads_eleven_headers_and_checks_the_boundary_parent"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_blob": "48674a83dde3f8ea6721e93cd5f52cab8a28fa63",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_retains_current_parent_full_packet_validation"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_blob": "48674a83dde3f8ea6721e93cd5f52cab8a28fa63",
+      "target": "lib",
+      "test": "store::error_boundary_tests::mining_wall_time_retains_genesis_record_and_original_error_checks"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/difference_tests.rs",
+      "source_blob": "9edb08c63f08c39ae8acdefdb3c5f7608283193d",
+      "target": "lib",
+      "test": "store::growth::difference_tests::ordered_growth_difference_control_checks_unchanged_keys_and_final_boundary"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "source_blob": "fcfaf9cd03008c9d1cc402fc13b68d40070e1e07",
+      "target": "lib",
+      "test": "store::growth::tests::header_timestamp::growth_header_timestamp_controls_real_pq_m06_expiry_at_the_input_boundary"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+      "source_blob": "fcfaf9cd03008c9d1cc402fc13b68d40070e1e07",
+      "target": "lib",
+      "test": "store::growth::tests::header_timestamp::growth_header_timestamp_preserves_classic_outputs_admission_and_retained_replay"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/materialization_control.rs",
+      "source_blob": "ad35cd5bdace1c974e915a6beeabdfde84d3d5db",
+      "target": "lib",
+      "test": "store::growth::tests::materialization_control::native_growth_v2_materialization_controls_preserve_state_and_original_errors"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+      "source_blob": "0182e91efb2dda2eee911e6d8dde769a0e9e50e1",
+      "target": "lib",
+      "test": "store::growth::tests::parallel_preparation::growth_parallel_preparation_keeps_dependent_task_settlement_spends_and_reward_canonical"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_account_queries_refuse_foreign_commit_inside_read_snapshot"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_autocommit_queries_recheck_foreign_epoch_after_read"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_head_and_exact_observations_refuse_foreign_commit_at_ready"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_read_snapshot_hides_foreign_epoch_until_release"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_successful_payment_rechecks_epoch_after_read_snapshot"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+      "source_blob": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+      "target": "lib",
+      "test": "store::growth::tests::read_epoch::native_growth_v2_working_queries_refuse_foreign_commit_inside_read_snapshot"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "source_blob": "dc1e968a55cfc5cba02683f90f4a9c7abd687766",
+      "target": "lib",
+      "test": "store::native_authenticated::post_write_readback::tests::cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "source_blob": "dc1e968a55cfc5cba02683f90f4a9c7abd687766",
+      "target": "lib",
+      "test": "store::native_authenticated::post_write_readback::tests::warm_catalog_statement_never_hides_temp_objects_or_database_attachments"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "source_blob": "6b4b75fee7765ed100faac140521ccb9b1f2be30",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_batches_io_without_skipping_a_locator"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "source_blob": "6b4b75fee7765ed100faac140521ccb9b1f2be30",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_does_not_hide_truncated_spill"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "source_blob": "6b4b75fee7765ed100faac140521ccb9b1f2be30",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_preserves_every_locator_across_original_long_chain"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/src/store/reverse_path.rs",
+      "source_blob": "6b4b75fee7765ed100faac140521ccb9b1f2be30",
+      "target": "lib",
+      "test": "store::reverse_path::tests::reverse_spool_propagates_failed_write_before_reusing_buffer"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "source_blob": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "target": "architecture_delivery_compare",
+      "test": "absolute_deadline_dissemination_keeps_complete_material_in_all_three_modes"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "source_blob": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "target": "architecture_delivery_compare",
+      "test": "dissemination_cancellation_preserves_original_sender_and_receiver_failures"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "source_blob": "b6a6ce07060b84a087e60f4fc951ddf14998c28f",
+      "target": "pool_mining",
+      "test": "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock"
+    },
+    {
+      "covered_by_original_node_command": true,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "source_blob": "b6a6ce07060b84a087e60f4fc951ddf14998c28f",
+      "target": "pool_mining",
+      "test": "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::cancellation_wakes_a_waiting_receiver"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::cancelled_writer_does_not_send_a_new_frame"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::continued_fragment_progress_cannot_renew_frame_deadline"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::empty_completion_still_observes_expiry_and_cancellation"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::expired_frame_does_not_consume_available_bytes"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::fragmented_frame_completes_within_one_original_budget"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::header_and_body_reads_share_the_original_frame_end"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::partial_eof_remains_an_error"
+    },
+    {
+      "covered_by_original_node_command": false,
+      "ignored": false,
+      "source": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+      "source_blob": "c8d082e2f902bda7911b10a87cb30164a864819f",
+      "target": "architecture_delivery_compare",
+      "test": "architecture_deadline::tests::stalled_writer_ends_under_original_deadline"
+    }
+  ],
+  "schema": "chain-fixed-source-new-native-test-roster-v1",
+  "scope": "source/module-path audit only; no test executions performed",
+  "source_commit": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "source_tree": "4a0314e72ebc45659986d03e7ca2f96cab9399ea",
+  "whole_chain_quantum_security_qualified": false
+}

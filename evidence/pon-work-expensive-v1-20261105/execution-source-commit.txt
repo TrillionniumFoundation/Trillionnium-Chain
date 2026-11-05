@@ -1,0 +1,6 @@
+tree 4240037a0901e70ef05e9edbc17641ee1382ae1f
+parent 4e42b620ed1ce306bca6e7d5da3819417aa0f397
+author Codex <codex@openai.com> 1793871652 +0800
+committer Codex <codex@openai.com> 1793871652 +0800
+
+feat(pon): measure cheapest legal work with frozen Mode A chronology

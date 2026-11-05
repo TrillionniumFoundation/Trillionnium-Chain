@@ -329,3 +329,32 @@ production service, independent evaluator custody and economic externalities
 also require their own evidence. Local `Positive`, a signature, an on-chain fee,
 or passing these tests establishes none of those claims. Model improvement and
 application payments remain outside target-derived chainwork.
+
+## PR 717 conflict reconciliation, 2026-11-05 UTC
+
+The original owner completed the fixed `96b8e81e2d25be7004a1e4a3b39d04a60dcadf0d`
+publication. Subsequent base advancement to
+`b9f339011886b7323f36825b2e79f7ecc7beea1f` made the stacked PR conflict again.
+This continuation uses a normal two-parent merge, with original candidate head
+first and that fixed integration base second. No rebase or force update is used.
+
+The only textual conflict was between adjacent independent additions to the
+canonical development plan. Both complete sections are retained: the upstream
+execution/request-accounting evidence, followed by service/research value
+separation. The source manifest merged automatically and retains the three
+candidate Rust pins plus all upstream pins and required paths. Original raw
+logs, failures, timelines, source receipts and authority restrictions are preserved.
+
+Checks on this composition: utility controls 19/19, raw-source negative controls
+43/43, PQ integration negative controls 37/37, source-pin checker (521 exact
+source blobs, HOLD_NO_GO), CI contract checker, and four selected runtime CI
+controls. Independent tree review checks preservation against both parents.
+The candidate-only whitespace check passes. The full imported-upstream check
+returns exit 2 for preexisting evidence-log whitespace; those bytes are retained.
+
+No Rust compiler/Cargo toolchain is available in this continuation environment.
+Native tests, Cargo metadata, Rust formatting and Clippy were not rerun, and no
+earlier native receipt is attributed to this merged tree. This is conflict
+reconciliation and source/Python validation, not a whole-workspace, hosted-CI,
+model-efficacy, economic-value or activation qualification. The full repository
+checker is not claimed green. Later base changes are outside this fixed merge.

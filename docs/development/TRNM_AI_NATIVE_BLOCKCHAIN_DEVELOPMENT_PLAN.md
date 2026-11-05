@@ -17,6 +17,35 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Cheapest legal work and Mode-A chronology, 2026-11-05:** Continue the
+existing #688 candidate, preserving concurrent architecture, Growth and public
+request work. The [work-cost research contract](specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md)
+compares versioned sets of legal implementations, including explicit dense and
+sparse preparation, on structured and exact trained source-routing materials.
+Retain preparation, every attempt and loser,
+actual cache epochs and held-out fixed-budget observations. The honest reference
+may use every legal optimization. Freeze the complete task, route, batch,
+numeric/output contract and bounded search schedule before new local entropy;
+require full native and scalar proof replay and an externally retained checkpoint
+for journal restore. Keep per-parent work and distinct complete application
+outputs separate. Repair the optional negative cache's full-proof hash before
+cheap malformed-input checks, and measure cold, changed-material, changed-challenge,
+expiry and eviction paths without discarding failed searches or normal-path cost.
+These are finite component experiments: authenticated challenge ownership,
+Sybil/bulk-precommit economics, adaptive Mode B, challenge/admission integration
+of the separate grouped prototype, whole-service resource fairness and a global
+accepted-work cost bound
+remain open. No mathematical lower bound, original fixed-Host acceptance or
+production qualification follows from these tests.
+The [frozen research record](../../evidence/pon-work-expensive-v1-20261105/README.md)
+retains the original fourteen-arm run and the separate fifteen-arm `dd10f0ae`
+run: 115,712 completed attempts, 30,867 verified hit records and 84,845 misses,
+plus all preparation, unsupported constructors and actual cache destruction.
+Seven of ten real tile/target calibration choices select the new sparse arm;
+those legal improvements belong in the honest set. Native false-trace rejection
+cost remains adverse, including new challenges and eviction. Neither repeated
+arm/target hits nor five component tiles become extra complete model outputs.
+
 **Complete useful-operator relation, 2026-11-05 America/New_York:** Continue
 the existing #688 candidate with the separately versioned
 [useful-Cell reference relation](specs/pon/USEFUL_CELL_RELATION_V1.md).
@@ -93,6 +122,39 @@ This continuation does not rewrite either historical configuration or combine
 their results with the new Chain candidate. The same-source PQ/Growth/public/recovery
 combination, host-wide capacity isolation, original 4s/16 and 4,105-block gates
 remain required. No qualification or activation flag changes.
+
+The [exact execution and request-accounting evidence](../../evidence/pon-ordered-request-cost-20261105/README.md)
+now binds the completed local validation to Chain
+`657bf2a462ff13a6101ebcb4fbe0fb91c515c972`, tree
+`7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73`. All 20 new feature tests pass
+(13 Rust and seven Python); strict workspace/all-targets/all-features Clippy,
+the 51 request-reader, 43 source-integrity and 140 from-zero-reader tests pass.
+M06 records 253 passed/eight ignored. The complete Node library remains
+1,083 passed/five failed/28 ignored: three independent Unix-witness EPERM
+failures, one original witness deadline and one owner-epoch diagnostic failure.
+The latter two pass isolated same-binary diagnostics without erasing the full
+suite's failures. The Node functional build has an explicit debug=0 override;
+the prior original-profile SIGKILL remains recorded.
+
+The original nine-cohort Growth attempt ends after two completed cohorts and
+a truncated stderr JSON mirror in the third; its errno remains unknown and its
+reader correctly refuses it. One same-source/binary/parameters diagnostic retry
+completes all nine cohorts, 72 measured blocks, 153 stage returns, nine original
+cancellations and nine cold reopens. All three touched owners remain fixed;
+cold work, the 101.686 ms maximum admission and the 210.997 ms cancellation are
+retained separately. This is local wall observation, not p99 or confirmed TPS.
+
+The unchanged release F0 runner's five named invocations return successfully,
+but original business acceptance fails CONFIRMATION_TARGET. Baseline and
+pressure each retain 7/7 ACKs, 16/16 History responses and 0/1 independent
+confirmation; separate execution/inclusion and successful latency remain null.
+All 32 independent replays stop in Host resolve with PUBLIC_HOST_KERNEL_PARENT,
+before native import. The separate original Host readiness check refused local
+provisioning. All 644 requests remain; 449 have known original CPU and 195 keep
+unknown costs, including actual CPU for all 435 rejected pressure requests.
+Later integrations contain additional production changes and do not inherit
+these frozen-source results. Combined configuration, original hosted and
+independent acceptance remain HOLD; no result is promoted to activation.
 
 **Service/research value separation, 2026-11-05 America/New_York:** Continue the
 existing #688 candidate through `2a8fee974b41fab6e2c4e662dcce1807fcd19bdd`,
@@ -7020,3 +7082,69 @@ Full model architecture/expert ABI, device/VRAM ownership, an ordinary multi-Cel
 model-use loop, independent long WAN/fairness, real coin lock/payment, automated
 paid renewal and long-term independent custody remain unaccepted. No local
 journal, parser, self-reported version or passing byte test closes those gates.
+
+
+### 2026-11-05 fixed-source six-domain owner and recovery observations
+
+This continuation records Chain native source
+`1d6a9f9b5e8abd9e86457f45199a4922f9376360` (tree
+`4a0314e72ebc45659986d03e7ca2f96cab9399ea`) and private Hepta tested source
+`9438a6c27a5e2f25169445f39499631db4e00529` (tree
+`a9cba014de26164f0285c6c886fb071b19a04845`). The
+[fixed-source execution record](../../evidence/pq-six-domain-owner-completion-20261105/README.md)
+keeps each command, test selection, original budget, terminal outcome and failed
+attempt under its actual source identity. Scoped owner controls and source
+checks do not replace the original complete-system acceptance.
+
+The scoped work covers native MTP11 clock readiness, original Growth request
+controls during working-set/difference/witness materialization, provider
+invocation history in recovery, explicit recovery namespace versions, and
+refusal of malformed stored fields or weakened pagination keys. These changes
+retain original signed state, deadlines, nonces, liabilities and error owners.
+
+On fixed Chain `1d6a9f9`, 365 source/research/ELF controls and complete-workspace,
+all-target, all-feature strict Clippy passed. The original Node library returned
+1090 passed, 3 failed and 28 existing ignored; pool mining returned 10 passed;
+the complete architecture target returned 12 passed and 1 failed. All 37 newly
+inventoried controls were observed passing within those runs; this subset is
+already contained in the harness counts and does not make the failed commands
+successful. Three witness-process failures preserve Unix socket bind EPERM.
+The architecture business comparison preserves 18 of 18 fixed-Host parent
+refusals. Its bounded console rows survive; the complete temporary report was
+not retained. No replacement full report is reconstructed. All three actual
+Cargo Running paths match their pre/post ELF byte lengths and SHA-256 values;
+these local debug-artifact observations are not execution-time attestation or
+independent release builds. Build-only execution contributes zero test passes.
+
+On fixed Hepta `9438a6c`, 120 source controls, exact 17 owner, 14 dispatcher and
+11 signed selections passed. The complete evidence library returned 155 passed
+with one existing excluded fixture; its contained 17 controls are not added
+again. Original product execution returned 0 passed/3 failed; recovery product
+execution returned 2 passed/2 failed. The failed processes retain Unix bind
+EPERM. Scoped fix exited zero with warnings and unchanged source; the subsequent
+original fmt command found no changed files and was not a full-repository audit.
+The original compile errors, timeout and interrupted observations remain intact.
+
+The Chain publication base `a16a89f92a0db5ff6af9c1d7790f201841f079aa`
+(tree `1bd822500863b843d7625402258c49c52a529e69`) and Runtime evidence
+publication `1556a4df6e279055fd8196f81a4ca2fe0f19384a` preserve additional
+peer source changes. Their trees differ from the tested sources above and do
+not inherit those native outcomes. The new plan/evidence append changes no
+production source. A separately sourced
+[fresh W1 v2 complete proof](../../evidence/pon-w1-full-v2-20261105/README.md)
+and 58 real receipt controls are retained in that concurrent history, with
+original budgets, prior failures, explicit fixture/build exclusions and their
+own source/image identities. One full proof trial does not establish PQ128,
+all later accepted statements, p99 resource cost, native admission, WAN
+propagation or independent operation.
+
+All six system domains remain **HOLD (0/6 closed)**: complete current-root
+authorization, native relation/proof security, mining and fork choice,
+history/migration/rollback, hostile PQ-wire capacity, and independent deployment.
+Recovery snapshots do not close the external monotonic-consumption crash window.
+The original four-second/16-hostile acceptance, separate fixed-Host F0 obligations,
+and 4,105-block/1,800-second campaign remain unchanged. Independent acceptance
+still requires at least three independently administered operators and failure
+domains with a preregistered, frozen WAN campaign of at least 72 hours. This minimum
+coverage is not sufficient production security. No threshold, denominator,
+resource budget, activation flag or protection is relaxed.

@@ -1,0 +1,11 @@
+tree 624c8aad419ee05dc71a4aac507abea429018289
+parent 2ae4c1d8be0a136df516dafa6aa80ce9d18b4b0d
+parent cfa57cd04751427451302b5c10539b3984d7f8db
+parent 5f0c4fdf8185fa9667769cbd3c8bf727dadda9ef
+parent 22ef7177e3c4e119911bf7d657af5c2d1a83ee03
+author Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793873273 -0500
+committer Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793873273 -0500
+
+merge(cell): retain concurrent source-bound records and runtime controls
+
+Preserve all current evidence and both independently appended development-plan sections. Integrate bounded runtime admission, explicit owner/worker v2, original discovery deadlines and delta cancellation. Retain cfa57cd as immutable V11 source plus both source-checked integration objects. Frozen 378 native/doc and 220 Python results retain their exact source scope; full model, WAN, device and paid-custody acceptance remains HOLD.
