@@ -1,0 +1,76 @@
+{
+  "binary_sha256": "234ee3bc057588dff12135d94befae430c2146704efdb353e8747bbf849afee2",
+  "measured_commit": "dbb1c989342639c4c04366a0d12bc3ecb4760e04",
+  "out": "/tmp/pon-contract-authority-20260929/cost",
+  "summary": {
+    "assumed_uniform_ticket_probability": {
+      "denominator": "2",
+      "numerator": "1"
+    },
+    "classes": {
+      "dense": {
+        "forgery_hash_trials_total": 18,
+        "honest_attempts_total": 23,
+        "honest_winner_to_valid_verification_ratio": 1.8586794415221362,
+        "invalid_rejection_to_forgery_ratio": 435.15783071464773,
+        "median_ns": {
+          "forgery_ns": 9865.0,
+          "honest_winning_ns": 7985549.5,
+          "invalid_verify_ns": 4292832.0,
+          "valid_verify_ns": 4296356.5
+        },
+        "samples": 8
+      },
+      "rank-one": {
+        "forgery_hash_trials_total": 11,
+        "honest_attempts_total": 17,
+        "honest_winner_to_valid_verification_ratio": 1.8470600656688734,
+        "invalid_rejection_to_forgery_ratio": 619.1135971223022,
+        "median_ns": {
+          "forgery_ns": 6950.0,
+          "honest_winning_ns": 7898588.5,
+          "invalid_verify_ns": 4302839.5,
+          "valid_verify_ns": 4276303.0
+        },
+        "samples": 8
+      },
+      "sparse": {
+        "forgery_hash_trials_total": 15,
+        "honest_attempts_total": 20,
+        "honest_winner_to_valid_verification_ratio": 2.7515925681300155,
+        "invalid_rejection_to_forgery_ratio": 520.2874381397871,
+        "median_ns": {
+          "forgery_ns": 7375.5,
+          "honest_winning_ns": 10402475.5,
+          "invalid_verify_ns": 3837380.0,
+          "valid_verify_ns": 3780529.0
+        },
+        "samples": 8
+      },
+      "zero": {
+        "forgery_hash_trials_total": 15,
+        "honest_attempts_total": 16,
+        "honest_winner_to_valid_verification_ratio": 1.3866563786574195,
+        "invalid_rejection_to_forgery_ratio": 604.1458348359178,
+        "median_ns": {
+          "forgery_ns": 6932.5,
+          "honest_winning_ns": 5797498.0,
+          "invalid_verify_ns": 4188241.0,
+          "valid_verify_ns": 4180919.0
+        },
+        "samples": 8
+      }
+    },
+    "honest_public_service_measured": false,
+    "independent_accepted": false,
+    "lottery_assumptions_qualified": false,
+    "production_activation": false,
+    "public_network_tested": false,
+    "ratio_definition": "ratio of within-class median measured durations at the same target",
+    "schema": "pon-same-target-cost-summary-v1",
+    "scope": "controlled CPU work/forgery costs; not fastest-adversary lower bound or public attack rate",
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "vram_bytes": null,
+    "work_hardness_accepted": false
+  }
+}
