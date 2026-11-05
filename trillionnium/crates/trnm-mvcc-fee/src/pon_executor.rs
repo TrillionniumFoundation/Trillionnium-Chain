@@ -2,14 +2,195 @@
 //! Parallel workers speculate against one immutable snapshot; exact key and prefix
 //! reads are validated in canonical order. Conflict or speculative rejection is
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
+use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
+use crate::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
+use crate::public_evaluation;
+use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
+use std::ops::Bound;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use trnm_crypto_primitives::qualified_work_task::{verify_development_statement, AdmissionContext};
 use trnm_crypto_primitives::verify_hex_strict;
-use trnm_protocol::pon_wire::{hash, state_root, Envelope, Hash};
+use trnm_protocol::pon_wire::{hash, state_root_from_entries, Envelope, Hash, StateRootInputError};
+use trnm_protocol::qualified_work_task::lifecycle_v2::PROFILE as LIFECYCLE_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v3::PROFILE as ATOMIC_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::lifecycle_v4::PROFILE as OVERLAP_TASK_PROFILE;
+use trnm_protocol::qualified_work_task::{SignedQualifiedWorkTask, TaskPurpose};
+
+pub const SIGNED_TASK_PROFILE: &str = "signed-task-dev-v1";
+pub const LEGACY_TASK_PROFILE: &str = "legacy-task-v1";
+pub const QUALIFIED_DEMANDS: u64 = 16;
+
+pub mod growth;
+#[cfg(feature = "pq-native-openssl")]
+pub mod pq_accounts;
+pub mod pq_accounts_v2;
 
 pub type State = BTreeMap<String, Value>;
 pub type Result<T> = std::result::Result<T, &'static str>;
+/// Borrow every matching row in the original map order. String prefixes occupy
+/// one contiguous range; seek its start without walking unrelated state. The
+/// open upper bound also handles empty and maximum-Unicode prefixes exactly.
+pub(crate) fn prefix_rows<'a>(
+    state: &'a State,
+    prefix: &'a str,
+) -> impl Iterator<Item = (&'a String, &'a Value)> + 'a {
+    state
+        .range::<str, _>((Bound::Included(prefix), Bound::Unbounded))
+        .take_while(move |(key, _)| key.starts_with(prefix))
+}
+/// Optional computation-input gate for semantic account point accesses. The
+/// callback itself conveys no proof, signature, parent or admission authority.
+/// Aggregate balance scans and complete state commitments still use full State.
+pub type AccountPointAccess<'a> = dyn Fn(&str) -> Result<()> + Sync + 'a;
+/// Borrowed research check of the actual complete mandatory transition.
+pub type MandatoryStateCheck<'a> = dyn Fn(&State, &State, &[Vec<u8>]) -> Result<()> + Sync + 'a;
+/// Research-only input for the complete mandatory non-account partition. The
+/// caller must authenticate these rows before entry. M06 additionally checks the
+/// exact complete partition against its full parent reference, then executes the
+/// actual mandatory relation using these supplied rows. A rejecting completion
+/// check prevents any transaction or output from following that prologue.
+pub struct MandatoryStateInput<'a> {
+    pub non_accounts: &'a State,
+    pub completed: &'a MandatoryStateCheck<'a>,
+}
+/// Complete monetary namespaces consumed by the explicit range-witness path.
+/// The semantic set is shared with its range producer/verifier. Future and
+/// zero-valued records are included; a due-only list is never sufficient.
+pub const MONETARY_OBLIGATION_PREFIXES: [&str; 4] = ["quota:", "release:", "reward:", "task:"];
+pub fn is_monetary_obligation(key: &str) -> bool {
+    MONETARY_OBLIGATION_PREFIXES
+        .iter()
+        .any(|prefix| key.starts_with(prefix))
+}
+/// Untrusted computation input; M06 checks its exact projection against the
+/// complete parent before using these supplied rows for monetary discovery.
+/// The Node research owner additionally verifies its authenticated range proof.
+/// Other cleanup rules and the final complete successor remain unchanged.
+pub struct MonetaryObligationInput<'a> {
+    pub rows: &'a State,
+}
+/// Read-only observations of the actual canonical M06 path. They convey no
+/// validation or funding authority; an owner must verify the completed output
+/// against the admitted header before publishing any observation.
+pub trait CanonicalTransitionObserver: Sync {
+    fn mandatory(&self, _before: &State, _after: &State, _receipts: &[Vec<u8>]) -> Result<()> {
+        Ok(())
+    }
+    fn transaction(
+        &self,
+        _index: usize,
+        _envelope: &Envelope,
+        _before: &State,
+        _writes: &State,
+        _fee: u64,
+        _receipt: &[u8],
+    ) -> Result<()> {
+        Ok(())
+    }
+    /// Called only after the selected PQ owner verifies real signatures and
+    /// applies the actual canonical patch. This never fabricates an Envelope.
+    fn native_pq_transaction(
+        &self,
+        _index: usize,
+        _command: &pq_accounts_v2::PreparedCommand,
+        _before: &State,
+        _writes: &State,
+        _fee: u64,
+        _receipt: &[u8],
+    ) -> Result<()> {
+        Err("PQ_ACCOUNT_OBSERVER_UNSUPPORTED")
+    }
+}
+#[derive(Default)]
+struct StateInputs<'a> {
+    accounts: Option<&'a AccountPointAccess<'a>>,
+    mandatory: Option<&'a MandatoryStateInput<'a>>,
+    monetary: Option<&'a MonetaryObligationInput<'a>>,
+    growth: Option<&'a growth::AccountPartition>,
+    observer: Option<&'a dyn CanonicalTransitionObserver>,
+    #[cfg(test)]
+    // Private per-call research only; default false and absent from production.
+    experimental_skip_repeated_senders: bool,
+}
+/// Caller-local observation only; no ledger byte or execution authority.
+/// Header context does not claim the separate parent State binding was read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExecutionProgress {
+    BeforeHeaderContext,
+    BeforeParentBinding,
+    BeforeStateClone,
+    AfterMandatory,
+    BeforePrepare { index: usize },
+    AfterPrepare { index: usize },
+    BeforeApply { index: usize },
+    AfterApply { index: usize },
+    BeforeReward,
+    BeforeCommitment,
+    AfterCommitment,
+    BeforeOutput,
+    BeforePersistence,
+    PersistenceDelta { index: usize },
+    BeforeDurableCommit,
+}
+/// An abandoned preview is separate from a canonical application rejection.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExecutionError<E> {
+    Relation(&'static str),
+    Cancelled(E),
+}
+impl<E> From<&'static str> for ExecutionError<E> {
+    fn from(error: &'static str) -> Self {
+        Self::Relation(error)
+    }
+}
+pub type ControlledResult<T, E> = std::result::Result<T, ExecutionError<E>>;
+/// Request-local accounting only. A guard is created on the actual worker and
+/// dropped on that same worker on success, rejection, cancellation or unwind.
+pub trait ExecutionWorkerInterval {}
+pub trait ExecutionWorkerAccounting: Sync {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>>;
+    fn worker_spawn_succeeded(&self);
+    #[cfg(test)]
+    fn test_spawn_allowed(&self, _index: usize) -> bool {
+        true
+    }
+}
+impl ExecutionWorkerAccounting for () {
+    fn worker_started(&self) -> Option<Box<dyn ExecutionWorkerInterval + '_>> {
+        None
+    }
+    fn worker_spawn_succeeded(&self) {}
+}
+/// Keep progress and accounting together without changing canonical outputs.
+pub struct ExecutionControl<'a, E> {
+    pub progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+    pub worker_accounting: &'a dyn ExecutionWorkerAccounting,
+}
+impl<'a, E> ExecutionControl<'a, E> {
+    pub fn new(
+        progress: &'a (dyn Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+        worker_accounting: &'a dyn ExecutionWorkerAccounting,
+    ) -> Self {
+        Self {
+            progress,
+            worker_accounting,
+        }
+    }
+}
+pub(crate) fn relation_only<T>(result: ControlledResult<T, std::convert::Infallible>) -> Result<T> {
+    match result {
+        Ok(value) => Ok(value),
+        Err(ExecutionError::Relation(error)) => Err(error),
+        Err(ExecutionError::Cancelled(impossible)) => match impossible {},
+    }
+}
+pub(crate) fn no_cancellation(
+    _: ExecutionProgress,
+) -> std::result::Result<(), std::convert::Infallible> {
+    Ok(())
+}
 const ZERO: Hash = [0; 32];
 fn require(ok: bool, error: &'static str) -> Result<()> {
     if ok {
@@ -41,36 +222,279 @@ fn hash32(s: &str) -> Result<Hash> {
     hex::decode_to_slice(s, &mut h).map_err(|_| "NONCANONICAL")?;
     Ok(h)
 }
-fn canonical(v: &Value) -> Result<Vec<u8>> {
-    fn visit(v: &Value) -> Result<()> {
-        match v {
-            Value::Null | Value::Bool(_) => Ok(()),
-            Value::Number(n) => require(n.is_u64() || n.is_i64(), "RANGE"),
-            Value::String(s) => require(s.is_ascii(), "NONCANONICAL"),
-            Value::Array(xs) => {
-                for x in xs {
-                    visit(x)?;
-                }
-                Ok(())
+fn validate_canonical(v: &Value) -> Result<()> {
+    match v {
+        Value::Null | Value::Bool(_) => Ok(()),
+        Value::Number(n) => require(n.is_u64() || n.is_i64(), "RANGE"),
+        Value::String(s) => require(s.is_ascii(), "NONCANONICAL"),
+        Value::Array(xs) => {
+            for x in xs {
+                validate_canonical(x)?;
             }
-            Value::Object(m) => {
-                for (k, v) in m {
-                    require(k.is_ascii(), "NONCANONICAL")?;
-                    visit(v)?;
-                }
-                Ok(())
+            Ok(())
+        }
+        Value::Object(m) => {
+            for (k, v) in m {
+                require(k.is_ascii(), "NONCANONICAL")?;
+                validate_canonical(v)?;
             }
+            Ok(())
         }
     }
-    visit(v)?;
+}
+
+/// Check eight bytes at a time without changing serde's escape alphabet.
+/// After excluding high bits, every byte is below 128. Subtracting a repeated
+/// threshold sets a high bit iff some byte is below that threshold: the first
+/// such byte underflows, whereas no byte can borrow when all meet it. Borrow
+/// propagation can mark further bytes, but cannot create a false positive.
+/// XOR with an ASCII delimiter stays below 128, so subtracting one detects an
+/// exact quote/backslash byte by the same argument. DEL (0x7f) remains allowed.
+fn unescaped_ascii_json(bytes: &[u8]) -> bool {
+    const HIGH: u64 = 0x8080_8080_8080_8080;
+    const ONE: u64 = 0x0101_0101_0101_0101;
+    let mut chunks = bytes.chunks_exact(8);
+    for chunk in &mut chunks {
+        let mut word_bytes = [0; 8];
+        word_bytes.copy_from_slice(chunk);
+        let word = u64::from_le_bytes(word_bytes);
+        if word & HIGH != 0 {
+            return false;
+        }
+        let control = word.wrapping_sub(0x2020_2020_2020_2020);
+        let quote = (word ^ 0x2222_2222_2222_2222).wrapping_sub(ONE);
+        let backslash = (word ^ 0x5c5c_5c5c_5c5c_5c5c).wrapping_sub(ONE);
+        if (control | quote | backslash) & HIGH != 0 {
+            return false;
+        }
+    }
+    chunks
+        .remainder()
+        .iter()
+        .all(|&byte| (0x20..=0x7f).contains(&byte) && byte != b'"' && byte != b'\\')
+}
+
+fn unescaped_string(v: &Value) -> Option<&str> {
+    match v {
+        Value::String(value) if unescaped_ascii_json(value.as_bytes()) => Some(value),
+        _ => None,
+    }
+}
+
+fn append_unescaped_string(bytes: &mut Vec<u8>, value: &str) -> std::io::Result<()> {
+    use std::io::Write;
+    // Mirror serde_json 1.0.149's three Vec writes. Reserving the final size
+    // instead would change capacities used by commitment workspace accounting.
+    bytes.write_all(b"\"")?;
+    if !value.is_empty() {
+        bytes.write_all(value.as_bytes())?;
+    }
+    bytes.write_all(b"\"")
+}
+
+pub(crate) fn canonical(v: &Value) -> Result<Vec<u8>> {
+    validate_canonical(v)?;
+    canonical_after_validation(v)
+}
+
+// Callers must finish their original grammar pass before encoding. In
+// particular, a complete State must be validated before any wire boundary.
+fn canonical_after_validation(v: &Value) -> Result<Vec<u8>> {
+    if let Some(value) = unescaped_string(v) {
+        // Keep the original serde_json::to_vec initial capacity as well as its
+        // write sequence; byte equivalence alone is not capacity equivalence.
+        let mut bytes = Vec::with_capacity(128);
+        append_unescaped_string(&mut bytes, value).map_err(|_| "NONCANONICAL")?;
+        return Ok(bytes);
+    }
     serde_json::to_vec(v).map_err(|_| "NONCANONICAL")
 }
-pub fn root(state: &State) -> Result<Hash> {
-    let mut bytes = BTreeMap::new();
-    for (k, v) in state {
-        bytes.insert(k.as_bytes().to_vec(), canonical(v)?);
+
+/// Reuse one operation-local encoder for comparisons which retain no value bytes.
+/// Grammar validation still precedes serialization and wire-limit decisions.
+pub(crate) fn canonical_into(v: &Value, bytes: &mut Vec<u8>) -> Result<()> {
+    validate_canonical(v)?;
+    bytes.clear();
+    if let Some(value) = unescaped_string(v) {
+        return append_unescaped_string(bytes, value).map_err(|_| "NONCANONICAL");
     }
-    state_root(&bytes).map_err(|_| "LIMIT")
+    serde_json::to_writer(bytes, v).map_err(|_| "NONCANONICAL")
+}
+
+pub fn root(state: &State) -> Result<Hash> {
+    // Preserve the original complete grammar/error pass before wire limits.
+    // A late noncanonical value must not be hidden by an earlier oversized key
+    // or by the fixed state count cap. No encoded values are retained here.
+    for value in state.values() {
+        validate_canonical(value)?;
+    }
+    // The original wire root checks total count before per-row limits.
+    if state.len() > 65_536 {
+        return Err("LIMIT");
+    }
+    state_root_from_entries(state.iter().map(|(key, value)| {
+        serde_json::to_vec(value)
+            .map(|bytes| (key.as_bytes(), bytes))
+            .map_err(|_| "NONCANONICAL")
+    }))
+    .map_err(|error| match error {
+        StateRootInputError::Input(error) => error,
+        StateRootInputError::Wire(_) => "LIMIT",
+    })
+}
+
+/// A borrowed complete non-account partition for pure root calculations. The
+/// immutable source supplies every row; this view accepts no claimed digest,
+/// precomputed leaf or partial update and grants no execution authority.
+/// This experimental comparison primitive is not selected by the default native
+/// store, which retains its original owned projection while acceptance is held.
+pub struct BorrowedNonAccountState<'a> {
+    rows: Vec<(&'a String, &'a Value)>,
+}
+
+impl<'a> BorrowedNonAccountState<'a> {
+    pub fn new(state: &'a State) -> Self {
+        Self {
+            // Filter the immutable State once. Subsequent grammar, component
+            // and encoding passes visit only these borrowed descriptors; no
+            // account rows are rescanned and no key or JSON value is cloned.
+            rows: state
+                .iter()
+                .filter(|(key, _)| !key.starts_with("account:"))
+                .collect(),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.rows.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&'a String, &'a Value)> + Clone + '_ {
+        self.rows.iter().copied()
+    }
+
+    pub fn get(&self, key: &str) -> Option<&'a Value> {
+        self.rows
+            .binary_search_by(|(name, _)| name.as_str().cmp(key))
+            .ok()
+            .map(|index| self.rows[index].1)
+    }
+
+    pub fn root(&self) -> Result<Hash> {
+        // Keep the independent root's grammar -> count -> wire order over the
+        // exact complete partition, without cloning its keys or JSON values.
+        for (_, value) in self.iter() {
+            validate_canonical(value)?;
+        }
+        if self.len() > 65_536 {
+            return Err("LIMIT");
+        }
+        state_root_from_entries(self.iter().map(|(key, value)| {
+            serde_json::to_vec(value)
+                .map(|bytes| (key.as_bytes(), bytes))
+                .map_err(|_| "NONCANONICAL")
+        }))
+        .map_err(|error| match error {
+            StateRootInputError::Input(error) => error,
+            StateRootInputError::Wire(_) => "LIMIT",
+        })
+    }
+
+    pub fn root_with_arithmetic(
+        &self,
+        arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+    ) -> Result<Hash> {
+        arithmetic_root_from_rows(self.iter(), self.len(), arithmetic)
+    }
+}
+
+/// Optional bounded tree arithmetic over the complete actual State. This is a
+/// root calculation, not a checked execution-parent or admission capability.
+/// No root claim, partial update or caller-produced leaf hash can enter it.
+/// Keep the independent original `root` above unchanged as the reference.
+pub fn root_with_arithmetic(
+    state: &State,
+    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+) -> Result<Hash> {
+    // The complete canonical pass must still precede every wire bound. In
+    // particular, a late invalid number wins over an early oversized key.
+    for value in state.values() {
+        validate_canonical(value)?;
+    }
+    if state.len() > 65_536 {
+        return Err("LIMIT");
+    }
+    let mut input = arithmetic.input_builder();
+    for (key, value) in state {
+        // Only a full current String/key equality can skip encoding. The
+        // builder proves eligibility from its private original wire bytes;
+        // every miss keeps the existing encoder and its actual allocations.
+        if let Value::String(value) = value {
+            if input
+                .try_plain_json_string(key.as_bytes(), value)
+                .map_err(|_| "LIMIT")?
+            {
+                continue;
+            }
+        }
+        let bytes = canonical_after_validation(value)?;
+        input
+            .add_encoded(key.as_bytes(), &bytes)
+            .map_err(|_| "LIMIT")?;
+    }
+    input.finish().map_err(|_| "LIMIT")
+}
+
+fn arithmetic_root_from_rows<'a>(
+    rows: impl Iterator<Item = (&'a String, &'a Value)> + Clone,
+    count: usize,
+    arithmetic: &mut trnm_protocol::pon_wire::StateRootArithmetic,
+) -> Result<Hash> {
+    // The complete canonical pass must still precede every wire bound. In
+    // particular, a late invalid number wins over an early oversized key.
+    for (_, value) in rows.clone() {
+        validate_canonical(value)?;
+    }
+    if count > 65_536 {
+        return Err("LIMIT");
+    }
+    let mut input = arithmetic.input_builder();
+    for (key, value) in rows {
+        // Only a full current String/key equality can skip encoding. The
+        // builder proves eligibility from its private original wire bytes;
+        // every miss keeps the existing encoder and its actual allocations.
+        if let Value::String(value) = value {
+            if input
+                .try_plain_json_string(key.as_bytes(), value)
+                .map_err(|_| "LIMIT")?
+            {
+                continue;
+            }
+        }
+        let bytes = canonical_after_validation(value)?;
+        input
+            .add_encoded(key.as_bytes(), &bytes)
+            .map_err(|_| "LIMIT")?;
+    }
+    input.finish().map_err(|_| "LIMIT")
+}
+
+#[cfg(test)]
+mod root_arithmetic_tests;
+
+/// Consensus-profile selected root. The historical root function and every old
+/// profile retain their complete grammar, error order and 65,536-key boundary.
+pub fn root_for_config(state: &State, cfg: &Config) -> Result<Hash> {
+    pq_accounts_v2::validate_state(state, cfg)?;
+    if crate::growth_profile_v2::enabled(cfg) {
+        Ok(crate::growth_profile_v2::commitment(state, cfg)?.id())
+    } else {
+        root(state)
+    }
 }
 
 #[derive(Clone)]
@@ -80,22 +504,472 @@ pub struct Config {
     pub family: Hash,
     pub plan: Hash,
     pub evaluators: BTreeSet<String>,
-    pub fees: [u64; 13],
+    pub fees: [u64; 25],
     pub params: Value,
+    pub model_registry: Value,
+    pub task_windows: Option<std::sync::Arc<crate::model_task_windows_v1::TaskWindows>>,
+    pub(crate) native_pq_v2: Option<std::sync::Arc<pq_accounts_v2::Profile>>,
+    #[cfg(feature = "pq-native-openssl")]
+    pub(crate) pq_accounts: Option<std::sync::Arc<pq_accounts::AccountPolicy>>,
 }
 impl Config {
     /// Installed experimental genesis context, not caller-supplied authority booleans.
     pub fn installed() -> Result<Self> {
-        let params: Value =
+        Self::installed_with_evaluation_policy("legacy-first-two-v3")
+    }
+    /// Explicit successor selects different network/parameter commitments. The default
+    /// revision3 bytes and economics remain unchanged; this is not a hot upgrade.
+    pub fn installed_with_evaluation_policy(policy: &str) -> Result<Self> {
+        Self::installed_with_profiles(policy, LEGACY_TASK_PROFILE)
+    }
+    pub fn installed_with_profiles(policy: &str, task_profile: &str) -> Result<Self> {
+        Self::installed_with_model_profiles(policy, task_profile, "linear-expert-dev-v1")
+    }
+    pub fn installed_with_model_profiles(
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+    ) -> Result<Self> {
+        let mut params: Value =
             serde_json::from_str(include_str!("../../../../config/pon/devnet-v1.json"))
                 .map_err(|_| "CONFIG")?;
         require(
             params["consensus_revision"] == 3 && params["production_activation"] == false,
             "CONFIG",
         )?;
-        let model: Value =
-            serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
+        match policy {
+            "legacy-first-two-v3" => {}
+            trnm_verification_profiles::closed_round::PROFILE => {
+                let policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/evaluation-round-v1.json"
+                ))
                 .map_err(|_| "CONFIG")?;
+                require(policy["production_activation"] == false, "CONFIG")?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
+            public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE => {
+                let quorum_profile = policy == public_evaluation::QUORUM_PROFILE;
+                let evolution_profile = model_profile == crate::model_evolution_v5::PROFILE;
+                let policy: Value = serde_json::from_str(if quorum_profile && evolution_profile {
+                    include_str!("../../../../config/pon/public-evaluation-model-evolution-v5.json")
+                } else if quorum_profile {
+                    include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
+                } else {
+                    include_str!("../../../../config/pon/public-evaluation-native-v1.json")
+                })
+                .map_err(|_| "CONFIG")?;
+                require(
+                    policy["production_activation"] == false
+                        && policy["independent_governance_accepted"] == false
+                        && policy["objective_model_quality"] == false,
+                    "CONFIG",
+                )?;
+                require(
+                    policy["storage_revision"]
+                        == if quorum_profile {
+                            public_evaluation::QUORUM_STORAGE_REVISION
+                        } else {
+                            public_evaluation::STORAGE_REVISION
+                        }
+                        && policy["maximum_record_bytes"] == 4096,
+                    "CONFIG",
+                )?;
+                if quorum_profile {
+                    require(
+                        policy["schema"] == "pon-native-public-evaluation-quorum-v2"
+                            && policy["id"] == public_evaluation::QUORUM_PROFILE
+                            && policy["record_namespace"]
+                                == public_evaluation::QUORUM_RECORD_NAMESPACE
+                            && policy["development_evaluators"] == 4
+                            && policy["native_model_profiles"]
+                                == if evolution_profile {
+                                    json!([crate::model_evolution_v5::PROFILE])
+                                } else {
+                                    json!([
+                                        crate::model_evidence_v3::PROFILE,
+                                        crate::model_composition_v4::PROFILE
+                                    ])
+                                }
+                            && policy["native_evidence_review_policy_override"]
+                                == public_evaluation::quorum_v2::REVIEW_POLICY
+                            && policy["fresh_dataset_activation"] == false
+                            && policy["consensus_finality"] == false
+                            && policy["execution_authority"] == false,
+                        "CONFIG",
+                    )?;
+                    require(
+                        matches!(
+                            model_profile,
+                            crate::model_evidence_v3::PROFILE
+                                | crate::model_composition_v4::PROFILE
+                                | crate::model_evolution_v5::PROFILE
+                        ),
+                        "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
+                    )?;
+                }
+                for (name, expected) in [
+                    ("candidate_end_offset", public_evaluation::CANDIDATE_END),
+                    ("commit_end_offset", public_evaluation::COMMIT_END),
+                    ("reveal_end_offset", public_evaluation::REVEAL_END),
+                    ("adoption_start_offset", public_evaluation::ADOPTION_START),
+                    ("appeal_limit_per_candidate", 16),
+                    ("archive_retention_blocks", 256),
+                    ("round_blocks", 128),
+                    ("maximum_candidates_per_round", 512),
+                ] {
+                    require(field(&policy, name)? == expected, "CONFIG")?;
+                }
+                for tag in 14..=17 {
+                    require(
+                        field(&policy["base_fee_units"], &tag.to_string())? == 160,
+                        "CONFIG",
+                    )?;
+                }
+                require(
+                    field(&params, "candidate_round_blocks")? == 128
+                        && field(&params, "max_candidate_history_per_round")? == 512,
+                    "CONFIG",
+                )?;
+                for (key, value) in policy["genesis_overrides"].as_object().ok_or("CONFIG")? {
+                    params[key] = value.clone();
+                }
+                params["evaluation_policy_hash"] = json!(hex::encode(hash(
+                    b"evaluation-policy",
+                    &[&canonical(&policy)?]
+                )));
+            }
+            _ => return Err("EVALUATION_POLICY"),
+        }
+        match task_profile {
+            LEGACY_TASK_PROFILE => {}
+            SIGNED_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-work-task-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                let revision = if policy == public_evaluation::PROFILE {
+                    6
+                } else {
+                    5
+                };
+                params["consensus_revision"] = json!(revision);
+                params["chain_label"] =
+                    json!(format!("trnm-pon-signed-task-devnet-{revision}-{policy}"));
+                params["work_task_profile"] = json!(SIGNED_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v1",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            LIFECYCLE_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(7);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-7-{policy}"));
+                params["work_task_profile"] = json!(LIFECYCLE_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v2",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            ATOMIC_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v3.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 8
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(8);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-8-{policy}"));
+                params["work_task_profile"] = json!(ATOMIC_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v3",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            OVERLAP_TASK_PROFILE => {
+                let registry: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/qualified-task-lifecycle-v4.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    registry["production_eligible"] == false
+                        && registry["hardness_accepted"] == false
+                        && registry["consensus_revision"] == 9
+                        && registry["standalone_renew_disabled"] == true
+                        && registry["atomic_overlap_window"] == true
+                        && registry["exact_contract"]["atomic_renew_bytes"] == 1028
+                        && registry["exact_contract"]["base_fee_units"]["22"] == 200,
+                    "CONFIG",
+                )?;
+                params["consensus_revision"] = json!(9);
+                params["chain_label"] = json!(format!("trnm-pon-task-lifecycle-devnet-9-{policy}"));
+                params["work_task_profile"] = json!(OVERLAP_TASK_PROFILE);
+                params["qualified_task_registry_hash"] = json!(hex::encode(hash(
+                    b"qualified-task-registry-v4",
+                    &[&canonical(&registry)?]
+                )));
+            }
+            CONTINUITY_TASK_PROFILE => continuity_v1::configure(&mut params, policy)?,
+            crate::growth_profile_v2::PROFILE => {
+                require(
+                    model_profile == "linear-expert-dev-v1",
+                    "GROWTH_MODEL_PROFILE",
+                )?;
+                crate::growth_profile_v2::configure(&mut params, policy)?;
+            }
+            CHECKPOINT_TASK_PROFILE => return Err("CHECKPOINT_POLICY_REQUIRED"),
+            _ => return Err("WORK_TASK_PROFILE"),
+        }
+        if matches!(
+            policy,
+            public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE
+        ) {
+            params["chain_label"] = json!(format!(
+                "{}-evaluation-storage{}",
+                text(&params, "chain_label")?,
+                if policy == public_evaluation::QUORUM_PROFILE {
+                    public_evaluation::QUORUM_STORAGE_REVISION
+                } else {
+                    public_evaluation::STORAGE_REVISION
+                }
+            ));
+        }
+        let model: Value = match model_profile {
+            "linear-expert-dev-v1" => {
+                serde_json::from_str(include_str!("../../../../config/pon/model-family-v1.json"))
+                    .map_err(|_| "CONFIG")?
+            }
+            crate::model_evolution_v5::PROFILE => {
+                require(
+                    policy == public_evaluation::QUORUM_PROFILE,
+                    "MODEL_PROFILE_POLICY",
+                )?;
+                require(
+                    matches!(task_profile, LEGACY_TASK_PROFILE | CONTINUITY_TASK_PROFILE),
+                    "MODEL_PROFILE_TASK",
+                )?;
+                params["consensus_revision"] = json!(crate::model_evolution_v5::REVISION);
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                crate::model_evolution_v5::install(&mut params)?;
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-evolution-v3.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
+            crate::integer_factor_candidate_v2::PROFILE
+            | crate::model_evidence_v3::PROFILE
+            | crate::model_composition_v4::PROFILE => {
+                require(
+                    matches!(
+                        policy,
+                        public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE
+                    ),
+                    "MODEL_PROFILE_POLICY",
+                )?;
+                require(
+                    task_profile == LEGACY_TASK_PROFILE
+                        || (matches!(
+                            model_profile,
+                            crate::model_evidence_v3::PROFILE
+                                | crate::model_composition_v4::PROFILE
+                        ) && task_profile == "consensus-maintenance-continuity-dev-v1"),
+                    "MODEL_PROFILE_TASK",
+                )?;
+                let factor_policy: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/integer-factor-candidate-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                require(
+                    factor_policy["production_activation"] == false
+                        && factor_policy["tag"] == 23
+                        && factor_policy["artifact_exact_bytes"]
+                            == crate::integer_factor_candidate_v2::MODEL_BYTES
+                        && factor_policy["rank_max"] == 2,
+                    "CONFIG",
+                )?;
+                for (key, expected) in [
+                    ("schema", json!("native-integer-factor-candidate-v2")),
+                    (
+                        "profile",
+                        json!(crate::integer_factor_candidate_v2::PROFILE),
+                    ),
+                    ("consensus_revision", json!(11)),
+                    ("magic", json!("ILF2")),
+                    ("rank_min", json!(1)),
+                    ("scale", json!(1024)),
+                    ("coefficient_min", json!(-32767)),
+                    ("coefficient_max", json!(32767)),
+                    ("payload_bytes", json!([762, 1282])),
+                    ("envelope_bytes", json!([921, 1441])),
+                    ("artifact_max_bytes", json!(65536)),
+                    ("chunk_bytes", json!(1024)),
+                    ("chunk_count_max", json!(64)),
+                    ("base_fee_units", json!(200)),
+                    ("no_op_rejected", json!(true)),
+                    ("source_budget_enforced", json!(false)),
+                    ("quality_qualified", json!(false)),
+                    ("general_model_equivalence", json!(false)),
+                ] {
+                    require(factor_policy[key] == expected, "CONFIG")?;
+                }
+                params["consensus_revision"] = json!(if model_profile
+                    == crate::model_composition_v4::PROFILE
+                {
+                    crate::model_composition_v4::REVISION.max(field(&params, "consensus_revision")?)
+                } else if model_profile == crate::model_evidence_v3::PROFILE {
+                    crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
+                } else {
+                    11
+                });
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                params["factor_candidate_policy_hash"] = json!(hex::encode(hash(
+                    b"integer-factor-candidate-policy-v2",
+                    &[&canonical(&factor_policy)?]
+                )));
+                let mut model: Value = serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-integer-factor-v2.json"
+                ))
+                .map_err(|_| "CONFIG")?;
+                if model_profile == crate::model_evidence_v3::PROFILE {
+                    crate::model_evidence_v3::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == crate::model_composition_v4::PROFILE {
+                    crate::model_composition_v4::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                }
+                model
+            }
+            "smollm2-135m-cpu-dev-v1" => {
+                require(policy == public_evaluation::PROFILE, "MODEL_PROFILE_POLICY")?;
+                params["model_profile"] = json!(model_profile);
+                params["chain_label"] =
+                    json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
+                serde_json::from_str(include_str!(
+                    "../../../../config/pon/model-family-smollm2-135m-v1.json"
+                ))
+                .map_err(|_| "CONFIG")?
+            }
+            _ => return Err("MODEL_PROFILE"),
+        };
+        if policy == public_evaluation::QUORUM_PROFILE {
+            params["consensus_revision"] = json!(
+                public_evaluation::QUORUM_REVISION.max(field(&params, "consensus_revision")?)
+            );
+        }
+        if model_profile != "linear-expert-dev-v1" {
+            let maximum = field(&model, "artifact_max_bytes")?;
+            require(
+                maximum > 0 && maximum <= field(&params, "max_artifact_bytes")?,
+                "MODEL_PROFILE_LIMIT",
+            )?;
+            params["max_artifact_bytes"] = json!(maximum);
+        }
+        if matches!(
+            model_profile,
+            crate::integer_factor_candidate_v2::PROFILE
+                | crate::model_evidence_v3::PROFILE
+                | crate::model_composition_v4::PROFILE
+                | crate::model_evolution_v5::PROFILE
+        ) {
+            let evolution = model_profile == crate::model_evolution_v5::PROFILE;
+            for (key, expected) in [
+                (
+                    "schema",
+                    json!(if evolution {
+                        "integer-linear-evolution-family-v3"
+                    } else {
+                        "integer-linear-factor-family-v2"
+                    }),
+                ),
+                ("version", json!(if evolution { 3 } else { 2 })),
+                ("dimensions", json!(257)),
+                ("experts", json!(3)),
+                ("logit_outputs", json!(3)),
+                ("weight_scale", json!(1024)),
+                ("weight_min", json!(-32767)),
+                ("weight_max", json!(32767)),
+                (
+                    "artifact_encoding",
+                    json!(if evolution {
+                        "ILM3-le-i16-complete-model-mask-v3"
+                    } else {
+                        "ILM2-le-i16-complete-model-v2"
+                    }),
+                ),
+                (
+                    "artifact_exact_bytes",
+                    json!(if evolution {
+                        crate::integer_factor_candidate_v2::EVOLUTION_MODEL_BYTES
+                    } else {
+                        crate::integer_factor_candidate_v2::MODEL_BYTES
+                    }),
+                ),
+                (
+                    "genesis_model",
+                    json!(if evolution {
+                        "canonical-full-zero-model-enabled-mask7-v3"
+                    } else {
+                        "canonical-full-zero-model-v2"
+                    }),
+                ),
+                ("native_factor_rank_min", json!(1)),
+                ("native_factor_rank_max", json!(2)),
+                (
+                    "tensor_shapes",
+                    json!({"base":[3,257],"router":[3,257],"deltas":[3,3,257]}),
+                ),
+                ("consensus_authority", json!(false)),
+                ("general_model_equivalence", json!(false)),
+                ("model_utility_qualified", json!(false)),
+            ] {
+                require(model[key] == expected, "CONFIG")?;
+            }
+            if evolution {
+                require(
+                    model["graph"] == "nonempty-three-bit-enabled-experts-mask"
+                        && model["arbitrary_topology"] == false
+                        && model["native_admission_profile"] == crate::model_evolution_v5::PROFILE,
+                    "CONFIG",
+                )?;
+            }
+            let family = hash(b"family", &[&canonical(&model)?]);
+            let artifact = if evolution {
+                crate::integer_factor_candidate_v2::IntegerModelV2::evolution_genesis(family)
+            } else {
+                crate::integer_factor_candidate_v2::IntegerModelV2::genesis(family)
+            };
+            params["factor_genesis_artifact"] = json!(hex::encode(artifact.id()));
+        }
         let wire: Value =
             serde_json::from_str(include_str!("../../../../config/pon/ledger-v1.json"))
                 .map_err(|_| "CONFIG")?;
@@ -113,8 +987,74 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = hash(b"plan", &[b"public-source-file-disjoint-v1"]);
-        let mut fees = [0; 13];
+        let plan = if model_profile == crate::model_evolution_v5::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-evolution-plan-v5",
+                    &family,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_evolution_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_composition_v4::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-composition-plan-v4",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_composition_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_evidence_v3::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-evidence-plan-v3",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::integer_factor_candidate_v2::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-factor-evaluation-v2",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile != "linear-expert-dev-v1" {
+            hash(
+                b"plan",
+                &[
+                    b"native-llm-strong-baseline-dev-v1",
+                    &family,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        } else if policy == "legacy-first-two-v3" {
+            hash(b"plan", &[b"public-source-file-disjoint-v1"])
+        } else {
+            hash(
+                b"plan",
+                &[
+                    b"public-source-file-disjoint-v1",
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                ],
+            )
+        };
+        let mut fees = [0; 25];
         let mut tags = BTreeSet::new();
         for c in wire["commands"].as_array().ok_or("CONFIG")? {
             let tag = field(c, "tag")? as usize;
@@ -122,8 +1062,25 @@ impl Config {
             fees[tag] = field(c, "base_fee_units")?;
         }
         require(tags.len() == 12, "CONFIG")?;
+        // The signed-task extension has an explicit fixed development base fee.
+        // It is refused under every historical context even though its codec exists.
+        fees[13] = 100;
+        for fee in &mut fees[14..=17] {
+            *fee = 160;
+        }
+        for fee in &mut fees[18..=21] {
+            *fee = 100;
+        }
+        fees[22] = 200;
+        fees[23] = 200;
+        fees[24] = 240;
         let mut evaluators = BTreeSet::new();
-        for i in 0_u64..3 {
+        let evaluator_count = if policy == public_evaluation::QUORUM_PROFILE {
+            4
+        } else {
+            3
+        };
+        for i in 0_u64..evaluator_count {
             let seed = hash(b"DEV-ONLY-KEY", &[&i.to_le_bytes()]);
             let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
                 .map_err(|_| "CONFIG")?;
@@ -137,10 +1094,120 @@ impl Config {
             evaluators,
             fees,
             params,
+            model_registry: model,
+            task_windows: None,
+            native_pq_v2: None,
+            #[cfg(feature = "pq-native-openssl")]
+            pq_accounts: None,
         })
+    }
+    /// Optional complete owner-pinned data is installed before genesis. A different
+    /// manifest selects a different chain context; candidate authors cannot change it.
+    pub fn installed_with_model_profiles_and_task_windows(
+        policy: &str,
+        task_profile: &str,
+        model_profile: &str,
+        windows: Option<crate::model_task_windows_v1::PinnedTaskWindows<'_>>,
+    ) -> Result<Self> {
+        let mut cfg = Self::installed_with_model_profiles(policy, task_profile, model_profile)?;
+        if let Some(pinned) = windows {
+            crate::model_task_windows_v1::install(&mut cfg, pinned)?;
+        }
+        Ok(cfg)
     }
     fn limit(&self, name: &str) -> Result<u64> {
         field(&self.params, name)
+    }
+    pub fn task_profile(&self) -> &str {
+        self.params["work_task_profile"]
+            .as_str()
+            .unwrap_or(LEGACY_TASK_PROFILE)
+    }
+    pub fn is_pq_account_profile(&self) -> bool {
+        if pq_accounts_v2::enabled(self) {
+            return true;
+        }
+        #[cfg(feature = "pq-native-openssl")]
+        if self.pq_accounts.is_some() {
+            return true;
+        }
+        false
+    }
+    fn check_account_profile(&self) -> Result<()> {
+        if pq_accounts_v2::enabled(self) {
+            return pq_accounts_v2::check_config(self);
+        }
+        #[cfg(feature = "pq-native-openssl")]
+        if let Some(policy) = &self.pq_accounts {
+            return policy.check_config(self);
+        }
+        require(
+            self.params["account_authorization_profile"].is_null(),
+            "PQ_ACCOUNT_PROFILE_UNAVAILABLE",
+        )
+    }
+    pub fn qualified_demand_id(&self, index: u64) -> Result<Hash> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE && index < QUALIFIED_DEMANDS,
+            "TASK_DEMAND",
+        )?;
+        Ok(hash(
+            b"qualified-development-demand-v1",
+            &[&self.network, &self.parameters, &index.to_le_bytes()],
+        ))
+    }
+    pub fn qualified_demand_purpose(index: u64) -> Result<TaskPurpose> {
+        require(index < QUALIFIED_DEMANDS, "TASK_DEMAND")?;
+        Ok(if index == 0 {
+            TaskPurpose::Maintenance
+        } else {
+            match index % 3 {
+                1 => TaskPurpose::InferenceContraction,
+                2 => TaskPurpose::EvaluationContraction,
+                _ => TaskPurpose::AdapterContraction,
+            }
+        })
+    }
+    pub fn qualified_task_context(&self, demand_id: Hash, height: u64) -> Result<AdmissionContext> {
+        require(
+            self.task_profile() == SIGNED_TASK_PROFILE,
+            "WORK_TASK_PROFILE",
+        )?;
+        let mut known = false;
+        for index in 0..QUALIFIED_DEMANDS {
+            known |= self.qualified_demand_id(index)? == demand_id;
+        }
+        require(known, "TASK_DEMAND")?;
+        let seed = hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]);
+        let key = trnm_crypto_primitives::signing_key_from_hex(&hex::encode(seed))
+            .map_err(|_| "CONFIG")?;
+        let source = key.verifying_key().to_bytes();
+        Ok(AdmissionContext {
+            network: self.network,
+            parameters: self.parameters,
+            source,
+            demand_id,
+            source_record: hash(
+                b"qualified-development-source-record-v1",
+                &[&demand_id, b"public-fixture-not-real-user-demand"],
+            ),
+            authorization_scope: hash(
+                b"qualified-development-authorization-v1",
+                &[
+                    &self.network,
+                    &self.parameters,
+                    b"development-attestation-not-local-permission",
+                ],
+            ),
+            withdrawal_head: hash(
+                b"qualified-development-withdrawal-v1",
+                &[&self.network, &self.parameters, &0_u64.to_le_bytes()],
+            ),
+            availability_manifest: hash(b"qualified-development-da-manifest-v1", &[&demand_id]),
+            availability_root: hash(b"qualified-development-da-attestation-v1", &[&demand_id]),
+            height,
+            required_retention_blocks: 100,
+        })
     }
 }
 
@@ -174,14 +1241,16 @@ struct Patch {
 }
 struct View<'a> {
     base: &'a State,
+    account_access: Option<&'a AccountPointAccess<'a>>,
     writes: BTreeMap<String, Value>,
     reads: BTreeMap<String, Option<Value>>,
     scans: BTreeMap<String, State>,
 }
 impl<'a> View<'a> {
-    fn new(base: &'a State) -> Self {
+    fn new(base: &'a State, account_access: Option<&'a AccountPointAccess<'a>>) -> Self {
         Self {
             base,
+            account_access,
             writes: BTreeMap::new(),
             reads: BTreeMap::new(),
             scans: BTreeMap::new(),
@@ -201,33 +1270,30 @@ impl<'a> View<'a> {
     }
     fn scan(&mut self, prefix: &str) -> State {
         self.scans.entry(prefix.to_owned()).or_insert_with(|| {
-            self.base
-                .iter()
-                .filter(|(k, _)| k.starts_with(prefix))
+            prefix_rows(self.base, prefix)
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect()
         });
         let mut rows = self.scans[prefix].clone();
-        rows.extend(
-            self.writes
-                .iter()
-                .filter(|(k, _)| k.starts_with(prefix))
-                .map(|(k, v)| (k.clone(), v.clone())),
-        );
+        rows.extend(prefix_rows(&self.writes, prefix).map(|(k, v)| (k.clone(), v.clone())));
         rows
     }
-    fn account(&mut self, who: &str) -> Value {
-        self.get(&format!("account:{who}"))
-            .unwrap_or_else(|| json!({"balance":0,"nonce":0}))
+    fn account(&mut self, who: &str) -> Result<Value> {
+        if let Some(access) = self.account_access {
+            access(who)?;
+        }
+        Ok(self
+            .get(&format!("account:{who}"))
+            .unwrap_or_else(|| json!({"balance":0,"nonce":0})))
     }
     fn credit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         a["balance"] = json!(add(field(&a, "balance")?, amount)?);
         self.put(format!("account:{who}"), a);
         Ok(())
     }
     fn debit(&mut self, who: &str, amount: u64) -> Result<()> {
-        let mut a = self.account(who);
+        let mut a = self.account(who)?;
         let b = field(&a, "balance")?;
         require(amount > 0 && b >= amount, "FUNDS")?;
         a["balance"] = json!(b - amount);
@@ -270,20 +1336,43 @@ impl<'a> View<'a> {
         )
     }
 }
+impl qualified_task_lifecycle::LifecycleState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
+impl crate::integer_factor_candidate_v2::FactorState for View<'_> {
+    fn get(&mut self, key: &str) -> Option<Value> {
+        self.get(key)
+    }
+    fn put(&mut self, key: String, value: Value) {
+        self.put(key, value);
+    }
+    fn scan(&mut self, prefix: &str) -> State {
+        self.scan(prefix)
+    }
+}
 impl Patch {
     fn current(&self, state: &State) -> bool {
         self.reads.iter().all(|(k, v)| state.get(k) == v.as_ref())
-            && self.scans.iter().all(|(prefix, old)| {
-                state
-                    .iter()
-                    .filter(|(k, _)| k.starts_with(prefix))
-                    .eq(old.iter())
-            })
+            && self
+                .scans
+                .iter()
+                .all(|(prefix, old)| prefix_rows(state, prefix).eq(old.iter()))
     }
     fn apply(self, state: &mut State) {
         state.extend(self.writes);
     }
 }
+#[cfg(test)]
+mod prefix_scan_tests;
+
 struct Payload<'a> {
     bytes: &'a [u8],
     pos: usize,
@@ -305,6 +1394,13 @@ impl<'a> Payload<'a> {
     }
     fn h(&mut self) -> Result<Hash> {
         self.take()
+    }
+    fn blob(&mut self) -> Result<&'a [u8]> {
+        let length = u16::from_le_bytes(self.take()?) as usize;
+        let end = self.pos.checked_add(length).ok_or("LENGTH")?;
+        let value = self.bytes.get(self.pos..end).ok_or("LENGTH")?;
+        self.pos = end;
+        Ok(value)
     }
     fn byte(&mut self) -> Result<u8> {
         Ok(self.take::<1>()?[0])
@@ -348,13 +1444,117 @@ fn active_candidate(v: &Value, current: &str, height: u64, cfg: &Config) -> Resu
 // This carrier is private and tied to the exact immutable input and installed context.
 // Main-envelope verification is independent of branch state and is done only once.
 // Consumer-use signatures still depend on the actual quota state and are checked there.
+struct ApplicationCommand {
+    sender: Hash,
+    nonce: u64,
+    fee_limit: u64,
+    tag: u8,
+    payload: Vec<u8>,
+}
 struct Prepared {
-    envelope: Envelope,
+    native_pq: Option<pq_accounts_v2::PreparedCommand>,
+    command: ApplicationCommand,
+    legacy: Option<Envelope>,
     sender: String,
     encoded_len: usize,
+    transaction_id: Vec<u8>,
 }
-fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> Result<Prepared> {
+/// Read-only native admission check for exact PNX1 canonical context, selected tag,
+/// expiry and strict main signature. This grants no nonce, funds or execution fact.
+pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
+    require(
+        !cfg.is_pq_account_profile(),
+        "PQ_ACCOUNT_NATIVE_API_REQUIRED",
+    )?;
+    prepare(raw, height, None, cfg, &AtomicUsize::new(0), None)?
+        .legacy
+        .ok_or("PQ_ACCOUNT_NATIVE_API_REQUIRED")
+}
+fn prepare(
+    raw: &[u8],
+    height: u64,
+    timestamp: Option<u64>,
+    cfg: &Config,
+    signatures: &AtomicUsize,
+    parent: Option<&State>,
+) -> Result<Prepared> {
+    cfg.check_account_profile()?;
+    if pq_accounts_v2::enabled(cfg) {
+        let timestamp = timestamp.ok_or("PQ2_HEADER_TIMESTAMP_REQUIRED")?;
+        let parent = parent.ok_or("PQ2_PARENT_REQUIRED")?;
+        let tx =
+            pq_accounts_v2::prepare_signature_metered(parent, raw, timestamp, cfg, signatures)?;
+        let command = ApplicationCommand {
+            sender: tx.sender(),
+            nonce: tx.nonce(),
+            fee_limit: tx.max_fee(),
+            tag: tx.kind(),
+            payload: Vec::new(),
+        };
+        return Ok(Prepared {
+            sender: hex::encode(tx.sender()),
+            encoded_len: raw.len(),
+            transaction_id: tx.statement_id().to_vec(),
+            command,
+            legacy: None,
+            native_pq: Some(tx),
+        });
+    }
+    #[cfg(feature = "pq-native-openssl")]
+    if let Some(policy) = &cfg.pq_accounts {
+        return pq_accounts::prepare(raw, height, cfg, signatures, policy);
+    }
     let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    require(
+        !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 19 || cfg.task_profile() == LIFECYCLE_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 22
+            || matches!(
+                cfg.task_profile(),
+                ATOMIC_TASK_PROFILE
+                    | OVERLAP_TASK_PROFILE
+                    | CHECKPOINT_TASK_PROFILE
+                    | CONTINUITY_TASK_PROFILE
+                    | crate::growth_profile_v2::PROFILE
+            ),
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        !(14..=17).contains(&tx.tag) || public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
+        tx.tag != 7 || !public_evaluation::enabled(cfg),
+        "PUBLIC_EVAL_PROFILE",
+    )?;
+    require(
+        tx.tag != 13 || cfg.task_profile() == SIGNED_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 12 || cfg.task_profile() == LEGACY_TASK_PROFILE,
+        "WORK_TASK_PROFILE",
+    )?;
+    require(
+        tx.tag != 23
+            || (crate::integer_factor_candidate_v2::enabled(cfg)
+                && !crate::model_evolution_v5::enabled(cfg)),
+        "FACTOR_PROFILE",
+    )?;
+    require(
+        tx.tag != 24 || crate::model_evolution_v5::enabled(cfg),
+        "EVOLUTION_PROFILE",
+    )?;
+    require(
+        tx.tag != 6 || !crate::integer_factor_candidate_v2::enabled(cfg),
+        "FACTOR_PROFILE",
+    )?;
     require(tx.network == cfg.network, "NETWORK")?;
     require(height <= tx.expiry, "EXPIRED")?;
     let sender = hex::encode(tx.sender);
@@ -365,41 +1565,76 @@ fn prepare(raw: &[u8], height: u64, cfg: &Config, signatures: &AtomicUsize) -> R
         &hex::encode(tx.signature),
     )
     .map_err(|_| "SIGNATURE")?;
+    let transaction_id = tx.id().map_err(|_| "ENCODING")?.to_vec();
+    let command = ApplicationCommand {
+        sender: tx.sender,
+        nonce: tx.nonce,
+        fee_limit: tx.fee_limit,
+        tag: tx.tag,
+        payload: tx.payload.clone(),
+    };
     Ok(Prepared {
-        envelope: tx,
+        native_pq: None,
+        command,
+        legacy: Some(tx),
         sender,
         encoded_len: raw.len(),
+        transaction_id,
     })
 }
 fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) -> Result<Patch> {
-    let tx = &prepared.envelope;
-    let sender = prepared.sender.clone();
-    let mut s = View::new(base);
-    let acct = s.account(&sender);
-    require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
+    apply_prepared_with_account_access(base, prepared, height, cfg, None)
+}
+// Shared native M06 arithmetic after the selected authentication owner succeeds.
+// This private function is never a signature verifier or a public bypass.
+fn debit_authorized_fee(
+    s: &mut View<'_>,
+    sender: &str,
+    tag: u8,
+    nonce: u64,
+    fee_limit: u64,
+    encoded_len: usize,
+    cfg: &Config,
+) -> Result<u64> {
+    let acct = s.account(sender)?;
+    require(nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
     let fee = add(
-        cfg.fees[tx.tag as usize],
-        (prepared.encoded_len as u64)
+        *cfg.fees.get(tag as usize).ok_or("VERSION")?,
+        (encoded_len as u64)
             .checked_mul(cfg.limit("byte_fee_units")?)
             .ok_or("RANGE")?,
     )?;
-    require(tx.fee_limit >= fee, "FEE")?;
-    if tx.tag != 11 {
-        s.debit(&sender, fee)?;
+    require(fee_limit >= fee, "FEE")?;
+    if tag != 11 {
+        s.debit(sender, fee)?;
     } else {
         s.put(format!("account:{sender}"), acct);
     }
+    Ok(fee)
+}
+
+fn transfer_balances(s: &mut View<'_>, sender: &str, recipient: &str, amount: u64) -> Result<()> {
+    s.debit(sender, amount)?;
+    s.credit(recipient, amount)
+}
+
+// Private common task owner. Both signature profiles reach this only after
+// their genuine authorization and original nonce/fee checks have succeeded.
+fn apply_task_command(
+    s: &mut View<'_>,
+    sender_id: Hash,
+    nonce: u64,
+    tag: u8,
+    payload: &[u8],
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let sender = hex::encode(sender_id);
     let mut p = Payload {
-        bytes: &tx.payload,
+        bytes: payload,
         pos: 0,
     };
-    match tx.tag {
-        1 => {
-            let recipient = hex::encode(p.h()?);
-            let amount = p.n()?;
-            s.debit(&sender, amount)?;
-            s.credit(&recipient, amount)?;
-        }
+    match tag {
         2 => {
             let task = p.h()?;
             let provider = hex::encode(p.h()?);
@@ -411,8 +1646,8 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                     &[
                         &cfg.network,
                         &cfg.parameters,
-                        &tx.sender,
-                        &tx.nonce.to_le_bytes(),
+                        &sender_id,
+                        &nonce.to_le_bytes(),
                         &hash32(&provider)?,
                         &budget.to_le_bytes(),
                         &deadline.to_le_bytes(),
@@ -458,10 +1693,271 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                     && text(&o, "output")? == output,
                 "STATE",
             )?;
-            s.credit(text(&o, "provider")?, field(&o, "remaining")?)?;
+            if field(&o, "remaining")? > 0 || !pq_accounts_v2::enabled(cfg) {
+                s.credit(text(&o, "provider")?, field(&o, "remaining")?)?;
+            }
             o["remaining"] = json!(0);
             o["status"] = json!("settled");
             s.put(k, o);
+        }
+        _ => return Err("VERSION"),
+    }
+    require(p.pos == p.bytes.len(), "ENCODING")
+}
+
+// Original quota owner shared by the legacy and explicit NPQ3 authorization
+// paths. Authentication is performed by their respective private prepared owners.
+fn reserve_quota(
+    s: &mut View<'_>,
+    sender_id: Hash,
+    nonce: u64,
+    payload: &[u8],
+    height: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let sender = hex::encode(sender_id);
+    let mut p = Payload {
+        bytes: payload,
+        pos: 0,
+    };
+    let quota = p.h()?;
+    let consumer = hex::encode(p.h()?);
+    let provider = hex::encode(p.h()?);
+    let units = p.n()?;
+    let deadline = p.n()?;
+    require(
+        quota
+            == hash(
+                b"quota-instance-v3",
+                &[
+                    &cfg.network,
+                    &cfg.parameters,
+                    &sender_id,
+                    &nonce.to_le_bytes(),
+                    &hash32(&consumer)?,
+                    &hash32(&provider)?,
+                    &units.to_le_bytes(),
+                    &deadline.to_le_bytes(),
+                ],
+            ),
+        "RESOURCE_ID",
+    )?;
+    let k = format!("quota:{}", hex::encode(quota));
+    require(s.get(&k).is_none(), "DUPLICATE")?;
+    s.deadline(cfg, deadline, height)?;
+    require(units > 0 && units <= cfg.limit("max_quota_units")?, "LIMIT")?;
+    let cost = units
+        .checked_mul(cfg.limit("quota_unit_price")?)
+        .ok_or("RANGE")?;
+    s.debit(&sender, cost)?;
+    s.put(k,json!({"owner":sender,"consumer":consumer,"provider":provider,"remaining":cost,"units":units,"deadline":deadline,"status":"reserved"}));
+    require(p.pos == p.bytes.len(), "ENCODING")
+}
+
+fn quota_use_context(
+    s: &mut View<'_>,
+    sender: &str,
+    quota: Hash,
+    units: u64,
+    result: Hash,
+    height: u64,
+) -> Result<(String, Value)> {
+    let (key, row) = s.object("quota:", quota)?;
+    require(text(&row, "provider")? == sender, "AUTHORITY")?;
+    require(
+        text(&row, "status")? == "reserved" && height < field(&row, "deadline")?,
+        "STATE",
+    )?;
+    require(
+        units > 0 && units <= field(&row, "units")? && result != ZERO,
+        "LIMIT",
+    )?;
+    Ok((key, row))
+}
+
+fn settle_verified_quota(
+    s: &mut View<'_>,
+    sender: &str,
+    key: String,
+    mut row: Value,
+    units: u64,
+    fee: u64,
+    cfg: &Config,
+) -> Result<()> {
+    let cost = units
+        .checked_mul(cfg.limit("quota_unit_price")?)
+        .ok_or("RANGE")?;
+    require(cost >= fee && field(&row, "remaining")? >= cost, "FUNDS")?;
+    row["remaining"] = json!(field(&row, "remaining")? - cost);
+    row["units"] = json!(field(&row, "units")? - units);
+    s.credit(sender, cost - fee)?;
+    if field(&row, "units")? == 0 {
+        row["status"] = json!("spent");
+    }
+    s.put(key, row);
+    Ok(())
+}
+
+fn apply_prepared_with_account_access(
+    base: &State,
+    prepared: &Prepared,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<Patch> {
+    if let Some(native) = &prepared.native_pq {
+        return pq_accounts_v2::apply(base, native, height, cfg, account_access);
+    }
+    apply_authenticated_application(base, prepared, height, cfg, account_access, None)
+}
+fn evaluation_exclusions(view: &mut View<'_>, cfg: &Config) -> BTreeSet<String> {
+    if pq_accounts_v2::application_v6::enabled(cfg) {
+        // PQ evidence is only authoritative for its own frozen generation and
+        // round. It cannot import a classic permanent stable-account penalty.
+        BTreeSet::new()
+    } else {
+        public_evaluation::excluded(&view.scan("evaluation-disqualified:"))
+    }
+}
+fn apply_authenticated_application(
+    base: &State,
+    prepared: &Prepared,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    pq_conflict: Option<&pq_accounts_v2::application_v6::VerifiedConflict>,
+) -> Result<Patch> {
+    let tx = &prepared.command;
+    let sender = prepared.sender.clone();
+    let mut s = View::new(base, account_access);
+    let acct = s.account(&sender)?;
+    require(tx.nonce == add(field(&acct, "nonce")?, 1)?, "NONCE")?;
+    let fee = add(
+        cfg.fees[tx.tag as usize],
+        (prepared.encoded_len as u64)
+            .checked_mul(cfg.limit("byte_fee_units")?)
+            .ok_or("RANGE")?,
+    )?;
+    require(tx.fee_limit >= fee, "FEE")?;
+    if tx.tag != 11 {
+        s.debit(&sender, fee)?;
+    } else {
+        s.put(format!("account:{sender}"), acct);
+    }
+    let mut p = Payload {
+        bytes: &tx.payload,
+        pos: 0,
+    };
+    match tx.tag {
+        1 => {
+            let recipient = hex::encode(p.h()?);
+            let amount = p.n()?;
+            s.debit(&sender, amount)?;
+            s.credit(&recipient, amount)?;
+        }
+        2..=5 => {
+            apply_task_command(
+                &mut s,
+                tx.sender,
+                tx.nonce,
+                tx.tag,
+                &tx.payload,
+                height,
+                cfg,
+            )?;
+            p.pos = p.bytes.len();
+        }
+        23 => {
+            let witness = trnm_protocol::integer_factor_v2::FactorWitnessV2::decode(&tx.payload)
+                .map_err(|_| "FACTOR_ENCODING")?;
+            let current = s
+                .get("model:current")
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or("STATE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
+            let active = history
+                .values()
+                .map(|v| active_candidate(v, &current, height, cfg))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .filter(|b| *b)
+                .count();
+            require(
+                (active as u64) < cfg.limit("max_model_candidates")?,
+                "LIMIT",
+            )?;
+            let key = format!("contribution:{}", hex::encode(witness.contribution_id));
+            require(s.get(&key).is_none(), "DUPLICATE")?;
+            let mut contribution = crate::integer_factor_candidate_v2::admit(
+                &mut s, cfg, tx.sender, height, &witness,
+            )?;
+            crate::model_evidence_v3::admit(
+                &mut s,
+                cfg,
+                witness.contribution_id,
+                &mut contribution,
+            )?;
+            let excluded = evaluation_exclusions(&mut s, cfg);
+            contribution["public_evaluation"] = public_evaluation::freeze(
+                cfg,
+                witness.contribution_id,
+                &contribution,
+                height,
+                &excluded,
+            )?;
+            pq_accounts_v2::application_v6::pin_evaluators(&mut s, &mut contribution, cfg)?;
+            s.put(key, contribution);
+            p.pos = p.bytes.len();
+        }
+        24 => {
+            let witness =
+                trnm_protocol::integer_evolution_v3::EvolutionWitnessV3::decode(&tx.payload)
+                    .map_err(|_| "EVOLUTION_ENCODING")?;
+            let current = s
+                .get("model:current")
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or("STATE")?;
+            let history = s.scan("contribution:");
+            require(
+                (history.len() as u64) < cfg.limit("max_candidate_history_per_round")?,
+                "CANDIDATE_WINDOW_FULL",
+            )?;
+            let active = history
+                .values()
+                .map(|v| active_candidate(v, &current, height, cfg))
+                .collect::<Result<Vec<_>>>()?
+                .into_iter()
+                .filter(|b| *b)
+                .count();
+            require(
+                (active as u64) < cfg.limit("max_model_candidates")?,
+                "LIMIT",
+            )?;
+            let key = format!("contribution:{}", hex::encode(witness.contribution_id));
+            require(s.get(&key).is_none(), "DUPLICATE")?;
+            let mut contribution =
+                crate::model_evolution_v5::admit(&mut s, cfg, tx.sender, height, &witness)?;
+            crate::model_evidence_v3::admit(
+                &mut s,
+                cfg,
+                witness.contribution_id,
+                &mut contribution,
+            )?;
+            let excluded = evaluation_exclusions(&mut s, cfg);
+            contribution["public_evaluation"] = public_evaluation::freeze(
+                cfg,
+                witness.contribution_id,
+                &contribution,
+                height,
+                &excluded,
+            )?;
+            pq_accounts_v2::application_v6::pin_evaluators(&mut s, &mut contribution, cfg)?;
+            s.put(key, contribution);
+            p.pos = p.bytes.len();
         }
         6 => {
             let cid = p.h()?;
@@ -525,7 +2021,14 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                 s.get(&k).is_none() && s.get(&duplicate).is_none(),
                 "DUPLICATE",
             )?;
-            s.put(k,json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round}));
+            let mut contribution = json!({"owner":sender,"artifact":hex::encode(artifact),"components_root":hex::encode(components),"family":hex::encode(family),"parent":hex::encode(parent),"votes":{},"score":0,"status":"submitted","submitted_height":height,"submission_round":round});
+            if public_evaluation::enabled(cfg) {
+                let excluded = evaluation_exclusions(&mut s, cfg);
+                contribution["public_evaluation"] =
+                    public_evaluation::freeze(cfg, cid, &contribution, height, &excluded)?;
+            }
+            pq_accounts_v2::application_v6::pin_evaluators(&mut s, &mut contribution, cfg)?;
+            s.put(k, contribution);
             s.put(duplicate, json!(hex::encode(cid)));
         }
         7 => {
@@ -549,7 +2052,32 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             o["votes"][&sender] = json!({"score":score,"evidence":hex::encode(evidence)});
             let votes = o["votes"].as_object().ok_or("STATE")?;
-            if votes.len() as u64 >= cfg.limit("evaluation_threshold")? {
+            let complete = match text(&cfg.params, "evaluation_profile")? {
+                "explicit-attested-dev-profile-not-permissionless-utility" => {
+                    votes.len() as u64 >= cfg.limit("evaluation_threshold")?
+                }
+                trnm_verification_profiles::closed_round::PROFILE => {
+                    let author = text(&o, "owner")?;
+                    let eligible = cfg
+                        .evaluators
+                        .iter()
+                        .filter(|s| s.as_str() != author)
+                        .cloned()
+                        .collect();
+                    let scores = votes
+                        .iter()
+                        .map(|(signer, vote)| Ok((signer.clone(), field(vote, "score")?)))
+                        .collect::<Result<BTreeMap<_, _>>>()?;
+                    trnm_verification_profiles::closed_round::complete_score(
+                        &eligible,
+                        &scores,
+                        cfg.limit("max_evidence_score")?,
+                    )?
+                    .is_some()
+                }
+                _ => return Err("EVALUATION_POLICY"),
+            };
+            if complete {
                 let minimum = votes
                     .values()
                     .map(|v| field(v, "score"))
@@ -570,9 +2098,36 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let supplied_root = p.h()?;
             let supplied_total = p.n()?;
             let count = p.byte()?;
+            if crate::model_composition_v4::enabled(cfg) {
+                require(
+                    (2..=crate::model_composition_v4::MAX_COMPONENTS).contains(&usize::from(count)),
+                    "MODEL_COMPOSITION_COUNT",
+                )?;
+            }
+            if crate::model_evolution_v5::enabled(cfg) {
+                require(count == 1, "EVOLUTION_SELF_ALLOCATION")?;
+            }
             let current = s.get("model:current").ok_or("STATE")?;
             require(current == json!(hex::encode(parent)), "STATE")?;
             let (bk, mut bundle) = s.object("contribution:", bundle_id)?;
+            let disqualified = if public_evaluation::quorum_enabled(cfg) {
+                evaluation_exclusions(&mut s, cfg)
+            } else {
+                BTreeSet::new()
+            };
+            if public_evaluation::enabled(cfg) {
+                let records = s.scan(&public_evaluation::record_prefix_for(
+                    bundle_id,
+                    &bundle["public_evaluation"],
+                )?);
+                let evaluation =
+                    public_evaluation::hydrate(&bundle["public_evaluation"], bundle_id, &records)?;
+                public_evaluation::adoption_allowed_with_disqualified(
+                    &evaluation,
+                    height,
+                    &disqualified,
+                )?;
+            }
             require(
                 text(&bundle, "status")? == "evaluated"
                     && field(&bundle, "score")? >= cfg.limit("minimum_adoption_score")?,
@@ -585,26 +2140,64 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             )?;
             let mut leaves = Vec::new();
             let mut adopted = Vec::new();
+            let mut evidence_allocations = Vec::new();
             let mut total = 0_u64;
             for _ in 0..count {
                 let cid = p.h()?;
                 let score = p.n()?;
+                if crate::model_evolution_v5::enabled(cfg) {
+                    require(cid == bundle_id, "EVOLUTION_SELF_ALLOCATION")?;
+                }
                 let (k, mut o) = s.object("contribution:", cid)?;
+                if public_evaluation::enabled(cfg) {
+                    let records = s.scan(&public_evaluation::record_prefix_for(
+                        cid,
+                        &o["public_evaluation"],
+                    )?);
+                    let evaluation =
+                        public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
+                    if crate::model_composition_v4::enabled(cfg) {
+                        crate::model_composition_v4::component_allowed(
+                            &evaluation,
+                            height,
+                            &disqualified,
+                        )?;
+                    } else {
+                        public_evaluation::adoption_allowed_with_disqualified(
+                            &evaluation,
+                            height,
+                            &disqualified,
+                        )?;
+                    }
+                }
                 require(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
-                        && field(&o, "score")? == score
+                        && (crate::model_composition_v4::enabled(cfg)
+                            || field(&o, "score")? == score)
                         && score > 0,
                     "EVIDENCE",
                 )?;
                 leaves.push(allocation_leaf(cid, hash32(text(&o, "owner")?)?, score));
                 total = add(total, score)?;
+                if crate::model_evidence_v3::enabled(cfg) {
+                    evidence_allocations.push((cid, o.clone(), score));
+                }
                 o["status"] = json!("adopted");
                 adopted.push((k, o));
             }
             require(
                 allocation_root(leaves)? == supplied_root && total == supplied_total,
                 "ROOT",
+            )?;
+            let composition_record = crate::model_evidence_v3::reserve_release(
+                &mut s,
+                cfg,
+                bundle_id,
+                &bundle,
+                &evidence_allocations,
+                budget,
+                total,
             )?;
             require(
                 release
@@ -629,7 +2222,11 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             let expiry = add(height, horizon)?;
             s.deadline_with_lifetime(cfg, expiry, height, horizon)?;
             s.debit(&sender, budget)?;
-            s.put(rk,json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"}));
+            let mut release_record = json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"});
+            if let Some(record) = composition_record {
+                release_record["model_composition_v4"] = record;
+            }
+            s.put(rk, release_record);
             for (k, o) in adopted {
                 s.put(k, o);
             }
@@ -670,53 +2267,15 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             s.put(rk, rel);
         }
         10 => {
-            let quota = p.h()?;
-            let consumer = hex::encode(p.h()?);
-            let provider = hex::encode(p.h()?);
-            let units = p.n()?;
-            let deadline = p.n()?;
-            require(
-                quota
-                    == hash(
-                        b"quota-instance-v3",
-                        &[
-                            &cfg.network,
-                            &cfg.parameters,
-                            &tx.sender,
-                            &tx.nonce.to_le_bytes(),
-                            &hash32(&consumer)?,
-                            &hash32(&provider)?,
-                            &units.to_le_bytes(),
-                            &deadline.to_le_bytes(),
-                        ],
-                    ),
-                "RESOURCE_ID",
-            )?;
-            let k = format!("quota:{}", hex::encode(quota));
-            require(s.get(&k).is_none(), "DUPLICATE")?;
-            s.deadline(cfg, deadline, height)?;
-            require(units > 0 && units <= cfg.limit("max_quota_units")?, "LIMIT")?;
-            let cost = units
-                .checked_mul(cfg.limit("quota_unit_price")?)
-                .ok_or("RANGE")?;
-            s.debit(&sender, cost)?;
-            s.put(k,json!({"owner":sender,"consumer":consumer,"provider":provider,"remaining":cost,"units":units,"deadline":deadline,"status":"reserved"}));
+            reserve_quota(&mut s, tx.sender, tx.nonce, &tx.payload, height, cfg)?;
+            p.pos = p.bytes.len();
         }
         11 => {
             let quota = p.h()?;
-            let (k, mut o) = s.object("quota:", quota)?;
             let units = p.n()?;
             let result = p.h()?;
             let signature = p.take::<64>()?;
-            require(text(&o, "provider")? == sender, "AUTHORITY")?;
-            require(
-                text(&o, "status")? == "reserved" && height < field(&o, "deadline")?,
-                "STATE",
-            )?;
-            require(
-                units > 0 && units <= field(&o, "units")? && result != ZERO,
-                "LIMIT",
-            )?;
+            let (key, row) = quota_use_context(&mut s, &sender, quota, units, result, height)?;
             let digest = hash(
                 b"use",
                 &[
@@ -729,19 +2288,9 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
                     &result,
                 ],
             );
-            verify_hex_strict(text(&o, "consumer")?, &digest, &hex::encode(signature))
+            verify_hex_strict(text(&row, "consumer")?, &digest, &hex::encode(signature))
                 .map_err(|_| "SIGNATURE")?;
-            let cost = units
-                .checked_mul(cfg.limit("quota_unit_price")?)
-                .ok_or("RANGE")?;
-            require(cost >= fee && field(&o, "remaining")? >= cost, "FUNDS")?;
-            o["remaining"] = json!(field(&o, "remaining")? - cost);
-            o["units"] = json!(field(&o, "units")? - units);
-            s.credit(&sender, cost - fee)?;
-            if field(&o, "units")? == 0 {
-                o["status"] = json!("spent");
-            }
-            s.put(k, o);
+            settle_verified_quota(&mut s, &sender, key, row, units, fee, cfg)?;
         }
         12 => {
             let task = p.h()?;
@@ -749,14 +2298,158 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
             require(task != ZERO && s.get(&k).is_none(), "DUPLICATE")?;
             s.put(k, json!(true));
         }
+        13 => {
+            let signed =
+                SignedQualifiedWorkTask::decode(&tx.payload).map_err(|_| "TASK_MANIFEST")?;
+            let manifest = &signed.manifest;
+            let context = cfg.qualified_task_context(manifest.demand_id, height)?;
+            require(tx.sender == context.source, "TASK_SOURCE")?;
+            let statement = verify_development_statement(&tx.payload, &context)
+                .map_err(|_| "TASK_STATEMENT")?;
+            let registry_key = format!("work-demand-registry:{}", hex::encode(manifest.demand_id));
+            let registered = s.get(&registry_key).ok_or("TASK_DEMAND")?;
+            require(
+                field(&registered, "purpose")? == manifest.purpose as u64,
+                "TASK_PURPOSE",
+            )?;
+            let withdrawal_key = format!("work-withdrawal:{}", hex::encode(context.source));
+            require(
+                s.get(&withdrawal_key) == Some(json!(hex::encode(context.withdrawal_head))),
+                "TASK_WITHDRAWAL",
+            )?;
+            let sequence_key = format!("work-source:{}", hex::encode(context.source));
+            let previous_sequence = s.get(&sequence_key).ok_or("TASK_SOURCE")?;
+            require(
+                manifest.demand_nonce == add(num(&previous_sequence)?, 1)?,
+                "TASK_SOURCE_NONCE",
+            )?;
+            let demand_key = format!("work-demand:{}", hex::encode(manifest.demand_id));
+            let work_key = format!("work:{}", hex::encode(manifest.matrix_task));
+            require(
+                s.get(&demand_key).is_none() && s.get(&work_key).is_none(),
+                "TASK_REPLAY",
+            )?;
+            s.put(sequence_key, json!(manifest.demand_nonce));
+            s.put(demand_key, json!(hex::encode(statement.manifest_id())));
+            s.put(work_key, json!({"schema":"qualified-work-registration-v1","manifest":hex::encode(&tx.payload),"admitted_height":height,"manifest_id":hex::encode(statement.manifest_id())}));
+            p.pos = p.bytes.len();
+        }
+        18..=22 => {
+            // This lifecycle consumes the original authenticated PNX1 statement.
+            // A transfer-only QTX1 command cannot enter its classical owner.
+            let legacy = prepared
+                .legacy
+                .as_ref()
+                .ok_or("PQ_ACCOUNT_OPERATION_UNSUPPORTED")?;
+            qualified_task_lifecycle::apply_verified_command(&mut s, legacy, height, cfg)?;
+            p.pos = tx.payload.len();
+        }
+        14..=17 => {
+            let cid = p.h()?;
+            if public_evaluation::quorum_enabled(cfg)
+                && !pq_accounts_v2::application_v6::enabled(cfg)
+                && matches!(tx.tag, 14 | 15)
+            {
+                require(
+                    s.get(&format!("evaluation-disqualified:{sender}"))
+                        .is_none(),
+                    "PUBLIC_EVAL_DISQUALIFIED",
+                )?;
+            }
+            let active_key = format!("contribution:{}", hex::encode(cid));
+            let archive_key = format!("evaluation-archive:{}", hex::encode(cid));
+            let (key, mut contribution) = if let Some(value) = s.get(&active_key) {
+                (active_key, value)
+            } else {
+                require(matches!(tx.tag, 16 | 17), "STATE")?;
+                (archive_key.clone(), s.get(&archive_key).ok_or("STATE")?)
+            };
+            let records = s.scan(&public_evaluation::record_prefix_for(
+                cid,
+                &contribution["public_evaluation"],
+            )?);
+            contribution["public_evaluation"] =
+                public_evaluation::hydrate(&contribution["public_evaluation"], cid, &records)?;
+            let evaluation = &mut contribution["public_evaluation"];
+            require(
+                public_evaluation::enabled(cfg) && !evaluation.is_null(),
+                "PUBLIC_EVAL_PROFILE",
+            )?;
+            match tx.tag {
+                14 => public_evaluation::commit(evaluation, &sender, p.h()?, p.h()?, height)?,
+                15 => {
+                    let value = public_evaluation::Reveal {
+                        candidate: cid,
+                        round: p.h()?,
+                        evaluator: tx.sender,
+                        plan: p.h()?,
+                        evidence: p.h()?,
+                        score: p.n()?,
+                        salt: p.h()?,
+                    };
+                    crate::model_evidence_v3::check_reveal(cfg, &contribution, &value)?;
+                    public_evaluation::reveal(
+                        &mut contribution["public_evaluation"],
+                        value,
+                        height,
+                    )?;
+                }
+                16 => {
+                    let first = p.blob()?;
+                    let second = p.blob()?;
+                    if pq_accounts_v2::application_v6::enabled(cfg) {
+                        public_evaluation::conflict_pq(
+                            evaluation,
+                            cfg,
+                            cid,
+                            first,
+                            second,
+                            pq_conflict.ok_or("PQ6_CONFLICT_PROOF_REQUIRED")?,
+                        )?;
+                    } else {
+                        let disqualified =
+                            public_evaluation::conflict(evaluation, cfg, cid, first, second)?;
+                        s.put(format!("evaluation-disqualified:{disqualified}"),json!({"evidence_candidate":hex::encode(cid),"height":height,"scope":"exact development key; no hidden-controller independence claim"}));
+                    }
+                }
+                17 => {
+                    let author = contribution["owner"].as_str().ok_or("STATE")?.to_owned();
+                    public_evaluation::appeal(
+                        &mut contribution["public_evaluation"],
+                        &author,
+                        &sender,
+                        p.h()?,
+                        p.h()?,
+                        p.h()?,
+                        height,
+                    )?;
+                }
+                _ => unreachable!(),
+            }
+            for (record_key, value) in
+                public_evaluation::record_rows(cid, &contribution["public_evaluation"])?
+            {
+                if let Some(previous) = records.get(&record_key) {
+                    require(previous == &value, "PUBLIC_EVAL_RECORD_MUTATION")?;
+                } else {
+                    s.put(record_key, value);
+                }
+            }
+            contribution["public_evaluation"] =
+                public_evaluation::compact(&contribution["public_evaluation"])?;
+            if !contribution["public_evaluation"]["closed"].is_null() {
+                s.put(archive_key, contribution.clone());
+            }
+            s.put(key, contribution);
+        }
         _ => return Err("VERSION"),
     }
     require(p.pos == p.bytes.len(), "LENGTH")?;
-    let mut a = s.account(&sender);
+    let mut a = s.account(&sender)?;
     a["nonce"] = json!(tx.nonce);
     s.put(format!("account:{sender}"), a);
     let receipt = canonical(
-        &json!({"tx":hex::encode(tx.id().map_err(|_|"ENCODING")?),"fee":fee,"status":"applied"}),
+        &json!({"tx":hex::encode(&prepared.transaction_id),"fee":fee,"status":"applied"}),
     )?;
     Ok(Patch {
         writes: s.writes,
@@ -769,7 +2462,16 @@ fn apply_prepared(base: &State, prepared: &Prepared, height: u64, cfg: &Config) 
 
 fn funds(state: &State) -> Result<u64> {
     let mut total = 0_u64;
-    for (k, v) in state {
+    // These are every monetary row consumed by the original full-State sum,
+    // in the same global lexical order. Model/artifact and unrelated values
+    // contributed only zero; seeking past them preserves the first field or
+    // overflow error without weakening the complete supply relation.
+    let rows = prefix_rows(state, "account:").chain(
+        MONETARY_OBLIGATION_PREFIXES
+            .into_iter()
+            .flat_map(|prefix| prefix_rows(state, prefix)),
+    );
+    for (k, v) in rows {
         let amount = if k.starts_with("account:") {
             field(v, "balance")?
         } else if k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:") {
@@ -783,7 +2485,15 @@ fn funds(state: &State) -> Result<u64> {
     }
     Ok(total)
 }
-fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
+fn credit_state(
+    state: &mut State,
+    who: &str,
+    amount: u64,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
+    if let Some(access) = account_access {
+        access(who)?;
+    }
     let key = format!("account:{who}");
     let mut account = state
         .get(&key)
@@ -793,13 +2503,71 @@ fn credit_state(state: &mut State, who: &str, amount: u64) -> Result<()> {
     state.insert(key, account);
     Ok(())
 }
-fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>>> {
+fn mandatory(
+    state: &mut State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
+) -> Result<Vec<Vec<u8>>> {
     let current = state
         .get("model:current")
         .and_then(Value::as_str)
         .ok_or("STATE")?
         .to_owned();
-    let keys: Vec<_> = state.keys().cloned().collect();
+    // Capture the same pre-cleanup key set, in its original global order,
+    // without cloning unrelated account/model keys. The five disjoint prefix
+    // ranges are sorted; newly written evaluation archives are still absent
+    // from this snapshot until the next block, exactly as in the full-key walk.
+    let keys: Vec<_> = [
+        "artifact:",
+        "contribution:",
+        "evaluation-archive:",
+        "quota:",
+        "task:",
+    ]
+    .into_iter()
+    .flat_map(|prefix| prefix_rows(state, prefix).map(|(key, _)| key.clone()))
+    .collect();
+    if public_evaluation::enabled(cfg) {
+        let disqualified = if public_evaluation::quorum_enabled(cfg)
+            && !pq_accounts_v2::application_v6::enabled(cfg)
+        {
+            public_evaluation::excluded(state)
+        } else {
+            BTreeSet::new()
+        };
+        let candidates: Vec<_> = keys
+            .iter()
+            .filter(|key| key.starts_with("contribution:"))
+            .cloned()
+            .collect();
+        for key in candidates {
+            let cid = hash32(key.strip_prefix("contribution:").ok_or("STATE")?)?;
+            let mut evaluation = public_evaluation::read_evaluation(state, cid)?;
+            let closed =
+                public_evaluation::close_with_disqualified(&mut evaluation, height, &disqualified)?;
+            let value = state.get_mut(&key).ok_or("STATE")?;
+            value["public_evaluation"] = public_evaluation::compact(&evaluation)?;
+            if let Some(score) = closed {
+                value["score"] = json!(score);
+                value["status"] = json!("evaluated");
+            } else if value["public_evaluation"]["closed"]["status"] == "aborted" {
+                value["score"] = json!(0);
+                value["status"] = json!("evaluation-aborted");
+            }
+            if !value["public_evaluation"]["closed"].is_null() {
+                let archive = value.clone();
+                state.insert(
+                    format!(
+                        "evaluation-archive:{}",
+                        key.strip_prefix("contribution:").ok_or("STATE")?
+                    ),
+                    archive,
+                );
+            }
+        }
+    }
     for k in keys {
         if k.starts_with("contribution:") {
             let v = state.get_mut(&k).ok_or("STATE")?;
@@ -822,6 +2590,12 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
                     v["score"] = json!(0);
                 }
             }
+        } else if k.starts_with("evaluation-archive:") {
+            let value = state.get(&k).ok_or("STATE")?;
+            let closed = field(&value["public_evaluation"]["closed"], "closed_height")?;
+            if height.saturating_sub(closed) > 256 {
+                state.remove(&k);
+            }
         } else if k.starts_with("task:") || k.starts_with("quota:") {
             let value = state.get(&k).ok_or("STATE")?;
             if field(value, "remaining")? == 0 && field(value, "deadline")? < height {
@@ -835,10 +2609,29 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
             }
         }
     }
-    let retired: Vec<_> = state
-        .iter()
+    if public_evaluation::enabled(cfg) {
+        // Remove records only after both active candidate and retained archive vanish.
+        // Branch state cleanup never touches physical/local operation journals.
+        let namespace = format!("{}:", public_evaluation::record_namespace(cfg));
+        let orphaned: Vec<_> = prefix_rows(state, &namespace)
+            .map(|(key, _)| key)
+            .filter(|key| {
+                key.strip_prefix(&namespace)
+                    .and_then(|suffix| suffix.split_once(':'))
+                    .is_some_and(|(candidate, _)| {
+                        !state.contains_key(&format!("contribution:{candidate}"))
+                            && !state.contains_key(&format!("evaluation-archive:{candidate}"))
+                    })
+            })
+            .cloned()
+            .collect();
+        for key in orphaned {
+            state.remove(&key);
+        }
+    }
+    let retired: Vec<_> = prefix_rows(state, "release:")
         .filter_map(|(k, v)| {
-            if k.starts_with("release:") && &k[8..] != current.as_str() && v["remaining"] == 0 {
+            if &k[8..] != current.as_str() && v["remaining"] == 0 {
                 Some(k.clone())
             } else {
                 None
@@ -849,11 +2642,17 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         state.remove(&k);
     }
     let mut due = Vec::new();
-    for (k, v) in state.iter() {
-        if (k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:"))
-            && field(v, "remaining")? > 0
-            && field(v, "deadline")? <= height
-        {
+    // Positive escrow records survive the preceding cleanup unchanged. Range
+    // inputs enumerate every original monetary record, including future rows;
+    // zero/retired rows are naturally ineligible under the ordinary predicates.
+    let monetary_rows = monetary_input.map_or(&*state, |input| input.rows);
+    for (k, v) in ["quota:", "release:", "task:"]
+        .into_iter()
+        .flat_map(|prefix| prefix_rows(monetary_rows, prefix))
+    {
+        // Preserve the old lexical error order and inspect future/zero rows;
+        // this is namespace selection, never a caller-supplied due-only list.
+        if field(v, "remaining")? > 0 && field(v, "deadline")? <= height {
             due.push((field(v, "deadline")?, k.clone()));
         }
     }
@@ -864,27 +2663,40 @@ fn mandatory(state: &mut State, height: u64, cfg: &Config) -> Result<Vec<Vec<u8>
         .take(cfg.limit("mandatory_expiry_per_block")? as usize)
     {
         let mut v = state.get(&k).cloned().ok_or("STATE")?;
-        credit_state(state, text(&v, "owner")?, field(&v, "remaining")?)?;
+        credit_state(
+            state,
+            text(&v, "owner")?,
+            field(&v, "remaining")?,
+            account_access,
+        )?;
         v["remaining"] = json!(0);
         v["status"] = json!("expired");
         state.insert(k.clone(), v);
         receipts.push(canonical(&json!({"expiry":k}))?);
     }
-    let mature = state
-        .iter()
-        .filter(|(k, _)| k.starts_with("reward:"))
-        .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
-        .collect::<Result<Vec<_>>>()?;
+    let mature = prefix_rows(
+        monetary_input.map_or(&*state, |input| input.rows),
+        "reward:",
+    )
+    .map(|(k, v)| Ok((k.clone(), field(v, "maturity")?)))
+    .collect::<Result<Vec<_>>>()?;
     for (k, maturity) in mature {
         if maturity <= height {
             let reward = state.remove(&k).ok_or("STATE")?;
-            credit_state(state, text(&reward, "owner")?, field(&reward, "amount")?)?;
+            let amount = field(&reward, "amount")?;
+            // A zero reward must not create an unregistered PQ account.
+            if amount != 0 || !cfg.is_pq_account_profile() {
+                credit_state(state, text(&reward, "owner")?, amount, account_access)?;
+            }
         }
     }
+    crate::model_evolution_v5::cleanup(state, height, cfg)?;
+    crate::integer_factor_candidate_v2::cleanup(state, height, cfg)?;
+    crate::model_evidence_v3::cleanup(state, cfg, height)?;
     Ok(receipts)
 }
 
-/// Execute all twelve signed commands in exact ledger order. Failed blocks never
+/// Execute context-selected signed commands in exact ledger order. Failed blocks never
 /// mutate `parent`. Only observed dependencies cause one canonical re-execution.
 pub fn execute(
     parent: &State,
@@ -895,13 +2707,261 @@ pub fn execute(
     workers: usize,
     cfg: &Config,
 ) -> Result<Output> {
+    execute_with_commitment(
+        parent,
+        BlockExecution {
+            timestamp: None,
+            transactions,
+            height,
+            miner,
+            parent_id,
+            workers,
+        },
+        cfg,
+        |_, next| root_for_config(next, cfg),
+    )
+}
+/// Cooperative pure preview; all spawned workers are joined before any return.
+/// Individual signatures, State operations and root construction are not preempted.
+pub fn execute_with_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_progress(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        progress,
+    )
+}
+pub fn execute_with_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        control,
+    )
+}
+/// Reexecute the ordinary complete-State relation while observing the exact
+/// mandatory and canonical transaction writes. A partial or rejected result
+/// must never be published as a payment observation by the caller.
+pub fn execute_observed(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    observer: &dyn CanonicalTransitionObserver,
+) -> Result<Output> {
+    relation_only(execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        &ExecutionControl::new(&no_cancellation, &()),
+        StateInputs {
+            observer: Some(observer),
+            ..StateInputs::default()
+        },
+    ))
+}
+/// Explicit serial research consumer of semantic account point-access evidence.
+/// This function still requires a complete State and performs its ordinary funds,
+/// prefix, capacity and root checks. It neither authenticates the callback nor
+/// grants permission to substitute a partial State or bypass Node admission.
+pub fn execute_with_account_point_access<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            ..StateInputs::default()
+        },
+    )
+}
+/// Explicit research relation using authenticated account point access and a
+/// complete non-account partition. It retains the ordinary full-State funds,
+/// capacity and root reference; this is not partial-State or admission authority.
+pub fn execute_with_authenticated_state_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: None,
+            growth: None,
+            observer: None,
+            #[cfg(test)]
+            experimental_skip_repeated_senders: false,
+        },
+    )
+}
+/// Explicit full-reference M06 relation whose mandatory monetary enumeration
+/// and original capacity scan consume authenticated namespace-range rows.
+/// Account access, other non-account rules, every transaction, the new reward
+/// and final successor capacity/conservation checks retain their ordinary rules.
+pub fn execute_with_authenticated_obligation_input<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    account_access: &AccountPointAccess<'_>,
+    mandatory_input: &MandatoryStateInput<'_>,
+    monetary_input: &MonetaryObligationInput<'_>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    require(block.workers == 1, "ACCOUNT_ACCESS_WORKERS")?;
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        |_, next| root_for_config(next, cfg),
+        &ExecutionControl::new(progress, &()),
+        StateInputs {
+            accounts: Some(account_access),
+            mandatory: Some(mandatory_input),
+            monetary: Some(monetary_input),
+            growth: None,
+            observer: None,
+            #[cfg(test)]
+            experimental_skip_repeated_senders: false,
+        },
+    )
+}
+/// Ordinary caller-supplied facts, not prepared execution or admission authority.
+pub struct BlockExecution<'a> {
+    /// Exact admitted header time. Legacy callers may use None; PQ refuses it.
+    pub timestamp: Option<u64>,
+    pub transactions: &'a [Vec<u8>],
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+    pub workers: usize,
+}
+pub(crate) fn execute_with_commitment(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+) -> Result<Output> {
+    relation_only(execute_with_commitment_and_progress(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &no_cancellation,
+    ))
+}
+pub(crate) fn execute_with_commitment_and_progress<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
+) -> ControlledResult<Output, E> {
+    execute_with_commitment_and_control(
+        parent,
+        block,
+        cfg,
+        commitment,
+        &ExecutionControl::new(progress, &()),
+    )
+}
+pub(crate) fn execute_with_commitment_and_control<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    execute_with_state_inputs(
+        parent,
+        block,
+        cfg,
+        commitment,
+        control,
+        StateInputs::default(),
+    )
+}
+fn execute_with_state_inputs<E: Send>(
+    parent: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    mut commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+    inputs: StateInputs<'_>,
+) -> ControlledResult<Output, E> {
+    let StateInputs {
+        accounts: account_access,
+        mandatory: mandatory_input,
+        monetary: monetary_input,
+        growth,
+        observer,
+        #[cfg(test)]
+        experimental_skip_repeated_senders,
+    } = inputs;
+    let progress = control.progress;
+    cfg.check_account_profile()?;
+    require(
+        !cfg.is_pq_account_profile() || pq_accounts_v2::enabled(cfg) || observer.is_none(),
+        "PQ_ACCOUNT_OBSERVER_UNSUPPORTED",
+    )?;
+    let BlockExecution {
+        timestamp,
+        transactions,
+        height,
+        miner,
+        parent_id,
+        workers,
+    } = block;
+    pq_accounts_v2::validate_block(parent, transactions, miner, timestamp, cfg)?;
     require([1, 2, 4, 8].contains(&workers), "WORKERS")?;
     require(
         transactions.len() as u64 <= cfg.limit("max_transactions")?,
         "LIMIT",
     )?;
-    let mut state = parent.clone();
-    let mut receipts = mandatory(&mut state, height, cfg)?;
+    progress(ExecutionProgress::BeforeStateClone).map_err(ExecutionError::Cancelled)?;
+    let (mut state, mut receipts) = prepare_block_state_with_inputs(
+        parent,
+        height,
+        cfg,
+        account_access,
+        mandatory_input,
+        monetary_input,
+        growth,
+    )?;
+    if let Some(observer) = observer {
+        observer.mandatory(parent, &state, &receipts)?;
+    }
+    progress(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
     let mut fees = 0;
     let mut metrics = Metrics {
         workers,
@@ -911,77 +2971,129 @@ pub fn execute(
     let signatures = AtomicUsize::new(0);
     // Same sender means every transaction writes the same nonce. Preserve a serial
     // state path, while independent cryptographic checks may still use the bounded pool.
-    let serial_state = workers == 1
+    // Authenticated Growth witnesses may be observed only by the canonical
+    // state owner. Parallelize preparation/signatures, never speculative account
+    // access or monetary effects against this partial account view.
+    let serial_state = growth.is_some()
+        || pq_accounts_v2::enabled(cfg)
+        || workers == 1
         || (transactions.len() > 1
             && transactions[0].len() >= 68
             && transactions
                 .iter()
                 .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
+    #[cfg(test)]
+    let repeated_senders = if !serial_state && experimental_skip_repeated_senders {
+        let mut seen = BTreeSet::new();
+        transactions
+            .iter()
+            .map(|raw| {
+                // This is only a conservative work hint. Every envelope is still
+                // decoded/context/profile/expiry/signature checked below. A valid
+                // earlier transaction always advances this same account's nonce;
+                // an invalid earlier transaction ends canonical execution first.
+                raw.get(36..68).is_some_and(|sender| !seen.insert(sender))
+            })
+            .collect::<Vec<_>>()
+    } else {
+        Vec::new()
+    };
     struct Predicted {
         prepared: Result<Prepared>,
         patch: Option<Result<Patch>>,
     }
-    let predict = |raw: &[u8]| {
-        let prepared = prepare(raw, height, cfg, &signatures);
+    let predict = |index: usize, raw: &[u8]| -> ControlledResult<Predicted, E> {
+        progress(ExecutionProgress::BeforePrepare { index }).map_err(ExecutionError::Cancelled)?;
+        let prepared = prepare(raw, height, timestamp, cfg, &signatures, Some(parent));
+        progress(ExecutionProgress::AfterPrepare { index }).map_err(ExecutionError::Cancelled)?;
         let range_command = prepared
             .as_ref()
-            .is_ok_and(|p| matches!(p.envelope.tag, 2 | 6 | 8 | 10));
+            .is_ok_and(|p| matches!(p.command.tag, 2 | 6 | 8 | 10 | 23));
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
-        let patch = if serial_state || range_command {
+        #[cfg(test)]
+        let skip_state_prediction =
+            serial_state || repeated_senders.get(index).copied().unwrap_or(false);
+        #[cfg(not(test))]
+        let skip_state_prediction = serial_state;
+        let patch = if skip_state_prediction || range_command {
             None
         } else {
-            Some(
-                prepared
-                    .as_ref()
-                    .map_err(|e| *e)
-                    .and_then(|tx| apply_prepared(&state, tx, height, cfg)),
-            )
+            Some(prepared.as_ref().map_err(|e| *e).and_then(|tx| {
+                apply_prepared_with_account_access(&state, tx, height, cfg, account_access)
+            }))
         };
-        Predicted { prepared, patch }
+        Ok(Predicted { prepared, patch })
     };
     let count = workers.min(transactions.len());
     let predicted = if count <= 1 {
         transactions
             .iter()
-            .map(|raw| predict(raw))
-            .collect::<Vec<_>>()
+            .enumerate()
+            .map(|(index, raw)| predict(index, raw))
+            .collect::<ControlledResult<Vec<_>, E>>()?
     } else {
         // One bounded group of scoped workers PER BLOCK, not per short batch.
         // No clone of the full state per worker; everyone reads the same snapshot.
         metrics.workers_spawned = count;
-        std::thread::scope(|scope| -> Result<Vec<Predicted>> {
+        std::thread::scope(|scope| -> ControlledResult<Vec<Predicted>, E> {
             let mut handles = Vec::with_capacity(count);
             for worker in 0..count {
                 let work = &predict;
-                let handle = std::thread::Builder::new()
-                    .name(format!("pon-exec-{worker}"))
-                    .spawn_scoped(scope, move || {
-                        (worker..transactions.len())
-                            .step_by(count)
-                            .map(|index| (index, work(&transactions[index])))
-                            .collect::<Vec<_>>()
-                    });
+                #[cfg(test)]
+                let allowed = control.worker_accounting.test_spawn_allowed(worker);
+                #[cfg(not(test))]
+                let allowed = true;
+                let handle = if allowed {
+                    std::thread::Builder::new()
+                        .name(format!("pon-exec-{worker}"))
+                        .spawn_scoped(scope, move || {
+                            let _interval = control.worker_accounting.worker_started();
+                            (worker..transactions.len())
+                                .step_by(count)
+                                .map(|index| {
+                                    work(index, &transactions[index]).map(|value| (index, value))
+                                })
+                                .collect::<ControlledResult<Vec<_>, E>>()
+                        })
+                } else {
+                    Err(std::io::Error::other(
+                        "test-only partial worker start refusal",
+                    ))
+                };
                 match handle {
-                    Ok(h) => handles.push(h),
+                    Ok(h) => {
+                        control.worker_accounting.worker_spawn_succeeded();
+                        handles.push(h);
+                    }
                     Err(_) => {
                         // Join already started workers on partial-spawn failure too.
                         for h in handles {
                             let _ = h.join();
                         }
-                        return Err("WORKER_START");
+                        return Err("WORKER_START".into());
                     }
                 }
             }
             let mut rows = Vec::with_capacity(transactions.len());
             let mut panicked = false;
+            let mut cancelled = None;
             for handle in handles {
                 match handle.join() {
-                    Ok(mut values) => rows.append(&mut values),
+                    Ok(Ok(mut values)) => rows.append(&mut values),
+                    Ok(Err(error)) => {
+                        if cancelled.is_none() {
+                            cancelled = Some(error);
+                        }
+                    }
                     Err(_) => panicked = true,
                 }
             }
             require(!panicked, "WORKER_PANIC")?;
+            // Every handle is joined above before cancellation is returned.
+            if let Some(error) = cancelled {
+                return Err(error);
+            }
             rows.sort_by_key(|(index, _)| *index);
             require(rows.len() == transactions.len(), "WORKER_RESULT")?;
             Ok(rows.into_iter().map(|(_, result)| result).collect())
@@ -993,16 +3105,21 @@ pub fn execute(
     } else {
         count
     };
-    if serial_state && workers > 1 && !transactions.is_empty() {
+    #[cfg(test)]
+    let serial_conflict = serial_state || repeated_senders.iter().any(|repeated| *repeated);
+    #[cfg(not(test))]
+    let serial_conflict = serial_state;
+    if serial_conflict && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
-    for result in predicted {
+    for (index, result) in predicted.into_iter().enumerate() {
+        progress(ExecutionProgress::BeforeApply { index }).map_err(ExecutionError::Cancelled)?;
         // Consume failures at their canonical transaction position. A bad later
         // signature never bypasses an earlier state error or mutates the parent.
         let prepared = result.prepared?;
         let patch = if serial_state || result.patch.is_none() {
             metrics.committed_without_replay += 1;
-            apply_prepared(&state, &prepared, height, cfg)?
+            apply_prepared_with_account_access(&state, &prepared, height, cfg, account_access)?
         } else {
             metrics.speculative += 1;
             match result.patch.ok_or("WORKER_RESULT")? {
@@ -1013,32 +3130,709 @@ pub fn execute(
                 _ => {
                     metrics.reexecuted += 1;
                     // Exactly one canonical state replay, no duplicate main-signature work.
-                    apply_prepared(&state, &prepared, height, cfg)?
+                    apply_prepared_with_account_access(
+                        &state,
+                        &prepared,
+                        height,
+                        cfg,
+                        account_access,
+                    )?
                 }
             }
         };
+        if let Some(observer) = observer {
+            if let Some(command) = &prepared.native_pq {
+                observer.native_pq_transaction(
+                    index,
+                    command,
+                    &state,
+                    &patch.writes,
+                    patch.fee,
+                    &patch.receipt,
+                )?;
+            } else {
+                observer.transaction(
+                    index,
+                    prepared
+                        .legacy
+                        .as_ref()
+                        .ok_or("PQ_ACCOUNT_OBSERVER_UNSUPPORTED")?,
+                    &state,
+                    &patch.writes,
+                    patch.fee,
+                    &patch.receipt,
+                )?;
+            }
+        }
         fees = add(fees, patch.fee)?;
         receipts.push(patch.receipt.clone());
         patch.apply(&mut state);
+        progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
     }
     metrics.state_transition_ns = transition_start.elapsed().as_nanos();
-    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
-    let subsidy = cfg
-        .limit("block_subsidy_units")?
-        .checked_shr(halvings as u32)
-        .unwrap_or(0);
-    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
-    state.insert(format!("reward:{}",hex::encode(reward)),json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}));
-    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
-    state.insert("meta:issued".into(), json!(issued));
-    require(funds(&state)? == issued, "CONSERVATION")?;
+    progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
+    state.extend(block_reward_updates(
+        &state, height, miner, parent_id, fees, cfg,
+    )?);
+    if let Some(partition) = growth {
+        partition.check_successor(parent, &state, height, cfg, account_access)?;
+    } else {
+        check_completed_block_state_with_account_access(&state, height, cfg, account_access)?;
+    }
     let root_start = std::time::Instant::now();
-    let root = root(&state)?;
+    progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
+    let root = commitment(parent, &state)?;
+    progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
     metrics.state_root_ns = root_start.elapsed().as_nanos();
+    progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
     Ok(Output {
         state,
         receipts,
         root,
         metrics,
     })
+}
+
+#[cfg(test)]
+#[path = "repeated_sender_tests.rs"]
+mod repeated_sender_tests;
+
+/// One original block prologue. Prefix previews retain its pre-reward successor,
+/// never a completed block with a second maturity, expiry or subsidy transition.
+fn prepare_block_state(parent: &State, height: u64, cfg: &Config) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_account_access(parent, height, cfg, None)
+}
+fn prepare_block_state_with_account_access(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<(State, Vec<Vec<u8>>)> {
+    prepare_block_state_with_inputs(parent, height, cfg, account_access, None, None, None)
+}
+fn prepare_block_state_with_inputs(
+    parent: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+    mandatory_input: Option<&MandatoryStateInput<'_>>,
+    monetary_input: Option<&MonetaryObligationInput<'_>>,
+    growth: Option<&growth::AccountPartition>,
+) -> Result<(State, Vec<Vec<u8>>)> {
+    cfg.check_account_profile()?;
+    pq_accounts_v2::validate_state(parent, cfg)?;
+    #[cfg(feature = "pq-native-openssl")]
+    if let Some(policy) = &cfg.pq_accounts {
+        policy.check_state(parent, cfg)?;
+    }
+    if let Some(input) = monetary_input {
+        require(
+            parent
+                .iter()
+                .filter(|(key, _)| is_monetary_obligation(key))
+                .eq(input.rows.iter()),
+            "MONETARY_OBLIGATION_PARTITION",
+        )?;
+    }
+    if let Some(input) = mandatory_input {
+        require(
+            !input
+                .non_accounts
+                .keys()
+                .any(|key| key.starts_with("account:"))
+                && parent
+                    .iter()
+                    .filter(|(key, _)| !key.starts_with("account:"))
+                    .eq(input.non_accounts.iter()),
+            "MANDATORY_STATE_PARTITION",
+        )?;
+    }
+    if let Some(partition) = growth {
+        partition.check_parent(
+            parent,
+            height.checked_sub(1).ok_or("HEIGHT")?,
+            cfg,
+            account_access,
+        )?;
+    } else if continuity_v1::enabled(cfg) {
+        continuity_v1::check_state_with_account_access_and_monetary(
+            parent,
+            height.checked_sub(1).ok_or("HEIGHT")?,
+            cfg,
+            account_access,
+            monetary_input.map(|input| input.rows),
+        )?;
+    }
+    let mut state = if let Some(input) = mandatory_input {
+        let mut complete: State = parent
+            .iter()
+            .filter(|(key, _)| key.starts_with("account:"))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect();
+        complete.extend(input.non_accounts.clone());
+        complete
+    } else {
+        parent.clone()
+    };
+    let receipts = mandatory(&mut state, height, cfg, account_access, monetary_input)?;
+    if let Some(input) = mandatory_input {
+        (input.completed)(parent, &state, &receipts)?;
+    }
+    Ok((state, receipts))
+}
+
+/// All block epilogue writes are returned together so an operation-local prefix
+/// can remove exactly those writes before accepting another ordinary transaction.
+fn block_reward_updates(
+    state: &State,
+    height: u64,
+    miner: Hash,
+    parent_id: Hash,
+    fees: u64,
+    cfg: &Config,
+) -> Result<State> {
+    let halvings = (height / cfg.limit("subsidy_halving_interval")?).min(64);
+    let subsidy = cfg
+        .limit("block_subsidy_units")?
+        .checked_shr(halvings as u32)
+        .unwrap_or(0);
+    let reward = hash(b"reward", &[&parent_id, &height.to_le_bytes(), &miner]);
+    let reward = (
+        format!("reward:{}", hex::encode(reward)),
+        json!({"owner":hex::encode(miner),"amount":add(fees,subsidy)?,"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?}),
+    );
+    let issued = add(num(state.get("meta:issued").ok_or("STATE")?)?, subsidy)?;
+    Ok(State::from([reward, ("meta:issued".into(), json!(issued))]))
+}
+
+fn check_completed_block_state(state: &State, height: u64, cfg: &Config) -> Result<()> {
+    check_completed_block_state_with_account_access(state, height, cfg, None)
+}
+fn check_completed_block_state_with_account_access(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&AccountPointAccess<'_>>,
+) -> Result<()> {
+    pq_accounts_v2::validate_state(state, cfg)?;
+    let total = funds(state)?;
+    #[cfg(feature = "pq-native-openssl")]
+    let total = if let Some(policy) = &cfg.pq_accounts {
+        policy.check_state(state, cfg)?;
+        add(total, policy.locked())?
+    } else {
+        total
+    };
+    require(
+        total == num(state.get("meta:issued").ok_or("STATE")?)?,
+        "CONSERVATION",
+    )?;
+    continuity_v1::check_state_with_account_access(state, height, cfg, account_access)
+}
+
+/// Exact fixed context for a series of prefixes of ONE candidate block.
+/// This is computation input only; no consensus, Pool or owner permission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PrefixContext {
+    pub timestamp: Option<u64>,
+    pub height: u64,
+    pub miner: Hash,
+    pub parent_id: Hash,
+}
+
+/// Private unfinalized prefix state. Only a checked original-parent binding can
+/// construct the public commitment wrapper. All authority stays with that caller.
+pub(crate) struct TransactionPrefix {
+    // Per-preview lifetime; rejected retries cannot replenish verification work.
+    pq_verification_attempts: AtomicUsize,
+    pq_signature_parent: Option<std::sync::Arc<State>>,
+    state: State,
+    receipts: Vec<Vec<u8>>,
+    fees: u64,
+    transactions: Vec<Vec<u8>>,
+    context: PrefixContext,
+    config: Config,
+}
+
+/// Changed-key rollback includes partial groups, finalizer writes and unwinding.
+/// It is scratch only and cannot undo any durable or external operation.
+struct PrefixRollback<'a> {
+    state: &'a mut State,
+    before: BTreeMap<String, Option<Value>>,
+    committed: bool,
+}
+impl PrefixRollback<'_> {
+    fn apply(&mut self, writes: State) {
+        for (key, value) in writes {
+            self.before
+                .entry(key.clone())
+                .or_insert_with(|| self.state.get(&key).cloned());
+            self.state.insert(key, value);
+        }
+    }
+    fn restore(&mut self, values: BTreeMap<String, Option<Value>>) {
+        for (key, value) in values {
+            if let Some(value) = value {
+                self.state.insert(key, value);
+            } else {
+                self.state.remove(&key);
+            }
+        }
+    }
+}
+impl Drop for PrefixRollback<'_> {
+    fn drop(&mut self) {
+        if !self.committed {
+            let before = std::mem::take(&mut self.before);
+            self.restore(before);
+        }
+    }
+}
+
+impl TransactionPrefix {
+    pub(crate) fn new<E: Send>(
+        parent: &State,
+        context: PrefixContext,
+        config: &Config,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Self, E> {
+        (control.progress)(ExecutionProgress::BeforeStateClone)
+            .map_err(ExecutionError::Cancelled)?;
+        pq_accounts_v2::validate_block(parent, &[], context.miner, context.timestamp, config)?;
+        let (state, receipts) = prepare_block_state(parent, context.height, config)?;
+        (control.progress)(ExecutionProgress::AfterMandatory).map_err(ExecutionError::Cancelled)?;
+        Ok(Self {
+            pq_verification_attempts: AtomicUsize::new(0),
+            pq_signature_parent: pq_accounts_v2::enabled(config)
+                .then(|| std::sync::Arc::new(parent.clone())),
+            state,
+            receipts,
+            fees: 0,
+            transactions: Vec::new(),
+            context,
+            config: config.clone(),
+        })
+    }
+
+    pub(crate) fn len(&self) -> usize {
+        self.transactions.len()
+    }
+
+    /// The full byte prefix is compared on every call. Only its new suffix is
+    /// prepared/applied; rejection, cancellation or panic retains the last prefix.
+    /// Output metrics describe this suffix, while state/receipts describe the full
+    /// candidate. Full state/root construction remains required per accepted group.
+    pub(crate) fn execute_with_commitment_and_control<E: Send>(
+        &mut self,
+        transactions: &[Vec<u8>],
+        mut commitment: impl FnMut(&State) -> Result<Hash>,
+        control: &ExecutionControl<'_, E>,
+    ) -> ControlledResult<Output, E> {
+        require(
+            transactions.len() as u64 <= self.config.limit("max_transactions")?,
+            "LIMIT",
+        )?;
+        require(
+            transactions.starts_with(&self.transactions),
+            "PREFIX_BINDING",
+        )?;
+        let progress = control.progress;
+        pq_accounts_v2::validate_block(
+            self.pq_signature_parent.as_deref().unwrap_or(&self.state),
+            transactions,
+            self.context.miner,
+            self.context.timestamp,
+            &self.config,
+        )?;
+        let first = self.transactions.len();
+        let suffix = &transactions[first..];
+        let legacy_signatures = AtomicUsize::new(0);
+        let signatures = if pq_accounts_v2::enabled(&self.config) {
+            &self.pq_verification_attempts
+        } else {
+            &legacy_signatures
+        };
+        let prior_attempts = signatures.load(Ordering::Relaxed);
+        let transition_start = std::time::Instant::now();
+        let mut prepared = Vec::with_capacity(suffix.len());
+        for (offset, raw) in suffix.iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforePrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+            prepared.push(prepare(
+                raw,
+                self.context.height,
+                self.context.timestamp,
+                &self.config,
+                signatures,
+                self.pq_signature_parent.as_deref().or(Some(&self.state)),
+            ));
+            progress(ExecutionProgress::AfterPrepare { index })
+                .map_err(ExecutionError::Cancelled)?;
+        }
+        // Complete raw cloning/capacity growth before any scratch mutation. The
+        // final publish then only moves initialized Vecs into reserved capacity.
+        let mut appended_transactions = suffix.to_vec();
+        self.transactions.reserve(appended_transactions.len());
+        let mut staged = PrefixRollback {
+            state: &mut self.state,
+            before: BTreeMap::new(),
+            committed: false,
+        };
+        let mut fees = self.fees;
+        let mut receipts = self.receipts.clone();
+        for (offset, prepared) in prepared.into_iter().enumerate() {
+            let index = first + offset;
+            progress(ExecutionProgress::BeforeApply { index })
+                .map_err(ExecutionError::Cancelled)?;
+            let patch =
+                apply_prepared(staged.state, &prepared?, self.context.height, &self.config)?;
+            fees = add(fees, patch.fee)?;
+            receipts.push(patch.receipt);
+            staged.apply(patch.writes);
+            progress(ExecutionProgress::AfterApply { index }).map_err(ExecutionError::Cancelled)?;
+        }
+        let mut metrics = Metrics {
+            workers: 1,
+            committed_without_replay: suffix.len(),
+            peak_inflight: usize::from(!suffix.is_empty()),
+            signature_verifications: signatures
+                .load(Ordering::Relaxed)
+                .saturating_sub(prior_attempts),
+            state_transition_ns: transition_start.elapsed().as_nanos(),
+            ..Metrics::default()
+        };
+        progress(ExecutionProgress::BeforeReward).map_err(ExecutionError::Cancelled)?;
+        let writes = block_reward_updates(
+            staged.state,
+            self.context.height,
+            self.context.miner,
+            self.context.parent_id,
+            fees,
+            &self.config,
+        )?;
+        let before_reward = writes
+            .keys()
+            .map(|key| (key.clone(), staged.state.get(key).cloned()))
+            .collect();
+        staged.apply(writes);
+        check_completed_block_state(staged.state, self.context.height, &self.config)?;
+        let root_start = std::time::Instant::now();
+        progress(ExecutionProgress::BeforeCommitment).map_err(ExecutionError::Cancelled)?;
+        let root = commitment(staged.state)?;
+        progress(ExecutionProgress::AfterCommitment).map_err(ExecutionError::Cancelled)?;
+        metrics.state_root_ns = root_start.elapsed().as_nanos();
+        progress(ExecutionProgress::BeforeOutput).map_err(ExecutionError::Cancelled)?;
+        let output = Output {
+            state: staged.state.clone(),
+            receipts: receipts.clone(),
+            root,
+            metrics,
+        };
+        staged.restore(before_reward);
+        staged.committed = true;
+        self.fees = fees;
+        self.receipts = receipts;
+        self.transactions.append(&mut appended_transactions);
+        Ok(output)
+    }
+}
+
+/// Compute cache only. The caller remains the sole authoritative ledger owner.
+/// A request must name the exact predecessor root and monotonically increasing sequence.
+/// Every failed transaction, commitment check or sequence mismatch preserves this session.
+pub struct ExecutionSession {
+    state: State,
+    tree: trnm_protocol::pon_state::StateTree,
+    config: Config,
+    sequence: u64,
+}
+#[derive(Debug)]
+pub struct SessionOutput {
+    pub predecessor: Hash,
+    pub root: Hash,
+    pub sequence: u64,
+    pub changes: Vec<(String, Option<Value>, Option<Value>)>,
+    pub receipts: Vec<Vec<u8>>,
+    pub metrics: Metrics,
+    pub commitment_nodes: usize,
+}
+impl ExecutionSession {
+    pub fn new(state: State, expected_root: Hash, config: Config) -> Result<Self> {
+        require(
+            !crate::growth_profile_v2::enabled(&config),
+            "GROWTH_REFERENCE_SESSION_UNSUPPORTED",
+        )?;
+        let mut bytes = BTreeMap::new();
+        for (key, value) in &state {
+            bytes.insert(key.as_bytes().to_vec(), canonical(value)?);
+        }
+        let tree =
+            trnm_protocol::pon_state::StateTree::from_values(&bytes).map_err(|_| "STATE_TREE")?;
+        require(tree.root() == expected_root, "SESSION_ROOT")?;
+        Ok(Self {
+            state,
+            tree,
+            config,
+            sequence: 0,
+        })
+    }
+    pub fn root(&self) -> Hash {
+        self.tree.root()
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn state(&self) -> &State {
+        &self.state
+    }
+    pub fn execute(
+        &mut self,
+        predecessor: (u64, Hash),
+        transactions: &[Vec<u8>],
+        height: u64,
+        miner: Hash,
+        parent_id: Hash,
+        workers: usize,
+    ) -> Result<SessionOutput> {
+        require(
+            predecessor == (self.sequence, self.tree.root()),
+            "SESSION_PREDECESSOR",
+        )?;
+        let sequence = self.sequence.checked_add(1).ok_or("SESSION_SEQUENCE")?;
+        let mut staged = None;
+        let mut changes = Vec::new();
+        let output = execute_with_commitment(
+            &self.state,
+            BlockExecution {
+                timestamp: None,
+                transactions,
+                height,
+                miner,
+                parent_id,
+                workers,
+            },
+            &self.config,
+            |before, after| {
+                use trnm_protocol::pon_state::Change;
+                let keys: BTreeSet<_> = before.keys().chain(after.keys()).collect();
+                let mut updates = Vec::new();
+                for key in keys {
+                    let old = before.get(key);
+                    let new = after.get(key);
+                    if old != new {
+                        updates.push(Change {
+                            key: key.as_bytes().to_vec(),
+                            before: old.map(canonical).transpose()?,
+                            after: new.map(canonical).transpose()?,
+                        });
+                        changes.push((key.clone(), old.cloned(), new.cloned()));
+                    }
+                }
+                let next = self
+                    .tree
+                    .apply(predecessor.1, &updates)
+                    .map_err(|_| "STATE_TREE")?;
+                let root = next.root();
+                staged = Some(next);
+                Ok(root)
+            },
+        )?;
+        let tree = staged.ok_or("STATE_TREE")?;
+        let result = SessionOutput {
+            predecessor: predecessor.1,
+            root: output.root,
+            sequence,
+            changes,
+            receipts: output.receipts,
+            metrics: output.metrics,
+            commitment_nodes: tree.allocated_nodes(),
+        };
+        self.state = output.state;
+        self.tree = tree;
+        self.sequence = sequence;
+        Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod session_tests {
+    use super::*;
+
+    fn initial() -> State {
+        BTreeMap::from([
+            ("meta:issued".into(), json!(0)),
+            ("model:current".into(), json!(hex::encode([0; 32]))),
+        ])
+    }
+
+    #[test]
+    fn session_state_and_receipts_equal_existing_complete_builder() {
+        let state = initial();
+        let cfg = Config::installed().unwrap();
+        let old_root = root(&state).unwrap();
+        let mut session = ExecutionSession::new(state.clone(), old_root, cfg.clone()).unwrap();
+        for height in 1..=8 {
+            let expected = execute(
+                session.state(),
+                &[],
+                height,
+                [1; 32],
+                [height as u8; 32],
+                4,
+                &cfg,
+            )
+            .unwrap();
+            let observed = session
+                .execute(
+                    (session.sequence(), session.root()),
+                    &[],
+                    height,
+                    [1; 32],
+                    [height as u8; 32],
+                    4,
+                )
+                .unwrap();
+            assert_eq!(observed.root, expected.root);
+            assert_eq!(observed.receipts, expected.receipts);
+            assert_eq!(session.state(), &expected.state);
+            assert_eq!(session.sequence(), height);
+        }
+        assert_eq!(root(&state).unwrap(), old_root);
+    }
+
+    #[test]
+    fn invalid_context_transaction_and_sequence_never_publish_session_state() {
+        let state = initial();
+        let old_root = root(&state).unwrap();
+        let mut session =
+            ExecutionSession::new(state.clone(), old_root, Config::installed().unwrap()).unwrap();
+        assert_eq!(
+            session
+                .execute((99, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert_eq!(
+            session
+                .execute((0, [9; 32]), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_PREDECESSOR"
+        );
+        assert!(session
+            .execute((0, old_root), &[vec![0; 159]], 1, [1; 32], [2; 32], 8)
+            .is_err());
+        assert_eq!(session.sequence(), 0);
+        assert_eq!(session.root(), old_root);
+        assert_eq!(session.state(), &state);
+        session.sequence = u64::MAX;
+        assert_eq!(
+            session
+                .execute((u64::MAX, old_root), &[], 1, [1; 32], [2; 32], 1)
+                .unwrap_err(),
+            "SESSION_SEQUENCE"
+        );
+        assert_eq!(session.state(), &state);
+    }
+}
+
+#[cfg(test)]
+mod streaming_root_tests {
+    use super::*;
+    use trnm_protocol::pon_wire::state_root;
+
+    fn original(state: &State) -> Result<Hash> {
+        let mut bytes = BTreeMap::new();
+        for (key, value) in state {
+            bytes.insert(key.as_bytes().to_vec(), canonical(value)?);
+        }
+        state_root(&bytes).map_err(|_| "LIMIT")
+    }
+
+    #[test]
+    fn streamed_m06_root_keeps_complete_canonical_value_errors_before_wire_limits() {
+        for bad in [json!(0.5), json!(-0.0), json!("λ"), json!({"bad": ["λ"]})] {
+            let values = State::from([("a".repeat(161), json!(0)), ("z".into(), bad)]);
+            assert_eq!(root(&values), original(&values));
+            assert_ne!(root(&values), Err("LIMIT"));
+        }
+        let mut over: State = (0..65_537)
+            .map(|i| (format!("k-{i:06}"), Value::Null))
+            .collect();
+        assert_eq!(root(&over), Err("LIMIT"));
+        over.insert("zz-last".into(), json!(false));
+        assert_eq!(root(&over), original(&over));
+        over.insert("zz-last".into(), json!(["λ"]));
+        assert_eq!(root(&over), original(&over));
+        assert_eq!(root(&over), Err("NONCANONICAL"));
+    }
+
+    #[test]
+    fn streamed_m06_root_matches_original_values_removals_and_branch_edits() {
+        let initial: State = (0..257)
+            .map(|i| {
+                (
+                    format!("key-{i:04}"),
+                    json!({"nonce": i, "array": [null, false, "ascii"], "negative": -1}),
+                )
+            })
+            .collect();
+        let frozen = initial.clone();
+        for count in [0, 1, 16, 31, 129, 257] {
+            let mut state: State = initial
+                .iter()
+                .take(count)
+                .map(|(k, v)| (k.clone(), v.clone()))
+                .collect();
+            assert_eq!(root(&state), original(&state));
+            state.insert("key-0000".into(), Value::Null);
+            state.remove("key-0015");
+            state.insert("first".into(), json!(u64::MAX));
+            assert_eq!(root(&state), original(&state));
+        }
+        assert_eq!(initial, frozen);
+        for size in [4094, 4095] {
+            let state = State::from([("payload".into(), json!("x".repeat(size)))]);
+            assert_eq!(root(&state), original(&state));
+        }
+    }
+
+    #[test]
+    #[ignore = "explicit paired complete-root cost; synthetic values, not native ledger growth"]
+    fn complete_root_encoding_cost() {
+        // One selected implementation per process keeps the measured RSS from
+        // inheriting the other implementation's peak. The caller must compare
+        // complete roots, source/binary identity and all failures across runs.
+        let implementation = std::env::var("TRNM_ROOT_ENCODING_IMPLEMENTATION")
+            .expect("select original or streamed explicitly");
+        assert!(matches!(implementation.as_str(), "original" | "streamed"));
+        let state: State = (0..16_384)
+            .map(|i| (format!("root-cost-{i:05}"), json!("x".repeat(4094))))
+            .collect();
+        let start = std::time::Instant::now();
+        let result = if implementation == "original" {
+            original(std::hint::black_box(&state))
+        } else {
+            root(std::hint::black_box(&state))
+        };
+        let elapsed_ns = start.elapsed().as_nanos();
+        // Equality between the two implementations is checked by the separate
+        // paired caller and the non-ignored independent reference regressions.
+        // This output cannot attest process RSS, source or whole-Node capacity.
+        let digest = result.expect("complete root must actually finish");
+        println!(
+            "{}",
+            json!({
+                "schema": "pon-complete-root-encoding-cost-v1",
+                "implementation": implementation,
+                "state_keys": state.len(),
+                "value_encoding_bytes": 4096,
+                "root": hex::encode(digest),
+                "root_wall_ns": elapsed_ns,
+                "native_ledger_admission": false,
+                "end_to_end_throughput": false,
+                "production_activation": false
+            })
+        );
+    }
 }

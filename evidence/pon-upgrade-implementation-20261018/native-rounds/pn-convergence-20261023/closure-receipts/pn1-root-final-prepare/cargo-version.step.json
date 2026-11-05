@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "-Vv"
+  ],
+  "complete_success": true,
+  "cwd": "/tmp/trnm-pn-convergence-20261023/integration",
+  "elapsed_ns": 33394744,
+  "elapsed_seconds": 0.033394744,
+  "error": null,
+  "name": "cargo-version",
+  "outer_stage_timeout_seconds": 60,
+  "returncode": 0,
+  "stderr": "cargo-version.stderr.log",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_truncated": false,
+  "stdout": "cargo-version.stdout.log",
+  "stdout_bytes": 336,
+  "stdout_sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+  "stdout_truncated": false
+}

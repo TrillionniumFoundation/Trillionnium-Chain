@@ -1,0 +1,97 @@
+{
+  "schema": "trnm-hepta-fixed-code-pair-v2",
+  "recorded_at_utc": "2026-11-05 04:42:54 UTC",
+  "chain": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "code_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "code_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+    "draft_pr": 688
+  },
+  "runtime": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "code_commit": "367e27fb6bf30443641b9e23a063d24e49eda9f7",
+    "code_tree": "6a2465606f0270eeecec83c2b7d9dbef5dc96076",
+    "draft_pr": 4812,
+    "production_test_source_commit": "d206c3c787f6b67c771b67a8e1d46c8261810042"
+  },
+  "historical_execution_scope": {
+    "chain_scoped_controls": {
+      "executed_chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+      "runtime_sha_recorded_when_run": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+      "runtime_was_executed": false,
+      "tests_total": 233,
+      "relabelled_as_pair_acceptance": false
+    },
+    "runtime_source_projection": "../runtime-29-to-d206-source-map.json",
+    "current_pair_combined_native_run": "NOT_RUN",
+    "evidence_only_successors_are_new_executions": false,
+    "growth_red": {
+      "source_head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+      "pristine_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+      "overlay": "../../pon-growth-persistence-control-20261105/red-overlay.json",
+      "overlay_scope": "Recorded enum/test probes without the new callback calls",
+      "attempt_count": 4,
+      "unqualified_observed_assertion_red_attempts": 2,
+      "canonical_tests_executed": 0,
+      "b5bb_green_tests_executed": 0,
+      "canonical_compilation_resource_aborts": 2
+    }
+  },
+  "qualification": {
+    "status": "HOLD_NO_GO",
+    "all_blockers_closed": false,
+    "whole_chain_pq_qualified": false,
+    "quantum_pon_hardness_qualified": false,
+    "proof_backend_enabled": false,
+    "production_activation": false
+  },
+  "configuration_boundaries": [
+    {
+      "name": "new Growth persistence tests",
+      "backend": "GrowthV2",
+      "authorization": "classical development",
+      "complete_w1": true,
+      "green_native_result": "NOT_RUN"
+    },
+    {
+      "name": "completed fixed-Host F0",
+      "backend": "AuthenticatedV1",
+      "work_profile": "RawR14",
+      "hostile_producers": 24,
+      "phase_seconds": 30,
+      "phase_count": 2,
+      "scheduled_confirmations": 6,
+      "original_slo_seconds": 4,
+      "result": "FAILED"
+    },
+    {
+      "name": "original issue #639",
+      "original_slo_seconds": 4,
+      "hostile_producers": 16,
+      "status": "OPEN",
+      "replaced_by_f0": false
+    },
+    {
+      "name": "Hepta recovery V2",
+      "startup_guard": "configured EvidenceHost open only",
+      "signer": "Ed25519",
+      "trust_file_version": 1,
+      "independent_freshness_qualified": false
+    }
+  ],
+  "execution_policy": {
+    "remote_ci_dispatched_or_rerun": false,
+    "protected_main_merged": false,
+    "force_push": false,
+    "other_tasks_terminated": false,
+    "original_thresholds_relaxed": false
+  },
+  "late_integration_observation": {
+    "chain_head": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "chain_tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+    "native_source_changed": true,
+    "evidence": "late-integration.json",
+    "earlier_results_transferred": false,
+    "combined_head_acceptance": "OPEN"
+  }
+}

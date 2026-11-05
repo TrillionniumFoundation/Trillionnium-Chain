@@ -1,0 +1,860 @@
+{
+  "schema": "round4-final-362-status-readback-v1",
+  "recorded_at_utc": "2026-11-04T01:47:16.323510+00:00",
+  "github_status_observed_at_utc": "2026-11-04T01:42:39.022Z",
+  "candidate_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+  "scope": "One bounded read-only refresh of the four previously unfinished 362-cohort jobs. These are historical 362/prospective receipts, not validation of the later C9 composition.",
+  "read_only": true,
+  "repository_mutations": false,
+  "native_tests_executed_by_this_readback": false,
+  "artifact_scripts_or_elf_executed": false,
+  "workflow_dispatches": 0,
+  "reruns_requested": 0,
+  "recurring_poll": false,
+  "collection_notes": [
+    "Direct job-resource fetch was unsupported by the connector and returned HTTP400. The two workflow job-list endpoints were then read once, each with per_page=100; all four requested job IDs were present.",
+    "Two artifact catalogs, two runtime job logs, and four selected archive downloads were read once. No controls-only, cost, fuzz, or other unrelated artifact was downloaded.",
+    "Only source receipts, ordinary Node library output, strict Clippy receipt, runtime libtest result lines, and one ordinary Python oracle error were extracted. The retained shard script was read only for its exact oracle command line."
+  ],
+  "jobs": [
+    {
+      "job_id": 126307454181,
+      "run_id": 41746463238,
+      "name": "rust-baseline shard (runtime)",
+      "github_status": "completed",
+      "github_conclusion": "failure",
+      "github_head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": "2026-11-04T01:41:12Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307454181",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install pinned compiler and tools in isolated hosted runner",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Install pinned dependency auditor",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Retain source and execution observations",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Retain lightweight exact Rust shard proof",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 24,
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 25,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "actual_source": {
+        "before": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 7948,
+          "tracked_bytes": 926580636,
+          "tests_executed_by_identity_check": false
+        },
+        "after": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "head",
+          "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "base": null,
+          "prospective_merge": null,
+          "tracked_worktree_verified": true,
+          "tracked_entries": 7948,
+          "tracked_bytes": 926580636,
+          "tests_executed_by_identity_check": false
+        },
+        "same_source_before_after": true
+      },
+      "terminal": {
+        "receipt_status": "failed",
+        "shard_exit_code": 1,
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307454181/rust-shard.json",
+          "bytes": 1193,
+          "sha256": "cb2412a8778cd04ce3a51ee00a5022ae17ae8ed3530edd9d7a54e3e37b4c1b2f"
+        },
+        "command_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea"
+      },
+      "rust_native_observations": {
+        "literal_result_line_count": 373,
+        "non_ok_literal_result_lines": 0,
+        "unique_test_total": null,
+        "unique_total_reason": "373 literal result lines include nested subprocess runs and multiple Cargo harnesses; no aggregate unique-test total is claimed.",
+        "all_literal_result_lines": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307454181/libtest-summary-readback.json",
+          "bytes": 228930,
+          "sha256": "645fd56dab92241c4ddb45d3b2476b517da31563b81dd2d413277628f3369852"
+        },
+        "node_library_outer_summary": {
+          "line": 5584,
+          "raw": "2026-11-04T01:19:46.4394019Z test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1164.83s",
+          "preceding_cargo_header": {
+            "line": 4574,
+            "text": "Running unittests src/lib.rs (/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/trnm_pon_node-6f68592da7a7f6bb)"
+          },
+          "counts": {
+            "passed": 951,
+            "failed": 0,
+            "ignored": 23,
+            "measured": 0,
+            "filtered_out": 0
+          },
+          "result": "ok",
+          "elapsed_s": 1164.83
+        },
+        "node_library_denominator": 974
+      },
+      "python_oracle_failure": {
+        "test_file": "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "oracle_command": "python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v",
+        "command_source": {
+          "artifact_id": 13287812560,
+          "member": "rust-shard.sh",
+          "line": 52,
+          "read_only": true
+        },
+        "tests_run": 28,
+        "failures": 15,
+        "errors": 9,
+        "elapsed_s": 3.049,
+        "outer_step_exit_code": 1,
+        "ordinary_positive_error_test": "NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes",
+        "ordinary_error": "ValueError: NATIVE_STORAGE_TABLE_NAME",
+        "ordinary_short_stack": "test_native_authenticated_storage_oracle.py:163 -> inspect:150 -> native_authenticated_storage_oracle.py:459 inspect_sqlite -> table_rows:266 -> require:58",
+        "table_name_check": "re.fullmatch('[a-z_]+', name) is not None",
+        "failure_name_scope": "An ordinary positive-path error is retained. Negative scenario bodies/configurations were not inspected or reproduced.",
+        "original_excerpt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307454181/ordinary-oracle-error-readback.json",
+          "bytes": 3704,
+          "sha256": "bf1e654f43e47d506b19b6dc92cb5502f5dc7c364df1f2269baf0cc9cb1945b1"
+        },
+        "github_log_endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126307454181/logs",
+        "raw_terminal_lines": [
+          {
+            "line": 8077,
+            "text": "2026-11-04T01:41:00.7478364Z Ran 28 tests in 3.049s"
+          },
+          {
+            "line": 8079,
+            "text": "2026-11-04T01:41:00.7478691Z FAILED (failures=15, errors=9)"
+          },
+          {
+            "line": 8080,
+            "text": "2026-11-04T01:41:01.8634394Z ##[error]Process completed with exit code 1."
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13287812560,
+        "name": "rust-shard-head-362fbebe5027d731f16c88f710bfef7e922cd230-1-runtime",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13287812560",
+        "size_in_bytes": 2390,
+        "digest": "sha256:63755dfc1c52fa31e33261d8583f706696e6f66168210e2f2dc3ca5d60a00236",
+        "created_at": "2026-11-04T01:41:07Z",
+        "local_archive": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/final-362-13287812560.zip",
+          "bytes": 2390,
+          "sha256": "63755dfc1c52fa31e33261d8583f706696e6f66168210e2f2dc3ca5d60a00236"
+        },
+        "digest_matches_download": true
+      }
+    },
+    {
+      "job_id": 126307453978,
+      "run_id": 41746463238,
+      "name": "prospective Rust shard (runtime)",
+      "github_status": "completed",
+      "github_conclusion": "failure",
+      "github_head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:40:00Z",
+      "completed_at": "2026-11-04T01:38:02Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463238/job/126307453978",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Set isolated Cargo paths after runner allocation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install pinned compiler and tools in isolated hosted runner",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Install pinned dependency auditor",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Install isolated signed-state oracle Python environment",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Run retained Rust shard",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 10,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Retain source and execution observations",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Retain lightweight exact Rust shard proof",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 24,
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 25,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "actual_source": {
+        "before": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "prospective-merge",
+          "tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "prospective_merge": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tracked_worktree_verified": true,
+          "tracked_entries": 7948,
+          "tracked_bytes": 926580636,
+          "tests_executed_by_identity_check": false
+        },
+        "after": {
+          "schema": "trnm-ci-source-v1",
+          "kind": "prospective-merge",
+          "tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "prospective_merge": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tracked_worktree_verified": true,
+          "tracked_entries": 7948,
+          "tracked_bytes": 926580636,
+          "tests_executed_by_identity_check": false
+        },
+        "same_source_before_after": true
+      },
+      "terminal": {
+        "receipt_status": "failed",
+        "shard_exit_code": 1,
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307453978/rust-shard.json",
+          "bytes": 1371,
+          "sha256": "b5bafc7122ca12e3306f5fba4029ccd38f0c3cab0178ed540e849298710e1d97"
+        },
+        "command_sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea"
+      },
+      "rust_native_observations": {
+        "literal_result_line_count": 373,
+        "non_ok_literal_result_lines": 0,
+        "unique_test_total": null,
+        "unique_total_reason": "373 literal result lines include nested subprocess runs and multiple Cargo harnesses; no aggregate unique-test total is claimed.",
+        "all_literal_result_lines": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307453978/libtest-summary-readback.json",
+          "bytes": 230041,
+          "sha256": "d7c04c58a43108c74f50b8aaa64ebdc2fb1049ce00a3daae18b44e973f1c9d1e"
+        },
+        "node_library_outer_summary": {
+          "line": 5600,
+          "raw": "2026-11-04T01:17:28.9544683Z test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1140.45s",
+          "preceding_cargo_header": {
+            "line": 4590,
+            "text": "Running unittests src/lib.rs (/home/runner/work/_temp/target-prospective-rust-shards/debug/deps/trnm_pon_node-6f68592da7a7f6bb)"
+          },
+          "counts": {
+            "passed": 951,
+            "failed": 0,
+            "ignored": 23,
+            "measured": 0,
+            "filtered_out": 0
+          },
+          "result": "ok",
+          "elapsed_s": 1140.45
+        },
+        "node_library_denominator": 974
+      },
+      "python_oracle_failure": {
+        "test_file": "formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py",
+        "oracle_command": "python3 formal/pon-nakamoto-v1/test_native_authenticated_storage_oracle.py -v",
+        "command_source": {
+          "artifact_id": 13286774641,
+          "member": "rust-shard.sh",
+          "line": 52,
+          "read_only": true
+        },
+        "tests_run": 28,
+        "failures": 15,
+        "errors": 9,
+        "elapsed_s": 2.631,
+        "outer_step_exit_code": 1,
+        "ordinary_positive_error_test": "NativeAuthenticatedStorageOracle.test_full_reconstruction_roots_nodes_snapshots_reorg_and_immutable_bytes",
+        "ordinary_error": "ValueError: NATIVE_STORAGE_TABLE_NAME",
+        "ordinary_short_stack": "test_native_authenticated_storage_oracle.py:163 -> inspect:150 -> native_authenticated_storage_oracle.py:459 inspect_sqlite -> table_rows:266 -> require:58",
+        "table_name_check": "re.fullmatch('[a-z_]+', name) is not None",
+        "failure_name_scope": "An ordinary positive-path error is retained. Negative scenario bodies/configurations were not inspected or reproduced.",
+        "original_excerpt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/runtime-job-126307453978/ordinary-oracle-error-readback.json",
+          "bytes": 3704,
+          "sha256": "241f4ffdb2e855901c81582c9aca30b4d615e13c26142acedbcda184cbe3cb89"
+        },
+        "github_log_endpoint": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/126307453978/logs",
+        "raw_terminal_lines": [
+          {
+            "line": 8093,
+            "text": "2026-11-04T01:37:51.1155678Z Ran 28 tests in 2.631s"
+          },
+          {
+            "line": 8095,
+            "text": "2026-11-04T01:37:51.1155987Z FAILED (failures=15, errors=9)"
+          },
+          {
+            "line": 8096,
+            "text": "2026-11-04T01:37:52.2154951Z ##[error]Process completed with exit code 1."
+          }
+        ]
+      },
+      "artifact": {
+        "id": 13286774641,
+        "name": "rust-shard-prospective-merge-b2e6ac4963855d98ebb351072b866742686f43d9-1-runtime",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13286774641",
+        "size_in_bytes": 2443,
+        "digest": "sha256:84ef29ec72f61a3b59d4616b451f3d24ceade09c80cb0ae4dced9f1c8b0a833d",
+        "created_at": "2026-11-04T01:37:57Z",
+        "local_archive": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/final-362-13286774641.zip",
+          "bytes": 2443,
+          "sha256": "84ef29ec72f61a3b59d4616b451f3d24ceade09c80cb0ae4dced9f1c8b0a833d"
+        },
+        "digest_matches_download": true
+      }
+    },
+    {
+      "job_id": 126300605895,
+      "run_id": 41746463373,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "github_status": "completed",
+      "github_conclusion": "success",
+      "github_head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:38Z",
+      "completed_at": "2026-11-04T01:12:20Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605895",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Execute every required native effect and rejection control",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Preserve native control records before the complete regression",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Preserve complete records including failures",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 24,
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 25,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "actual_source": {
+        "before": {
+          "base": null,
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 926580636,
+          "tracked_entries": 7948,
+          "tracked_worktree_verified": true
+        },
+        "after": {
+          "base": null,
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 926580636,
+          "tracked_entries": 7948,
+          "tracked_worktree_verified": true
+        },
+        "same_source_before_after": true
+      },
+      "original_node_library": {
+        "native_exit_code": 0,
+        "status": "command_succeeded",
+        "command_elapsed_ns": 2171995534672,
+        "outer_summary": {
+          "line": 2387,
+          "raw": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2170.23s",
+          "result": "ok",
+          "passed": 951,
+          "failed": 0,
+          "ignored": 23,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed_s": 2170.23
+        },
+        "denominator": 974,
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605895/node-lib.json",
+          "archive_member": "node-lib.json",
+          "bytes": 2369,
+          "sha256": "3278e944c3f90d5e51bb011694e07671d316b58609c24e3c9b6804713b2be2d9"
+        },
+        "raw_log": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605895/node-lib.log",
+          "archive_member": "node-lib.log",
+          "bytes": 7292687,
+          "sha256": "a8bab68f3128f1012a7abbf6ac7b9613fde28035ac53f050739a6a4fa25e9c98"
+        },
+        "log_digest_matches_receipt": true,
+        "log_bytes_matches_receipt": true,
+        "observed_test_name_count": 974,
+        "literal_registry": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605895/literal-registry-readback.json",
+          "bytes": 188824,
+          "sha256": "1a1eb88e99ad362411dfc861fa585fcc197fc1b8c96176ed3ce1c6a62cadd194"
+        },
+        "unresolved_literal_test_names": [
+          "store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence"
+        ],
+        "registry_scope": "974 unique names are visible. One name has no same-line terminal status because subprocess output is interleaved; no status is fabricated for that individual name. The outer suite terminal aggregate is recorded independently. Two nested one-test summaries are excluded from its counts."
+      },
+      "strict_clippy": {
+        "native_exit_code": 0,
+        "status": "command_succeeded",
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605895/clippy.json",
+          "archive_member": "clippy.json",
+          "bytes": 2360,
+          "sha256": "0645311be8e6327770d062326eb18f9340c336be9842455df1c809150a9d882f"
+        },
+        "same_source_before_after": true,
+        "tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+        "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d"
+      },
+      "artifact": {
+        "id": 13287190986,
+        "name": "pq-system-ubuntu-24.04-arm-head-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13287190986",
+        "size_in_bytes": 1050955,
+        "digest": "sha256:08e3116249351bfcf1258c91cfbdf27ec8dae9621e766572ad0c8c0c80b156f2",
+        "created_at": "2026-11-04T01:12:18Z",
+        "local_archive": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/final-362-13287190986.zip",
+          "bytes": 1050955,
+          "sha256": "08e3116249351bfcf1258c91cfbdf27ec8dae9621e766572ad0c8c0c80b156f2"
+        },
+        "digest_matches_download": true
+      }
+    },
+    {
+      "job_id": 126300605711,
+      "run_id": 41746463373,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "github_status": "completed",
+      "github_conclusion": "success",
+      "github_head_sha_metadata": "362fbebe5027d731f16c88f710bfef7e922cd230",
+      "started_at": "2026-11-04T00:23:37Z",
+      "completed_at": "2026-11-04T01:12:12Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41746463373/job/126300605711",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Execute every required native effect and rejection control",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Preserve native control records before the complete regression",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Check strict Clippy without rewriting source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Preserve complete records including failures",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 24,
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 25,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "actual_source": {
+        "before": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "kind": "prospective-merge",
+          "prospective_merge": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 926580636,
+          "tracked_entries": 7948,
+          "tracked_worktree_verified": true
+        },
+        "after": {
+          "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+          "candidate": "362fbebe5027d731f16c88f710bfef7e922cd230",
+          "kind": "prospective-merge",
+          "prospective_merge": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+          "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 926580636,
+          "tracked_entries": 7948,
+          "tracked_worktree_verified": true
+        },
+        "same_source_before_after": true
+      },
+      "original_node_library": {
+        "native_exit_code": 0,
+        "status": "command_succeeded",
+        "command_elapsed_ns": 2169904982343,
+        "outer_summary": {
+          "line": 2387,
+          "raw": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2168.14s",
+          "result": "ok",
+          "passed": 951,
+          "failed": 0,
+          "ignored": 23,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed_s": 2168.14
+        },
+        "denominator": 974,
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605711/node-lib.json",
+          "archive_member": "node-lib.json",
+          "bytes": 2547,
+          "sha256": "03de756797b65b896417909e9f8f2cb0fce313d7840a3d7353e3ea41111951dd"
+        },
+        "raw_log": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605711/node-lib.log",
+          "archive_member": "node-lib.log",
+          "bytes": 7292723,
+          "sha256": "8d4927c0e1e5d1d58e4aa808b39a946b8dae2f678b88733bdb0fd2365f1285a5"
+        },
+        "log_digest_matches_receipt": true,
+        "log_bytes_matches_receipt": true,
+        "observed_test_name_count": 974,
+        "literal_registry": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605711/literal-registry-readback.json",
+          "bytes": 188824,
+          "sha256": "179cdb26ffab346a16f9328f016cf77bca5f87d296fb1b19cdaf10564cac9878"
+        },
+        "unresolved_literal_test_names": [
+          "store::reorg_cancellation::tests::three_actual_sigkill_cuts_keep_active_state_replay_and_unknown_cpu_fence"
+        ],
+        "registry_scope": "974 unique names are visible. One name has no same-line terminal status because subprocess output is interleaved; no status is fabricated for that individual name. The outer suite terminal aggregate is recorded independently. Two nested one-test summaries are excluded from its counts."
+      },
+      "strict_clippy": {
+        "native_exit_code": 0,
+        "status": "command_succeeded",
+        "receipt": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/node-arm-job-126300605711/clippy.json",
+          "archive_member": "clippy.json",
+          "bytes": 2538,
+          "sha256": "304595b484fcaaf03c49855a5243823d49b4cf2297d66dbbf6f7fd8efa1ba3b0"
+        },
+        "same_source_before_after": true,
+        "tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+        "tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d"
+      },
+      "artifact": {
+        "id": 13285064797,
+        "name": "pq-system-ubuntu-24.04-arm-prospective-merge-362fbebe5027d731f16c88f710bfef7e922cd230-1",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13285064797",
+        "size_in_bytes": 1053973,
+        "digest": "sha256:9171bd1c8b64c1b557fff9195256a29f37aa42f2e7e405b28c0c495e188b023b",
+        "created_at": "2026-11-04T01:12:09Z",
+        "local_archive": {
+          "path": "/workspace/scratch/76b6e0e6eb14/round4-ci-readback/final-362-13285064797.zip",
+          "bytes": 1053973,
+          "sha256": "9171bd1c8b64c1b557fff9195256a29f37aa42f2e7e405b28c0c495e188b023b"
+        },
+        "digest_matches_download": true
+      }
+    }
+  ],
+  "cross_job_source_observation": {
+    "head_tested_commit": "362fbebe5027d731f16c88f710bfef7e922cd230",
+    "prospective_tested_commit": "b2e6ac4963855d98ebb351072b866742686f43d9",
+    "common_tested_tree": "5a7a2eadfcfb75b9fdf38fa0e8a05c6a503d776d",
+    "both_kinds_have_unchanged_before_after_receipts": true,
+    "github_job_head_sha_is_not_used_as_actual_prospective_checkout": true
+  },
+  "limitations": [
+    "Runtime job failure is preserved: its later Python oracle reports 28 tests, 15 failures and 9 errors despite the observed Rust result lines being ok. This is not a Rust compilation-failure claim.",
+    "The earlier independent x64 Node-head failure remains a separate source-bound observation; these successes do not erase or replace it.",
+    "Job-level success and a returned native process are not qualification for whole-chain security, attack resistance, or the new C9 source.",
+    "No cumulative pass count is formed across jobs, architectures, source kinds, or nested libtest summaries."
+  ]
+}

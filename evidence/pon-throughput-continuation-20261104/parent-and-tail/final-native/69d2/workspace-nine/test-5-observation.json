@@ -1,0 +1,63 @@
+{
+  "guard_after": {
+    "elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "native_input_files": 1190,
+    "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "required_reader_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "wrapper_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8"
+  },
+  "guard_before": {
+    "elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "native_input_files": 1190,
+    "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "required_reader_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "wrapper_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8"
+  },
+  "label": "test-5",
+  "native": {
+    "argv": [
+      "bash",
+      "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "child_system_seconds": 0.008124999999999993,
+    "child_user_seconds": 0.05044000000000004,
+    "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node",
+    "exit_code": 0,
+    "finished_at": "2026-11-04T09:00:52.706396+00:00",
+    "label": "test-5",
+    "max_child_rss_kib": 20920,
+    "started_at": "2026-11-04T09:00:52.642624+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "7d52a5de4fb90ef2d52660df323637e33c5d1c73105897b4da50307d1263448f",
+    "wall_ns": 63774595
+  },
+  "reader": {
+    "argv": [
+      "python3",
+      "/workspace/scratch/7318d5f890d1/chain-throughput/scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/7318d5f890d1/throughput-readback/final-69d2-workspace-nine/test-5.stdout",
+      "--test",
+      "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error"
+    ],
+    "child_system_seconds": 0.011421,
+    "child_user_seconds": 0.015761000000000025,
+    "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+    "exit_code": 0,
+    "finished_at": "2026-11-04T09:00:52.734475+00:00",
+    "label": "test-5-reader",
+    "max_child_rss_kib": 20920,
+    "started_at": "2026-11-04T09:00:52.706852+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "10929f53167969d7f914dad31fdbf7ff3586b69d0e2c19ae2a2bcc90205df641",
+    "wall_ns": 27634437
+  },
+  "selector": "store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error",
+  "source_and_elf_unchanged": true
+}

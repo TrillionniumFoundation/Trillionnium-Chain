@@ -1,0 +1,955 @@
+{
+  "schema": "bebb-growth-execution-supplement-v1",
+  "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "actual_merge": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "cpu_report_sha256": "4acaab2d6d9c3d6fd3b2056bf5baf9d1c9dec6e216401698a41e7e5acf74ca68",
+  "run_id": 41658914609,
+  "outcomes": [
+    {
+      "artifact_id": 13244425730,
+      "arch": "x64",
+      "source_kind": "head",
+      "job_id": 125996632330,
+      "job_conclusion": "success",
+      "growth_step": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation"
+      },
+      "log_sha256": "656d518fa53f7b802e07878d6d877d39cced1c99a7276ce8c5a6eedb752bdf88",
+      "native_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 319.42s"
+      ],
+      "completed_cohorts": 9,
+      "native_blocks": 72,
+      "cancelled_admissions": 9,
+      "cold_reopens": 9,
+      "cohorts": [
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            10093579,
+            10586614
+          ],
+          "cold_reopen_wall_ns": 57765570,
+          "copied_nodes_min_max": [
+            13,
+            13
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            17119591,
+            17377814
+          ],
+          "cold_reopen_wall_ns": 193474191,
+          "copied_nodes_min_max": [
+            13,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            17754320,
+            17794475
+          ],
+          "cold_reopen_wall_ns": 1293920892,
+          "copied_nodes_min_max": [
+            16,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            10076250,
+            10575144
+          ],
+          "cold_reopen_wall_ns": 147797206,
+          "copied_nodes_min_max": [
+            23,
+            23
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            17155487,
+            17426494
+          ],
+          "cold_reopen_wall_ns": 278617120,
+          "copied_nodes_min_max": [
+            23,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            18419938,
+            18443763
+          ],
+          "cold_reopen_wall_ns": 1385484235,
+          "copied_nodes_min_max": [
+            30,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            10120929,
+            10573972
+          ],
+          "cold_reopen_wall_ns": 1583190486,
+          "copied_nodes_min_max": [
+            27,
+            27
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            17734047,
+            18386114
+          ],
+          "cold_reopen_wall_ns": 1723604760,
+          "copied_nodes_min_max": [
+            27,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            19140434,
+            19204994
+          ],
+          "cold_reopen_wall_ns": 2832857777,
+          "copied_nodes_min_max": [
+            37,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": 13243430730,
+      "arch": "x64",
+      "source_kind": "prospective-merge",
+      "job_id": 125996631617,
+      "job_conclusion": "success",
+      "growth_step": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation"
+      },
+      "log_sha256": "f47f9dfbddc1f4953f2b33898246faffff2f2d00429c484646e86e506999ea9a",
+      "native_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 333.68s"
+      ],
+      "completed_cohorts": 9,
+      "native_blocks": 72,
+      "cancelled_admissions": 9,
+      "cold_reopens": 9,
+      "cohorts": [
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            9464216,
+            9844296
+          ],
+          "cold_reopen_wall_ns": 60293914,
+          "copied_nodes_min_max": [
+            13,
+            13
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            16529827,
+            16897088
+          ],
+          "cold_reopen_wall_ns": 198878413,
+          "copied_nodes_min_max": [
+            13,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            17223800,
+            17224200
+          ],
+          "cold_reopen_wall_ns": 1341666716,
+          "copied_nodes_min_max": [
+            16,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            9815804,
+            10276612
+          ],
+          "cold_reopen_wall_ns": 152733596,
+          "copied_nodes_min_max": [
+            23,
+            23
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            16777532,
+            17199965
+          ],
+          "cold_reopen_wall_ns": 291882882,
+          "copied_nodes_min_max": [
+            23,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            17860971,
+            17885307
+          ],
+          "cold_reopen_wall_ns": 1437790039,
+          "copied_nodes_min_max": [
+            30,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            10115325,
+            10487266
+          ],
+          "cold_reopen_wall_ns": 1635612491,
+          "copied_nodes_min_max": [
+            27,
+            27
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            17215607,
+            18037802
+          ],
+          "cold_reopen_wall_ns": 1790150570,
+          "copied_nodes_min_max": [
+            27,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            19288356,
+            19375739
+          ],
+          "cold_reopen_wall_ns": 2924216556,
+          "copied_nodes_min_max": [
+            37,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": 13244186644,
+      "arch": "arm64",
+      "source_kind": "head",
+      "job_id": 125996632087,
+      "job_conclusion": "failure",
+      "growth_step": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation"
+      },
+      "log_sha256": "e23e17e52fd301f2b12ce7b74745a3c7fad1fdb054d5651609942d251cdd802b",
+      "native_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 660.40s"
+      ],
+      "completed_cohorts": 9,
+      "native_blocks": 72,
+      "cancelled_admissions": 9,
+      "cold_reopens": 9,
+      "cohorts": [
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            14267808,
+            14959285
+          ],
+          "cold_reopen_wall_ns": 93833260,
+          "copied_nodes_min_max": [
+            13,
+            13
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            25531526,
+            26384577
+          ],
+          "cold_reopen_wall_ns": 313776656,
+          "copied_nodes_min_max": [
+            13,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            26738844,
+            26874417
+          ],
+          "cold_reopen_wall_ns": 2173924273,
+          "copied_nodes_min_max": [
+            16,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            14820765,
+            15395031
+          ],
+          "cold_reopen_wall_ns": 274444268,
+          "copied_nodes_min_max": [
+            23,
+            23
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            25911359,
+            26911381
+          ],
+          "cold_reopen_wall_ns": 495971903,
+          "copied_nodes_min_max": [
+            23,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            27682141,
+            27806617
+          ],
+          "cold_reopen_wall_ns": 2358698861,
+          "copied_nodes_min_max": [
+            30,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            14951205,
+            15759673
+          ],
+          "cold_reopen_wall_ns": 3136203068,
+          "copied_nodes_min_max": [
+            27,
+            27
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            26116466,
+            27295097
+          ],
+          "cold_reopen_wall_ns": 3362152212,
+          "copied_nodes_min_max": [
+            27,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            28504071,
+            28558994
+          ],
+          "cold_reopen_wall_ns": 5223818563,
+          "copied_nodes_min_max": [
+            37,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": 13244361752,
+      "arch": "arm64",
+      "source_kind": "prospective-merge",
+      "job_id": 125996632088,
+      "job_conclusion": "failure",
+      "growth_step": {
+        "name": "Observe fixed touched owners across actual account and history growth",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9
+      },
+      "execution": {
+        "executed_tests": 1,
+        "result": "PASS",
+        "scope": "named-libtest-execution-only",
+        "test": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation"
+      },
+      "log_sha256": "fe551a41dd7fbb5e5240aacb1b017c6d1077b6e968a835cf61a482370c06f23a",
+      "native_summary": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 956 filtered out; finished in 664.42s"
+      ],
+      "completed_cohorts": 9,
+      "native_blocks": 72,
+      "cancelled_admissions": 9,
+      "cold_reopens": 9,
+      "cohorts": [
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            14550291,
+            15735346
+          ],
+          "cold_reopen_wall_ns": 93126963,
+          "copied_nodes_min_max": [
+            13,
+            13
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            25586709,
+            26401902
+          ],
+          "cold_reopen_wall_ns": 317604409,
+          "copied_nodes_min_max": [
+            13,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 64,
+          "admission_median_interval_ns": [
+            26797041,
+            26993369
+          ],
+          "cold_reopen_wall_ns": 2137409232,
+          "copied_nodes_min_max": [
+            16,
+            16
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            16,
+            16
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            917,
+            917
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            14894226,
+            15680310
+          ],
+          "cold_reopen_wall_ns": 275575194,
+          "copied_nodes_min_max": [
+            23,
+            23
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            26262161,
+            26895291
+          ],
+          "cold_reopen_wall_ns": 492866258,
+          "copied_nodes_min_max": [
+            23,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 1024,
+          "admission_median_interval_ns": [
+            28058951,
+            28278513
+          ],
+          "cold_reopen_wall_ns": 2351185922,
+          "copied_nodes_min_max": [
+            30,
+            30
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            30,
+            30
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            1841,
+            1841
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            15603685,
+            16000060
+          ],
+          "cold_reopen_wall_ns": 3155373727,
+          "copied_nodes_min_max": [
+            27,
+            27
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 0,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            27256500,
+            28054492
+          ],
+          "cold_reopen_wall_ns": 3375905164,
+          "copied_nodes_min_max": [
+            27,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 16,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        },
+        {
+          "accounts": 16384,
+          "admission_median_interval_ns": [
+            29407892,
+            29600328
+          ],
+          "cold_reopen_wall_ns": 5265660628,
+          "copied_nodes_min_max": [
+            37,
+            37
+          ],
+          "measured_blocks": 8,
+          "p99_ns": null,
+          "separate_query_point_reads_min_max": [
+            37,
+            37
+          ],
+          "warmup_history_blocks": 128,
+          "witness_bytes_min_max": [
+            2303,
+            2303
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "Same four build artifacts and exact source as CPU report; separate native Growth V2 selector and all nine fixed-owner cohorts. Component observation is not original CPU-policy/ordinary History/public-service qualification. Eight calls per cohort do not support p99."
+}

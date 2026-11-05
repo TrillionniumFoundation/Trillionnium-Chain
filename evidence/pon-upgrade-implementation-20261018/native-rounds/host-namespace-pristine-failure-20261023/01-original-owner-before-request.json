@@ -1,0 +1,9 @@
+{
+  "operation": "operation-c5764bb5789b4818b7b35b8bba282a89",
+  "original_membership": "0::/user.slice/user-1000.slice/session-100718.scope\n",
+  "pid": 1233522,
+  "scope_request_not_yet_called": true,
+  "source": "37808e86dc1ae753b02f11658e9e2fd6c365e083",
+  "starttime": 89891805,
+  "unit": "trnm-host-44c90b775ee441b99bae043a8157a6a2.scope"
+}

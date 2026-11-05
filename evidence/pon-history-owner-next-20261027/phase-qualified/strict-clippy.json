@@ -1,0 +1,67 @@
+{
+  "schema": "history-frozen-strict-clippy-v1",
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "argv": [
+    "nice",
+    "-n",
+    "19",
+    "/tmp/pure-pon-toolchain-20261027/bin/cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--test",
+    "public_v3_multiprocess",
+    "--offline",
+    "--locked",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "started_utc": "2026-10-28T00:55:08.481061+00:00",
+  "ended_utc": "2026-10-28T00:56:59.355878+00:00",
+  "elapsed_seconds": 110.87481962799939,
+  "exit_code": 0,
+  "timed_out": false,
+  "outer_timeout_seconds": 900,
+  "cargo_build_jobs": 1,
+  "nice": 19,
+  "shared_host_peer_W1_real_prover_running": true,
+  "performance_claim": false,
+  "source_before": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "tested_tree": "9b64bb807def976edbe16aa5171492ffdc3bb7fb",
+    "candidate": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 5583,
+    "tracked_bytes": 708204641,
+    "tests_executed_by_identity_check": false
+  },
+  "source_after": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "tested_tree": "9b64bb807def976edbe16aa5171492ffdc3bb7fb",
+    "candidate": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 5583,
+    "tracked_bytes": 708204641,
+    "tests_executed_by_identity_check": false
+  },
+  "strict-clippy.stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "strict-clippy.stderr.txt": {
+    "bytes": 2646,
+    "sha256": "96080353c878848c7aa1064973302202995d995ed0c4e1e1cbc8f94d605e2ff2"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "base_commit": "189ba3adfd9a22c7cfc1537eab535e9eb7c442df",
+  "source_diff_sha256": "280b641963732226f8ea96ae68b70d2adfd95abf8bc2f3410397ff5dd9510583",
+  "path": "/tmp/target-history-56818e4fba76/history-r8-candidate-node",
+  "sha256": "bbc2e67a525c14907f41dfe74e8a0a2d4cb007e2a6178046e450461c366e0d0b",
+  "features": [
+    "default"
+  ],
+  "profile": {
+    "opt_level": "3",
+    "debuginfo": 0,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": true
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "schema": "trnm-pq-validation-evidence-files-v1",
+  "source_commit": "8a74a9e42a9efbc52d83e861f64f03efd40f1406",
+  "source_tree": "3d3ab7ff49c7f0b9109ba9e5ede1362cf6b290e7",
+  "scope": "X230 Linux locked all-feature graph, original compiler/profile, complete pq_rollback_witness filter and strict Node Clippy; no whole-Node runtime or hosted ARM matrix claim.",
+  "job_id": "1a1a2e9ee80-96a-7564",
+  "job_exit_code": 0,
+  "source_worktree_clean_at_packaging": true,
+  "files": [
+    {
+      "path": "preflight.json",
+      "bytes": 2252,
+      "sha256": "f6aa6faebc2db58f0e66d948caa381b13de54f4d87eb3c8cdda0ea24e792bc77"
+    },
+    {
+      "path": "preflight.log",
+      "bytes": 173,
+      "sha256": "72e62bd3821b0361ae2f50828014c3485959fc66db48dc2c76db6834351a398c"
+    },
+    {
+      "path": "compiler.json",
+      "bytes": 2293,
+      "sha256": "3aedcb2d91d8f214c4002be4a70fc2bdd274642ccf6893cbfba5ac883f09a840"
+    },
+    {
+      "path": "compiler.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "locked-linux.json",
+      "bytes": 2453,
+      "sha256": "159b5d4e4991a6556cd17369e1808db98112e107f30999b49b9c4462ada3b56e"
+    },
+    {
+      "path": "locked-linux.log",
+      "bytes": 639484,
+      "sha256": "8a884a92502b0221d8747625e8ffae679ea289f98d81dee4cdffa3245b71bbb9"
+    },
+    {
+      "path": "format.json",
+      "bytes": 2331,
+      "sha256": "55d172ec2eb2914eb4bfda833988b1cfe0e59af337fdc983dcd0b8f536edbfcb"
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-build.json",
+      "bytes": 2450,
+      "sha256": "cadd40a44449f266417b87450fe382e38cd5f49aeed7b15f46e1e60054ef6d5e"
+    },
+    {
+      "path": "native-build.log",
+      "bytes": 103962,
+      "sha256": "9ceb2518f8ab7696481ef5ce92bbb7314237e3e2aefa6bfb0725440b7ac62f2f"
+    },
+    {
+      "path": "strict-clippy.json",
+      "bytes": 2455,
+      "sha256": "9746f7634f90d322d05c0596db284258af3249204bab53bf683223f07d077412"
+    },
+    {
+      "path": "strict-clippy.log",
+      "bytes": 178,
+      "sha256": "c18de68ee245d9f79e5b92156b5c9ba5132e9708ed9e02785cb1b8f19616135b"
+    },
+    {
+      "path": "witness-inventory.json",
+      "bytes": 2457,
+      "sha256": "674b2eec4b97ec1224dc21665528efa14c01ea17b9122abfbdfd1b4f35b098ce"
+    },
+    {
+      "path": "witness-inventory.log",
+      "bytes": 4968,
+      "sha256": "e10a914e96bfb3e47cd1e0a6cc789557f3a326b2013b5fa930df0ca23f43c8bd"
+    },
+    {
+      "path": "witness-scope.json",
+      "bytes": 2487,
+      "sha256": "d12adc2460930b113a6e09a0fd6ec4c1254e3c3978668bd4524a02960f84b9e3"
+    },
+    {
+      "path": "witness-scope.log",
+      "bytes": 273113,
+      "sha256": "72c1656bdd4392f6e4667c92853aff299741a3f423a3e56ec0f763efc7f436f1"
+    },
+    {
+      "path": "postflight.json",
+      "bytes": 2253,
+      "sha256": "52ca02e51b2d0839628e4ba906396cc708bc717cc84cf1228549af694bf43aed"
+    },
+    {
+      "path": "postflight.log",
+      "bytes": 173,
+      "sha256": "72e62bd3821b0361ae2f50828014c3485959fc66db48dc2c76db6834351a398c"
+    },
+    {
+      "path": "provider-reuse.json",
+      "bytes": 1742,
+      "sha256": "96f34fcd3627fafe7ca77b4e7ec1a2f9fb0eec534e912bdc779ae2d750fbc2a5"
+    },
+    {
+      "path": "provider-original-459.json",
+      "bytes": 2843,
+      "sha256": "41a90fe4ba6fbcd7c0e90caaf26df7b46518c621f9aa06c07e7f777367a2f30e"
+    },
+    {
+      "path": "witness-scope-execution.json",
+      "bytes": 9983,
+      "sha256": "41b66fc234cfcc0af602ff7e2fc706db96d37709bf159189676456dc00e3ed90"
+    },
+    {
+      "path": "binary-retention.json",
+      "bytes": 627,
+      "sha256": "979a05bb455a9a6301341b5f62601fa184207f5810c3f70353b2ee5ef21c0be8"
+    },
+    {
+      "path": "job-status.json",
+      "bytes": 485,
+      "sha256": "972429755bbe98890e51ae750d8134ecd2742378d65342eae2c2717908a86726"
+    },
+    {
+      "path": "job.stdout.log",
+      "bytes": 4912,
+      "sha256": "0771c2dcd02cff3bb9c8832de55b47abafa4c9ab767b4d96b044a5d60cdef0eb"
+    },
+    {
+      "path": "job.stderr.log",
+      "bytes": 144,
+      "sha256": "bde8074640a06bc8a7b58f1fa0b8b0094852c40d5dd0f084086e1123335e0b22"
+    }
+  ],
+  "whole_chain_quantum_security_qualified": false
+}

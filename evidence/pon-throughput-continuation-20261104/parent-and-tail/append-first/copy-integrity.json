@@ -1,0 +1,42 @@
+{
+  "all_copies_byte_identical": true,
+  "binary_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "compiled_native_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "files": [
+    {
+      "bytes": 1870,
+      "destination": "stdout.log",
+      "destination_sha256": "c6f4e43de2a22678b25e43b17a3189676a7c36893910eece6a1cfac731a5f111",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/append-reorg-first-functional/stdout.log",
+      "source_sha256": "c6f4e43de2a22678b25e43b17a3189676a7c36893910eece6a1cfac731a5f111"
+    },
+    {
+      "bytes": 0,
+      "destination": "stderr.log",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/append-reorg-first-functional/stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1133,
+      "destination": "receipt.json",
+      "destination_sha256": "7955fad39434041f80f5dcdad03c8604e7ba930393f78f5461692c1dfcace594",
+      "source": "/workspace/scratch/7318d5f890d1/throughput-validation/append-reorg-first-functional/receipt.json",
+      "source_sha256": "7955fad39434041f80f5dcdad03c8604e7ba930393f78f5461692c1dfcace594"
+    }
+  ],
+  "retained_native_test_names": [
+    "store::append_readback_tests::direct_append_cancellation_at_each_callback_leaves_no_partial_publication",
+    "store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+    "store::reorg_readback_tests::final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+    "store::reorg_readback_tests::no_scope_keeps_full_graphs_and_rejects_transaction_replacement_with_cancel_source",
+    "store::reorg_readback_tests::non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+    "store::reorg_readback_tests::original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit",
+    "store::reorg_readback_tests::prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+    "store::reorg_readback_tests::real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen"
+  ],
+  "schema": "trnm-byte-identical-evidence-copy-v1",
+  "scope": "copies of first append/reorg functional observation on f56cc35b dirty native source and dd6a1dee ELF only; no new native tests or performance measurements run by this copy; not subsequent source acceptance",
+  "source_manifest_file_sha256": "a6328a50145e1cd86bd9b73696524869a0ea37475423ce2eccd073bdd18c8f7b",
+  "source_manifest_original_path": "/workspace/scratch/7318d5f890d1/throughput-readback/tail-native-73ab-attempt-2/source-before.json"
+}

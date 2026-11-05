@@ -1,0 +1,59 @@
+{
+  "head": "390617cbe7b169843f60c5622ec26d2531f385d3",
+  "tree": "f2817209ce22b41fdffda284d37c9381edcd6dae",
+  "scope": "single-host; original budget and verifier; explicit ten-second offered block pace, not saturation or a replacement for failed one-second pace",
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.1087338009965606,
+      "child_user_seconds": 0.087348,
+      "child_system_seconds": 0.021408999999999997
+    },
+    {
+      "name": "network-only-business-original-parent-created",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_service_campaign",
+        "network_only_business::network_only_business_confirmations_survive_rotating_false_work",
+        "--",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 7.769538720953278,
+      "child_user_seconds": 6.4578809999999995,
+      "child_system_seconds": 0.586534
+    },
+    {
+      "name": "continuous-growth-protocol-pace",
+      "command": [
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/continuous_pipeline",
+        "/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-390-measured-followup/continuous-growth-protocol-pace",
+        "100",
+        "8",
+        "10000",
+        "growth",
+        "protected"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1053.2078180359676,
+      "child_user_seconds": 171.822977,
+      "child_system_seconds": 34.919694
+    }
+  ]
+}

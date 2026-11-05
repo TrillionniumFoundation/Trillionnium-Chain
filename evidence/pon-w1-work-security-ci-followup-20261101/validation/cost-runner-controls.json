@@ -1,0 +1,12 @@
+{
+  "name": "cost-runner-controls",
+  "command": [
+    "python3",
+    "scripts/ci/test_run_w1_false_trace_reuse_v1.py"
+  ],
+  "exit_code": 0,
+  "started_unix_ns": 1793524915858964451,
+  "ended_unix_ns": 1793524916151212627,
+  "stdout_bytes": 0,
+  "stderr_bytes": 125
+}

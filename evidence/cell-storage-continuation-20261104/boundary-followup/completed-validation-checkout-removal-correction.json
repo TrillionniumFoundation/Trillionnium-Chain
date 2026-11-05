@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-completed-checkout-removal-correction-v1",
+  "prior_record": "completed-validation-worktree-cleanup.json",
+  "prior_claim_requires_correction": true,
+  "observed_path": "/workspace/scratch/73305aff6ced/validation-a9b860",
+  "verified_before_cleanup": {
+    "commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+    "tracked_files": 9023,
+    "all_blob_hashes_equal": true,
+    "extra_files": [
+      ".git"
+    ],
+    "registered_git_worktree": false
+  },
+  "correction": "The prior record stated that the directory was removed at N. A later observation found an unregistered physical checkout byte-exact to A9. This observation supersedes that physical-removal claim; it does not relabel any test receipt.",
+  "cleanup": {
+    "scope": "Only this task's redundant, fully hash-verified checkout",
+    "result": "PARTIAL",
+    "error": "OSError errno 39: Directory not empty during shutil.rmtree",
+    "later_observation": {
+      "remaining_files": 3564,
+      "previously_absent_directory": ".rsync-tmp",
+      "raw_free_bytes": 551149568
+    },
+    "action": "Stopped further removal when the directory contents changed during cleanup. No new or unverified remaining files were deleted."
+  },
+  "other_workspaces_modified": false,
+  "git_objects_and_logs_retained": true
+}

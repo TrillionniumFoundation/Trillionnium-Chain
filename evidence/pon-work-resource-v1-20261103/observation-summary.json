@@ -1,0 +1,114 @@
+{
+  "schema": "pon-w1-local-resource-change-summary-v1",
+  "qualification": "HOLD",
+  "source_commit_base": "a1f6cd3411681d5f1295e1deadba0b639bb7d4d5",
+  "source_path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+  "baseline_source_sha256": "8c6d0105b8018990ef59c63246aacdefe04426a002df8d61a22c6e31fa1c85cc",
+  "candidate_working_tree_source_sha256": "a605dd18d967ec945ea7a4ae7d40549ee8d1ef9b9ce525c5214f5854e35123dc",
+  "candidate_is_committed_release_receipt": false,
+  "harness_sha256": "6de123ce524fbf2ef6b4e7a3af965800886fa7d3cd162e8ae0da966c056b4760",
+  "retained_local_binary_hashes": {
+    "baseline": "be8ac27f5df6f0608d8d99f0f5b5acfae32f499e123288f2287019e93ccd96d3",
+    "candidate": "f8c8a4f6645787e098a5e8038cdedcde423a5031599fb6bb920614340a245c6e"
+  },
+  "allocation_observation": {
+    "baseline": {
+      "process_observations": [
+        {
+          "schema": "w1-process-alloc-observation-v1",
+          "successful_allocation_requests": 3708,
+          "requested_bytes": 28539657
+        },
+        {
+          "schema": "w1-process-alloc-observation-v1",
+          "successful_allocation_requests": 4236,
+          "requested_bytes": 33798921
+        }
+      ],
+      "incremental_valid_calls": 24,
+      "allocation_requests_per_valid_call": 22,
+      "requested_bytes_per_valid_call": 219136
+    },
+    "candidate": {
+      "process_observations": [
+        {
+          "schema": "w1-process-alloc-observation-v1",
+          "successful_allocation_requests": 3516,
+          "requested_bytes": 25393930
+        },
+        {
+          "schema": "w1-process-alloc-observation-v1",
+          "successful_allocation_requests": 3948,
+          "requested_bytes": 29080330
+        }
+      ],
+      "incremental_valid_calls": 24,
+      "allocation_requests_per_valid_call": 18,
+      "requested_bytes_per_valid_call": 153600
+    }
+  },
+  "comparison": {
+    "allocation_requests_per_valid_call": {
+      "baseline": 22,
+      "candidate": 18,
+      "reduction": 4
+    },
+    "cumulative_requested_bytes_per_valid_call": {
+      "baseline": 219136,
+      "candidate": 153600,
+      "reduction": 65536,
+      "reduction_fraction": 0.29906542056074764
+    }
+  },
+  "allocation_method": {
+    "instrument": "external glibc allocation-request interposer in alloc_probe.c; not linked into production Rust",
+    "counted_calls": [
+      "malloc",
+      "calloc",
+      "realloc"
+    ],
+    "normalization": "For each exact binary, subtract the full process counters at loops=1 from loops=2, then divide by 24 additional complete valid native verifications. Both processes execute identical proof setup, scalar/native parity checks, and printing.",
+    "not_measured": [
+      "live allocations",
+      "peak memory",
+      "peak RSS",
+      "cheap-rejection cost"
+    ]
+  },
+  "valid_fixture_observation": {
+    "fixture_count": 24,
+    "classes": [
+      "full dense field input",
+      "zero A with nonzero B",
+      "sparse diagonal A with dense B"
+    ],
+    "target_hex": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "generation": "Full original prove for each trial; complete legal proof only; bounded trial count 64.",
+    "parity": "Independent scalar verify_reference and native verify agree on complete product and challenge/task/ticket; proof digests match across every retained baseline/candidate execution.",
+    "public_transport_or_chain_state_exercised": false
+  },
+  "native_w1_test_result": {
+    "passed": 113,
+    "failed": 0,
+    "ignored": 0,
+    "filtered_non_w1": 12
+  },
+  "timing_status": "Raw timing outputs retained, not qualified for speedup or throughput comparison. Concurrent Node compilation was reported during the four-process batch; no optional follow-up timing was run.",
+  "fixed_build_method": "Original locked Cargo workspace release profile for the primitive library; standalone same safe Rust observer built with rustc 1.95.0 and opt-level=3; no Cargo profile or production dependency change.",
+  "environment": {
+    "rust_toolchain": "1.95.0-x86_64-unknown-linux-gnu",
+    "clock_ticks_per_second": 100,
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  },
+  "preserved_failure": "baseline-build-1.stderr records the initial external observer compilation rejection of an unchecked write return under -Werror; final observer source checks it.",
+  "limits": [
+    "one local x86_64 environment",
+    "allocator counts use a separate local glibc interposer; requested bytes are cumulative requests, not peak RSS",
+    "valid core verification only; no live header/task admission, public transport, state, storage or confirmation measurement",
+    "baseline and candidate use the same fixed legal fixture observer and original locked Cargo release profile",
+    "not a cheapest-work bound, invalid-rejection economic acceptance, cross-architecture acceptance, quantum proof or production qualification",
+    "No producer setup/all-misses/winning-serialization cost cohort or effective adversarial work-share bound was measured; no hardness or public-readiness gate is closed."
+  ],
+  "excluded_files": "All ELF, rlib and shared-library binaries are excluded from this review bundle; original binaries remain local and are bound by SHA-256 above."
+}

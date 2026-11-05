@@ -1,0 +1,11 @@
+{
+  "input_path": "../pon-w1-complete-succinct-20261028/full-proof/input.bin",
+  "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+  "expected_artifacts_sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683",
+  "model_hash": "f4bde4424ac308ce841579e6fa51873698bce09f38e069134981b27b8437ad40",
+  "input_hash": "b24e046b7d51db8897c8fe4ba730e8aae22e60d226172ad57d23fac137af0c7f",
+  "source": "independent original PON domain-and-length-framed hash over exact native witness A/B bytes",
+  "trusted_manifest_registration_observed": false,
+  "parent_eligibility_checked": false,
+  "consensus_admission": false
+}

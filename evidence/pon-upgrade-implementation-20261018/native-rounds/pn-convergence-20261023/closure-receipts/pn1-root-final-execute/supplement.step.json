@@ -1,0 +1,26 @@
+{
+  "command": [
+    "/tmp/trnm-pn-convergence-20261023/evidence-root/pn1-root-final-prepare/public_v3_multiprocess.bin",
+    "--exact",
+    "separate_process_root_rejection_and_signed_confirmation_supplement",
+    "--ignored",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "complete_success": false,
+  "cwd": "/tmp/trnm-pn-convergence-20261023/integration",
+  "elapsed_ns": 88510967708,
+  "elapsed_seconds": 88.510967708,
+  "error": null,
+  "name": "supplement",
+  "outer_stage_timeout_seconds": 540,
+  "returncode": 101,
+  "stderr": "supplement.stderr.log",
+  "stderr_bytes": 351,
+  "stderr_sha256": "f54cb8b833625ce564669fda979aaa3dc15d583ef743ef1a6fcdd45ebfbda768",
+  "stderr_truncated": false,
+  "stdout": "supplement.stdout.log",
+  "stdout_bytes": 294,
+  "stdout_sha256": "bbbcc2f104f640deb0c25c5079ad71c2ade322ae4a771bb15903fe4693ebd9a8",
+  "stdout_truncated": false
+}

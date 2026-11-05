@@ -1,0 +1,17 @@
+test_actual_version_mismatch_never_reaches_crypto (test_pq_openssl_backend.PQOpenSSLBackendTests.test_actual_version_mismatch_never_reaches_crypto) ... ok
+test_cli_and_rust_prefix_mismatch_rejects_before_child (test_pq_openssl_backend.PQOpenSSLBackendTests.test_cli_and_rust_prefix_mismatch_rejects_before_child) ... ok
+test_executable_digest_mismatch_rejects_before_child (test_pq_openssl_backend.PQOpenSSLBackendTests.test_executable_digest_mismatch_rejects_before_child) ... ok
+test_expired_original_budget_never_launches_backend (test_pq_openssl_backend.PQOpenSSLBackendTests.test_expired_original_budget_never_launches_backend) ... ok
+test_missing_declaration_never_uses_path (test_pq_openssl_backend.PQOpenSSLBackendTests.test_missing_declaration_never_uses_path) ... ok
+test_pinned_failure_uses_absolute_cli_default_provider_and_isolated_config (test_pq_openssl_backend.PQOpenSSLBackendTests.test_pinned_failure_uses_absolute_cli_default_provider_and_isolated_config) ... ok
+test_provider_configuration_and_command_shape_overrides_reject (test_pq_openssl_backend.PQOpenSSLBackendTests.test_provider_configuration_and_command_shape_overrides_reject) ... ok
+test_public_failure_diagnostic_is_bounded (test_pq_openssl_backend.PQOpenSSLBackendTests.test_public_failure_diagnostic_is_bounded) ... ok
+test_relative_or_noncanonical_or_symlink_cli_rejects (test_pq_openssl_backend.PQOpenSSLBackendTests.test_relative_or_noncanonical_or_symlink_cli_rejects) ... ok
+test_signing_failure_never_exposes_private_input_diagnostic (test_pq_openssl_backend.PQOpenSSLBackendTests.test_signing_failure_never_exposes_private_input_diagnostic) ... ok
+test_unsupported_declared_version_rejects_before_child (test_pq_openssl_backend.PQOpenSSLBackendTests.test_unsupported_declared_version_rejects_before_child) ... ok
+test_version_lookup_consumes_the_original_absolute_budget (test_pq_openssl_backend.PQOpenSSLBackendTests.test_version_lookup_consumes_the_original_absolute_budget) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.405s
+
+OK

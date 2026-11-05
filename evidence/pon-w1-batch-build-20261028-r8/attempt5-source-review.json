@@ -1,0 +1,32 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT5-SOURCE-REVIEW1",
+  "status": "SOURCE_AND_BINDING_CONTROLS_PASS_NO_BUILD",
+  "pipeline_sha256": "763df6547166b7a865358a2fd7e9f5b5933ff2e9697bb65778605aba5b1a97b5",
+  "wrapper_sha256": "6a65805d8f000fa04e5778ea4de16feb6224808915672033ad7f59a527ec20d2",
+  "wrapper_diff_from_reviewed_attempt3": [
+    "--- ",
+    "+++ ",
+    "@@ -1,5 +1,5 @@",
+    " #!/usr/bin/python3",
+    "-\"\"\"Attempt3: restore exactly four intended Cargo build constraints.",
+    "+\"\"\"Attempt5: restore exactly four intended Cargo build constraints.",
+    " ",
+    " The upstream SDK deliberately sanitizes CARGO variables for guest compilation.",
+    " This wrapper preserves its argv, RUSTC, encoded flags, HOME and every other env",
+    "@@ -14,7 +14,7 @@",
+    " ",
+    " CARGO = '/tmp/pure-pon-toolchain-20261027/bin/cargo'",
+    " CARGO_SHA256 = '841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66'",
+    "-LOG = '/tmp/w1-batch-phase0-attempt3-20261028-r8/cargo-wrapper.jsonl'",
+    "+LOG = '/tmp/w1-batch-phase0-attempt5-20261028-r8/cargo-wrapper.jsonl'",
+    " RESTORE = {",
+    "     'CARGO_HOME': '/tmp/pure-pon-cargo-20261027',",
+    "     'CARGO_NET_OFFLINE': 'true',"
+  ],
+  "changes": "Official installed1.91.1 selected through supported isolated home/default settings. Bind real installation and full file inventory; verify all members, regular hashes and links before/after. Require exact nested SDK RUSTC path. Keep SDK3.0.6, native toolchain, patched original guest lock and 4-key wrapper behavior.",
+  "source_commit": "401096e8f9eed84fcb4d78122a49fa5dd3aa88e9",
+  "source_tree": "db0908a57db7675b22485c6ad712c8e19e4f38fa",
+  "first_static_review_failure": "The earlier heredoc ast.literal_eval attempted a dictionary whose keys include Path expressions; ValueError before any declaration was written or pipeline/metadata/native command executed. Corrected reviewer only reads literal scalar assignments. This was not a Phase0 run.",
+  "compile_or_metadata_command_executed": false,
+  "guest_execution_or_proof_executed": false
+}

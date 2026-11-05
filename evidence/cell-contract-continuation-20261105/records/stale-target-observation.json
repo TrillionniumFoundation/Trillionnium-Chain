@@ -1,0 +1,7 @@
+{
+  "status": "NOT_ACCEPTED",
+  "reason": "Shared target reused old red-control binary: all four new delta tests absent, seven historical tests alone ran. Clean affected package before new source validation.",
+  "old_production_tests_count": 7,
+  "expected_delta_tests_count": 11,
+  "counts_in_final_acceptance": false
+}

@@ -1,0 +1,16 @@
+test_different_network_family_parent_generation_expiry_reject (test_pq_cell_release.PQCellReleaseTests.test_different_network_family_parent_generation_expiry_reject) ... ok
+test_evaluation_receipt_signature_and_plan_binding (test_pq_cell_release.PQCellReleaseTests.test_evaluation_receipt_signature_and_plan_binding) ... ok
+test_field_limits_and_zero_resource_reject (test_pq_cell_release.PQCellReleaseTests.test_field_limits_and_zero_resource_reject) ... ok
+test_model_and_cell_weight_substitution_reject (test_pq_cell_release.PQCellReleaseTests.test_model_and_cell_weight_substitution_reject) ... ok
+test_no_false_model_adoption_or_independent_evaluator_claim (test_pq_cell_release.PQCellReleaseTests.test_no_false_model_adoption_or_independent_evaluator_claim) ... ok
+test_real_two_of_three_reviews_and_release_signature (test_pq_cell_release.PQCellReleaseTests.test_real_two_of_three_reviews_and_release_signature) ... ok
+test_receipt_quorum_duplicate_reviewer_and_untrusted_key_reject (test_pq_cell_release.PQCellReleaseTests.test_receipt_quorum_duplicate_reviewer_and_untrusted_key_reject) ... ok
+test_release_owner_cannot_self_count_as_reviewer (test_pq_cell_release.PQCellReleaseTests.test_release_owner_cannot_self_count_as_reviewer) ... ok
+test_release_signature_cannot_omit_or_relabel_reviewers (test_pq_cell_release.PQCellReleaseTests.test_release_signature_cannot_omit_or_relabel_reviewers) ... ok
+test_reordered_duplicate_or_too_many_cells_reject (test_pq_cell_release.PQCellReleaseTests.test_reordered_duplicate_or_too_many_cells_reject) ... ok
+test_strict_canonical_manifest_mutations_reject (test_pq_cell_release.PQCellReleaseTests.test_strict_canonical_manifest_mutations_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.384s
+
+OK

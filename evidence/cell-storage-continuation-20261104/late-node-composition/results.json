@@ -1,0 +1,65 @@
+{
+  "schema": "trnm.cell.late-node-composition-observation.v1",
+  "tested_commit": "17bea70f6646c74e80bab0571e735dba903c2ea5",
+  "tested_tree": "b3a8280ce4c546e749f7ee1cade86de91a9b47b3",
+  "source_before_after_equal": true,
+  "tracked_entries_verified": 8822,
+  "tracked_bytes_verified": 941682534,
+  "static_checks": {
+    "strict_clippy": "PASS: whole workspace, all targets, default features, -D warnings",
+    "format": "PASS",
+    "native_inventory": "PASS",
+    "source_pins": 429,
+    "required_paths": 343,
+    "ci_contract": "PASS",
+    "repository": {
+      "activation": false,
+      "head": "17bea70f6646c74e80bab0571e735dba903c2ea5",
+      "local_links": 2498,
+      "normal_dependency_edges": 24,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1119,
+      "source_state": "committed-clean",
+      "tree": "b3a8280ce4c546e749f7ee1cade86de91a9b47b3",
+      "workspace_packages": 26
+    },
+    "source_negative_tests": {
+      "ci_source_integrity": 34,
+      "pq_source_integrity": 34,
+      "claim_guard": 22,
+      "authority_surface": 11
+    }
+  },
+  "initial_selected_node_invocation": {
+    "status": "compile_failed_before_tests",
+    "exit_code": 101,
+    "signal": "SIGKILL",
+    "tests_executed": 0,
+    "cargo_build_jobs": 1,
+    "original_profile_preserved": true,
+    "source_diagnostic_emitted": false,
+    "memory_limit_bytes": 8589934592,
+    "interpretation": "SIGKILL is consistent with observed shared-memory exhaustion; the resource snapshot alone does not establish an exclusive cause."
+  },
+  "retry_results_included": false,
+  "original_source_results_preserved": {
+    "A": "3e866c637197339700c93a6b716d20a3968291f1",
+    "C": "b110ba5bc1f755e5988c1b1f710243677976bcc8"
+  },
+  "qualification_promoted": false,
+  "production_activation": false,
+  "notes": [
+    "The original selected native command did not execute its five selected tests. Any later retry is recorded separately.",
+    "The 101 source negatives repeat a prior-source scope and are not additional unique runtime coverage.",
+    "These receipts belong to E, not to a subsequent concurrent merge.",
+    "The bounded resource-scheduling window ended without starting the same-profile retry; the selected native tests remain unexecuted on E."
+  ],
+  "retry_scheduling": {
+    "status": "resource_window_not_observed",
+    "scheduler_exit_code": 75,
+    "test_command_started": false,
+    "tests_executed": 0,
+    "record": "retry-resource-window-final.json"
+  }
+}

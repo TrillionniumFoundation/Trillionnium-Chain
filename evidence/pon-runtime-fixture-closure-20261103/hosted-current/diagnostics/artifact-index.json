@@ -1,0 +1,73 @@
+{
+  "schema": "diagnostic-observability-artifact-index-v1",
+  "files": {
+    "draft-v1/read_observability.py": {
+      "bytes": 21809,
+      "sha256": "57685ad23b1ac91122ad8e5b9710baee5671b28190efa749efe0f03aecd95876"
+    },
+    "draft-v1/readback.json": {
+      "bytes": 827183,
+      "sha256": "02eb0a3920690084cc38554f57f9752d2ae6f041ff6cad564b6a9dcfd3492e8e"
+    },
+    "draft-v1/selected-original-rows.json.gz": {
+      "bytes": 43207,
+      "sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19"
+    },
+    "draft-v1/source-identities.json": {
+      "bytes": 4318,
+      "sha256": "7a0bc23b193008faa61f13ac73ff58995331e162d2532f2be5e53258f3f1b224"
+    },
+    "finalize_readback.py": {
+      "bytes": 10380,
+      "sha256": "e422ee1903ca322842a16894d25d9484069f0b27df46804491b4090d44095105"
+    },
+    "read_observability.py": {
+      "bytes": 22441,
+      "sha256": "2b501278966246ed924d661eab752706076752750e287efa7a5642af67c2b242"
+    },
+    "readback.json": {
+      "bytes": 966118,
+      "sha256": "72deb9444572e8d48f73d657ec1ee263d48fa3c0a9d79471596dfb44095f201d"
+    },
+    "reader-attempt-1.json": {
+      "bytes": 541,
+      "sha256": "bf77d0131c573a5b1052f9f6cfe79a4cb0e1836e2590071357293f5b642796a6"
+    },
+    "reader-attempt-1.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reader-attempt-1.stdout.log": {
+      "bytes": 190,
+      "sha256": "7b59f5488819b8d8ca7f38655cf0e3d6310df12b8043383c8148f3db38ac2d5d"
+    },
+    "reader-attempt-2.json": {
+      "bytes": 760,
+      "sha256": "68fc1302f02ce45e699ba93e580f708ea17f081951858ef6481b2a91e4466162"
+    },
+    "reader-attempt-2.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reader-attempt-2.stdout.log": {
+      "bytes": 190,
+      "sha256": "e8e257359d043cb20e54b9b8fa495048e2b88caf3d5eab583587eccea420efa1"
+    },
+    "selected-original-rows.json.gz": {
+      "bytes": 43207,
+      "sha256": "49d99cc252aae00811ede5f606ca3bc195b0f1a33689a0569228a84e1f67ce19"
+    },
+    "source-identities.json": {
+      "bytes": 4318,
+      "sha256": "7a0bc23b193008faa61f13ac73ff58995331e162d2532f2be5e53258f3f1b224"
+    },
+    "summary.json": {
+      "bytes": 14037,
+      "sha256": "c0c134b107088709b0048e562bbfb5ca8e35da6db5da2bfc7f9b4b3aab8c435f"
+    },
+    "verification.json": {
+      "bytes": 508,
+      "sha256": "82243d8ecc3a2ddf9f45e8fbfc5f15e389888b33f1064f75441e23d635f380c2"
+    }
+  }
+}

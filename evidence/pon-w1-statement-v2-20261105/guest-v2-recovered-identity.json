@@ -1,0 +1,35 @@
+{
+  "schema": "TRNM-W1-V2-RECOVERED-GUEST-IDENTITY1",
+  "locked_build_result": "build-v2-recovered.json",
+  "methods_path": "/workspace/scratch/79360d3567d1/target-v2/release/build/trnm-w1-zk-methods-v2-34d5caa351109b82/out/methods.rs",
+  "methods_sha256": "e766c4bb657392803a74695b2b1395ad1c3fa56a0ba5ffb5783ce2834238b7c0",
+  "guest_path": "/workspace/scratch/79360d3567d1/target-v2/riscv-guest/trnm-w1-zk-methods-v2/trnm-w1-full-guest-v2/riscv32im-risc0-zkvm-elf/release/trnm-w1-full-guest-v2.bin",
+  "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+  "guest_bytes": 375928,
+  "image_id": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "expected_initial_image_id": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "expected_initial_guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+  "image_matches_initial_pin": true,
+  "guest_sha256_matches_initial_pin": true,
+  "guest_bytes_matches_initial_pin": true,
+  "image_matches_independent_verifier_pin": true,
+  "new_proof_generated": false
+}

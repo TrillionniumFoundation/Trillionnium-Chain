@@ -1,0 +1,137 @@
+{
+  "schema": "f0-exact-committed-static-readback-v1",
+  "head": "65ad46dfb1f6eb5e64ab4436e5bc127acebe8a4d",
+  "tree": "dbb27f59e0572e2b368e1158e6d4e2c46a367fb7",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 0.06491204099802417,
+      "captured_child_cpu_seconds": 0.05596899999999999,
+      "stdout": "0.stdout.txt",
+      "stderr": "0.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "65ad46dfb1f6eb5e64ab4436e5bc127acebe8a4d",
+        "--output",
+        "/workspace/scratch/56818e4fba76/recovery/round10/f0-recovery/committed-source-readback/source-before.json"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 2.3761932230008824,
+      "captured_child_cpu_seconds": 1.258778,
+      "stdout": "1.stdout.txt",
+      "stderr": "1.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_native_phase_host.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 0.1664771110008587,
+      "captured_child_cpu_seconds": 0.127189,
+      "stdout": "2.stdout.txt",
+      "stderr": "2.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_fixed_root*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 0.26810105399999884,
+      "captured_child_cpu_seconds": 0.23825900000000022,
+      "stdout": "3.stdout.txt",
+      "stderr": "3.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 0.06466384699888295,
+      "captured_child_cpu_seconds": 0.06781500000000007,
+      "stdout": "4.stdout.txt",
+      "stderr": "4.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 43.201308195999445,
+      "captured_child_cpu_seconds": 43.145857,
+      "stdout": "5.stdout.txt",
+      "stderr": "5.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 0.016107393999845954,
+      "captured_child_cpu_seconds": 0.008709999999997553,
+      "stdout": "6.stdout.txt",
+      "stderr": "6.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "65ad46dfb1f6eb5e64ab4436e5bc127acebe8a4d",
+        "--output",
+        "/workspace/scratch/56818e4fba76/recovery/round10/f0-recovery/committed-source-readback/source-after.json"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "wall_seconds": 1.1178509199999098,
+      "captured_child_cpu_seconds": 0.9388569999999961,
+      "stdout": "7.stdout.txt",
+      "stderr": "7.stderr.txt"
+    }
+  ],
+  "wall_seconds": 47.29881428899898,
+  "captured_child_cpu_seconds": 45.841434,
+  "source_unchanged_clean": true,
+  "checks_passed": true,
+  "native_and_host_execution": false,
+  "format_and_native_qualification_pending": true
+}

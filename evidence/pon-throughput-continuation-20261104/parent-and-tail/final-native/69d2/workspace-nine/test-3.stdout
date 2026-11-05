@@ -1,0 +1,11 @@
+
+running 1 test
+test account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations ... ok
+
+successes:
+
+successes:
+    account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_fork_shape_and_all_lift_input_relations
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1018 filtered out; finished in 0.03s
+

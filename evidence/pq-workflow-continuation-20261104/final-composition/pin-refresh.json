@@ -1,0 +1,46 @@
+{
+  "base_sha": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+  "changes": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "before": "103a7a6d3a0ca6c2a79071e3b54b89b9c701338f",
+      "after": "2d9657048f016b49924c3270bb21c4d62132ddf8"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "before": "7e6fa33cbaa50d76f1a8fd0146a44ca3623345b3",
+      "after": "ce1608248d2ee67ed8f5d82a2c5f15942689139b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "15493d3231802f097705c216afd416dec2965a5a",
+      "after": "5067247b1eb62efc9fab96d19f3e1f12cb57a5d5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "before": "e21b8873c8fc4ee4b9dacc24a1107dfe76f09901",
+      "after": "cda95433f7bdd6d1c013e506891154c9722ff967"
+    }
+  ],
+  "restored": [
+    "evidence/pon-pq-account-native-20261028/README.md",
+    "evidence/pon-pq-cell-deadline-native-v1/README.md",
+    "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+    "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+    "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+    "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+    "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+    "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+    "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+    "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+    "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+    "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+    "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+    "evidence/pon-pq-spki-v1/README.md",
+    "evidence/pon-pq-tpq1-native-v1/README.md",
+    "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+    "evidence/pon-pq-tpq1-native-v1/native-test.log",
+    "qualification/full-pq-r3/README.md"
+  ],
+  "claims_unchanged": true
+}

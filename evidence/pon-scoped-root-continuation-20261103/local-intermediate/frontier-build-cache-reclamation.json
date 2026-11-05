@@ -1,0 +1,19 @@
+{
+  "schema": "owned-build-cache-reclamation-v1",
+  "reason": "actual ENOSPC prevents safe source/evidence writes; completed own intermediate build cache only; final combined candidate still requires original build/runtime validation",
+  "target": "/workspace/scratch/abae1861b451/frontier-target",
+  "files": 1104,
+  "allocated_bytes_before": 679608320,
+  "completed_protocol_binary_sha256": "b35583ba6ad9e8eddec8c68fd4853c52a704c76df1a4610bc6e623588ad264b4",
+  "passed_protocol_tests": 9,
+  "passed_private_builder_compile_fail": 1,
+  "preserved": [
+    "source worktrees",
+    "frontier native logs and binary hashes",
+    "protocol native logs and binary hash",
+    "all failed build/selector outcomes"
+  ],
+  "final_combined_source_qualified": false,
+  "actual_free_bytes_after_unlink": 164962304,
+  "physical_space_reclaimed_not_established": true
+}

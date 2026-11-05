@@ -1,0 +1,738 @@
+{
+  "archive_portability": {
+    "archive_sha256": "d8493fb0d03f536f3d80012d65a7a1ac33a36f8254e7ed8e9a0830a2b9236cdb",
+    "checks": [
+      {
+        "actual_exit": 2,
+        "check": "portable_strict_reader_all_31",
+        "expected_exit": 2,
+        "stderr": "",
+        "stdout": "{\"net_compute_benefit\": null, \"qualification\": false, \"runs\": 31, \"schema\": \"pon-shared-material-total-cost-v2\", \"status\": \"incomplete_local_observations\"}\n"
+      },
+      {
+        "check": "portable_standalone_summary_bytes",
+        "exit": 0,
+        "identical": true,
+        "sha256": "7e03e5f7b38014ace73bb21b3f50d4a89b87c4b3d90505e6d5697dd4e8e3ce80",
+        "stderr": "",
+        "stdout": "{\"counts\": {\"complete\": 30, \"fanout\": 4, \"incomplete_exhaustion\": 1, \"new_batches_of_demand_from_repetitions\": 0, \"paired\": 24, \"requests_in_unique_batch\": 64, \"reuse\": 2, \"runs\": 31, \"unique_material_batches\": 1}, \"output_sha256\": \"7e03e5f7b38014ace73bb21b3f50d4a89b87c4b3d90505e6d5697dd4e8e3ce80\", \"qualification\": false, \"schema\": \"pon-shared-material-statistics-v2\"}\n"
+      }
+    ],
+    "finished_unix_ns": 1793870758328020390,
+    "full_raw_readback_equal_except_relocated_directory_fields": true,
+    "payload_files_checked": 1241,
+    "qualification": false,
+    "result": "PASS",
+    "schema": "pon-shared-material-archive-portability-v2",
+    "started_unix_ns": 1793870752424600176
+  },
+  "archive_publication_boundary": "Raw archive retains frozen measurements and first integration preparation. This later publication-only record is excluded from the archive to avoid a circular commitment.",
+  "final_source_gate": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 492,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "hosted_ci_waited_for": false,
+  "inherited_raw_log_whitespace": {
+    "changed_to_hide_failure": false,
+    "first_full_delta_check_exit": 2,
+    "reason": "Pre-existing concurrent raw logs have trailing whitespace or terminal blank lines; exact observations are preserved. Own changes relative to cf8 pass both staged and working whitespace checks."
+  },
+  "initial_dda_integration_checks": {
+    "checks": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "finished_unix_ns": 1793870670250481064,
+        "log_bytes": 171,
+        "log_sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886",
+        "name": "preflight",
+        "returncode": 0,
+        "started_unix_ns": 1793870670154631658
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "finished_unix_ns": 1793870670636104942,
+        "log_bytes": 557,
+        "log_sha256": "bf6c55da8737cfa3b2cb27694761507b193cf3532290da00f0f2e2e29204b863",
+        "name": "pq-source-check",
+        "returncode": 0,
+        "started_unix_ns": 1793870670250754535
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "finished_unix_ns": 1793870670788429778,
+        "log_bytes": 180,
+        "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+        "name": "ci-contract-check",
+        "returncode": 0,
+        "started_unix_ns": 1793870670636374037
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "finished_unix_ns": 1793870691457091500,
+        "log_bytes": 16318,
+        "log_sha256": "55e9508ec6d506b2252a8f4e8bebf5b0a84ede968cb5f06681a639453b10a74f",
+        "name": "ci-contract-tests",
+        "returncode": 0,
+        "started_unix_ns": 1793870670788817120
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_native_constants_roster.py"
+        ],
+        "finished_unix_ns": 1793870691526732908,
+        "log_bytes": 1002,
+        "log_sha256": "08e7f67a71883874a8e1d5c869274de7fa18cd8699f5f30ef9cec81ee7a4ad51",
+        "name": "native-constants-roster-tests",
+        "returncode": 0,
+        "started_unix_ns": 1793870691457491451
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "finished_unix_ns": 1793870697180889999,
+        "log_bytes": 6898,
+        "log_sha256": "61f42d58bb229a1afeebbca6774df0b32245d24b18151990fbdde36acbca3e43",
+        "name": "source-negative-tests",
+        "returncode": 0,
+        "started_unix_ns": 1793870691527060150
+      },
+      {
+        "command": [
+          "python",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "finished_unix_ns": 1793870697273763606,
+        "log_bytes": 35,
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "name": "source-inventory",
+        "returncode": 0,
+        "started_unix_ns": 1793870697181181838
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/check_repository.py"
+        ],
+        "finished_unix_ns": 1793870771037490805,
+        "log_bytes": 307,
+        "log_sha256": "98c201f7f32e0612d4df52715ab2ce84be5edf0dd4b38d1c40cbd26c190d5dac",
+        "name": "repository-check",
+        "returncode": 0,
+        "started_unix_ns": 1793870697274101164
+      },
+      {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--all",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "finished_unix_ns": 1793870791277719220,
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "workspace-format",
+        "returncode": 0,
+        "started_unix_ns": 1793870771037826950
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "finished_unix_ns": 1793870791322929071,
+        "log_bytes": 1538,
+        "log_sha256": "3e46eaf7b098b0c1d6ddbea57404e2b991418d3985697e4421048cc2ad7b6304",
+        "name": "staged-whitespace",
+        "returncode": 2,
+        "started_unix_ns": 1793870791278016728
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "finished_unix_ns": 1793870791344650015,
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "unstaged-whitespace",
+        "returncode": 0,
+        "started_unix_ns": 1793870791323256984
+      }
+    ],
+    "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+    "preserved_remote": "dda4cc47362065819e9591f11f713933e7a853bf",
+    "scope": "integrated candidate before evidence-only publication metadata"
+  },
+  "late_integration": {
+    "applied-merge.json": {
+      "applied_and_staged_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+        "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md",
+        "evidence/pon-architecture-continuation-20261105/README.md",
+        "evidence/pon-architecture-continuation-20261105/business-failure.json",
+        "evidence/pon-architecture-continuation-20261105/business-manifest.json",
+        "evidence/pon-architecture-continuation-20261105/execution-summary.json",
+        "evidence/pon-architecture-continuation-20261105/ghostdag-order-max6.json",
+        "evidence/pon-architecture-continuation-20261105/ghostdag-replay.json",
+        "evidence/pon-architecture-continuation-20261105/raw-records.tar.gz",
+        "evidence/pon-architecture-continuation-20261105/records-index.json",
+        "formal/pon-nakamoto-v1/experiments/architecture_compare.py",
+        "formal/pon-nakamoto-v1/experiments/ghostdag_order_campaign.py",
+        "formal/pon-nakamoto-v1/experiments/test_architecture_compare.py",
+        "formal/pon-nakamoto-v1/ghostdag_order_reference.py",
+        "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+        "formal/pon-nakamoto-v1/test_ghostdag_order_reference.py",
+        "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/test_pon_public_v3_phase_read.py",
+        "scripts/llm_runtime_release.py",
+        "scripts/pon_public_v3_phase_read.py",
+        "scripts/test_llm_runtime_release.py",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+        "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs"
+      ],
+      "commit_created_or_ref_updated": false,
+      "existing_ours_evidence_files_preserved": 22,
+      "existing_ours_files_preserved": 34,
+      "explicit_merge_base": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "head_unchanged": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "measured_core_files_unchanged": 18,
+      "merged_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/ci_job.sh"
+      ],
+      "real_index_updated": true,
+      "remote_commit": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+      "remote_tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c",
+      "schema": "late-integration-applied-v1",
+      "unmodified_remote_paths_preserved_exactly": 35
+    },
+    "ci-contract.json": {
+      "command": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "log_bytes": 180,
+      "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+      "name": "ci-contract",
+      "returncode": 0,
+      "started_utc": "2026-11-05T09:37:32.295927+00:00",
+      "wall_ns": 96608544
+    },
+    "ci-shell-syntax.json": {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/ci/ci_job.sh"
+      ],
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "ci-shell-syntax",
+      "returncode": 0,
+      "started_utc": "2026-11-05T09:37:32.309977+00:00",
+      "wall_ns": 16666788
+    },
+    "git-object-verification.json": {
+      "all_blob_sizes_and_git_shas_verified": true,
+      "base": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "changed_blob_count": 38,
+      "commit": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+      "commit_reconstruction": {
+        "added_message_lf": 0,
+        "author_timezone": "-0500",
+        "bytes": 679,
+        "committer_timezone": "-0500",
+        "encoding": null
+      },
+      "git_commit_metadata_reconstruction_candidates_checked": 31,
+      "git_commit_metadata_reconstruction_sha_verified": true,
+      "head_unchanged": true,
+      "real_index_unchanged": true,
+      "schema": "late-integration-git-object-verification-v1",
+      "temporary_index": "/workspace/scratch/708bcecd45db/late-integration/cf8-remote.index",
+      "tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c"
+    },
+    "manifest.json": {
+      "all_verified": true,
+      "base": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "files": [
+        {
+          "bytes": 91658,
+          "git_blob_sha1": "91f62653605487caffb41699445db38280bc124c",
+          "git_mode": "100644",
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "3ef57f58048c3e53ce56077f3da688f532df7ab0d18b085d9629b4cc05ac8d7f",
+          "status": "modified"
+        },
+        {
+          "bytes": 526370,
+          "git_blob_sha1": "f039b0c2cc90465ed3b411613f713ff721d5eb4a",
+          "git_mode": "100644",
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "8d69d2ee5fce0f06039d8eb3e402b6a58ccc2f0fe0574a35622c94ec79855603",
+          "status": "modified"
+        },
+        {
+          "bytes": 25457,
+          "git_blob_sha1": "59f0d119455b016b631771cb9774a7bc1c4be98b",
+          "git_mode": "100644",
+          "path": "docs/protocol/pon-nakamoto-v1/details/ARCHITECTURE_COMPARISON_V1.md",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "31711a9cc23817b56c3a527f44b7176ca0f89517ec975bf80f125ddafc644ba1",
+          "status": "modified"
+        },
+        {
+          "bytes": 11855,
+          "git_blob_sha1": "7a36e2f11c9d633e2c66903db23dd9af9996c2e4",
+          "git_mode": "100644",
+          "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "877076ec1bf12cdfad6ee3120bc504845a4d159a97cd79a08d0cd486a5332d47",
+          "status": "modified"
+        },
+        {
+          "bytes": 11034,
+          "git_blob_sha1": "b2b77ab07c3892535c3236e1132a993996566c47",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/README.md",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "c13f13678a65226394b77dcd04cd2f534fbd19ef8300081876207dddc9a22f28",
+          "status": "added"
+        },
+        {
+          "bytes": 6112,
+          "git_blob_sha1": "d1d71857f9a5c30dbf56591227ea531046330ce7",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/business-failure.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "2f414e9824afe996f7038372a6dbacb95b5de9cd09194df7c0380753dbf5f341",
+          "status": "added"
+        },
+        {
+          "bytes": 51328,
+          "git_blob_sha1": "0b295eae20d08216bc67d7beb903973247bfca03",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/business-manifest.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "f58a378cb0264f6599d265c1748a50103c45c8dcbc9bd2063e1aa550641bc1c3",
+          "status": "added"
+        },
+        {
+          "bytes": 37801,
+          "git_blob_sha1": "55c4d23694676b104c4abe3a784a3c920b9a0702",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/execution-summary.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "93c1ea3c45bebf89798504ebaa4652135507144d6a38c48bb4b58e06b087cf5f",
+          "status": "added"
+        },
+        {
+          "bytes": 7963,
+          "git_blob_sha1": "c4b5c8b41c2ac2bb8ad083c5f6960438ad8049f7",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/ghostdag-order-max6.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "f531c01d6701525fdf5b8096c48947f814cf39c7a1a09b399d309fad16a4a7c5",
+          "status": "added"
+        },
+        {
+          "bytes": 339,
+          "git_blob_sha1": "5c5904768cef15da405e6076cbf08bae0e829b08",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/ghostdag-replay.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "fef766abb028e63c492a6721bb6cd4caef2e4008a9e60c7cb0340458133e5711",
+          "status": "added"
+        },
+        {
+          "bytes": 1044134,
+          "git_blob_sha1": "fde2f27329ab0a853ba473065c786d12875f4c28",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/raw-records.tar.gz",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "938f83b82a0d9d74c30c1a97c533a5af9b33175f0adf3d88829761aac310ca1d",
+          "status": "added"
+        },
+        {
+          "bytes": 34017,
+          "git_blob_sha1": "3f60304212857b8b26c2cb6f29f5cb76edd13310",
+          "git_mode": "100644",
+          "path": "evidence/pon-architecture-continuation-20261105/records-index.json",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "5c4b11445ae816a36973e26f0cbf6cf72994c7d48e28a2dbe0bb08ceb559ac75",
+          "status": "added"
+        },
+        {
+          "bytes": 18803,
+          "git_blob_sha1": "b5a260c4cc959b2463596cd78561b2e5ddc94e0d",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/experiments/architecture_compare.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "fa438f829e305020fce190250d46e9b6272c2ec7b9aeb82745dfc311cc2e0fb4",
+          "status": "modified"
+        },
+        {
+          "bytes": 8266,
+          "git_blob_sha1": "1b236a8200c01c7e713a7d20b24a06570a753678",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/experiments/ghostdag_order_campaign.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "dde0099a14f5c9c477575bc68b7e8ba9a485c9ce9c7246bab3cbd5937851ed17",
+          "status": "added"
+        },
+        {
+          "bytes": 18680,
+          "git_blob_sha1": "8ec23ccc009ef8d04d16496897829f9526a3ba49",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/experiments/test_architecture_compare.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "0c97181b1082788ae3903eafc28157291dae55b06a25289656b60fbd70903d11",
+          "status": "modified"
+        },
+        {
+          "bytes": 16019,
+          "git_blob_sha1": "ff3c8476f014090ab937df5e6cf008f118b8501c",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/ghostdag_order_reference.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "63f4ae8fcb6916c440e11eb883af1f14f2dab35939d0821d3ecc0c0953e1e1a7",
+          "status": "added"
+        },
+        {
+          "bytes": 48419,
+          "git_blob_sha1": "dc39fbc8670075e4bbc8fde5e74f81b3fff41bf6",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "da2daaf616f12d0284e16a36c67f392d19becacc797755abb4578c4ef4e0ce6d",
+          "status": "modified"
+        },
+        {
+          "bytes": 26240,
+          "git_blob_sha1": "a469fa5192603b771eb773e89e1fbdd5a14cdf82",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/test_ghostdag_order_reference.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "0545c1d2be0e0a1855d947b58131de8e81524ca45ed9097eabc0406c9d331156",
+          "status": "added"
+        },
+        {
+          "bytes": 30216,
+          "git_blob_sha1": "acd88cc7888c116815181f34eb327247140a167f",
+          "git_mode": "100644",
+          "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "82c89fd614c9a418e1f6426bb2bc39c7f92c15166263ccdf4954a91c073bbaf3",
+          "status": "modified"
+        },
+        {
+          "bytes": 23895,
+          "git_blob_sha1": "5257dd4a05f4222ec02835fed40da8c5c7486b3b",
+          "git_mode": "100644",
+          "path": "scripts/ci/ci_job.sh",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "7c42aaef03d8250dd0c8a341ffc399f5bb131b46e7f012d5dd762df1f6478ff2",
+          "status": "modified"
+        },
+        {
+          "bytes": 77445,
+          "git_blob_sha1": "7d9d5c13e94ef1e5c0366d3ea75bf5435cd4ca3d",
+          "git_mode": "100644",
+          "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "fdcaa42d088635bb63a933f57904377a3d020409ee6452f09237c5acdf250b7c",
+          "status": "modified"
+        },
+        {
+          "bytes": 26363,
+          "git_blob_sha1": "c1cc08ce8189364dfc45666e6af5793eac81f8fc",
+          "git_mode": "100644",
+          "path": "scripts/llm_runtime_release.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "5593480205fbeb3c9e2c1bd29250ffedb6e768e5e5aca5289d5746967845d734",
+          "status": "modified"
+        },
+        {
+          "bytes": 68512,
+          "git_blob_sha1": "1f5a5fa2e1c95719553b0de0cd20464a0d15310a",
+          "git_mode": "100644",
+          "path": "scripts/pon_public_v3_phase_read.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "8c12e3e894b842d4f8b2ca80ca4059bca0cae372deb90b2538eeb29f2f33f0dc",
+          "status": "modified"
+        },
+        {
+          "bytes": 21407,
+          "git_blob_sha1": "44871794d8b93fe7236cad99fa3c2477a82e6253",
+          "git_mode": "100644",
+          "path": "scripts/test_llm_runtime_release.py",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "31721fec327f0d02d238a3d54123bdfb502cb16b46c952210e74b0531c50a191",
+          "status": "modified"
+        },
+        {
+          "bytes": 341973,
+          "git_blob_sha1": "2bba9433c7f87c6adb7262da09006f083f1c38c0",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "3ca6905e1dfbc618601f17b2a7698d8113f4648e008384df29baacb481410850",
+          "status": "modified"
+        },
+        {
+          "bytes": 29354,
+          "git_blob_sha1": "ecd5e028329ab448868e45bfae74cbade09ca428",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "ab5b2360b01c97fe930f64ede2a15d907b7457b094b1f13e51f7e5f4237d1b6e",
+          "status": "modified"
+        },
+        {
+          "bytes": 20930,
+          "git_blob_sha1": "b9c1178ded8ac279ef0d96f4feda1dba65923233",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof_tests.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "afc583beae4f9187f64b5308f8917a724e9a4c5cdb41a68ffbd1ab8d3708aa02",
+          "status": "modified"
+        },
+        {
+          "bytes": 386697,
+          "git_blob_sha1": "891ec08f59a6e2346735bd08b1bf363466fe38a3",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+          "status": "modified"
+        },
+        {
+          "bytes": 77581,
+          "git_blob_sha1": "e8e3afa160cbf6e958d2d6b47b2cf7561f229ba4",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "fdd161cfee7e994f092e048020ae8dce140e852edf0c9e99ec9edce1cc838d21",
+          "status": "modified"
+        },
+        {
+          "bytes": 21603,
+          "git_blob_sha1": "377064d416246f6c29c2cbd7e3481fd3e3498819",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "a2096b5dc5f8ec8290fe638e127e138000d932af34c74798e2a64a0d598d4da9",
+          "status": "modified"
+        },
+        {
+          "bytes": 32770,
+          "git_blob_sha1": "16b9eebe277e36a2101f18d481883bb45a9d76e8",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "6324f70d7420b7468e8125db96be4c3562f3be7e833126e8c601d4890720ff2b",
+          "status": "modified"
+        },
+        {
+          "bytes": 11564,
+          "git_blob_sha1": "e519d4967106a5472ce30197d6fab99a8d40c814",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "d67674bde9e9b271ae5b0236da9f81193cd6a957343319aebdd798dcdfdc727a",
+          "status": "modified"
+        },
+        {
+          "bytes": 92421,
+          "git_blob_sha1": "4bf4a6582020b6e1439b559e4ee236e7ac69e9a0",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "9189dca96f2d14802e54bbdc6c9a5d95bf6b5e9636863acd3dc6f44fcba2d2c6",
+          "status": "modified"
+        },
+        {
+          "bytes": 8070,
+          "git_blob_sha1": "fcfaf9cd03008c9d1cc402fc13b68d40070e1e07",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/header_timestamp.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "ca7d50ecec37c1a437dab85be856dbcbbbad108c3d959c60f068621437adaca8",
+          "status": "added"
+        },
+        {
+          "bytes": 25146,
+          "git_blob_sha1": "0182e91efb2dda2eee911e6d8dde769a0e9e50e1",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "9a2ba764c0adfe57b4435122deec3274ba4d22a5bda9a042ecdd5241432f213f",
+          "status": "modified"
+        },
+        {
+          "bytes": 18698,
+          "git_blob_sha1": "3fe5fcbb14e6ca663a9e964abf5d1700482b3978",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/read_epoch.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "e813750f67981341cbe48293b439385249d9a6832cbbbe5249aa5c127ee2985b",
+          "status": "added"
+        },
+        {
+          "bytes": 36607,
+          "git_blob_sha1": "80431c483d76b827df22eb543e78575a73a58cd5",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+          "status": "modified"
+        },
+        {
+          "bytes": 8844,
+          "git_blob_sha1": "c8d082e2f902bda7911b10a87cb30164a864819f",
+          "git_mode": "100644",
+          "path": "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs",
+          "retrieval": "GitHub fetch_file pinned commit / base64; tree SHA, size and Git blob SHA verified",
+          "sha256": "6c27211ad90a976fc0f00db9c056c2389c92a7e96ae9c13b872806ca467b4c0d",
+          "status": "added"
+        }
+      ],
+      "files_count": 38,
+      "head": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "schema": "pon-late-integration-remote-stage-v1",
+      "total_bytes": 3344591,
+      "tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c"
+    },
+    "pq-source-gate.json": {
+      "command": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "log_bytes": 557,
+      "log_sha256": "c962e52a737eacbf290eb027c5b092cf89b05a45011d131693e4ddb4052c23e2",
+      "name": "pq-source-gate",
+      "returncode": 0,
+      "started_utc": "2026-11-05T09:37:32.285657+00:00",
+      "wall_ns": 307080934
+    },
+    "prepared-merge.json": {
+      "commands_retained_once_in_original_relative_order": [
+        "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v",
+        "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_ghostdag_order_reference.py' -v",
+        "    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_architecture_compare.py' -v",
+        "    python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py",
+        "    python3 scripts/ci/test_shared_material_cost_v2.py",
+        "    python3 scripts/ci/test_shared_material_security_v1.py",
+        "    python3 scripts/ci/test_shared_material_campaign_v2.py"
+      ],
+      "explicit_base": "dda4cc47362065819e9591f11f713933e7a853bf",
+      "files": [
+        {
+          "bytes": 91658,
+          "git_blob_sha1": "70e92e7084fccdac3f22f709a2165c0d8a955734",
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "sha256": "0302dad576dfccc72cc9f98fbec8f283e0a21650f0fb8503a56cd95bf8cf7959"
+        },
+        {
+          "bytes": 527911,
+          "git_blob_sha1": "8ee67feb47b79a851ec7cdb7f5b76bbf93eb18bd",
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "sha256": "0ce18e7421daa08d862e2ef70de569806923486737252c521428bc5d053b01c6"
+        },
+        {
+          "bytes": 24135,
+          "git_blob_sha1": "87d2a087b66895b27040952c09bb789d9662d7a4",
+          "path": "scripts/ci/ci_job.sh",
+          "sha256": "47ed119efee2f24984399f50afd019cb4cad40dd9807862ec410412b46a9b419"
+        }
+      ],
+      "overlaps": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/ci_job.sh"
+      ],
+      "pinned_blobs": 492,
+      "plan_base_lines": 6819,
+      "plan_base_lines_removed": 0,
+      "plan_ours_inserted_lines": 20,
+      "plan_remote_inserted_lines": 48,
+      "remote_head": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+      "remote_pq_structure_preserved_except_exact_pin_updates": {
+        "scripts/ci/check_ci_contract.py": {
+          "merged_git_blob_sha1": "89b4ef2addb137e3c191d169677a3307be93e2a7",
+          "remote_git_blob_sha1": "3138da98830aa551715a0e395fd8cf34dd0be27d"
+        },
+        "scripts/ci/ci_job.sh": {
+          "merged_git_blob_sha1": "87d2a087b66895b27040952c09bb789d9662d7a4",
+          "remote_git_blob_sha1": "5257dd4a05f4222ec02835fed40da8c5c7486b3b"
+        }
+      },
+      "repo_written": false,
+      "required_paths": 410,
+      "schema": "late-integration-prepared-merge-v1",
+      "shared_cost_contract_literal_unchanged": true
+    }
+  },
+  "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "measured_tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf",
+  "preserved_remote": "cf8c88acc026bd36a00aedb40e09aa380ddbc0eb",
+  "preserved_remote_tree": "83c80dae1fb5bd7423beb290e109a5bd9582297c",
+  "production_activation": false,
+  "qualification": false,
+  "schema": "pon-shared-material-publication-validation-v2",
+  "source_files_json_comparison_scope": "initial dda integration checkpoint, before late cf8 research CI additions; measured runtime core remains byte-identical. ci_job and pins now preserve both source lines.",
+  "source_identity_rule": "Measurements and native test receipts stay bound to their actually executed commits; integration is not claimed to be a fresh benchmark."
+}

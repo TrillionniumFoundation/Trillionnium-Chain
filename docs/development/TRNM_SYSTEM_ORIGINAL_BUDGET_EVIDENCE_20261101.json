@@ -1,0 +1,353 @@
+{
+  "schema": "trnm-original-budget-evidence-snapshot-v1",
+  "decision": "HOLD",
+  "scope": "Summary of inspected immutable native artifacts and source review; not a replacement for raw artifacts or acceptance of a later head.",
+  "observed_through_utc": "2026-11-01 10:06:30 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "pr": 678,
+  "sources": {
+    "runtime": {
+      "commit": "b97f63254df260243186f14c6e177ab96fffdcd8",
+      "tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+      "ordered_parents": [
+        "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "605af09da34ca72665f822200a2f3e75573e6052"
+      ],
+      "prospective_merge": "b15dcc671bc16f2885dbcab27f2a8005d0d8210a"
+    },
+    "explicit_priority_selectors": {
+      "commit": "bb84d3ded8acc8b33ddbf32e1c8defae76900a0e",
+      "tree": "8802deea926665ecb05d5c943c22c00814877cb7",
+      "runtime_changes": false,
+      "prospective_merge": "59196f102d30bc50305d0686c26c0df662b33713"
+    }
+  },
+  "original_four_second": {
+    "run_id": 41293784189,
+    "source": "b97f63254df260243186f14c6e177ab96fffdcd8",
+    "window_ns": 4000000000,
+    "malicious_w1_workers": 16,
+    "host": {
+      "cpu_max": "25000 100000",
+      "cpu_max_burst": "0",
+      "memory_max": "2147483648",
+      "memory_swap_max": "0",
+      "pids_max": "256"
+    },
+    "scope": "Four inspected actual execution artifacts; not a complete 2x2 architecture/source matrix for this run.",
+    "executions": [
+      {
+        "name": "protocol x64 head",
+        "job_id": 124810273570,
+        "artifact_id": 13079060614,
+        "artifact_sha256": "dbf8ccc15c31b1adb0fa6bb2693f2e3dc4c31c08468434f7a5aa0f5def9d492c",
+        "baseline_confirmed": 1,
+        "baseline_offered": 1,
+        "baseline_latency_ns": 2897804531,
+        "pressure_ack_count": 7,
+        "pressure_last_ack_ns": 1951356475,
+        "pressure_confirmed": 0,
+        "pressure_offered": 1,
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "replay": "first page completed; second page deadline",
+        "page_one_wall_ns": 1400063213,
+        "page_one_caller_cpu_ns": 75215510,
+        "page_two_start_ns": 3556821763,
+        "page_two_error_ns": 4051780044
+      },
+      {
+        "name": "protocol x64 prospective merge",
+        "job_id": 124810273577,
+        "artifact_id": 13078826035,
+        "artifact_sha256": "b5abee7635e97f89c4c96d6be12aabfe099e3c05ff8c6d8b899dc3afaf5e4999",
+        "baseline_confirmed": 1,
+        "baseline_offered": 1,
+        "baseline_latency_ns": 2817577638,
+        "pressure_ack_count": 7,
+        "pressure_last_ack_ns": 1974011406,
+        "pressure_confirmed": 0,
+        "pressure_offered": 1,
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "replay": "first page completed; second page deadline"
+      },
+      {
+        "name": "cost x64 head",
+        "job_id": 124810273556,
+        "artifact_id": 13078512746,
+        "artifact_sha256": "175f20be14eb42aaa2202aed87077769b665312ff6ecc49307245d5410ff1631",
+        "baseline_confirmed": 1,
+        "baseline_offered": 1,
+        "baseline_latency_ns": 3476350205,
+        "pressure_ack_count": 7,
+        "pressure_last_ack_ns": 2446005365,
+        "pressure_confirmed": 0,
+        "pressure_offered": 1,
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "replay": "first page deadline"
+      },
+      {
+        "name": "cost ARM head",
+        "job_id": 124810273572,
+        "artifact_id": 13078667645,
+        "artifact_sha256": "b6743a1120d1fd8a4dd9217dfed1cff729f862a6ed0b22c502ce76295538cd5c",
+        "baseline_confirmed": 1,
+        "baseline_offered": 1,
+        "baseline_latency_ns": 2196132609,
+        "pressure_ack_count": 7,
+        "pressure_last_ack_ns": 2244766954,
+        "pressure_confirmed": 0,
+        "pressure_offered": 1,
+        "error": "PUBLIC_REQUEST_DEADLINE",
+        "replay": "first page completed; second page deadline"
+      }
+    ],
+    "aggregate_failures": [
+      "CONFIRMATION_TARGET"
+    ],
+    "invariant_target_met": true,
+    "named_rust_tests_per_artifact": 5,
+    "named_rust_tests_passed": true,
+    "host_errors": false,
+    "oom": false,
+    "saturation_tps": null,
+    "confirmation_tail_percentiles": null
+  },
+  "complete_original_campaign": {
+    "source": "b97f63254df260243186f14c6e177ab96fffdcd8",
+    "run_id": 41293783904,
+    "job_id": 124810272193,
+    "artifact_id": 13078093744,
+    "artifact_sha256": "95fc270716f9b996b2bc5f2b5bedeee5fb2b568ec0543d1bdbac69e6cfee85c2",
+    "seed_transfers": 1024,
+    "seed_blocks": 4,
+    "business_blocks": 21,
+    "business_rounds": 3,
+    "phase_duration_seconds": 30,
+    "hostile_processes": {
+      "baseline": 0,
+      "from_zero": 24,
+      "late_product": 24
+    },
+    "runs": [
+      {
+        "run": 1,
+        "original_criteria_met": false,
+        "confirmed_rounds": {
+          "baseline": 1,
+          "from_zero": 0,
+          "late_product": 0
+        },
+        "offered_rounds_per_phase": 3,
+        "phase_startup_errors": [],
+        "report_validation_failure": null,
+        "genuine_budget_depletion_observed": false
+      },
+      {
+        "run": 2,
+        "original_criteria_met": false,
+        "confirmed_rounds": {
+          "baseline": 1,
+          "from_zero": 0,
+          "late_product": 0
+        },
+        "offered_rounds_per_phase": 3,
+        "phase_startup_errors": [],
+        "report_validation_failure": null,
+        "genuine_budget_depletion_observed": false
+      },
+      {
+        "run": 3,
+        "original_criteria_met": false,
+        "confirmed_rounds": {
+          "baseline": 1,
+          "from_zero": 0,
+          "late_product": 0
+        },
+        "offered_rounds_per_phase": 3,
+        "phase_startup_errors": [],
+        "report_validation_failure": null,
+        "genuine_budget_depletion_observed": false
+      }
+    ],
+    "client_stage_observation": {
+      "run": 1,
+      "phase": "baseline",
+      "nested_do_not_sum": true,
+      "account_graph": {
+        "calls": 69,
+        "cpu_seconds_rounded": 5.0461,
+        "wall_seconds_rounded": 21.6738
+      },
+      "verify_state": {
+        "calls": 84,
+        "cpu_seconds_rounded": 5.1439,
+        "wall_seconds_rounded": 21.9236
+      },
+      "complete_state_root": {
+        "calls": 36,
+        "cpu_seconds_rounded": 0.008,
+        "wall_seconds_rounded": 0.0851
+      },
+      "three_run_account_graph_cpu_seconds_range_approx": [
+        4.92,
+        5.05
+      ],
+      "attribution": "Source-correlated graph/control-path diagnosis; not an isolated syscall-level causal measurement."
+    }
+  },
+  "later_complete_campaign": {
+    "observed_at_utc": "2026-11-01 09:57:50 UTC",
+    "source": "bb84d3ded8acc8b33ddbf32e1c8defae76900a0e",
+    "tree": "8802deea926665ecb05d5c943c22c00814877cb7",
+    "run_id": 41294743084,
+    "job_id": 124813103557,
+    "artifact_id": 13078533015,
+    "conclusion": "failure",
+    "complete_failed_criteria_count": 3,
+    "phase_startup_errors": [],
+    "report_validation_failure": null,
+    "source_after_verified": true,
+    "phase_counts": null,
+    "phase_counts_note": "New per-phase JSON was not re-extracted in this snapshot; do not copy b97 counts into this source."
+  },
+  "original_large_state": {
+    "selectors": [
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator"
+    ],
+    "profile": "default release",
+    "initial_cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "start_reserve_ns": 100000000,
+    "workers": 2,
+    "absolute_deadline_seconds": 10,
+    "complete_key_and_canonical_value_bytes": 8625548,
+    "strings": 2100,
+    "string_bytes": 4080,
+    "baseline": "custom large genesis; not default-genesis growth or full-capacity acceptance",
+    "completed_original_release_result_for_candidate": null,
+    "bb84_priority": {
+      "run_id": 41294743048,
+      "status": "pending",
+      "jobs": []
+    },
+    "b97_required_runtime_shards": {
+      "jobs": [
+        124810273559,
+        124810273545
+      ],
+      "status": "in_progress",
+      "named_selector_outcomes": "unknown until actual completed logs are available"
+    }
+  },
+  "original_history": {
+    "source": "b97f63254df260243186f14c6e177ab96fffdcd8",
+    "run_id": 41293784074,
+    "blocks": 4105,
+    "service_lifetime_seconds": 1800,
+    "original_public_parent": {
+      "cpu_max": "25000 100000",
+      "memory_max": "2147483648"
+    },
+    "observed_at_utc": "2026-11-01 10:06:30 UTC",
+    "jobs": [
+      {
+        "job_id": 124810272766,
+        "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+        "status": "in_progress",
+        "conclusion": null,
+        "active_step": [
+          "Execute 4105 real work blocks and paid public full sync"
+        ]
+      },
+      {
+        "job_id": 124810272811,
+        "name": "native priorities (ubuntu-24.04, head, history)",
+        "status": "in_progress",
+        "conclusion": null,
+        "active_step": [
+          "Execute 4105 real work blocks and paid public full sync"
+        ]
+      },
+      {
+        "job_id": 124810272833,
+        "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+        "status": "in_progress",
+        "conclusion": null,
+        "active_step": [
+          "Execute 4105 real work blocks and paid public full sync"
+        ]
+      },
+      {
+        "job_id": 124810272977,
+        "name": "native priorities (ubuntu-24.04-arm, head, history)",
+        "status": "in_progress",
+        "conclusion": null,
+        "active_step": [
+          "Execute 4105 real work blocks and paid public full sync"
+        ]
+      }
+    ],
+    "completed_result": null,
+    "current_height": null,
+    "diagnostic": "Candidate records the actual reactor exit condition before cleanup sets stop. Old after-return stop=true does not establish why the loop exited.",
+    "lifetime_expiry_as_root_cause": "Unproven for new original full-History runs at this snapshot."
+  },
+  "bounded_recent_batch_success": {
+    "source": "b97f63254df260243186f14c6e177ab96fffdcd8",
+    "run_id": 41293784173,
+    "jobs": [
+      124810272783,
+      124810272975,
+      124810272985,
+      124810272939
+    ],
+    "combinations": "x64/ARM by head/prospective merge",
+    "conclusion": "success",
+    "actual_named_tests": true,
+    "tracked_source_verified": true,
+    "scope": "Native owner/transaction controls and rotating false-work confirmation regression; does not override separate original business failures."
+  },
+  "local": {
+    "completed_cold_no_run_build": {
+      "commit": "b40cfffa4c6525ba2ed947130d7667082fd5b512",
+      "tree": "a61aa2029758386a6278bc6d58debc0f590e6d15",
+      "elapsed_seconds": 602,
+      "tracked_entries": 6771,
+      "tracked_bytes": 781023099,
+      "native_tests_executed": 0,
+      "rustc": "1.95.0 (59807616e 2026-04-14)",
+      "release": true,
+      "locked": true,
+      "offline": true,
+      "completed": true
+    },
+    "checks": {
+      "confirmation_reader": 98,
+      "ci_contract_tests": 95,
+      "source_integrity_negative_tests": 34,
+      "public_readiness_reader_tests": 51,
+      "formatting": "passed",
+      "project_boundary": "passed",
+      "corpus_pins": "passed",
+      "native_source_inventory": "passed"
+    },
+    "final_bb84_rebuild": {
+      "completion_observed": false,
+      "native_tests_executed_by_premature_runner": 0,
+      "reason": "Managed executor unavailable before completed final provenance was observed."
+    },
+    "new_strict_clippy_result": null
+  },
+  "reporting": {
+    "failed_confirmations_remain_in_denominator": true,
+    "minimum_success_samples": {
+      "p50": 2,
+      "p95": 20,
+      "p99": 100
+    },
+    "saturation_tps_measured": false,
+    "complete_pq_configuration_qualified": false,
+    "production_activation": false
+  }
+}

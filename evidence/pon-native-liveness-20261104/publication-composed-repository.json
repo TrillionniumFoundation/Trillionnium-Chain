@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "publication-composed-repository",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T15:07:56.696835+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 50312947433,
+  "finished_at": "2026-11-04T15:08:47.009969+00:00",
+  "log_bytes": 307,
+  "log_sha256": "d87664c923e41716df64c47ded98bf6f57e9046c84cdc7fa37ae12ba9f70a9e9",
+  "final_head": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "final_dirty_paths": []
+}

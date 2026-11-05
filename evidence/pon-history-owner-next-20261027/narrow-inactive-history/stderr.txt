@@ -1,0 +1,4 @@
+
+thread 'store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation' (8) panicked at crates/trnm-pon-node/src/native_authenticated_tests.rs:749:86:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(PublicMutationCpuBudget), kind: Capacity, message: "PUBLIC_MUTATION_CPU_BUDGET", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

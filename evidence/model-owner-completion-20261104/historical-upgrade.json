@@ -1,0 +1,56 @@
+{
+  "current_runtime_assessment_and_family_files_absent_from_new_reader": true,
+  "database_sha256": "8e30a01eb240fb96e587864a578e988e79056123272f0dc0518b63d6c1313a73",
+  "independent_antirollback": false,
+  "independent_custody": false,
+  "new_ledger_sha256": "fc61ecbfba09a3bccd7c1ba1c8862ff684e24a866cd6f8bf4e0e14b87ff7806f",
+  "old_head": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "old_source_sha256": {
+    "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+    "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+    "scripts/llm_runtime_assessment.py": "133871703daf740c26cccb30e450cd90127d1ee206c75734929ddbf364602f5d",
+    "scripts/llm_runtime_pilot.py": "9a567f29f0bc64913dbfaae45d195772b66362c775060c1e418d3ed92f3741b6",
+    "scripts/llm_runtime_trial_ledger.py": "cd19645147730580b03cec8b40c7dacf6ebbb20285c6c1f98923bf450f83196b",
+    "scripts/test_llm_runtime_assessment.py": "c259833462346225a54ecd09486dc58d2edd1efdcd505f688115a2321af7bc79"
+  },
+  "original_projection": {
+    "attempts": {
+      "1111111111111111111111111111111111111111111111111111111111111111": {
+        "alpha": [
+          1,
+          160
+        ],
+        "plan": "391f1ad270e3a767e3018cfc2d6312d72cda9928f14267e1b77cd2c0e06a8968",
+        "state": "complete-unqualified",
+        "terminal": "58994b996879bcf65ae42d65baeb5ecdcee2dd5061fcc8c95d5cc83fa6164b99"
+      }
+    },
+    "checkpoint": "d59b5d79b6c789598af29029b1ed49f01a4f1cec69880d9470ee59f6e1dc0dac",
+    "policy": "f92313e5b0337771e383e4d52bf2922395e375d1b19a177b3828575800b56757",
+    "scope": "cooperative-local-public-pilot-no-global-custody-or-qualification",
+    "spent": 1
+  },
+  "results": [
+    {
+      "case": "original-a9-writer-to-new-reader",
+      "database_bytes_identical": true,
+      "policy_checkpoint_spent_and_terminal_identical": true,
+      "result": "PASS"
+    },
+    {
+      "case": "family-formatting-only",
+      "new_reader_result": "PASS",
+      "old_reader_rejection": "RUNTIME_COST_FAMILY_BINDING",
+      "policy_checkpoint_spent_and_terminal_identical": true
+    },
+    {
+      "case": "assessment-obligation-only",
+      "new_reader_result": "PASS",
+      "old_reader_rejection": "TRIAL_TERMINAL_COST_BINDING",
+      "policy_checkpoint_spent_and_terminal_identical": true
+    }
+  ],
+  "schema": "llm-trial-historical-source-replay-probe-v1",
+  "scope": "Real SQLite and fresh processes; all model receipts are control fixtures; no real model attempt",
+  "statistical_acceptance": false
+}

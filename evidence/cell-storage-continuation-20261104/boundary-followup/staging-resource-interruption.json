@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-evidence-staging-resource-observation-v1",
+  "source_head": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "command": "freeze-storage-evidence.py (git add of explicit evidence paths)",
+  "result": "ENOSPC",
+  "git_exit_code": 128,
+  "outer_helper_exit_code": 1,
+  "message": "fatal: unable to write loose object file: No space left on device",
+  "source_or_test_conditions_changed": false,
+  "subsequent_observation": {
+    "raw_free_bytes": 316985344,
+    "observed_utc": "2026-11-05T02:13:54.215786+00:00",
+    "checksum_verified_C_cache_files_selected_for_cleanup": 0,
+    "C_cache_bytes_removed": 0,
+    "cause_of_recovered_free_space": "unknown shared-environment change; not attributed to this task"
+  },
+  "archive_cleanup_record_write": "A separate cleanup-record write also hit ENOSPC. No reclaimed capacity is credited to that unretained attempt.",
+  "native_tests_executed": 0
+}

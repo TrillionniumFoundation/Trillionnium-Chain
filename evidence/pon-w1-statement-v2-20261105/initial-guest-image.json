@@ -1,0 +1,16 @@
+{
+  "image_id": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+  "bytes": 375928,
+  "locked_rebuild_required": true,
+  "new_proof_generated": false
+}

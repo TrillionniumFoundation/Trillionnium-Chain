@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-pq-build-failure-observation-v1",
+  "scope": "exact-source local build attempt; not a native test run",
+  "local_source_commit": "ed31b019525963456e0e84eb5f0862ef6ee0186a",
+  "source_tree": "f5cdc9a1c46ef01a722ab472e89a2a7b80ca17aa",
+  "same_tree_remote_commit": "82a576f111f686ffaa5e4eff015bf6b83bb7cec2",
+  "exit_code": 101,
+  "status": "command_failed",
+  "source_before_equals_after": true,
+  "rustc_sigkill_observed": true,
+  "cgroup_memory_limit_bytes": 8589934592,
+  "observed_cgroup_oom_kill_before": 5,
+  "observed_cgroup_oom_kill_after": 6,
+  "cgroup_counters_are_shared_not_per_process": true,
+  "log_sha256": "45c27b578e2b6e0a7a2340a39c2cb1283cbbfaad656e1848e606abb41a45c985",
+  "native_binary_produced": false,
+  "native_controls_executed": 0,
+  "whole_chain_pq_qualified": false
+}

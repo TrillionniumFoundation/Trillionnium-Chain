@@ -1,0 +1,4 @@
+
+thread 'main' (33) panicked at /workspace/scratch/7318d5f890d1/throughput-readback/half-close-original-40a5/original-half-close.rs:24:2:
+completed-request trailing byte must not hide closed caller write-half
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

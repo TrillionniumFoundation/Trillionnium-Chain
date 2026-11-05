@@ -1,0 +1,97 @@
+{
+  "published_parent": "1c18878c42727e5261c7706d996fbfb672a8dc3c",
+  "checkout_head": "9f04640877078204d367f753eba684d94e705a74",
+  "preserved_document_overlay": {
+    "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md": "10ba17f811da67dc4716b33d2c08eff35a3e6c9f",
+    "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md": "d200a232d4cc65f3066aba61a294f3ef1ed8a1e3",
+    "config/pon/pq-cross-branch-corpus-v1.json": "c47f214feae0bacefc8a10369f4f52b63a47da5b"
+  },
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "blob": "9434a12dca6b66da00c0862a07ece1a2b26166ce"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "blob": "2b71f487040937a1142e028ed7c99bf090282a65"
+    }
+  ],
+  "commands": [
+    {
+      "name": "preflight-before",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3190634250640869,
+      "stdout_sha256": "5faf39c62b3a214f26e9cab379843e14dcc3e6d68117efea4476f020a9ed2b6b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "preflight-after",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21854901313781738,
+      "stdout_sha256": "5faf39c62b3a214f26e9cab379843e14dcc3e6d68117efea4476f020a9ed2b6b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.16447043418884277,
+      "stdout_sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "source-corpus",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.9496138095855713,
+      "stdout_sha256": "01f8b236ffd929a5c12078cda4c44c61a86978b1de4077bace21058d2484b054",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.047269582748413086,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "format",
+      "argv": [
+        "/home/qian/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 1,
+      "seconds": 43.393128395080566,
+      "stdout_sha256": "104b1db8fb789ac546af8d5d04dbf4a227673f1663e5911eecaffdbd5ad188cc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "other_pins_unchanged": 375,
+  "patch_unchanged": true,
+  "all_succeeded": false
+}

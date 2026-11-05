@@ -1,0 +1,100 @@
+{
+  "all_source_matches": true,
+  "source_checks": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+      "source_current_match": true,
+      "harness_match": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+      "source_current_match": true,
+      "harness_match": true
+    }
+  ],
+  "exact_registry_package_identities_match": true,
+  "harness_lock_unchanged": true,
+  "workspace_lock_unchanged": true,
+  "binaries": [
+    {
+      "path": "/workspace/scratch/295b0f1bca6b/target/debug/deps/pn1_w1_source_harness-d15c9e72a10add73",
+      "sha256": "e922d7dee5a719e8cd517cc13a42447faecdf9b20aa2aeb7921ef79ea151e74b",
+      "bytes": 27264960
+    }
+  ]
+}

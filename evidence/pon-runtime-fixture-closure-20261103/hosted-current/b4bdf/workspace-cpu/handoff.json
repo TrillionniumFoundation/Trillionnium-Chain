@@ -1,0 +1,109 @@
+{
+  "cohort": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "head": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+    "merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+    "run": 41732370067,
+    "tracked_bytes": 884109821,
+    "tracked_entries": 7757,
+    "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb"
+  },
+  "collector_attempts": [
+    {
+      "attempt": 1,
+      "classification": "all four current C2 artifacts independently checked against their own source/profile/native/growth/metadata records; no inherited C1 result",
+      "exit_code": 0,
+      "source_file": "collect-workspace-cpu.py",
+      "stderr_file": "collector-attempt-1.stderr"
+    }
+  ],
+  "complete_workspace_test_execution": false,
+  "external_inputs_retained_losslessly": [
+    "all original ZIP text member bytes",
+    "original source and artifact/job/download metadata receipts",
+    "exact committed source bytes for original workflow and readers"
+  ],
+  "file_count_excluding_handoff": 13,
+  "files": [
+    {
+      "bytes": 196209,
+      "file": "arm-head-original-records.json.gz",
+      "sha256": "36f0346393a590c74ccdb287df1a7fd23501542cca359c35195865739246ee86"
+    },
+    {
+      "bytes": 196702,
+      "file": "arm-merge-original-records.json.gz",
+      "sha256": "5b9ddd671c7311152553b48a3b9d7b4768879a96586a5b36efa97a75d0dc5b81"
+    },
+    {
+      "bytes": 28749,
+      "file": "collect-workspace-cpu.py",
+      "sha256": "8e547d760eb38d4a87c6272d8ea20f1f082dc39748196654bdf65c2fff57ec52"
+    },
+    {
+      "bytes": 903,
+      "file": "collector-attempt-1.json",
+      "sha256": "1b5bf6ee6ff5567c9837c4b1b3b718abafa4545ea872a6c6b5a4dc63d999d73e"
+    },
+    {
+      "bytes": 0,
+      "file": "collector-attempt-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 484,
+      "file": "collector-attempt-1.stdout",
+      "sha256": "173d4ef58086bda8a2c0fe16c72b5e630bb02448f590f564fbf618f892487536"
+    },
+    {
+      "bytes": 1942,
+      "file": "index.json",
+      "sha256": "05c2db2f7bbc030e1a933c22146fe66cc1ef4d37a53f0fe263975ebd71578c8c"
+    },
+    {
+      "bytes": 272,
+      "file": "preflight.json",
+      "sha256": "53d48b2260002578054c06a82a05f4b7e8e172204c22b1649d045c5f850258cb"
+    },
+    {
+      "bytes": 448559,
+      "file": "readback.json",
+      "sha256": "71a5967c4ee8f4bb52175f1453754d37280767681424aa951cd195be9d8127ed"
+    },
+    {
+      "bytes": 54411,
+      "file": "source-and-original-metadata.json.gz",
+      "sha256": "d6a7e6faa518800c0b4cf202922d350169b061509f9cfd3074069351d6f1366d"
+    },
+    {
+      "bytes": 17161,
+      "file": "summary.json",
+      "sha256": "eae38ad33bfb25528d54b8d6e650c48f8cbd28b1aae782270200de9d5f8f3367"
+    },
+    {
+      "bytes": 196713,
+      "file": "x64-head-original-records.json.gz",
+      "sha256": "d968d26d313afdbf13c38552b0e2c56d4d2f13178b59c3f25781087ad267a914"
+    },
+    {
+      "bytes": 196846,
+      "file": "x64-merge-original-records.json.gz",
+      "sha256": "53ecaa09b4efdbc8fb6bdf4a9fb8e84631f417b88c0ac149dda7e78b47294794"
+    }
+  ],
+  "independent_elf_bytes_present": false,
+  "independent_original_zip_digest_verification": true,
+  "native_executed": false,
+  "new_downloads": false,
+  "observed_utc": "2026-11-03T23:43:57.697245+00:00",
+  "original_zip_bytes_retained_in_this_bundle": false,
+  "primary_index": "index.json",
+  "primary_index_precedes_final_collector_process_receipts": true,
+  "public_confirmation_target_qualified": false,
+  "public_host_qualified": false,
+  "reader_reuse_note": "Identical C1 data-checking code except broader metadata filename glob to recognize the original C2 workspace-cpu-final-jobs receipt; distinct exact source snapshot and native artifact bytes for C2.",
+  "release_qualified": false,
+  "result": "PASS_FOR_NAMED_ORIGINAL_WORKSPACE_CPU_LANES",
+  "schema": "trnm-workspace-cpu-readback-handoff-v1",
+  "total_bytes_excluding_handoff": 1338951
+}

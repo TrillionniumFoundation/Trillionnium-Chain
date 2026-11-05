@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "../../../evidence/pon-w1-batch-build-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "../../../evidence/pon-w1-rust1911-acquisition-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "../../../evidence/pon-w1-batch-ruint-security-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "../../../docs/protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "../../../evidence/pon-w1-complete-succinct-20261028/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "statement/src/lib.rs",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "methods/guest/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "host/src/main.rs",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "host/src/staged.rs",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "contract_controls.py",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "examples/one-leaf.json",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "EXPERIMENT_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "STAGED_PILOT_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/README.md",
+      "link": "EXTERNAL_GATES_REVIEW.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "link": "../../../evidence/pon-w1-batch-build-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "link": "../../../evidence/pon-w1-batch-build-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "link": "../../../evidence/pon-w1-rust1911-acquisition-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/EXPERIMENT_CONTRACT.md",
+      "link": "STAGED_PILOT_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/STAGED_PILOT_CONTRACT.md",
+      "link": "../../../evidence/pon-w1-batch-build-20261028-r8/README.md",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/STAGED_PILOT_CONTRACT.md",
+      "link": "host/src/staged.rs",
+      "exists": true
+    },
+    {
+      "source": "formal/pon-nakamoto-v1/w1_batch/STAGED_PILOT_CONTRACT.md",
+      "link": "host/src/main.rs",
+      "exists": true
+    }
+  ]
+}

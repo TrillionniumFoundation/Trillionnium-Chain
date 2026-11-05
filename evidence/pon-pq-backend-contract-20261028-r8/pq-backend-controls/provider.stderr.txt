@@ -1,0 +1,14 @@
+test_explicit_archive_still_requires_exact_digest_without_network_fallback (__main__.PreparationFailureTests.test_explicit_archive_still_requires_exact_digest_without_network_fallback) ... ok
+test_failed_download_never_exports_or_overwrites_failure (__main__.PreparationFailureTests.test_failed_download_never_exports_or_overwrites_failure) ... ok
+test_wrong_archive_never_extracts_or_exports (__main__.PreparationFailureTests.test_wrong_archive_never_extracts_or_exports) ... ok
+test_auxiliary_backend_cannot_be_removed_or_ignored (__main__.ProviderWiringTests.test_auxiliary_backend_cannot_be_removed_or_ignored) ... ok
+test_changed_pins_removed_smoke_and_premature_export_are_rejected (__main__.ProviderWiringTests.test_changed_pins_removed_smoke_and_premature_export_are_rejected) ... ok
+test_each_provider_cannot_be_removed_weakened_duplicated_or_moved (__main__.ProviderWiringTests.test_each_provider_cannot_be_removed_weakened_duplicated_or_moved) ... ok
+test_every_allfeatures_workflow_has_same_backend_contract (__main__.ProviderWiringTests.test_every_allfeatures_workflow_has_same_backend_contract) ... ok
+test_exact_source_wiring_and_shell_syntax (__main__.ProviderWiringTests.test_exact_source_wiring_and_shell_syntax) ... ok
+test_prospective_matrix_is_protocol_only_and_other_jobs_do_not_build (__main__.ProviderWiringTests.test_prospective_matrix_is_protocol_only_and_other_jobs_do_not_build) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.184s
+
+OK

@@ -1,0 +1,31 @@
+{
+  "schema": "host-first-native-pristine-failure-subset-v1",
+  "source": "37808e86dc1ae753b02f11658e9e2fd6c365e083",
+  "fullImmutableRun": "/home/qian-qi/Documents/Codex/2026-10-22/github-trillionnium-chain-https-github-com/work/host378-v2-native-20261023T213401Z-e36786b2b6c5",
+  "fullFreezeSha256": "595e416e68a4f9415fcbf50631b5bc504a2119200c4fd063f19e0de78cbd9b7a",
+  "full71MaterialManifestSha256": "9dbed183c648f421848bce20fc974a0025159c0c865ce26fb0db33740b505154",
+  "scope": "Historical failure subset only, not all71 files and not a grant or qualification",
+  "rawPins": [
+    {
+      "path": "01-original-owner-before-request.json",
+      "sha256": "370e13239ac02d9e10e349ff23198165a1a93a837df55b9d498d1e9e47aab317",
+      "bytes": 347
+    },
+    {
+      "path": "02-original-attempt-unknown-retained.json",
+      "sha256": "5225fc4e2b57a02551a736036e1bc2722f8fe717fe9d2030dd98824ce027982c",
+      "bytes": 9060
+    },
+    {
+      "path": "03-evidence-window.json",
+      "sha256": "ab0efd0a98df0cafafa3d5ce226be57975eef9fd4fc27eac0685b9aa462f2241",
+      "bytes": 518
+    },
+    {
+      "path": "04-ordinary-exit-intent.json",
+      "sha256": "9ebb1b4f81f74030aaa7ceffebef9ec5bcdf1ade699513baa857684e6479e1c0",
+      "bytes": 661
+    }
+  ],
+  "remoteAdditionalReadsOrEffects": false
+}

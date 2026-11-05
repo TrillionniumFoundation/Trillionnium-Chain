@@ -1,0 +1,51 @@
+   Compiling typenum v1.19.0
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.4
+   Compiling syn v2.0.117
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling zeroize v1.8.2
+   Compiling signature v2.2.0
+   Compiling subtle v2.6.1
+   Compiling ed25519 v2.2.3
+   Compiling anyhow v1.0.103
+   Compiling hex v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-verification-profiles)
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.32s
+     Running unittests src/lib.rs (/home/qian-qi/Documents/chain-pr204-next-20260930-wh6affyn/target/debug/deps/trnm_crypto_primitives-17840c73d1b2ed7a)
+
+running 14 tests
+test pon_work::tests::bad_proof_never_gains_a_verified_type ... ok
+test pon_work::tests::decoded_output_is_the_real_matrix_product ... ok
+test pon_work::tests::exact_length_and_field_are_required ... ok
+test pon_work::tests::expansion_cannot_exceed_fixed_hash_budget ... ok
+test pon_work::tests::final_output_only_shortcut_is_not_a_transcript_proof ... ok
+test pon_work::tests::fixed_task_preparation_is_byte_identical_across_challenges_and_shapes ... ok
+test pon_work::tests::optimized_producer_matches_full_verifier_for_structures_and_extreme_fields ... ok
+test pon_work::tests::producer_reduction_matches_remainder_at_boundaries_and_deterministic_samples ... ok
+test pon_work::tests::work_binds_challenge_and_inputs ... ok
+test tests::domain_hash_is_framed_and_domain_separated ... ok
+test tests::ed25519_roundtrip_rejects_tamper ... ok
+test tests::fixed_hash_text_preserves_all_ascii_substitutions_and_error_precedence ... ok
+test tests::fixed_hash_text_reproduces_every_byte_value_without_normalization ... ok
+test tests::strict_signatures_reject_small_order_and_noncanonical_points ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.54s
+
+     Running unittests src/lib.rs (/home/qian-qi/Documents/chain-pr204-next-20260930-wh6affyn/target/debug/deps/trnm_verification_profiles-0ad85bc3a70e62ef)
+
+running 4 tests
+test closed_round::tests::author_exclusion_requires_all_remaining_eligible_signers ... ok
+test closed_round::tests::every_arrival_order_closes_at_the_same_minimum ... ok
+test closed_round::tests::fixed_roster_and_score_range_are_checked ... ok
+test closed_round::tests::missing_or_zero_attestation_cannot_unlock_positive_value ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,1337 @@
+{
+  "schema": "trnm-incoming-source-materialization-v1",
+  "incoming_commit": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+  "current_tree": "e5561165ad3b02174b089ce43f93142ab3efd839",
+  "unique_current_blob_ids": 8092,
+  "initial_missing_blob_count": 162,
+  "materialized": [
+    {
+      "sha": "d47576ac8e43ac3789575faad87d359d78f1e137",
+      "paths": [
+        "evidence/pon-six-axis-execution-v1/README.md"
+      ],
+      "bytes": 8447,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c12eedb7fd224bde38288479e8d97d0c24255afd",
+      "paths": [
+        "evidence/pon-six-axis-execution-v1/check_legacy_reader.py"
+      ],
+      "bytes": 2962,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3386b0b1d35a47066d765d0c31f3a2b8e5c5de85",
+      "paths": [
+        "evidence/pon-six-axis-execution-v1/measurement-plan.json"
+      ],
+      "bytes": 3075,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "ff186559851c8655e310afa41fa02ee2ead3f290",
+      "paths": [
+        "evidence/pon-six-axis-execution-v1/reproduction.json"
+      ],
+      "bytes": 37290,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "65141bfaa9e1c995089eac44c6b9c4f9ea94b5bb",
+      "paths": [
+        "evidence/pon-w1-qrom-budget-20261105/README.md"
+      ],
+      "bytes": 10066,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "83f550558d4b2aad2e09d7f07f1dc42b5ad12305",
+      "paths": [
+        "evidence/pon-w1-qrom-budget-20261105/component-budget.json"
+      ],
+      "bytes": 51261,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c36cd6bc4ee484ad867ff5989f1abe565d94419d",
+      "paths": [
+        "evidence/pon-w1-qrom-budget-20261105/theorem-review.json"
+      ],
+      "bytes": 6968,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "739e2d28527b611d0e4cb3e066b404d07e27d310",
+      "paths": [
+        "evidence/pon-w1-qrom-budget-20261105/validation.json"
+      ],
+      "bytes": 3296,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "5846ca66ed14cb45a81b1dd959fb1fd2b68ef34c",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/README.md"
+      ],
+      "bytes": 6324,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "975873a593ed8c7ad73d4041f7069b57334ace86",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/RELATION_ABI.md"
+      ],
+      "bytes": 6248,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b353e12a42b0a2089cbc0ca30713ef89850a05a4",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/build-v2-recovered.json"
+      ],
+      "bytes": 939,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e3deb6804273b62c023ae294480633dd89af4c6d",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/cache-repopulation-recovery.json"
+      ],
+      "bytes": 565,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "f9ae936ac88411971a74cf52778a7f263b133448",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/cache-truncation-after-repopulation.json"
+      ],
+      "bytes": 902,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1cf70397a3e0dc6805dbda3276c267e082f99a3f",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/cargo-risczero-v3.0.3.tgz.json"
+      ],
+      "bytes": 343,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "95585fed92ff9110ab9c7c4c75f359ae6b087c74",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/clippy-v2-recovered.json"
+      ],
+      "bytes": 997,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "6cbdc12b6ed4ade04d454ec75e8a97ed66b72ba8",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/concurrent-cell-source-integration.json"
+      ],
+      "bytes": 1475,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "7acf8885342751bb690ecd4254ef23376e830d53",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/concurrent-source-integration.json"
+      ],
+      "bytes": 497,
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "8a1e552cc362202bb9829e49912f241497bfd4f8",
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/expected-artifacts.bin"
+      ],
+      "bytes": 64,
+      "source": "verified read-only binary from canonical clone /workspace/scratch/f4976366a32a/chain"
+    },
+    {
+      "sha": "e0bfda8a622b7cb35da49ed271ff788a787effc7",
+      "bytes": 929,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/fmt-v2-recovered.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "78e0c9034bb5499595dbeb7ca24a2a632470ccff",
+      "bytes": 1227,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/guest-v2-recovered-identity.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "2cf8eca3fca30bf7e05db9ec4791fbb3a1777f16",
+      "bytes": 852,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/initial-guest-build-output.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "24396eba3a457d062a3e7c3f780f115076ad36fb",
+      "bytes": 13917,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/initial-guest-build-stderr.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "956a4b1bc423581c8f772d55e9ced8801c8c74c8",
+      "bytes": 319,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/initial-guest-image.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c4110b5e0e2e3462bd621a345990c310d88d408b",
+      "bytes": 661,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/input-declaration.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "d1c343d81fb810d2a0ebaf8d4fc4e97c064b156c",
+      "bytes": 370,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/interrupted-locked-build.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "d1e8e0ef95576be592954dce93887284fed640d2",
+      "bytes": 4344,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/legacy-observer-controls.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "41d278b187c591ec5c9641b9fae772973ab49e66",
+      "bytes": 370,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/lifecycle21-result.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a3ce52553fe05862c86a6025e2687472c099c7f8",
+      "bytes": 2554,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/module-environment-observations.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "bf6ecd1be38387a19d4e13c524a6a0dc1a5fa2e1",
+      "bytes": 1321,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-artifact-tests.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "54cd47bfedec82cc83b705c59e4fc20b024d8d8b",
+      "bytes": 3155,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-clippy.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1096e4ab4402573a0dedae3c98b7d4fab1890ef0",
+      "bytes": 22875,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-crypto-retained-tests.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b6f6150ee9e91682a76490eaeea8834173e46c33",
+      "bytes": 5557,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-module-checks.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b0d29fd2aed55d35acbb4bba9c694a7b2a869cf6",
+      "bytes": 783,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-node-qualified-tests.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "da57c7ca5228463e356101cce0fa3de33c3d307a",
+      "bytes": 351,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-relation-clippy.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "bfd9e04067bc20b7cb491620cd7f7181fb7cbaf7",
+      "bytes": 1591,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-relation-tests.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a5c81d86b9b0ba5aff2274d41d27c18848cd1395",
+      "bytes": 406,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/native-toolchain-install.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "081730941b225e3f6c7d0d449aa700db2b0254b7",
+      "bytes": 315,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/new-python-final.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "87d442e7ad91fde6d0507b655656875a43164bac",
+      "bytes": 919,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/observer-imageid-failure-record.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "6c372d87805a2eaaeac0e4f7d056ff9f07926f81",
+      "bytes": 283,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/observer-imageid-rerun-result.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "32de6af8f8b047a82acac33bcb0e2e66ec6eec7b",
+      "bytes": 2213,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/optional-guest-tool-cleanup.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "7f3f23209ae2ff1400db5ef5ff4e34d56a398f08",
+      "bytes": 867,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/post-validation-cache-cleanup.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "47815af962c94b0177050e872235c82487547826",
+      "bytes": 826,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/preflight-v2-recovered.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e08d2c1ad12aeecb2257679c617829c1710399e5",
+      "bytes": 757,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/python-root-controls.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "bef10f6498d2d9dfdfa514f1662604dcaf9e245a",
+      "bytes": 740,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/recovered-executor-cache-cleanup.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "6c1cc3c0ab3ecedf254488aa403760eb78130143",
+      "bytes": 307,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/repository-after-pin.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "70c1e633ba43ed927cfa5f541e6dc7897720761c",
+      "bytes": 268,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/repository-precommit.stderr"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "92beeb904c8548977fc333d7fa5dc0c744260295",
+      "bytes": 1741,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/retained-verifier-binary.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "168b190aabb3510d54bc287515354b8b279960db",
+      "bytes": 349,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/risc0-rust-1.88.0.tar.gz.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "5fe5a651c0736b305adfbe309139b4a897bc3e22",
+      "bytes": 3172,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/security-budget-controls.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "cabb26fb49d2d6e20b0cb60ca112e7e79f86adb4",
+      "bytes": 460,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/source-controls.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "97bf4df878900f0cec727d915ab2b8fef483cabd",
+      "bytes": 5571,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/source-integrity-controls.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "39877fb4ab5f105dbfdd24b8d2098709cf914126",
+      "bytes": 1211,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/source-map-controls.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0185512eab18314d7dcc16baf35d800543b1aef6",
+      "bytes": 84,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/staged-observer-17-final.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "645b93ad1b09114c98eee5fa499c76e772a014ff",
+      "bytes": 306,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/staged-observer-17-ramtmp.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1a9f83f329d4142936ab8d02b5b31c47c80c88dc",
+      "bytes": 2899,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/staged-observer-controls.txt"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "42ed9555d4f041aa46d6d146ebfa4b0aef746bcc",
+      "bytes": 937,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/test-v2-recovered.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e1c145ba919bea03164758ae0ade196968ccc619",
+      "bytes": 51,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v1-receipt-v2-rejection.stderr"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e744280d2caca4222d255629e500a5f11364a89e",
+      "bytes": 2002,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-clippy.stderr"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a8d5f543dc71611a48e1ca6cae0b7fc8d4fb4b0f",
+      "bytes": 264,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-graph-summary.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "407831b5ceb1fbac6bb053248eaf06856658fdc2",
+      "bytes": 715,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-native-preproof-declaration.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "6eb92bd4e2035730fe82be59bc874abf69b76abc",
+      "bytes": 8077,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-native-preproof.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e4c6b026f7a590cbe8bebd3d5503b0b61526fe63",
+      "bytes": 320,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-tests-locked.stderr"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c96d450b9b1c9d0ff5fd5ab539cb02311e6a72ed",
+      "bytes": 1406,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/v2-verifier-validation.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "de1251ed1ebf1725395a5c6206c6a33dae5b6b20",
+      "bytes": 566,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/validated-binaries.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1be31c767577bd1426e3c31fdbd249df7452bf61",
+      "bytes": 728,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/workflow-final-structural-review.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3b72ca33c5c5361552b809eac6c3462817a1c478",
+      "bytes": 428,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/workflow-lifecycle-followup.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "2274f6dd8ac73b730b1cb228318183bcb2671ae3",
+      "bytes": 764,
+      "paths": [
+        "evidence/pon-w1-statement-v2-20261105/workflow-structural-review.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1ce34e00674b6f9d72e55d01720777fb067d8b7c",
+      "bytes": 8212,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/P0_BASELINE.md"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "ca714430f63be1ecc179c4229880d3e876584aff",
+      "bytes": 1617,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/PUBLICATION_SCOPE.md"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "f64bc2e180e0f3ccff74a61caaa34c954e476f28",
+      "bytes": 10608,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/README.md"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "994f9ac61e0d7c41e2cbdb2838eb5139ec54ca02",
+      "bytes": 180,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/ci-contract.log",
+        "evidence/pq-workflow-continuation-20261104/final-composition/ci-contract.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "520a67db68002bc56038052960e17dbd92c15d09",
+      "bytes": 4676,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/checks.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b4004f9cb8a26e2f662b52417e50de6c840fa81e",
+      "bytes": 1207,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/native-cache-modes/cargo.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "d1762282e99f2402d2d6573a54243773c6fb5e35",
+      "bytes": 7994,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/native-cache-modes/result.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "dbdb56938afb0c983929636be477212a41adcc57",
+      "bytes": 2041,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/pin-refresh.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3b8ef37dfe709d3840ab8f65ceacc98defdeffff",
+      "bytes": 8614,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/pq-controls.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "aa0883ac069b303320b2f2f7e5d8251f9c6b876d",
+      "bytes": 557,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/pq-corpus.log",
+        "evidence/pq-workflow-continuation-20261104/pq-corpus-final.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a2b847a7623e8ef8a6d0a6b06ebcfdd5ba80b2d1",
+      "bytes": 10701,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/quantum-clock.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "9a2d3dfc8953baeef6e49b1594e7fd2537972bf3",
+      "bytes": 3023,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/source-files.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b03f679db5914cf3c2de6f39abc922cf6f6f5dd8",
+      "bytes": 8738,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/final-composition/source-integrity.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3716e16b84adc6450c45c44a659cb7e532eabc99",
+      "bytes": 10440,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/initial-composition-reproduction.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "840f76cfb6f927ecbd0120382143b11aff898156",
+      "bytes": 3309,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/integration-checks.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "e9e3da4fa33135841bbf48c1a1f0f5041eaf583c",
+      "bytes": 3147,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/materialized-pins.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "4ed1d89774f7aecf3f513af8362525ae9dc4418a",
+      "bytes": 4583,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/native-cache-modes/cargo.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "fdc65af21dd5cfab8af8243c97c78272fccd270f",
+      "bytes": 6986,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/native-cache-modes/result.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c28b983b59ac9113b2b8a77f3da44288f52552d8",
+      "bytes": 1700,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/native-cache-prior-unknown.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "81cb5e621a0cf7ae2b7bbff60f9d42f34ae01451",
+      "bytes": 8614,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/pq-controls.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "61e127be8f278c5ecc6e8b007fd53e1e0efb2643",
+      "bytes": 395,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/pq-corpus-final.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b5c38c195da6d897dfcd1d11863ddfbeee3522b1",
+      "bytes": 409,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/pq-corpus-materialized.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "7190e01bf1ba5a98ca00726d9e28bf05aee834bf",
+      "bytes": 63,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/pq-corpus-materialized.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "2d532c064d78047897be9f942bd2833341933e5d",
+      "bytes": 78,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/pq-corpus.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "27fdd05393f125279e530b6b7751d8bbc80bdb5e",
+      "bytes": 3749,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/publication-source-files.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "19ca783ba16a377199c2ea1f4d0c81a91e7f4cad",
+      "bytes": 483,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/quantum-baseline-source.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "9c4b6f71c493179bcad192f8502910ea86d66fdc",
+      "bytes": 3564,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/quantum-before-fix.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "868e8760d4e3461f67d4e902979f0f8147961b5d",
+      "bytes": 557,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/quantum-clock.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "284c1c11285e8f4ddbb8c2d0cb7b292a213d39d9",
+      "bytes": 10701,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/quantum-clock.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0eef1ebd980f1376c903e803d868fcdf3dec0e42",
+      "bytes": 10226,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/reproduction.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "9afb6303f24acf8b617ab43b3d9e428a50ab46b7",
+      "bytes": 2922,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/source-files.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c5587723754f5d37c90f33ff5ed59605c8b2c4d2",
+      "bytes": 511,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/source-integrity.json"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "4f782818bd13c99a86c94ce5b9ed098219e3d217",
+      "bytes": 8738,
+      "paths": [
+        "evidence/pq-workflow-continuation-20261104/source-integrity.log"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "854ca752f0ce37e8a961e151baaf08bcf0cdd320",
+      "bytes": 24490,
+      "paths": [
+        "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c93682d321e51a66e2c323825ada3388094b5335",
+      "bytes": 8813,
+      "paths": [
+        "formal/pon-nakamoto-v1/experiments/w1_local_payload.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "53bd77b728230e969917eef269cbeb1fe3482193",
+      "bytes": 20135,
+      "paths": [
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "582dee64057b81edbacc477c2eb285ee162bc61a",
+      "bytes": 60687,
+      "paths": [
+        "formal/pon-nakamoto-v1/quantum_network_sim.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "5aea3b1ea4f3edf1d717fd5fc7bbeb6655760fc1",
+      "bytes": 4924,
+      "paths": [
+        "formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3796deeff8479e9158d2c1302ad9d56ca5728958",
+      "bytes": 110,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "02fba7c0c8e0232eb3268bd5a48904836117058d",
+      "bytes": 25429,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+      "bytes": 5246,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "f19c3dce9ef71a9261556b79451ac32d6e9259e5",
+      "bytes": 1282,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "661994ef71dccb88a8b175621f5304a3450307cc",
+      "bytes": 46474,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "9cbb5a8387e17246fe5bb2404df8dea4dc78fe11",
+      "bytes": 498,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "88688018617bae938184329bc70d2851f76f656f",
+      "bytes": 284,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "05aca725f2b4ba863e375faea18170d144121e6d",
+      "bytes": 7395,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "4a9045fac34603d8f96ac88c1ac42c395cff6436",
+      "bytes": 74338,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "520ac7e39e98ab1f6ca1284aa0d09e4d2c7dd1af",
+      "bytes": 397,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "7d6ee4de11309b8ea138f180f57e47cbb67e6085",
+      "bytes": 15579,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/STAGED_PROVER.md"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "5a92d0f36c8a1f13d923cd799a3dba179bd8dbc1",
+      "bytes": 680,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/host-v2/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "038fc45a00ab03305a15e0924739952d7e0b1336",
+      "bytes": 567,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/host/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0998189acc80a2f7d2ae8d61f0d90decd26d5541",
+      "bytes": 34404,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0075e142a45f16868b646cc9bdb881b401a84a73",
+      "bytes": 166,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/.cargo/config.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "b4bb341df1b1704195417d43a54c3cabbea215e6",
+      "bytes": 239,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "73130ccdec2a483e64c780b004b39928618034cf",
+      "bytes": 725,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/build.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "d2e384cdc16128fc6b23b971c5f7af9fa7538bc8",
+      "bytes": 45363,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "5d39bcb571af842326a73848983f5f2fab803cfe",
+      "bytes": 564,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "44dff7af4685bf3c8c103c79d6b4beeedd1438ea",
+      "bytes": 445,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3a322a70d676387d9bc2cb4b3d14f33b0bac2fa9",
+      "bytes": 14597,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "16d9dea62fe0b336366a2a4480ab422387ed9e03",
+      "bytes": 11159,
+      "paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a2ca334bfc7f58abeb634645475267260c65bdd2",
+      "bytes": 23555,
+      "paths": [
+        "scripts/ci/ci_job.sh"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c",
+      "bytes": 25907,
+      "paths": [
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "ad20815839712fb167ec72cedd82db06818f1e8d",
+      "bytes": 65203,
+      "paths": [
+        "scripts/ci/test_pon_public_v3_phase_read.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "08857d97914d342ca644e119b8b1beaf6111af31",
+      "bytes": 11485,
+      "paths": [
+        "scripts/ci/test_w1_security_budget.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "906f80da15166008fab3aee8de112a2959c44b60",
+      "bytes": 20684,
+      "paths": [
+        "scripts/ci/test_w1_staged_observer.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "bytes": 11231,
+      "paths": [
+        "scripts/ci/verify_ci_source.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0f46577524e1e352c5ec8cfdb30e7af75c773031",
+      "bytes": 58685,
+      "paths": [
+        "scripts/pon_public_v3_phase_read.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "53707abbc95a76f478a11d76a07a05ff90075c13",
+      "bytes": 19786,
+      "paths": [
+        "scripts/w1_security_budget.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c7450b8ec4a734c75eb9d5d8df8938ae3b430cbf",
+      "bytes": 21683,
+      "paths": [
+        "scripts/w1_v2_receipt_controls.py"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "bytes": 104121,
+      "paths": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "a01331d9403552e6e96dfd0d5bdbf34dae8c7083",
+      "bytes": 3747,
+      "paths": [
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "c17a1149d6336b57f5d717b2ee426a037933aeae",
+      "bytes": 17359,
+      "paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "2ab5d20fb40523cb6540c260172f9dd133c43721",
+      "bytes": 37235,
+      "paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "867ade35cb43cc3d1dc9bba60c4c47be2d918e2b",
+      "bytes": 149355,
+      "paths": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "8528cb9e4504a776b8cfb7d4ded52988a396d6a4",
+      "bytes": 10775,
+      "paths": [
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "7c4e2a35bbf96dc83d01e6191b5474ca30f05f10",
+      "bytes": 337693,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "68d6c3e13eca1f032de9a12532f74d17370f9984",
+      "bytes": 5612,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "4ec279243a13ba92369fe7cb01d5ef72c469cbf7",
+      "bytes": 8306,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3e74d19498f9ba3893a8f0ff48c4a7e6182694a6",
+      "bytes": 48515,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "22da87350cdb670feec4bba6775e0cf56b616db2",
+      "bytes": 9838,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/account_prefix_tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "45a9167acf5b5671eac72a54ea3e687b63eae7d4",
+      "bytes": 379826,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "de2f56bc0143553ea628c8e9c707043a4e95526c",
+      "bytes": 9197,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "1111d532383b19a4e623de311795a883202410f2",
+      "bytes": 26695,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "9e7e8e5d97cb1390121edbf9327eb2c71f61070b",
+      "bytes": 67274,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "72f5f1145cd03d70f4df423a69b142c3199dffdc",
+      "bytes": 7040,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "13ed1b33668335970ffbf98099bb4ee7757dab80",
+      "bytes": 124665,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "cda95433f7bdd6d1c013e506891154c9722ff967",
+      "bytes": 339626,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "d5a09cf485dfc4d27d332c251b6633501f890c1d",
+      "bytes": 31911,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "87ece5b2846e00fa28ba0b2b51d3b837383e9843",
+      "bytes": 30547,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "304683bc8e7863670b92a4a6f864e12fb45cc803",
+      "bytes": 84707,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "0ab229471a9d1e05b1a477ab35824a24f7be9210",
+      "bytes": 16584,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "3090e7a1b60b7d4d135166c7530383cc7be1aca5",
+      "bytes": 17093,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "f16f40edb24b73d80360fa13846090ff8852b109",
+      "bytes": 2809,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "f6f4f0aa32811ffe2132d8539aa3e8dd93debdeb",
+      "bytes": 37248,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    },
+    {
+      "sha": "ddcfa777d6a73422e11d8b153076e337abf8c889",
+      "bytes": 19801,
+      "paths": [
+        "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs"
+      ],
+      "source": "authenticated GitHub immutable file at 81da"
+    }
+  ],
+  "final_missing_blob_count": 0,
+  "all_imports_git_hash_verified": true,
+  "read_only_source_clone": "/workspace/scratch/fd8e3e31d21a/chain-pon-work",
+  "failed_attempts": [
+    {
+      "kind": "local-fetch",
+      "result": "Missing historical blob in partially materialized source clone; no remote source modified."
+    },
+    {
+      "kind": "filtered-local-fetch",
+      "result": "Commit/tree metadata arrived but connectivity check found missing blobs; temporary local promisor remote section removed."
+    },
+    {
+      "kind": "base64-import",
+      "result": "Rejected line-wrapped base64 before import; normalized only encoding whitespace and revalidated Git blob hash."
+    },
+    {
+      "kind": "binary-provider-decode",
+      "result": "The provider decoded binary bytes as UTF-8; hash mismatch/UnicodeDecodeError rejected. Exact 64-byte binary was read from canonical local clone and its expected Git blob hash verified."
+    },
+    {
+      "kind": "large-command",
+      "result": "OS rejected argument list length; staged encoding in bounded chunks without changing bytes."
+    },
+    {
+      "kind": "d995-inventory-successor-import",
+      "result": "Temporary staging hit ENOSPC; retained failures, reclaimed only own byte-identical duplicates, then imported exact blobs and matched immutable tree/commit."
+    }
+  ],
+  "native_tests_executed": false
+}

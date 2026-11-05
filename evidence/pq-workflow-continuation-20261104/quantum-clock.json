@@ -1,0 +1,22 @@
+{
+  "name": "quantum-clock",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "test_quantum_candidate_check_clock",
+    "test_quantum_network_sim",
+    "test_quantum_resource_clock",
+    "-v"
+  ],
+  "env_overrides": {
+    "PYTHONPATH": "formal/pon-nakamoto-v1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "cwd": "repository root",
+  "base_sha": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "exit_code": 0,
+  "wall_seconds": 5.393977,
+  "log": "quantum-clock.log",
+  "log_sha256": "9c73d96c150c97ccbf7aaf144329b3279a1574d8126dcc5776b88ec6555eef68"
+}

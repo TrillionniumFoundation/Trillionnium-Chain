@@ -1,0 +1,26 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_project_boundary.py"
+    ],
+    "returncode": 0,
+    "wall_seconds": 11.42439309000008
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_repository.py"
+    ],
+    "returncode": 1,
+    "wall_seconds": 697.4488579189999
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "returncode": 0,
+    "wall_seconds": 13.651027280000108
+  }
+]

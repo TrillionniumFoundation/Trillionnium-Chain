@@ -1,0 +1,8 @@
+{
+  "allowed_attempts": 1,
+  "executable_sha256": "3fd395f7145793fafb1a5653d128349e2fecefd17d1679304ae269df4c459d9b",
+  "preregistration_sha256": "5a6d1f93426df5faac0eec39b97c3712cc41a2885ec925ebd173bad98ba2428a",
+  "selector": "pon_commitment::unchanged_snapshot_tests::checked_prefix_three_arm_tests::checked_prefix_three_arm_full_binding_cost",
+  "source_manifest_sha256": "d88c742223b09b2597aeefed95191869528410f2765e7d25a5a7f62cf6243430",
+  "started_at": "2026-11-04T08:25:20.180315+00:00"
+}

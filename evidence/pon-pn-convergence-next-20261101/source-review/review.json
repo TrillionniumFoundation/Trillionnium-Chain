@@ -1,0 +1,76 @@
+{
+  "schema": "pn0-pn6-internal-source-review-v1",
+  "reviewed_at_utc": "2026-11-01T08:02:01.214949+00:00",
+  "baseline_commit": "cea95fb44d8152a0eb1138727619fcced056f496",
+  "reviewed_files": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": {
+      "git_blob": "96ef7b370deb0f1067adfdb47a77a958ac584952",
+      "sha256": "611baefab215e6131bd2d6187655a581b42463f5df89ec5413040e5f52b53a02",
+      "bytes": 29340
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "git_blob": "afe34340911c6bb57501a2af1e625de5c70336f1",
+      "sha256": "5dae987d921a321ce26c37e20c2c8030595f4224d10d7e2c42abc53111e9080e",
+      "bytes": 63347
+    },
+    "qualification/pn-convergence-20261031/PROFILE_COMPATIBILITY.md": {
+      "git_blob": "9b9d25c8cf1b1bd929437a471ed0d7a14637f23c",
+      "sha256": "83f96edc68d07a6e5b8d13554d46b53bc434d60f778b5e94af751751336d94f8",
+      "bytes": 17023
+    },
+    "qualification/pn-convergence-20261031/profile-compatibility.json": {
+      "git_blob": "3fdaf237eaf914773ca1802ce5d2b9c26d7807a0",
+      "sha256": "85211b7d44ff2c44412831ddc2d433599ce0ea22dea64ea82f6ff54204279e4a",
+      "bytes": 54316
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": {
+      "git_blob": "1fa88899d0b88501252e2d7f8f6b6f0f891cf87a",
+      "sha256": "78dd6d0c59d8bfc8ed07bda4319ca17e79acaeab9662508d178bd92d8810fc53",
+      "bytes": 10007
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs": {
+      "git_blob": "c4bb9dbf6854f06b61089aaa01ff918804fbdad0",
+      "sha256": "21a4004783e3b2edc0d140c7a312f3da309eade957e0b64d8cc6680d215f63aa",
+      "bytes": 20455
+    }
+  },
+  "must_fix": [],
+  "decision": "No must-fix identified in this exact six-file source diff. This is an internal separate-agent code review, not independent operator, security-cost or production acceptance.",
+  "findings": {
+    "rejection_cache": "Malformed lengths skip hashing and cache locking, delegate to original native verifier, retain Length before version/target/cancellation. Exact-width paths and Transcript/Product-only insertion remain unchanged.",
+    "arithmetic_cache": "Only complete() calls complete_root(). State is immutable BTreeMap<String,serde_json::Value>; bounded serialization has no user callbacks. Borrow existing bytes/None at the same root grammar point without extending retained inputs or bypassing account/conservation checks.",
+    "workflow": "Original cargo command, pipefail, workload, matrix, environment and 25-minute timeout retained. One tee log must contain 73 unique matching test success names, 15 post-write names and exactly one successful 73/0/0 summary. Native source registrations match 58 existing plus 15 post-write tests; 24 shell run blocks passed bash -n.",
+    "corpus": "All 346 pinned blobs independently recomputed and matched the current files.",
+    "matrix": "All 16 current_native_evidence outcomes remain UNQUALIFIED_COMBINED_PAIR and log fields null. Working successor final commit/tree/binary fields are not fabricated. Published snapshot and old c165/553 runtime lanes remain separate; PN5 and PN6 unexecuted external requirements retained. Follow-up review corrected the sixteen H pinned_url values to the same inspected f0f1 commit; the earlier source-only review conclusion is superseded for that JSON hash."
+  },
+  "validation_limits": [
+    "No full Node compilation or locked workspace Clippy result produced by this review.",
+    "No original large-state CPU or long-History acceptance run performed by this review.",
+    "No independent administrators, physical 72-hour WAN run, release activation or economic/quantum-cost qualification."
+  ],
+  "resolved_review_findings": [
+    {
+      "issue": "The original review missed sixteen historical H pinned_url values after inspected_commit was updated; H11 URL selected a different workflow blob.",
+      "severity": "must-fix",
+      "resolution": "All sixteen H pinned_url values now bind their exact inspected_commit, path and line_hint. Historical b93 source-window fields remain unchanged. None of the twenty-one C references contains a pinned_url; their explicit inspected commits/paths/blobs remain checked.",
+      "fixed_ids": [
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H6",
+        "H7",
+        "H8",
+        "H9",
+        "H10",
+        "H11",
+        "H12",
+        "H13",
+        "H14",
+        "H15",
+        "H16"
+      ]
+    }
+  ]
+}

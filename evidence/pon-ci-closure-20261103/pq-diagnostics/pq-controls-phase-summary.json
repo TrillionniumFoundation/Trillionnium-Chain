@@ -1,0 +1,2086 @@
+{
+  "schema": "trnm-pq-original-budget-phase-audit-v1",
+  "observed_at_utc": "2026-11-03T15:33:23.555966+00:00",
+  "head_sha": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+  "actual_merge_sha": "0153600a002c420d20128983c3280ff6c16e70c4",
+  "tree_sha": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+  "required_selectors": 43,
+  "validated_control_executions": 172,
+  "required_config_sha256": "1061054781de305654bf391a6293b7158b835cfbd350a192888104740753bcdc",
+  "all_log_sha256_and_bytes_verified": true,
+  "all_command_source_before_after_verified": true,
+  "limitations": [
+    "The 172 PASS receipts are four executions of the original 43 exact selectors on one candidate; they are not independent long-run reliability trials.",
+    "The original 250 ms exchange cap and 200 ms shared native-31 deadline remain unchanged; diagnostic overhead is charged to those original budgets.",
+    "Signature phases include their original self-verification and message preparation; they do not isolate raw ML-DSA primitive signing time.",
+    "Phase intervals are nested and not additive. Direct fixture transport includes synchronous service work and the intentional late-reply delay; its CPU overlaps the service phases.",
+    "Per-scope totals can include initialization, the target action, and subsequent validation calls. Native-31 has seven exchange samples, not just its one Current/CAS target pair.",
+    "Every native-31 final snapshot has 21 overwritten operation rows. Its fixed last_failure retains LIVE_DEADLINE and local_committed=true, but the critical CAS row and individual phase timing are no longer reconstructible.",
+    "Eight selectors per lane have no explicitly enabled diagnostic scope; their ordinary exact test receipts are still present and validated.",
+    "Zero unknown clock counts or unfinished samples applies only to recorded snapshots in this run; it does not demonstrate cancellation/kill coverage under every schedule.",
+    "The expected bad-signature rejection in native-36 records tcp_handle with code=null. Its exact error identity is unknown; no payload text or guessed code is substituted.",
+    "This report covers the small pre-regression controls artifacts. Full Node library and strict Clippy job conclusions are separate."
+  ],
+  "lanes": [
+    {
+      "lane": "ubuntu-24.04-prospective-merge",
+      "artifact_id": 13241352868,
+      "archive_bytes": 291597,
+      "archive_sha256": "45b0b9c475dc7a91cea8c1060fe63f51711ff5cdaf8dc289d517028f1adb8372",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "passed_controls": 43,
+      "diagnostic_snapshot_count": 50,
+      "controls_without_diagnostics": [
+        "native-00",
+        "native-01",
+        "native-02",
+        "native-03",
+        "native-04",
+        "native-09",
+        "native-10",
+        "native-42"
+      ],
+      "diagnostic_quality": {
+        "measurement_unavailable": 0,
+        "encoding_truncated": 0,
+        "process_log_limit_reached": 0,
+        "child_snapshot_missing_or_invalid": 0,
+        "has_open_operations": 0,
+        "measurement_failures": 0,
+        "snapshots_with_overwritten_records": 32,
+        "phase_cpu_unknown_representations": 0,
+        "phase_wall_unknown_representations": 0,
+        "phase_unfinished_representations": 0
+      },
+      "native31": {
+        "last_failure": {
+          "error": {
+            "code": "LIVE_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 9,
+          "kind": "mutation_commit",
+          "marks": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            false
+          ],
+          "phase": "final_live_check",
+          "thread_cpu_ns": 42980529,
+          "wall_ns": 182794609
+        },
+        "records_overwritten": 21,
+        "retained_record_ids": [
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "selected_phase_statistics": {
+          "request_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 49197701,
+            "unfinished": 0,
+            "wall_ns": 49191783,
+            "wall_unknown": 0,
+            "wall_mean_ns": 7027397.571428572,
+            "cpu_mean_ns": 7028243.0
+          },
+          "reply_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 91643020,
+            "unfinished": 0,
+            "wall_ns": 91636323,
+            "wall_unknown": 0,
+            "wall_mean_ns": 13090903.285714285,
+            "cpu_mean_ns": 13091860.0
+          },
+          "service_request_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 9166076,
+            "unfinished": 0,
+            "wall_ns": 9163976,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1309139.4285714286,
+            "cpu_mean_ns": 1309439.4285714286
+          },
+          "client_reply_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 9175630,
+            "unfinished": 0,
+            "wall_ns": 9173379,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1310482.7142857143,
+            "cpu_mean_ns": 1310804.2857142857
+          },
+          "transport": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 104806255,
+            "unfinished": 0,
+            "wall_ns": 245058800,
+            "wall_unknown": 0,
+            "wall_mean_ns": 35008400.0,
+            "cpu_mean_ns": 14972322.142857144
+          },
+          "local_commit": {
+            "completed": 2,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 2,
+            "thread_cpu_ns": 291782,
+            "unfinished": 0,
+            "wall_ns": 890770,
+            "wall_unknown": 0,
+            "wall_mean_ns": 445385.0,
+            "cpu_mean_ns": 145891.0
+          }
+        }
+      },
+      "unknown_failure_slots": [
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 58485975,
+          "wall_ns": 162546060
+        },
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_tcp_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 58485975,
+          "wall_ns": 162546060
+        }
+      ],
+      "safe_service_failure_slots": [
+        {
+          "label": "native-07",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_REQUEST_CONTEXT",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_request_context",
+          "thread_cpu_ns": 266686,
+          "wall_ns": 266585
+        },
+        {
+          "label": "native-22",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_CAS",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 22,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1616367,
+          "wall_ns": 1616325
+        },
+        {
+          "label": "native-23",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_IDENTITY",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 33891,
+          "wall_ns": 33870
+        },
+        {
+          "label": "native-29",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_SCHEMA",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 227608,
+          "wall_ns": 227558
+        },
+        {
+          "label": "native-30",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 1546965,
+          "wall_ns": 1546903
+        },
+        {
+          "label": "native-30",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 939704,
+          "wall_ns": 939653
+        },
+        {
+          "label": "native-30",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 3046580,
+          "wall_ns": 3046546
+        },
+        {
+          "label": "native-40",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 1714604,
+          "wall_ns": 1714561
+        },
+        {
+          "label": "native-40",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 1701234,
+          "wall_ns": 1701191
+        },
+        {
+          "label": "native-40",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1662106,
+          "wall_ns": 1662084
+        },
+        {
+          "label": "native-40",
+          "snapshot": 3,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1674924,
+          "wall_ns": 1674903
+        },
+        {
+          "label": "native-41",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_COMMIT_UNCERTAIN",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 7,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 20891,
+          "wall_ns": 20851
+        }
+      ]
+    },
+    {
+      "lane": "ubuntu-24.04-head",
+      "artifact_id": 13242016969,
+      "archive_bytes": 288556,
+      "archive_sha256": "d1fdbc942035466c97d92bade8754d05d3e5679ace0196bf217b95ebbe10bbf7",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "passed_controls": 43,
+      "diagnostic_snapshot_count": 50,
+      "controls_without_diagnostics": [
+        "native-00",
+        "native-01",
+        "native-02",
+        "native-03",
+        "native-04",
+        "native-09",
+        "native-10",
+        "native-42"
+      ],
+      "diagnostic_quality": {
+        "measurement_unavailable": 0,
+        "encoding_truncated": 0,
+        "process_log_limit_reached": 0,
+        "child_snapshot_missing_or_invalid": 0,
+        "has_open_operations": 0,
+        "measurement_failures": 0,
+        "snapshots_with_overwritten_records": 32,
+        "phase_cpu_unknown_representations": 0,
+        "phase_wall_unknown_representations": 0,
+        "phase_unfinished_representations": 0
+      },
+      "native31": {
+        "last_failure": {
+          "error": {
+            "code": "LIVE_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 9,
+          "kind": "mutation_commit",
+          "marks": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            false
+          ],
+          "phase": "final_live_check",
+          "thread_cpu_ns": 76434139,
+          "wall_ns": 182861254
+        },
+        "records_overwritten": 21,
+        "retained_record_ids": [
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "selected_phase_statistics": {
+          "request_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 115588241,
+            "unfinished": 0,
+            "wall_ns": 115589517,
+            "wall_unknown": 0,
+            "wall_mean_ns": 16512788.142857144,
+            "cpu_mean_ns": 16512605.857142856
+          },
+          "reply_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 142199917,
+            "unfinished": 0,
+            "wall_ns": 142201101,
+            "wall_unknown": 0,
+            "wall_mean_ns": 20314443.0,
+            "cpu_mean_ns": 20314273.85714286
+          },
+          "service_request_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 10418482,
+            "unfinished": 0,
+            "wall_ns": 10426677,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1489525.2857142857,
+            "cpu_mean_ns": 1488354.5714285714
+          },
+          "client_reply_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 10688486,
+            "unfinished": 0,
+            "wall_ns": 10685926,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1526560.857142857,
+            "cpu_mean_ns": 1526926.5714285714
+          },
+          "transport": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 157181724,
+            "unfinished": 0,
+            "wall_ns": 264023254,
+            "wall_unknown": 0,
+            "wall_mean_ns": 37717607.71428572,
+            "cpu_mean_ns": 22454532.0
+          },
+          "local_commit": {
+            "completed": 2,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 2,
+            "thread_cpu_ns": 256337,
+            "unfinished": 0,
+            "wall_ns": 936959,
+            "wall_unknown": 0,
+            "wall_mean_ns": 468479.5,
+            "cpu_mean_ns": 128168.5
+          }
+        }
+      },
+      "unknown_failure_slots": [
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 78197676,
+          "wall_ns": 224938485
+        },
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_tcp_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 78197676,
+          "wall_ns": 224938485
+        }
+      ],
+      "safe_service_failure_slots": [
+        {
+          "label": "native-07",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_REQUEST_CONTEXT",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_request_context",
+          "thread_cpu_ns": 259283,
+          "wall_ns": 259254
+        },
+        {
+          "label": "native-22",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_CAS",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 22,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1779666,
+          "wall_ns": 1779632
+        },
+        {
+          "label": "native-23",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_IDENTITY",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 20448,
+          "wall_ns": 20418
+        },
+        {
+          "label": "native-29",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_SCHEMA",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 214640,
+          "wall_ns": 214601
+        },
+        {
+          "label": "native-30",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 1478024,
+          "wall_ns": 1477949
+        },
+        {
+          "label": "native-30",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 922689,
+          "wall_ns": 922612
+        },
+        {
+          "label": "native-30",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 3236390,
+          "wall_ns": 3236322
+        },
+        {
+          "label": "native-40",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 1958590,
+          "wall_ns": 1958556
+        },
+        {
+          "label": "native-40",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 1929585,
+          "wall_ns": 1929562
+        },
+        {
+          "label": "native-40",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1879932,
+          "wall_ns": 1879920
+        },
+        {
+          "label": "native-40",
+          "snapshot": 3,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 1912603,
+          "wall_ns": 1912571
+        },
+        {
+          "label": "native-41",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_COMMIT_UNCERTAIN",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 7,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 6061,
+          "wall_ns": 6061
+        }
+      ]
+    },
+    {
+      "lane": "ubuntu-24.04-arm-prospective-merge",
+      "artifact_id": 13242445918,
+      "archive_bytes": 289824,
+      "archive_sha256": "332d1aac75c201c3edf67fae6aa7a70f6e5c3434f75e168c00e634199ad67af8",
+      "tested_commit": "0153600a002c420d20128983c3280ff6c16e70c4",
+      "passed_controls": 43,
+      "diagnostic_snapshot_count": 50,
+      "controls_without_diagnostics": [
+        "native-00",
+        "native-01",
+        "native-02",
+        "native-03",
+        "native-04",
+        "native-09",
+        "native-10",
+        "native-42"
+      ],
+      "diagnostic_quality": {
+        "measurement_unavailable": 0,
+        "encoding_truncated": 0,
+        "process_log_limit_reached": 0,
+        "child_snapshot_missing_or_invalid": 0,
+        "has_open_operations": 0,
+        "measurement_failures": 0,
+        "snapshots_with_overwritten_records": 32,
+        "phase_cpu_unknown_representations": 0,
+        "phase_wall_unknown_representations": 0,
+        "phase_unfinished_representations": 0
+      },
+      "native31": {
+        "last_failure": {
+          "error": {
+            "code": "LIVE_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 9,
+          "kind": "mutation_commit",
+          "marks": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            false
+          ],
+          "phase": "final_live_check",
+          "thread_cpu_ns": 40474680,
+          "wall_ns": 164831129
+        },
+        "records_overwritten": 21,
+        "retained_record_ids": [
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "selected_phase_statistics": {
+          "request_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 111676560,
+            "unfinished": 0,
+            "wall_ns": 111659767,
+            "wall_unknown": 0,
+            "wall_mean_ns": 15951395.285714285,
+            "cpu_mean_ns": 15953794.285714285
+          },
+          "reply_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 162468152,
+            "unfinished": 0,
+            "wall_ns": 162456079,
+            "wall_unknown": 0,
+            "wall_mean_ns": 23208011.285714287,
+            "cpu_mean_ns": 23209736.0
+          },
+          "service_request_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 12482984,
+            "unfinished": 0,
+            "wall_ns": 12478069,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1782581.2857142857,
+            "cpu_mean_ns": 1783283.4285714286
+          },
+          "client_reply_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 12421888,
+            "unfinished": 0,
+            "wall_ns": 12417031,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1773861.5714285714,
+            "cpu_mean_ns": 1774555.4285714286
+          },
+          "transport": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 179156672,
+            "unfinished": 0,
+            "wall_ns": 303622829,
+            "wall_unknown": 0,
+            "wall_mean_ns": 43374689.85714286,
+            "cpu_mean_ns": 25593810.285714287
+          },
+          "local_commit": {
+            "completed": 2,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 2,
+            "thread_cpu_ns": 339632,
+            "unfinished": 0,
+            "wall_ns": 1347393,
+            "wall_unknown": 0,
+            "wall_mean_ns": 673696.5,
+            "cpu_mean_ns": 169816.0
+          }
+        }
+      },
+      "unknown_failure_slots": [
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 68317472,
+          "wall_ns": 187225940
+        },
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_tcp_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 68317472,
+          "wall_ns": 187225940
+        }
+      ],
+      "safe_service_failure_slots": [
+        {
+          "label": "native-07",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_REQUEST_CONTEXT",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_request_context",
+          "thread_cpu_ns": 259256,
+          "wall_ns": 259337
+        },
+        {
+          "label": "native-22",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_CAS",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 22,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2112864,
+          "wall_ns": 2112764
+        },
+        {
+          "label": "native-23",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_IDENTITY",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 39936,
+          "wall_ns": 39981
+        },
+        {
+          "label": "native-29",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_SCHEMA",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 247904,
+          "wall_ns": 247892
+        },
+        {
+          "label": "native-30",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 1301256,
+          "wall_ns": 1301109
+        },
+        {
+          "label": "native-30",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 872488,
+          "wall_ns": 872398
+        },
+        {
+          "label": "native-30",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 5092704,
+          "wall_ns": 5092260
+        },
+        {
+          "label": "native-40",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 2260320,
+          "wall_ns": 2260425
+        },
+        {
+          "label": "native-40",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 2199288,
+          "wall_ns": 2199291
+        },
+        {
+          "label": "native-40",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2162288,
+          "wall_ns": 2162117
+        },
+        {
+          "label": "native-40",
+          "snapshot": 3,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2130360,
+          "wall_ns": 2130253
+        },
+        {
+          "label": "native-41",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_COMMIT_UNCERTAIN",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 7,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 29136,
+          "wall_ns": 29118
+        }
+      ]
+    },
+    {
+      "lane": "ubuntu-24.04-arm-head",
+      "artifact_id": 13242565851,
+      "archive_bytes": 286757,
+      "archive_sha256": "938e830235a3fc7ead97017519b554afa35caefd889e65b7becfae4b7ebde30e",
+      "tested_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "passed_controls": 43,
+      "diagnostic_snapshot_count": 50,
+      "controls_without_diagnostics": [
+        "native-00",
+        "native-01",
+        "native-02",
+        "native-03",
+        "native-04",
+        "native-09",
+        "native-10",
+        "native-42"
+      ],
+      "diagnostic_quality": {
+        "measurement_unavailable": 0,
+        "encoding_truncated": 0,
+        "process_log_limit_reached": 0,
+        "child_snapshot_missing_or_invalid": 0,
+        "has_open_operations": 0,
+        "measurement_failures": 0,
+        "snapshots_with_overwritten_records": 32,
+        "phase_cpu_unknown_representations": 0,
+        "phase_wall_unknown_representations": 0,
+        "phase_unfinished_representations": 0
+      },
+      "native31": {
+        "last_failure": {
+          "error": {
+            "code": "LIVE_DEADLINE",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 9,
+          "kind": "mutation_commit",
+          "marks": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            false
+          ],
+          "phase": "final_live_check",
+          "thread_cpu_ns": 34811592,
+          "wall_ns": 165037733
+        },
+        "records_overwritten": 21,
+        "retained_record_ids": [
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "selected_phase_statistics": {
+          "request_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 100504984,
+            "unfinished": 0,
+            "wall_ns": 100528831,
+            "wall_unknown": 0,
+            "wall_mean_ns": 14361261.57142857,
+            "cpu_mean_ns": 14357854.857142856
+          },
+          "reply_sign_including_self_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 132713624,
+            "unfinished": 0,
+            "wall_ns": 132721681,
+            "wall_unknown": 0,
+            "wall_mean_ns": 18960240.14285714,
+            "cpu_mean_ns": 18959089.14285714
+          },
+          "service_request_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 12543328,
+            "unfinished": 0,
+            "wall_ns": 12538258,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1791179.7142857143,
+            "cpu_mean_ns": 1791904.0
+          },
+          "client_reply_verify": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 12502528,
+            "unfinished": 0,
+            "wall_ns": 12498112,
+            "wall_unknown": 0,
+            "wall_mean_ns": 1785444.5714285714,
+            "cpu_mean_ns": 1786075.4285714286
+          },
+          "transport": {
+            "completed": 7,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 7,
+            "thread_cpu_ns": 150422744,
+            "unfinished": 0,
+            "wall_ns": 281578258,
+            "wall_unknown": 0,
+            "wall_mean_ns": 40225465.428571425,
+            "cpu_mean_ns": 21488963.42857143
+          },
+          "local_commit": {
+            "completed": 2,
+            "cpu_unknown": 0,
+            "failed": 0,
+            "last_error": null,
+            "started": 2,
+            "thread_cpu_ns": 617592,
+            "unfinished": 0,
+            "wall_ns": 1842166,
+            "wall_unknown": 0,
+            "wall_mean_ns": 921083.0,
+            "cpu_mean_ns": 308796.0
+          }
+        }
+      },
+      "unknown_failure_slots": [
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 81795808,
+          "wall_ns": 217255052
+        },
+        {
+          "label": "native-36",
+          "snapshot": 2,
+          "slot": "last_tcp_failure",
+          "error": {
+            "code": null,
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "tcp_request",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "tcp_handle",
+          "thread_cpu_ns": 81795808,
+          "wall_ns": 217255052
+        }
+      ],
+      "safe_service_failure_slots": [
+        {
+          "label": "native-07",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_REQUEST_CONTEXT",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_request_context",
+          "thread_cpu_ns": 293368,
+          "wall_ns": 293426
+        },
+        {
+          "label": "native-22",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_CAS",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 22,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2128560,
+          "wall_ns": 2128648
+        },
+        {
+          "label": "native-23",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_IDENTITY",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 47544,
+          "wall_ns": 47513
+        },
+        {
+          "label": "native-29",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_SCHEMA",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 274728,
+          "wall_ns": 274697
+        },
+        {
+          "label": "native-30",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 1407584,
+          "wall_ns": 1407598
+        },
+        {
+          "label": "native-30",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 1065720,
+          "wall_ns": 1065691
+        },
+        {
+          "label": "native-30",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STATE_WIDTH",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 6,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 5272312,
+          "wall_ns": 5272486
+        },
+        {
+          "label": "native-40",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 2289424,
+          "wall_ns": 2289589
+        },
+        {
+          "label": "native-40",
+          "snapshot": 1,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 2,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_read",
+          "thread_cpu_ns": 2291024,
+          "wall_ns": 2291077
+        },
+        {
+          "label": "native-40",
+          "snapshot": 2,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2193800,
+          "wall_ns": 2193834
+        },
+        {
+          "label": "native-40",
+          "snapshot": 3,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_STORAGE_ROLLBACK",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 3,
+          "kind": "service_cas",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_cas",
+          "thread_cpu_ns": 2189528,
+          "wall_ns": 2189713
+        },
+        {
+          "label": "native-41",
+          "snapshot": 0,
+          "slot": "last_service_failure",
+          "error": {
+            "code": "PQ_WITNESS_COMMIT_UNCERTAIN",
+            "io_kind": null,
+            "origin": "exact_diagnostic_string_or_unknown",
+            "raw_os_error": null,
+            "sqlite_extended_code": null
+          },
+          "id": 7,
+          "kind": "service_current",
+          "marks": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "phase": "service_entry_and_storage",
+          "thread_cpu_ns": 25352,
+          "wall_ns": 25393
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+distributed source inventory: PASS
+{"canonical_default_provider_contract_checked": true, "canonical_pnq2_contract_checked": true, "continuous_npq6_combination_accepted": false, "cryptographic_acceptance": false, "exact_source_blobs": 460, "legacy_qtx1_optional_adapter_contract_checked": true, "native_transfer_account_contract_checked": true, "native_transport_contract_checked": true, "node_activated": false, "production_confidentiality_accepted": false, "schema": "trnm-pq-cross-branch-check-v1", "status": "HOLD_NO_GO", "upstream_heads": 6, "whole_native_authorization_migrated": false}
+{"artifact_comparison_jobs": 1, "head_jobs": 5, "inline_source_pins": 22, "merge_lanes": 5, "native_cost_architectures": 2, "tests_executed": false, "w1_actual_reuse_v3_cells": 4}
+{"activation": false, "head": "568c97590eee9e95e6b5021a49fd0a5d20716fa7", "local_links": 2658, "normal_dependency_edges": 25, "result": "PASS", "runtime_implemented": false, "rust_files": 1130, "source_state": "committed-clean", "tree": "ea600542130341144d697776d92048988d44572b", "workspace_packages": 26}
+..................................
+----------------------------------------------------------------------
+Ran 34 tests in 2.655s
+
+OK
+{"receipt": "/tmp/trnm-ci-raw-source-p4eofdcb/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-id8va4pn/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-s05_3a64/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-qqr8b8mm/.git/receipt", "result": "FAIL"}
+{"receipt": "/tmp/trnm-ci-raw-source-mj2afeba/.git/receipt-PASS", "result": "PASS"}
+{"receipt": "/tmp/trnm-ci-raw-source-mj2afeba/.git/receipt-FAIL", "result": "FAIL"}
+...................................
+----------------------------------------------------------------------
+Ran 35 tests in 23.654s
+
+OK
+......................
+----------------------------------------------------------------------
+Ran 22 tests in 0.197s
+
+OK
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.088s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.004s
+
+OK

@@ -1,0 +1,50 @@
+{
+  "schema": "pq-owner-evidence-publication-v1",
+  "observed_utc": "2026-11-05T06:58:45.105Z",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "branch": "fix/hepta-ordinary-pq-effects-20261104",
+  "pull_request": 4812,
+  "evidence_commit": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+  "tree": "253d7584783cf658b9d5192d1106aa4c08fe031f",
+  "parents": [
+    "70115620a7f540c8618a9b0d32ead20f8bc508f0"
+  ],
+  "author": {
+    "name": "Tomasrgbsf",
+    "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+    "date": "2026-11-05T06:57:53Z"
+  },
+  "expected_previous_head": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+  "force": false,
+  "remote_ref_readback": "7530e4bc7aa61a0c23a5933fef4a65d86a586cf8",
+  "evidence_only": true,
+  "changed_files": 98,
+  "source_ci_configuration_lock_changed": false,
+  "local_prepublication_commit": "ce5c7ceb3020345eb7dd3fb5843e39f003a7889d",
+  "local_prepublication_tree_equals_remote": true,
+  "full_index_independently_verified": true,
+  "indexed_files_excluding_index": 97,
+  "readback_files": [
+    {
+      "path": "evidence/pq-recovery-owner-20261105/R2-validation-summary.json",
+      "bytes": 4326,
+      "git_blob": "45b5947bffeeda33ad5279be250bba1f53dc3a8e",
+      "sha256": "1fcdbde92beef8f69c35efd607be11e5669b4712dfa604063d007ba3c7da0b7d"
+    },
+    {
+      "path": "evidence/pq-recovery-owner-20261105/index.json",
+      "bytes": 24965,
+      "git_blob": "ac2f413aa773553172e92ff4924de6172053e80e",
+      "sha256": "46caa8ac5f6258e3669dfc1c9efc929091bc4e2d03720559cc5fd91d73cd7b66"
+    },
+    {
+      "path": "evidence/pq-recovery-owner-20261105/README.md",
+      "bytes": 25791,
+      "git_blob": "03569a58ee87dd60eeabef51d0d613e142546ac7",
+      "sha256": "b1d5447856b3541a7e9502a7ce19746458a7c48879138e860e94408a8977b256"
+    }
+  ],
+  "source_under_test": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+  "qualification": "HOLD_NO_GO",
+  "scope": "Evidence publication only. No result is relabelled as native execution on this evidence commit."
+}

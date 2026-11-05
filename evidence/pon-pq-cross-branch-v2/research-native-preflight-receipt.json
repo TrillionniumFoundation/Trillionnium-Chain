@@ -1,0 +1,30 @@
+{
+  "schema": "pon-pql7-native-preflight-and-convergence-v1",
+  "source_commit": "d3b8ea036dd9da662bdee06eef328233193e426a",
+  "tested_objects": {
+    "scripts/ci/check_pq_research_integration.py": "ef5fc1e2e68ed2622ae839023995ec16fd3f3d44",
+    "scripts/ci/test_pq_research_integration.py": "230964359f593ef89eca1a2249b2e0af66481b9b"
+  },
+  "native_code_object": "e960d82d992119d307e6513f7ffb9c71f5dfce3f",
+  "new_native_role": "M00 exact TPQ1 3487-byte structural preflight, no ML-DSA verification authority",
+  "rust_test_cases_authored": 5,
+  "rust_compiled_or_executed": false,
+  "python_exact_blob_fixture_tests": 10,
+  "python_fixture_tests_passed": 10,
+  "python_fixture_tests_failed": 0,
+  "source_blob_pins_checked": 86,
+  "source_blob_mismatches": 0,
+  "source_overlap_decisions": 4,
+  "complete_checked_out_research_corpus_runtime_test": false,
+  "closed_security_gate": [],
+  "open_critical_gates": [
+    "Native audited ML-DSA-65 signer/verifier with hardware-backed key custody",
+    "Exact Rust M05/M06 QTX1 transaction/fee/replay/reorg owner integration and production size changes",
+    "PoN W1 quantum-effective hardness and adversarial verification admission",
+    "Independent monotonic antirollback witness outside shared-admin mutable disks",
+    "Native hybrid PQ P2P, Cell WAN retention and Hepta Final-use owner admission",
+    "Independent crypto/system acceptance, physical power loss and WAN testing"
+  ],
+  "production_activation": false,
+  "claim": "Only exact source blob identity and isolated checker fixture tests passed. Not a quantum-secure integrated chain."
+}

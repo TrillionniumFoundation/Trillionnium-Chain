@@ -1,0 +1,48 @@
+{
+  "schema": "pon-r8-imported-raw-transport-v1",
+  "original_commit": "e3afbbf4703946fb15c1e216c9173efcbf6dc8ea",
+  "original_diff_check_returncode": 2,
+  "archive": "original-records.zip",
+  "archive_bytes": 14878,
+  "archive_sha256": "ea7f6903e05ee20e35426f924976df20b3f347493742331feb6ed3ead0e0d25f",
+  "entries": [
+    {
+      "original_path": "evidence/pon-history-checkpoint-r8-20261028/candidate-rust.diff",
+      "bytes": 16033,
+      "sha256": "6cfa79e14d3278b8d8eac1616df6fec3def19da47b019b34af953f6d6867c146"
+    },
+    {
+      "original_path": "evidence/pon-legacy-reader-pq-layout-r8-20261028/candidate-reader.diff",
+      "bytes": 30561,
+      "sha256": "ab546f6e14e9c6d6347ebf7743e92269c11d2f9579f8d69ceed88dffc1492b0f"
+    },
+    {
+      "original_path": "evidence/pon-w1-batch-guest-msrv-20261028-r8/guest-lock.diff",
+      "bytes": 1649,
+      "sha256": "75f19771a47898f2bffa96c0bb67dcb75f5f522bfeab49d163d4b5c8cce1350f"
+    },
+    {
+      "original_path": "evidence/pon-w1-batch-phase0-20261028-r8/attempt2/build.stderr",
+      "bytes": 2095,
+      "sha256": "d9fe194352573f59edb6d2367bfaebcd1f4a5b580dd28d2305997f75301d3068"
+    },
+    {
+      "original_path": "evidence/pon-w1-batch-phase0-20261028-r8/attempt3/build.stderr",
+      "bytes": 1821,
+      "sha256": "716ee8f73a0e5c7fde8b9d5e52d913a66824b30cbe2725ae5e9c25e77ea4f5c9"
+    },
+    {
+      "original_path": "original-diff-check.stdout",
+      "bytes": 1371,
+      "sha256": "13357f7342f1795b525507e5de2c9339971f4cd56585fb1ec2ce6aa522e86487"
+    },
+    {
+      "original_path": "original-diff-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "all_original_bytes_equal_after_archive_readback": true,
+  "historical_hash_manifests_unchanged": true,
+  "acceptance_gate_changed": false
+}

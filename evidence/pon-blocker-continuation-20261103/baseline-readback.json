@@ -1,0 +1,307 @@
+{
+  "artifact_id": 13230750887,
+  "artifact_zip_sha256": "503f4da52f81b4d126af6da17399bfadcdf4956650160538576067b27024874e",
+  "baseline_sha256": "94305c8f020321b9912087df172b2ed767c6494e7a05f5a9d08494e7947917d5",
+  "binary": {
+    "build_artifact": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-64e29df06cf605a6",
+    "bytes": 11514152,
+    "compiler_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41635095044-1/prepared/public_v3_multiprocess.bin",
+    "sha256": "cfc35955955b65af3d7a3b191342b1d27211677b6a391399b90d4c21892f5a2c"
+  },
+  "confirmations_inside_original_window": 0,
+  "extra_request_processes": 0,
+  "failed_imports": 1,
+  "history_imports": [
+    {
+      "checkpoint": {
+        "calls_completed": 10760,
+        "calls_started": 10760,
+        "thread_cpu_ns": 597720624,
+        "wall_ns": 907041133
+      },
+      "ended_ns": 7103235037,
+      "error": null,
+      "index": 0,
+      "started_ns": 3703201917,
+      "succeeded": true,
+      "thread_cpu_ns": 697828571,
+      "wall_ns": 3400033110
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 12570,
+        "calls_started": 12570,
+        "thread_cpu_ns": 693097223,
+        "wall_ns": 1388097284
+      },
+      "ended_ns": 10697925664,
+      "error": null,
+      "index": 1,
+      "started_ns": 7115387862,
+      "succeeded": true,
+      "thread_cpu_ns": 799024640,
+      "wall_ns": 3582537792
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 12575,
+        "calls_started": 12575,
+        "thread_cpu_ns": 694274882,
+        "wall_ns": 1235685071
+      },
+      "ended_ns": 14292201267,
+      "error": null,
+      "index": 2,
+      "started_ns": 10709889837,
+      "succeeded": true,
+      "thread_cpu_ns": 799360674,
+      "wall_ns": 3582311399
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 12580,
+        "calls_started": 12580,
+        "thread_cpu_ns": 691834833,
+        "wall_ns": 1078234755
+      },
+      "ended_ns": 17808924625,
+      "error": null,
+      "index": 3,
+      "started_ns": 14304303382,
+      "succeeded": true,
+      "thread_cpu_ns": 799312001,
+      "wall_ns": 3504621243
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 12585,
+        "calls_started": 12585,
+        "thread_cpu_ns": 682841108,
+        "wall_ns": 760355316
+      },
+      "ended_ns": 21391898783,
+      "error": null,
+      "index": 4,
+      "started_ns": 17890015224,
+      "succeeded": true,
+      "thread_cpu_ns": 793076332,
+      "wall_ns": 3501883559
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 12590,
+        "calls_started": 12590,
+        "thread_cpu_ns": 701658621,
+        "wall_ns": 933904694
+      },
+      "ended_ns": 24999892552,
+      "error": null,
+      "index": 5,
+      "started_ns": 21404285469,
+      "succeeded": true,
+      "thread_cpu_ns": 819190541,
+      "wall_ns": 3595607073
+    },
+    {
+      "checkpoint": {
+        "calls_completed": 17802,
+        "calls_started": 17802,
+        "thread_cpu_ns": 960689293,
+        "wall_ns": 1574305582
+      },
+      "ended_ns": 30001914811,
+      "error": "PUBLIC_REQUEST_DEADLINE",
+      "index": 6,
+      "started_ns": 25011746576,
+      "succeeded": false,
+      "thread_cpu_ns": 1125593659,
+      "wall_ns": 4990168245
+    }
+  ],
+  "independent_operators_qualified": false,
+  "interpretation": [
+    "Read-only extraction of the existing exact-head artifact; no campaign executed here.",
+    "The failed final import remains in totals; its completed-work amount is censored.",
+    "Missing rounds remain missing and count against the original three-round denominator.",
+    "Network acknowledgement is not confirmation or local import success.",
+    "Stage and Host intervals overlap; their totals must not be added.",
+    "Importer CPU excludes scoped-worker CPU; Host spans cover each actual invoking thread.",
+    "Different completed cohorts or different heads do not form a paired speedup estimate."
+  ],
+  "nested_client_stage_deltas": {
+    "account_graph": {
+      "calls": 45,
+      "cpu_ns": 4595563093,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 19634745930
+    },
+    "activation": {
+      "calls": 1,
+      "cpu_ns": 336553858,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 1498618791
+    },
+    "admission": {
+      "calls": 7,
+      "cpu_ns": 5027870458,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 22397667898
+    },
+    "complete_commitment": {
+      "calls": 68,
+      "cpu_ns": 76032474,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 616143220
+    },
+    "complete_state_root": {
+      "calls": 24,
+      "cpu_ns": 9031271,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 239421286
+    },
+    "delta": {
+      "calls": 164,
+      "cpu_ns": 66980290,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 531958910
+    },
+    "execute": {
+      "calls": 7,
+      "cpu_ns": 17812126,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 96104640
+    },
+    "execution_parent_binding": {
+      "calls": 7,
+      "cpu_ns": 5274256,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 5284302
+    },
+    "packet": {
+      "calls": 171,
+      "cpu_ns": 6743982,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 6904712
+    },
+    "persisted_state_root": {
+      "calls": 41,
+      "cpu_ns": 7893479,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 160740612
+    },
+    "publish": {
+      "calls": 7,
+      "cpu_ns": 1845858532,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 8278448220
+    },
+    "read_active": {
+      "calls": 2,
+      "cpu_ns": 269822833,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 1279591491
+    },
+    "record": {
+      "calls": 305,
+      "cpu_ns": 3314979,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 3610662
+    },
+    "state_at": {
+      "calls": 21,
+      "cpu_ns": 1880084487,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 8313002005
+    },
+    "verify_history": {
+      "calls": 15,
+      "cpu_ns": 75470508,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 696118578
+    },
+    "verify_state": {
+      "calls": 61,
+      "cpu_ns": 4694808229,
+      "cpu_unknown_calls": 0,
+      "wall_ns": 20274671853
+    }
+  },
+  "new_candidate_runtime_qualified": false,
+  "observed_rounds": 1,
+  "original_four_second_successes": 0,
+  "original_verifier_errors": [
+    "PUBLIC_REQUEST_DEADLINE"
+  ],
+  "original_window_seconds": 30,
+  "phase": "baseline",
+  "planned_business_packets": 21,
+  "planned_rounds": 3,
+  "production_activation": false,
+  "public_service_qualified": false,
+  "rounds": [
+    {
+      "actual_ended_ns": 30002068677,
+      "actual_started_ns": 1000172733,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 29002068677,
+      "end_lateness_from_four_second_deadline_ns": 25002068677,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 172733
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    }
+  ],
+  "schema": "pon-original-baseline-readback-v1",
+  "source_head": "1b0d60d574c4b3e2172f314cd2655644373b0a27",
+  "source_tree": "afe7c0f29c224c7262755d38d69930bf5030b8a0",
+  "successful_imports": 6,
+  "timely_network_acknowledgements": 7,
+  "total_checkpoint_observations": {
+    "calls_completed": 91462,
+    "calls_started": 91462,
+    "thread_cpu_ns": 5022116584,
+    "wall_ns": 7877623835
+  },
+  "total_client_import_observations": {
+    "thread_cpu_ns": 5833386418,
+    "wall_ns": 26157162421
+  },
+  "work_hardness_qualified": false,
+  "workflow_job": 125914169978,
+  "workflow_run": 41635095044
+}

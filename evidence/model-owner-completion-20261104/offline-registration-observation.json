@@ -1,0 +1,28 @@
+{
+  "command": [
+    "python3",
+    "-I",
+    "-S",
+    "-B",
+    "scripts/ci/llm_hosted_once.py",
+    "register",
+    "--source-commit",
+    "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+    "--ledger",
+    "/workspace/scratch/f4976366a32a/hosted-original-authority/pilot.sqlite3",
+    "--manifest",
+    "/workspace/scratch/f4976366a32a/smollm2-pinned-materials/material-manifest.json",
+    "--trial-id",
+    "009805004f8e3b37bd2c92173a786a70a1c0b9014dd4b1a45190e5deff149604"
+  ],
+  "started_at": "2026-11-05T01:52:28.585323+00:00",
+  "exit_code": 0,
+  "seconds": 0.8284530909995738,
+  "ledger_before_sha256": "8470b5b30aec002780fad5db4252b05355c2fba72a1292a275788ea840c9fffe",
+  "ledger_after_sha256": "8470b5b30aec002780fad5db4252b05355c2fba72a1292a275788ea840c9fffe",
+  "authority_bytes_unchanged": true,
+  "manifest_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+  "offline_only": true,
+  "model_started": false,
+  "published": false
+}

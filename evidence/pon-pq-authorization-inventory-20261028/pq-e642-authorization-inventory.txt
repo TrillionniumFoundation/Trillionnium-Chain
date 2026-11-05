@@ -1,0 +1,93 @@
+PQ 候选授权路径只读审阅 — 2026-10-28
+
+冻结源码：e6429b9a226ac43682f11ecb5f760ef0243c35a7
+文档/证据后继：7745eb9777f392dee134878d6346e05914d00bfa（parent 在本审阅期间提交；Rust 代码未变，也未重试 native 执行）。
+工作目录：/workspace/scratch/56818e4fba76/chain-pq-next
+性质：源码与既有证据审阅；本次没有运行 Rust/Cargo、密码测试、重放测试、基准、网络请求或提权，没有修改仓库源码。
+结论：工作包 3 仍为 HOLD / NO GO；不能声明所有生产授权已统一 PQ，也不能声明全链抗量子。
+
+一、已经接上的真实代码与边界
+
+1. ML-DSA-65 不是成功占位符。trnm-crypto-primitives/src/pq_auth.rs:95–150 对固定 SPKI/key ID 做严格 DER 和算法核对，随后调用进程内 OpenSSL EVP verify_oneshot。TPQ1 预解析本身明确不提供授权。运行时只检查 OpenSSL >=3.5，精确 provider 二进制来源仍须由构建证据承担。
+
+2. 真实签名帧叫 TPQ1；网络请求/响应外壳是 PNQ1/PNP1，不是 PQT1。TPQ1 为 176 字节声明、2 字节签名长度及 3,309 字节 ML-DSA-65 签名，共 3,487 字节。QTX1 为 144 字节正文头、0–512 字节 memo 和一个 TPQ1，实际 3,631–4,143 字节。显式账户配置上限 8,192 字节/交易、16 交易/块；未覆盖旧默认配置。参见 trnm-protocol/src/pq_frame.rs:9–22、pq_transaction.rs:8–13,121–173；trnm-mvcc-fee/src/pon_executor/pq_accounts.rs:465–480。
+
+3. QTX1 实际授权路径为：严格解析 → 选定派生 network → imported sender/key/generation/nonce floor → 实际 ML-DSA 验证 → 私有 ApplicationCommand(tag=1) → 原 M06 扣款、入账、当前分支 nonce 与全字节费用 → 原状态差分/根。并不存在公开 verified=true 或为 QTX1 伪造 PNX1 签名的转换。参见 pq_accounts.rs:516–563；pon_executor.rs:1210–1239,1316–1353。此处是静态路径结论，不能代替 e642 的运行验收。
+
+4. 选中 PQ 账户配置后，prepare() 直接进入 QTX1 解析，PNX1 不被经典分支兜底。validate_main_envelope() 显式拒绝此配置。普通配置仍经 Ed25519/PNX1，不能据此称默认链已 PQ 化。PQ 账户必须使用 PqNetworkV1 存储；普通/经典 listener 拒绝该 backend。参见 pon_executor.rs:887–902,1224–1239,1290–1314；trnm-pon-node/src/store.rs:892–898,1153–1165；ingress.rs:1375；ingress/public_v2.rs:694,723；ingress/public_v3.rs:1869。这只说明已检查直接入口没有发现经典兜底，不是对所有状态路径的形式化无旁路证明。
+
+5. PqNetworkV1 本身也允许配合普通账户 Settings；它首先是传输身份配置。它不自动把被运输的经典交易升级为 PQ 账户交易。账户是否迁移必须另外核对 Settings.app.is_pq_account_profile()。参见 ingress/pq_network.rs:73–143；store/pq_network.rs:49–75,108–114。两者不可混称。
+
+6. from_pq_account_import()、open_with_pq_network() 与 serve_pq_authenticated() 已存在于原 Node 库中，但 main.rs 没有调用这些入口，也没有 PQG1/QTX1 原生部署命令。当前是库 API/测试候选，不是完成 CLI、密钥托管、配置与发布的运行产品。pq-native-openssl 在三个相关 crate 中 default=[]。CLI canary 通过仅证明其保密日志边界，不能替代 PQ 节点启动验收。
+
+二、授权路径矩阵
+
+以下路径均相对 trillionnium/crates/，行号属于冻结 e642。这里的“生产路径”指非测试模块负责的真实功能；不表示已有生产网部署。矩阵是经过上下文核对的审阅清单，不是穷尽的形式化调用图。源码存在、曾经测试通过、当前版本实际通过三者严格区分。
+
+路径 | 当前算法/绑定 | 是否接到实际状态 owner | 运行证据与剩余缺口
+
+PQG1 导入 | 每个激活账号旧 Ed25519 + 新 ML-DSA-65；同一迁移消息绑定完整源摘要、旧/新命名空间、旧 head、撤销 head、protocol、旧账号完整行、新 key ID、generation+1、expiry；另比较外部 target root/genesis | import_genesis() 产出私有 VerifiedPqGenesis 与原 M06 Config/State，Settings 生成新的原生 genesis | 旧 M06 5/5 包括双签/撤销/目标替换；e642 后未完成 native 执行。源历史完整性、撤销头和目标 key mapping 的外部真实性不是本地验签产生的。pq_accounts.rs:26–47,309–377,449–513；lib.rs:250–280。
+
+QTX1 转账 | 固定 imported ML-DSA key；network/generation/nonce floor/height expiry；body+key ID 的 SHA-384 logical ID 排除随机签名 | 原 M06 私有 transfer command，原余额/nonce/fee/State，不另造余额账本 | 原 5/5 已测错误签名/网络/nonce/quarantine/经典拒绝；e642 新派生网络修复和 oracle 互验尚无完成运行记录。pq_accounts.rs:516–563；pon_executor.rs:1326–1353；pq_transaction.rs:65–117。
+
+账户 nonce 与 reorg | imported next_nonce-1 初始状态及不可低于 floor-1；当前分支逐次 +1 | 原 Node 分支/差分/状态根；nonce 依正确 reorg 可回到另一分支状态，这不同于链外不可逆撤销账 | 初始 Node 7 项中 5 PASS、2 FAIL；完整 Node fork/reorg/cold replay 与真实 TCP transfer 两项均失败。后续源码修改不继承通过。pq_accounts.rs:246–260,409–432；pon_executor.rs:1330；tests/pq_account_native.rs:50,185。
+
+未迁移账号与四类负债 | 未迁移账号进入独立 quarantine 地址，无 signing policy；四类原始 81 字节负债行 immutable/frozen | 余额和 locked amount 参与原资金守恒；每块重验 nonce floor 与 exact liability rows | 不丢弃、不自动退款，但未来支付/到期/完成生命周期未迁移，不能算经济完整迁移。pq_accounts.rs:175–190,400–445,246–260；pon_executor.rs:2755–2759,2849–2859。
+
+账户注册/轮换/撤销/恢复 | imported roster/generation 固定；没有对应 QTX1 操作 | 当前仅 tag=1 转账，后续账户 key lifecycle owner 缺失 | 未授权地址可收 PoN 奖励但无花费钥匙；不应为规避此缺口把挖矿限定到迁移名单。docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md:99–116；pq_accounts.rs:528–555。
+
+PNQ1/PNP1 网络身份 | 真实 ML-DSA；固定 server/最多64 peers；network+parameters+genesis+policy ID+direction+peer+generation+sequence+expiry+payload | 真 TCP → durable begin → 原 dispatch/W1/M06 → signed response → durable finish | 旧 exact-source transport 6/6 PASS，e642 未重新验收。loopback-only、串行 accept/read/execute/write、单连接最多10秒、server lifetime最多3600秒；没有公开发现、保密握手、WAN 服务验收。ingress/pq_network.rs:27–36,73–204,448–538。
+
+网络重放/撤销 | operation ID 来自已认证声明，不包含随机签名字节；pending/completed/expired 记录；本地 operator revoke | 独立 SQLite pq_network_peer_v1 / pq_network_request_v1，不放入 reorg State；冷开重新验签旧记录与上下文 | 旧 6/6 包括 lost ack、随机签名同操作、冷开、实际 reorg 不撤销本地 revoke、expired pending、ledger byte exhaustion。16MiB/4096 条上限不是 CPU/SLA 或无限期运行证明；无 rotation、剪裁检查点、物理 antirollback。store/pq_network.rs:22–25,117–270,273–375。
+
+默认 PNX1 与 M05 queue | 旧 Ed25519 main envelope；M05 CheckedPnxSignature 绑定 parent/config/state/raw | 旧完整业务和排队 owner 继续存在；PQ 配置拒绝旧 validate_main_envelope | QTX1 队列schema、prefix admission、缓存与观察尚未迁移；不可把网络 PQ 包装记为账户 PQ。pon_executor.rs:1224–1239,1290–1314；store/mempool.rs:240–267。
+
+Qualified task/source/lease | 旧 Ed25519 inner source statement，绑定 demand/lease/授权scope/withdrawal/height/DA | 原 task lifecycle；PQ transfer command 无 legacy Envelope 且只有 tag1，不能进入 tags18–22 | 任务格式、source registry、lease、撤销与激活仍需版本化 PQ 迁移。crypto-primitives/src/qualified_work_task.rs:180–210；qualified_work_task/lifecycle_v2.rs:40–70；mvcc-fee/src/pon_executor.rs:1929–1936。
+
+模型 task window/evaluation/actor | 旧 Ed25519 model-owner/window signature、conflict tx复核、actor Ed25519 key parser | 原模型/评价/actor 状态；没有新 PQ owner 连接 | 未迁移；评价授权不得变为共识权重。model_task_windows_v1.rs:279；public_evaluation.rs:385；deployment_actors.rs:84。
+
+Operator 部署/checkpoint/任务/挖矿/pool/连续恢复与历史 | 旧单/双 Ed25519 批准，保留不同角色 | 原 operator 持久权限/恢复/效果 owner | PQ 网络 backend 还明确排斥现有 operator owner 组合；不能删掉角色要求或用一个新 PQ 签名代替双批准。node/src/operator_deployment.rs:271；operator_checkpoint_tile.rs:211；operator_task_policy.rs:647,653；operator_mining_policy.rs:495,501；operator_pool_policy.rs:331,337；operator_continuous_policy.rs:325,331；operator_continuous_recipient.rs:367,373；operator_continuous_recovery.rs:139,145；operator_continuous_history.rs:488,494；store.rs:1162–1165。
+
+Research command / Chain-side Hepta handoff | 旧 32字节 Ed25519 public key +64字节signature；chain/DID/canonical payload，另查 HeptaAuthority role | 原研究协议授权与跨owner交接 | 这些接口未迁移，外部 Hepta loader/FinalUse 本次没有重审或迁移。research-protocol/src/command.rs:155–169；hepta_handoff.rs:235–276。
+
+Task-kernel controller/session/capability | 旧 Ed25519；按操作选择 controller/session key，严格 role/domain/有效height | 原持久 AgentMarketStore | 未迁移 controller、session、撤销与 durable operation 的联合语义。task-kernel/src/store.rs:1004–1079。
+
+双边 service settlement | 明确要求 SIGNATURE_SCHEME_ED25519_V1；agent/key/role/policy revision/generation/authority height | 原 usage/settlement/escrow owner | 未迁移双方钥匙与结算生命周期，不能用PQG1冻结负债替代未来结算。service-settlement/src/engine.rs:986–1034。
+
+DA author/attestation/retrieval | 旧 strict Ed25519 author/member/requester/responder，原上下文/epoch/sequence/对象摘要 | 原 DA 录入、证明、重启审计和取回owner | 未迁移成员/作者名册、证书和request/response wire；签名升级也不证明实际可用性。data-availability/src/types.rs:949–968,1330–1382,1756–1783；retrieval.rs:249,589,870。
+
+Cell discovery | CDP1旧 Ed25519 owner/signature；request、endpoint、sequence、TTL、地址策略 | 原目录记录验证与查询 | 未迁移 discovery owner/key lifecycle。data-availability/src/cell/discovery.rs:197–231；其引用的 types::verify_strict 仍Ed25519。
+
+Cell release/fetch/model installation | TCR1/Cell内容地址是完整性，不自动给release/current/FinalUse权限；expected root来自外部owner | 真store/fetch/cache/marker；completion marker明确不是CURRENT/FinalUse | 没有新的PQ release或模型安装owner；取得字节不等于有权安装或证明改进。data-availability/src/cell/release.rs:46–82,164–185；Hepta外部运行结果应独立审阅。
+
+State import / Release / Control-plane verifier interfaces | SourceFinalityVerifierV0、CutoverSignatureVerifierV0、ReleaseSignatureVerifierV0、PlanSignatureVerifierV0 为泛型外部验证接口 | 能消费外部实现，接口本身没有固定生产PQ密码实现或信任锚 | 不能把接口存在计为PQ迁移；也不能把测试AcceptSignature/AcceptFinality误报为非测试运行时旁路。state-import/src/lib.rs:148–151,2292–2295；release-bundle/src/lib.rs:320–323；control-plane/src/lib.rs:359–362。
+
+三、跨导入上下文修复：准确范围
+
+保留的 prepatch 原始日志确实显示：同一真实 ML-DSA QTX1 在两个不同 genesis/parameter 上应用成功，只因两者重用了声明 new_network。cross-import-prepatch.stdout.txt 明示 foreign_transaction_applied=true；拒绝控制 0 PASS / 1 FAIL。它是已执行的普通本地重放反例，不是量子计算。
+
+e642 静态修复为：参数ID同时绑定旧 installed parameters、source.protocol、完整 source_digest、target_genesis、SPKI key bindings 和 canonical params；实际 cfg.network 再以 fresh domain 绑定 declared new_network、上述完整参数ID、source_digest 和 target_genesis（pq_accounts.rs:471–495）。QTX1正文签该派生 network，prepare() 与实际 cfg.network 比较（:526）。因此在哈希承诺假设成立、外部pins可信的条件下，改变这些已绑定导入上下文不能沿用旧声明network重放同一签名。它不自动证明外部源历史真实，不覆盖尚未实现的key rotation、task、Cell或model权限；postpatch native控制仍未完成，不能记PASS。
+
+四、迁移不能修复已被量子破解的旧身份
+
+旧钥匙若已可被伪造，攻击者可自选新PQ钥匙并同时给出“旧钥匙签名”和“新PQ钥匙签名”。本地两个数学验签都真，并不能区分真正旧owner的新钥匙与攻击者新钥匙。因此必须在旧身份失守之前固定可独立认证的目标PQ映射，或显式引入可信迁移授权。仅固定旧余额快照不够。
+
+此实现的 target_state_root / target_genesis 由外部 ImportPins 提供，并在:449–462 精确核对；它能够执行给定映射，却不能自己建立映射真实性。e642 的 docs/security/PQ_NATIVE_ACCOUNT_OWNER_V1.md:44–59 已写明该假设。新测试 dual_possession_does_not_recover_already_compromised_classical_identity 在 tests/pq_account_owner.rs:563–581，但本次未见其完成运行记录。本次审阅指出原文“native negative control demonstrates”不能被摘成已执行通过；parent 已在文档/证据后继 7745 中修正为已编写、尚未执行的控制，补记自动中断，未重试 native 测试。
+
+五、现有执行证据，禁止继承通过
+
+1. reconstruction native-loopback：原source manifest SHA-256 41ecb6b2ea8094c02a5ba9473b80663ae6aa8ef313ecf8f0920bc8e306fa7381，ELF SHA-256 528c76dcbf1cf2e5823345641a762f0f9fd8ab3dad27bf873821dc4b9a810662。6 PASS /0 FAIL /0 ignored，2.506743949秒。第一次4 PASS/2 sandbox bind FAIL也保留。当前e642不是这个原source身份。
+2. m06-second：旧candidate 5/5实际PASS，native测试0.51秒，build/run wall25.757261309秒。涵盖原transfer、nonce分支、四类负债、签名/上下文/quarantine/经典拒绝及迁移限制；之后仍有源码修改。
+3. node-native-first：7执行，5 PASS、2 FAIL，0 skipped/timeout。真实Node fork/reorg/cold reopen和真实TCP QTX1两项没有通过，不能把fixture后续源码修复当结果。
+4. cross-import-prepatch：0/1拒绝控制FAIL，保留真实跨导入签名可重复应用的反例；51.624404153秒总墙钟，0.27秒测试执行。
+5. cli-canary-first：1/1 PASS，6.137036716995秒，仅CLI日志边界，不是PQ Node CLI实现。
+6. e642 strict Clippy：whole-workspace/all-target/all-feature -D warnings 实际exit0，86.800480400998秒，source_unchanged=true。本审阅重新核对记录关联source manifest SHA，以及stdout/stderr长度和SHA，全部吻合。该证明只到编译/静态lint。
+7. node-build-e642：仅有编译中的stdout/stderr，无最终record，无postpatch native结果。自动安全检查中断来自parent工作记录；本审阅未重试，也没有把日志缺结尾猜成特定Rust编译错误。
+
+六、下一阶段需要关闭的具体门
+
+须分别完成新源原生运行、QTX1与M05原排队/费用资源集成、账户公开注册与key lifecycle、四类负债原结算迁移、所有task/operator/Cell/Hepta授权统一、可信旧源及目标映射来源、网络公开部署和旋转/持久裁剪/恢复。公开网络需要对实际3.3KB签名验证、未认证解析CPU、响应和durable ledger上限重新做服务验收；当前串行loopback实现不是已达标公开P2P传输。
+
+纯PoN保持不变：账户签名、peer名单、迁移身份、operator批准不能增加chainwork，不能把必须迁移的owner通过加入许可挖矿名单绕过去。PQ签名迁移也没有解决W1证明soundness/QROM、量子有效算力与DAA、数据持久可用性或模型质量这些独立问题。
+
+配套 JSON 记录本次审阅文件的 Git blob、SHA-256 与源码行定位，以及只读证据校验结果；没有输出私钥材料。

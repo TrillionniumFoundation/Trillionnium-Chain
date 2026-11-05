@@ -1,0 +1,12 @@
+{
+  "artifact_id": 13230750887,
+  "artifact_zip_sha256": "503f4da52f81b4d126af6da17399bfadcdf4956650160538576067b27024874e",
+  "gzip_bytes": 188113,
+  "gzip_sha256": "eb5b396d42cdb191d396626a73b0c990ecd95eb474ec258ff94fe5912a014d05",
+  "raw_bytes": 2225166,
+  "raw_sha256": "94305c8f020321b9912087df172b2ed767c6494e7a05f5a9d08494e7947917d5",
+  "result_bytes": 73771,
+  "result_sha256": "ed77747b0b185d686fe15759f65e6a19d7e6e9ffb0c1a878c862c6254c9f6aa0",
+  "schema": "pon-baseline-raw-preservation-v1",
+  "source_head": "1b0d60d574c4b3e2172f314cd2655644373b0a27"
+}

@@ -1,0 +1,382 @@
+{
+  "schema": "exact-candidate-original-node-974-four-lane-terminal-readback-v1",
+  "observed_utc": "2026-11-03T23:38:31.210314+00:00",
+  "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+  "actual_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+  "tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+  "run_id": 41732369827,
+  "attempt": 1,
+  "source_binding": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/source-binding.json",
+    "bytes": 6561,
+    "sha256": "0ee84001eb8410e88cbb46a45e3c838ffc07509cbd1429e4cbc86ba2d7c7fb10"
+  },
+  "terminal_job_metadata": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/20261103T233738774Z-pq-full-jobs.json",
+    "bytes": 33878,
+    "sha256": "255e7bbca5873f15ddd97949a4bb3f85ae9332c60867cc54bb371a1855d08333"
+  },
+  "same_951_unique_pass_names_all_four_lanes": true,
+  "same_23_original_ignored_names_and_reasons_all_four_lanes": true,
+  "same_43_original_selector_names_all_four_lanes": true,
+  "registry_reference": {
+    "path": "/workspace/scratch/b5a148b09b11/next-validation/full-node-fixture-diagnostics/plan.json",
+    "sha256": "c85222711cb8ef0a65c11a828d8471cfc6f7faa7bd9b9a6228f745530171e27d",
+    "original_ignored": [
+      "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+      "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+      "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+      "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+      "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+      "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+      "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+      "ingress::history_import::tests::history_kill_cut_child",
+      "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+      "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+      "store::history_page::tests::history_page_complete_call_cost",
+      "store::history_page::tests::packet_reservation_history_complete_call_cost",
+      "store::mempool::binding_tests::normal_256_signed_raw_binding_component_timing",
+      "store::mempool::incremental_prefix_tests::normal_m05_signature_reuse_component_timing",
+      "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "store::native_budget::tests::native_budget_abrupt_exit_worker",
+      "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+      "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "store::reorg_cancellation::tests::reorg_cancellation_kill_child"
+    ],
+    "candidate_additions": [
+      "ingress::public_v3::request_observation::tests::error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8",
+      "ingress::public_v3::request_observation::tests::dispatch_diagnostic_survives_distinct_terminal_cancellation_without_changing_codes",
+      "ingress::public_v3::request_observation::tests::error_diagnostic_contention_does_not_block_or_reclassify_rejection"
+    ]
+  },
+  "unique_pass_names_sha256": "f7e6efe2b0910cd8c0721856297407cde7647c80c9a4f1886fdd24acec74c1be",
+  "original_ignored_names_and_reasons": [
+    {
+      "name": "account_archive_execution::state_witness::growth_v2_tests::growth_v2_crosses_legacy_total_key_cap_without_changing_old_profile",
+      "reason": "explicit release-only 65,537 permanent-account growth relation; not native admission"
+    },
+    {
+      "name": "account_archive_prototype::native_primitive_tests::native_branch_single_buffer_cost_observation",
+      "reason": "explicit release branch hashing observation; not Node or WAN throughput"
+    },
+    {
+      "name": "account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost",
+      "reason": "explicit release account-verification comparison; no full Node cost claim"
+    },
+    {
+      "name": "account_archive_prototype::native_primitive_tests::shared_branch_kernel_complete_call_cost",
+      "reason": "explicit same-binary codegen observation; not Node or network throughput"
+    },
+    {
+      "name": "account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover",
+      "reason": "explicit release full-capacity gate in both head and prospective-merge CI"
+    },
+    {
+      "name": "account_archive_prototype::native_store::node_reader::tests::native_node_reader_paired_graph_cost_observation",
+      "reason": "explicit paired SQL reader observation; not the public service acceptance gate"
+    },
+    {
+      "name": "account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation",
+      "reason": "explicit constant-table observation; not full-node performance"
+    },
+    {
+      "name": "ancestry_index::cost_tests::retained_4105_actual_history_index_cost",
+      "reason": "read-only retained #674 artifact: set TRNM_RETAINED_HISTORY_DIRECTORY; not original Host/cold-sync acceptance"
+    },
+    {
+      "name": "ingress::history_import::tests::history_kill_cut_child",
+      "reason": "subprocess fixture: parent selects a real SIGKILL cut"
+    },
+    {
+      "name": "ingress::tests::authenticated_activation_recovery::withheld_original_frame_must_not_stall_a_different_honest_signed_mutation",
+      "reason": "actual original ten-second deadline and signed-socket honest-service gate; run explicitly"
+    },
+    {
+      "name": "store::detached_admission::tests::detached_full_state_cost_uses_real_signed_history_and_reports_scope",
+      "reason": "explicit actual 1024-signed-transfer full-State snapshot/execution/commit cost; not a saturation campaign"
+    },
+    {
+      "name": "store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen",
+      "reason": "explicit release gate: actual signed native transition across 65,536 accounts, full work and cold replay"
+    },
+    {
+      "name": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "reason": "explicit native A/H observation: full State reference, real W1/signed admission, atomic cancellation and cold reopen"
+    },
+    {
+      "name": "store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen",
+      "reason": "explicit release native-growth ordinary-genesis 65,537 signed-account gate"
+    },
+    {
+      "name": "store::history_page::tests::history_page_complete_call_cost",
+      "reason": "finite paired native history cost; requires a new output directory"
+    },
+    {
+      "name": "store::history_page::tests::packet_reservation_history_complete_call_cost",
+      "reason": "paired complete native read/response cost; needs a new output directory"
+    },
+    {
+      "name": "store::mempool::binding_tests::normal_256_signed_raw_binding_component_timing",
+      "reason": "explicit normal component timing, not a service or work-cost qualification"
+    },
+    {
+      "name": "store::mempool::incremental_prefix_tests::normal_m05_signature_reuse_component_timing",
+      "reason": "explicit M05/M06 component timing, not endpoint or public service acceptance"
+    },
+    {
+      "name": "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations",
+      "reason": "explicit release-only retained-delta cost observation; not a throughput gate"
+    },
+    {
+      "name": "store::native_budget::tests::native_budget_abrupt_exit_worker",
+      "reason": "selected only by the abrupt-exit parent with a fresh test directory"
+    },
+    {
+      "name": "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+      "reason": "complete snapshot/public-history cost and retained long-history growth; saved output required"
+    },
+    {
+      "name": "store::reorg_cancellation::tests::actual_full_w1_depletion_terminates_intent_and_admits_an_independent_honest_mutation",
+      "reason": "actual full W1 depletion; preserves all attempts and original account"
+    },
+    {
+      "name": "store::reorg_cancellation::tests::reorg_cancellation_kill_child",
+      "reason": "subprocess fixture: only parent chooses a real SIGKILL cut"
+    }
+  ],
+  "lanes": [
+    {
+      "lane": "x64-head",
+      "job_id": 126252724264,
+      "job_started_at": "2026-11-03T22:37:15Z",
+      "job_completed_at": "2026-11-03T23:13:56Z",
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "artifact_id": 13279576440,
+      "artifact_bytes": 1052408,
+      "artifact_sha256": "5870776b82b3cba0394e5651251c5f821af1f4431898311250cee9f376d1a106",
+      "source": {
+        "base": null,
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1379.80s",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "actual_compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "original43_named_control_count": 43,
+      "strict_clippy_exit": 0,
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-head-13279576440-readback.json",
+        "bytes": 288846,
+        "sha256": "7e11a880ee502b1b1bd3f263e58ad25303defa82e0b31111d2772450387b5070"
+      },
+      "complete_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-head-13279576440-original-records.json.gz",
+        "bytes": 956347,
+        "sha256": "889635fe9d54a4eb035704e8429e68bfa791031b2756a417e343a1c3ca47c02c"
+      },
+      "native_elf_sha256": null,
+      "native_elf_scope": "This artifact retains compiler executable path and profile, but no ELF bytes or independently recorded ELF SHA; no hash is inferred."
+    },
+    {
+      "lane": "x64-merge",
+      "job_id": 126252724063,
+      "job_started_at": "2026-11-03T22:37:14Z",
+      "job_completed_at": "2026-11-03T23:17:31Z",
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "artifact_id": 13280436185,
+      "artifact_bytes": 1056291,
+      "artifact_sha256": "3509ed48489a58cbc7f14374dc241c5257384e5c2d98742a509376a06cbb01d3",
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "prospective-merge",
+        "prospective_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 1384.25s",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "actual_compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "original43_named_control_count": 43,
+      "strict_clippy_exit": 0,
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-merge-13280436185-readback.json",
+        "bytes": 289305,
+        "sha256": "9d9121237013ffbcedac81716c47170275a3f98615c7e1fdc192c999fc4c85bf"
+      },
+      "complete_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-x64-merge-13280436185-original-records.json.gz",
+        "bytes": 957398,
+        "sha256": "2b68488ca0dc40cc95a7ff40ec5b769aa1a3c1398c59c2d379a474460a5970b7"
+      },
+      "native_elf_sha256": null,
+      "native_elf_scope": "This artifact retains compiler executable path and profile, but no ELF bytes or independently recorded ELF SHA; no hash is inferred."
+    },
+    {
+      "lane": "arm64-head",
+      "job_id": 126252724241,
+      "job_started_at": "2026-11-03T22:37:16Z",
+      "job_completed_at": "2026-11-03T23:30:52Z",
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "artifact_id": 13279503756,
+      "artifact_bytes": 1035553,
+      "artifact_sha256": "6fbd171646ff5547d934df26b6f41202eda32a5ac8c7eef7252f5dc86e308670",
+      "source": {
+        "base": null,
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2175.89s",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "actual_compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "original43_named_control_count": 43,
+      "strict_clippy_exit": 0,
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-head-13279503756-readback.json",
+        "bytes": 288856,
+        "sha256": "d8124ff5fd2be3b38980fa50a5c8fd916f4d66d6568d4288c0ef17e676a03b57"
+      },
+      "complete_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-head-13279503756-original-records.json.gz",
+        "bytes": 938038,
+        "sha256": "f6a795090fa864ee7cf317cac2286cae4a6f2943e34d256c170ffaa5a5861ad5"
+      },
+      "native_elf_sha256": null,
+      "native_elf_scope": "This artifact retains compiler executable path and profile, but no ELF bytes or independently recorded ELF SHA; no hash is inferred."
+    },
+    {
+      "lane": "arm64-merge",
+      "job_id": 126252723783,
+      "job_started_at": "2026-11-03T22:37:16Z",
+      "job_completed_at": "2026-11-03T23:25:14Z",
+      "job_status": "completed",
+      "job_conclusion": "success",
+      "artifact_id": 13279562975,
+      "artifact_bytes": 1054162,
+      "artifact_sha256": "739528432a36fc8220ff72d598ba9570573ccba947d498e37bb31aa8e2df02ed",
+      "source": {
+        "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+        "candidate": "b4bdf142f513081715ecc8d1f9674291e85302cc",
+        "kind": "prospective-merge",
+        "prospective_merge": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d9efb0f3bc4dfdbfd8fcb609375dfeb852407bfb",
+        "tested_tree": "3e141fb9bcec9bf2a49d55647f46f12bd3ca28bb",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 884109821,
+        "tracked_entries": 7757,
+        "tracked_worktree_verified": true
+      },
+      "outer_summary": "test result: ok. 951 passed; 0 failed; 23 ignored; 0 measured; 0 filtered out; finished in 2163.15s",
+      "counts": {
+        "pass": 951,
+        "fail": 0,
+        "original_ignored": 23,
+        "measured": 0,
+        "filtered": 0
+      },
+      "actual_compiler_profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "original43_named_control_count": 43,
+      "strict_clippy_exit": 0,
+      "readback": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-merge-13279562975-readback.json",
+        "bytes": 289315,
+        "sha256": "7c0d619b0a59a2e0393ad68cab1e244d304f5122c5572dd247b8b63082e966de"
+      },
+      "complete_original_records": {
+        "path": "/workspace/scratch/b5a148b09b11/next-hosted/b4bdf-review/pq-node-arm64-merge-13279562975-original-records.json.gz",
+        "bytes": 955427,
+        "sha256": "78adc431d8b940c37558179cfbcfa3b52013fecf109f222f14156a9f78e90c9d"
+      },
+      "native_elf_sha256": null,
+      "native_elf_scope": "This artifact retains compiler executable path and profile, but no ELF bytes or independently recorded ELF SHA; no hash is inferred."
+    }
+  ],
+  "claims": {
+    "four_original_full_node_lanes_pass": true,
+    "four_original43_control_lanes_pass": true,
+    "four_original_strict_clippy_commands_pass": true,
+    "whole_workspace_pass": false,
+    "nine_host_runtime_selectors_pass": false,
+    "original_business_performance_acceptance_pass": false,
+    "other_source_qualified": false,
+    "whole_chain_pq_qualified": false,
+    "release_or_activation_authorized": false
+  },
+  "counts_scope": "951 unique PASS names repeated on four exact source/architecture lanes. The original43 selectors overlap that population and are not added. Nested subprocess harness summaries are retained in per-lane records but not added. The three candidate diagnostic tests are included; all23 original ignored tests remain ignored. W1 History default-feature958 is a separate invocation profile. No results from a previous candidate are inherited.",
+  "reader": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/new-candidate-preparation/aggregate-pq-four-lane.py",
+    "bytes": 7512,
+    "sha256": "1375c8af27d5afc1fa245a46fc779dcdf774a1c5285de69cff955068a11fb044"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "label": "untested-composition-from-b811",
+  "base_commit": "b8116f65789a85148254f870c678a44f895316de",
+  "scope": "only the ten parent-carry / known-write paths; not a complete tested native tree",
+  "native_execution_of_this_composed_patch": null,
+  "full_historical_native_manifest_sha256": null,
+  "patch_path": "source/untested-composition-from-b811.patch.gz",
+  "raw_patch_sha256": "52b99c2e92feb04df9a3fc22d0be106ddc8f4223ee301aec5cbc96f39e550dae",
+  "stored_patch_sha256": "4712dca5cfaed794dbbd7b7d3d42741eed798ae87294732b612d333dfb127f5d",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "base_sha256": "e2bff28f8b040b36f9a019637db8cee496990ee58cc5d610114a54d6cb169709",
+      "candidate_sha256": "4ab9644d90e72fdf2ee8227c75b6a7de5d9093b26f1f6a4c940a9ddc23778416",
+      "candidate_bytes": 48160,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "base_sha256": "07c2bdd2c1a69e3572863c6b9f9e962488bae3c303347e8bb3c90cbc0487522f",
+      "candidate_sha256": "bb6d645dbed0a67b8e36b2287ba3fbaca486f06bd1ae72dca53d8c40cbf12a46",
+      "candidate_bytes": 47300,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "base_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "candidate_sha256": "cc437eeb283e1b4da1552eceacee744f70046eca0b67dac3046fc3ce19fe1650",
+      "candidate_bytes": 97169,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "base_sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "candidate_sha256": "b733ff3386da5068fb66fcdcca72ac8fb494cd0f928229e7f212a5451b814df3",
+      "candidate_bytes": 13643,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "base_sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "candidate_sha256": "7f2845630eeae1e9dff01edf880a9e6834ea9006cabf568e396cd3fd2c4d746d",
+      "candidate_bytes": 17353,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs",
+      "base_sha256": null,
+      "candidate_sha256": "140e86198f4950d72d45fbc6b40aba989350e995cd49e94a1e79f5419b2237e2",
+      "candidate_bytes": 5610,
+      "new_file": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+      "base_sha256": null,
+      "candidate_sha256": "f579f4509f3d1a7f4e9cbdd060e4da3a4beacfc40998a18d5b05d38d033544c7",
+      "candidate_bytes": 36149,
+      "new_file": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+      "base_sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "candidate_sha256": "bae66fadbd551aff2494fa7f2a77d043d576b5d8931067a1b7f038148047b812",
+      "candidate_bytes": 2326,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "base_sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "candidate_sha256": "e0f042bf3103c2da92f737e935bcb6354736b2070ddd74a48854a1c36f34939e",
+      "candidate_bytes": 15685,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/known_write_scope_tests.rs",
+      "base_sha256": null,
+      "candidate_sha256": "0fd3e76d84502411525be5ded7b8395b27556d3e61fb557dc36e519b2e9c4cf4",
+      "candidate_bytes": 8172,
+      "new_file": true
+    }
+  ],
+  "scratch_git_apply_check_exit": 0,
+  "scratch_git_apply_exit": 0,
+  "all_reconstructed_file_bytes_match": true
+}

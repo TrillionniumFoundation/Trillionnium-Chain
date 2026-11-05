@@ -1,0 +1,2 @@
+{"kind": "wait4", "monotonic": 73154.717836893, "pid": 12, "returncode": 0, "user_seconds": 0.01146, "system_seconds": 0.020193, "maxrss_kib": 55424}
+{"kind": "stop_requested", "monotonic": 73154.718729043, "reason": "wait4_rss"}

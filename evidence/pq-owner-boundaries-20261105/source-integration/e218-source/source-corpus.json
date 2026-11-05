@@ -1,0 +1,26 @@
+{
+  "scope": "Source/package/link checks and source-integrity fixtures only; no Rust/native/deployment acceptance",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "source_before": {
+    "head": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+    "status": ""
+  },
+  "source_after": {
+    "head": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+    "status": ""
+  },
+  "source_unchanged": true,
+  "exit_code": 0,
+  "elapsed_seconds": 0.5315389249990403,
+  "output_sha256": "9aff167000acadac6524cfe2a0f75be9376dbfef329d140cdbcec2beec10917c",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  }
+}

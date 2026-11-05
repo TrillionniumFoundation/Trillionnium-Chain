@@ -1,0 +1,387 @@
+{
+  "actual_v2_cost_controls": {
+    "actual_run": "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-dense",
+    "command": [
+      "python",
+      "scripts/ci/test_shared_material_cost_v2.py",
+      "--actual-run",
+      "/workspace/scratch/708bcecd45db/campaign-v2/paired-r0-t0-full-limb-dense",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/708bcecd45db/chain",
+    "finished_utc": "2026-11-05T09:08:20.768849+00:00",
+    "log": "/workspace/scratch/708bcecd45db/audit-notes/cost-v2-actual-controls.log",
+    "log_sha256": "0b5bd6b396eaaf294729eb7c10d97e8e66c534bc017571ab613d536d4e941d2b",
+    "returncode": 0,
+    "scope": "read-only audit; disposable mutation copies are outside the repository; no native measurement or compilation started",
+    "started_utc": "2026-11-05T09:08:16.907065+00:00",
+    "wall_ns": 3861867469
+  },
+  "exact_source_python_and_repository": {
+    "checks": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "finish_unix_ns": 1793869795343320052,
+        "log_bytes": 171,
+        "log_sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886",
+        "name": "preflight",
+        "returncode": 0,
+        "start_unix_ns": 1793869795273766857
+      },
+      {
+        "command": [
+          "python",
+          "formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py"
+        ],
+        "finish_unix_ns": 1793869797190715045,
+        "log_bytes": 1869,
+        "log_sha256": "f8021180b3f748a2cc806ae44e029b4dc19d7aa674dce8c7de138740b44611f3",
+        "name": "consumer",
+        "returncode": 0,
+        "start_unix_ns": 1793869795343515897
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_shared_material_security_v1.py"
+        ],
+        "finish_unix_ns": 1793869797808753843,
+        "log_bytes": 2979,
+        "log_sha256": "f164dd9645bcc7466ebefe105b5de6d4516f16de409813bd5f6a2add51a34f4f",
+        "name": "security-reader",
+        "returncode": 0,
+        "start_unix_ns": 1793869797191222048
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_shared_material_campaign_v2.py"
+        ],
+        "finish_unix_ns": 1793869797877770485,
+        "log_bytes": 100,
+        "log_sha256": "6f283ee6225d2cef4c0127d95456a6f954c45141c92b97dd89016cb1c630e8f4",
+        "name": "campaign-driver",
+        "returncode": 0,
+        "start_unix_ns": 1793869797809074306
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "finish_unix_ns": 1793869814559531212,
+        "log_bytes": 16318,
+        "log_sha256": "df8209604e717de621131a608cdd53b5605065858fe7032ede0f89835ff5a69e",
+        "name": "ci-contract-tests",
+        "returncode": 0,
+        "start_unix_ns": 1793869797882669399
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "finish_unix_ns": 1793869814710950301,
+        "log_bytes": 180,
+        "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+        "name": "ci-contract-check",
+        "returncode": 0,
+        "start_unix_ns": 1793869814559803541
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/test_ci_source_integrity.py"
+        ],
+        "finish_unix_ns": 1793869819641807089,
+        "log_bytes": 6898,
+        "log_sha256": "bc2339ffff24e3032b357e499d1659a5d5b64e904850544b9ad01020ddf4552f",
+        "name": "source-negative-tests",
+        "returncode": 0,
+        "start_unix_ns": 1793869814711248530
+      },
+      {
+        "command": [
+          "python",
+          "scripts/refresh_distributed_source_inventory.py",
+          "--check"
+        ],
+        "finish_unix_ns": 1793869819703072654,
+        "log_bytes": 35,
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "name": "source-inventory",
+        "returncode": 0,
+        "start_unix_ns": 1793869819642104887
+      },
+      {
+        "command": [
+          "python",
+          "scripts/ci/check_repository.py"
+        ],
+        "finish_unix_ns": 1793869880763204609,
+        "log_bytes": 307,
+        "log_sha256": "8e547b310d96fb7e145e882223242d5bda4c7c2f8425c7dfd91bbf78300d1df6",
+        "name": "repository-check",
+        "returncode": 0,
+        "start_unix_ns": 1793869819703451844
+      },
+      {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "metadata",
+          "--offline",
+          "--locked",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "trillionnium/Cargo.toml"
+        ],
+        "finish_unix_ns": 1793869881686925614,
+        "log_bytes": 805968,
+        "log_sha256": "9891afaf3c8b0c1119479b9dd09efced7829d95b9175cebc64beb1bb4858485a",
+        "name": "cargo-graph",
+        "returncode": 0,
+        "start_unix_ns": 1793869880763466313
+      },
+      {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "fmt",
+          "--all",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "finish_unix_ns": 1793869899638622077,
+        "log_bytes": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "workspace-format",
+        "returncode": 0,
+        "start_unix_ns": 1793869881687741682
+      }
+    ],
+    "source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1"
+  },
+  "exact_source_rust": {
+    "after": {
+      "dirty_porcelain": "",
+      "head": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "release_binary_sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f",
+      "rust_source_files_sha256": {
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655"
+      }
+    },
+    "before": {
+      "dirty_porcelain": "",
+      "expected_head": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "head": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+      "matches_precommit_rust_hashes": true,
+      "release_binary_matches_precommit": true,
+      "release_binary_sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f",
+      "rust_source_files_sha256": {
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655"
+      }
+    },
+    "checked_at_utc": "2026-11-05T09:15:18.812595+00:00",
+    "followup_commands": [
+      {
+        "command": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "cwd": "/workspace/scratch/708bcecd45db/chain",
+        "exit_code": 0,
+        "log": "/workspace/scratch/708bcecd45db/audit-notes/exact-source-project-preflight.log",
+        "log_bytes": 171,
+        "log_sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886",
+        "start_utc": "2026-11-05T09:12:27.413989+00:00",
+        "wall_seconds": 0.06955694399948698
+      },
+      {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--example",
+          "pon_shared_material_v1",
+          "--",
+          "--nocapture"
+        ],
+        "cwd": "/workspace/scratch/708bcecd45db/chain",
+        "exit_code": 0,
+        "log": "/workspace/scratch/708bcecd45db/audit-notes/exact-source-native-example-tests.log",
+        "log_bytes": 2906,
+        "log_sha256": "c101c920b6073c2c017a5daa964379b4ddc250e5eaf89a8e6850027e645567fc",
+        "start_utc": "2026-11-05T09:12:27.484008+00:00",
+        "wall_seconds": 67.00296843499746
+      },
+      {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--lib",
+          "--tests",
+          "--example",
+          "pon_shared_material_v1",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/708bcecd45db/chain",
+        "exit_code": 0,
+        "log": "/workspace/scratch/708bcecd45db/audit-notes/exact-source-native-strict-clippy.log",
+        "log_bytes": 1463,
+        "log_sha256": "5e4bcc4bc2f25f17aab2ec72f9c159405a904db4809aab6a48b69af85038ad93",
+        "start_utc": "2026-11-05T09:13:34.487794+00:00",
+        "wall_seconds": 21.888322988001164
+      }
+    ],
+    "limitations": [
+      "This validation names eeedfe33 explicitly; a subsequent merge is not claimed to have been benchmarked here.",
+      "No production verifier/consensus changes or repository writes were made during this audit.",
+      "No full-workspace build or broadened testing scope."
+    ],
+    "logs": {
+      "exact-source-crypto-lib-tests.log": {
+        "bytes": 16463,
+        "sha256": "fcdf1dc72f26acf853b1d09a1e397f52e97269045333a61703d1bf5068c0f378"
+      },
+      "exact-source-followup-command-results.json": {
+        "bytes": 1869,
+        "sha256": "21c78352a7239e05bee84961bd6ffb1ccc26d6b3fcd986503646207f321d2ff6"
+      },
+      "exact-source-native-example-tests.log": {
+        "bytes": 2906,
+        "sha256": "c101c920b6073c2c017a5daa964379b4ddc250e5eaf89a8e6850027e645567fc"
+      },
+      "exact-source-native-strict-clippy.log": {
+        "bytes": 1463,
+        "sha256": "5e4bcc4bc2f25f17aab2ec72f9c159405a904db4809aab6a48b69af85038ad93"
+      },
+      "exact-source-precheck.json": {
+        "bytes": 662,
+        "sha256": "c5febe36cb21fd757d2ec6dd4b65472d46bc306044999c9e15fd037ab5d0d7f5"
+      },
+      "exact-source-project-preflight.log": {
+        "bytes": 171,
+        "sha256": "3c1113869b4a71da70382f07293851668e729b74f34a0aaa8a47764ec0d12886"
+      }
+    },
+    "release_binary": {
+      "bytes": 843432,
+      "original_build": "standard unchanged release profile; validated source files identical",
+      "path": "/workspace/scratch/708bcecd45db/target/release/examples/pon_shared_material_v1",
+      "rebuilt_in_this_exact_source_check": false,
+      "sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f"
+    },
+    "results": {
+      "clippy": {
+        "args": "-- -D warnings",
+        "result": "PASS",
+        "scope": "--lib --tests --example pon_shared_material_v1"
+      },
+      "example": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "passed": 9,
+        "result": "PASS"
+      },
+      "library": {
+        "command": [
+          "/root/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-crypto-primitives",
+          "--lib",
+          "--",
+          "--nocapture"
+        ],
+        "completion_evidence": "successful Cargo/test log, all 138 test IDs identical to prior recorded run",
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 0,
+        "passed": 138,
+        "result": "PASS",
+        "test_execution_seconds": 1.22
+      },
+      "prior_test_ids_preserved": true,
+      "project_preflight": "PASS",
+      "release_binary_hash_unchanged": true,
+      "repository_unchanged": true,
+      "rust_source_hashes_match_precommit": true
+    },
+    "schema": "pon-shared-material-v2-exact-source-rust-validation-v1",
+    "scope": "exact frozen measurement source; default features; existing 138 lib tests, 9 example tests, same strict Clippy scope only",
+    "source_commit": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+    "test_build_environment": {
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/708bcecd45db/target",
+      "PATH_prefix": "/root/.cargo/bin"
+    },
+    "toolchain": {
+      "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)"
+    }
+  },
+  "frozen_source_gate": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 487,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "production_activation": false,
+  "retained_crypto_test_identities": {
+    "added": [
+      "pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs",
+      "pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths",
+      "pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry"
+    ],
+    "baseline_log": "/workspace/scratch/8de1bcb09af8/frozen-source-crypto-retained-tests.log",
+    "baseline_observed_pass_ids": 135,
+    "missing": [],
+    "new_observed_pass_ids": 138
+  },
+  "schema": "pon-shared-material-frozen-validation-v2",
+  "scope": "Only named tests and commands; no whole-workspace/all-feature, hosted, deployment or model efficacy qualification"
+}

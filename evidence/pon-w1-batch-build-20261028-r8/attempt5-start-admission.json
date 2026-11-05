@@ -1,0 +1,23 @@
+{
+  "schema": "TRNM-W1-BATCH-PHASE0-ATTEMPT5-START-ADMISSION1",
+  "unix_ns": 1793163303237110649,
+  "parent_native_slot_release_received": true,
+  "parent_no_parallel_native_work": true,
+  "source_commit": "401096e8f9eed84fcb4d78122a49fa5dd3aa88e9",
+  "source_tree": "db0908a57db7675b22485c6ad712c8e19e4f38fa",
+  "pins_rechecked": {
+    "/tmp/w1-batch-phase0-attempt5-predecl-20261028-r8.json": "0c96c9a912d8adbe37d661c58e5bc264f30fba54b9fc3fc89e9f69cbb7bab927",
+    "/tmp/w1-batch-phase0-attempt5-pipeline-20261028-r8.py": "763df6547166b7a865358a2fd7e9f5b5933ff2e9697bb65778605aba5b1a97b5",
+    "/tmp/w1-batch-attempt5-wrapper-r8/cargo": "6a65805d8f000fa04e5778ea4de16feb6224808915672033ad7f59a527ec20d2",
+    "/tmp/w1-batch-phase0-guard-20261028-r8.py": "9981c3a138c4aefb6c4662f1e2c4c05cf5ef26e302c46763a42a2366a6334217",
+    "/tmp/w1-risc0-1911-resources-r8/home/settings.toml": "339cfb8be3b1247b0997b442ded5605bb9daaa77a8a2feecf1bd7c66741301a6"
+  },
+  "free_before_bytes": 2009686016,
+  "minimum_free_bytes": 1073741824,
+  "outcome": "ADMITTED_NEW_COMPILE_ONLY_ATTEMPT",
+  "admission_wall_seconds_before_receipt_write": 0.019246593001298606,
+  "admission_self_cpu_seconds_before_receipt_write": 0.0015860000000000006,
+  "admission_child_cpu_seconds": 0.016815999999999998,
+  "old_attempt_deadline_extended": false,
+  "guest_execution_or_prover_permitted": false
+}

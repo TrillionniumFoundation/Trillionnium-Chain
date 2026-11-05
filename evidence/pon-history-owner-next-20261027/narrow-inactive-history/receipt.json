@@ -1,0 +1,25 @@
+{
+  "schema": "history-native-next-control-v1",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/debug/deps/trnm_pon_node-1badda97b74924a5",
+    "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_state": "new uncommitted narrow candidate from explicit recovered subset on ac469",
+  "base": "ac469237422d43805845e8b9a6839ad14e1028e7",
+  "binary_sha256": "f05e9f776ad24d478d1be5b63024bbacf2f8da1198ccf2c8df8a7922c108b581",
+  "source_manifest_sha256": "d24093d9b9069fc385d6c37ce5fbe074f129bcf688739b99f246753e01c6bb93",
+  "start_utc": "2026-10-27T23:55:36.892095+00:00",
+  "exit_code": 101,
+  "elapsed_seconds": 2.4246965769998496,
+  "stdout.txt": {
+    "bytes": 380,
+    "sha256": "ea2aba560c1516b9a08c513517effecf6d340461ef64f29c75917e3cacc87603"
+  },
+  "stderr.txt": {
+    "bytes": 468,
+    "sha256": "40b527df39fe060a29ac324933c31e73ee6af4a71b823753c1921c5d917b6d55"
+  }
+}

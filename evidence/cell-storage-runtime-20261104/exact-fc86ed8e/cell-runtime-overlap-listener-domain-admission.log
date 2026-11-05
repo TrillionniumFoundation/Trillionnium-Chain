@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/lib.rs (/workspace/scratch/0c2d131ac5a9/target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 1 test
+test ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1074 filtered out; finished in 0.04s
+

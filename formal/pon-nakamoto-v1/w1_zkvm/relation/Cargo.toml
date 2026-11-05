@@ -1,0 +1,10 @@
+[package]
+name = "trnm-w1-zk-relation"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[dependencies]
+trnm-crypto-primitives = { path = "../../../../trillionnium/crates/trnm-crypto-primitives" }
+trnm-protocol = { path = "../../../../trillionnium/crates/trnm-protocol" }

@@ -1,0 +1,7 @@
+{
+  "schema": "exact-original-utf8-log-v1",
+  "original_filename": "attempt2-clippy.log",
+  "bytes": 965,
+  "sha256": "d62ff03c3892b1982a357819f99809e4b6c37a76489ac79a969e2a114905c6e0",
+  "raw_utf8": "    Checking trnm-pon-node v0.1.0 (/workspace/scratch/ff4dad3c0eb8/chain-integration/trillionnium/crates/trnm-pon-node)\n    Checking trnm-transport v0.1.0 (/workspace/scratch/ff4dad3c0eb8/chain-integration/trillionnium/crates/trnm-transport)\nerror: this assertion has a constant value\n   --> crates/trnm-pon-node/src/store/growth_reference_tests.rs:241:5\n    |\n241 | /     assert!(\n242 | |         !cfg!(debug_assertions),\n243 | |         \"select --release for the real growth campaign\"\n244 | |     );\n    | |_____^\n    |\n    = help: consider moving this into a const block: `const { assert!(..) }`\n    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#assertions_on_constants\n    = note: `-D clippy::assertions-on-constants` implied by `-D warnings`\n    = help: to override `-D warnings` add `#[allow(clippy::assertions_on_constants)]`\n\nerror: could not compile `trnm-pon-node` (lib test) due to 1 previous error\n"
+}

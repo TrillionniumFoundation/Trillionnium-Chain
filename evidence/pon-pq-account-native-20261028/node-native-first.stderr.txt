@@ -1,0 +1,9 @@
+
+thread 'real_node_pq_account_packets_work_forks_reorg_and_cold_replay' (723881) panicked at crates/trnm-pon-node/tests/pq_account_native.rs:112:5:
+assertion `left == right` failed
+  left: [244, 122, 58, 61, 64, 49, 185, 227, 37, 26, 91, 143, 90, 239, 78, 216, 83, 144, 78, 219, 138, 120, 238, 225, 121, 150, 211, 214, 10, 22, 155, 99]
+ right: [28, 46, 59, 113, 151, 145, 234, 247, 205, 209, 129, 170, 58, 212, 188, 121, 251, 126, 137, 73, 167, 40, 235, 68, 254, 225, 172, 9, 177, 159, 153, 213]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'real_pq_transport_dispatch_consumes_qtx1_through_w1_and_native_account_owner' (723893) panicked at crates/trnm-pon-node/tests/pq_account_native.rs:212:5:
+assertion failed: reply.ok

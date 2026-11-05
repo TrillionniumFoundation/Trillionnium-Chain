@@ -1,0 +1,32 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/pon-upgrade-implementation-20261018/chain-performance/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3.37s
+     Running tests/public_submit_recovery.rs (/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/deps/public_submit_recovery-84eb1568c034e60d)
+
+running 24 tests
+test actual_absolute_epoch_call_cap_and_current_clock_fail_closed ... ok
+test actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack ... ok
+test actual_budget_absence_with_two_call_cap_stops_without_another_submit ... ok
+test actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates ... ok
+test actual_cli_bad_combinations_and_limits_precede_store_creation ... ok
+test actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership ... ok
+test actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership ... ok
+test actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts ... ok
+test actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule ... ok
+test actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies ... ok
+test actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack ... ok
+test actual_membership_readiness_does_not_replace_installed_confirmation ... ok
+test actual_missing_parent_is_restored_before_child_and_reopens_byte_exact ... ok
+test actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried ... ok
+test actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time ... ok
+test actual_repeated_exact_eof_stops_after_three_identical_submits ... ok
+test actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits ... ok
+test actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance ... ok
+test actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance ... ok
+test actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch ... ok
+test actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack ... ok
+test actual_signed_cpu_budget_without_membership_retains_all_three_refusals ... ok
+test actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity ... ok
+test actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.06s
+

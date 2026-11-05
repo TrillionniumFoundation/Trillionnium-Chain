@@ -1,0 +1,9 @@
+{
+  "source": "Normal Git protocol; exact raw commit SHA independently verified",
+  "head": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "tree": "30309765887b6d2f54a5e37d58f8608dc60a2518",
+  "status": "clean",
+  "failed_fetch": "Original overlay index-pack ENOSPC; temporary object transport succeeded with no permanent alternate or guard change",
+  "reserve_released_bytes": 33554432,
+  "branch": "fix/chain-model-owner-integration-20261105"
+}

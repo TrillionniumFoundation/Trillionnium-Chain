@@ -1,0 +1,14 @@
+{
+  "all_payload_sizes_and_hashes_read_back": true,
+  "archive": "static-controls-and-preservation.zip",
+  "bytes": 235275,
+  "crc_all_members": true,
+  "head": "be0437976c64ff548064e2b2136fdfd0afc532cf",
+  "manifest_members": 56,
+  "native_or_host_pass": false,
+  "payload_members": 56,
+  "python_controls_passed": 78,
+  "scope": "exact committed-source static/Python/parser evidence only; retains earlier failure artifacts",
+  "sha256": "bee0bb3eda6641f4cdc2d6d0eab002fba15bedfa41d5481ef1de001cbdbfb311",
+  "tree": "c9c6ac66cff590ea8101b57fb3d66087c2394beb"
+}

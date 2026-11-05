@@ -1,0 +1,10 @@
+{
+  "workspace_members": 26,
+  "packages": 175,
+  "resolve_nodes": 175,
+  "raw_sha256": "0afd8c8fff7442b93426a11f58efc8872543797acaff18352184f9dd29adf694",
+  "raw_bytes": 812345,
+  "locked": true,
+  "offline": true,
+  "chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c"
+}

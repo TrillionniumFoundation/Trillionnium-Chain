@@ -1,0 +1,82 @@
+{
+  "head": "4940b7a8072761807c5da75b322eecb05a5f193f",
+  "tree": "e336a673fa763ad117b4b4dc40677fb85ba0c00e",
+  "state_backend": "authenticated-v1",
+  "requested_outer_cpu_quota_percent": 400,
+  "scope": "finite single-host native campaign; original public task/work/resource settings and planned denominators unchanged; no independent-operator or WAN claim; build time separated; unrelated host load uncontrolled",
+  "steps": [
+    {
+      "name": "preflight",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.08720972400624305,
+      "child_user_seconds": 0.065216,
+      "child_system_seconds": 0.021899999999999996,
+      "waited_child_peak_rss_bytes": 16404480
+    },
+    {
+      "name": "compile-original-test",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "--no-run"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 147.0886561240186,
+      "child_user_seconds": 356.55622800000003,
+      "child_system_seconds": 13.243139,
+      "waited_child_peak_rss_bytes": 1176875008
+    },
+    {
+      "name": "preflight-before-measurement",
+      "command": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.09147268097149208,
+      "child_user_seconds": 0.07229200000000446,
+      "child_system_seconds": 0.018347999999999587,
+      "waited_child_peak_rss_bytes": 1176875008
+    },
+    {
+      "name": "original-authenticated-multiprocess",
+      "command": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "test",
+        "--release",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "separate_process_work_and_signed_confirmation_campaign",
+        "--",
+        "--ignored",
+        "--exact",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "returncode": 101,
+      "elapsed_seconds": 390.8495972949895,
+      "child_user_seconds": 329.18019599999997,
+      "child_system_seconds": 7.819239999999999,
+      "waited_child_peak_rss_bytes": 1176875008
+    }
+  ]
+}

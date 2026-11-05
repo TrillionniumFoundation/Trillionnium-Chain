@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/workspace/scratch/4eec83b6ae24/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--offline",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml",
+    "--locked"
+  ],
+  "exit_code": 101,
+  "stderr": "error: cannot update the lock file /workspace/scratch/abae1861b451/chain-math/tests/fuzz/Cargo.lock because --locked was passed to prevent this\nhelp: to generate the lock file without accessing the network, remove the --locked flag and use --offline instead.\n",
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "lock_sha256_after": "6c39a792fd03e539e72406f6e3e440066630c8607cc2cb2000ae6efb50ec195a"
+}

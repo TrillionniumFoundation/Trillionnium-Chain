@@ -1,0 +1,16 @@
+
+running 1 test
+test store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error ... ok
+
+successes:
+
+---- store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error stdout ----
+{"accepted":true,"block":"96b7d3e7e71554f81f5b67732bba2608a6bcbf18efd5e2c43dec7eb0dbd004d6","error":null,"error_code":null,"event":"native_stage_returned","native_stage":{"before_commit_offset_ns":5872023,"before_commit_to_return_wall_ns":809804,"before_persistence_offset_ns":3904099,"checkpoints":{"before_commit_checks":1,"context_checks":2,"cow_account_node_checkpoints":27,"execution_checkpoints":10,"full_work_checkpoints":1099,"header_ancestors":0,"reorg_ancestors":0,"reorg_readbacks":0,"reorg_writes":0},"persistence_and_readback_wall_ns":1967924,"process_cpu_ns":null,"thread_cpu_ns":null,"timing_scope":"inclusive wall time; offsets and nested intervals must not be summed; BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement","wall_ns":6681827},"operation":"admission","parent":"575b2830f80655bfe785df1ac5edb56d075ee9aadb4e980dd06c17bec2f58162","purpose":"measurement","returned_block":"96b7d3e7e71554f81f5b67732bba2608a6bcbf18efd5e2c43dec7eb0dbd004d6","sample":0,"schema":"native-growth-stage-return-v1","sql_total_changes":19}
+{"accepted":false,"block":"96b7d3e7e71554f81f5b67732bba2608a6bcbf18efd5e2c43dec7eb0dbd004d6","error":"PUBLIC_REQUEST_CANCELLED","error_code":"PUBLIC_REQUEST_CANCELLED","event":"native_stage_returned","native_stage":{"before_commit_offset_ns":1191290,"before_commit_to_return_wall_ns":16325,"before_persistence_offset_ns":null,"checkpoints":{"before_commit_checks":1,"context_checks":0,"cow_account_node_checkpoints":0,"execution_checkpoints":0,"full_work_checkpoints":0,"header_ancestors":0,"reorg_ancestors":1,"reorg_readbacks":5,"reorg_writes":1},"persistence_and_readback_wall_ns":null,"process_cpu_ns":null,"thread_cpu_ns":null,"timing_scope":"inclusive wall time; offsets and nested intervals must not be summed; BeforeCommit-to-return includes the actual success or error return, not a durable-commit measurement","wall_ns":1207615},"operation":"activation","parent":"575b2830f80655bfe785df1ac5edb56d075ee9aadb4e980dd06c17bec2f58162","purpose":"measurement","returned_block":null,"sample":0,"schema":"native-growth-stage-return-v1","sql_total_changes":4}
+
+
+successes:
+    store::growth::tests::scale_observation::native_growth_scale_retains_admission_when_activation_returns_error
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1018 filtered out; finished in 0.06s
+

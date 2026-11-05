@@ -1,0 +1,34 @@
+{
+  "schema": "history-exact-source-native-control-v1",
+  "argv": [
+    "/tmp/target-history-56818e4fba76/owner-next-3ca96292cc-trnm-pon-node",
+    "ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "source_commit": "3ca96292ccc7815f4c7f49b34445f3d28687b5f4",
+  "source_manifest_sha256": "106a6cf428cd2b1a7b728ec5aec938d319df48e40d1abbb433f51148fb2a7f70",
+  "binary_sha256": "86d70c9cf0e6bfffbf0e8e0758433e9d2fbb8791d9a01e7f9cb6fcb7cf7b6f40",
+  "started_utc": "2026-10-28T00:31:12.999286+00:00",
+  "outer_observer_timeout_seconds": 60,
+  "exit_code": 0,
+  "elapsed_seconds": 0.0036808799995924346,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 228,
+    "sha256": "dd7262468e8555b072f75cef6df963f1be475bc7baee0ee4a76cb5a7d1aebbdf"
+  },
+  "stderr.txt": {
+    "bytes": 209,
+    "sha256": "6f469289b13b281605460e124f9b0ce9c2497efeb481ed1c12570260b761f8d0"
+  },
+  "harness_results": [
+    {
+      "outcome": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "launched": false,
+  "exit_code": null,
+  "launcher_error": "PermissionError executing non-executable wrapper directly; retry uses bash without modifying permissions"
+}

@@ -1,0 +1,22 @@
+
+running 1 test
+test actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission ... FAILED
+
+successes:
+
+successes:
+
+failures:
+
+---- actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission stdout ----
+
+thread 'actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission' (63) panicked at crates/trnm-pon-node/tests/pinned_peer_polling.rs:117:45:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: "OWNER_REORG_TERMINATION_CPU_REQUIRED", source: None, request_history_budget: false }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+

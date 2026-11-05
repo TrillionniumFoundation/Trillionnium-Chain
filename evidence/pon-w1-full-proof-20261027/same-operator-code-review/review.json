@@ -1,0 +1,209 @@
+{
+  "actual_benefit_qualified": false,
+  "consensus_admission": false,
+  "cryptographic_proof_generated_by_reviewer": false,
+  "decoder_successor_source": "ce04877b6cab8109fee51c7013bf1c8127978946",
+  "existing_observations": [
+    {
+      "bytes": 944,
+      "path": "/workspace/scratch/56818e4fba76/w1-real-proof-attempt1/source.json",
+      "sha256": "e3be2204dc2b4408eb3a3e88febccda4d320756055f7a479c013b248b977934e"
+    },
+    {
+      "bytes": 699,
+      "path": "/workspace/scratch/56818e4fba76/w1-decoder-tests.log",
+      "sha256": "9a6cbe74dcea3c6f45165138263ebc0847a3f80499bd09b531577f2d2188c4fa"
+    },
+    {
+      "bytes": 279,
+      "path": "/workspace/scratch/56818e4fba76/w1-real-execution-controls/source.json",
+      "sha256": "e337e0555ce37e357b72031cf6e6fa3e892292e3d9b13b6f48ac93d4da0dbdc6"
+    },
+    {
+      "bytes": 2516,
+      "path": "/workspace/scratch/56818e4fba76/w1-real-execution-controls/summary.json",
+      "sha256": "fe26235f457248f215f299fef20f4e4f3c02a6c3e84f34872c9ec644bd67c2ae"
+    },
+    {
+      "bytes": 548,
+      "path": "/workspace/scratch/56818e4fba76/w1-independent-native-cost/source.json",
+      "sha256": "fc821f2f60953603814874d1653b4a08799bde53cdf64d673e11db1a94cf0089"
+    },
+    {
+      "bytes": 298,
+      "path": "/workspace/scratch/56818e4fba76/w1-independent-native-cost/readback.json",
+      "sha256": "3e5cca18dd3cd6257178c65c0911f62144fbac7608cc0a3a8c3412de918ccd22"
+    },
+    {
+      "bytes": 502,
+      "path": "/workspace/scratch/56818e4fba76/w1-independent-native-cost/process/process.json",
+      "sha256": "3417f48a7d78f1f80a2448a22f8f8918071e9829a20a94eece92c5a538f88fdd"
+    },
+    {
+      "bytes": 7491,
+      "path": "/workspace/scratch/56818e4fba76/w1-independent-native-cost/process/stdout.log",
+      "sha256": "d6e1828affded6c1907db3e4881478ca3d11368b95087ab48960d2a3b075666d"
+    }
+  ],
+  "finding": {
+    "attack_executed": false,
+    "class": "untrusted-input resource exhaustion before prohibited receipt type rejection",
+    "cryptographic_forgery_demonstrated": false,
+    "fix_location": "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs:28-43",
+    "fix_source": "ce04877b6cab8109fee51c7013bf1c8127978946",
+    "id": "W1-01",
+    "location": "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs:28-34; type check at45-51",
+    "mechanism": "Receipt Composite recursively contains Composite assumption receipts; bincode byte limit is not a depth limit",
+    "original_severity": "medium for untrusted parser; isolated research CLI not a demonstrated exposed Node flaw",
+    "original_source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198",
+    "regression": {
+      "nested_composite_depth": 4096,
+      "serialized_bytes": 213084,
+      "tests_observed_in_existing_root_log": 2,
+      "tests_run_by_this_reviewer": 0
+    },
+    "status": "closed for identified recursive variant path by reviewed successor source; original measurement binary intentionally unchanged",
+    "wire_guard": {
+      "bytes": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "meaning": "fixed-integer little-endian u32 variant1=Succinct in pinned bincode1.3.3/risc0-zkvm3.0.3",
+      "offset": 0
+    }
+  },
+  "hardness_qualified": false,
+  "independent_native_cost_source": "f6c6380abc1b1a942ad90120f87e44e36b07f83c",
+  "measured_proof_source": "65c97a95cab4702a368855397c65413e2a754b97",
+  "native_cost_observation": {
+    "count": 1000,
+    "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+    "max_ns": 6346603,
+    "median_ns": 693803.5,
+    "min_ns": 528284,
+    "mining_search_cost_established": false,
+    "observed_nearest_rank_p99_ns": 1559635,
+    "production_tail_established": false
+  },
+  "notes": {
+    "path": "/workspace/scratch/56818e4fba76/w1_independent_review_f9994db17.md",
+    "sha256": "ef313f22a2e17ce71e9aa31a8d2cc390bf4d0f94497eeae0d5ffccad7349f5b4"
+  },
+  "original_host_binary_readback": {
+    "matches_original_source_record": true,
+    "path": "/workspace/scratch/56818e4fba76/target-w1/release/trnm-w1-zk-host",
+    "sha256": "de867e2b77079b8d73b890823d3b3cc23f6b6d810660a5291216b32d886b43d5"
+  },
+  "original_proof_process_summary_present_at_readback": false,
+  "production_activation": false,
+  "quantum_soundness_qualified": false,
+  "recorded_utc": "2026-10-27T09:48:03.516999+00:00",
+  "remaining_boundaries": [
+    "Real complete proof and fresh-process receipt verification are not accepted by this read-only review.",
+    "Fixed guest read does not enforce EOF on private stdin; unused suffix does not alter work identity.",
+    "Default SDK permits multiple registered hash suites; production profile needs exact suite/parameter and resource policy.",
+    "Reported SuccinctReceipt.control_id is not independently compared by the SDK integrity path; effective control code is checked from the seal.",
+    "Current negative guest-execution controls recorded executor errors and guest_rejection_established=false; retain these original outcomes.",
+    "Parent/branch target/task eligibility/M06/state roots remain original Node obligations; relation receipt alone does not admit a block.",
+    "Child wait4 peak RSS is not summed concurrent process-tree RSS.",
+    "Known-source test correction does not retroactively qualify the earlier measured binary."
+  ],
+  "review_conclusions": {
+    "additional_proof_randomness_ticket_found": false,
+    "expected_header_bytes": 318,
+    "fake_or_dev_receipt_acceptance_found": false,
+    "header_journal_binding_bypass_found": false,
+    "input_bytes": 49506,
+    "journal_bytes": 16818,
+    "native_verifier_called_directly": true,
+    "omitted_native_w1_check_found": false,
+    "original_field_modulus": 4294967291,
+    "pnw1_bytes": 49188,
+    "security_model_disclaims_training_hardness_and_pq_implications": true,
+    "streamed_sha256_compression_blocks_including_padding": 2049,
+    "streamed_transcript_bytes_before_padding": 131120,
+    "streamed_transcript_prefix_elements": 32768
+  },
+  "review_files": [
+    {
+      "bytes": 8907,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "sha256": "84282e040d9d613578e81125d7be37cfd3ca250f96bc82bdb2aa7b5918570d21",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 10134,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs",
+      "sha256": "bc76836137b8b089725f80f146447267c5574d8ba81491b07ef2f1f6684e8398",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 472,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/src/main.rs",
+      "sha256": "7a453d4e3eb39f2fb62792f7d6635706c6960890096356076e821eb7ca1e8b7e",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 413,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/Cargo.toml",
+      "sha256": "7642ef56f872d83fefac282061a02659c4417ecc7998f8eee4fb696668296197",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 643,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.toml",
+      "sha256": "4b009fdeaa378a9f99b3b59fe1a5ee297235b70e433f2e1b4013763d85e66ee4",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 70030,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "sha256": "6d1bf8a8099196ae24da98971d6f21b1549be5bed5be17f7ee5a7870a7dec5a6",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 40801,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock",
+      "sha256": "517632d9380db3b9b034efa475063cd2c081ba1af14de580dd09f8648e472f76",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 6987,
+      "path": "formal/pon-nakamoto-v1/experiments/w1_proof_cost.py",
+      "sha256": "a2df8dafcb7aabfb181e5f2b65866a72b7fee2a90b10220bbd0f8ff9ff440864",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 72052,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "3ed29941eb0b9959bdeb0cd4e59d2565bbd4b82b70c9cc94d0cd46065c16b874",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 28831,
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    },
+    {
+      "bytes": 11243,
+      "path": "docs/protocol/pon-nakamoto-v1/details/PURE_PON_WORK_SECURITY_MODEL_V1.md",
+      "sha256": "03cf447cb6c032c4e454114e034d999c8dd7f2c61b88c5ec08ac63ba0a8b7185",
+      "source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198"
+    }
+  ],
+  "review_scope": "read-only source inspection and readback of existing observations; no new builds, tests, proving, native execution or crash experiment",
+  "reviewed_source": "f9994db17eb9ed5fdc0bf080572dd6e0e6d4b198",
+  "reviewed_successor_file": {
+    "bytes": 12998,
+    "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs",
+    "sha256": "b85381e6da64ff55cf0d3449906a6cf0a28c505a561ecfbdc5ffc19f5aa22d22",
+    "source": "ce04877b6cab8109fee51c7013bf1c8127978946"
+  },
+  "reviewer": "/root/consensus_security_quantum",
+  "root_worktree_modified_by_reviewer": false,
+  "schema": "trnm-w1-independent-readonly-review-v1",
+  "whole_chain_quantum_security_qualified": false
+}

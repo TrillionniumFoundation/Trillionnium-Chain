@@ -1,0 +1,29 @@
+{
+  "schema": "trnm-final-integration-E-result-v1",
+  "commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "tree": "6b2d72dd73957f521c4952d2ece9f53d485a7059",
+  "source_before_after_equal": true,
+  "overall_status": "command_failed",
+  "exit_code": 2,
+  "completed_steps": {
+    "source_integrity_unit_tests": {
+      "passed": 43,
+      "failed": 0,
+      "elapsed_seconds": 4.134
+    },
+    "cargo_fmt": "PASS",
+    "generated_source_inventory": "PASS",
+    "exact_source_pins": 464,
+    "ci_contract": "PASS"
+  },
+  "repository_check": {
+    "status": "FAIL",
+    "reason": "broken link evidence/pon-w1-statement-v2-20261105/README.md -> lifecycle21-direct.log"
+  },
+  "cargo_metadata": "NOT_RUN_AFTER_PRIOR_FAILURE",
+  "native_tests_executed": 0,
+  "strict_clippy_executed": false,
+  "log_sha256": "b804a2702ec516a3cb9e93b23f7a57a03864560ed778e6aeb980ae7efb12cb87",
+  "source_guard_fixture_FAIL_lines": "Expected rejection observations within the 43 passing tests; not additional failed invocations.",
+  "documentation_correction": "The appended seven transport regressions comprise four client and three server tests; describing all seven as client tests was inaccurate."
+}

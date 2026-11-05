@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-rust-baseline-shard-v1",
+  "shard": "quality",
+  "status": "failed",
+  "exit_code": 1,
+  "command_sha256": "95e069506f2140679f781257b8ff5079796f13696ef69db6eb97dbd544760e13",
+  "run": {
+    "GITHUB_RUN_ID": "41641510365",
+    "GITHUB_RUN_ATTEMPT": "1"
+  },
+  "before": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "tested_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+    "candidate": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 7159,
+    "tracked_bytes": 859735858,
+    "tests_executed_by_identity_check": false
+  },
+  "after": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "tested_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+    "candidate": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 7159,
+    "tracked_bytes": 859735858,
+    "tests_executed_by_identity_check": false
+  }
+}

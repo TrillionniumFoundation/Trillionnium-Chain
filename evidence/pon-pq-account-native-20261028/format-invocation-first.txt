@@ -1,0 +1,1 @@
+Invocation of /tmp/pure-pon-toolchain-20261027/bin/cargo without adding its bin directory to PATH failed: no such command fmt. No source changed in that command. The installed matching cargo-fmt exists; subsequent invocation sets the toolchain PATH explicitly.

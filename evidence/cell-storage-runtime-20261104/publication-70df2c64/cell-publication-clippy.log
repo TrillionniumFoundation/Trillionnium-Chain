@@ -1,0 +1,7 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-six-axis-performance-20261103", "remote_policy_mutated": false}
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-data-availability)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-pon-node)
+    Checking trnm-checkpoint-store v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-checkpoint-store)
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/0c2d131ac5a9/chain-storage/trillionnium/crates/trnm-release-bundle)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2m 21s

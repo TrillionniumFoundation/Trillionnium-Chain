@@ -1,0 +1,16 @@
+{
+  "command_prefix": [
+    "git",
+    "-c",
+    "fetch.writeCommitGraph=false",
+    "fetch",
+    "--no-auto-gc",
+    "--no-write-fetch-head",
+    "origin"
+  ],
+  "requested_blobs": 112,
+  "exit_code": 0,
+  "wall_seconds": 7.284156018000431,
+  "per_process_temporary_objects": true,
+  "persistent_config_changed": false
+}

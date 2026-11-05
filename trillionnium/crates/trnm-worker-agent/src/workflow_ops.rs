@@ -12,7 +12,10 @@ pub(crate) struct RunOnceOutput {
     pub(crate) template_reveal: String,
 }
 
-pub(crate) fn compute_result_and_salt(task_id: u64, payload: &str) -> (String, String) {
+pub(crate) fn compute_result_and_salt(
+    task_id: u64,
+    payload: &str,
+) -> anyhow::Result<(String, String)> {
     use crate::execute_payload;
     execute_payload(payload, task_id)
 }
@@ -27,17 +30,37 @@ pub(crate) fn compute_commit_hash(
     commitment(task_id, result_hash, salt_hex, worker)
 }
 
+// These strings are human-facing POSIX-shell templates, not executable
+// authority. Worker identities and caller-supplied digests must occupy exactly
+// one argument even when an upstream task contains shell metacharacters.
+// Preserve ordinary safe tokens byte-for-byte for existing receipts.
+fn command_shell_token(value: &str) -> String {
+    if !value.is_empty()
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || b"_-./:@+=".contains(&byte))
+    {
+        return value.to_string();
+    }
+    format!("'{}'", value.replace('\'', "'\\''"))
+}
+
 pub(crate) fn commit_template(task_id: u64, worker: &str, commit_hash: &str, nonce: u64) -> String {
     format!(
         "trnm-node tx commit-result {} {} {} {}",
-        task_id, worker, commit_hash, nonce
+        task_id,
+        command_shell_token(worker),
+        command_shell_token(commit_hash),
+        nonce
     )
 }
 
 pub(crate) fn reveal_template(task_id: u64, result_hash: &str, salt_hex: &str) -> String {
     format!(
         "trnm-node tx reveal-result {} {} {}",
-        task_id, result_hash, salt_hex
+        task_id,
+        command_shell_token(result_hash),
+        command_shell_token(salt_hex)
     )
 }
 
@@ -71,6 +94,24 @@ mod tests {
     };
 
     #[test]
+    fn command_templates_quote_entire_untrusted_shell_arguments() {
+        let worker = "evil';$(echo injected)";
+        let actual = commit_template(9, worker, "digest;whoami", 9);
+        assert_eq!(
+            actual,
+            "trnm-node tx commit-result 9 'evil'\\'';$(echo injected)' 'digest;whoami' 9"
+        );
+        assert_eq!(
+            reveal_template(9, "result;whoami", "salt with space"),
+            "trnm-node tx reveal-result 9 'result;whoami' 'salt with space'"
+        );
+        assert_eq!(
+            commit_template(9, "worker/name:1", "deadbeef", 9),
+            "trnm-node tx commit-result 9 worker/name:1 deadbeef 9"
+        );
+    }
+
+    #[test]
     fn build_commit_and_reveal_templates_are_stable() {
         let out = commit_template(7, "alice", "ccc", 7);
         assert_eq!(out, "trnm-node tx commit-result 7 alice ccc 7");
@@ -96,11 +137,10 @@ mod tests {
 
     #[test]
     fn compute_result_and_salt_matches_core_payload_hashing() {
-        let (result_hash, salt_hex) = compute_result_and_salt(7, "hello");
-        assert_eq!(
-            salt_hex,
-            "0000000000000000000000000000000000000000000000000000000000000007"
-        );
+        let (result_hash, salt_hex) = compute_result_and_salt(7, "hello").unwrap();
+        assert_eq!(salt_hex.len(), 64);
+        assert!(salt_hex.bytes().all(|c| c.is_ascii_hexdigit()));
+        assert_ne!(salt_hex, format!("{:064x}", 7u64));
         assert_eq!(result_hash.len(), 64);
     }
 

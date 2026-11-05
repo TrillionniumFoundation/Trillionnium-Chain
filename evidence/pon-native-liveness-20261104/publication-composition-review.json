@@ -1,0 +1,510 @@
+{
+  "schema": "trnm-final-native-composition-review-v1",
+  "review_kind": "Source preservation only; no native runtime execution.",
+  "source_commit": "3e601d0c6769b973b8436245293ad00ecb86c3f9",
+  "source_tree": "87f974c3ad327d5da2c61286ec86fcb1580b3fcf",
+  "ours_parent": "8f1c0267f419d4b737b524515ea5b55d3d440ec2",
+  "incoming_parent": "1c885019fdf1cc2f33af8da0780da603fff1c353",
+  "common_base": "33a170e863a413279d6611457d907913a54e9e5a",
+  "incoming_changed_files": 34,
+  "overlapping_paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+  ],
+  "incoming_files": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "incoming_blob": "82eabc0822864804eeb5ee9985f50f9c47445fb3",
+      "composed_blob": "500666181115b94e40306f5a5cbba0b1c978a657",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "incoming_blob": "f174171b1ff1d69a37579ac4ba893225d26871a5",
+      "composed_blob": "0f28b39a44325f817d8297241dea2ca5bf1c937f",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "incoming_blob": "b8e656256db93c1139c948ee61112cbe4a7e89eb",
+      "composed_blob": "fb35627f6ce527821eb3896adce9f3a70dcd82ea",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "evidence/native-liveness-20261104/README.md",
+      "incoming_blob": "2a8acc64c3e361e9c44cf298241585edf2f8f807",
+      "composed_blob": "2a8acc64c3e361e9c44cf298241585edf2f8f807",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "evidence/native-liveness-20261104/composition.json",
+      "incoming_blob": "4637f6b93ee148b504390271a0c47fc08c1eb090",
+      "composed_blob": "4637f6b93ee148b504390271a0c47fc08c1eb090",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "evidence/native-liveness-20261104/reproduction.json",
+      "incoming_blob": "af86d6a27a058350b1790afb3ae7e37fb3eaf101",
+      "composed_blob": "af86d6a27a058350b1790afb3ae7e37fb3eaf101",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/parallel_variable_ohie_campaign.py",
+      "incoming_blob": "9173eef5470760ffbb23d3c4141cdb3b9cfc8445",
+      "composed_blob": "9173eef5470760ffbb23d3c4141cdb3b9cfc8445",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+      "incoming_blob": "c8ab59bf8bd9158acb7cfa8b737f3479f7fea310",
+      "composed_blob": "c8ab59bf8bd9158acb7cfa8b737f3479f7fea310",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+      "incoming_blob": "a7b51838a80c39cb521550cd512f0023b9325f23",
+      "composed_blob": "a7b51838a80c39cb521550cd512f0023b9325f23",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/quantum_resource_clock_campaign.py",
+      "incoming_blob": "3508cac9d629a4d357735d1d35d8ea780626b8dd",
+      "composed_blob": "3508cac9d629a4d357735d1d35d8ea780626b8dd",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_quantum_oracle_campaign.py",
+      "incoming_blob": "c514b206cce772b5e0880819a46722b88e5e86cb",
+      "composed_blob": "c514b206cce772b5e0880819a46722b88e5e86cb",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/parallel_variable_ohie.py",
+      "incoming_blob": "f6a861917022e72f486d6c1f9ea50bbdd3ed30ea",
+      "composed_blob": "f6a861917022e72f486d6c1f9ea50bbdd3ed30ea",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+      "incoming_blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+      "composed_blob": "ec1cfc9178e8fc8d37cce43cf6f8dfa95089fb8c",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "incoming_blob": "82e235aed43c18c325c7c5051355abb7e23a1ee0",
+      "composed_blob": "82e235aed43c18c325c7c5051355abb7e23a1ee0",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+      "incoming_blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "composed_blob": "50cc314bd4e15232889d752fb70b59289f1418d2",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_parallel_variable_ohie.py",
+      "incoming_blob": "3f5f510024df697910520460879b60b8f4bc8122",
+      "composed_blob": "3f5f510024df697910520460879b60b8f4bc8122",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",
+      "incoming_blob": "b88dfbda888766d6a7f63c2596d2b561d227d79d",
+      "composed_blob": "b88dfbda888766d6a7f63c2596d2b561d227d79d",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+      "incoming_blob": "0714a7499fa94773b20efeab1f583475eed52ee6",
+      "composed_blob": "0714a7499fa94773b20efeab1f583475eed52ee6",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+      "incoming_blob": "8fbb0bdd76f7dff92f1e335ded4e60c0106101e2",
+      "composed_blob": "8fbb0bdd76f7dff92f1e335ded4e60c0106101e2",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_quantum_oracle.py",
+      "incoming_blob": "b19052928e1a0fcf2a9fd45719355926e0d3e10c",
+      "composed_blob": "b19052928e1a0fcf2a9fd45719355926e0d3e10c",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+      "incoming_blob": "d6e749358074c5246adcfec81842df1e43947805",
+      "composed_blob": "d6e749358074c5246adcfec81842df1e43947805",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_quantum_primitives.py",
+      "incoming_blob": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+      "composed_blob": "2326123599c31f55e9b957967591bc4caf3a4fa6",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "incoming_blob": "28387126d05de6e1e23a863bc152ead491519a77",
+      "composed_blob": "28387126d05de6e1e23a863bc152ead491519a77",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+      "incoming_blob": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa",
+      "composed_blob": "ccd4d4a7a7ede5cb935e0d48c82d74920c15c1aa",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "incoming_blob": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf",
+      "composed_blob": "c496d0ee1cd5d04e5a7b0cef8b3fe20206de39bf",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/model_evolution_v5.rs",
+      "incoming_blob": "7bebea6cb8890313168832c66129b8286908a546",
+      "composed_blob": "7bebea6cb8890313168832c66129b8286908a546",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "incoming_blob": "950a9320636e8c68207ca01b0b67f6450bdcd304",
+      "composed_blob": "7460399683377fe4b4a656d2b22b245c965f54bc",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "incoming_blob": "cfd44e53cae61728bf58c5315fa1e76f1965aef8",
+      "composed_blob": "cfd44e53cae61728bf58c5315fa1e76f1965aef8",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "incoming_blob": "ae73ee11346ca1ba4ebf22310f9162befc32409c",
+      "composed_blob": "8619f003694361afe4e10c7eb4e7aa7df41a0dbe",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs",
+      "incoming_blob": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7",
+      "composed_blob": "efac53fdbb15bc7a56b56c8c5b3534cf76ac73f7",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "incoming_blob": "b9463c0b37630251e847964138effb7acce7ce6d",
+      "composed_blob": "f398794a8bb0a250c4b645f19a5bb0ae87176b02",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "incoming_blob": "0e30e12fbcc2cd951ceff2ea6d89006073a27ad3",
+      "composed_blob": "3a9fd5d7fbda0026413d70dda65a7ab6590ef6bb",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/observation.rs",
+      "incoming_blob": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99",
+      "composed_blob": "88a1cdd1429ce748e07d19e30dcda880a8aa4e99",
+      "overlapping": false,
+      "incoming_preserved_exactly": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "incoming_blob": "c2cae5fd6b81d0819be56730948dcfcd9e1c5b39",
+      "composed_blob": "166f5ce0b1196bc528e36e000ebc2b55a9ec01b7",
+      "overlapping": true,
+      "incoming_preserved_exactly": false
+    }
+  ],
+  "cargo_inputs_unchanged_from": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "cargo_inputs": [
+    {
+      "path": "evidence/pon-runtime-fixture-closure-20261103/hosted-current/c5dd/runtime-source/Cargo.toml",
+      "blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+    },
+    {
+      "path": "evidence/pon-w1-nonblocking-cache-20261101b/host-module-harness/Cargo.lock",
+      "blob": "fbc0c60eafd5749d8a39d057c0d547d0276a0ae8"
+    },
+    {
+      "path": "evidence/pon-w1-nonblocking-cache-20261101b/host-module-harness/Cargo.toml",
+      "blob": "e524b682cbe5dc23a73986f70c0bd8f9d9cff922"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.lock",
+      "blob": "195e03f3ca3ac401ea83a28e506c0bcc25a739b8"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.toml",
+      "blob": "80c01b3389af5ab97475afbda8251e72f21b6006"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.toml",
+      "blob": "8c8514bfee67946762101643b2b0e91fe228cb0f"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/protocol/Cargo.toml",
+      "blob": "36118ceed547de6048aa00f9b9aeeb265ce3abb5"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/trial-1/harness/Cargo.lock",
+      "blob": "16472725519e46e16d2d057a291fbeb24503cb23"
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/trial-1/harness/Cargo.toml",
+      "blob": "08f8654cb6e338ae819356321a41bbd58efda54b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+      "blob": "70ef9c45aaa139a857e8123c4af8da175c390636"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.toml",
+      "blob": "fefc45520ce491f2a1eb693df5a2a11132701ed7"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/host/Cargo.toml",
+      "blob": "89e630cad70ff015b4449dfc05b5c7e6d815edfa"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/Cargo.toml",
+      "blob": "0a9aea97c3a94280d1f7d3e187592b0c891d884d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+      "blob": "6d2ee496115f3e7cd3833f3b22aed1e06bb9039b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.toml",
+      "blob": "13ed2eb7134ad2621f7d5f08b789a94563e8bebc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/statement/Cargo.toml",
+      "blob": "5840173cfc0c4d09714ec6bc92231aefdd1181a8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "blob": "1020d2fd06b76312c69972261be5b56ebeb66972"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "blob": "b0976468fc6d2f2bab29182e1154c235b794c0a5"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+      "blob": "91e93fe1667cb9fc4c58eca0c4e42bd0973bf917"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+      "blob": "50443c0fbc0169c400b9106ec3a22fa069d70b3b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "blob": "b1640058303515eda8c505b8edd538c4b60e7cfa"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+      "blob": "b0d9412b2f6b55fbdbfb2b3a8a25487aa6abc0e9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/Cargo.toml",
+      "blob": "a2a184bc6842c921bee76b051c62048278448121"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/Cargo.toml",
+      "blob": "5911cbaa6b5a5ba0ffafaea9a2037a316fa324d1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock",
+      "blob": "9bd40d35b9e2da403d161728acadedfa81b38801"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.toml",
+      "blob": "25758ff0dff887ca57a71d49ae69408a632dfc9d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+      "blob": "5e6a02e79718ac2b0d89b5700aa9a67911faf054"
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "blob": "3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08"
+    },
+    {
+      "path": "tests/fuzz/Cargo.toml",
+      "blob": "a55d73741e6971601f1f3df6dec9b19a924d9a8e"
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "blob": "17e1155502ae7a15a9eea151a045dd24df2aae50"
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "blob": "44df8f8d5eec880d10da42c12a903c03658cfc65"
+    },
+    {
+      "path": "trillionnium/crates/trnm-audit-events/Cargo.toml",
+      "blob": "0252a6a570ac9ac64745697706d994a255602a5a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-bench/Cargo.toml",
+      "blob": "dbf24160e626814244efd95d77ebafc7f3d6f137"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
+      "blob": "86bf7216ee32ad2c63c5925e8fa7ae5a2d35b5f9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-types/Cargo.toml",
+      "blob": "957d104fd3bab32bfdd69c9dd54a67d025eea8bd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-control-plane/Cargo.toml",
+      "blob": "4b41ec5aa5901ba9fb330e0e6990af5e5fbafa47"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "blob": "58b98a2f697a32eb85669479f4083262b5783842"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "blob": "d248078e438dfc89562f15bb41ac927c18559d43"
+    },
+    {
+      "path": "trillionnium/crates/trnm-escrow-vault/Cargo.toml",
+      "blob": "6ff7598967a829c71b634264947e3871cd99c1bd"
+    },
+    {
+      "path": "trillionnium/crates/trnm-executor/Cargo.toml",
+      "blob": "7a862a1eca334022c4c26b81fb153ec405a1e9a2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-governance-guard/Cargo.toml",
+      "blob": "c2196efdc03ccc339c50c98017e3925d2ef3bf98"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mempool/Cargo.toml",
+      "blob": "720fbee664e961ec3d164f0d1983cf252e525b7a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "blob": "b2bb5a60236231b6b967ae5ec8f1e354dde28734"
+    },
+    {
+      "path": "trillionnium/crates/trnm-oracle/Cargo.toml",
+      "blob": "eed23638b277c0c3085293c41f8797ea3c01271d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-peer-lease/Cargo.toml",
+      "blob": "29b8c2de17406b94f14ec2b7ca6e9433d4ccf98c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "blob": "eb44e7bc91a36b54ae025e5c1f1629e548af204f"
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "blob": "201c768b20e3afb44779bd6bc5da501def4241f5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/Cargo.toml",
+      "blob": "d6207eea2c865f4c5ef1f5b1101fa1301b8cc6f3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+      "blob": "80e68f532562b2a48afad5e754c9c26402bd2105"
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+      "blob": "36972e39413614a7bff8d8801cb7b2f729030f3e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-state-import/Cargo.toml",
+      "blob": "f620f73466f27a302f7e06f6d0a59efcff1443e3"
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/Cargo.toml",
+      "blob": "fb316959a00e1ee35572e2aed7d2f05636401f20"
+    },
+    {
+      "path": "trillionnium/crates/trnm-transport/Cargo.toml",
+      "blob": "d87b9de3738ddfce79506a82fc0bba42e960be8c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/Cargo.toml",
+      "blob": "f419a29de4c1b18e7dc5f6d1276983faa6556721"
+    },
+    {
+      "path": "trillionnium/crates/trnm-verification-profiles/Cargo.toml",
+      "blob": "40c52b49b2bb599e5e4d3fc77281b98b8f0ea24b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/Cargo.toml",
+      "blob": "44b90fcf030f73fcca444b92feba676a1bb532bc"
+    }
+  ],
+  "completion_source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "completion_source_blob": "f398794a8bb0a250c4b645f19a5bb0ae87176b02",
+  "completion_source_sha256": "028ca36853f0544536dac494fdf7147c108ba385b571ed2a458c1ae90a7d4e76",
+  "completion_gate": "Original work, total and service bounds plus stop/cancel; equality refuses; Finished resources release before Connection.",
+  "late_encoding_failure": "Actual encoding failure adds secondary output events. Primary remains Deadline/Cancelled; accepted and CPU remain factual. Overlapping events do not add requests to the denominator.",
+  "diagnostic_limit": "Existing schema has no secondary full error-text slot. Existing worker ResponseEncoding phase is retained; no fake dispatch or reactor phase.",
+  "incoming_worker_reservation_regression": "Real body Vec, body permit, original lane Arc and original TaskObservation remain worker-owned; connection/output closure alone does not mark task complete.",
+  "native_executed": false,
+  "strict_clippy_on_this_composition": "NOT_RUN_AFTER_RECORDED_RESOURCE_EXHAUSTION",
+  "reader_suite_on_this_composition": "NOT_RUN_AFTER_RECORDED_RESOURCE_EXHAUSTION",
+  "retained_prior_failures": {
+    "source": "0ba09db0cf1c684013a896dd83f29c327f58521e",
+    "clippy_returncode": 101,
+    "clippy_observation": "getrandom build-script linker SIGBUS",
+    "reader_returncode": 120,
+    "reader_observation": "ENOSPC during Git-fixture creation"
+  },
+  "qualification": false,
+  "additional_packaging_observation": "First inventory regeneration during this merge failed with ENOSPC before replacement. The unchanged generator later passed after byte-verified relocation/deduplication of own immutable temporary data; source and evidence bytes were retained."
+}
