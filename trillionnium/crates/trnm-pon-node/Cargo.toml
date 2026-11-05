@@ -39,3 +39,8 @@ openssl = { version = "=0.10.81", optional = true }
 zeroize = "=1.8.2"
 
 tempfile = "3"
+
+[dev-dependencies]
+# Test-only safe executed-SQL observation. Production features stay unchanged;
+# this uses the existing pinned rusqlite package and adds no lockfile package.
+rusqlite = { version = "=0.39.0", features = ["trace"] }

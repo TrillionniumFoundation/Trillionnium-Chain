@@ -1,0 +1,191 @@
+{
+  "schema": "pon-native-apply-rejected-v1",
+  "measured_local_source": "d685a14ac2b2ce0a30e7bacee6eb29290d8248cf",
+  "measured_tree": "88ddb8b5d9c3a4885ed00a69804700c02cf44a65",
+  "final_test_only_source": "1a7357936942e0e8a3564026e5257dc95cba6ea4",
+  "final_test_only_tree": "e3182ccf7afafc1fe4f196210343850778190b25",
+  "base": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+  "decision": "REJECT_DEFAULT_INTEGRATION",
+  "production_optimization_enabled": false,
+  "public_service_accepted": false,
+  "original_fixed_host_gate_replaced": false,
+  "performance_campaign_count": 1,
+  "performance": {
+    "rows": {
+      "pon_native_apply_reader_sample_v1": 288,
+      "pon_native_apply_reader_pair_v1": 96,
+      "pon_native_apply_reader_cell_v1": 8,
+      "pon_native_apply_reader_summary_v1": 1
+    },
+    "cells": [
+      {
+        "accounts": 512,
+        "changed": 1,
+        "warm": false,
+        "median_ratio": 6.394383284545888,
+        "p95_ratio": 26.703932290304014,
+        "passed": false
+      },
+      {
+        "accounts": 512,
+        "changed": 1,
+        "warm": true,
+        "median_ratio": 0.6299355492646268,
+        "p95_ratio": 0.9347219728507543,
+        "passed": true
+      },
+      {
+        "accounts": 512,
+        "changed": 128,
+        "warm": false,
+        "median_ratio": 0.7152397946936396,
+        "p95_ratio": 0.6933329773416587,
+        "passed": true
+      },
+      {
+        "accounts": 512,
+        "changed": 128,
+        "warm": true,
+        "median_ratio": 0.2958089409753746,
+        "p95_ratio": 0.4074511204164204,
+        "passed": true
+      },
+      {
+        "accounts": 1024,
+        "changed": 1,
+        "warm": false,
+        "median_ratio": 0.9761915931047234,
+        "p95_ratio": 0.6497177697930714,
+        "passed": false
+      },
+      {
+        "accounts": 1024,
+        "changed": 1,
+        "warm": true,
+        "median_ratio": 0.6304595848318464,
+        "p95_ratio": 0.42751993196555754,
+        "passed": true
+      },
+      {
+        "accounts": 1024,
+        "changed": 256,
+        "warm": false,
+        "median_ratio": 0.6615716708880409,
+        "p95_ratio": 0.5963413456110539,
+        "passed": true
+      },
+      {
+        "accounts": 1024,
+        "changed": 256,
+        "warm": true,
+        "median_ratio": 0.3197571832768284,
+        "p95_ratio": 0.525901245266832,
+        "passed": true
+      }
+    ],
+    "independent_recompute_matches": true,
+    "decision": "REJECT_DEFAULT_INTEGRATION",
+    "same_raw_campaign_repeated": false,
+    "parser_note": "First raw sample shares the Rust harness test-name line; marker recognized without discarding that sample."
+  },
+  "native_correctness": {
+    "measured_test_profile": {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 1
+    },
+    "measured_release_profile": {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 1
+    },
+    "measured_existing_publish_selectors": 3,
+    "final_test_only_test_profile": {
+      "passed": 8,
+      "failed": 0,
+      "ignored": 1
+    }
+  },
+  "final_checks": {
+    "strict_workspace_all_targets_all_features_clippy": "PASS",
+    "rustfmt": "PASS",
+    "source_controls": 37,
+    "ci_contract_controls": 100,
+    "source_pins": 522,
+    "inventory": "PASS",
+    "locked_workspace_packages": 26,
+    "locked_resolved_packages": 175
+  },
+  "files": {
+    "native-apply-reader-tests.txt": {
+      "size": 2590,
+      "sha256": "b581c0d05f60eff902be92ed77866b7febdb5dc3962727144187ff130319b856"
+    },
+    "native-apply-publish-tests.txt": {
+      "size": 709,
+      "sha256": "38a268829a5fab273bea3b9598b5ee2cd83d4149e70ca9584306c706d968af66"
+    },
+    "native-apply-reader-cost.txt": {
+      "size": 808902,
+      "sha256": "34fd31fb551c1b7ab187611f221dff2546868ee5c3e823a9d230ad89178cd934"
+    },
+    "native-apply-release-correctness.txt": {
+      "size": 1531,
+      "sha256": "fc2a8c679669c065320b617443995e26e75b96d2342176baef5dbd8819c9be63"
+    },
+    "native-apply-reader-unsafe-compile-failure.txt": {
+      "size": 4789,
+      "sha256": "649e9f87bd980d66f76538647a10c61d944960f612a68af7fd096aed1cf5c39d"
+    },
+    "native-apply-ci-contract.txt": {
+      "size": 1153,
+      "sha256": "794e60ee385143fc970ea5c21e6145b54aa5ac0b2bf326e67afa8f2f1ff20204"
+    },
+    "native-apply-ci-contract-fixed.txt": {
+      "size": 16853,
+      "sha256": "a7ac4e5163c9d27ab3314c91e8be50814f227de77a6ef19a6370a7c37f986055"
+    },
+    "native-apply-final-tests.txt": {
+      "size": 1856,
+      "sha256": "e70949f8066cdd664347ffa536e29cd77c896fd4386cec72126148f725c7d4d0"
+    },
+    "native-apply-final-static.txt": {
+      "size": 17582,
+      "sha256": "717ab457ff413f9b98041db31e4f9489c93808597bbe6d303f78c46190a1cea0"
+    },
+    "native-apply-final-fmt.txt": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-apply-final-clippy.txt": {
+      "size": 3701,
+      "sha256": "80a84b6a08b3f83ba0112f6a448e3f18ff9b8037fdff2f472d7d79971fa70831"
+    },
+    "native-apply-rejected-source.patch": {
+      "size": 66873,
+      "sha256": "ea6a4d764065544970b70bb8871df9a6219faa1199ae2bcf4edaa5a48fd59cdf"
+    },
+    "native-apply-independent-analysis.json": {
+      "size": 1904,
+      "sha256": "857978392638e1166a620fb6970fcbac643b0fc49f0cb7f730d08d87e9f8d34f"
+    },
+    "native-apply-debug-elf.txt": {
+      "size": 152,
+      "sha256": "23d4439c1260f2a83aa641b081c6fa883e65fca334decbeebe4d750e928ee8a3"
+    },
+    "native-apply-release-elf.txt": {
+      "size": 154,
+      "sha256": "856513a9f35c3a450443ac5d8f03e1617e542345f1cf942a1f544a8b3df0a68a"
+    },
+    "native-apply-final-elf.txt": {
+      "size": 152,
+      "sha256": "4b06778ebc258c6d790fd0f3b7f0c5a27ad9075f0f6d052ad0714e7c4534b0a4"
+    }
+  },
+  "archive": {
+    "path": "raw-observations.zip",
+    "size": 48131,
+    "sha256": "2d698ef5640e4f176a44e212e4a7c1d2955dd8333a011d8cb23691880107002e"
+  },
+  "scope_note": "During the measured release build only inline CI source pins and their registration were refreshed. Native Rust, Cargo manifests and lockfile remained unchanged from d685a14a. Final revalidation is a separate source anchor. Same cost campaign was not rerun."
+}

@@ -451,6 +451,10 @@ fn apply_bounded(
 #[path = "native_store_batch_tests.rs"]
 mod batch_tests;
 
+#[cfg(test)]
+#[path = "native_apply_reader_tests.rs"]
+mod apply_reader_tests;
+
 // Only the compiled account-archive hash grammar determines these 8,224 bytes.
 // No database, block, clock, network context or successful validation is cached.
 // Return an owned copy so callers cannot modify the shared mathematical constants.
