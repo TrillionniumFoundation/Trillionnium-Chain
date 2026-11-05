@@ -1,0 +1,83 @@
+[
+  {
+    "directory": "b811/build",
+    "source_head": "b8116f65789a85148254f870c678a44f895316de",
+    "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "2b66a9984063c944720634dcbd0a4c202c756a51598f48b3de7c5cd4bfe3230a",
+    "recorded_elf_before_after_equal": true
+  },
+  {
+    "directory": "b811/native",
+    "source_head": "b8116f65789a85148254f870c678a44f895316de",
+    "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "ac57651d94dc49bb6831e2b4ac518578816415e82808eff264d4881dd19de64c",
+    "recorded_elf_before_after_equal": true
+  },
+  {
+    "directory": "b811/clippy",
+    "source_head": "b8116f65789a85148254f870c678a44f895316de",
+    "source_manifest_sha256": "27920633e57be739926218c370ecfbdfea624df71d84b89c2f9e3fc6f48605d2",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "0bec4dac15c072d61b4dc288d0662a4ddec0f9b999bc4bbf2a24651392e3e7bd",
+    "recorded_elf_before_after_equal": null
+  },
+  {
+    "directory": "69d2/build",
+    "source_head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "af7b60b3ccdf4528715bcd5a7dfa7a576953cd4cf42e33cb1c2227c38cb9ca35",
+    "recorded_elf_before_after_equal": true
+  },
+  {
+    "directory": "69d2/native",
+    "source_head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "f0bed1919b86308488079cd46f5937759a45de45bc37fe3f35e0ed5dfb5e460f",
+    "recorded_elf_before_after_equal": true
+  },
+  {
+    "directory": "69d2/clippy",
+    "source_head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "ce20b7bb3ba6a77509155aa8dcbcd70de6a6d9c0d73a227e232ee45926928ca3",
+    "recorded_elf_before_after_equal": null
+  },
+  {
+    "directory": "69d2/components",
+    "source_head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "3ae36feed95fe30494b0e6d5ecdae06d754924486b31f2caeb438a1c2553e917",
+    "recorded_elf_before_after_equal": null
+  },
+  {
+    "directory": "69d2/workspace-nine",
+    "source_head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "source_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "native_input_files": 1190,
+    "source_before_after_equal": true,
+    "all_command_exits_zero": true,
+    "original_result_sha256": "590d7318af405dd8bf6196e65a6dc69156ed8e5950aadef2f66f4006f6d143d7",
+    "recorded_elf_before_after_equal": true,
+    "per_test_source_elf_reader_wrapper_guards_match": true
+  }
+]

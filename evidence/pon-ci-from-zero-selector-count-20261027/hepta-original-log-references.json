@@ -1,0 +1,44 @@
+{
+  "schema": "hepta-original-pair-failed-log-references-v1",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "run_id": 40491440610,
+  "run_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/actions/runs/40491440610",
+  "hepta_pr_head": "2bfceaa3226611a72f43d24e67d13e30091c7449",
+  "chain_pr_head": "0c804e9f5bcf6e972bbb4524c744d4b3c8801c34",
+  "chain_prospective_merge": "e22045b22fcda846d826243210c998a97d4559a3",
+  "representation": "Exact UTF-8 encoding of connector decoded log content; no native GitHub ZIP claim. One apply_patch-added final newline removed.",
+  "scope": "Hashes checked against root-retained original decoded-tool readbacks. The roughly 10MB original logs remain in the separate docs archive, not duplicated in this runtime successor.",
+  "readback_manifest_sha256": "397096079de468b8e32465d59f3b708b20f383e781b1379dffbd3c30ba5fd29b",
+  "files": [
+    {
+      "path": "job-122146096003.log",
+      "bytes": 2493487,
+      "sha256": "3a90053cba3cc67d3f76ab8067c2f5a7f9113af7f89fd04b2cc5d53acd8e9226"
+    },
+    {
+      "path": "job-122146096385.log",
+      "bytes": 2504105,
+      "sha256": "c8d2e12d1acb18e191793e8ad4d813e17345aa1542091c702f19a6f7924fe018"
+    },
+    {
+      "path": "job-122146096513.log",
+      "bytes": 2496916,
+      "sha256": "36c751a703364590e1dcc06efc057ca6670884305cdf188c1f118bbe730bc36c"
+    },
+    {
+      "path": "job-122146096567.log",
+      "bytes": 2506990,
+      "sha256": "5dd50f819042e78888f9300b57659f5ed583fefa4886731eb12a4ab32fd7586a"
+    },
+    {
+      "path": "pair-jobs.json",
+      "bytes": 142455,
+      "sha256": "e6da0e7a8871fbf7aa8f17affe22c7e014aa7490af7c10c2710f13b4598076ce"
+    },
+    {
+      "path": "runs.json",
+      "bytes": 130158,
+      "sha256": "fcc11a9afb357d7d7d3ab3514956cbe05f893ca053fb74970d3e50121a76e13b"
+    }
+  ]
+}

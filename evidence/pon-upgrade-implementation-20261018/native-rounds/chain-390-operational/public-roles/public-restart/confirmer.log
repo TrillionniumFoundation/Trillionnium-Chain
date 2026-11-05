@@ -1,0 +1,6 @@
+{"event":"confirmer-start","payload_summary":null,"receipt_digest":"acfa95a4e0d8cb9c100abb8b9228c04b10cccce4dc141b6885d5011fe0842544","sequence":0}
+{"event":"read-attempt","payload_summary":null,"receipt_digest":"9a058216db5c9aa59c5e4a00ae8d1d31d4bbadb5724c98238c524cb9238c05b4","sequence":1}
+{"event":"confirmer-observation","payload_summary":null,"receipt_digest":"85a0ec6ab8af3e36732a0524b287d9f31e87a4251b0fe95ff7660228fcd5aa95","sequence":2}
+{"event":"read-attempt","payload_summary":null,"receipt_digest":"9d2452b83eb9932ab3da977486c9437444fa5477f23cc88fb0dc5f11be0b80d0","sequence":3}
+{"event":"confirmer-observation","payload_summary":null,"receipt_digest":"d5ee987d23c5056411dc1d8415bb0ee71f7596ec2d9e28ccb349bac24e054d37","sequence":4}
+{"event":"read-attempt","payload_summary":null,"receipt_digest":"cdb00d5dbb7e15875570fc5f0760247f95dd9a915884c9d498674855dd763b7a","sequence":5}

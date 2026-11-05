@@ -1,0 +1,223 @@
+{
+  "schema": "collector-domain-assertion-refusal-v1",
+  "observed_utc": "2026-11-03T22:59:57.573019+00:00",
+  "failure": "Strict same-cleanup-label assertion failed; must inspect actual controller values before classification",
+  "actual_records": [
+    {
+      "mode": "baseline",
+      "controller": {
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "baseline",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-baseline-5257.service",
+          "stop_step": null
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "passed": true,
+        "service_or_depletion_criteria_met": false,
+        "systemd_run_exit": 0
+      },
+      "inside-before": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "1",
+        "cgroup_events": "populated 1\nfrozen 0"
+      },
+      "inside-after": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "1",
+        "cgroup_events": "populated 1\nfrozen 0"
+      },
+      "outside-after": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "0",
+        "cgroup_events": "populated 0\nfrozen 0"
+      }
+    },
+    {
+      "mode": "valid-work-root",
+      "controller": {
+        "cleanup": {
+          "after": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "before": {
+            "group": {
+              "empty": true,
+              "evidence": "exact cgroup path absent after same-boot ownership validation",
+              "exists": false,
+              "path": "/sys/fs/cgroup/trnmponpublic.slice/trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service"
+            },
+            "manager": {
+              "ActiveState": "inactive",
+              "ControlGroup": "",
+              "Description": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "Group": "",
+              "Id": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+              "InvocationID": "",
+              "KillMode": "control-group",
+              "LoadState": "not-found",
+              "MainPID": "0",
+              "Restart": "no",
+              "Slice": "",
+              "SubState": "dead",
+              "Transient": "no",
+              "User": "",
+              "WorkingDirectory": ""
+            }
+          },
+          "cleanup_attempted": false,
+          "failure": null,
+          "known_empty": true,
+          "ownership_validated": true,
+          "phase": "valid-work-root",
+          "remaining": "observed-empty",
+          "service": "trnm-fixed-root-41732369850-1-fixed-host-root-f0-valid-work-root-5348.service",
+          "stop_step": null
+        },
+        "failure": null,
+        "final_host_errors": [],
+        "host_readiness_only": true,
+        "passed": true,
+        "service_or_depletion_criteria_met": false,
+        "systemd_run_exit": 0
+      },
+      "inside-before": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "1",
+        "cgroup_events": "populated 1\nfrozen 0"
+      },
+      "inside-after": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "1",
+        "cgroup_events": "populated 1\nfrozen 0"
+      },
+      "outside-after": {
+        "limits": {
+          "cpu.max": "25000 100000",
+          "cpu.max.burst": "0",
+          "memory.max": "2147483648",
+          "memory.swap.max": "0",
+          "pids.max": "256"
+        },
+        "read_errors": {},
+        "pids": "0",
+        "cgroup_events": "populated 0\nfrozen 0"
+      }
+    }
+  ],
+  "artifact_untouched": true,
+  "readback_not_written": true
+}

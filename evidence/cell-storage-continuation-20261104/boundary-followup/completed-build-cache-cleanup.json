@@ -1,0 +1,49 @@
+{
+  "schema": "trnm.cell.completed-build-cache-cleanup.v1",
+  "utc": "2026-11-05T00:42:10.623914+00:00",
+  "reason": "Shared filesystem reached 100 percent; reclaim only completed task-owned reproducible integration-test binaries.",
+  "files": [
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_cache_wal_cli-b1a90c2238f1bc1b",
+      "bytes": 46286904,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_closure_cli-4fa2438fe2280e37",
+      "bytes": 46883048,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_discovery_cli-20d73d00fbb693bb",
+      "bytes": 47059248,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_fetch_deadline_cli-c109e258526a9f6e",
+      "bytes": 46460408,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_persistent_cli-41f277f79dfd338d",
+      "bytes": 46195904,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_release_cli-d69bc10bfaf656fb",
+      "bytes": 46407728,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/cell_tensor_cli-a390a9d34380fb69",
+      "bytes": 47075784,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    },
+    {
+      "path": "/workspace/scratch/73305aff6ced/target/debug/deps/pq_cell_cli-0d8b9a18db4df54d",
+      "bytes": 45904136,
+      "scope": "completed task-owned CLI test executable; source and successful command log retained"
+    }
+  ],
+  "logical_bytes": 372273160,
+  "available_bytes": 0
+}

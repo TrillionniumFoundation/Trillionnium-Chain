@@ -1,0 +1,17 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/708bcecd45db/chain/trillionnium/crates/trnm-crypto-primitives)
+    Finished `test` profile [unoptimized] target(s) in 20.76s
+     Running unittests examples/pon_shared_material_v1.rs (/workspace/scratch/708bcecd45db/target/debug/examples/pon_shared_material_v1-2ac7e48f76b17196)
+
+running 9 tests
+test tests::explicit_canonical_controls_are_bounded ... ok
+test tests::explicit_preparation_or_verifier_count_selects_v2_without_changing_defaults ... ok
+test tests::malformed_material_has_failed_summary_and_no_winner ... ok
+test tests::matched_challenges_bind_task_target_seed_cycle_nonce_but_not_arm_or_reuse ... ok
+test tests::raw_material_is_exact_and_is_never_reduced ... ok
+test tests::v2_invalid_material_retains_failure_without_any_handoff ... ok
+test tests::forged_same_material_keeps_cold_warm_churn_and_owner_loss_distinct ... ok
+test tests::native_and_reference_handoff_reuses_one_setup_and_keeps_all_attempts ... ok
+test tests::sparse_and_dense_v2_keep_identical_work_and_charge_each_real_full_verifier_once ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

@@ -1,0 +1,28 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-format",
+  "command": [
+    "bash",
+    "/workspace/scratch/e537ad232c79/run-native.sh",
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:58:00.006528+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 15409025615,
+  "finished_at": "2026-11-04T13:58:15.415763+00:00",
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

@@ -1,0 +1,375 @@
+{
+  "schema": "trnm-pq-fixed-execution-publication-scope-v1",
+  "native_tested_commit": "dba49c2f66d8a72d6845c70958c4a24d6c4e7e89",
+  "native_tested_tree": "25ae0d2035b763b916575292d04571e93a512dd1",
+  "publication_parent": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "publication_parent_tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+  "publication_parent_parents": [
+    "160b6f91e39708454d1edd200ab9ef2b4192192e",
+    "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+  ],
+  "intermediate_evidence_only_commit": "160b6f91e39708454d1edd200ab9ef2b4192192e",
+  "comparison_base": "160b6f91e39708454d1edd200ab9ef2b4192192e",
+  "comparison_head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "comparison_status": "ahead",
+  "comparison_paths": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "modified",
+      "blob": "7391dca78235e2a241142184b22d9cacd7612d53",
+      "additions": 2,
+      "deletions": 2
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "modified",
+      "blob": "8380ed1dfabacadbad5e8078356f6b0ced0a4324",
+      "additions": 16,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/README.md",
+      "status": "added",
+      "blob": "215ede18e03673a918649a79b97c995ad662eee3",
+      "additions": 237,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/baseline-pair.json",
+      "status": "added",
+      "blob": "f39abdafa3fb747f4c8b964d006117cfca825e0e",
+      "additions": 59,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/migration-handoff-original.json",
+      "status": "added",
+      "blob": "41a88ca0f6fdd1f51d1947d96b9cd15d5cc7f336",
+      "additions": 221,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/cache-cleanup-36f.json",
+      "status": "added",
+      "blob": "4c23a886c90846a8ea308d3cba89dd8ad3ef92e1",
+      "additions": 157,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-clippy.json",
+      "status": "added",
+      "blob": "82ab21ea4695d2553c2b492dc2945a6ed9fe763d",
+      "additions": 49,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-clippy.log",
+      "status": "added",
+      "blob": "39b69e1fba68dbb4756b00ff385d0b361d1ef345",
+      "additions": 67,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-format.json",
+      "status": "added",
+      "blob": "19faba0d5177e6bb938ce88109e0944e557feef7",
+      "additions": 43,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-format.log",
+      "status": "added",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-green.patch",
+      "status": "added",
+      "blob": "a40b7e83b3b58c6a87a7967e309e0837fb9b8a29",
+      "additions": 162,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-native-artifacts.json",
+      "status": "added",
+      "blob": "c47d7dfb618424ace1b8bfbf33adc56ff3dffd4b",
+      "additions": 173,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-build-missing-quorum-vector.json",
+      "status": "added",
+      "blob": "9f1c944a21a9946f38711027d4fca88e674de102",
+      "additions": 46,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-build-missing-quorum-vector.log",
+      "status": "added",
+      "blob": "f0f5d6c2b57b2cc6ee8269c672be49a5c0df798a",
+      "additions": 11,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-green.json",
+      "status": "added",
+      "blob": "257d7d2df1fd87a4800b04b28bf8a23f99233bb2",
+      "additions": 46,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-package-green.log",
+      "status": "added",
+      "blob": "e767a8b9a8fdd23185b09e068e2d13b2ddb4389c",
+      "additions": 398,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-build-missing-vector.json",
+      "status": "added",
+      "blob": "f2e312f4dde4ca167f59074f4107229b7d414aba",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-build-missing-vector.log",
+      "status": "added",
+      "blob": "29d23e9485b388e0684b2627f3f50b7bce1c3f8b",
+      "additions": 103,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red-tests.patch",
+      "status": "added",
+      "blob": "05436cdb216d6eb908ae52e490088ce503323bd9",
+      "additions": 88,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red.json",
+      "status": "added",
+      "blob": "fec6d01b2a13ebc115994e17f646d1da38826ebc",
+      "additions": 53,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-red.log",
+      "status": "added",
+      "blob": "9528eaa48fbcd39d2e689b7d0aa3bc8b3c4c0df1",
+      "additions": 44,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/migration-source-scope.json",
+      "status": "added",
+      "blob": "bb9786140f4ce45f406d91dcc8a93e29acb2e99e",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/native-env.json",
+      "status": "added",
+      "blob": "7c9ca7a050999d31782ca9314d862542919c10c7",
+      "additions": 15,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/run-native.py",
+      "status": "added",
+      "blob": "26d345389e3b5076fb7346e5040ac4b40f3ef0ae",
+      "additions": 57,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/source-commit.txt",
+      "status": "added",
+      "blob": "427e30b84133af2913f91e986ab1d5898dbfa9ad",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-initial/toolchain-provider.json",
+      "status": "added",
+      "blob": "271f17de966dcd527dd72bfc2e12a2c6fc4238b6",
+      "additions": 52,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/cache-cleanup-14f.json",
+      "status": "added",
+      "blob": "5870d3c70019f0fb6e37b5f14e0b795d401e539c",
+      "additions": 146,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/cache-cleanup-final-build.json",
+      "status": "added",
+      "blob": "a1e3f0c76f7f9ee52ae6058810043d8e683679cc",
+      "additions": 61,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-format.json",
+      "status": "added",
+      "blob": "80425799c085fb5bc3f183e4ca9389a1c807d5f3",
+      "additions": 43,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-format.log",
+      "status": "added",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "additions": 0,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-clippy.json",
+      "status": "added",
+      "blob": "ecc39c125d14a14599ea53c7e240e8dc8fedebda",
+      "additions": 49,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-clippy.log",
+      "status": "added",
+      "blob": "e6ee382e02e26753b0b964f26f17084ab74601fb",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib-artifact.json",
+      "status": "added",
+      "blob": "ff99d049c04ed0768ffd5186024cb71c036d1d8a",
+      "additions": 33,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib.json",
+      "status": "added",
+      "blob": "6c9ff825435b923bc7e363ccec8505402e1f9d30",
+      "additions": 46,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-lib.log",
+      "status": "added",
+      "blob": "902483f75b726e6b494ae6c32a3d8b8db1633aea",
+      "additions": 152,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-native-artifacts.json",
+      "status": "added",
+      "blob": "33f09db4dfef7002e5c67dd021b9a2b0de81f805",
+      "additions": 151,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-package.json",
+      "status": "added",
+      "blob": "73459d16b11c740d86d9ab4864711ae704d3597f",
+      "additions": 46,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-m06-package.log",
+      "status": "added",
+      "blob": "414a3f294e37ccc656a5ed1cea3db9487b952075",
+      "additions": 406,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/merged-materialization.json",
+      "status": "added",
+      "blob": "24027f4b69fb987423af70ab10fede7069ec7e12",
+      "additions": 12,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/native-migration-merged/native-profile-scope.json",
+      "status": "added",
+      "blob": "7f6a67a2e92d1b55f321c25c659b853fc940c3cb",
+      "additions": 53,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-component-numerical-recheck.json",
+      "status": "added",
+      "blob": "c547109a06f726a216dd38dbea4adc9ab2520cc6",
+      "additions": 105,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-original-runner.py",
+      "status": "added",
+      "blob": "726dfc869d4757a640b2f4e507ca84af9e676ebe",
+      "additions": 76,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-reproduce.py",
+      "status": "added",
+      "blob": "12c46fe34a893c447579701d9ae0d73055134978",
+      "additions": 187,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-result.json",
+      "status": "added",
+      "blob": "c5acfe374e2c90fca2e9ccaf0aad6909748889b5",
+      "additions": 328,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-runner-provenance.json",
+      "status": "added",
+      "blob": "ebef8a01deae30ee1c1780789c9e2381cf2d064b",
+      "additions": 27,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/research-source-equivalence.json",
+      "status": "added",
+      "blob": "bd00f7e1ab6eaa357533e9294bd859fbf7e70104",
+      "additions": 376,
+      "deletions": 0
+    },
+    {
+      "path": "evidence/pq-owner-boundaries-20261105/source-checks.json",
+      "status": "added",
+      "blob": "e0a8f98e13b49bd76443d1d6d76ecf22ce4fb9e2",
+      "additions": 42,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "status": "modified",
+      "blob": "f4af2dc570e705c80c11c1dca880f2e249fe7a12",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "status": "modified",
+      "blob": "046297918ece4753cfa595ca88885bbb44d1a660",
+      "additions": 80,
+      "deletions": 0
+    }
+  ],
+  "production_and_test_source_changes": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "blob": "f4af2dc570e705c80c11c1dca880f2e249fe7a12"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "blob": "046297918ece4753cfa595ca88885bbb44d1a660"
+    }
+  ],
+  "interpretation": "The publication appends reporting files to the current branch while preserving its later migration changes. The 671-component, 39-example/recovery and 9-canonical-Node observations and two Python groups executed on dba49c2f only. The later 70df2c64 composition was not re-executed by this batch. Its predecessor's migration evidence remains separately sourced; no result is inherited or relabelled.",
+  "final_combination_native_rerun": false,
+  "evidence_only_publication": true,
+  "whole_chain_quantum_security_qualified": false,
+  "production_activation": false
+}

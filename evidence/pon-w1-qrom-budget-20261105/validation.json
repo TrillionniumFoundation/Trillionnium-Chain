@@ -1,0 +1,92 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/ci/test_w1_security_budget.py"
+      ],
+      "exit_code": 0,
+      "stderr": ".....................\n----------------------------------------------------------------------\nRan 21 tests in 0.247s\n\nOK\n",
+      "stdout": "",
+      "wall_seconds": 0.863231745000121
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/w1_security_budget.py",
+        "--crate-cache",
+        "/workspace/scratch/79360d3567d1/qrom-research/crates",
+        "--target-bits",
+        "128",
+        "--output",
+        "/tmp/w1-budget-replay-vwjs_nli/reproduced.json"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "wall_seconds": 0.40955551100000775
+    },
+    {
+      "check": "component_report_byte_reproduction",
+      "result": "PASS"
+    },
+    {
+      "check": "relative_markdown_links",
+      "result": "PASS",
+      "targets": [
+        "component-budget.json",
+        "../../scripts/w1_security_budget.py",
+        "../pon-w1-transparent-profile-20261104/security-map.json",
+        "theorem-review.json"
+      ]
+    },
+    {
+      "check": "owned_files_trailing_whitespace",
+      "result": "PASS"
+    },
+    {
+      "check": "narrow_fulltext_search_record_and_unchanged_budget",
+      "component_budget_sha256_unchanged": "e5b609ddab2a53f7cb3e1c2aff9cd64f6f1b00610cc60e4df0992f45be44681e",
+      "executor_recovery_readback": true,
+      "formal_constants_newly_verified": false,
+      "formal_fulltext_found": false,
+      "other_recorded_files_hash_unchanged": [
+        "evidence/pon-w1-qrom-budget-20261105/README.md",
+        "evidence/pon-w1-qrom-budget-20261105/component-budget.json",
+        "scripts/ci/test_w1_security_budget.py",
+        "scripts/w1_security_budget.py"
+      ],
+      "post_quantum_soundness_qualified": false,
+      "project_preflight": "PASS --dev; 26 packages; remote policy unchanged",
+      "result": "PASS"
+    }
+  ],
+  "files": {
+    "evidence/pon-w1-qrom-budget-20261105/README.md": {
+      "bytes": 10066,
+      "sha256": "4ae3d2f968b4f91cfdc60d2d8a4385a0719d24cf85e7d39b4e6195e758ba2e31"
+    },
+    "evidence/pon-w1-qrom-budget-20261105/component-budget.json": {
+      "bytes": 51261,
+      "sha256": "e5b609ddab2a53f7cb3e1c2aff9cd64f6f1b00610cc60e4df0992f45be44681e"
+    },
+    "evidence/pon-w1-qrom-budget-20261105/theorem-review.json": {
+      "bytes": 6968,
+      "sha256": "c6134d171b5c2f78fd43c285707cf7c41d89e1effded6afd2d15668250050df3"
+    },
+    "scripts/ci/test_w1_security_budget.py": {
+      "bytes": 11485,
+      "sha256": "ac4ddaaf0d82e4bd848ff804990895b38d1fd18539f4d7b7e4baa23886563912"
+    },
+    "scripts/w1_security_budget.py": {
+      "bytes": 19786,
+      "sha256": "1b274a42bf5da33af02a27312bbe9058fd5805cc1c260ced3c86b5b59a382e61"
+    }
+  },
+  "post_quantum_soundness_qualified": false,
+  "quantum_security_bits": null,
+  "schema": "TRNM-W1-QROM-BUDGET-VALIDATION1",
+  "scope": "Only the independent component-budget tool and evidence; no full-chain or QROM qualification.",
+  "source_tree_base_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "uncommitted_worktree_validation": true
+}

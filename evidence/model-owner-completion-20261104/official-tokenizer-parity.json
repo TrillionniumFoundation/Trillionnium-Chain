@@ -1,0 +1,20 @@
+{
+  "scope": "official-pinned-tokenizer-only-parity-no-model-load-or-evaluation",
+  "manifest_sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c",
+  "material_snapshot": "e04953cee0b571cc23ddcf2665e9e1d7ba03b7bd07d98c198a7f156957dfd317",
+  "complete_backend_and_behavior_equal": true,
+  "vocabulary": 49152,
+  "added_token_count": 17,
+  "special_token_map_equal": true,
+  "chat_template_equal": true,
+  "state_sha256": "ff604952d1790b83aae25715e51f88f024c599fbd12dea484d9e1566bf5dcef1",
+  "training_fixture_count": 12,
+  "training_encoding_sha256": "1f4864ffb90df57a27b43d802bee9f7bd823cb005edd6daf18e85e880a59ceeb",
+  "source_pins": {
+    "llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "llm_base_material.py": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b"
+  },
+  "model_loaded": false,
+  "evaluation_executed": false,
+  "qualification": false
+}

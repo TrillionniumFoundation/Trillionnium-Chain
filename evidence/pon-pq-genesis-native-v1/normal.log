@@ -1,0 +1,22 @@
+test_any_migration_identity_replacement_rejects (test_pqg_native_verify.NativePQGenesisTests.test_any_migration_identity_replacement_rejects) ... ok
+test_ed25519_key_is_not_a_pq_signer (test_pqg_native_verify.NativePQGenesisTests.test_ed25519_key_is_not_a_pq_signer) ... ok
+test_expired_migration_even_when_both_signatures_cryptographically_valid (test_pqg_native_verify.NativePQGenesisTests.test_expired_migration_even_when_both_signatures_cryptographically_valid) ... ok
+test_external_expected_anchor_and_source_hash_are_mandatory (test_pqg_native_verify.NativePQGenesisTests.test_external_expected_anchor_and_source_hash_are_mandatory) ... ok
+test_foreign_file_symlink_refused (test_pqg_native_verify.NativePQGenesisTests.test_foreign_file_symlink_refused) ... ok
+test_missing_owner_or_misassigned_liability_rejects_even_if_reanchored (test_pqg_native_verify.NativePQGenesisTests.test_missing_owner_or_misassigned_liability_rejects_even_if_reanchored) ... ok
+test_no_implicit_ledger_or_final_use_authority (test_pqg_native_verify.NativePQGenesisTests.test_no_implicit_ledger_or_final_use_authority) ... ok
+test_noncanonical_account_roster_rejects_even_if_reanchored (test_pqg_native_verify.NativePQGenesisTests.test_noncanonical_account_roster_rejects_even_if_reanchored) ... ok
+test_old_signature_and_new_signature_are_both_required (test_pqg_native_verify.NativePQGenesisTests.test_old_signature_and_new_signature_are_both_required) ... ok
+test_public_key_trailing_data_is_not_canonical (test_pqg_native_verify.NativePQGenesisTests.test_public_key_trailing_data_is_not_canonical) ... ok
+test_real_dual_possession_with_two_conserved_liabilities (test_pqg_native_verify.NativePQGenesisTests.test_real_dual_possession_with_two_conserved_liabilities) ... ok
+test_snapshot_fields_and_liability_tampering_fail (test_pqg_native_verify.NativePQGenesisTests.test_snapshot_fields_and_liability_tampering_fail) ... ok
+test_strict_ed25519_R_and_S_negative_vectors (test_pqg_native_verify.NativePQGenesisTests.test_strict_ed25519_R_and_S_negative_vectors) ... ok
+test_strict_ed25519_legacy_identity_point_rejected_after_reanchor (test_pqg_native_verify.NativePQGenesisTests.test_strict_ed25519_legacy_identity_point_rejected_after_reanchor) ... ok
+test_sum_conservation_not_just_snapshot_digest (test_pqg_native_verify.NativePQGenesisTests.test_sum_conservation_not_just_snapshot_digest) ... ok
+test_truncated_and_appended_source_reject (test_pqg_native_verify.NativePQGenesisTests.test_truncated_and_appended_source_reject) ... ok
+test_wrong_pq_public_key_cannot_authenticate_original_proof (test_pqg_native_verify.NativePQGenesisTests.test_wrong_pq_public_key_cannot_authenticate_original_proof) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.558s
+
+OK

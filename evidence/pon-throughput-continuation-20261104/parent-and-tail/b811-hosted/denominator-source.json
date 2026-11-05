@@ -1,0 +1,13 @@
+{
+  "calculated_at": "2026-11-04T08:23:28.316478+00:00",
+  "campaign_denominator_source_commit": "b8116f65789a85148254f870c678a44f895316de",
+  "campaign_test_source_sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+  "constant_rounds": 3,
+  "fixed_schedule_seconds": [
+    1,
+    5,
+    9
+  ],
+  "derived_campaign_four_second_slo_is_additional_not_original_gate": true,
+  "native_execution_performed": false
+}

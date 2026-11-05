@@ -1,0 +1,163 @@
+{
+  "adaptation": "time_delta = upstream timeDiff + 600; intervals = upstream heightDiff + 1; compare raw targets, without nBits rounding",
+  "algorithm_blob": "52b37822da2d4c132b31113a1fc1e3d7b670e3a7",
+  "half_life": 172800,
+  "parameter_source_lines": "src/chainparams.cpp:97-108",
+  "parameters_blob": "6b831b9b2c43f8a8d5bfe3e6a6fc042548e72fcb",
+  "pow_limit_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "schema": "trnm-quantum-daa-bchn-fixture-v1",
+  "scope": "18 numeric CalculateASERT unit vectors; not the full external ASERT vector corpus or native Trillionnium integration",
+  "source_blob": "fd3ea96b9a663b28a7020393e5a71a413b2ed355",
+  "source_commit": "07576013c91ff4a3a74acd85f189c69121cdad1b",
+  "source_path": "src/test/pow_tests.cpp",
+  "source_repository": "bitcoin-cash-node/bitcoin-cash-node",
+  "source_url": "https://github.com/bitcoin-cash-node/bitcoin-cash-node/blob/07576013c91ff4a3a74acd85f189c69121cdad1b/src/test/pow_tests.cpp#L649-L772",
+  "spacing": 600,
+  "upstream_license": "MIT",
+  "vectors": [
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 289,
+      "source_line": 745,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "1c7fffff"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "000000003fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 577,
+      "source_line": 746,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "1c3fffff"
+    },
+    {
+      "anchor_target_hex": "000000007fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "000000003fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 289,
+      "source_line": 747,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "1c3fffff"
+    },
+    {
+      "anchor_target_hex": "000000003fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 289,
+      "source_line": 748,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "1c1fffff"
+    },
+    {
+      "anchor_target_hex": "000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "000000000fffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 289,
+      "source_line": 749,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "1c0fffff"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000003",
+      "intervals": 63937,
+      "source_line": 750,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01030000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000003",
+      "intervals": 64056,
+      "source_line": 751,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01030000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000002",
+      "intervals": 64057,
+      "source_line": 752,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01020000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000002",
+      "intervals": 64224,
+      "source_line": 753,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01020000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "intervals": 64225,
+      "source_line": 754,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01010000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "intervals": 64513,
+      "source_line": 755,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01010000"
+    },
+    {
+      "anchor_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "expected_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "intervals": 64513,
+      "source_line": 756,
+      "time_delta": 600,
+      "upstream_expected_nbits_hex": "01010000"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 1,
+      "source_line": 757,
+      "time_delta": 138840,
+      "upstream_expected_nbits_hex": "1d00ffff"
+    },
+    {
+      "anchor_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "expected_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 1,
+      "source_line": 758,
+      "time_delta": 38707800,
+      "upstream_expected_nbits_hex": "1d00ffff"
+    },
+    {
+      "anchor_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "00000000ffb1ffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 2,
+      "source_line": 759,
+      "time_delta": 900,
+      "upstream_expected_nbits_hex": "1d00ffb1"
+    },
+    {
+      "anchor_target_hex": "000000008000000000000000000fffffffffffffffffffffffffffffffffffff",
+      "expected_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 1,
+      "source_line": 760,
+      "time_delta": 5703000,
+      "upstream_expected_nbits_hex": "1d00ffff"
+    },
+    {
+      "anchor_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "expected_target_hex": "00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intervals": 1,
+      "source_line": 761,
+      "time_delta": 44237400,
+      "upstream_expected_nbits_hex": "1d00ffff"
+    },
+    {
+      "anchor_target_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "expected_target_hex": "00000000ffff8000000000000000000000000000000000000000000000000000",
+      "intervals": 1,
+      "source_line": 762,
+      "time_delta": 38707799,
+      "upstream_expected_nbits_hex": "1d00ffff"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling proc-macro2 v1.0.106
+   Compiling shlex v1.3.0
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.8.2
+   Compiling cmov v0.5.4
+   Compiling pkg-config v0.3.32
+   Compiling semver v1.0.27
+   Compiling cc v1.2.59
+   Compiling ctutils v0.4.6
+   Compiling vcpkg v0.2.15
+   Compiling serde_core v1.0.228
+   Compiling hashbrown v0.16.1
+   Compiling generic-array v0.14.7
+   Compiling rustc_version v0.4.1
+   Compiling equivalent v1.0.2
+   Compiling winnow v1.0.4
+   Compiling curve25519-dalek v4.1.3
+   Compiling syn v2.0.117
+   Compiling hybrid-array v0.4.15
+   Compiling indexmap v2.13.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling bitflags v2.11.0
+   Compiling autocfg v1.5.1
+   Compiling foldhash v0.2.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling num-traits v0.2.19
+   Compiling digest v0.10.7
+   Compiling zmij v1.0.21
+   Compiling sha2-asm v0.6.4
+   Compiling libsqlite3-sys v0.37.0
+   Compiling cfg_aliases v0.2.2
+   Compiling subtle v2.6.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling libc v0.2.184
+   Compiling sha2 v0.10.9
+   Compiling serde v1.0.228
+   Compiling signature v2.2.0
+   Compiling hashlink v0.11.1
+   Compiling borsh v1.8.0
+   Compiling ed25519 v2.2.3
+   Compiling serde_json v1.0.149
+   Compiling digest v0.11.3
+   Compiling thiserror v1.0.69
+   Compiling smallvec v1.15.1
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling fallible-iterator v0.3.0
+   Compiling once_cell v1.21.4
+   Compiling thiserror-impl v1.0.69
+   Compiling proc-macro-crate v3.5.0
+   Compiling keccak v0.2.2
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling sponge-cursor v0.1.0
+   Compiling anyhow v1.0.103
+   Compiling borsh-derive v1.8.0
+   Compiling shake v0.1.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling hex v0.4.3
+   Compiling rustix v1.1.4
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling fs2 v0.4.3
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-verification-profiles)
+   Compiling ed25519-dalek v2.2.0
+   Compiling fastrand v2.3.0
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-mempool)
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-protocol)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-transport)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-crypto-primitives)
+   Compiling tempfile v3.27.0
+   Compiling rusqlite v0.39.0
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/growth-fix/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10m 19s
+     Running unittests src/lib.rs (/workspace/shared/chain-growth-target/debug/deps/trnm_pon_node-2aaee31106a4dfcc)
+
+running 1 test
+
+thread 'account_archive_execution::state_witness::native_growth::account_prefix_tests::native_growth_account_prefix_cost_keeps_complete_roots_and_recovery' (13417) panicked at crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs:153:9:
+assertion `left == right` failed
+  left: (5, 9)
+ right: (2, 6)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test account_archive_execution::state_witness::native_growth::account_prefix_tests::native_growth_account_prefix_cost_keeps_complete_roots_and_recovery ... FAILED
+
+failures:
+
+failures:
+    account_archive_execution::state_witness::native_growth::account_prefix_tests::native_growth_account_prefix_cost_keeps_complete_roots_and_recovery
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1077 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

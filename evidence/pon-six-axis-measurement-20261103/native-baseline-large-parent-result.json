@@ -1,0 +1,13 @@
+{
+  "name": "large-parent-baseline",
+  "command": [
+    "/workspace/scratch/b5a148b09b11/validation/node-before-borrow",
+    "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+    "--nocapture",
+    "--test-threads=1",
+    "--exact"
+  ],
+  "exit_code": 101,
+  "elapsed_s": 30.87929727200003,
+  "binary_sha256": "6f877f68c96591184ebdb1d77e0f2a938836fcc597d8b79eeec9c89f5a02cc34"
+}

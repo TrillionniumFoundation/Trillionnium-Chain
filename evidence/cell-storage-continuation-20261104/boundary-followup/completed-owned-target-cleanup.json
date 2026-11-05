@@ -1,0 +1,24 @@
+{
+  "schema": "trnm-completed-owned-target-cleanup-v1",
+  "observed_utc": "2026-11-05T01:32:56.663259+00:00",
+  "reason": "Saving the final 74214-byte evidence summary failed with ENOSPC after the completed Node compilation failure. Remove this task's completed rebuildable Cargo target to finish preserving source-bound evidence.",
+  "argv": [
+    "bash",
+    "/workspace/scratch/73305aff6ced/runtime/run-storage-runtime.sh",
+    "cargo",
+    "clean",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--target-dir",
+    "/workspace/scratch/73305aff6ced/target"
+  ],
+  "exit_code": 0,
+  "source_files_deleted": false,
+  "logs_or_receipts_deleted": false,
+  "completed_rebuildable_artifacts_deleted": true,
+  "other_workspaces_changed": false,
+  "native_rerun_planned": false,
+  "log_sha256": "f72f3b67b72f606fbcbf3b4c1632aa4a0ec95d78bdd72a82fc07e6886c828e12"
+}

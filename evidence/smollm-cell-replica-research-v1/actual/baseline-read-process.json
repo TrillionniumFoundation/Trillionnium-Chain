@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/smollm-cpu-env/bin/python",
+    "/workspace/scratch/56818e4fba76/chain-cell-model/scripts/llm_neural_read_worker.py",
+    "serve",
+    "--materials",
+    "/workspace/scratch/56818e4fba76/smollm-materials",
+    "--parent",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/gen2/worker/parent-material.json",
+    "--parent-sha256",
+    "907a0f1d999e27e97f6412d61f4755d4f65d71ea015b60fbc26bb0380ac39c88",
+    "--actions",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/actions.json",
+    "--actions-sha256",
+    "8206fd8d4161d3c6a274c0bfd2a7c0bb517af1246128af8ba55a76eeb44b1988",
+    "--output",
+    "/workspace/scratch/56818e4fba76/smollm-replica-run-v1/actual-replica/baseline-read",
+    "--threads",
+    "2"
+  ],
+  "authority": {
+    "hepta_final_use": false,
+    "independent_accepted": false,
+    "installation_authorized": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false,
+    "selection_authorized": false
+  },
+  "observations": 32,
+  "original_hepta_owner_used": false,
+  "pid": 111074,
+  "returncode": 0
+}

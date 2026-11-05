@@ -1,0 +1,54 @@
+{
+  "campaign": "model-owner-completion-20261104-once-v1",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "scripts/ci/test_llm_hosted_once.py"
+  ],
+  "elapsed_ns": 22880293623,
+  "exit_code": 0,
+  "log": {
+    "bytes": 4974,
+    "path": "/workspace/scratch/f4976366a32a/model-pilot-cost-audit/hosted-once-execution-branch-tests.log",
+    "sha256": "8eba12983bb6ab3a5d14272c3f0817e769719ec8e01b3a19a09a02e6e4b93805"
+  },
+  "model_executed": false,
+  "native_build": false,
+  "new_ref": "refs/heads/fix/chain-model-owner-hosted-once-20261105",
+  "old_ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+  "original_summary": [
+    "test_wrong_registration_filename_and_unsafe_members_refuse_before_import (__main__.HostedOnceTests.test_wrong_registration_filename_and_unsafe_members_refuse_before_import) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 33 tests in 22.542s",
+    "",
+    "OK"
+  ],
+  "policy_and_trial_reinitialized": false,
+  "preflight": "PASS",
+  "real_trial_executed": false,
+  "real_trial_registered": false,
+  "reported_seconds": 22.542,
+  "reported_tests": 33,
+  "schema": "hosted-once-branch-binding-validation-v1",
+  "scope": "branch-binding-only-existing-33-synthetic-Git-SQLite-controls-no-real-registration-or-model",
+  "source_baseline": "018fa1ffc6dee2a4c000479463ad60034f04fecb",
+  "source_sha256_after_tests": {
+    ".github/workflows/pon-smollm-hosted-once.yml": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+    "scripts/ci/llm_hosted_once.py": "3e1085487fd5c2387164a26cc85822fab857391f0caa373475ebb5205dc3120b",
+    "scripts/ci/test_llm_hosted_once.py": "8307d85afd7b13ed0973d97fa75ab4e77cc1eb742fbc61040dadf880fb776b8f"
+  },
+  "source_sha256_before_tests": {
+    ".github/workflows/pon-smollm-hosted-once.yml": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+    "scripts/ci/llm_hosted_once.py": "3e1085487fd5c2387164a26cc85822fab857391f0caa373475ebb5205dc3120b",
+    "scripts/ci/test_llm_hosted_once.py": "8307d85afd7b13ed0973d97fa75ab4e77cc1eb742fbc61040dadf880fb776b8f"
+  },
+  "source_sha256_original": {
+    ".github/workflows/pon-smollm-hosted-once.yml": "694433c2b5d05eb3b0a3cc838433704a34bf88ec4700b31f5b02fc56433d5b24",
+    "scripts/ci/llm_hosted_once.py": "8025eba157477e42d3efa9ba6276296b47f1e7a692d6fc44f870c853f39b3906",
+    "scripts/ci/test_llm_hosted_once.py": "9ab052552df9f2adc295ad847fc6dbd998818b705a794b06e6245a9aea3dd58e"
+  },
+  "source_unchanged_during_tests": true
+}

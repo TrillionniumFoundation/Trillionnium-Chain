@@ -1,0 +1,9 @@
+cargo:rustc-check-cfg=cfg(trnm_sqlite_layout_witness)
+cargo:rerun-if-changed=build.rs
+cargo:rerun-if-changed=build_loader_paths.rs
+cargo:rerun-if-changed=unix_layout_witness.c
+cargo:rerun-if-env-changed=DEP_SQLITE3_INCLUDE
+cargo:rerun-if-env-changed=HOST
+cargo:rerun-if-env-changed=TARGET
+cargo:warning=trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete
+cargo:rustc-env=TRNM_SQLITE3_UNQUALIFIED_REASON=normal Cargo loader directory set incomplete

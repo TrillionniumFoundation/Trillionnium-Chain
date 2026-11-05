@@ -1,0 +1,62 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "3e866c637197339700c93a6b716d20a3968291f1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "3e866c637197339700c93a6b716d20a3968291f1",
+    "tested_tree": "38fd2b903c276d3d53e44a0e2fbd7ef3373681f1",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 941172912,
+    "tracked_entries": 8796,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "bash",
+    "-c",
+    "set -euo pipefail\ncargo test --locked --offline --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --all-targets\ncargo clippy --locked --offline --manifest-path trillionnium/Cargo.toml --workspace --all-targets -- -D warnings\ncargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\npython3 scripts/refresh_distributed_source_inventory.py --check\npython3 scripts/ci/check_pq_research_integration.py\npython3 scripts/ci/check_repository.py\npython3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py\npython3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py\npython3 -m unittest discover -s scripts/ci -p test_pq_chain_claim_guard.py\npython3 -m unittest discover -s scripts/ci -p test_pq_authority_surface_scan.py\npython3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_model_release_root.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "3e866c637197339700c93a6b716d20a3968291f1",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "3e866c637197339700c93a6b716d20a3968291f1",
+    "tested_tree": "38fd2b903c276d3d53e44a0e2fbd7ef3373681f1",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 941172912,
+    "tracked_entries": 8796,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/workspace/scratch/73305aff6ced/chain",
+  "elapsed_ns": 756186026515,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/73305aff6ced/target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install",
+    "OPENSSL_STATIC": "1",
+    "RUNNER_ARCH": null,
+    "RUSTC": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ec72bff5f6e4b2d9798e66b4ee338e81969ff6f8fa5a228bf312f1c57ff08818",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "exit_code": 0,
+  "log_bytes": 39715,
+  "log_file": "cell-storage-exact-source.log",
+  "log_sha256": "e1cb038efae319e479b41f10a7c64c1c4626b1088ba23ca254e9a236cbc13545",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-04T12:01:37.900407+00:00",
+  "status": "command_succeeded",
+  "whole_chain_quantum_security_qualified": false
+}

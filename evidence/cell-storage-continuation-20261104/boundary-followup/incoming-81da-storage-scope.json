@@ -1,0 +1,154 @@
+{
+  "schema": "trnm.cell.incoming-storage-scope.v1",
+  "status": "read_only_exact_git_object_comparison_complete",
+  "observed_utc": "2026-11-05T01:41:56.959582+00:00",
+  "sources": {
+    "N": {
+      "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tree": "ea600542130341144d697776d92048988d44572b",
+      "repository": "/workspace/scratch/73305aff6ced/chain"
+    },
+    "D": {
+      "commit": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+      "tree": "78bd5d116163ed9520e14e68daed3a2b3d00dc89",
+      "M09_tree_entries_equal_N": true
+    },
+    "incoming": {
+      "commit": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+      "tree": "e5561165ad3b02174b089ce43f93142ab3efd839",
+      "repository": "/workspace/scratch/fd8e3e31d21a/chain-pon-work",
+      "access": "Read Git objects only; no checkout, fetch, edits, or writes in this repository."
+    }
+  },
+  "scope": {
+    "crate_prefix": "trillionnium/crates/trnm-data-availability/",
+    "N_entries": 79,
+    "incoming_entries": 79,
+    "changed_entries": 2,
+    "unchanged_entries": 77,
+    "added_or_removed_paths": []
+  },
+  "changed_files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+      "N_blob": "5fa3d53195fd3d6f124edec3c28a90125824a827",
+      "incoming_blob": "c17a1149d6336b57f5d717b2ee426a037933aeae",
+      "N_bytes": 16775,
+      "N_sha256": "1cb4cb8394eab433df22cf7f06cf1003453b51c8be9c72ab75fe5574b41727c2",
+      "N_lines": 474,
+      "incoming_bytes": 17359,
+      "incoming_sha256": "82ed7c852d25b5bdf13f852edea1e039a9097d21d13cce927f3b0cbb9a69042f",
+      "incoming_lines": 482,
+      "lines_added": 9,
+      "lines_removed": 1
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+      "N_blob": "489252b90366447d708f2b8618678c19763d79a7",
+      "incoming_blob": "2ab5d20fb40523cb6540c260172f9dd133c43721",
+      "N_bytes": 23438,
+      "N_sha256": "614059ebd2748f131a9cbd81bd3c947235c38f2e4752af7f61e7375a4ad85b88",
+      "N_lines": 606,
+      "incoming_bytes": 37235,
+      "incoming_sha256": "c146e3bff4d8a955c9d04ff53bf3ca0ef9ea3358a35cf8a28fc9aa8f4031cbc2",
+      "incoming_lines": 950,
+      "lines_added": 344,
+      "lines_removed": 0
+    }
+  ],
+  "new_behavior": {
+    "function": "ConnectionPool::request_inner",
+    "only_added_executable_statement": "transport.responses.require_remaining()?;",
+    "placement": "After acquiring the per-peer connection mutex and rechecking peer quarantine; before mutating an expired/reused connection slot, charging a new dial, or writing a reused frame.",
+    "effect": "A shared response budget that became actually exhausted while this request waited for the peer connection now refuses before a new dial or frame. Its already charged request attempt remains charged. Temporary in-flight reservations alone do not count as actual exhaustion; quarantine retains precedence.",
+    "other_implementation_delta": "Comments only; no public signature, profile default, TCQ2/TCS2 framing, deadline renewal, or wire namespace change.",
+    "review_conclusion": "The insertion is consistent with the original shared-budget semantics and closes the observed connection-wait recheck gap; this is a source review, not runtime validation."
+  },
+  "preservation": {
+    "server_function_byte_proofs": [
+      {
+        "function": "serve_connection",
+        "exact_function_bytes_unchanged": true,
+        "sha256": "a2f83b44fa7b7375418f9673884046f3fab52d8bed7f0e7017acfc732d2b1c07"
+      },
+      {
+        "function": "serve_cells_persistent",
+        "exact_function_bytes_unchanged": true,
+        "sha256": "472d2cb80a772b41ab1b03fe07d6c12776b4e1f091d2aa4d1dfe2a7496a7d2a5"
+      }
+    ],
+    "server_actual_egress_intake_and_per_frame_fix_unchanged": true,
+    "server_temporary_reservation_refund_semantics_unchanged": true,
+    "availability_deadline_fix_unchanged": {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+      "blob": "eb00ba785d02120dbe385863cb392f2ed641db98",
+      "sha256": "aa6de26a2623ad27750ffced9ba0f2fe1c9342545b9581d671ed0fe2167dfbe9"
+    },
+    "old_test_file_is_exact_prefix": true,
+    "old_test_file_preserved_bytes": 23438,
+    "old_tests_count": 10,
+    "incoming_tests_count": 17,
+    "old_test_names": [
+      "real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget",
+      "request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix",
+      "interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances",
+      "old_response_magic_is_rejected_without_namespace_fallback_or_redial",
+      "reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial",
+      "server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes",
+      "server_frame_and_byte_budgets_apply_across_reused_requests",
+      "server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown",
+      "server_temporary_egress_reservation_refunds_before_real_tcp_response",
+      "invalid_persistent_limits_never_open_transport_or_mutate_the_cache"
+    ],
+    "own_two_tests_preserved_unchanged": [
+      "server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown",
+      "server_temporary_egress_reservation_refunds_before_real_tcp_response"
+    ],
+    "removed_or_modified_old_tests": []
+  },
+  "new_tests": {
+    "count": 7,
+    "names": [
+      "exhausted_response_budget_after_connection_wait_refuses_new_dial",
+      "exhausted_response_budget_after_connection_wait_refuses_reused_frame",
+      "quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion",
+      "temporary_response_reservation_after_connection_wait_is_not_exhaustion",
+      "zero_egress_service_does_not_accept_an_already_queued_connection",
+      "last_response_byte_closes_reused_connection_without_admitting_idle_frame",
+      "exhausted_service_still_joins_an_already_admitted_incomplete_frame"
+    ],
+    "linux_only": [
+      "exhausted_service_still_joins_an_already_admitted_incomplete_frame"
+    ],
+    "coverage": [
+      "Actual response exhaustion while waiting refuses new TCP dial",
+      "Actual response exhaustion while waiting refuses reused TCP frame",
+      "Quarantine during wait retains precedence over byte exhaustion",
+      "Temporary reservation refund still permits the real TCP response",
+      "Zero-egress service does not accept an already queued socket",
+      "Last response byte drains reused connection without admitting an idle next frame",
+      "Already admitted incomplete frame is joined after service egress exhaustion"
+    ],
+    "appended_lines": 344
+  },
+  "validation_boundary": {
+    "rust_commands_executed": false,
+    "tests_executed": 0,
+    "source_or_target_modified": false,
+    "incoming_runtime_validation_claimed": false,
+    "merged_E_runtime_validation_claimed": false,
+    "prior_M09_295_pass_scope": "The actual 295-test M09 runtime pass belongs to C=211e330fd1cfbdaf3e9ff552714df29c840ce675. N=568c97590eee9e95e6b5021a49fd0a5d20716fa7 and D have the same M09 source projection but did not rerun those 295 tests. The incoming persistent implementation and added tests differ; the C result must not be relabeled as a runtime pass on N, D, 81da, or E=81da+D.",
+    "preserved_old_tests_are_not_new_source_runtime_evidence": true,
+    "required_reporting": "Keep the 295-test passing runtime receipt attributed to C=211e330fd1cfbdaf3e9ff552714df29c840ce675. Describe N/D as the same M09 source projection, not a rerun. Describe 81da/E overlap as reviewed source with seven added tests not executed by this audit. Do not claim a merged-source M09 295 pass.",
+    "runtime_provenance_correction": {
+      "corrected_utc": "2026-11-05T01:43:15.247405+00:00",
+      "source": "Parent clarified the actual runtime receipt attribution; no runtime or source audit was repeated.",
+      "actual_runtime_pass_commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+      "actual_runtime_pass_count": 295,
+      "N_and_D_M09_source_projection_matches_C": true,
+      "source_projection_matches_C_basis": "Parent clarification; N/D equality and incoming overlap retain the existing exact Git-object comparison.",
+      "N_or_D_reran_295_tests": false,
+      "tree_blob_comparisons_modified": false
+    }
+  }
+}

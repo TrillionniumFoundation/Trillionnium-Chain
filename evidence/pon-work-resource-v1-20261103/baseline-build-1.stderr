@@ -1,0 +1,5 @@
+/workspace/scratch/ed36d74e0124/w1-resource-local/alloc_probe.c: In function ‘report’:
+/workspace/scratch/ed36d74e0124/w1-resource-local/alloc_probe.c:48:15: error: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Werror=unused-result]
+   48 |         (void)write(STDERR_FILENO, line, (size_t)length);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors

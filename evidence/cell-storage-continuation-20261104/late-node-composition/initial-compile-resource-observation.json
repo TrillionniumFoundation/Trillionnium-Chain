@@ -1,0 +1,11 @@
+{
+  "observed_utc": "2026-11-04T13:04:08.530035+00:00",
+  "interpretation": "SIGKILL with no source diagnostic is consistent with shared-memory exhaustion; this snapshot alone does not identify the kernel victim or establish an exclusive cause.",
+  "memory.current": "8466907136",
+  "memory.max": "8589934592",
+  "memory.peak": "8595656704",
+  "memory.events": "low 0\nhigh 0\nmax 19742031\noom 78\noom_kill 20\noom_group_kill 0",
+  "memory.stat": "anon 1653264384\nfile 6227517440\nkernel 581726208\nkernel_stack 2408448\npagetables 15360000\nsec_pagetables 0\npercpu 39028\nsock 3698688\nvmalloc 28672\nshmem 3672690688\nfile_mapped 517537792\nfile_dirty 66371584\nfile_writeback 0\nswapcached 0\nanon_thp 0\nfile_thp 140509184\nshmem_thp 0\ninactive_anon 3520061440\nactive_anon 1805406208\ninactive_file 666771456\nactive_file 1888055296\nunevictable 0\nslab_reclaimable 538696248\nslab_unreclaimable 25088240\nslab 563784488\nworkingset_refault_anon 0\nworkingset_refault_file 1610703434\nworkingset_activate_anon 0\nworkingset_activate_file 242954802\nworkingset_restore_anon 0\nworkingset_restore_file 118529916\nworkingset_nodereclaim 94403\npgdemote_kswapd 0\npgdemote_direct 0\npgdemote_khugepaged 0\npgdemote_proactive 0\npgscan 6681088306\npgsteal 1673112309\npswpin 0\npswpout 0\npgscan_kswapd 31650175\npgscan_direct 6649438131\npgscan_khugepaged 0\npgscan_proactive 0\npgsteal_kswapd 30889128\npgsteal_direct 1642223181\npgsteal_khugepaged 0\npgsteal_proactive 0\npgfault 1138385840\npgmajfault 1023005\npgrefill 328355867\npgactivate 73390323\npgdeactivate 300229443\npglazyfree 77\npglazyfreed 0\nswpin_zero 0\nswpout_zero 0\nthp_fault_alloc 0\nthp_collapse_alloc 0\nthp_swpout 0\nthp_swpout_fallback 0",
+  "active_compiler_count": 5,
+  "active_compiler_rss_kib": 1459732
+}

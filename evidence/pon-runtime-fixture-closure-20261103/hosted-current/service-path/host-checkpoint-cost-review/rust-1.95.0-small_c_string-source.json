@@ -1,0 +1,8 @@
+{
+  "repository": "rust-lang/rust",
+  "ref": "1.95.0",
+  "path": "library/std/src/sys/helpers/small_c_string.rs",
+  "git_blob": "f54505a856e05cca952669988b47a88663607507",
+  "url": "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/helpers/small_c_string.rs",
+  "scope": "Primary upstream source read-only; not executed or used as a native result."
+}

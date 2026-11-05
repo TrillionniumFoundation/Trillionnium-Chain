@@ -1,0 +1,6 @@
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/56818e4fba76/chain-pq-next/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 20s

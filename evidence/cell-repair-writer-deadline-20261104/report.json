@@ -1,0 +1,85 @@
+{
+  "schema": "trnm-cell-repair-writer-deadline-observation-v1",
+  "base_commit": "40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+  "source_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "37ebf33ffec0a96de94e875bd9de0e60555f10cae216ef2307c6adc8279e8a13",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs": "f4023fdf634e8c8eb3bdbc6b213c482b2ef1cbb03cb67d165439645936574b78",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a"
+  },
+  "scope": "local durable retention writer wait and replay integrity only",
+  "red_control": "same four tests added to unmodified baseline retention.rs; all four fail while 12 existing repair-filter tests pass",
+  "green_control": "complete 183-test native M09 library passed; strict Clippy all targets passed",
+  "case_names": {
+    "0": "new repair intent with damaged payload",
+    "1": "missing-intent zero-byte target reconciliation",
+    "2": "lost-completion repair retry",
+    "3": "lost-completion target reconciliation"
+  },
+  "writer_lock_detection_bound_ms": 600,
+  "observations": {
+    "red": [
+      {
+        "case": 3,
+        "original_budget_ms": 100,
+        "elapsed_ns": 632085829
+      },
+      {
+        "case": 2,
+        "original_budget_ms": 100,
+        "elapsed_ns": 633685901
+      },
+      {
+        "case": 0,
+        "original_budget_ms": 100,
+        "elapsed_ns": 631454770
+      },
+      {
+        "case": 1,
+        "original_budget_ms": 100,
+        "elapsed_ns": 631770261
+      }
+    ],
+    "green": [
+      {
+        "case": 3,
+        "original_budget_ms": 100,
+        "elapsed_ns": 100030062
+      },
+      {
+        "case": 2,
+        "original_budget_ms": 100,
+        "elapsed_ns": 100266969
+      },
+      {
+        "case": 0,
+        "original_budget_ms": 100,
+        "elapsed_ns": 100213409
+      },
+      {
+        "case": 1,
+        "original_budget_ms": 100,
+        "elapsed_ns": 100298953
+      }
+    ]
+  },
+  "environment": {
+    "os": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "rust": "1.95.0 x86_64-unknown-linux-gnu",
+    "profile": "unchanged repository test profile, offline locked Cargo graph",
+    "shared_host": true
+  },
+  "independent_custody_accepted": false,
+  "prospective_model_evolution_accepted": false,
+  "source_checker_note": "optional check_pq_research_integration refused this sparse clone because historical evidence/pon-pq-account-native-20261028/README.md is omitted; rerun on root complete integration checkout",
+  "production_activation": false,
+  "integration_source_check": {
+    "exact_source_blobs": 389,
+    "canonical_pnq2_contract_checked": true,
+    "canonical_default_provider_contract_checked": true,
+    "status": "HOLD_NO_GO",
+    "exit_code": 0,
+    "whole_native_authorization_migrated": false,
+    "production_activation": false
+  }
+}

@@ -1,0 +1,10 @@
+
+running 5 tests
+test account_forks_keep_the_original_state_nonce_owner_without_shared_credits ... ok
+test dual_migration_native_verification_rejects_either_signature_revocation_or_target_substitution ... ok
+test native_parent_rejects_nonce_reset_liability_omission_and_rebound_parameters ... ok
+test pqg1_native_import_preserves_nonces_all_four_liabilities_and_original_m06_transfers ... ok
+test real_wrong_signatures_context_nonce_quarantine_and_classical_fallback_refuse ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+

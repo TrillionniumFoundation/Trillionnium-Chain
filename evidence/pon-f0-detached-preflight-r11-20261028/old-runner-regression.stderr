@@ -1,0 +1,19 @@
+test_audit_mode_does_not_rescue_a_foreign_repository (test_fixed_root_preflight.F0PreparationPreflightControls.test_audit_mode_does_not_rescue_a_foreign_repository) ... ok
+test_detached_prepare_passes_real_audit_and_stops_before_native (test_fixed_root_preflight.F0PreparationPreflightControls.test_detached_prepare_passes_real_audit_and_stops_before_native) ... FAIL
+test_source_failure_precedes_any_boundary_or_native_command (test_fixed_root_preflight.F0PreparationPreflightControls.test_source_failure_precedes_any_boundary_or_native_command) ... ok
+
+======================================================================
+FAIL: test_detached_prepare_passes_real_audit_and_stops_before_native (test_fixed_root_preflight.F0PreparationPreflightControls.test_detached_prepare_passes_real_audit_and_stops_before_native)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/56818e4fba76/chain-recovered/scripts/ci/test_fixed_root_preflight.py", line 68, in test_detached_prepare_passes_real_audit_and_stops_before_native
+    self.assertEqual(result['failure'], 'RUSTC-VERSION_FAILED')
+AssertionError: 'PREFLIGHT_FAILED' != 'RUSTC-VERSION_FAILED'
+- PREFLIGHT_FAILED
++ RUSTC-VERSION_FAILED
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.352s
+
+FAILED (failures=1)

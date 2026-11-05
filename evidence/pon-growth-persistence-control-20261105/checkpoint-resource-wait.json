@@ -1,0 +1,83 @@
+{
+  "schema": "growth-persistence-resource-wait-checkpoint-v1",
+  "prior_evidence_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "prior_manifest_blob": "8c7c047c566e366a13a695341007a3cb9e9f3fad",
+  "fixed_green_code": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "owned_growth_new_attempt_started": false,
+  "canonical_red": "PENDING_AFTER_TWO_RESOURCE_ABORTS",
+  "green2": "NOT_RUN",
+  "b1_account_prefix": "NOT_RUN",
+  "observed_shared_idle_oom_counters": {
+    "first": 1,
+    "intermediate": 3,
+    "latest": 4
+  },
+  "note": "Shared cgroup OOM counters increased while this agent and the coordinated authority agent had no Cargo process. No attribution to a specific victim or single process is made. Earlier four Growth attempt receipts retain their actual per-window OOM deltas of zero. No new compile was started in the observed unstable window; original 512MiB stop floor and 600s bound unchanged. F0 source confirms AuthenticatedV1/RawR14 and does not cover the new Growth2 or B1 tests.",
+  "qualification": "HOLD",
+  "production_activation": false,
+  "files": [
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/post-runtime-idle-process-observation.json",
+      "bytes": 1908,
+      "sha256": "7f84ef2433d4293f765208446a9528d268a7e63f94aa47b7afa474149cfe3465",
+      "blob": "161e52a3fd7249f59b1aba5d51b7a36cd4a8c8cc",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-latest.json",
+      "bytes": 983,
+      "sha256": "1897b8aedfd6493bac3274bb7ec34a04007760e519ce573d787d3c04bec6898c",
+      "blob": "786a979aa310730c6ddc9b3f09ed03ae239cae57",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-followup.json",
+      "bytes": 2479,
+      "sha256": "320c45e88c922a894319129c8c07515380356780e5447444bb929e4a7d239022",
+      "blob": "c458722ed9b656c13ee04ab1e641bc043424adcb",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/resource-window-after-ef1fa4d.json",
+      "bytes": 7332,
+      "sha256": "6e12f3d53a5ca1e89d22ab1ee133e3e0c7afb8ac86fc73d8517ed26eb6142ed0",
+      "blob": "29d82707b0869632d1a2f73472eb081ef07a4e6a",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/frozen-b5bb-component-binding.json",
+      "bytes": 698,
+      "sha256": "b718660cdbeae090cab1ce6a00f6f756dc061705e4a36178b34bf6cd2a3925ba",
+      "blob": "cb03e6da1a10f4df666f87375744c32ee398b945",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/b5bb-f0-growth-coverage.json",
+      "bytes": 4675,
+      "sha256": "fa2fe6597dab6001ae7a0d59a8dbe8a5700ad0a4efb85918e5777012b96767dd",
+      "blob": "32bff8ae09b6b147b3f09572b47e4b985d4dc9a8",
+      "readback_verified": true
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/b5bb-f0-backend-scope.json",
+      "bytes": 2237,
+      "sha256": "0a834d8e0c6c802380e06c5ff4846ba7c832fccbf47c0108268fa3dc70962f2b",
+      "blob": "169e40c6b5ac50c682103af1f0e0148695af9506",
+      "readback_verified": true
+    }
+  ],
+  "runners": [
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-bounded.py",
+      "blob": "25426a744175cb9f9d16b78ff4f7df2728a0ee09",
+      "bytes": 17204,
+      "sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f"
+    },
+    {
+      "path": "evidence/pon-growth-persistence-control-20261105/run-account-prefix-bounded.py",
+      "bytes": 16778,
+      "sha256": "614f8fc36aa38b1df5d0c869cebcf2bf88c5a9aa7580892ef9becaceb19f4e65",
+      "blob": "384a1eb7c6fb3d361935f6a441c89b402a670e3a"
+    }
+  ]
+}

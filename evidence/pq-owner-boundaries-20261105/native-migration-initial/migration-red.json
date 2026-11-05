@@ -1,0 +1,53 @@
+{
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-features",
+    "--lib",
+    "migration_",
+    "--",
+    "--nocapture"
+  ],
+  "source_before": {
+    "head": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+    "diff_sha256": "5591cfb236f16e62b9a5bb958758280a57681900d8ee69d3c143df3686ad5e08",
+    "status": " M trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs\n",
+    "changed_file_sha256": {
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "29bf357cd9a0523b413accbbfa55438910f38d5ef6565be060cb90741cad597f"
+    }
+  },
+  "source_after": {
+    "head": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+    "diff_sha256": "5591cfb236f16e62b9a5bb958758280a57681900d8ee69d3c143df3686ad5e08",
+    "status": " M trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs\n",
+    "changed_file_sha256": {
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs": "29bf357cd9a0523b413accbbfa55438910f38d5ef6565be060cb90741cad597f"
+    }
+  },
+  "source_unchanged": true,
+  "exit_code": 101,
+  "elapsed_seconds": 117.05347847938538,
+  "environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_INCREMENTAL": "0",
+    "RUST_TEST_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "CARGO_TARGET_DIR": "/workspace/scratch/aea25ba345a8/chain-pq-agent/target",
+    "CARGO_NET_OFFLINE": "true",
+    "OPENSSL_DIR": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/fee7901564fd-next/provider-native799/trnm-pq-provider-3.5.9.UF6qy3Q5/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL_SHA256": "35f28c82e7e4fdcd06b0a42062efd224a5fd5d32d5cc9894252f8206219d496e"
+  },
+  "output_sha256": "3332481009a579dcab45ccc1ee7c3760939a34f753977d63040bff2f8f714320"
+}

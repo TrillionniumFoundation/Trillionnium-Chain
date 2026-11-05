@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "corpus-check",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "tree": "72d12bd434055f67c5f6becf2ee480a9ec09b99e",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:17:21.461626+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 238904338,
+  "finished_at": "2026-11-04T13:17:21.700809+00:00",
+  "log_bytes": 557,
+  "log_sha256": "61bc31416f3ddb7b3a28132d18c42bb960f5921cdbb0f4620fcfe1b1755937cb",
+  "final_head": "92a0750e3278f71f86000dfcb14388f3e86baa2a",
+  "final_dirty_paths": []
+}

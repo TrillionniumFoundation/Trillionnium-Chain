@@ -1,0 +1,16 @@
+[
+  {
+    "pid": 108192,
+    "command": "/bin/bash -lc env PATH=/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin:$PATH CARGO_HOME=/workspace/scratch/56818e4fba76/toolchains/cargo CARGO_TARGET_DIR=/workspace/scratch/56818e4fba76/target-w1 CARGO_BUILD_JOBS=3 RISC0_HOME=/workspace/scratch/56818e4fba76/toolchains/risc0 RISC0_BUILD_LOCKED=1 CARGO_NET_GIT_FETCH_WITH_CLI=true cargo build --locked --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-host --release > /workspace/scratch/56818e4fba76/w1-prover-build-locked-retry.log 2>&1 ",
+    "observed_at_unix": 1793092351.677248,
+    "reason": "Explicit transition to digest-pinned official local r0vm3.0.3; first guest build failed MSRV; queued retry not executed",
+    "sigterm_sent": true
+  },
+  {
+    "pid": 85467,
+    "command": "/bin/bash -lc env PATH=/workspace/scratch/56818e4fba76/toolchains/rust-1.95.0/bin:$PATH CARGO_HOME=/workspace/scratch/56818e4fba76/toolchains/cargo CARGO_TARGET_DIR=/workspace/scratch/56818e4fba76/target-w1 CARGO_BUILD_JOBS=4 RISC0_HOME=/workspace/scratch/56818e4fba76/toolchains/risc0 cargo build --locked --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-host --release > /workspace/scratch/56818e4fba76/w1-prover-build.log 2>&1 ",
+    "observed_at_unix": 1793092351.6774657,
+    "reason": "Explicit transition to digest-pinned official local r0vm3.0.3; first guest build failed MSRV; queued retry not executed",
+    "sigterm_sent": true
+  }
+]

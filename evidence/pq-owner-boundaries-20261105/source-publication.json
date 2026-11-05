@@ -1,0 +1,55 @@
+{
+  "schema": "pq-owner-source-publication-v1",
+  "chain": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "source_commit": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+    "source_tree": "ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855",
+    "parents": [
+      "160b6f91e39708454d1edd200ab9ef2b4192192e",
+      "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+    ],
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-05T05:45:57Z"
+    },
+    "expected_previous_ref": "160b6f91e39708454d1edd200ab9ef2b4192192e",
+    "force": false,
+    "ref_update_success": true
+  },
+  "runtime": {
+    "repository": "TrillionniumFoundation/hepta-private-ci",
+    "branch": "fix/hepta-ordinary-pq-effects-20261104",
+    "source_commit": "fc0c6f7430cc1cce9274d407536e7249f2290ccd",
+    "source_tree": "8403d5acabc83707e9b5fcb4e5250a4883c12293",
+    "parents": [
+      "d7c32f38ae1c3890e73ff48ef8ee725ba4e80c58"
+    ],
+    "author": {
+      "name": "Tomasrgbsf",
+      "email": "273673612+Tomasrgbsf@users.noreply.github.com",
+      "date": "2026-11-05T05:42:09Z"
+    },
+    "expected_previous_ref": "d7c32f38ae1c3890e73ff48ef8ee725ba4e80c58",
+    "force": false,
+    "ref_update_success": true
+  },
+  "exact_blob_readback": [
+    {
+      "kind": "chain",
+      "observed_head": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+      "published_source": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+      "exact_source_blob_readback": true,
+      "blob": "f4af2dc570e705c80c11c1dca880f2e249fe7a12"
+    },
+    {
+      "kind": "runtime",
+      "observed_head": "fc0c6f7430cc1cce9274d407536e7249f2290ccd",
+      "published_source": "fc0c6f7430cc1cce9274d407536e7249f2290ccd",
+      "exact_source_blob_readback": true,
+      "blob": "74a95d84f8bf1bc78eb372a50ffc03124f57e34e"
+    }
+  ],
+  "scope": "Source publication and exact Git tree/blob identity only. This receipt does not report native execution, hosted CI completion, deployed binaries, root custody or activation."
+}

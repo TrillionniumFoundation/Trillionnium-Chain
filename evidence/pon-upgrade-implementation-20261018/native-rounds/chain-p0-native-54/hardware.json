@@ -1,0 +1,9 @@
+{
+  "machine": "x86_64",
+  "kernel": "7.0.0-38-generic",
+  "native_same_host_other_builds_possible": true,
+  "cpu_quota_percent": 400,
+  "cpu_models": [
+    "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  ]
+}

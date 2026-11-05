@@ -1,0 +1,94 @@
+{
+  "acceptance_granted": false,
+  "advisory_databases": [],
+  "artifact_sha256": {
+    "fetch-crates-0.log": "b51525f59b5a86f3be09aaf64c65ee2e7c7181335cc2bbe69e5aee93e3f91fe5",
+    "fetch-crates-1.log": "b8cc63ec3bc045865321a56fd4cd4867310822b42e132712c4d9c2787eca8669",
+    "tool-version.log": "1758f5ea93d8ad3585079f05c19358b7bb969cce1bf6c7bdab6659a8cd1ef6b8"
+  },
+  "cargo_deny_sha256": "20cf3f92d873bb262075c3b8539e65c1dc0aed9cf89946e5e292b546b491e2ff",
+  "error": "command exited 101; retained /home/runner/work/_temp/ci-observations/supply-chain/fetch-crates-1.log",
+  "input_sha256": {
+    "deny.toml": "c4543ba5da36d0dea6480d39e107b77efe3f4c6dfc6d86723c1c794407472954",
+    "scripts/ci/run_supply_chain.py": "3ba25e784966e4d52efe22d400ddb73657a02550a8d7ac955c2968b652d839f6",
+    "scripts/ci/tool-versions.env": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408",
+    "tests/fuzz/Cargo.lock": "6c39a792fd03e539e72406f6e3e440066630c8607cc2cb2000ae6efb50ec195a",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+  },
+  "observations": [
+    {
+      "command": [
+        "/home/runner/work/_temp/trnm-ci-tools/deny-0.20.2/bin/cargo-deny",
+        "--version"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2115255580,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+      "log": "tool-version.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 3944827162,
+      "executed": true,
+      "exit_code": 0,
+      "expected_source": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+      "log": "fetch-crates-0.log",
+      "process_exit_code": 0,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    },
+    {
+      "command": [
+        "cargo",
+        "fetch",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 2241490851,
+      "executed": true,
+      "exit_code": 101,
+      "expected_source": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+      "log": "fetch-crates-1.log",
+      "process_exit_code": 101,
+      "source_after_verified": true,
+      "source_before_verified": true,
+      "source_verified": true,
+      "timed_out": false
+    }
+  ],
+  "result": "FAIL",
+  "schema": "trnm-supply-chain-v1",
+  "source": {
+    "commit": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+    "source_state": "committed-clean",
+    "tracked_bytes": 859735858,
+    "tracked_entries": 7159,
+    "tracked_worktree_verified": true,
+    "tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439"
+  },
+  "source_consistent": true,
+  "source_expected": "469c4d4bb36efb37045d968f35f83cb2c1771933",
+  "tools": {
+    "TRNM_CARGO_DENY_VERSION": "0.20.2",
+    "TRNM_CARGO_FUZZ_VERSION": "0.13.2",
+    "TRNM_FUZZ_TOOLCHAIN": "nightly-2026-10-01"
+  }
+}

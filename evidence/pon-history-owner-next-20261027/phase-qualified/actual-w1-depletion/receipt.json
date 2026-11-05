@@ -1,0 +1,33 @@
+{
+  "schema": "history-frozen-native-control-v2",
+  "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+  "binary_sha256": "0f82f1a43c785ac6610789df27379c3bba166036bb39b5589d75b92ef6fdc927",
+  "argv": [
+    "/tmp/history-phase-qualified-20261028/trnm_pon_node",
+    "ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "outer_observer_timeout_seconds": 60,
+  "started_utc": "2026-10-28T00:53:44.501504+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 1.017889754002681,
+  "timed_out": false,
+  "stdout.txt": {
+    "bytes": 617,
+    "sha256": "2f79073c1065edf9e8057dd27e9d7596798b8a4ab1a6b52f5f04c9fced746d2e"
+  },
+  "stderr.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "harness_results": [
+    {
+      "outcome": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

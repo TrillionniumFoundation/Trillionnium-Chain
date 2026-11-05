@@ -1,0 +1,501 @@
+//! One preregistered three-arm observation of the independent checked-prefix candidate.
+//! Both references retain actual historical function bodies. The original
+//! encode_for_cache is local to full_map_a10, so neither baseline can call the
+//! candidate's changed generic encoder. No production source changes here.
+use super::*;
+use serde_json::json;
+
+// Historical functions are copied literally, apart from module visibility and
+// one indentation level. Keep them out of rustfmt so body-byte checks are stable.
+#[rustfmt::skip]
+mod full_map_a10 {
+    use super::*;
+
+    fn encode_for_cache(
+        state: &State,
+        limits: CacheLimits,
+    ) -> Result<(Option<CanonicalValues>, Charges)> {
+        let count = state.len();
+        let nodes = count.saturating_mul(2).saturating_sub(1);
+        let mut retained = (count <= limits.max_keys && count <= 65_536).then(BTreeMap::new);
+        let mut payload = 0usize;
+        let mut capacities = 0usize;
+        let mut within_wire = count <= 65_536;
+        for (key, value) in state {
+            let encoded = pon_executor::canonical(value)?;
+            within_wire &= key.len() <= 160 && encoded.len() <= 4096;
+            // Saturation only chooses to discard a cache. No saturated charge is
+            // returned: valid wire input has a finite bound and is recomputed below.
+            payload = payload
+                .saturating_add(key.len())
+                .saturating_add(encoded.len());
+            capacities = capacities
+                .saturating_add(key.len())
+                .saturating_add(encoded.capacity());
+            let map = capacities.saturating_add(count.saturating_mul(MAP_ENTRY_CHARGE));
+            let tree = capacities
+                .saturating_add(nodes.saturating_mul(COMPRESSED_NODE_CHARGE))
+                .saturating_add(EMPTY_TABLE_CHARGE);
+            let minimum_workspace = map
+                .saturating_add(tree)
+                .saturating_mul(3)
+                .saturating_add(payload.saturating_mul(2));
+            if !within_wire
+                || payload > limits.max_payload_bytes
+                || minimum_workspace > limits.max_workspace_charge_bytes
+            {
+                retained = None;
+            }
+            if let Some(values) = &mut retained {
+                values.insert(key.as_bytes().to_vec(), encoded);
+            }
+        }
+        if !within_wire {
+            return Err("LIMIT");
+        }
+        // Bounds above imply these charges fit even on a 32-bit host. Keep checked
+        // arithmetic rather than making the cache-discard saturation authoritative.
+        let current = Charges {
+            payload,
+            map: add(capacities, mul(count, MAP_ENTRY_CHARGE)?)?,
+            tree: add(
+                add(capacities, mul(nodes, COMPRESSED_NODE_CHARGE)?)?,
+                EMPTY_TABLE_CHARGE,
+            )?,
+            nodes,
+        };
+        Ok((retained, current))
+    }
+
+    pub(super) fn prepare_state_with_arithmetic(
+        state: &State,
+        prior: Option<&CheckedCommitment>,
+        actual_before: Option<&CanonicalValues>,
+        limits: CacheLimits,
+        arithmetic: Option<&FullRootArithmetic>,
+    ) -> Result<PreparedCommitment> {
+        let (values, current) = encode_for_cache(state, limits)?;
+        limits.validate()?;
+        if let Some(values) = values {
+            return prepare_values(values, prior, actual_before, limits);
+        }
+        let before = actual_before.or_else(|| prior.map(|p| p.values.as_ref()));
+        let mut difference = DifferencePlan::default();
+        if let Some(before) = before {
+            visit_state_differences(before, state, |key, old, new| {
+                difference.count = add(difference.count, 1)?;
+                difference.payload = add(
+                    difference.payload,
+                    add(
+                        key.len(),
+                        add(old.map_or(0, Vec::len), new.map_or(0, Vec::len))?,
+                    )?,
+                )?;
+                Ok(())
+            })?;
+        }
+        let preceding = before.map(charges).transpose()?.unwrap_or(current);
+        let workspace = workspace_charge(current, preceding, difference.count)?;
+        let reason = fallback_reason(
+            state.len(),
+            current,
+            workspace,
+            prior.is_some(),
+            difference.count,
+            limits,
+        )
+        .ok_or("COMMITMENT_CHARGE")?;
+        mark_stage("budget-selected");
+        let root = match arithmetic {
+            Some(arithmetic) => arithmetic.root(state),
+            None => pon_executor::root(state),
+        }?;
+        mark_stage("full-root-completed");
+        mark_stage("changes-allocation");
+        let mut changes = Vec::with_capacity(difference.count);
+        if let Some(before) = before {
+            visit_state_differences(before, state, |key, old, new| {
+                changes.push(Change {
+                    key: key.to_vec(),
+                    before: old.cloned(),
+                    after: new.cloned(),
+                });
+                Ok(())
+            })?;
+        }
+        debug_assert_eq!(changes.len(), difference.count);
+        Ok(PreparedCommitment {
+            root,
+            snapshot: None,
+            changes,
+            observation: CommitmentObservation {
+                method: CommitmentMethod::FullRoot(reason),
+                actual_keys: state.len(),
+                actual_payload_bytes: current.payload,
+                changed_keys: difference.count,
+                changed_payload_bytes: difference.payload,
+                compressed_nodes: None,
+                workspace_charge_bytes: workspace,
+            },
+        })
+    }
+
+    pub(super) fn checked_snapshot_with_optional_arithmetic(
+        actual_state: &State,
+        expected_root: Hash,
+        prior: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+        arithmetic: Option<&FullRootArithmetic>,
+    ) -> Result<PreparedCommitment> {
+        let prepared = prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?;
+        if prepared.root != expected_root {
+            return Err("COMMITMENT_ROOT");
+        }
+        Ok(prepared)
+    }
+}
+
+#[rustfmt::skip]
+mod parent_40a {
+    use super::*;
+    use super::full_map_a10::prepare_state_with_arithmetic;
+
+    pub(super) fn checked_snapshot_with_optional_arithmetic(
+        actual_state: &State,
+        expected_root: Hash,
+        prior: Option<&CheckedCommitment>,
+        limits: CacheLimits,
+        arithmetic: Option<&FullRootArithmetic>,
+    ) -> Result<PreparedCommitment> {
+        // The freshly supplied root and key count select calculation material only.
+        // A hit still canonically compares EVERY actual key/value below. Historical
+        // transitions with a different root retain the original single encoding
+        // pass; a misleading same-root hint takes that original path on mismatch.
+        let unchanged = prior
+            .filter(|previous| {
+                previous.root == expected_root && previous.values.len() == actual_state.len()
+            })
+            .map(|previous| prepare_unchanged_snapshot(actual_state, previous, limits))
+            .transpose()?
+            .flatten();
+        let prepared = match unchanged {
+            Some(prepared) => prepared,
+            None => prepare_state_with_arithmetic(actual_state, prior, None, limits, arithmetic)?,
+        };
+        if prepared.root != expected_root {
+            return Err("COMMITMENT_ROOT");
+        }
+        Ok(prepared)
+    }
+
+    fn prepare_unchanged_snapshot(
+        actual_state: &State,
+        previous: &CheckedCommitment,
+        limits: CacheLimits,
+    ) -> Result<Option<PreparedCommitment>> {
+        let Ok(current) = charges(&previous.values) else {
+            return Ok(None);
+        };
+        let Ok(workspace) = workspace_charge(current, current, 0) else {
+            return Ok(None);
+        };
+        if limits.validate().is_err()
+            || fallback_reason(previous.keys(), current, workspace, true, 0, limits).is_some()
+        {
+            return Ok(None);
+        }
+        if !matches_unchanged_candidate(actual_state, &previous.values)? {
+            return Ok(None);
+        }
+        mark_stage("budget-selected");
+        let mut observation = CommitmentObservation {
+            method: CommitmentMethod::CheckedApply,
+            actual_keys: actual_state.len(),
+            actual_payload_bytes: current.payload,
+            changed_keys: 0,
+            changed_payload_bytes: 0,
+            compressed_nodes: Some(current.nodes),
+            workspace_charge_bytes: workspace,
+        };
+        mark_stage("changes-allocation");
+        let changes = Vec::new();
+        mark_stage("tree-allocation");
+        let tree = match previous.tree.apply(previous.root, &changes) {
+            Ok(tree) => tree,
+            Err(_) => {
+                observation.method =
+                    CommitmentMethod::FullRoot(FullRootReason::InternalSnapshotMismatch);
+                observation.compressed_nodes = None;
+                return Ok(Some(PreparedCommitment {
+                    root: state_root(&previous.values).map_err(|_| "LIMIT")?,
+                    snapshot: None,
+                    changes,
+                    observation,
+                }));
+            }
+        };
+        let root = tree.root();
+        Ok(Some(PreparedCommitment {
+            root,
+            snapshot: Some(CheckedCommitment {
+                values: Arc::clone(&previous.values),
+                tree,
+                root,
+                charges: current,
+            }),
+            changes,
+            observation,
+        }))
+    }
+
+    pub(super) fn matches_unchanged_candidate(state: &State, expected: &CanonicalValues) -> Result<bool> {
+        if state.len() != expected.len() {
+            return Ok(false);
+        }
+        let mut within_limits = state.len() <= 65_536;
+        let mut previous = expected.iter();
+        let mut actual = Vec::new();
+        for (key, value) in state {
+            let Some((old_key, old_value)) = previous.next() else {
+                return Ok(false);
+            };
+            if key.as_bytes() != old_key {
+                return Ok(false);
+            }
+            pon_executor::canonical_into(value, &mut actual)?;
+            within_limits &= key.len() <= 160 && actual.len() <= 4096;
+            if actual != *old_value {
+                return Ok(false);
+            }
+        }
+        if !within_limits {
+            return Err("LIMIT");
+        }
+        Ok(true)
+    }
+}
+
+fn fixture(count: usize, width: usize) -> State {
+    (0..count)
+        .map(|index| (format!("unchanged:{index:05}"), json!("x".repeat(width))))
+        .collect()
+}
+
+fn original(
+    state: &State,
+    expected: Hash,
+    prior: Option<&CheckedCommitment>,
+    limits: CacheLimits,
+    arithmetic: Option<&FullRootArithmetic>,
+) -> Result<PreparedCommitment> {
+    full_map_a10::checked_snapshot_with_optional_arithmetic(
+        state, expected, prior, limits, arithmetic,
+    )
+}
+
+fn equal(actual: &PreparedCommitment, reference: &PreparedCommitment) {
+    assert_eq!(actual.root, reference.root);
+    assert_eq!(actual.observation, reference.observation);
+    let changes = |prepared: &PreparedCommitment| {
+        prepared
+            .changes
+            .iter()
+            .map(|change| {
+                (
+                    change.key.clone(),
+                    change.before.clone(),
+                    change.after.clone(),
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(changes(actual), changes(reference));
+    assert_eq!(actual.snapshot.is_some(), reference.snapshot.is_some());
+    if let (Some(actual), Some(reference)) = (&actual.snapshot, &reference.snapshot) {
+        assert_eq!(actual.values, reference.values);
+        equal_capacities(&actual.values, &reference.values);
+        assert_eq!(actual.tree.root(), reference.tree.root());
+        assert_eq!(
+            actual.retained_charge_bytes(),
+            reference.retained_charge_bytes()
+        );
+    }
+}
+
+fn equal_capacities(actual: &CanonicalValues, reference: &CanonicalValues) {
+    assert_eq!(actual.len(), reference.len());
+    for ((actual_key, actual_value), (key, value)) in actual.iter().zip(reference) {
+        assert_eq!(actual_key, key);
+        assert_eq!(actual_value, value);
+        assert_eq!(actual_key.capacity(), key.capacity());
+        assert_eq!(actual_value.capacity(), value.capacity());
+    }
+}
+
+#[test]
+#[ignore = "one preregistered three-arm experiment, preserving every return and all original 5%/10% limits"]
+fn checked_prefix_three_arm_full_binding_cost() {
+    use sha2::{Digest, Sha256};
+    use std::hint::black_box;
+    use std::time::Instant;
+    let limits = CacheLimits::default();
+    // Fix all six permutations before running any v4 sample. Each occurs twice;
+    // each arm occupies each position four times and precedes each peer six times.
+    let order = [
+        [0, 1, 2],
+        [2, 1, 0],
+        [1, 2, 0],
+        [0, 2, 1],
+        [2, 0, 1],
+        [1, 0, 2],
+    ];
+    let decision = json!({
+        "schema": "unchanged-snapshot-three-arm-decision-v1",
+        "primary_targets": [
+            {
+                "reference": "parent_40a_shared_map_ns",
+                "case": "same_root_hint_last_value_changed",
+                "state_keys": [
+                    128,
+                    1024,
+                    4096
+                ],
+                "minimum_paired_median_improvement_fraction": 0.05
+            },
+            {
+                "reference": "original_full_map_ns",
+                "case": "unchanged",
+                "state_keys": [
+                    128,
+                    1024,
+                    4096
+                ],
+                "minimum_paired_median_improvement_fraction": 0.05
+            }
+        ],
+        "candidate": "checked_shared_map_ns",
+        "all_nine_cells_against_each_reference_required": true,
+        "maximum_paired_median_regression_fraction": 0.1,
+        "maximum_p95_regression_fraction": 0.1,
+        "paired_median_definition": "median of round-matched (reference_ns - candidate_ns) / reference_ns; midpoint of central two values for twelve samples",
+        "p95_definition": "nearest rank ceil(0.95 * N); N=12 gives order statistic twelve, the maximum; no confidence or full-chain latency claim",
+        "maximum_missing_or_unexpected_result_bindings": 0,
+        "expected_results": {
+            "unchanged": "Ok with expected root",
+            "same_root_hint_first_value_changed": "COMMITMENT_ROOT",
+            "same_root_hint_last_value_changed": "COMMITMENT_ROOT"
+        },
+        "no_cell_aggregation_or_sample_exclusion": true,
+        "physical_memory_qualification": false,
+        "public_business_gate_replaced": false
+    });
+    let source_identity = json!({
+        "original_full_map_commit":"a10c39025cdc03d3265b031d6547b11e0350da2c",
+        "parent_shared_map_commit":"40a5ba25e40fd5eda5b04fc1c3811320d438de11",
+        "original_reference_source_sha256":"18ed1e6582e34bdbf9b2a376171fccf27fc59eff8b6786bd44dfd525b25e5c01",
+        "parent_reference_source_sha256":"8d1f455e74114346275b24b70c3656bc2adb7d316f40f64958c0733674f345b4",
+        "compiled_production_source_sha256":hex::encode(Sha256::digest(include_bytes!("../pon_commitment.rs"))),
+        "compiled_test_source_sha256":hex::encode(Sha256::digest(include_bytes!("checked_prefix_three_arm_tests.rs"))),
+        "compiled_executor_source_sha256":hex::encode(Sha256::digest(include_bytes!("../pon_executor.rs"))),
+        "compiled_parent_test_source_sha256":hex::encode(Sha256::digest(include_bytes!("unchanged_snapshot_tests.rs"))),
+        "candidate_identity":"borrowed-checked-prefix-with-allocation-free-canonical-comparison",
+        "scope":"new candidate in one current test binary; pinned a10 encoder and old entry bodies, unchanged remaining helpers and original canonical functions; separate from rejected 7dfee source"
+    });
+    for (keys, width) in [(128, 64), (1024, 512), (4096, 512)] {
+        let state = fixture(keys, width);
+        let root = pon_executor::root(&state).unwrap();
+        let seed = original(&state, root, None, limits, None)
+            .unwrap()
+            .snapshot
+            .unwrap();
+        let mut first_mismatch = state.clone();
+        first_mismatch.insert("unchanged:00000".into(), json!("y".repeat(width)));
+        let mut last_mismatch = state.clone();
+        last_mismatch.insert(
+            format!("unchanged:{:05}", keys - 1),
+            json!("y".repeat(width)),
+        );
+        for (case, actual) in [
+            ("unchanged", &state),
+            ("same_root_hint_first_value_changed", &first_mismatch),
+            ("same_root_hint_last_value_changed", &last_mismatch),
+        ] {
+            let reference = original(actual, root, Some(&seed), limits, None);
+            let parent = parent_40a::checked_snapshot_with_optional_arithmetic(
+                actual,
+                root,
+                Some(&seed),
+                limits,
+                None,
+            );
+            let checked = checked_snapshot(actual, root, Some(&seed), limits);
+            for result in [&parent, &checked] {
+                match (&reference, result) {
+                    (Ok(reference), Ok(result)) => equal(result, reference),
+                    (Err(reference), Err(result)) => assert_eq!(result, reference),
+                    _ => panic!("component arms disagree"),
+                }
+            }
+            let mut samples: [Vec<u128>; 3] = [Vec::new(), Vec::new(), Vec::new()];
+            let mut expected_returns = [0usize; 3];
+            let mut unexpected_returns = [0usize; 3];
+            for sample in 0..12 {
+                for arm in order[sample % order.len()] {
+                    let start = Instant::now();
+                    for _ in 0..8 {
+                        let result = match arm {
+                            0 => original(black_box(actual), root, Some(&seed), limits, None),
+                            1 => parent_40a::checked_snapshot_with_optional_arithmetic(
+                                black_box(actual),
+                                root,
+                                Some(&seed),
+                                limits,
+                                None,
+                            ),
+                            2 => checked_snapshot(black_box(actual), root, Some(&seed), limits),
+                            _ => unreachable!(),
+                        };
+                        let expected = match &result {
+                            Ok(prepared) => case == "unchanged" && prepared.root == root,
+                            Err(error) => case != "unchanged" && *error == "COMMITMENT_ROOT",
+                        };
+                        if expected {
+                            expected_returns[arm] += 1;
+                        } else {
+                            unexpected_returns[arm] += 1;
+                        }
+                        drop(black_box(result));
+                    }
+                    samples[arm].push(start.elapsed().as_nanos());
+                }
+            }
+            println!(
+                "{}",
+                json!({
+                    "schema":"unchanged-snapshot-full-binding-cost-v4",
+                    "case":case, "state_keys":keys, "value_width":width,
+                    "bindings_per_sample":8, "samples_per_arm":12,
+                    "original_full_map_ns":samples[0],
+                    "parent_40a_shared_map_ns":samples[1],
+                    "checked_shared_map_ns":samples[2],
+                    "order":"fixed six-permutation rotation repeated twice",
+                    "arm_order_per_six_rounds":order,
+                    "arm_names":["original_full_map_ns","parent_40a_shared_map_ns","checked_shared_map_ns"],
+                    "expected_returns_per_arm":expected_returns,
+                    "unexpected_returns_per_arm":unexpected_returns,
+                    "equal_result":unexpected_returns == [0; 3],
+                    "decision":decision, "source_identity":source_identity,
+                    "complete_actual_state_compared":true, "expected_root_checked":true,
+                    "tree_empty_delta_check_retained":true,
+                    "mismatch_path":"compare canonical bytes without an owned encoding; borrow only the verified prefix under the same immutable State; preserve original capacities when materializing and validate the entire suffix",
+                    "parent_mismatch_path":"40a candidate stops at first mismatch; pinned original full-map preparation rechecks all actual rows",
+                    "scope":"full component binding, constant-time result classification and output destruction; unchanged cache limits; all planned failure returns retained",
+                    "public_tps_measured":false, "node_owner_measured":false,
+                    "physical_memory_bound":false
+                })
+            );
+            assert_eq!(expected_returns, [12 * 8; 3]);
+            assert_eq!(unexpected_returns, [0; 3]);
+        }
+    }
+}

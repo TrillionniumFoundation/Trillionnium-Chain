@@ -1,0 +1,347 @@
+{
+  "archive": "raw.zip",
+  "archive_bytes": 127888,
+  "archive_git_blob": "f1982da007ca62f3e6edf41d0350b468ca5cd892",
+  "archive_sha256": "4855257a035cca0dee08db2661800227f85c00327d23c2a593eeb12c9bbdbfe8",
+  "code_commit": "619c5f80856fb15bb6896d8008df91f58c215229",
+  "code_tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+  "files": [
+    {
+      "archive_path": "frozen-619/after.json",
+      "bytes": 1692,
+      "git_blob": "4172f20a6b6f8829ba9b584e081355f4e848817a",
+      "sha256": "84723986c8fe80bf3a98e40001bd660185d3500ed6d3e3c09adc0b99d4ceaf1c"
+    },
+    {
+      "archive_path": "frozen-619/before.json",
+      "bytes": 505,
+      "git_blob": "59b5d2b50da39d01d7e21e297e7cd18d5fdfd433",
+      "sha256": "3d487caf9b8bae7fe20e3d6bda7f6b45d9b9b740db042766de70bbe40961d046"
+    },
+    {
+      "archive_path": "frozen-619/clean-source.json",
+      "bytes": 1881,
+      "git_blob": "b79c39dbff6743a6a298e90c2136983fd8d5fed3",
+      "sha256": "3b50c879f9f3de5931d4749c27547c687afd249eaebc86b644ae1bcf68b648ad"
+    },
+    {
+      "archive_path": "frozen-619/clean-source.log",
+      "bytes": 422,
+      "git_blob": "cd642918a370da0cec6cea4fb1dc651d20afda30",
+      "sha256": "c4f96f6f47415046936cf0a758f43e3640e4c7b71cd0c6214c395dd9980c1865"
+    },
+    {
+      "archive_path": "frozen-619/complete-source-checker.json",
+      "bytes": 1863,
+      "git_blob": "137299e1640b4825ff32e012ce11449e3e2f58ce",
+      "sha256": "722b7c0da42fffc599f2567a54f52345a0174e4a4b1b29b8c62317eb9c867814"
+    },
+    {
+      "archive_path": "frozen-619/complete-source-checker.log",
+      "bytes": 557,
+      "git_blob": "c73b761c357b7e16e870b96bfabc38f0e65dbf6f",
+      "sha256": "641eb6ec3d7f216485f37620658762802b9b5afe9338a57e4269f989f46f2345"
+    },
+    {
+      "archive_path": "frozen-619/distributed-inventory.json",
+      "bytes": 1242,
+      "git_blob": "70fbb2957ac89ff9d24aeca1dea01601ef707081",
+      "sha256": "c7b26d8d4bb95b1ea4e661881ebe17d617a43a84ca9a834118c68b8a354f04da"
+    },
+    {
+      "archive_path": "frozen-619/distributed-inventory.log",
+      "bytes": 35,
+      "git_blob": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "archive_path": "frozen-619/frozen-commit.raw",
+      "bytes": 849,
+      "git_blob": "ddb2917e2320647fa9353ef015c4144c981ca992",
+      "sha256": "a2e1cb6e782195c5e637d693648e41d4826ccf337ba2d946957097f062d41f8f"
+    },
+    {
+      "archive_path": "frozen-619/frozen-tree-check.json",
+      "bytes": 117,
+      "git_blob": "5b93df451178e45b9b48655dae44823f2f1c8e40",
+      "sha256": "ee5f84c96810f48404ed18313dddb195d27dfad53f0809aa9b067b851b2e40b5"
+    },
+    {
+      "archive_path": "frozen-619/guard-commit.raw",
+      "bytes": 704,
+      "git_blob": "82bf916fec2a44cf442fcfcabde810362ebea12f",
+      "sha256": "a75ca9552529954a2ac4930672ea1ba94a892d95cd6bdd30eb5af67a7b428335"
+    },
+    {
+      "archive_path": "frozen-619/incoming-commit.raw",
+      "bytes": 665,
+      "git_blob": "d651072bc96705903f5c54dac1557c4c2a45a1b5",
+      "sha256": "44a64d167cc6cfa9298901b0b1b256d0dc945c57843a755275240d6f31b9f9da"
+    },
+    {
+      "archive_path": "frozen-619/incoming-tree-check.json",
+      "bytes": 117,
+      "git_blob": "adb2cc615d8a2f2b7a31753708389f0018e0881b",
+      "sha256": "0d6576aadeaf9d879c63074df5620368cffaee62ff930faee9dc5012a9819e4b"
+    },
+    {
+      "archive_path": "frozen-619/local-object-availability.json",
+      "bytes": 6378,
+      "git_blob": "a4fddb1893ab07d0c5d7dc09ed15e8a5a20bee1f",
+      "sha256": "e14e1dacc624129a547553d13c42bfc5960820d392680ed2462440f649337a34"
+    },
+    {
+      "archive_path": "frozen-619/materials.json",
+      "bytes": 14046,
+      "git_blob": "927f1acd3a2e3b6fd692534b7ae34ab700a8005a",
+      "sha256": "68ca7d5e4b9d7971425421fb74a36d825368cdfd5a34a20c1db026f6f9ba018b"
+    },
+    {
+      "archive_path": "frozen-619/repository-check.json",
+      "bytes": 1572,
+      "git_blob": "94fedc2d9bcab7257fd592fe70764358d2e0732d",
+      "sha256": "45e8516090decfdb3ac3368a387819a1578f9585dd977997df8064553dc51d25"
+    },
+    {
+      "archive_path": "frozen-619/repository-check.log",
+      "bytes": 307,
+      "git_blob": "afa1b79be2faca6ef722b358e3aa7993ba70cf34",
+      "sha256": "6b6c9354ded2fb6d059e089a9ceb6f2d0453738bc7ed222c659585befb096aa8"
+    },
+    {
+      "archive_path": "frozen-619/resource-preflight.json",
+      "bytes": 702,
+      "git_blob": "31c55ae46077a96b60395b7e1a6d8b730b83c458",
+      "sha256": "6e6a0fae08aa7fcf2cc5dcf773e6ce695ea8952c136a1f0b6ecc8f4da8fbc2a8"
+    },
+    {
+      "archive_path": "frozen-619/source-identity.json",
+      "bytes": 422,
+      "git_blob": "cd642918a370da0cec6cea4fb1dc651d20afda30",
+      "sha256": "c4f96f6f47415046936cf0a758f43e3640e4c7b71cd0c6214c395dd9980c1865"
+    },
+    {
+      "archive_path": "frozen-619/source-suite.json",
+      "bytes": 1397,
+      "git_blob": "d3deb32fb0cc6a33745686d76a02ec504184f2c0",
+      "sha256": "45c082bef1efddb2f58318eb8fabcff973b0154b4ea37e1d2216ef90bd1a2016"
+    },
+    {
+      "archive_path": "frozen-619/source-suite.log",
+      "bytes": 6066,
+      "git_blob": "33d929c0ae2ad5980b037a1f5fd2fbc0c7edf3a9",
+      "sha256": "27bf71a280b7d6f11809dbfc2f1ca3dbfbf335941783ab66ea15cdfde522698e"
+    },
+    {
+      "archive_path": "frozen-619/summary.json",
+      "bytes": 3931,
+      "git_blob": "1f76cb24501ae6df982b3799d581c78522a7d6af",
+      "sha256": "186469d373bc3ce0ed0336bfbdd25a40cd95c1ad59d73f5ef4882dc7e672b869"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/base-identity.json",
+      "bytes": 2082,
+      "git_blob": "1244ba72749b33c24b6a1fd8f664a36eb23239d6",
+      "sha256": "e7e062b6432333b32c3897ad1e9f4af35c7cec72df3b714905ffe81320a6bd66"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/baseline-actual-source.json",
+      "bytes": 1647,
+      "git_blob": "1f4ecfd5efef8bb841b6aedd73c07aab7ce2a5a5",
+      "sha256": "f34c23c482504a68867226bfb180a6217b87a4e084023beea38add9592597b59"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/baseline-actual-source.log",
+      "bytes": 566,
+      "git_blob": "be641d3f9370929018bc8c569f2dfde746f6aadc",
+      "sha256": "9acf0a1c87a0f5933feba897240ef8f395d2ee2d011166dc961eb849d646d01d"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/candidate-pin-audit.json",
+      "bytes": 2688,
+      "git_blob": "c4cca72fd2b2b21b0953af7f7ee32924af84efdc",
+      "sha256": "46fc34e37fa690a15cd8775e420287221362a9fd7ad5ede44428aa8eeb0df369"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/coverage-green.json",
+      "bytes": 1191,
+      "git_blob": "18e68fdf860308ada5cb6ece1c30639d8ce789b0",
+      "sha256": "c184a9aadcf2beb8d72a2047700d47765c4825b6916032100b0f775f3a5d2331"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/coverage-green.log",
+      "bytes": 6066,
+      "git_blob": "8159cd08975613867f93dbdc965daf32957f69ac",
+      "sha256": "b8a0e45513032a9863decb53df89e3de5073b98632eb35ca5705bdd796464699"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/coverage-red.json",
+      "bytes": 1260,
+      "git_blob": "4d408093bc44b4e88dc012687fa4c4dfb0c43941",
+      "sha256": "c27babfa31a95156e441fdab7677ec8ceac0dc0f0605a9982d4b2e12f4672b5b"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/coverage-red.log",
+      "bytes": 7115,
+      "git_blob": "7ef4e070a6c789bf92314a9777b490e87f3a5e64",
+      "sha256": "a36ee1e57a4eae9d77a3989e28f571f20221507cc084c086f040317a80bfdfa6"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/growth-source-coverage.patch",
+      "bytes": 9437,
+      "git_blob": "4401ea8f2205cb08ffc3ddaafdc15154b539e35c",
+      "sha256": "04e9d406eba3b4c22dee615dbe5973c6c604ced9b473da5b49f7bf0996c1b8a2"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/patch-apply-check.json",
+      "bytes": 651,
+      "git_blob": "546a6815dff94de0ab151413ff5ee9a8ca877ab1",
+      "sha256": "43205602a26a9197d3ab375a46515f25fa04651f81b78e6af81bc51444aefb8f"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/patch-apply-check.log",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/review.json",
+      "bytes": 13607,
+      "git_blob": "1b5020e90273e8dc3f3cbbb6ee486f5c7b315d37",
+      "sha256": "10c01f6d4a74a8da4df12994bf8a944e1e2986af86ae6d2bc292dbeccc443e9a"
+    },
+    {
+      "archive_path": "historical-growth-coverage-2a8fee/snapshot-preflight-aborted.json",
+      "bytes": 365,
+      "git_blob": "4a44e9f7ef80954cecd2a621e6d5ed074727633a",
+      "sha256": "bd07f5f3971ce05675495098d4ea8b5615f8321a470ee099015fc828ffc0de89"
+    },
+    {
+      "archive_path": "inputs/chain-frozen-code-config.json",
+      "bytes": 94118,
+      "git_blob": "ae5ef9f99d7a9b785f846f93f5115c8b1743fc0b",
+      "sha256": "4b74e8c1239ca41f5948c5c76c5693504150b603da96d3929eb11f00b9971214"
+    },
+    {
+      "archive_path": "inputs/chain-frozen-materialization-input.json",
+      "bytes": 279000,
+      "git_blob": "2ff0908a10431c0ce4aceb1e081fb78e64f522b9",
+      "sha256": "742ce150020852ddb2b824e2efb1a57977e63b697ea4f2346cf123fc02357b75"
+    },
+    {
+      "archive_path": "tools/materialize_frozen619.py",
+      "bytes": 12095,
+      "git_blob": "5dfe308d3793d9b39c7a60a538d68076ba6a05c8",
+      "sha256": "39b0778eeea887d3687760f74feb1753c43d383a599c97d6b8eaa8f5a0ed4447"
+    },
+    {
+      "archive_path": "tools/run_frozen619_check.py",
+      "bytes": 3089,
+      "git_blob": "a9485bbefb0cc212ec4e447522054e6cd7f93aec",
+      "sha256": "b3f88afbfd9c990bd80d1ef75125edc4cf3a2ca7622c652f037d7e432c50f713"
+    }
+  ],
+  "fresh_source_summary": {
+    "all_command_source_fences_stable": true,
+    "checks": [
+      {
+        "log": "clean-source.log",
+        "log_sha256": "c4f96f6f47415046936cf0a758f43e3640e4c7b71cd0c6214c395dd9980c1865",
+        "name": "clean-source",
+        "receipt": "clean-source.json",
+        "receipt_sha256": "3b50c879f9f3de5931d4749c27547c687afd249eaebc86b644ae1bcf68b648ad"
+      },
+      {
+        "log": "complete-source-checker.log",
+        "log_sha256": "641eb6ec3d7f216485f37620658762802b9b5afe9338a57e4269f989f46f2345",
+        "name": "complete-source-checker",
+        "receipt": "complete-source-checker.json",
+        "receipt_sha256": "722b7c0da42fffc599f2567a54f52345a0174e4a4b1b29b8c62317eb9c867814"
+      },
+      {
+        "log": "distributed-inventory.log",
+        "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+        "name": "distributed-inventory",
+        "receipt": "distributed-inventory.json",
+        "receipt_sha256": "c7b26d8d4bb95b1ea4e661881ebe17d617a43a84ca9a834118c68b8a354f04da"
+      },
+      {
+        "log": "repository-check.log",
+        "log_sha256": "6b6c9354ded2fb6d059e089a9ceb6f2d0453738bc7ed222c659585befb096aa8",
+        "name": "repository-check",
+        "receipt": "repository-check.json",
+        "receipt_sha256": "45e8516090decfdb3ac3368a387819a1578f9585dd977997df8064553dc51d25"
+      },
+      {
+        "log": "source-suite.log",
+        "log_sha256": "27bf71a280b7d6f11809dbfc2f1ca3dbfbf335941783ab66ea15cdfde522698e",
+        "name": "source-suite",
+        "receipt": "source-suite.json",
+        "receipt_sha256": "45c082bef1efddb2f58318eb8fabcff973b0154b4ea37e1d2216ef90bd1a2016"
+      }
+    ],
+    "clean_source": {
+      "base": null,
+      "candidate": "619c5f80856fb15bb6896d8008df91f58c215229",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "619c5f80856fb15bb6896d8008df91f58c215229",
+      "tested_tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 965549861,
+      "tracked_entries": 10034,
+      "tracked_worktree_verified": true
+    },
+    "code_commit": "619c5f80856fb15bb6896d8008df91f58c215229",
+    "code_tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+    "complete_source_pins": 505,
+    "historical_scopes": {
+      "coverage_base": "2a8fee974b41fab6e2c4e662dcce1807fcd19bdd",
+      "coverage_green": "37 fixture tests on the coverage candidate; retained unchanged.",
+      "coverage_red": "Six actual omission failures under the original checker; retained unchanged.",
+      "old_manual_composition_is_619_acceptance": false,
+      "old_manual_composition_python_tests": 124,
+      "old_manual_composition_tree": "ba8dba6eec9426381bc7d489103030a955d274a0"
+    },
+    "inventory": "PASS",
+    "materialization_receipt": "/workspace/scratch/baeed38792e5/liveness-work/frozen-619-materialization-20261105/after.json",
+    "remote_write_scope": "Immutable evidence blobs only, under root authorization; this agent does not create a tree, commit, or remote ref.",
+    "repository": {
+      "activation": false,
+      "head": "619c5f80856fb15bb6896d8008df91f58c215229",
+      "local_links": 3056,
+      "normal_dependency_edges": 25,
+      "result": "PASS",
+      "runtime_implemented": false,
+      "rust_files": 1153,
+      "source_state": "committed-clean",
+      "tree": "501607a6f76d4e5fc4e31a79bfdbff00c4bb007f",
+      "workspace_packages": 26
+    },
+    "schema": "trnm-frozen-source-receipt-v1",
+    "scope": {
+      "cargo_executed": false,
+      "complete_pq_effect_authorization": false,
+      "cryptographic_acceptance": false,
+      "historical_2a8_or_ba8_results_upgraded": false,
+      "independent_administrative_acceptance": false,
+      "independent_f0_passed": false,
+      "native_runtime_tests_executed_on_619": false,
+      "original_4_second_16_hostile_passed": false,
+      "production_activation": false
+    },
+    "source_suite": {
+      "passed": 37,
+      "reported_seconds": 31.972,
+      "skipped": 0,
+      "tests": 37
+    },
+    "status": "HOLD_NO_GO"
+  },
+  "historical_coverage_allowlist_sha256": "9db7dcfcc0445508cf849efd274588318958f561e57f8bb1373a6058608b6844",
+  "historical_coverage_file_count": 13,
+  "qualification": "HOLD_NO_GO",
+  "readme_sha256": "591319ab6a586d260dedd511d27c6447533136888de88bc6aff8c435445c62f2",
+  "schema": "trnm-frozen-source-evidence-index-v1"
+}

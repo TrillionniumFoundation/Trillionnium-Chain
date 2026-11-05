@@ -1,0 +1,85 @@
+{
+  "label": "0e9d-owned-from-73ab",
+  "base_commit": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "scope": "only the ten parent-carry / known-write paths; not a complete tested native tree",
+  "native_execution_of_this_composed_patch": "Historical full-tree identity linked separately; this ten-path patch alone does not reconstruct that full tested tree.",
+  "full_historical_native_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88",
+  "patch_path": "source/0e9d-owned-from-73ab.patch.gz",
+  "raw_patch_sha256": "f2aa13ee22ad2402c89f2d78929a3ed33c7ecde01f85044a8c445c1c0bbcb3f4",
+  "stored_patch_sha256": "a8d877c29f44bcc9322c96f41fed2ca68546e1c06b14b1d6e230c67284d7aec0",
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "base_sha256": "0569202aef2d858c9ed7d85473cb4d084a5616137655f31f67e73b7cc6432078",
+      "candidate_sha256": "0ce80d608fd15e6e0242894c1e635416177ffd2570509320802951ef4bb46af1",
+      "candidate_bytes": 47803,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "base_sha256": "08528bfeee465e653f48b84492bfe2aecb1dcfe7cd1bde917c07fde710a93ea0",
+      "candidate_sha256": "bb6d86968a6d52bca9b381d61c8552141f674af2ac06e751255ab214c4a5eeee",
+      "candidate_bytes": 46663,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "base_sha256": "92bfaca74ad0b7e5f9c7559d05a13a5535420b7df536a474de4035191e7a838f",
+      "candidate_sha256": "cc437eeb283e1b4da1552eceacee744f70046eca0b67dac3046fc3ce19fe1650",
+      "candidate_bytes": 97169,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "base_sha256": "d544bd342d3f86ad925f4f8178c557e5be1c48b8419711e0c325ff0626ee04e5",
+      "candidate_sha256": "b733ff3386da5068fb66fcdcca72ac8fb494cd0f928229e7f212a5451b814df3",
+      "candidate_bytes": 13643,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "base_sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d",
+      "candidate_sha256": "7f2845630eeae1e9dff01edf880a9e6834ea9006cabf568e396cd3fd2c4d746d",
+      "candidate_bytes": 17353,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs",
+      "base_sha256": null,
+      "candidate_sha256": "140e86198f4950d72d45fbc6b40aba989350e995cd49e94a1e79f5419b2237e2",
+      "candidate_bytes": 5610,
+      "new_file": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+      "base_sha256": null,
+      "candidate_sha256": "f579f4509f3d1a7f4e9cbdd060e4da3a4beacfc40998a18d5b05d38d033544c7",
+      "candidate_bytes": 36149,
+      "new_file": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/lib.rs",
+      "base_sha256": "7b56edcc1ad0ac27489050d66796517982fdf488582a039bee3c7865d9ee2802",
+      "candidate_sha256": "bae66fadbd551aff2494fa7f2a77d043d576b5d8931067a1b7f038148047b812",
+      "candidate_bytes": 2326,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+      "base_sha256": "7fc1376207c91ab9c58d5265936c8e40284ee5f532f649b1fb00edf55164d869",
+      "candidate_sha256": "e0f042bf3103c2da92f737e935bcb6354736b2070ddd74a48854a1c36f34939e",
+      "candidate_bytes": 15685,
+      "new_file": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/known_write_scope_tests.rs",
+      "base_sha256": null,
+      "candidate_sha256": "0fd3e76d84502411525be5ded7b8395b27556d3e61fb557dc36e519b2e9c4cf4",
+      "candidate_bytes": 8172,
+      "new_file": true
+    }
+  ],
+  "scratch_git_apply_check_exit": 0,
+  "scratch_git_apply_exit": 0,
+  "all_reconstructed_file_bytes_match": true
+}

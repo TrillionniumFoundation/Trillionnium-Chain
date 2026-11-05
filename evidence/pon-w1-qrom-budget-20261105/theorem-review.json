@@ -1,0 +1,130 @@
+{
+  "schema": "TRNM-W1-QROM-LITERATURE-REVIEW1",
+  "review_date_utc": "2026-11-05",
+  "paper": {
+    "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+    "authors": ["Alessandro Chiesa", "Zijing Di", "Zihan Hu", "Yuxi Zheng"],
+    "eprint": "https://eprint.iacr.org/2025/2166",
+    "publisher": "https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14",
+    "official_institution_record": "https://infoscience.epfl.ch/entities/publication/029a1aad-a83a-4e7a-bbf7-03819bb7dd4b",
+    "published_online": "2026-05-09",
+    "venue": "EUROCRYPT 2026, LNCS 16547, pages 389-415",
+    "eprint_latest_revision_date_observed_in_metadata": "2026-03-02",
+    "formal_full_text_read": false,
+    "formal_constants_verified": false
+  },
+  "access_observations": [
+    {
+      "url": "https://eprint.iacr.org/2025/2166",
+      "result": "Metadata and abstract retrieved; this is not the full theorem text."
+    },
+    {
+      "url": "https://eprint.iacr.org/2025/2166.pdf",
+      "result": "HTTP 403 from ordinary PDF retrieval. No theorem numbers or constants inferred from the abstract."
+    },
+    {
+      "url": "https://files01.core.ac.uk/download/690750245.pdf",
+      "result": "HTTP 403 for the PDF. Search indexing exposed the primary manuscript's introduction, dated January 1, 2026; complete manuscript and equality to the March revision unverified."
+    },
+    {
+      "url": "https://link.springer.com/chapter/10.1007/978-3-032-25336-1_14",
+      "result": "Official publication metadata and abstract retrieved; full text requires publisher access."
+    },
+    {
+      "url": "https://zihanhu.cn/assets/pdf/pq-bcs.pdf",
+      "author_link_page": "https://zihanhu.cn/",
+      "result": "Downloaded and inspected as an author slide deck, not the manuscript.",
+      "bytes": 13802289,
+      "sha256": "1be128e0e36877a25bab90093b73b5c72b6ca14d1c10d748f1e97cf354aca120",
+      "pdf_pages": 167,
+      "pdf_creator": "Keynote",
+      "full_paper_identity_claimed": false
+    }
+  ],
+  "introduction_only_outline": {
+    "source": "https://files01.core.ac.uk/download/690750245.pdf",
+    "indexed_manuscript_date": "2026-01-01",
+    "review_level": "Search-index-visible primary-manuscript introduction; not full-text verification.",
+    "informal_theorems": [
+      {
+        "intro_number": 1,
+        "formal_reference_printed_in_intro": "Theorem 11.3",
+        "outline": "BCS knowledge error is asymptotically bounded using PQ state-restoration knowledge error and commitment multi-extractability error.",
+        "constant": null
+      },
+      {
+        "intro_number": 2,
+        "formal_reference_printed_in_intro": "Theorems 6.9 and 6.10",
+        "outline": "For k rounds and t quantum moves, the stated RBR-to-state-restoration loss is O((t+k)^2); knowledge soundness uses the relaxed RBR knowledge property.",
+        "constant": null
+      },
+      {
+        "intro_number": 3,
+        "formal_reference_printed_in_intro": "Theorem 8.3",
+        "outline": "Merkle commitment PQ extractability is stated as O(t^3/2^sigma) for an ideal sigma-bit-output oracle; this is a commitment property.",
+        "constant": null
+      }
+    ],
+    "formal_theorem_mapping_complete": false,
+    "latest_revision_equivalence_verified": false,
+    "used_to_compute_concrete_quantum_bits": false
+  },
+  "implementation_premises": {
+    "all_accepted_air_ior_rbr_bounds_instantiated": false,
+    "round_count_and_quantum_query_budget_instantiated": false,
+    "poseidon2_and_transcript_to_ideal_oracle_mapping_instantiated": false,
+    "merkle_multi_extractability_bound_instantiated": false,
+    "recursive_adaptive_composition_bound_instantiated": false,
+    "source_component_formulas_reproduced": true,
+    "ideal_iid_field_sampler_bias_arithmetic_reproduced": true,
+    "concrete_sponge_uniformity_or_adaptive_sampling_proved": false
+  },
+  "followup_fulltext_search": {
+    "date_utc": "2026-11-05",
+    "scope": "A narrow additional search for a lawful author or institutional copy of the March 2026 revision, or readable full text. Previously rejected PDF URLs were not retried.",
+    "queries": [
+      "\"How to Prove Post-Quantum Security\" \"March 2, 2026\"",
+      "\"2025/2166\" \"March\" pdf -site:files01.core.ac.uk",
+      "\"How to Prove Post-Quantum Security\" pdf -site:eprint.iacr.org -site:files01.core.ac.uk -site:zihanhu.cn -site:link.springer.com -site:link.springernature.com -site:dblp.org",
+      "\"How to Prove Post-Quantum Security\" site:github.com",
+      "\"How to Prove Post-Quantum Security\" site:eurocrypt.iacr.org/2026",
+      "\"How to Prove Post-Quantum Security\" site:arxiv.org"
+    ],
+    "additional_primary_locations": [
+      {
+        "source": "https://github.com/yuxi-zheng/yuxi-zheng.github.io/blob/main/src/App.jsx",
+        "source_blob_sha": "e145bd0ade1bf4a35b115fc471e77aed74a9e793",
+        "observation": "The paper's button is labelled arXiv, but its actual href is https://eprint.iacr.org/2025/2166. This is not evidence of a distinct arXiv full-text copy."
+      },
+      {
+        "source": "https://api.github.com/repos/yuxi-zheng/yuxi-zheng.github.io/contents/public?ref=main",
+        "observation": "The inspected public-asset roster exposes icons, site verification, photos, robots and sitemap entries; it supplied no manuscript link."
+      },
+      {
+        "source": "https://github.com/dizidizidi/dizidizidi.github.io/blob/main/index.html",
+        "source_blob_sha": "14ae73512057ab46afb4ce34008c4822e7164708",
+        "observation": "The publication entry points only to the existing ePrint page. The public repository root contains index.html, blog.html and profile.jpg, without a manuscript PDF."
+      },
+      {
+        "source": "https://eurocrypt.iacr.org/2026/acceptedpapers.php",
+        "observation": "Web-readable text supplied a JavaScript-dependent conference template without a manuscript URL. An ordinary direct page fetch returned HTTP 403; no retry or alternate access technique followed."
+      },
+      {
+        "source": "https://www.cse.cuhk.edu.hk/upcoming-events/how-to-prove-post-quantum-security-for-succinct-non-interactive-reductions/",
+        "observation": "The official December 2025 seminar listing supplies event metadata, not the March 2026 manuscript."
+      }
+    ],
+    "march_revision_fulltext_located": false,
+    "formal_definitions_or_constants_newly_verified": false,
+    "result": "This additional search did not locate an accessible author/institutional March-revision body. It does not assert that no such copy exists. Existing formal-theorem gaps and all qualification fields remain unchanged.",
+    "component_budget_changed": false
+  },
+  "decision": {
+    "quantum_security_bits": null,
+    "post_quantum_soundness_qualified": false,
+    "whole_recursive_proof_soundness_qualified": false,
+    "complete_w1_attack_established": false,
+    "production_qualified": false,
+    "consensus_admission": false
+  }
+}

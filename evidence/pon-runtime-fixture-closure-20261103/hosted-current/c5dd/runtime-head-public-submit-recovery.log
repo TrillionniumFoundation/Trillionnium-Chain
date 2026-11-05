@@ -1,0 +1,126 @@
+     Running tests/public_submit_recovery.rs (/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_submit_recovery-9d2cc9ba389b8915)
+
+running 24 tests
+test actual_absolute_epoch_call_cap_and_current_clock_fail_closed ... ok
+test actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack ... FAILED
+test actual_budget_absence_with_two_call_cap_stops_without_another_submit ... FAILED
+test actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates ... FAILED
+test actual_cli_bad_combinations_and_limits_precede_store_creation ... ok
+test actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership ... ok
+test actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership ... ok
+test actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts ... ok
+test actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule ... ok
+test actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies ... 
+thread '<unnamed>' (39322) panicked at crates/trnm-pon-node/tests/public_submit_recovery.rs:225:61:
+called `Result::unwrap()` on an `Err` value: Error { code: Some(OwnerReorgTerminationCpuRequired), kind: DependencyUnavailable, message: "OWNER_REORG_TERMINATION_CPU_REQUIRED", source: None, request_history_budget: false }
+
+thread 'actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies' (39317) panicked at crates/trnm-pon-node/tests/public_submit_recovery.rs:1229:5:
+assertion `left == right` failed
+  left: Some("IO: Connection refused (os error 111)")
+ right: Some("SUBMIT_RECOVERY_STALE_BRANCH")
+
+thread 'actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies' (39317) panicked at crates/trnm-pon-node/tests/public_submit_recovery.rs:381:42:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+stack backtrace:
+   0:     0x564fb430624a - std[e28293b1aa0f68bd]::backtrace_rs::backtrace::libunwind::trace
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/../../backtrace/src/backtrace/libunwind.rs:117:9
+   1:     0x564fb430624a - std[e28293b1aa0f68bd]::backtrace_rs::backtrace::trace_unsynchronized::<std[e28293b1aa0f68bd]::sys::backtrace::_print_fmt::{closure#1}>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/../../backtrace/src/backtrace/mod.rs:66:14
+   2:     0x564fb430624a - std[e28293b1aa0f68bd]::sys::backtrace::_print_fmt
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/backtrace.rs:74:9
+   3:     0x564fb430624a - <<std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1f1a4ba060b9bfa]::fmt::Display>::fmt
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/backtrace.rs:44:26
+   4:     0x564fb431d5ba - <core[c1f1a4ba060b9bfa]::fmt::rt::Argument>::fmt
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/fmt/rt.rs:152:76
+   5:     0x564fb431d5ba - core[c1f1a4ba060b9bfa]::fmt::write
+   6:     0x564fb430b682 - std[e28293b1aa0f68bd]::io::default_write_fmt::<alloc[fdfd2bd8633a6659]::vec::Vec<u8>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/io/mod.rs:639:11
+   7:     0x564fb430b682 - <alloc[fdfd2bd8633a6659]::vec::Vec<u8> as std[e28293b1aa0f68bd]::io::Write>::write_fmt
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/io/mod.rs:1994:13
+   8:     0x564fb42e138f - <std[e28293b1aa0f68bd]::sys::backtrace::BacktraceLock>::print
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/backtrace.rs:47:9
+   9:     0x564fb42e138f - std[e28293b1aa0f68bd]::panicking::default_hook::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:292:27
+  10:     0x564fb42fcc19 - std[e28293b1aa0f68bd]::panicking::default_hook
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:316:9
+  11:     0x564fb387e5cc - <alloc[fdfd2bd8633a6659]::boxed::Box<dyn for<'a, 'b> core[c1f1a4ba060b9bfa]::ops::function::Fn<(&'a std[e28293b1aa0f68bd]::panic::PanicHookInfo<'b>,), Output = ()> + core[c1f1a4ba060b9bfa]::marker::Sync + core[c1f1a4ba060b9bfa]::marker::Send> as core[c1f1a4ba060b9bfa]::ops::function::Fn<(&std[e28293b1aa0f68bd]::panic::PanicHookInfo,)>>::call
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/alloc/src/boxed.rs:2254:9
+  12:     0x564fb387e5cc - test[273d7611820c9051]::test_main_with_exit_callback::<test[273d7611820c9051]::test_main::{closure#0}>::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:145:21
+  13:     0x564fb42fce92 - <alloc[fdfd2bd8633a6659]::boxed::Box<dyn for<'a, 'b> core[c1f1a4ba060b9bfa]::ops::function::Fn<(&'a std[e28293b1aa0f68bd]::panic::PanicHookInfo<'b>,), Output = ()> + core[c1f1a4ba060b9bfa]::marker::Sync + core[c1f1a4ba060b9bfa]::marker::Send> as core[c1f1a4ba060b9bfa]::ops::function::Fn<(&std[e28293b1aa0f68bd]::panic::PanicHookInfo,)>>::call
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/alloc/src/boxed.rs:2254:9
+  14:     0x564fb42fce92 - std[e28293b1aa0f68bd]::panicking::panic_with_hook
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:833:13
+  15:     0x564fb42e1448 - std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:698:13
+  16:     0x564fb42d8519 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_end_short_backtrace::<std[e28293b1aa0f68bd]::panicking::panic_handler::{closure#0}, !>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/backtrace.rs:182:18
+  17:     0x564fb42e249d - __rustc[b7974e8690430dd9]::rust_begin_unwind
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:689:5
+  18:     0x564fb431de9c - core[c1f1a4ba060b9bfa]::panicking::panic_fmt
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/panicking.rs:80:14
+  19:     0x564fb431dc12 - core[c1f1a4ba060b9bfa]::result::unwrap_failed
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/result.rs:1867:5
+  20:     0x564fb3855f29 - core::result::Result<T,E>::unwrap::h85a7deba1337bbe4
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/result.rs:1233:23
+  21:     0x564fb3855f29 - <public_submit_recovery::Proxy as core::ops::drop::Drop>::drop::h6aaa9f9356dffc20
+                               at /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs:381:42
+  22:     0x564fb3855f29 - core::ptr::drop_in_place<public_submit_recovery::Proxy>::h55e4e8ee8ba0fb4f
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/ptr/mod.rs:805:1
+  23:     0x564fb384004c - public_submit_recovery::actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies::hf0c60344558e1a81
+                               at /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs:1238:1
+  24:     0x564fb384004c - public_submit_recovery::actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies::{{closure}}::h0c0b7f2fa8adcb27
+                               at /home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs:1167:82
+  25:     0x564fb384004c - core::ops::function::FnOnce::call_once::h78c454481f16c536
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/ops/function.rs:250:5
+  26:     0x564fb38726ab - <fn() -> core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String> as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/ops/function.rs:250:5
+  27:     0x564fb38726ab - test[273d7611820c9051]::__rust_begin_short_backtrace::<core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String>, fn() -> core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:663:18
+  28:     0x564fb387f09b - test[273d7611820c9051]::run_test_in_process::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:686:74
+  29:     0x564fb387f09b - <core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<test[273d7611820c9051]::run_test_in_process::{closure#0}> as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/panic/unwind_safe.rs:274:9
+  30:     0x564fb387f09b - std[e28293b1aa0f68bd]::panicking::catch_unwind::do_call::<core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<test[273d7611820c9051]::run_test_in_process::{closure#0}>, core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:581:40
+  31:     0x564fb387f09b - std[e28293b1aa0f68bd]::panicking::catch_unwind::<core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String>, core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<test[273d7611820c9051]::run_test_in_process::{closure#0}>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:544:19
+  32:     0x564fb387f09b - std[e28293b1aa0f68bd]::panic::catch_unwind::<core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<test[273d7611820c9051]::run_test_in_process::{closure#0}>, core[c1f1a4ba060b9bfa]::result::Result<(), alloc[fdfd2bd8633a6659]::string::String>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panic.rs:359:14
+  33:     0x564fb387f09b - test[273d7611820c9051]::run_test_in_process
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:686:27
+  34:     0x564fb387f09b - test[273d7611820c9051]::run_test::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:607:43
+  35:     0x564fb387a7b4 - test[273d7611820c9051]::run_test::{closure#1}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/test/src/lib.rs:637:41
+  36:     0x564fb387a7b4 - std[e28293b1aa0f68bd]::sys::backtrace::__rust_begin_short_backtrace::<test[273d7611820c9051]::run_test::{closure#1}, ()>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/backtrace.rs:166:18
+  37:     0x564fb3881ca2 - std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked::<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}::{closure#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/thread/lifecycle.rs:91:13
+  38:     0x564fb3881ca2 - <core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}::{closure#0}> as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/panic/unwind_safe.rs:274:9
+  39:     0x564fb3881ca2 - std[e28293b1aa0f68bd]::panicking::catch_unwind::do_call::<core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}::{closure#0}>, ()>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:581:40
+  40:     0x564fb3881ca2 - std[e28293b1aa0f68bd]::panicking::catch_unwind::<(), core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}::{closure#0}>>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panicking.rs:544:19
+  41:     0x564fb3881ca2 - std[e28293b1aa0f68bd]::panic::catch_unwind::<core[c1f1a4ba060b9bfa]::panic::unwind_safe::AssertUnwindSafe<std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}::{closure#0}>, ()>
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/panic.rs:359:14
+  42:     0x564fb3881ca2 - std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked::<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/thread/lifecycle.rs:89:26
+  43:     0x564fb3881ca2 - <std[e28293b1aa0f68bd]::thread::lifecycle::spawn_unchecked<test[273d7611820c9051]::run_test::{closure#1}, ()>::{closure#1} as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/ops/function.rs:250:5
+  44:     0x564fb430505f - <alloc[fdfd2bd8633a6659]::boxed::Box<dyn core[c1f1a4ba060b9bfa]::ops::function::FnOnce<(), Output = ()> + core[c1f1a4ba060b9bfa]::marker::Send> as core[c1f1a4ba060b9bfa]::ops::function::FnOnce<()>>::call_once
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/alloc/src/boxed.rs:2240:9
+  45:     0x564fb430505f - <std[e28293b1aa0f68bd]::sys::thread::unix::Thread>::new::thread_start
+                               at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/std/src/sys/thread/unix.rs:118:17
+  46:     0x7fb7ade9cb84 - <unknown>
+  47:     0x7fb7adf29ecc - <unknown>
+  48:                0x0 - <unknown>
+
+thread 'actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies' (39317) panicked at /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library/core/src/panicking.rs:233:5:
+panic in a destructor during cleanup
+thread caused non-unwinding panic. aborting.
+error: test failed, to rerun pass `-p trnm-pon-node --test public_submit_recovery`
+
+Caused by:
+  process didn't exit successfully: `/home/runner/work/_temp/target-rust-baseline-shards/debug/deps/public_submit_recovery-9d2cc9ba389b8915` (signal: 6, SIGABRT: process abort signal)

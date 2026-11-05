@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "bash",
+    "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+    "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+    "store::native_authenticated::",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "child_system_seconds": 0.490619,
+  "child_user_seconds": 27.131985999999998,
+  "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+  "exit_code": 0,
+  "finished_at": "2026-11-04T08:53:58.665018+00:00",
+  "label": "authenticated",
+  "max_child_rss_kib": 90852,
+  "started_at": "2026-11-04T08:53:30.551963+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "5e1fe4b7db5cb47e65c4b76eafa417a5e5ec767049868b60d0082ff3855dbe22",
+  "wall_ns": 28113072639
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "trnm-evidence-file-manifest-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3261,
+      "sha256": "4559146bee467f3fe4c3aa11d88484a4032ed816628c64bea5b8a81a3f003a65"
+    },
+    {
+      "path": "chain-131f-native-readback-r7.json",
+      "bytes": 904347,
+      "sha256": "ad57114c6cc2de2074110fcec6b039fc60fb2091bfc810c1d837c35649b0e78b"
+    },
+    {
+      "path": "chain-131f-native-readback-r7.txt",
+      "bytes": 6984,
+      "sha256": "e72b9e0fb2c4efb9ecf9cd7a04aedbb7d4d3fd3885a0cf05593530668f33cb60"
+    },
+    {
+      "path": "chain-131f-required-receipts-readback-r7.json",
+      "bytes": 1091713,
+      "sha256": "71d23f02c54210037d11bc68c5b97df222d1aca47fe78b3086e12f03bccf0eb7"
+    },
+    {
+      "path": "history-131f-observation-r7.json",
+      "bytes": 111581,
+      "sha256": "63625b7a4598dcd76135ca07d405d526db92d78df0df459d5a510eece76fe314"
+    },
+    {
+      "path": "history-131f-observation-r7.txt",
+      "bytes": 10515,
+      "sha256": "76eae4c5905b1ead3ab259c262c490ed35334734e9f27a73ff98d161b7da4f84"
+    },
+    {
+      "path": "pq-backend-portability-r7.json",
+      "bytes": 29564,
+      "sha256": "cc7ce1b197faf6803240949eb7492ec0b119fc5f1fc147026f45cdbf04dd55de"
+    },
+    {
+      "path": "pq-backend-portability-r7.txt",
+      "bytes": 9685,
+      "sha256": "1e48c9c5cc5e369c49ce695793555c2df5ddc7087b14d85adb5ac05c834a790c"
+    }
+  ]
+}

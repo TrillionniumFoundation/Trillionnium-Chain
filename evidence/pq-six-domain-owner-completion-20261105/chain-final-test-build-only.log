@@ -1,0 +1,73 @@
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling zeroize v1.8.2
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling cmov v0.5.4
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling bitflags v2.11.0
+   Compiling sha2-asm v0.6.4
+   Compiling hybrid-array v0.4.15
+   Compiling libc v0.2.184
+   Compiling sha2 v0.10.9
+   Compiling serde_core v1.0.228
+   Compiling curve25519-dalek v4.1.3
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.16.1
+   Compiling crypto-common v0.2.2
+   Compiling subtle v2.6.1
+   Compiling signature v2.2.0
+   Compiling ed25519 v2.2.3
+   Compiling digest v0.11.3
+   Compiling hashlink v0.11.1
+   Compiling libsqlite3-sys v0.37.0
+   Compiling serde_json v1.0.149
+   Compiling fallible-iterator v0.3.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling smallvec v1.15.1
+   Compiling rusqlite v0.39.0
+   Compiling serde v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling ed25519-dalek v2.2.0
+   Compiling zmij v1.0.21
+   Compiling keccak v0.2.2
+   Compiling foreign-types-shared v0.1.1
+   Compiling memchr v2.8.0
+   Compiling itoa v1.0.18
+   Compiling sponge-cursor v0.1.0
+   Compiling shake v0.1.0
+   Compiling foreign-types v0.3.2
+   Compiling thiserror v1.0.69
+   Compiling borsh v1.8.0
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-sys v0.9.117
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-protocol)
+   Compiling openssl v0.10.81
+   Compiling ml-dsa v0.1.1
+   Compiling anyhow v1.0.103
+   Compiling linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/768fd621f7e2/chain/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24m 08s
+  Executable unittests src/lib.rs (/workspace/scratch/768fd621f7e2/target/debug/deps/trnm_pon_node-411f55f039b2c3b6)
+  Executable tests/architecture_delivery_compare.rs (/workspace/scratch/768fd621f7e2/target/debug/deps/architecture_delivery_compare-4678277dbc448539)
+  Executable tests/pool_mining.rs (/workspace/scratch/768fd621f7e2/target/debug/deps/pool_mining-cc0741c5553beb4a)

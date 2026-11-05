@@ -1,0 +1,4 @@
+
+thread '<unnamed>' (731557) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4650:13:
+controlled request registry poison
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

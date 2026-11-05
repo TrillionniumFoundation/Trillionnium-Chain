@@ -1,0 +1,167 @@
+{
+  "schema": "trnm-w1-fresh-service-execution-v1",
+  "source_before": {
+    "commit": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+    "tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "tested_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+      "candidate": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7159,
+      "tracked_bytes": 859735858,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+  },
+  "source_after": {
+    "commit": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+    "tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+    "tracked_source_identity": {
+      "schema": "trnm-ci-source-v1",
+      "kind": "head",
+      "tested_commit": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "tested_tree": "383a3cbc8a4a71f27e4f18d7df089b860f302439",
+      "candidate": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+      "base": null,
+      "prospective_merge": null,
+      "tracked_worktree_verified": true,
+      "tracked_entries": 7159,
+      "tracked_bytes": 859735858,
+      "tests_executed_by_identity_check": false
+    },
+    "test_sha256": "7aac67d8543c71acc6de2779f482d4cbecb5712a3f25676cad15ad92c8f9f8a0"
+  },
+  "source_expected": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+  "source_recompiled": true,
+  "all_named_tests_passed": false,
+  "runs": [
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 0,
+        "timed_out": false,
+        "elapsed_ns": 16595427239,
+        "log": "original.log",
+        "executed": true,
+        "process_exit_code": 0,
+        "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": false,
+      "log_sha256": "2ff16ead5239322f5129f7766ba8c21a37dd00cf08b76c8ea617a6f189182484",
+      "report_path": "original/report.json",
+      "failure": "CONFIRMATION_TARGET"
+    },
+    {
+      "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+      "process": {
+        "command": [
+          "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-bf8dae960d76ab8c",
+          "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "--exact",
+          "--nocapture",
+          "--test-threads=1",
+          "--ignored"
+        ],
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "exit_code": 101,
+        "timed_out": false,
+        "elapsed_ns": 16604551679,
+        "log": "fresh.log",
+        "executed": true,
+        "process_exit_code": 101,
+        "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+        "source_before_verified": true,
+        "source_after_verified": true,
+        "source_verified": true
+      },
+      "passed": false,
+      "log_sha256": "9692ad06c731226ab559a7175baa8f58fb3fc251b9225942ceb7237bc7436d13",
+      "report_path": "fresh/report.json",
+      "failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+    }
+  ],
+  "failures": [
+    "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+    "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+  ],
+  "passed": false,
+  "execution_finished": true,
+  "requested_window_ns": 4000000000,
+  "attack_workers": 16,
+  "independent_wan_accepted": false,
+  "work_hardness_accepted": false,
+  "production_activation": false,
+  "build": {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "public_v3_from_zero",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_ns": 8398541231,
+    "log": "build.log",
+    "executed": true,
+    "process_exit_code": 0,
+    "expected_source": "bfe1f33959a02d0766b33f6acc082e5990d82ea1",
+    "source_before_verified": true,
+    "source_after_verified": true,
+    "source_verified": true
+  },
+  "binary_sha256_before": "eab7e036574b3eeb07cdf38e1057d24cb40875697705017e087f04b0ea425e5f",
+  "binary_sha256_after": "eab7e036574b3eeb07cdf38e1057d24cb40875697705017e087f04b0ea425e5f",
+  "files": {
+    "build.log": "4b88129fc7f1d85789ca196767b88d9be400c13e2b5042ade0ecb35a61d51c9a",
+    "fresh/baseline/independent-client/native.sqlite": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+    "fresh/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/baseline/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "fresh/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/independent-client/native.sqlite": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+    "fresh/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/pressure/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "fresh/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/producer/native.sqlite": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+    "fresh/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fresh/report.json": "e8428f57cd7518e6bb25cc734f1085a44913a1f604e740da168542031f0c420c",
+    "fresh.log": "9692ad06c731226ab559a7175baa8f58fb3fc251b9225942ceb7237bc7436d13",
+    "original/baseline/independent-client/native.sqlite": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+    "original/baseline/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/baseline/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "original/baseline/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/independent-client/native.sqlite": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96",
+    "original/pressure/independent-client/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/pressure/receiver/native.sqlite": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+    "original/pressure/receiver/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/producer/native.sqlite": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770",
+    "original/producer/owner.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "original/report.json": "c7a2e2a0f2312ac8ab467dc57d1065acb5f9e1eb859b2f3e5c8bffea3069261e",
+    "original.log": "2ff16ead5239322f5129f7766ba8c21a37dd00cf08b76c8ea617a6f189182484",
+    "public_v3_from_zero": "eab7e036574b3eeb07cdf38e1057d24cb40875697705017e087f04b0ea425e5f"
+  }
+}

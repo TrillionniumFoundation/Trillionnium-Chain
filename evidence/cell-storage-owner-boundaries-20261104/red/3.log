@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_data_availability-860e4d3b2378d360)
+
+running 1 test
+
+thread 'cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker' (61) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:376:5:
+assertion failed: matches!(result, Err(CellErrorV1::Invalid("release fetch deadline")))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker ... FAILED
+
+failures:
+
+failures:
+    cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 304 filtered out; finished in 1.02s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

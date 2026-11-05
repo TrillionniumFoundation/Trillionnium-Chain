@@ -1,0 +1,24 @@
+{
+  "schema": "native-liveness-completion-cutoff-source-v1",
+  "base_commit": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "commit": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+  "changed_paths": [
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "before_blob": "4f448f61f6fb8605197b57e32ded999db0eaf579",
+      "after_blob": "2797525bb7f06befa00e758c5d0c14adde90f6e1"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "before_blob": "e0c8bc3d2264347c3b0ac1326dcd9f525d728358",
+      "after_blob": "33bf334f16f0cec4ff3582b6011cde52222ddd86"
+    }
+  ],
+  "other_tracked_paths_identical": true,
+  "cargo_lock_unchanged": true,
+  "native_tests_executed_on_this_source": false,
+  "original_native_experiment_source": "2b4d7b46f0de6507ca960b259bc3d52f09f9dc36",
+  "production_activation": false,
+  "note": "Source identity and independent review only; exact command checks have separate receipts."
+}

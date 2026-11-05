@@ -1,0 +1,3 @@
+error: can't find example `pon_w1_legal_strategy_v2` at path `/workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v2.rs`
+ --> /workspace/scratch/e08750459604/pon-work/trillionnium/crates/trnm-pon-node/Cargo.toml
+error: could not compile due to 1 previous target resolution error

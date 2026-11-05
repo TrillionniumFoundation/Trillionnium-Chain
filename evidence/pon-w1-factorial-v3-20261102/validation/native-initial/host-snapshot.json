@@ -1,0 +1,20 @@
+{
+  "captured_utc": "2026-11-02T00:59:03.685120+00:00",
+  "cgroup": {
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592"
+  },
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "process_affinity_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "scope": "local diagnostic host snapshot during fixed V3 campaign; not original 0.25-CPU/2-GiB Host"
+}

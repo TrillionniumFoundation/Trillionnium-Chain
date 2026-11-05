@@ -1,0 +1,16 @@
+{
+  "schema": "TRNM-W1-V2-WORKFLOW-FINAL-STRUCTURE1",
+  "workflow_sha256": "8b3ac7fd95b1e74b0bd510e4b8b37f2817a98e900b57d9e2e83ee95727e59678",
+  "retained_steps_unchanged": 15,
+  "all_shell_bodies_bash_n_passed": true,
+  "added_test_minima": {
+    "staged_observer": 17,
+    "security_budget": 21,
+    "independent_v2_verifier": 2
+  },
+  "receipt_controls_path_triggered": true,
+  "actual_v2_receipt_controls_executed": false,
+  "hosted_ci_observed": false,
+  "earlier_record_retained": "workflow-structural-review.json",
+  "review_process_correction": "First local comparison assumed every step has an id and raised KeyError on a name-only step; final comparison keys every unique step name and compares the entire mapping."
+}

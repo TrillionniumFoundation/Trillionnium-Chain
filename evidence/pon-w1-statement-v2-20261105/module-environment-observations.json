@@ -1,0 +1,31 @@
+{
+  "schema": "TRNM-W1-V2-MODULE-ENVIRONMENT-OBSERVATIONS1",
+  "base_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "capture": "command and relevant actual tool-output excerpts; these are not reconstructed full stdout logs",
+  "observations": [
+    {
+      "stage": "initial_relation_locked_test",
+      "command": "cargo test --locked --release --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-relation",
+      "exit_code": 101,
+      "observed_output": "error: cannot update the lock file formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock because --locked was passed to prevent this",
+      "cause": "Existing research lock omitted dependencies now required by the current native crypto crate, including ml-dsa and zeroize. No relation test ran in this attempt.",
+      "resolution": "Resolved the real workspace graph with cargo update --workspace; retained the existing v1 guest lock and archived v1 receipt identity."
+    },
+    {
+      "stage": "initial_guest_v2_offline_lock",
+      "command": "cargo update --workspace --offline --manifest-path formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "exit_code": 101,
+      "observed_output": "failed to load source for dependency sha2: unable to update https://github.com/risc0/RustCrypto-hashes?rev=244dc3b08788f7a4ccce14c66896ae3b4f24c166#244dc3b0; can't checkout ... you are in the offline mode (--offline)",
+      "cause": "The fresh environment had not fetched the pinned SHA-256 extension revision. No guest build or proof ran in this attempt.",
+      "resolution": "Fetched the exact fixed revision with cargo update --workspace online; retained the original dependency revision in guest-v2/Cargo.toml."
+    },
+    {
+      "stage": "intermediate_workspace_offline_resolution",
+      "command": "cargo update --workspace --offline --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+      "exit_code": 0,
+      "observed_output": "Locking 66 packages to latest compatible versions; several unrelated dependencies downgraded because offline resolution preferred locally available packages.",
+      "cause": "An intermediate successful resolution was broader than needed. It was not used as the final dependency manifest.",
+      "resolution": "Restored the original a9b86027 workspace lock and ran cargo update --workspace online. The final online update added the actual missing dependency graph and host-v2/methods-v2, retaining the other original locked versions; only zeroize was downgraded to the native exact 1.8.2 requirement."
+    }
+  ]
+}

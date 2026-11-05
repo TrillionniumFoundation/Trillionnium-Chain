@@ -1,0 +1,362 @@
+{
+  "schema": "trnm-pq-cold-recovery-component-evidence-v1",
+  "runtime_source_commit": "618d1bd225db4df8fb7c1d0fc53af991d7f7fdf7",
+  "base_source_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "source_overlay": "local-derived-overlay.patch",
+  "required_controls": 47,
+  "required_passed": 46,
+  "required_blocked_before_business_execution": [
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart"
+  ],
+  "additional_blocked_before_business_execution": [
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+    "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart"
+  ],
+  "unexecuted_required_selectors": [],
+  "block_reason": "Child UnixListener::bind returned EPERM (Operation not permitted) before readiness; original assertions/deadlines retained.",
+  "sandbox_escalation": {
+    "attempts": 1,
+    "outcome": "automatically rejected",
+    "reason": "approval policy Granular has sandbox_approval=false; require_escalated is not allowed",
+    "retried": false
+  },
+  "original_business_budgets_changed": false,
+  "legacy_counterexamples": [
+    "pq-recovery-legacy-cold-open-red-1",
+    "pq-recovery-legacy-invalid-checkpoint-red-1"
+  ],
+  "fixed_positive_controls": [
+    "pq-recovery-fixed-cold-open-green-2",
+    "pq-recovery-fixed-invalid-checkpoint-green-2"
+  ],
+  "whole_effect_state_coverage": false,
+  "physical_monotonic_root_qualified": false,
+  "whole_system_quantum_security_qualified": false,
+  "business_performance_qualified": false,
+  "release_decision": "HOLD_NO_GO",
+  "runs": {
+    "pq-recovery-pin-native-1": {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "pq_rollback_witness",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 101,
+      "failure": null,
+      "elapsed_ns": 389814468018,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 279174,
+          "sha256": "7fa653d4df517dbee8d32b829f0b0c7bb0c08895b5d063d3063419d3100a5863"
+        },
+        "stderr.log": {
+          "bytes": 1622,
+          "sha256": "0668610514f677ab4b2e257f0383dfbf85b892706a02e72eb7753884d240dbf0"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-pin-live-admission-1": {
+      "command": [
+        "/workspace/scratch/8a53368149fe/pq-reproducer/fixed-native-tests",
+        "ingress::pq_network::live_admission_tests",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 4610948518,
+      "timeout_seconds": 300,
+      "files": {
+        "stdout.log": {
+          "bytes": 1331,
+          "sha256": "9db4d7888ad4cf8a49d3ebaf13066446123208ad7a84c4d7188b79b06c04f17e"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-legacy-cold-open-red-1": {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint",
+        "--",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 101,
+      "failure": null,
+      "elapsed_ns": 378412132886,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 16338,
+          "sha256": "63593a496dd30d9d229205ec5392723039ee80731888e4cf6146682690c86572"
+        },
+        "stderr.log": {
+          "bytes": 431,
+          "sha256": "50c06b85eb55b4794b4c46521134b45ce2826b02c625f0ceec0a60819758ac36"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-legacy-invalid-checkpoint-red-1": {
+      "command": [
+        "/workspace/scratch/8a53368149fe/pq-reproducer/legacy-native-tests",
+        "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 101,
+      "failure": null,
+      "elapsed_ns": 566009984,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 1706,
+          "sha256": "c902ed14d0d29e9393dfa99e43a466c0b945e55e38614a56f2b29f31612508bc"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-fixed-cold-open-green-2": {
+      "command": [
+        "/workspace/scratch/8a53368149fe/pq-reproducer/fixed-native-tests",
+        "pq_rollback_witness::tests::cold_reopen_requires_exact_independently_retained_checkpoint",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 3744512033,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 16030,
+          "sha256": "98b80a0efc7af45b4e8730fc5cb39fdefb165de247432abc13dacc9b1a9977b9"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-fixed-invalid-checkpoint-green-2": {
+      "command": [
+        "/workspace/scratch/8a53368149fe/pq-reproducer/fixed-native-tests",
+        "pq_rollback_witness::tests::invalid_external_checkpoint_is_rejected_before_touching_recovery_storage",
+        "--exact",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 1926650754,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 1292,
+          "sha256": "95b40788b7f36edf2934ddd19e35ec918fbd28645c75cfaa42ec0ff6f3d54346"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-pin-source-integrity-1": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 12433624656,
+      "timeout_seconds": 300,
+      "files": {
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.log": {
+          "bytes": 134,
+          "sha256": "1d2dde7cd64256dd7c60cefda436f439575e5d7b0f1c40c49a9fdbce094e2088"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-locked-graph-1": {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 216869797,
+      "timeout_seconds": 300,
+      "files": {
+        "stdout.log": {
+          "bytes": 828865,
+          "sha256": "f7fa07b5dfc8b50d30c09b9fdd19223416c81e7cf791e8bf6b0af37156f00200"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-compiler-1": {
+      "command": [
+        "rustc",
+        "+1.95.0",
+        "-Vv"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 16027142,
+      "timeout_seconds": 60,
+      "files": {
+        "stdout.log": {
+          "bytes": 196,
+          "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-final-clippy-1": {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 106180809959,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.log": {
+          "bytes": 1791,
+          "sha256": "6d346a549edc3ec086924f65f6ce115d5296dad5f8f828f9fba58fcbd48bebdb"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    },
+    "pq-recovery-final-fmt-1": {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/8a53368149fe/pq-recovery",
+      "returncode": 0,
+      "failure": null,
+      "elapsed_ns": 9166172185,
+      "timeout_seconds": 1800,
+      "files": {
+        "stdout.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.log": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "profile_overrides": false,
+      "acceptance_granted": false
+    }
+  }
+}

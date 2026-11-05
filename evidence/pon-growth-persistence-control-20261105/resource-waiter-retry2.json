@@ -1,0 +1,312 @@
+{
+  "schema": "growth-single-resource-waiter-v1",
+  "started_utc": "2026-11-05T04:44:53.259434+00:00",
+  "runner_sha256": "ae20081596e452c1f0b8a5f7db17acc0fba650e840fed9a9914bdedd24cba52f",
+  "scheduler_sha256": "714d8575adc633dbc2bee7c0ae5c898da493d52ff8967fff30d3bf3cdb8a81da",
+  "max_wait_seconds": 600,
+  "continuous_ready_seconds": 30,
+  "scheduling_min_estimated_available_bytes": 2147483648,
+  "native_stop_floor_bytes_unchanged": 536870912,
+  "native_timeout_seconds_unchanged": 600,
+  "native_command": [
+    "python3",
+    "/workspace/scratch/822cc50e24f0/state-scheduling-restored/run-bounded.py",
+    "--phase",
+    "red",
+    "--source",
+    "/workspace/scratch/822cc50e24f0/round2-chain",
+    "--expected-head",
+    "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "--target",
+    "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-target-canonical",
+    "--cargo-home",
+    "/root/.cargo",
+    "--toolchain-bin",
+    "/root/.cargo/bin",
+    "--rustc",
+    "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "--out",
+    "/workspace/scratch/822cc50e24f0/state-scheduling-restored/native-red-canonical-retry2"
+  ],
+  "initial_memory": {
+    "host_available": 2303156224,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 8589733888,
+    "events": "low 0\nhigh 0\nmax 5565818\noom 4\noom_kill 4\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 5565818,
+      "oom": 4,
+      "oom_kill": 4,
+      "oom_group_kill": 0
+    },
+    "effective_available": 58179584,
+    "hard_cgroup_headroom": 200704,
+    "reclaimable_inactive_file_estimate": 57978880,
+    "memory_stat_inputs": {
+      "file": 750759936,
+      "shmem": 147456,
+      "file_dirty": 348160,
+      "file_writeback": 0,
+      "inactive_file": 57978880
+    }
+  },
+  "samples": [
+    {
+      "elapsed_seconds": 0.001,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 2302701568,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589889536,
+        "events": "low 0\nhigh 0\nmax 5565818\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5565818,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 58023936,
+        "hard_cgroup_headroom": 45056,
+        "reclaimable_inactive_file_estimate": 57978880,
+        "memory_stat_inputs": {
+          "file": 750759936,
+          "shmem": 147456,
+          "file_dirty": 348160,
+          "file_writeback": 0,
+          "inactive_file": 57978880
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 20.052,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1820622848,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8584851456,
+        "events": "low 0\nhigh 0\nmax 5614742\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5614742,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 284385280,
+        "hard_cgroup_headroom": 5083136,
+        "reclaimable_inactive_file_estimate": 279302144,
+        "memory_stat_inputs": {
+          "file": 673652736,
+          "shmem": 147456,
+          "file_dirty": 1224704,
+          "file_writeback": 0,
+          "inactive_file": 279302144
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 40.101,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1473593344,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8583720960,
+        "events": "low 0\nhigh 0\nmax 5697790\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5697790,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 39157760,
+        "hard_cgroup_headroom": 6213632,
+        "reclaimable_inactive_file_estimate": 32944128,
+        "memory_stat_inputs": {
+          "file": 406163456,
+          "shmem": 147456,
+          "file_dirty": 106496,
+          "file_writeback": 0,
+          "inactive_file": 32944128
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 60.141,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1279176704,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589799424,
+        "events": "low 0\nhigh 0\nmax 5913419\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 5913419,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 14880768,
+        "hard_cgroup_headroom": 135168,
+        "reclaimable_inactive_file_estimate": 14745600,
+        "memory_stat_inputs": {
+          "file": 223051776,
+          "shmem": 147456,
+          "file_dirty": 4096,
+          "file_writeback": 0,
+          "inactive_file": 14745600
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 80.204,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1301811200,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589905920,
+        "events": "low 0\nhigh 0\nmax 6175706\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 6175706,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 20410368,
+        "hard_cgroup_headroom": 28672,
+        "reclaimable_inactive_file_estimate": 20381696,
+        "memory_stat_inputs": {
+          "file": 168550400,
+          "shmem": 147456,
+          "file_dirty": 61440,
+          "file_writeback": 0,
+          "inactive_file": 20381696
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 100.333,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1341341696,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589930496,
+        "events": "low 0\nhigh 0\nmax 6508951\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 6508951,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 13570048,
+        "hard_cgroup_headroom": 4096,
+        "reclaimable_inactive_file_estimate": 13565952,
+        "memory_stat_inputs": {
+          "file": 168337408,
+          "shmem": 147456,
+          "file_dirty": 36864,
+          "file_writeback": 0,
+          "inactive_file": 13565952
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 120.404,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1287077888,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589918208,
+        "events": "low 0\nhigh 0\nmax 6810967\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 6810967,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 15052800,
+        "hard_cgroup_headroom": 16384,
+        "reclaimable_inactive_file_estimate": 15036416,
+        "memory_stat_inputs": {
+          "file": 86884352,
+          "shmem": 147456,
+          "file_dirty": 61440,
+          "file_writeback": 0,
+          "inactive_file": 15036416
+        }
+      }
+    },
+    {
+      "elapsed_seconds": 141.171,
+      "continuous_ready_seconds": 0,
+      "memory": {
+        "host_available": 1255485440,
+        "cgroup_limit": "8589934592",
+        "cgroup_current": 8589770752,
+        "events": "low 0\nhigh 0\nmax 6975098\noom 4\noom_kill 4\noom_group_kill 0\n",
+        "event_counters": {
+          "low": 0,
+          "high": 0,
+          "max": 6975098,
+          "oom": 4,
+          "oom_kill": 4,
+          "oom_group_kill": 0
+        },
+        "effective_available": 6754304,
+        "hard_cgroup_headroom": 163840,
+        "reclaimable_inactive_file_estimate": 6590464,
+        "memory_stat_inputs": {
+          "file": 7532544,
+          "shmem": 147456,
+          "file_dirty": 0,
+          "file_writeback": 0,
+          "inactive_file": 6590464
+        }
+      }
+    }
+  ],
+  "actual_native_started": false,
+  "state": "OOM_DURING_WAIT",
+  "qualification": "HOLD",
+  "production_activation": false,
+  "scope": "One finite correctness-build scheduling window, not a resource guarantee or a change to the original production Host/4s/16 gate.",
+  "last_memory": {
+    "host_available": 3237707776,
+    "cgroup_limit": "8589934592",
+    "cgroup_current": 7721033728,
+    "events": "low 0\nhigh 0\nmax 7014114\noom 5\noom_kill 5\noom_group_kill 0\n",
+    "event_counters": {
+      "low": 0,
+      "high": 0,
+      "max": 7014114,
+      "oom": 5,
+      "oom_kill": 5,
+      "oom_group_kill": 0
+    },
+    "effective_available": 2082181120,
+    "hard_cgroup_headroom": 868900864,
+    "reclaimable_inactive_file_estimate": 1213280256,
+    "memory_stat_inputs": {
+      "file": 1281474560,
+      "shmem": 147456,
+      "file_dirty": 1019904,
+      "file_writeback": 0,
+      "inactive_file": 1213280256
+    }
+  },
+  "wait_elapsed_seconds": 160.16535,
+  "finished_utc": "2026-11-05T04:47:33.425339+00:00"
+}

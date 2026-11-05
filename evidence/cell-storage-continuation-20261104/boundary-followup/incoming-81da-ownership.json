@@ -1,0 +1,1203 @@
+{
+  "schema": "trnm.incoming-composition-ownership-observation.v1",
+  "observed_at_utc": "2026-11-05T01:42:44.234903+00:00",
+  "result": "PASS",
+  "scope": "Immutable Git source ownership, ancestry and path/hunk overlap only; no runtime qualification.",
+  "source_clone": "/workspace/scratch/fd8e3e31d21a/chain-pon-work",
+  "origin": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+  "report_path": "/workspace/scratch/73305aff6ced/observations/incoming-81da-ownership.json",
+  "commits": {
+    "base": {
+      "commit": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+      "tree": "95a877919f9ed053aac6a06990a12c07afbed129",
+      "parents": [
+        "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771"
+      ],
+      "subject": "docs(pq): preserve restored migration test receipts"
+    },
+    "N": {
+      "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "tree": "ea600542130341144d697776d92048988d44572b",
+      "parents": [
+        "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+        "20cdab3b882c942f28c719a74b3fd22b1837f9fa"
+      ],
+      "subject": "fix(cell): preserve concurrent research while integrating storage boundary checks"
+    },
+    "D": {
+      "commit": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+      "tree": "78bd5d116163ed9520e14e68daed3a2b3d00dc89",
+      "parents": [
+        "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+        "8992e87ab14d6905303b9a813656a591621a49bd"
+      ],
+      "subject": "docs(cell): preserve storage boundary validation and blocked Node execution"
+    },
+    "incoming": {
+      "commit": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+      "tree": "e5561165ad3b02174b089ce43f93142ab3efd839",
+      "parents": [
+        "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0"
+      ],
+      "subject": "fix(pon): isolate source composition and guard cache ownership"
+    }
+  },
+  "incoming_commits": [
+    {
+      "commit": "95d37c7c31c601fb6ee319bc965a5956c7250f68",
+      "tree": "82332ee4d5ffcc8b75d3f760ee15d5de59de98bf",
+      "parents": [
+        "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
+      ],
+      "subject": "perf(pon): meter canonical Growth preparation and bound account and Cell work"
+    },
+    {
+      "commit": "babd86253092e47b9ea94617e6e8b289f9be4f5c",
+      "tree": "ce4bc1e2c8f2c002f249eb656fc71ea1b13bb89a",
+      "parents": [
+        "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771"
+      ],
+      "subject": "feat(w1): bind v2 materials and harden bounded full-proof observations"
+    },
+    {
+      "commit": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+      "tree": "b02426da27aea65182e6e1240ed07b517780f025",
+      "parents": [
+        "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+        "babd86253092e47b9ea94617e6e8b289f9be4f5c"
+      ],
+      "subject": "merge(pon): preserve migration receipts with frozen W1 v2 candidate"
+    },
+    {
+      "commit": "8d523cda45691a9472f8c27e8710ab8e98e6e040",
+      "tree": "dd7bd0fff877229328826294583e236dbafe4eb0",
+      "parents": [
+        "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+        "95d37c7c31c601fb6ee319bc965a5956c7250f68"
+      ],
+      "subject": "merge(pon): preserve Cell boundaries with bounded native preparation"
+    },
+    {
+      "commit": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "tree": "3f04db65a66724a09b8981854e03eddeb7a19f08",
+      "parents": [
+        "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+        "8d523cda45691a9472f8c27e8710ab8e98e6e040"
+      ],
+      "subject": "merge(pon): integrate metered Growth preparation and exact account ranges"
+    },
+    {
+      "commit": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+      "tree": "e5561165ad3b02174b089ce43f93142ab3efd839",
+      "parents": [
+        "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0"
+      ],
+      "subject": "fix(pon): isolate source composition and guard cache ownership"
+    }
+  ],
+  "merge_bases": [
+    "c57c2432c47ca207d6dd84585dc06dede50a16d0"
+  ],
+  "checks": [
+    {
+      "name": "canonical_origin",
+      "passed": true
+    },
+    {
+      "name": "incoming_exact_tree",
+      "passed": true
+    },
+    {
+      "name": "D_exact_tree",
+      "passed": true
+    },
+    {
+      "name": "unique_merge_base_is_c57",
+      "passed": true
+    },
+    {
+      "name": "incoming_descends_N",
+      "passed": true
+    },
+    {
+      "name": "incoming_descends_base",
+      "passed": true
+    },
+    {
+      "name": "six_incoming_commits",
+      "passed": true
+    },
+    {
+      "name": "only_shared_changed_path_is_sole_plan",
+      "passed": true
+    },
+    {
+      "name": "D_changed_path_count_83",
+      "passed": true
+    },
+    {
+      "name": "D_changes_are_only_sole_plan_and_boundary_evidence",
+      "passed": true
+    },
+    {
+      "name": "incoming_changed_path_count_182",
+      "passed": true
+    },
+    {
+      "name": "D_evidence_is_81_additions_and_one_modified_README",
+      "passed": true
+    },
+    {
+      "name": "D_native_tree_equals_N",
+      "passed": true
+    },
+    {
+      "name": "incoming_native_tree_is_different_from_N",
+      "passed": true
+    },
+    {
+      "name": "eight_nonpersistent_storage_fix_files_preserved_exactly",
+      "passed": true
+    },
+    {
+      "name": "D_plan_is_insertions_only",
+      "passed": true
+    },
+    {
+      "name": "incoming_plan_is_insertions_only",
+      "passed": true
+    },
+    {
+      "name": "plan_insertions_do_not_share_base_position",
+      "passed": true
+    },
+    {
+      "name": "D_corpus_is_unchanged_from_merge_base",
+      "passed": true
+    },
+    {
+      "name": "incoming_corpus_pins_match_incoming_tree",
+      "passed": true
+    }
+  ],
+  "runtime_tests_executed": false,
+  "rust_compilation_executed": false,
+  "repository_modified": false,
+  "checkout_performed": false,
+  "N_native_passes_transfer_to_incoming": false,
+  "native_tree_ids": {
+    "N": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+    "D": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
+    "incoming": "cb28bf37d8dcef43ec4dd6a4d9bf58f6b71f8788"
+  },
+  "change_summaries": {
+    "D": {
+      "total": 83,
+      "statuses": {
+        "M": 2,
+        "A": 81
+      },
+      "top_level_counts": {
+        "docs": 1,
+        "evidence": 82
+      },
+      "evidence_family_counts": {
+        "evidence/cell-storage-continuation-20261104": 82
+      }
+    },
+    "incoming": {
+      "total": 182,
+      "statuses": {
+        "M": 44,
+        "A": 138
+      },
+      "top_level_counts": {
+        ".github": 3,
+        "config": 1,
+        "docs": 3,
+        "evidence": 112,
+        "formal": 28,
+        "scripts": 9,
+        "trillionnium": 26
+      },
+      "evidence_family_counts": {
+        "evidence/pon-six-axis-execution-v1": 4,
+        "evidence/pon-w1-qrom-budget-20261105": 4,
+        "evidence/pon-w1-statement-v2-20261105": 59,
+        "evidence/pq-workflow-continuation-20261104": 45
+      }
+    }
+  },
+  "overlap_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "incoming_non_evidence_paths": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "status": "M",
+      "blob": "6be4b067f694c94a04c178cea2e8252a9bf86cbe"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "status": "M",
+      "blob": "2d9657048f016b49924c3270bb21c4d62132ddf8"
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "status": "M",
+      "blob": "343843d2f462bc44a6266e3384a0990e3607889e"
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "status": "M",
+      "blob": "2c640d16a42f56974108648dcaf8d9c159fd751e"
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "status": "M",
+      "blob": "f5e379599ddad8428893424b77f45d449dcb4197"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/PERFORMANCE_ACCEPTANCE.md",
+      "status": "M",
+      "blob": "1f98e4b5907c3c7d30f73d8f5c57ed85b80d8e5b"
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/PUBLIC_REQUEST_RESOURCE_OBSERVATION.md",
+      "status": "M",
+      "blob": "836e0b997a79eb03a0b4a5a92a928da136322ba3"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "status": "M",
+      "blob": "854ca752f0ce37e8a961e151baaf08bcf0cdd320"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+      "status": "A",
+      "blob": "c93682d321e51a66e2c323825ada3388094b5335"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+      "status": "M",
+      "blob": "53bd77b728230e969917eef269cbeb1fe3482193"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+      "status": "M",
+      "blob": "582dee64057b81edbacc477c2eb285ee162bc61a"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_candidate_check_clock.py",
+      "status": "A",
+      "blob": "5aea3b1ea4f3edf1d717fd5fc7bbeb6655760fc1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs",
+      "status": "A",
+      "blob": "3796deeff8479e9158d2c1302ad9d56ca5728958"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "status": "M",
+      "blob": "02fba7c0c8e0232eb3268bd5a48904836117058d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "status": "M",
+      "blob": "3ccedc567d6cd29c6156ade3f706b8c05470307b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+      "status": "A",
+      "blob": "f19c3dce9ef71a9261556b79451ac32d6e9259e5"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "status": "A",
+      "blob": "661994ef71dccb88a8b175621f5304a3450307cc"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "status": "A",
+      "blob": "9cbb5a8387e17246fe5bb2404df8dea4dc78fe11"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+      "status": "A",
+      "blob": "88688018617bae938184329bc70d2851f76f656f"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "status": "A",
+      "blob": "05aca725f2b4ba863e375faea18170d144121e6d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "status": "M",
+      "blob": "4a9045fac34603d8f96ac88c1ac42c395cff6436"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+      "status": "M",
+      "blob": "520ac7e39e98ab1f6ca1284aa0d09e4d2c7dd1af"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/STAGED_PROVER.md",
+      "status": "M",
+      "blob": "7d6ee4de11309b8ea138f180f57e47cbb67e6085"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host-v2/Cargo.toml",
+      "status": "A",
+      "blob": "5a92d0f36c8a1f13d923cd799a3dba179bd8dbc1"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/Cargo.toml",
+      "status": "M",
+      "blob": "038fc45a00ab03305a15e0924739952d7e0b1336"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+      "status": "M",
+      "blob": "0998189acc80a2f7d2ae8d61f0d90decd26d5541"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/.cargo/config.toml",
+      "status": "A",
+      "blob": "0075e142a45f16868b646cc9bdb881b401a84a73"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/Cargo.toml",
+      "status": "A",
+      "blob": "b4bb341df1b1704195417d43a54c3cabbea215e6"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/build.rs",
+      "status": "A",
+      "blob": "73130ccdec2a483e64c780b004b39928618034cf"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/src/lib.rs",
+      "status": "A",
+      "blob": "1bdb3085fa164c7151a1128bcc4ea78dd3a96657"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "status": "A",
+      "blob": "d2e384cdc16128fc6b23b971c5f7af9fa7538bc8"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "status": "A",
+      "blob": "5d39bcb571af842326a73848983f5f2fab803cfe"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "status": "A",
+      "blob": "44dff7af4685bf3c8c103c79d6b4beeedd1438ea"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "status": "M",
+      "blob": "3a322a70d676387d9bc2cb4b3d14f33b0bac2fa9"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "status": "A",
+      "blob": "16d9dea62fe0b336366a2a4480ab422387ed9e03"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "status": "M",
+      "blob": "a2ca334bfc7f58abeb634645475267260c65bdd2"
+    },
+    {
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "status": "M",
+      "blob": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c"
+    },
+    {
+      "path": "scripts/ci/test_pon_public_v3_phase_read.py",
+      "status": "M",
+      "blob": "ad20815839712fb167ec72cedd82db06818f1e8d"
+    },
+    {
+      "path": "scripts/ci/test_w1_security_budget.py",
+      "status": "A",
+      "blob": "08857d97914d342ca644e119b8b1beaf6111af31"
+    },
+    {
+      "path": "scripts/ci/test_w1_staged_observer.py",
+      "status": "A",
+      "blob": "906f80da15166008fab3aee8de112a2959c44b60"
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "status": "M",
+      "blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee"
+    },
+    {
+      "path": "scripts/pon_public_v3_phase_read.py",
+      "status": "M",
+      "blob": "0f46577524e1e352c5ec8cfdb30e7af75c773031"
+    },
+    {
+      "path": "scripts/w1_security_budget.py",
+      "status": "A",
+      "blob": "53707abbc95a76f478a11d76a07a05ff90075c13"
+    },
+    {
+      "path": "scripts/w1_v2_receipt_controls.py",
+      "status": "A",
+      "blob": "c7450b8ec4a734c75eb9d5d8df8938ae3b430cbf"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "status": "M",
+      "blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "status": "A",
+      "blob": "a01331d9403552e6e96dfd0d5bdbf34dae8c7083"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+      "status": "M",
+      "blob": "c17a1149d6336b57f5d717b2ee426a037933aeae"
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+      "status": "M",
+      "blob": "2ab5d20fb40523cb6540c260172f9dd133c43721"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "status": "M",
+      "blob": "867ade35cb43cc3d1dc9bba60c4c47be2d918e2b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/growth.rs",
+      "status": "M",
+      "blob": "8528cb9e4504a776b8cfb7d4ded52988a396d6a4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "status": "M",
+      "blob": "7c4e2a35bbf96dc83d01e6191b5474ca30f05f10"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth.rs",
+      "status": "M",
+      "blob": "68d6c3e13eca1f032de9a12532f74d17370f9984"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs",
+      "status": "A",
+      "blob": "4ec279243a13ba92369fe7cb01d5ef72c469cbf7"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "status": "M",
+      "blob": "3e74d19498f9ba3893a8f0ff48c4a7e6182694a6"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/account_prefix_tests.rs",
+      "status": "A",
+      "blob": "22da87350cdb670feec4bba6775e0cf56b616db2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "status": "M",
+      "blob": "45a9167acf5b5671eac72a54ea3e687b63eae7d4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth.rs",
+      "status": "M",
+      "blob": "de2f56bc0143553ea628c8e9c707043a4e95526c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/growth/tests.rs",
+      "status": "M",
+      "blob": "1111d532383b19a4e623de311795a883202410f2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "status": "M",
+      "blob": "9e7e8e5d97cb1390121edbf9327eb2c71f61070b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "status": "M",
+      "blob": "72f5f1145cd03d70f4df423a69b142c3199dffdc"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "status": "M",
+      "blob": "13ed1b33668335970ffbf98099bb4ee7757dab80"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "status": "M",
+      "blob": "cda95433f7bdd6d1c013e506891154c9722ff967"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "status": "M",
+      "blob": "d5a09cf485dfc4d27d332c251b6633501f890c1d"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "status": "M",
+      "blob": "87ece5b2846e00fa28ba0b2b51d3b837383e9843"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "status": "M",
+      "blob": "304683bc8e7863670b92a4a6f864e12fb45cc803"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+      "status": "A",
+      "blob": "0ab229471a9d1e05b1a477ab35824a24f7be9210"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+      "status": "M",
+      "blob": "3090e7a1b60b7d4d135166c7530383cc7be1aca5"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_cache_modes.rs",
+      "status": "A",
+      "blob": "f16f40edb24b73d80360fa13846090ff8852b109"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs",
+      "status": "M",
+      "blob": "f6f4f0aa32811ffe2132d8539aa3e8dd93debdeb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "status": "M",
+      "blob": "ddcfa777d6a73422e11d8b153076e337abf8c889"
+    }
+  ],
+  "D_boundary_evidence": {
+    "prefix": "evidence/cell-storage-continuation-20261104/boundary-followup/",
+    "count": 82,
+    "entries": [
+      {
+        "path": "README.md",
+        "status": "M",
+        "blob": "67e2e9a0cfb060be65daef9c9d9476c435a2cb1e"
+      },
+      {
+        "path": "artifact-manifest.json",
+        "status": "A",
+        "blob": "c0fa1e8c3e5e6aa7b279a0e6277e73cb81b9a98f"
+      },
+      {
+        "path": "baseline/baseline-node-composition.json",
+        "status": "A",
+        "blob": "335b686c5ee923a56c5ef3dc19e911f5226a5e87"
+      },
+      {
+        "path": "baseline/baseline-node-composition.log",
+        "status": "A",
+        "blob": "8af7018588137aea79312e577e232bd418b01b60"
+      },
+      {
+        "path": "baseline/initial-runtime-interruption.json",
+        "status": "A",
+        "blob": "6df967ba774218bd6380fe8ff6b5865d55ab3d75"
+      },
+      {
+        "path": "baseline/initial-runtime-unqualified.sh",
+        "status": "A",
+        "blob": "c97522a3d8d0249564ccc65877d79c6d6b3b6271"
+      },
+      {
+        "path": "baseline/legacy_observation_opt_in_is_local_and_keeps_unentered_unknown.log",
+        "status": "A",
+        "blob": "b62d69c908db7bd0f07af20e430e4f51023dd82e"
+      },
+      {
+        "path": "baseline/runtime-correction.json",
+        "status": "A",
+        "blob": "a31beae6d813fefb026285bec41615f79806bded"
+      },
+      {
+        "path": "changed-source-pins.json",
+        "status": "A",
+        "blob": "759d7176740bb9354220e8ac24a6a7eb03ccba9c"
+      },
+      {
+        "path": "completed-build-cache-cleanup.json",
+        "status": "A",
+        "blob": "16cb5a4c5be830444a9568c69854c30ccebd1cc5"
+      },
+      {
+        "path": "completed-owned-target-cleanup.json",
+        "status": "A",
+        "blob": "ede7df7d6730aee19bfd8891a8057d67aba4d6e3"
+      },
+      {
+        "path": "completed-owned-target-cleanup.log",
+        "status": "A",
+        "blob": "e2aedcf8ea05af347c86a6ccc6099ada9f4c78ea"
+      },
+      {
+        "path": "composed-final/cargo-metadata.json.gz",
+        "status": "A",
+        "blob": "b1354ef4131578bb398ad6d2ef88207ecdbc9bd4"
+      },
+      {
+        "path": "composed-final/composed-node-selected-qualified.json",
+        "status": "A",
+        "blob": "83d614337464cc06a354642e3715a74596c37f34"
+      },
+      {
+        "path": "composed-final/composed-node-selected-qualified.log",
+        "status": "A",
+        "blob": "48c3eab9a471b9ea2efa8fd2f62c3d1a68fed910"
+      },
+      {
+        "path": "composed-final/composed-node-selected.json",
+        "status": "A",
+        "blob": "ec8dbd66edeaafa358de7d70746e9e627ff2ac82"
+      },
+      {
+        "path": "composed-final/composed-node-selected.log",
+        "status": "A",
+        "blob": "120db5881a7e6d5a41e2876006379bcbe51a70e1"
+      },
+      {
+        "path": "composed-final/composed-source-controls.json",
+        "status": "A",
+        "blob": "99abd0f81b0feab4fdae19acb9a211bf9472eb3a"
+      },
+      {
+        "path": "composed-final/composed-source-controls.log",
+        "status": "A",
+        "blob": "51a1c854b8ed73172ca44a3c68309686fceb2c2e"
+      },
+      {
+        "path": "composed-final/composed-workspace-clippy.json",
+        "status": "A",
+        "blob": "01c3158809614d258d464f76e9d97eab93536eb0"
+      },
+      {
+        "path": "composed-final/composed-workspace-clippy.log",
+        "status": "A",
+        "blob": "608735ead16011c22c47336a49cd04d4defb4f44"
+      },
+      {
+        "path": "composed-final/node-qualified/cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention.log",
+        "status": "A",
+        "blob": "48c3eab9a471b9ea2efa8fd2f62c3d1a68fed910"
+      },
+      {
+        "path": "composed-final/node/cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention.log",
+        "status": "A",
+        "blob": "120db5881a7e6d5a41e2876006379bcbe51a70e1"
+      },
+      {
+        "path": "composition-preservation.json",
+        "status": "A",
+        "blob": "13be634bb49b119bf3a382c8b329ec6a83bb4920"
+      },
+      {
+        "path": "composition/composition-source-controls.json",
+        "status": "A",
+        "blob": "e17a4332d2bd3fcf8d0bb9fc069457d6255178f9"
+      },
+      {
+        "path": "composition/composition-source-controls.log",
+        "status": "A",
+        "blob": "32eefb6a02c007d6d14a7dc057bd049975331451"
+      },
+      {
+        "path": "delivery-results.json",
+        "status": "A",
+        "blob": "51eb9637f7dfe3ccaf301b30a71f1415a3a8c77e"
+      },
+      {
+        "path": "delivery-source-projection.json",
+        "status": "A",
+        "blob": "8390855a75474a2ab5432e11ae6bcc0fa7cd4ba8"
+      },
+      {
+        "path": "environment-interruption.json",
+        "status": "A",
+        "blob": "a87ddd381c0c9cd0de5e25582bc5c12b6a1b729f"
+      },
+      {
+        "path": "failed-node-artifact-assessment.json",
+        "status": "A",
+        "blob": "fe5cc5abd645c14816a0ba2c49ee3ed7a1ae9ca3"
+      },
+      {
+        "path": "failed-node-object-cleanup.json",
+        "status": "A",
+        "blob": "48741e82ed10362bba7f9f714d9357f7a8bdc375"
+      },
+      {
+        "path": "final/cargo-metadata.json.gz",
+        "status": "A",
+        "blob": "adcd9b33a03a67f0a856723e6ea94588e49371ec"
+      },
+      {
+        "path": "final/m09-doc.log",
+        "status": "A",
+        "blob": "30fc9fb19cea07f58cb7e120566f4010f3650683"
+      },
+      {
+        "path": "final/m09-tests.log",
+        "status": "A",
+        "blob": "6b3dce544f327701f63ced8e21b610f665c386ba"
+      },
+      {
+        "path": "final/model-root-oracle.json",
+        "status": "A",
+        "blob": "c1434b9ad7e789c8425e79fd68e919eefee575be"
+      },
+      {
+        "path": "final/model-root-oracle.log",
+        "status": "A",
+        "blob": "a1f4e1a961a6ba949f74aa8bd709e5c7029237b7"
+      },
+      {
+        "path": "final/retained-test-coverage.json",
+        "status": "A",
+        "blob": "ab0c87f6775d339d6d7fe566ce29699a772ccb93"
+      },
+      {
+        "path": "final/storage-native.json",
+        "status": "A",
+        "blob": "85ff579e9f19a0c1d0898cfd0e7b2b31b8898da6"
+      },
+      {
+        "path": "final/storage-native.log",
+        "status": "A",
+        "blob": "8bb6c84f79294efacbfd8ef24aecf7a0d08bf718"
+      },
+      {
+        "path": "final/storage-source-controls-corrected.json",
+        "status": "A",
+        "blob": "cbc593d1ef190370068e01190fc80207700c41be"
+      },
+      {
+        "path": "final/storage-source-controls-corrected.log",
+        "status": "A",
+        "blob": "867ff680857b5b5ff21c4b91afcd410cd459b08d"
+      },
+      {
+        "path": "final/storage-source-controls.json",
+        "status": "A",
+        "blob": "2ce2a3f6a10138b8f731bf05ce6136f7dfafd7e0"
+      },
+      {
+        "path": "final/storage-source-controls.log",
+        "status": "A",
+        "blob": "e8047ac6029054be7a9205607979cfbd22db4955"
+      },
+      {
+        "path": "final/storage-workspace-clippy.json",
+        "status": "A",
+        "blob": "0cdb456e1f324d372f0aee86ae93992f5cc11888"
+      },
+      {
+        "path": "final/storage-workspace-clippy.log",
+        "status": "A",
+        "blob": "1f151ab7eef67469bec9a8173027b1bc0f163be3"
+      },
+      {
+        "path": "implementation-commit-metadata.json",
+        "status": "A",
+        "blob": "67df61696da8b9ebf2b5bec4a7fb140d2279d1c5"
+      },
+      {
+        "path": "incoming-c57-preservation.json",
+        "status": "A",
+        "blob": "a79c1a596966e51041add143df5766b3e503136b"
+      },
+      {
+        "path": "node-qualified-runner-projection.json",
+        "status": "A",
+        "blob": "9f8367215175e98759685200415fcbd7bdef4e2e"
+      },
+      {
+        "path": "node-runner-projection.json",
+        "status": "A",
+        "blob": "93aa67c5f8e6809e2835dd27c857d57d7378e22d"
+      },
+      {
+        "path": "node-selected-status.json",
+        "status": "A",
+        "blob": "a74e6cb1257dc17dbf88934d722afb7d80a8d0dd"
+      },
+      {
+        "path": "node-unqualified-cache-interruption.json",
+        "status": "A",
+        "blob": "2d53e4fe04b20a2e1aff0a94abb82f9a72b313cd"
+      },
+      {
+        "path": "owned-worktree-space.json",
+        "status": "A",
+        "blob": "5c3f68834444ab1a7d6fe56bb80c94774fd63adb"
+      },
+      {
+        "path": "published-N-readback.json",
+        "status": "A",
+        "blob": "dc15739455b9626015c5d5d1590a40bc5f5506d8"
+      },
+      {
+        "path": "qualified-runtime.sh",
+        "status": "A",
+        "blob": "d9ea2bf40feb429cc34f2537e6530f20fa282f92"
+      },
+      {
+        "path": "red-commit-metadata.json",
+        "status": "A",
+        "blob": "50ca20c6588b77bdebb1f574a4f08eb3bcd5f83d"
+      },
+      {
+        "path": "red/tensor-old-parser-red.json",
+        "status": "A",
+        "blob": "18c32232b09e20916987ca107118edeb92f1845b"
+      },
+      {
+        "path": "red/tensor-old-parser-red.log",
+        "status": "A",
+        "blob": "82d4ccd34f035d1ee336882f074fb5382500f933"
+      },
+      {
+        "path": "research-composition-commit-metadata.json",
+        "status": "A",
+        "blob": "11f4b359d4140edf4bd63d9fc0d49e28ed26ecc5"
+      },
+      {
+        "path": "research-composition-preservation.json",
+        "status": "A",
+        "blob": "ea06397a62cd9e818a14c1097661cc1b8c4f8617"
+      },
+      {
+        "path": "resource-observations.jsonl",
+        "status": "A",
+        "blob": "78194b6bbfacf1bdd81f8f6846e8a72c400cab64"
+      },
+      {
+        "path": "retained-tests-input.json",
+        "status": "A",
+        "blob": "2b81a1e5c264034d94035411e6f8208ef0a80771"
+      },
+      {
+        "path": "run-node-selected-N.sh",
+        "status": "A",
+        "blob": "f85e0e24d8d570fa060d4b23df30f569062f5806"
+      },
+      {
+        "path": "run-node-selected-qualified-N.sh",
+        "status": "A",
+        "blob": "2c86cc6013efc08eaa691a1ed62867b11664ca70"
+      },
+      {
+        "path": "run-node-selected.sh",
+        "status": "A",
+        "blob": "910f76742737af1168181c3b2bc04d5591e22882"
+      },
+      {
+        "path": "runtime-cache-diagnosis.json",
+        "status": "A",
+        "blob": "18809010dead41f84c2c0f4705d4b5460ba22e98"
+      },
+      {
+        "path": "runtime-cache-diagnosis/bad6ead-output",
+        "status": "A",
+        "blob": "0827ed738125a38dacf2e25e1b37a035e131c44d"
+      },
+      {
+        "path": "runtime-cache-diagnosis/bad6ead-run-fingerprint.json",
+        "status": "A",
+        "blob": "d6d80e5311842ae322114bd3a4a84920c9fbbc4f"
+      },
+      {
+        "path": "runtime-cache-diagnosis/bad6ead-run-fingerprint.raw",
+        "status": "A",
+        "blob": "2bad9a7fef77f34848b1cac5145bd8313f9f581d"
+      },
+      {
+        "path": "runtime-cache-diagnosis/good27a8-output",
+        "status": "A",
+        "blob": "40d8f07f5210551367abbbe58dcb3b0991877f4d"
+      },
+      {
+        "path": "runtime-cache-diagnosis/good27a8-run-fingerprint.json",
+        "status": "A",
+        "blob": "d789745b256dd81c2e77a363200716eeb530b6a3"
+      },
+      {
+        "path": "runtime-cache-diagnosis/good27a8-run-fingerprint.raw",
+        "status": "A",
+        "blob": "78f846d62be177fd27e9d86ff1d8eb2b05c0c0e4"
+      },
+      {
+        "path": "runtime-cache-diagnosis/node3edd-lib-fingerprint.json",
+        "status": "A",
+        "blob": "a62f4490c3622c2f874791c285cfea6697f1f1ae"
+      },
+      {
+        "path": "runtime-cache-diagnosis/node3edd-lib-fingerprint.raw",
+        "status": "A",
+        "blob": "b3455ee4d95b112eb7ff0ea130f3c70c5cc2d655"
+      },
+      {
+        "path": "runtime-cache-requalification.json",
+        "status": "A",
+        "blob": "338977ceb7d150419b0faa7ae80a79b21fb60abb"
+      },
+      {
+        "path": "runtime-cache-requalification/node3edd-lib-fingerprint.json",
+        "status": "A",
+        "blob": "e1e3955baa35ca129e0fac18551efe7024a8d153"
+      },
+      {
+        "path": "runtime-cache-requalification/node3edd-lib-fingerprint.raw",
+        "status": "A",
+        "blob": "c7eeef39108d05091edf413485a08ff0f7adbae5"
+      },
+      {
+        "path": "runtime-cache-requalification/requalified6ead-output",
+        "status": "A",
+        "blob": "28a511ad8d1362b5c799a578ca0337c307834974"
+      },
+      {
+        "path": "runtime-cache-requalification/requalified6ead-run-fingerprint.json",
+        "status": "A",
+        "blob": "24a850269568b9a9af3f4c8862100c08c26cb879"
+      },
+      {
+        "path": "runtime-cache-requalification/requalified6ead-run-fingerprint.raw",
+        "status": "A",
+        "blob": "5f98934982f27651e80b28028c110752ebd93d4e"
+      },
+      {
+        "path": "runtime-package-clean.json",
+        "status": "A",
+        "blob": "9850dfab8761fd6191dba7787b32930ba3d41fc6"
+      },
+      {
+        "path": "runtime-package-clean.log",
+        "status": "A",
+        "blob": "236f0eeea36cb192308f98e4f88fe07027684ae5"
+      },
+      {
+        "path": "target-resource-assessment.json",
+        "status": "A",
+        "blob": "fe823af9aea9ef77f535f6db81b8dcb89a5c6ee2"
+      }
+    ]
+  },
+  "incoming_evidence": {
+    "count": 112,
+    "sorted_entry_manifest_sha256": "103a35bd714624ad843960f25e6225697770bfbfa6071c2f44b657db1b5a48b7",
+    "all_paths_are_disjoint_from_D_changes": true
+  },
+  "sole_plan": {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "base_blob": "7e608857ee1f1b693acb2426f9f730db5525afef",
+    "changes": {
+      "D": {
+        "plan_blob": "45be58f65ff354b740a39d5d4c1da9f6357f5c08",
+        "added_lines": 15,
+        "edits": [
+          {
+            "operation": "insert",
+            "base_insert_before_line": 6217,
+            "removed_lines": 0,
+            "added_lines": 15,
+            "sha256": "21a7c867b2180d118dcc4f6529bba0cbe87b20a1e7281c41616f3efa762e66be",
+            "first_nonempty_line": "Frozen implementation `211e330f` executes 295 M09 library, 29 CLI and eight"
+          }
+        ]
+      },
+      "incoming": {
+        "plan_blob": "f5e379599ddad8428893424b77f45d449dcb4197",
+        "added_lines": 83,
+        "edits": [
+          {
+            "operation": "insert",
+            "base_insert_before_line": 25,
+            "removed_lines": 0,
+            "added_lines": 13,
+            "sha256": "704bd68a5801ef9a481d0f32472f083797d96a785659a993742f4a1589a794dd",
+            "first_nonempty_line": "**PQ workflow continuation, 2026-11-04 America/New_York (2026-11-05 UTC):**"
+          },
+          {
+            "operation": "insert",
+            "base_insert_before_line": 77,
+            "removed_lines": 0,
+            "added_lines": 31,
+            "sha256": "54e4c41a251250b0b2686c037e4bfa6f17de684add84c26d183d49578ac044bd",
+            "first_nonempty_line": "#### Metered Growth preparation and complete settlement observations"
+          },
+          {
+            "operation": "insert",
+            "base_insert_before_line": 6396,
+            "removed_lines": 0,
+            "added_lines": 39,
+            "sha256": "c8f99d08a57335c3d77b431a7e392d9f6731a318e849c1e3b52f8fc735a86177",
+            "first_nonempty_line": "### 2026-11-05 W1 v2 material statement and concrete error-budget continuation"
+          }
+        ]
+      }
+    },
+    "disjoint_insertions": true,
+    "expected_combined_plan_blob": "f3a78fdae581f9ca61017079aa0a69e2ce450f21",
+    "expected_combined_plan_sha256": "132840335b8a04e38dd6d5d85cde2605d5eb61a77f95e83fbd3b75f3ac222659",
+    "expected_combined_plan_bytes": 500041,
+    "computed_in_memory_only": true
+  },
+  "corpus_ownership": {
+    "owner": "incoming",
+    "D_blob": "ad20d25934d345896c0b02ccd70c1dc74d0beeda",
+    "incoming_blob": "2c640d16a42f56974108648dcaf8d9c159fd751e",
+    "D_pin_count": 460,
+    "incoming_pin_count": 464,
+    "new_pin_keys": [
+      "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/account_prefix_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests/parallel_preparation.rs",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs"
+    ],
+    "removed_pin_keys": [],
+    "changed_existing_pin_count": 17,
+    "incoming_pin_mismatches": []
+  },
+  "storage_fix_files_unchanged": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "c3fca2b182d3fd4bc351c5b246154f4951a7a125"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "c3fca2b182d3fd4bc351c5b246154f4951a7a125"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "86fd50019efd601a974de3d8d15e1ef959239b92"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "86fd50019efd601a974de3d8d15e1ef959239b92"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "d73bc05d617e8148ee49e6650ccfb435d4d72b1b"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "d73bc05d617e8148ee49e6650ccfb435d4d72b1b"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "9f2fd2b9343326e6322bd723ec22f75d27baec9e"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "9f2fd2b9343326e6322bd723ec22f75d27baec9e"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "7002b249e4eb94adaf0f28121ff1c5f20b6cd25b"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "7002b249e4eb94adaf0f28121ff1c5f20b6cd25b"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "eb00ba785d02120dbe385863cb392f2ed641db98"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "eb00ba785d02120dbe385863cb392f2ed641db98"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "7fd60c9e77f09c436f93392646b77bda0cbcda30"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "7fd60c9e77f09c436f93392646b77bda0cbcda30"
+      },
+      "exact_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+      "N": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "dc23777a6840bdbec99c8253b8cbd576e9a2b67c"
+      },
+      "incoming": {
+        "mode": "100644",
+        "type": "blob",
+        "object": "dc23777a6840bdbec99c8253b8cbd576e9a2b67c"
+      },
+      "exact_equal": true
+    }
+  ],
+  "merge_preservation_requirements": [
+    "Preserve all 181 incoming non-plan changed paths exactly from 81da, including its corpus, CI, native sources, formal sources and 112 new evidence files.",
+    "Preserve all 82 D non-plan changed paths exactly from D: 81 new boundary evidence files plus its modified README.",
+    "Combine the sole plan from the common c57 base with both original insertion sets; their positions are disjoint. The expected plan content hash is recorded above.",
+    "Retain both histories in the final merge. Do not relabel N/D runtime receipts as passes for the new incoming native tree."
+  ],
+  "qualification_limits": [
+    "26 native paths changed; the complete incoming trillionnium subtree differs from N/D. Historical test results stay bound to their original sources.",
+    "Eight archive/retention/tensor/Node storage fix files are unchanged, but persistent transport and broader native dependencies changed; semantic reviews and any narrow composition validation remain separate.",
+    "This observation neither runs tests nor writes a merge, refs or worktree content."
+  ]
+}

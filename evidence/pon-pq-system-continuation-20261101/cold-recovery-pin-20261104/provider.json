@@ -1,0 +1,17 @@
+{
+  "version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\nbuilt on: Wed Nov  4 02:34:17 2026 UTC\nplatform: linux-x86_64\noptions:  bn(64,64)\ncompiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -O3 -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DNDEBUG\nOPENSSLDIR: \"/workspace/scratch/66671f1fe103/build-env/trnm-pq-provider-3.5.9.KitaGNRr/install/ssl\"\nENGINESDIR: \"/workspace/scratch/66671f1fe103/build-env/trnm-pq-provider-3.5.9.KitaGNRr/install/lib/engines-3\"\nMODULESDIR: \"/workspace/scratch/66671f1fe103/build-env/trnm-pq-provider-3.5.9.KitaGNRr/install/lib/ossl-modules\"\nSeeding source: os-specific\nCPUINFO: OPENSSL_ia32cap=0xfffa3203078bffff:0x00405fc6f1bf07ab:0x0000002020000010:0x0000000000000000:0x0000000000000000\n",
+  "files": {
+    "bin/openssl": {
+      "bytes": 8933400,
+      "sha256": "1a4a170d3bbd19bb231e768581b5e668d36a1f56a83a3c0739a18ea219815314"
+    },
+    "lib/libcrypto.a": {
+      "bytes": 12380328,
+      "sha256": "88e87c5a68268efa84250ec5db5495ccad48a0e5e930c653281b5a254aea5fb5"
+    },
+    "lib/libssl.a": {
+      "bytes": 2123050,
+      "sha256": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9"
+    }
+  }
+}

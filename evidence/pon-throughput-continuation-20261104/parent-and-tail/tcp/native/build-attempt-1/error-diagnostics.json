@@ -1,0 +1,86 @@
+[
+  {
+    "code": "E0425",
+    "message": "cannot find function `ensure` in this scope",
+    "rendered": "error[E0425]: cannot find function `ensure` in this scope\n   --> crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs:457:11\n    |\n457 |     local(ensure(\n    |           ^^^^^^ not found in this scope\n    |\nhelp: consider importing this function\n    |\n  5 + use crate::ensure;\n    |\n\n",
+    "spans": [
+      {
+        "byte_end": 16115,
+        "byte_start": 16109,
+        "column_end": 17,
+        "column_start": 11,
+        "expansion": null,
+        "file_name": "crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+        "is_primary": true,
+        "label": "not found in this scope",
+        "line_end": 457,
+        "line_start": 457,
+        "suggested_replacement": null,
+        "suggestion_applicability": null,
+        "text": [
+          {
+            "highlight_end": 17,
+            "highlight_start": 11,
+            "text": "    local(ensure("
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "E0425",
+    "message": "cannot find function `ensure` in this scope",
+    "rendered": "error[E0425]: cannot find function `ensure` in this scope\n   --> crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs:463:11\n    |\n463 |     local(ensure(matches, \"NATIVE_STATE_DELTA\"))?;\n    |           ^^^^^^ not found in this scope\n    |\nhelp: consider importing this function\n    |\n  5 + use crate::ensure;\n    |\n\n",
+    "spans": [
+      {
+        "byte_end": 16404,
+        "byte_start": 16398,
+        "column_end": 17,
+        "column_start": 11,
+        "expansion": null,
+        "file_name": "crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+        "is_primary": true,
+        "label": "not found in this scope",
+        "line_end": 463,
+        "line_start": 463,
+        "suggested_replacement": null,
+        "suggestion_applicability": null,
+        "text": [
+          {
+            "highlight_end": 17,
+            "highlight_start": 11,
+            "text": "    local(ensure(matches, \"NATIVE_STATE_DELTA\"))?;"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "E0425",
+    "message": "cannot find function `ensure` in this scope",
+    "rendered": "error[E0425]: cannot find function `ensure` in this scope\n   --> crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs:469:11\n    |\n469 |     local(ensure(\n    |           ^^^^^^ not found in this scope\n    |\nhelp: consider importing this function\n    |\n  5 + use crate::ensure;\n    |\n\n",
+    "spans": [
+      {
+        "byte_end": 16680,
+        "byte_start": 16674,
+        "column_end": 17,
+        "column_start": 11,
+        "expansion": null,
+        "file_name": "crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs",
+        "is_primary": true,
+        "label": "not found in this scope",
+        "line_end": 469,
+        "line_start": 469,
+        "suggested_replacement": null,
+        "suggestion_applicability": null,
+        "text": [
+          {
+            "highlight_end": 17,
+            "highlight_start": 11,
+            "text": "    local(ensure("
+          }
+        ]
+      }
+    ]
+  }
+]

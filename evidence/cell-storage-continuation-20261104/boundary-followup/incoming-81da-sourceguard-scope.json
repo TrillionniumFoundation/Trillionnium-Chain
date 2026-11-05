@@ -1,0 +1,180 @@
+{
+  "schema": "trnm.cell.incoming-sourceguard-scope.v1",
+  "status": "READ_ONLY_REVIEW_COMPLETE_NO_TEST_EXECUTION",
+  "recorded_utc": "2026-11-05T01:54:35.924734+00:00",
+  "scope": "Exact source-guard and test-source Git-object comparison already completed for c57 to 81da; this file records the findings and a final-E validation recommendation. It is not a test receipt.",
+  "reviewed_repository": "/workspace/scratch/fd8e3e31d21a/chain-pon-work",
+  "sources": {
+    "comparison_base": {
+      "commit": "c57c2432c47ca207d6dd84585dc06dede50a16d0",
+      "tree": "95a877919f9ed053aac6a06990a12c07afbed129"
+    },
+    "incoming_remote_snapshot": {
+      "commit": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+      "tree": "e5561165ad3b02174b089ce43f93142ab3efd839",
+      "parent": "38cf428103f48879fcc6b7dc0fc523d5c58ff2e0",
+      "remote_role": "Task-owner supplied latest remote snapshot; this review did not poll the remote."
+    },
+    "local_delivery_D": {
+      "commit": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+      "published": false,
+      "publication_status_source": "Task-owner report at assignment"
+    },
+    "future_E": {
+      "commit": null,
+      "tree": null,
+      "description": "Future reviewed composition of incoming 81da and D; no exact E identity or result exists in this observation."
+    }
+  },
+  "review_method": {
+    "git_diff": "git diff c57c2432c47ca207d6dd84585dc06dede50a16d0 81da33e609cb64b319e8cfcca7059e5c30d39044 -- scripts/ci/verify_ci_source.py scripts/ci/test_ci_source_integrity.py",
+    "test_count_method": "Parsed exact committed Python source with ast.parse and enumerated test_ FunctionDef/AsyncFunctionDef names; did not import or execute test modules.",
+    "recorder_comparison": "Compared exact committed record_pq_native_command.py bytes at c57 and 81da.",
+    "repeated_whole_repository_audit": false,
+    "runtime_tests_executed": false,
+    "rust_builds_executed": false,
+    "repository_files_modified": false,
+    "only_observation_file_written": "/workspace/scratch/73305aff6ced/observations/incoming-81da-sourceguard-scope.json"
+  },
+  "sourceguard_change": {
+    "path": "scripts/ci/verify_ci_source.py",
+    "canonical_merge_function": "_canonical_merge_tree",
+    "canonical_merge_function_line_at_81da": 18,
+    "verify_function_line_at_81da": 117,
+    "new_prospective_tree_check_line_at_81da": 158,
+    "behavior": [
+      "A prospective-merge receipt must match both ordered event parents and the canonical tree reproduced from the selected base and candidate.",
+      "Injected committed source, omitted base changes, and unresolved or unreviewed conflict resolutions are refused.",
+      "For divergent histories, a temporary bare repository with object alternates isolates local configuration, local info/attributes, templates, global configuration and GIT_-environment injection.",
+      "Tracked attributes remain part of the reviewed input objects. The verifier relies on the installed trusted Git and does not certify Git itself or accept custom external merge drivers as prospective-source identity."
+    ],
+    "head_mode_identity_behavior_changed": false,
+    "verify_signature_changed": false,
+    "returned_schema": "trnm-ci-source-v1",
+    "returned_schema_changed": false,
+    "returned_identity_fields_changed": false,
+    "recorder": {
+      "path": "scripts/ci/record_pq_native_command.py",
+      "bytes_identical_c57_to_81da": true,
+      "schema": "trnm-pq-native-command-v1",
+      "schema_changed": false,
+      "original_recorder_invocation_compatible": true,
+      "before_after_source_and_log_digest_recording_preserved": true
+    }
+  },
+  "test_inventory": {
+    "source_guard_suite": {
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "class": "TrackedSourceTests",
+      "before_methods": 34,
+      "after_methods": 43,
+      "added_methods": 9,
+      "removed_methods": [],
+      "added_positive_controls": [
+        "test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+        "test_prospective_merge_accepts_exact_diverged_combination",
+        "test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree"
+      ],
+      "added_rejection_or_isolation_cases": [
+        "test_prospective_merge_rejects_injected_committed_source",
+        "test_prospective_merge_rejects_omitted_base_change",
+        "test_prospective_merge_rejects_unreviewed_conflict_resolution",
+        "test_prospective_merge_never_executes_local_merge_driver",
+        "test_prospective_merge_ignores_environment_merge_driver",
+        "test_prospective_merge_ignores_local_union_attributes"
+      ]
+    },
+    "other_four_suites": [
+      {
+        "path": "scripts/ci/test_pq_research_integration.py",
+        "test_methods": 35,
+        "bytes_identical_to_c57": true
+      },
+      {
+        "path": "scripts/ci/test_pq_chain_claim_guard.py",
+        "test_methods": 22,
+        "bytes_identical_to_c57": true
+      },
+      {
+        "path": "scripts/ci/test_pq_authority_surface_scan.py",
+        "test_methods": 11,
+        "bytes_identical_to_c57": true
+      },
+      {
+        "path": "formal/pon-nakamoto-v1/test_model_release_root.py",
+        "test_methods": 4,
+        "bytes_identical_to_c57": true
+      }
+    ],
+    "other_four_distinct_methods": 72,
+    "original_five_suite_total": 106,
+    "incoming_five_suite_total": 115,
+    "counts_are_static_inventory_not_observed_passes": true,
+    "tests_executed_by_this_review": 0
+  },
+  "recommended_final_E_check": {
+    "required_source_state": "Reviewed final E committed and frozen; run the recorder from that exact E checkout with output outside its source root.",
+    "mode": "head",
+    "candidate_and_tested": "Both must be the same explicit final E 40-hex commit ID.",
+    "why_head": "E is the reviewed and committed final source. A prospective-merge label additionally requires the exact canonical conflict-free event-base/candidate combination; manual reviewed pin or inventory resolution must not silently borrow that label.",
+    "argv_template": [
+      "python3",
+      "scripts/ci/record_pq_native_command.py",
+      "--kind",
+      "head",
+      "--candidate",
+      "${FINAL_E}",
+      "--tested",
+      "${FINAL_E}",
+      "--label",
+      "final-e-source-controls",
+      "--output",
+      "/workspace/scratch/73305aff6ced/observations/e-final",
+      "--",
+      "bash",
+      "-c",
+      "set -euo pipefail\npython3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py\npython3 scripts/refresh_distributed_source_inventory.py --check\npython3 scripts/ci/check_pq_research_integration.py\npython3 scripts/ci/check_ci_contract.py\npython3 scripts/ci/check_repository.py\n"
+    ],
+    "template_note": "Substitute the actual E SHA for both ${FINAL_E} placeholders; use a new label/output record if a prior record already exists.",
+    "commands_inside_recorder": [
+      "python3 -m unittest discover -s scripts/ci -p test_ci_source_integrity.py",
+      "python3 scripts/refresh_distributed_source_inventory.py --check",
+      "python3 scripts/ci/check_pq_research_integration.py",
+      "python3 scripts/ci/check_ci_contract.py",
+      "python3 scripts/ci/check_repository.py"
+    ],
+    "expected_distinct_tests_in_this_minimal_command": 43,
+    "other_commands_are_static_gates_not_extra_tests": true,
+    "if_all_original_five_suites_are_rerun_expected_distinct_tests": 115,
+    "success_not_yet_observed": true,
+    "preserve_failure_or_incomplete_receipts": true
+  },
+  "result_attribution": {
+    "C": {
+      "commit": "211e330fd1cfbdaf3e9ff552714df29c840ce675",
+      "native_library": 295,
+      "native_cli": 29,
+      "compile_fail_docs": 8,
+      "attribution": "Existing completed results remain source-local to C; not E execution."
+    },
+    "N": {
+      "commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+      "python_distinct_completed": 106,
+      "strict_workspace_clippy": "PASS_ON_N_ONLY",
+      "selected_node": "NOT_RUN_BUILD_FAILED_RESOURCE",
+      "selected_node_actual_tests_executed": 0,
+      "attribution": "Existing N records retain N identity. The Node compile failure does not provide test outcomes."
+    },
+    "D": {
+      "commit": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+      "attribution": "Any D-local observation and carried C/N evidence keep their recorded source identities; neither is E-local execution."
+    },
+    "C_N_D_results_transferred_to_E": false,
+    "fresh_E_results_claimed": false,
+    "incoming_native_Growth_or_W1_runtime_results_claimed": false,
+    "combined_native_acceptance": "HOLD",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "blocking_findings": [],
+  "conclusion": "No blocking recorder/schema compatibility issue found. Run the minimal fresh static gates on exact final E and preserve C/N/D attribution. This review supplies no new native runtime result or acceptance."
+}

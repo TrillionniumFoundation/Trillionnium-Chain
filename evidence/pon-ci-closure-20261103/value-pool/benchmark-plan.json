@@ -1,0 +1,196 @@
+{
+  "schema": "value-pool-preregistered-component-v1",
+  "created_utc": "2026-11-03T16:07:12Z",
+  "measurement_started": false,
+  "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+  "driver_path": "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs",
+  "sources": {
+    "baseline": {
+      "directory": "/workspace/scratch/abae1861b451/value-pool-baseline",
+      "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "production_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "measured_tree_with_driver": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+      "target": "/workspace/scratch/abae1861b451/value-pool-baseline-target",
+      "production_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate": {
+      "directory": "/workspace/scratch/abae1861b451/chain-value-pool",
+      "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "production_tree": "367bf61031f47fecc64123de644c3bf23b9d39b5",
+      "measured_tree_with_driver": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+      "target": "/workspace/scratch/abae1861b451/value-pool-target",
+      "production_patch_sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1"
+    }
+  },
+  "inputs": {
+    "repeated": [
+      {
+        "sha256": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+        "json_bytes": 8620501,
+        "keys": 2100
+      },
+      {
+        "sha256": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+        "json_bytes": 8620501,
+        "keys": 2100
+      },
+      {
+        "sha256": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+        "json_bytes": 8624781,
+        "keys": 2102
+      },
+      {
+        "sha256": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+        "json_bytes": 8620670,
+        "keys": 2101
+      }
+    ],
+    "unique": [
+      {
+        "sha256": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+        "json_bytes": 8620501,
+        "keys": 2100
+      },
+      {
+        "sha256": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+        "json_bytes": 8620501,
+        "keys": 2100
+      }
+    ],
+    "collision": [
+      {
+        "sha256": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+        "json_bytes": 8620501,
+        "keys": 2100
+      },
+      {
+        "sha256": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+        "json_bytes": 8620501,
+        "keys": 2100
+      }
+    ]
+  },
+  "toolchain": "1.95.0",
+  "cargo_mode": "test --locked --no-run --message-format=json",
+  "profile_requirements": {
+    "trnm_protocol": {
+      "opt_level": "3",
+      "debug_assertions": true,
+      "overflow_checks": true
+    },
+    "trnm_mvcc_fee": {
+      "opt_level": "1",
+      "debug_assertions": true,
+      "overflow_checks": true
+    }
+  },
+  "apis": [
+    "executor::root_with_arithmetic",
+    "commitment::derive_snapshot_with_arithmetic"
+  ],
+  "limits": {
+    "root_retained_bytes": 2097152,
+    "node_retained_charge_reference_bytes": 16777216,
+    "commitment_limits": "unaltered CacheLimits::default, including original 8MiB payload limit",
+    "workers": 1,
+    "new_provider": false,
+    "new_dependency": false
+  },
+  "grid": {
+    "case_order": [
+      "repeated",
+      "unique",
+      "collision"
+    ],
+    "rows": 2100,
+    "body_bytes": 4080,
+    "key_template": "root-fallback:{index:05}",
+    "fixture_origin": "trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs::fixture(2100,4080)",
+    "pairs": 5,
+    "process_order": [
+      [
+        "baseline",
+        "candidate"
+      ],
+      [
+        "candidate",
+        "baseline"
+      ],
+      [
+        "baseline",
+        "candidate"
+      ],
+      [
+        "candidate",
+        "baseline"
+      ],
+      [
+        "baseline",
+        "candidate"
+      ]
+    ],
+    "calls_each_api_case": [
+      "cold",
+      "warm-0",
+      "warm-1",
+      "warm-2",
+      "warm-3",
+      "warm-4",
+      "warm-5",
+      "warm-6",
+      "warm-7",
+      "changed",
+      "restored"
+    ],
+    "extra_repeated_calls": [
+      "late_grammar",
+      "late_wire"
+    ],
+    "samples_per_process": 70,
+    "total_planned_samples": 700
+  },
+  "comparison": {
+    "warm_unit": "sum of eight same-process caller-thread CPU intervals; eight correlated calls are not independent replicates",
+    "statistic": "median across five paired candidate/baseline ratios",
+    "repeated_warm_root_max_ratio": 0.85,
+    "repeated_warm_commitment_max_ratio": 0.95,
+    "unique_collision_each_cold_warm_api_max_ratio": 1.05,
+    "cold_repeated_changed_restored_failures": "retain and report all; no additional timing pass threshold",
+    "correctness": "all original-reference roots/commitment observations/errors match; every exposed arithmetic charge<=2MiB; root cache unchanged on failed input; unknown clocks or missing planned samples prevent pass",
+    "private_M06_observation": "null, no new private material access or observer API",
+    "memory": "software retained charge and process VmHWM are distinct; no peak/RSS claim from 2MiB bound"
+  },
+  "boundaries": {
+    "setup": "input generation, complete input SHA256, original root/derive reference calculations; separately measured outside operation timers",
+    "cold": "new empty optional arithmetic owner after common setup; not cold OS pages/allocator/global empty-hash table",
+    "operation": "complete original API invocation; canonical validation/encoding and fallback remain inside timer; output validation, destruction and logging are outside",
+    "CPU": "existing Node rustix(time) dynamic CLOCK_THREAD_CPUTIME_ID with checked seconds/nanoseconds and thread identity",
+    "scope": "finite component experiment, no ARM quota/Host/service/TPS/confirmation acceptance"
+  },
+  "stops": {
+    "process_timeout_seconds": 120,
+    "retries": 0,
+    "outlier_exclusions": 0,
+    "unknown_or_failed_samples": "retain all; run remaining originally planned processes; no replacement sample",
+    "hardware_fault_or_timeout": "preserve partial log and explicit missing sample counts; campaign cannot pass"
+  },
+  "preflight_history": [
+    "candidate PASS",
+    "baseline initial fix/value-pool-baseline name refused; renamed to allowed fix/chain-value-pool-baseline before any source editing/build; subsequent PASS"
+  ],
+  "environment": {
+    "machine": "x86_64",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "compiler": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "filesystem": "overlayfs",
+    "build_env": {
+      "RUSTFLAGS": null,
+      "CARGO_ENCODED_RUSTFLAGS": null,
+      "RUSTC_WRAPPER": null,
+      "CARGO_BUILD_RUSTFLAGS": null
+    },
+    "cpu.max": "800000 100000",
+    "memory.max": "8589934592",
+    "pids.max": "max"
+  }
+}

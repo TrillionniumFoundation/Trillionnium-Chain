@@ -1,0 +1,9 @@
+{
+  "stored_path": "static/cargo-graph.log.gz",
+  "stored_bytes": 65824,
+  "stored_sha256": "817a47cb6bae2710945b2d65ae027d9f9514daf5381b22fd87ba83980fc5e206",
+  "encoding": "gzip",
+  "decoded_path": "static/cargo-graph.log",
+  "decoded_bytes": 812345,
+  "decoded_sha256": "0afd8c8fff7442b93426a11f58efc8872543797acaff18352184f9dd29adf694"
+}

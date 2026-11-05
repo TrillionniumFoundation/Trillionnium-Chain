@@ -1,0 +1,899 @@
+{
+  "artifact": {
+    "artifact_id": 13386124417,
+    "entry_count": 444,
+    "extracted_text_bytes": 40292779,
+    "extracted_text_count": 433,
+    "zip_bytes": 18263423,
+    "zip_sha256": "c39004a545404871bc04a58edd769d339319a8ec41ee1e806f3507e54317832d"
+  },
+  "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41964674522/artifacts/13386124417",
+  "bindings": {
+    "prepared_binary": {
+      "build_artifact": "/home/runner/work/_temp/target-fixed-host-root-f0/release/deps/public_v3_multiprocess-b96ca04a3b841191",
+      "bytes": 11676080,
+      "compiler_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "path": "/home/runner/work/_temp/pon-fixed-host-root-f0-41964674522-1/prepared/public_v3_multiprocess.bin",
+      "sha256": "68de7e28779aca7bf0f6738906cf9edb1e50afc387e3c508f26df721ec86b227"
+    },
+    "source_after": {
+      "bytes": 421,
+      "git_blob": "e009659910e4f1b1ca876fc604b5ac6ba673e030",
+      "sha256": "f87e0920748006bfff9c83594fd4c0f66cc5e58b174a646593016b069ca0d899"
+    },
+    "source_before": {
+      "bytes": 421,
+      "git_blob": "e009659910e4f1b1ca876fc604b5ac6ba673e030",
+      "sha256": "f87e0920748006bfff9c83594fd4c0f66cc5e58b174a646593016b069ca0d899"
+    }
+  },
+  "finalization": {
+    "all_services_known_empty": true,
+    "complete_success": false,
+    "denominator": {
+      "controller_resource_failure": null,
+      "controller_resources_complete": true,
+      "four_second_slo_successes": 0,
+      "native_complete_success": false,
+      "native_result_failure": "NATIVE_F0_FAILED",
+      "native_result_observed": true,
+      "native_result_sha256": "9a545b0104f29438163f1707abb143c3896ee6d0f73083de4fbd3cfecef67181",
+      "planned_business_packet_exposures": 42,
+      "planned_confirmations": 6,
+      "report_failure": null,
+      "report_observed": true,
+      "report_sha256": "e56674a91e022b7b1a234f0b0ab67fed77aa581c482f6c87d8cd5dc261932872"
+    },
+    "services": [
+      {
+        "controller_terminal_before_phase_observation": null,
+        "failure": null,
+        "known_empty": true,
+        "observed_empty_at_readback": true,
+        "phase": "controller",
+        "remaining": "observed-empty"
+      },
+      {
+        "controller_terminal_before_phase_observation": true,
+        "failure": null,
+        "known_empty": true,
+        "observed_empty_at_readback": true,
+        "phase": "baseline",
+        "remaining": "observed-empty"
+      },
+      {
+        "controller_terminal_before_phase_observation": true,
+        "failure": null,
+        "known_empty": true,
+        "observed_empty_at_readback": true,
+        "phase": "valid-work-root",
+        "remaining": "observed-empty"
+      }
+    ]
+  },
+  "head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "inputs": {
+    "actor_call_cap": 480,
+    "attackers": 24,
+    "business_blocks": 21,
+    "confirmation_depth": 6,
+    "controller_resource_boundary_samples": 6,
+    "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "f1_implemented": false,
+    "four_second_slo_ns": 4000000000,
+    "legacy_four_second_from_zero_epoch_changed": false,
+    "m06_workers": 1,
+    "phase_profile": "fixed-public-root-phase-external-actors-v1",
+    "phase_seconds": 30,
+    "planned_business_packets": 42,
+    "planned_complete_runs": 1,
+    "planned_confirmations": 6,
+    "planned_phases": [
+      "baseline",
+      "valid-work-root"
+    ],
+    "round_start_seconds": [
+      1,
+      5,
+      9
+    ],
+    "seed_blocks": 4,
+    "seed_transfers": 1024,
+    "slo_starts_at_scheduled_offset": true,
+    "start_reserve_ns": 100000000
+  },
+  "job_id": 127038806677,
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41964674522/job/127038806677",
+  "measurement_limits": [
+    "CPU/stage/Host intervals are nested and must not be added across categories.",
+    "Host checkpoint timing is actual per-call observation; it does not establish which account-graph instruction dominates or justify skipping a check.",
+    "CPU throttling was observed under the declared public Host limits; the observed GitHub memory.events contain no OOM. Current local shared-cgroup OOM is unrelated evidence.",
+    "full_work_accepted is work-verification-stage acceptance, not successful admission of invalid-root hostile packets.",
+    "This single finite x64 head F0 pair uses AuthenticatedV1 and RawR14, not the GrowthV2 path. It does not cover the newly added GrowthV2/B1 native selectors.",
+    "F0 uses 24 hostile producers, two 30-second phases and six scheduled 4-second SLOs. It does not rerun or close original issue #639's from-zero 4-second/16-hostile-producer gate.",
+    "No prospective-merge native, independent operator/WAN, production, F1, PQ or quantum qualification follows."
+  ],
+  "no_artifact_binary_executed": true,
+  "outcome": {
+    "complete_success": false,
+    "controller_resources_complete": true,
+    "direct_process_exit_observed": true,
+    "failure": "NATIVE_F0_FAILED",
+    "four_second_slo_successes": 0,
+    "native_execution_observed": true,
+    "native_result_failure": "NATIVE_F0_FAILED",
+    "planned_business_packet_exposures": 42,
+    "planned_confirmations": 6,
+    "report_validation_failure": "BASELINE_MUST_PASS"
+  },
+  "phases": {
+    "baseline": {
+      "client_host_checks_sum": {
+        "checkpoint": {
+          "calls_accepted": 166743,
+          "calls_completed": 166743,
+          "calls_rejected": 0,
+          "calls_started": 166743,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 4038066182,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 6612842651
+        },
+        "final": {
+          "calls_accepted": 14,
+          "calls_completed": 14,
+          "calls_rejected": 0,
+          "calls_started": 14,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 830158,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 833506
+        },
+        "initial": {
+          "calls_accepted": 14,
+          "calls_completed": 14,
+          "calls_rejected": 0,
+          "calls_started": 14,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 389743,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 389599
+        },
+        "resolve": {
+          "calls_accepted": 14,
+          "calls_completed": 14,
+          "calls_rejected": 0,
+          "calls_started": 14,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 1477365,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 1477979
+        }
+      },
+      "client_import": {
+        "all_client_import_cpu_known": true,
+        "client_import_calls": 14,
+        "client_import_successes": 14,
+        "client_import_thread_cpu_ns": 5401201965,
+        "client_import_wall_ns": 23368586812,
+        "history_calls": 14,
+        "history_network_wall_ns": 308889425
+      },
+      "client_stage_after_minus_before": [
+        {
+          "calls": 168,
+          "cpu_ns": 3964410927,
+          "stage": "verify_state",
+          "wall_ns": 16696467688
+        },
+        {
+          "calls": 124,
+          "cpu_ns": 3738849684,
+          "stage": "account_graph",
+          "wall_ns": 15396977190
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 3424224411,
+          "stage": "admission",
+          "wall_ns": 14486087764
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 1751352990,
+          "stage": "publish",
+          "wall_ns": 7197680450
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 1541348017,
+          "stage": "activation",
+          "wall_ns": 6682407941
+        },
+        {
+          "calls": 42,
+          "cpu_ns": 975755608,
+          "stage": "state_at",
+          "wall_ns": 4428487205
+        },
+        {
+          "calls": 6,
+          "cpu_ns": 247419130,
+          "stage": "read_active",
+          "wall_ns": 1090670002
+        },
+        {
+          "calls": 46,
+          "cpu_ns": 171887033,
+          "stage": "verify_history",
+          "wall_ns": 709397290
+        },
+        {
+          "calls": 182,
+          "cpu_ns": 170707677,
+          "stage": "complete_commitment",
+          "wall_ns": 1012958206
+        },
+        {
+          "calls": 629,
+          "cpu_ns": 134551554,
+          "stage": "delta",
+          "wall_ns": 441097418
+        },
+        {
+          "calls": 142,
+          "cpu_ns": 39879925,
+          "stage": "persisted_state_root",
+          "wall_ns": 39981574
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 27171066,
+          "stage": "execute",
+          "wall_ns": 179967853
+        },
+        {
+          "calls": 72,
+          "cpu_ns": 24423567,
+          "stage": "complete_state_root",
+          "wall_ns": 176405284
+        },
+        {
+          "calls": 643,
+          "cpu_ns": 19684772,
+          "stage": "packet",
+          "wall_ns": 94962466
+        },
+        {
+          "calls": 1180,
+          "cpu_ns": 7713635,
+          "stage": "record",
+          "wall_ns": 8211439
+        },
+        {
+          "calls": 14,
+          "cpu_ns": 4976127,
+          "stage": "execution_parent_binding",
+          "wall_ns": 81003778
+        }
+      ],
+      "finite_phase_criteria_met": false,
+      "observer_complete": true,
+      "packets": {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 18,
+        "planned": 21,
+        "timely_network_ack": 17,
+        "unobserved": 3
+      },
+      "public_host_observations": {
+        "inside-after": {
+          "artifact_member": "execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 4293000,
+            "nr_bursts": 0,
+            "nr_periods": 353,
+            "nr_throttled": 338,
+            "system_usec": 4181263,
+            "throttled_usec": 39033869,
+            "usage_usec": 8566840,
+            "user_usec": 4385576
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 28614656,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "inside-before": {
+          "artifact_member": "execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 65000,
+            "nr_bursts": 0,
+            "nr_periods": 3,
+            "nr_throttled": 2,
+            "system_usec": 9756,
+            "throttled_usec": 148332,
+            "usage_usec": 73174,
+            "user_usec": 63418
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 14942208,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "outside-after": {
+          "artifact_member": "execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 4309000,
+            "nr_bursts": 0,
+            "nr_periods": 355,
+            "nr_throttled": 339,
+            "system_usec": 4185950,
+            "throttled_usec": 39082547,
+            "usage_usec": 8587430,
+            "user_usec": 4401479
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 13242368,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "outside-before": {
+          "artifact_member": "execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "nr_bursts": 0,
+            "nr_periods": 0,
+            "nr_throttled": 0,
+            "system_usec": 0,
+            "throttled_usec": 0,
+            "usage_usec": 0,
+            "user_usec": 0
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 0,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        }
+      },
+      "raw_source": {
+        "artifact_member": "execution/raw/baseline.json",
+        "bytes": 3249541,
+        "git_blob": "1e35411f3c0160373664dd2fe99f4a5b7f3c5f40",
+        "sha256": "26fca4992a451cf4231501ab76f1ee2725d81b7d6b1fa4cc9da273bde90ae8e9"
+      },
+      "root_checks": {},
+      "state_backend": "authenticated-v1",
+      "verifier_errors": []
+    },
+    "valid-work-root": {
+      "client_host_checks_sum": {
+        "checkpoint": {
+          "calls_accepted": 43310,
+          "calls_completed": 43310,
+          "calls_rejected": 0,
+          "calls_started": 43310,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 1236897535,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 3296422510
+        },
+        "final": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 388790,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 86911916
+        },
+        "initial": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 179228,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 179108
+        },
+        "resolve": {
+          "calls_accepted": 5,
+          "calls_completed": 5,
+          "calls_rejected": 0,
+          "calls_started": 5,
+          "calls_unfinished": 0,
+          "cpu_clock_unknown_calls": 0,
+          "thread_cpu_ns": 704034,
+          "wall_clock_unknown_calls": 0,
+          "wall_ns": 703954
+        }
+      },
+      "client_import": {
+        "all_client_import_cpu_known": true,
+        "client_import_calls": 5,
+        "client_import_successes": 4,
+        "client_import_thread_cpu_ns": 1585730854,
+        "client_import_wall_ns": 15374301136,
+        "history_calls": 5,
+        "history_network_wall_ns": 328417233
+      },
+      "client_stage_after_minus_before": [
+        {
+          "calls": 5,
+          "cpu_ns": 1403020135,
+          "stage": "admission",
+          "wall_ns": 13296540276
+        },
+        {
+          "calls": 35,
+          "cpu_ns": 1133877249,
+          "stage": "verify_state",
+          "wall_ns": 11326646205
+        },
+        {
+          "calls": 24,
+          "cpu_ns": 1089253706,
+          "stage": "account_graph",
+          "wall_ns": 10657761129
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 737484127,
+          "stage": "publish",
+          "wall_ns": 7083348940
+        },
+        {
+          "calls": 13,
+          "cpu_ns": 406605207,
+          "stage": "state_at",
+          "wall_ns": 3894711517
+        },
+        {
+          "calls": 2,
+          "cpu_ns": 89411269,
+          "stage": "read_active",
+          "wall_ns": 801538715
+        },
+        {
+          "calls": 40,
+          "cpu_ns": 35615039,
+          "stage": "complete_commitment",
+          "wall_ns": 479813545
+        },
+        {
+          "calls": 8,
+          "cpu_ns": 28997574,
+          "stage": "verify_history",
+          "wall_ns": 117914902
+        },
+        {
+          "calls": 85,
+          "cpu_ns": 26654355,
+          "stage": "delta",
+          "wall_ns": 205764139
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 10720915,
+          "stage": "execute",
+          "wall_ns": 187824839
+        },
+        {
+          "calls": 13,
+          "cpu_ns": 5746261,
+          "stage": "complete_state_root",
+          "wall_ns": 94598027
+        },
+        {
+          "calls": 90,
+          "cpu_ns": 4104248,
+          "stage": "packet",
+          "wall_ns": 4169611
+        },
+        {
+          "calls": 20,
+          "cpu_ns": 2318546,
+          "stage": "persisted_state_root",
+          "wall_ns": 90292698
+        },
+        {
+          "calls": 5,
+          "cpu_ns": 1595779,
+          "stage": "execution_parent_binding",
+          "wall_ns": 90407127
+        },
+        {
+          "calls": 159,
+          "cpu_ns": 1593065,
+          "stage": "record",
+          "wall_ns": 1681824
+        },
+        {
+          "calls": 0,
+          "cpu_ns": 0,
+          "stage": "activation",
+          "wall_ns": 0
+        }
+      ],
+      "finite_phase_criteria_met": false,
+      "observer_complete": true,
+      "packets": {
+        "ack_is_not_confirmation": true,
+        "observed_attempts": 7,
+        "planned": 21,
+        "timely_network_ack": 7,
+        "unobserved": 14
+      },
+      "public_host_observations": {
+        "inside-after": {
+          "artifact_member": "execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 10895000,
+            "nr_bursts": 0,
+            "nr_periods": 723,
+            "nr_throttled": 704,
+            "system_usec": 6772127,
+            "throttled_usec": 106967300,
+            "usage_usec": 17751640,
+            "user_usec": 10979512
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 40349696,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "inside-before": {
+          "artifact_member": "execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 4373000,
+            "nr_bursts": 0,
+            "nr_periods": 358,
+            "nr_throttled": 341,
+            "system_usec": 4195532,
+            "throttled_usec": 39218890,
+            "usage_usec": 8660624,
+            "user_usec": 4465091
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 28426240,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "outside-after": {
+          "artifact_member": "execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 10913000,
+            "nr_bursts": 0,
+            "nr_periods": 725,
+            "nr_throttled": 705,
+            "system_usec": 6775157,
+            "throttled_usec": 107000968,
+            "usage_usec": 17772820,
+            "user_usec": 10997663
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 25436160,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        },
+        "outside-before": {
+          "artifact_member": "execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+          "cpu_stat": {
+            "burst_usec": 0,
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 4309000,
+            "nr_bursts": 0,
+            "nr_periods": 356,
+            "nr_throttled": 339,
+            "system_usec": 4185950,
+            "throttled_usec": 39082547,
+            "usage_usec": 8587430,
+            "user_usec": 4401479
+          },
+          "limits": {
+            "cpu.max": "25000 100000",
+            "cpu.max.burst": "0",
+            "memory.max": "2147483648",
+            "memory.swap.max": "0",
+            "pids.max": "256"
+          },
+          "memory_current_bytes": 13242368,
+          "memory_events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "read_errors": {}
+        }
+      },
+      "raw_source": {
+        "artifact_member": "execution/raw/valid-work-root.json",
+        "bytes": 5735157,
+        "git_blob": "af9656841ed241dd89ec1a3bfefce2f70fc066e9",
+        "sha256": "c222bc11052b7b33fb7b760c46815c8cc282b5520c29a77b2a44a52302df933b"
+      },
+      "root_checks": {
+        "aggregate_membership_verified": true,
+        "aggregate_scoped_cpu_ns": 0,
+        "checked_acquisitions_complete": true,
+        "cold_state_equal": true,
+        "criteria_met": false,
+        "expected_legal_counts_and_tip": false,
+        "hostile_packets_absent_cold": true,
+        "hostile_packets_absent_live": true,
+        "mutation_owner_cpu_ns": 5180366206,
+        "original_campaign_qualified": false,
+        "whole_domain_paid_reconciled": true
+      },
+      "state_backend": "authenticated-v1",
+      "verifier_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ]
+    }
+  },
+  "raw_report_binding": {
+    "artifact_member": "execution/raw/report.json",
+    "bytes": 12101521,
+    "git_blob": "040ed3b177bc4af3eaa9df2c8c231043de9c03d5",
+    "sha256": "e56674a91e022b7b1a234f0b0ab67fed77aa581c482f6c87d8cd5dc261932872"
+  },
+  "review_conclusion": "The native business pair genuinely failed, starting with the no-attack baseline. Denominator/finalization failure is the intended aggregate failure because native_complete_success is false and 0 of 6 SLOs passed; report/resource observations and service-empty evidence are present. Measured ordinary client imports justify inspecting that exact authenticated replay path; they do not identify a safe statement deletion.",
+  "round_time_semantics": "Phase-relative nanoseconds. elapsed_from_scheduled_ns includes scheduling delay; it is not actual execution duration. Missing observations remain unsuccessful in the original denominator.",
+  "rounds": [
+    {
+      "actual_ended_ns": 15102383267,
+      "actual_started_ns": 1001387691,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 14102383267,
+      "end_lateness_from_four_second_deadline_ns": 10102383267,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 1387691
+    },
+    {
+      "actual_ended_ns": 28812108308,
+      "actual_started_ns": 15102405166,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 23812108308,
+      "end_lateness_from_four_second_deadline_ns": 19812108308,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 10102405166
+    },
+    {
+      "actual_ended_ns": 30004374319,
+      "actual_started_ns": 28812126962,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 21004374319,
+      "end_lateness_from_four_second_deadline_ns": 17004374319,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": 19812126962
+    },
+    {
+      "actual_ended_ns": 30053569951,
+      "actual_started_ns": 1050950036,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 29053569951,
+      "end_lateness_from_four_second_deadline_ns": 25053569951,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 50950036
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    }
+  ],
+  "run_id": 41964674522,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41964674522",
+  "schema": "pon-fixed-host-root-f0-readback-analysis-v1",
+  "scope": "Read-only analysis of an already completed GitHub head campaign. No new native/model tests, no CI dispatch, no threshold/source changes.",
+  "source_map": [
+    {
+      "git_blob": "2b2454cf6ffee6959e0402c52a77e7722e181f3a",
+      "path": "scripts/run_fixed_host_root_f0.py",
+      "review_locations": "check_report 215-224; execute failure/report extraction 478-501",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/scripts/run_fixed_host_root_f0.py"
+    },
+    {
+      "git_blob": "c5deebcd734b57e5ef63b1e51797328db6551a1f",
+      "path": "scripts/ci/finalize_fixed_root_f0.py",
+      "review_locations": "denominator retention 182-240; aggregate exit gate 283-288",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/scripts/ci/finalize_fixed_root_f0.py"
+    },
+    {
+      "git_blob": "452a7c10265ecc337943832589e71ce80d0eff14",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+      "review_locations": "AuthenticatedV1/RawR14 415-443; ordinary client importer 651-685; criteria panic 1423",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs"
+    },
+    {
+      "git_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "review_locations": "explicit state-backend routing 135-169",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    },
+    {
+      "git_blob": "cda95433f7bdd6d1c013e506891154c9722ff967",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "review_locations": "AuthenticatedV1 constructor 1083-1109",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "git_blob": "d3d158a67e25fef03f035638d3090fdadfbdfd78",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "review_locations": "separate GrowthV2 constructor 238-249",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c/trillionnium/crates/trnm-pon-node/src/store/growth.rs"
+    }
+  ],
+  "tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+  "wrapper_or_parser_bug_established": false
+}

@@ -1,0 +1,1254 @@
+{
+  "schema": "trnm-b280-actual-elf-list-only-registry-v1",
+  "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+  "started_utc": "2026-11-03T20:23:07.207088+00:00",
+  "completed_utc": "2026-11-03T20:23:08.389473+00:00",
+  "environment_setup": "/workspace/scratch/b5a148b09b11/validation/env.sh",
+  "scope": "Actual built ELF --list output only; no test bodies, hosted fixtures or business acceptance executed.",
+  "artifacts_path": "/workspace/scratch/b5a148b09b11/next-validation/composed-b280-j1-build/artifacts.json",
+  "artifacts_sha256_before": "38f49f6e0960bc62371a1ea15e390cb7a70ef4c8ebe335ef38ef329de1db9ef4",
+  "artifacts_sha256_after": "38f49f6e0960bc62371a1ea15e390cb7a70ef4c8ebe335ef38ef329de1db9ef4",
+  "build_invocation": {
+    "started_utc": "2026-11-03T20:04:05.099768+00:00",
+    "source_commit": "b28098c092dca72165c0d26054fce95a8636d777",
+    "cargo_build_jobs": "1",
+    "cargo_incremental": "0",
+    "cargo_target_dir": "/workspace/scratch/b5a148b09b11/target",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "recovery_from": "composed-8a74-final-build session 55201 lost without terminal result; executor key changed during session recovery",
+    "profiles_and_native_budgets_changed": false
+  },
+  "native_source_manifests": {
+    "native-source.before.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+    "native-source.after.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+    "native-source.final.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188"
+  },
+  "registry_source": {
+    "path": "scripts/ci/run_public_fixture_native.py",
+    "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+    "matches_b280": true
+  },
+  "declared_host_fixtures": [
+    {
+      "target": "architecture_delivery_compare",
+      "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+      "cli_required": false
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+      "cli_required": false
+    },
+    {
+      "target": "public_intake_v2",
+      "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+      "cli_required": false
+    },
+    {
+      "target": "public_cli",
+      "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+      "cli_required": true
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+      "cli_required": true
+    },
+    {
+      "target": "public_pool_cli",
+      "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+      "cli_required": true
+    },
+    {
+      "target": "mining_service_budget",
+      "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+      "cli_required": true
+    },
+    {
+      "target": "evaluation_sync_observation",
+      "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+      "cli_required": true
+    },
+    {
+      "target": "native_node",
+      "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+      "cli_required": true
+    }
+  ],
+  "host_selector_count": 9,
+  "additional_pinned_selector": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+  "history_filter": "ingress::history_import::tests::",
+  "history_expected_registered": 26,
+  "history_expected_ignored": [
+    "ingress::history_import::tests::history_kill_cut_child"
+  ],
+  "entries": [
+    {
+      "target": "architecture_delivery_compare",
+      "filter": null,
+      "expected_selectors": [
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "architecture_delivery_compare",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+        "sha256": "0573fd982b5e748824b107a11c31af3011f6076842a2259bed573aec39f6bc48"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "sha256": "101c3e33f9378f959a9aace7c80f910f8f28654967b0ee2f54117f60d520d72d",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "0573fd982b5e748824b107a11c31af3011f6076842a2259bed573aec39f6bc48",
+      "binary_sha256_after": "0573fd982b5e748824b107a11c31af3011f6076842a2259bed573aec39f6bc48",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2130793,
+        "stdout": "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history: test\nsigned_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract: test\n\n2 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "c885a9a1b43219cb9b2872235bbaaeae8d1429f3975aad352070380226c1e76a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+          "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+        ],
+        "summary_count": 2,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/architecture_delivery_compare-d79010039403b74c",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2092915,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "reference_dag_rejects_withheld_body_equivocation_and_changed_signed_history",
+        "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract"
+      ],
+      "selector_checks": [
+        {
+          "selector": "signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "public_intake_v2",
+      "filter": null,
+      "expected_selectors": [
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+        "one_packet_history_preserves_partial_progress_and_independent_validation"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "public_intake_v2",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_intake_v2-9fc0852a14291a17",
+        "sha256": "a83adea557954dfc59c197efca04954230b9d0b9a49fc0784f356d741c436df6"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_intake_v2.rs",
+        "sha256": "2bd91aac6dafab96a1e8dc3858ad4b0b8628779384fce4ddb4940e3fee594429",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "a83adea557954dfc59c197efca04954230b9d0b9a49fc0784f356d741c436df6",
+      "binary_sha256_after": "a83adea557954dfc59c197efca04954230b9d0b9a49fc0784f356d741c436df6",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_intake_v2-9fc0852a14291a17",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2740154,
+        "stdout": "one_packet_history_preserves_partial_progress_and_independent_validation: test\nunknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work: test\n\n2 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "edb58614d5522525e44428950278edbaffefbba5b5e2da1d037caf6ca08a00ad",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+        ],
+        "summary_count": 2,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_intake_v2-9fc0852a14291a17",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 1734147,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "one_packet_history_preserves_partial_progress_and_independent_validation",
+        "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work"
+      ],
+      "selector_checks": [
+        {
+          "selector": "unknown_caller_cannot_override_ledger_and_full_sync_independently_verifies_actual_work",
+          "registered_once": true,
+          "ignored": false
+        },
+        {
+          "selector": "one_packet_history_preserves_partial_progress_and_independent_validation",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "public_cli",
+      "filter": null,
+      "expected_selectors": [
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "public_cli",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_cli-1b6f3532731727ff",
+        "sha256": "1a4fd132f27c10ac17fffc568675838f2f179532d1ac083a4b131e786325bc6a"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_cli.rs",
+        "sha256": "376d26752b617c7dac4b0d35ee1fb95cc78cdc096fac790149376de69c25890b",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "1a4fd132f27c10ac17fffc568675838f2f179532d1ac083a4b131e786325bc6a",
+      "binary_sha256_after": "1a4fd132f27c10ac17fffc568675838f2f179532d1ac083a4b131e786325bc6a",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_cli-1b6f3532731727ff",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2213369,
+        "stdout": "actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse: test\nactual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history: test\npublic_cli_requires_explicit_profile_and_rejects_private_session_options: test\n\n3 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "e81bfaafbe99397c7b3b06988253bc996ff074c28d6f8ab26cd0e6b9e9eebcd9",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse",
+          "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "public_cli_requires_explicit_profile_and_rejects_private_session_options"
+        ],
+        "summary_count": 3,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_cli-1b6f3532731727ff",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3541967,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse",
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        "public_cli_requires_explicit_profile_and_rejects_private_session_options"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "actual_cli_explicit_v3_bootstrap_mines_and_refuses_v2_namespace_reuse",
+        "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+        "public_cli_requires_explicit_profile_and_rejects_private_session_options"
+      ],
+      "selector_checks": [
+        {
+          "selector": "actual_public_cli_pins_server_denials_fail_and_sync_verifies_native_history",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "public_pool_cli",
+      "filter": null,
+      "expected_selectors": [
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "public_pool_cli",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/public_pool_cli-fb977579b89a95f5",
+        "sha256": "d71c2cb96a39c585776fce1fd3fece0c8484afec8a2a05a3379a65cb2eb634f1"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "d71c2cb96a39c585776fce1fd3fece0c8484afec8a2a05a3379a65cb2eb634f1",
+      "binary_sha256_after": "d71c2cb96a39c585776fce1fd3fece0c8484afec8a2a05a3379a65cb2eb634f1",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_pool_cli-fb977579b89a95f5",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2769988,
+        "stdout": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner: test\nactual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver: test\npeer_cli_rejects_unused_options_and_wrong_context_before_store_creation: test\nreal_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst: test\nv3_mining_options_refuse_v2_and_unused_or_logical_clock_options: test\n\n5 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "1572f3b8a4b307a41442a6528f55fc88b5ecd2bb71d4aeaa78c75f0bbc4e48eb",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "peer_cli_rejects_unused_options_and_wrong_context_before_store_creation",
+          "real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst",
+          "v3_mining_options_refuse_v2_and_unused_or_logical_clock_options"
+        ],
+        "summary_count": 5,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/public_pool_cli-fb977579b89a95f5",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2080015,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "peer_cli_rejects_unused_options_and_wrong_context_before_store_creation",
+        "real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst",
+        "v3_mining_options_refuse_v2_and_unused_or_logical_clock_options"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+        "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+        "peer_cli_rejects_unused_options_and_wrong_context_before_store_creation",
+        "real_two_cli_process_cold_reopens_one_node_without_fresh_cpu_burst",
+        "v3_mining_options_refuse_v2_and_unused_or_logical_clock_options"
+      ],
+      "selector_checks": [
+        {
+          "selector": "actual_v3_cli_unknown_guest_funding_and_atomic_renewal_reach_native_receiver",
+          "registered_once": true,
+          "ignored": false
+        },
+        {
+          "selector": "actual_pinned_peer_cli_follows_native_blocks_and_closes_shared_owner",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "mining_service_budget",
+      "filter": null,
+      "expected_selectors": [
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "mining_service_budget",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/mining_service_budget-643ab311680759e5",
+        "sha256": "438595a7a64b34753582fb52feafde4f74f944f62605d382f7ad18d587498f2e"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs",
+        "sha256": "de77046e05414963efb186e10c4ae9795ef69033f9a4bfd662537412bbafa8b2",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "438595a7a64b34753582fb52feafde4f74f944f62605d382f7ad18d587498f2e",
+      "binary_sha256_after": "438595a7a64b34753582fb52feafde4f74f944f62605d382f7ad18d587498f2e",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/mining_service_budget-643ab311680759e5",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2152055,
+        "stdout": "invalid_or_unused_mining_runtime_refuses_before_store_creation: test\nmining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain: test\n\n2 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "133488f517d2e7c005f504b70058c57670e6e0bb326f32301aa643994389bfc1",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "invalid_or_unused_mining_runtime_refuses_before_store_creation",
+          "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+        ],
+        "summary_count": 2,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/mining_service_budget-643ab311680759e5",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2319571,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "invalid_or_unused_mining_runtime_refuses_before_store_creation",
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "invalid_or_unused_mining_runtime_refuses_before_store_creation",
+        "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain"
+      ],
+      "selector_checks": [
+        {
+          "selector": "mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_chain",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "evaluation_sync_observation",
+      "filter": null,
+      "expected_selectors": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "evaluation_sync_observation",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/evaluation_sync_observation-28496d9b3cdcf560",
+        "sha256": "f94cd26f88628c3d98bae9a5a422a8c82ecfa48ffe7cd42681ae34527528abf6"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/evaluation_sync_observation.rs",
+        "sha256": "bd2a3c2886d4a866e71a0f5579c5c2d054ecebb40c9fc60ed379cb8e400c8b21",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "f94cd26f88628c3d98bae9a5a422a8c82ecfa48ffe7cd42681ae34527528abf6",
+      "binary_sha256_after": "f94cd26f88628c3d98bae9a5a422a8c82ecfa48ffe7cd42681ae34527528abf6",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/evaluation_sync_observation-28496d9b3cdcf560",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2455498,
+        "stdout": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement: test\noptional_sync_inputs_reject_before_open_without_changing_old_defaults: test\n\n2 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "995eadb18e1e5bc52a12738529fba06a4aeb9fd1f671341981500a5089f45e65",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "optional_sync_inputs_reject_before_open_without_changing_old_defaults"
+        ],
+        "summary_count": 2,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/evaluation_sync_observation-28496d9b3cdcf560",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2272158,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+        "optional_sync_inputs_reject_before_open_without_changing_old_defaults"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+        "optional_sync_inputs_reject_before_open_without_changing_old_defaults"
+      ],
+      "selector_checks": [
+        {
+          "selector": "actual_public_full_sync_query_partial_refusals_reorg_and_retirement",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "native_node",
+      "filter": null,
+      "expected_selectors": [
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "native_node",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/native_node-a1e1ae1f7daf0349",
+        "sha256": "194b9e94dc7ca412d322c457c8eaec27118e11dda0fac7136975a20afbe3fe25"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "194b9e94dc7ca412d322c457c8eaec27118e11dda0fac7136975a20afbe3fe25",
+      "binary_sha256_after": "194b9e94dc7ca412d322c457c8eaec27118e11dda0fac7136975a20afbe3fe25",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/native_node-a1e1ae1f7daf0349",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 5560709,
+        "stdout": "abrupt_child: test\ntest_active_state_cancellation_does_not_publish_a_commitment_or_change_generation: test\ntest_active_state_rechecks_generation_before_publishing_a_derived_snapshot: test\ntest_authenticated_cli_push_and_sync_share_one_durable_outbox_owner: test\ntest_authentication_options_are_scoped_to_network_commands: test\ntest_cached_work_never_reuses_an_old_clock_verdict: test\ntest_confirmed_transfer_is_removed_by_a_real_heavier_fork: test\ntest_every_reorg_process_cut_and_admission_gap_recovers_once: test\ntest_existing_output_path_cannot_publish_a_new_cli_block: test\ntest_full_transaction_pages_use_byte_limits_and_recover_all_native_state: test\ntest_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent: test\ntest_history_batches_cross_boundaries_cancel_and_recheck_actual_rows: test\ntest_initialization_process_cuts_recover_only_the_owned_context: test\ntest_joined_history_projection_rejects_corrupt_genesis_record_shapes: test\ntest_lower_height_higher_required_work_wins_after_native_retarget: test\ntest_malformed_work_and_changed_duplicate_never_mutate_state: test\ntest_native_batch_actual_heavier_reorg_removes_all_confirmations: test\ntest_native_batch_and_history_cancel_after_traversal_without_writes_or_cache: test\ntest_native_batch_checks_one_history_and_one_shared_body: test\ntest_native_batch_cli_uses_the_real_persisted_owner: test\ntest_native_batch_generation_change_is_detected_before_any_response: test\ntest_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success: test\ntest_native_batch_rechecks_future_ancestor_below_all_inclusions: test\ntest_native_body_membership_is_still_checked_after_header_projection: test\ntest_native_cli_replays_the_existing_signed_vector_without_a_reference_backend: test\ntest_native_header_projection_rejects_changed_header_or_trace: test\ntest_native_writer_and_namespace_fences_are_not_optional: test\ntest_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry: test\ntest_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store: test\ntest_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry: test\ntest_socket_history_uses_real_native_validation_and_separate_stores: test\n\n31 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "120ba3ac6bf3b1ba5d01d44da63970f04ecd0d0f8af8b5b85cccef28ec12f8a4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "abrupt_child",
+          "test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation",
+          "test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+          "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "test_authentication_options_are_scoped_to_network_commands",
+          "test_cached_work_never_reuses_an_old_clock_verdict",
+          "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+          "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+          "test_existing_output_path_cannot_publish_a_new_cli_block",
+          "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+          "test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent",
+          "test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+          "test_initialization_process_cuts_recover_only_the_owned_context",
+          "test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
+          "test_lower_height_higher_required_work_wins_after_native_retarget",
+          "test_malformed_work_and_changed_duplicate_never_mutate_state",
+          "test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+          "test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+          "test_native_batch_checks_one_history_and_one_shared_body",
+          "test_native_batch_cli_uses_the_real_persisted_owner",
+          "test_native_batch_generation_change_is_detected_before_any_response",
+          "test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success",
+          "test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+          "test_native_body_membership_is_still_checked_after_header_projection",
+          "test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
+          "test_native_header_projection_rejects_changed_header_or_trace",
+          "test_native_writer_and_namespace_fences_are_not_optional",
+          "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+          "test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store",
+          "test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry",
+          "test_socket_history_uses_real_native_validation_and_separate_stores"
+        ],
+        "summary_count": 31,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/native_node-a1e1ae1f7daf0349",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2316807,
+        "stdout": "abrupt_child: test\n\n1 test, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "2d49940567e6b13a65cc6b4c53f63c8a4963fcc9b4fb491a7234127f08c917d3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "abrupt_child"
+        ],
+        "summary_count": 1,
+        "failures": []
+      },
+      "registered_names": [
+        "abrupt_child",
+        "test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation",
+        "test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "test_authentication_options_are_scoped_to_network_commands",
+        "test_cached_work_never_reuses_an_old_clock_verdict",
+        "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_existing_output_path_cannot_publish_a_new_cli_block",
+        "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+        "test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent",
+        "test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+        "test_initialization_process_cuts_recover_only_the_owned_context",
+        "test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
+        "test_lower_height_higher_required_work_wins_after_native_retarget",
+        "test_malformed_work_and_changed_duplicate_never_mutate_state",
+        "test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+        "test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+        "test_native_batch_checks_one_history_and_one_shared_body",
+        "test_native_batch_cli_uses_the_real_persisted_owner",
+        "test_native_batch_generation_change_is_detected_before_any_response",
+        "test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success",
+        "test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+        "test_native_body_membership_is_still_checked_after_header_projection",
+        "test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
+        "test_native_header_projection_rejects_changed_header_or_trace",
+        "test_native_writer_and_namespace_fences_are_not_optional",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+        "test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store",
+        "test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry",
+        "test_socket_history_uses_real_native_validation_and_separate_stores"
+      ],
+      "ignored_names": [
+        "abrupt_child"
+      ],
+      "meaningful_names": [
+        "test_active_state_cancellation_does_not_publish_a_commitment_or_change_generation",
+        "test_active_state_rechecks_generation_before_publishing_a_derived_snapshot",
+        "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+        "test_authentication_options_are_scoped_to_network_commands",
+        "test_cached_work_never_reuses_an_old_clock_verdict",
+        "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+        "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+        "test_existing_output_path_cannot_publish_a_new_cli_block",
+        "test_full_transaction_pages_use_byte_limits_and_recover_all_native_state",
+        "test_golden_native_state_matches_separate_oracle_and_duplicate_is_idempotent",
+        "test_history_batches_cross_boundaries_cancel_and_recheck_actual_rows",
+        "test_initialization_process_cuts_recover_only_the_owned_context",
+        "test_joined_history_projection_rejects_corrupt_genesis_record_shapes",
+        "test_lower_height_higher_required_work_wins_after_native_retarget",
+        "test_malformed_work_and_changed_duplicate_never_mutate_state",
+        "test_native_batch_actual_heavier_reorg_removes_all_confirmations",
+        "test_native_batch_and_history_cancel_after_traversal_without_writes_or_cache",
+        "test_native_batch_checks_one_history_and_one_shared_body",
+        "test_native_batch_cli_uses_the_real_persisted_owner",
+        "test_native_batch_generation_change_is_detected_before_any_response",
+        "test_native_batch_invalid_tail_duplicate_and_limits_return_no_partial_success",
+        "test_native_batch_rechecks_future_ancestor_below_all_inclusions",
+        "test_native_body_membership_is_still_checked_after_header_projection",
+        "test_native_cli_replays_the_existing_signed_vector_without_a_reference_backend",
+        "test_native_header_projection_rejects_changed_header_or_trace",
+        "test_native_writer_and_namespace_fences_are_not_optional",
+        "test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry",
+        "test_packet_status_observes_exact_durable_packet_without_replaying_or_creating_store",
+        "test_socket_false_transcripts_and_honest_native_batch_use_the_actual_entry",
+        "test_socket_history_uses_real_native_validation_and_separate_stores"
+      ],
+      "selector_checks": [
+        {
+          "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "pinned_peer_polling",
+      "filter": null,
+      "expected_selectors": [
+        "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+      ],
+      "artifact": {
+        "target": {
+          "kind": [
+            "test"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "pinned_peer_polling",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs",
+          "edition": "2021",
+          "doc": false,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+        "sha256": "ca3775e1814c1447818566ad8641fe8e19a17dcbf5e83b3984748c521a50ce92"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs",
+        "sha256": "0f07820acea72e4e552297d82c22b1918653e2e8673c8f90b23e9317dc4e9b0e",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "ca3775e1814c1447818566ad8641fe8e19a17dcbf5e83b3984748c521a50ce92",
+      "binary_sha256_after": "ca3775e1814c1447818566ad8641fe8e19a17dcbf5e83b3984748c521a50ce92",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 2735826,
+        "stdout": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission: test\n\n1 test, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "2186165018ad3c5b22e00e4286f0d9ebbb00371e2fea994251fcc7b465a393e4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+        ],
+        "summary_count": 1,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/pinned_peer_polling-4d64eee6f480ca80",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3338867,
+        "stdout": "0 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "414c144fa67f1df75f7b14a69af5641637772e81c4c3fa0a171e3228adbb922e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [],
+        "summary_count": 0,
+        "failures": []
+      },
+      "registered_names": [
+        "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+      ],
+      "ignored_names": [],
+      "meaningful_names": [
+        "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+      ],
+      "selector_checks": [
+        {
+          "selector": "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission",
+          "registered_once": true,
+          "ignored": false
+        }
+      ],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    },
+    {
+      "target": "trnm_pon_node",
+      "filter": "ingress::history_import::tests::",
+      "expected_selectors": [],
+      "artifact": {
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/workspace/scratch/b5a148b09b11/chain-six-axis/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 2,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "executable": "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+        "sha256": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483"
+      },
+      "source_file": {
+        "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "sha256": "be9b62089b6b276f0bb711ce063a704dc7444d8961cba044e1c31f79f9b74c9b",
+        "matches_commit_and_build_manifest": true
+      },
+      "binary_sha256_before": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483",
+      "binary_sha256_after": "5c63c59a0bdfe05fab8039f83d2e360c9e960136857c0b189ffb5bac25a44483",
+      "all_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "ingress::history_import::tests::",
+          "--list"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3193144,
+        "stdout": "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced: test\ningress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation: test\ningress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account: test\ningress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry: test\ningress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account: test\ningress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen: test\ningress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account: test\ningress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart: test\ningress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline: test\ningress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account: test\ningress::history_import::tests::history_kill_cut_child: test\ningress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill: test\ningress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary: test\ningress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account: test\ningress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries: test\ningress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work: test\ningress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null: test\ningress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation: test\ningress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch: test\ningress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1: test\ningress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one: test\ningress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1: test\ningress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks: test\ningress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit: test\ningress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer: test\ningress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer: test\n\n26 tests, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "52eaf192a6386b8aa562e9e1dae100f4e4f59d2985a44ecb7b6dc77695619716",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+          "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+          "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+          "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+          "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+          "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+          "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+          "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+          "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+          "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+          "ingress::history_import::tests::history_kill_cut_child",
+          "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+          "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+          "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+          "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+          "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+          "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+          "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+          "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+          "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+          "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+          "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+          "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+          "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+          "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+          "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+        ],
+        "summary_count": 26,
+        "failures": []
+      },
+      "ignored_list": {
+        "command": [
+          "/workspace/scratch/b5a148b09b11/target/debug/deps/trnm_pon_node-4a176b3f1058369c",
+          "ingress::history_import::tests::",
+          "--list",
+          "--ignored"
+        ],
+        "cwd": "/workspace/scratch/b5a148b09b11/chain-six-axis",
+        "list_only": true,
+        "native_tests_executed": 0,
+        "timeout_seconds": 30,
+        "exit_code": 0,
+        "timed_out": false,
+        "wall_ns": 3532682,
+        "stdout": "ingress::history_import::tests::history_kill_cut_child: test\n\n1 test, 0 benchmarks\n",
+        "stderr": "",
+        "stdout_sha256": "d8ab7593dc1093624e0f81fef25cfc4573da8dbe966a68b338cf316f7de724f3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "names": [
+          "ingress::history_import::tests::history_kill_cut_child"
+        ],
+        "summary_count": 1,
+        "failures": []
+      },
+      "registered_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_kill_cut_child",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "ignored_names": [
+        "ingress::history_import::tests::history_kill_cut_child"
+      ],
+      "meaningful_names": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "selector_checks": [],
+      "failures": [],
+      "registry_verified": true,
+      "tests_executed": 0
+    }
+  ],
+  "failures": [],
+  "registry_verified": true,
+  "native_tests_executed": 0,
+  "actual_host_qualified": false,
+  "business_acceptance": false,
+  "all_blockers_closed": false,
+  "head_after": "b28098c092dca72165c0d26054fce95a8636d777",
+  "native_source_manifests_after": {
+    "native-source.before.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+    "native-source.after.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188",
+    "native-source.final.json": "fd57a7ac6a44ef49258c885a1efc056676f5031577ab17ede3949aff4b4f9188"
+  },
+  "history_observed": {
+    "registered": 26,
+    "ignored": 1,
+    "meaningful": 25,
+    "test_bodies_executed": false
+  },
+  "workflow_count_scope": {
+    "path": ".github/workflows/pon-w1-work-security.yml",
+    "filter": "ingress::history_import::tests::",
+    "existing_count_expectation": [
+      22,
+      1
+    ],
+    "observed_registry_meaningful_and_ignored": [
+      25,
+      1
+    ],
+    "workflow_modified": false,
+    "actual_history_execution_still_required_before_main_thread_count_patch": true
+  }
+}

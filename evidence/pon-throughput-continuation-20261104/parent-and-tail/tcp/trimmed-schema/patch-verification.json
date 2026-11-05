@@ -1,0 +1,27 @@
+{
+  "all_resulting_file_hashes_verified": true,
+  "base_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "changed_files": [
+    {
+      "after_sha256": "1b50f74760307b3fddb3485dd2e3f7ad0935a7e69540a30cd8d12d3fd0d0af9d",
+      "before_sha256": "0342acef32397f88d4020f1b3a5d8873f066490dcf68d9bd0792d183abdd1f17",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    },
+    {
+      "after_sha256": "140e86198f4950d72d45fbc6b40aba989350e995cd49e94a1e79f5419b2237e2",
+      "before_sha256": "87f6e70aa956ad409991391f3624f31b4e5e1b0421cc33106facc84c7949465e",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write.rs"
+    },
+    {
+      "after_sha256": "f579f4509f3d1a7f4e9cbdd060e4da3a4beacfc40998a18d5b05d38d033544c7",
+      "before_sha256": "5d1808cc774f404931945f84b92c3e825dd359989305b28338ec5f44dc25ae4c",
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/pre_write_tests.rs"
+    }
+  ],
+  "git_apply_check_exit": 0,
+  "git_apply_exit": 0,
+  "patch_raw_sha256": "588f07e6ccc5eefdb56134f169a76fe050686c8d828743f6b9cb506c1e430191",
+  "patch_stored_sha256": "ced2c35fb43ce73e23584980d3ae6bdd708aa1a6fbfbd9f46174770df6c84eec",
+  "scope": "Patch constructed from frozen source snapshots, then applied only to a temporary scratch tree; no native build or test executed while packaging.",
+  "target_manifest_sha256": "0e9dd2812f4ae9388e5bba175934ee71632c4e053f5f94906d0dd21a22209c88"
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "TRNM-ACQUISITION-INDEPENDENT-SOURCE-REVIEW-RECORD1",
+  "reviewer_agent": "/root/history_incremental_r8",
+  "reviewed_source_sha256": "05354a8f2450572ef38b585e5eda3c1ff9a90df791638bae2bc25c9173492180",
+  "scope": "Read-only script and installed Python tarfile implementation; no network, acquisition script execution or compiler tree inspection by reviewer",
+  "conclusion": "No blocking path/link escape found for this exact official archive SHA and a new exclusively owned BASE/home. Full header traversal rejects normalized escapes, duplicate paths and special files. Per-member data_filter and final strict symlink containment add checks. Prior home/partial are not overwritten; archive dev/inode/size/mtime/ctime are checked before/after. Failures are retained without retries.",
+  "limitations": [
+    "Not a general hostile-tar denial-of-service proof.",
+    "Header, whole-file digest and one large member are not fully bounded by the inner 100 second extraction check; the declared outer wall/CPU/RSS/disk supervisor remains necessary.",
+    "Hardlink allocation estimate assumes successful actual links; observed target growth and full post-extraction allocated bytes remain authoritative.",
+    "Source review and helper controls do not establish actual compiler/SDK/prover compatibility."
+  ],
+  "installed_python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "tarfile_path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/tarfile.py",
+  "tarfile_sha256": "41a9f1930e5285455b4b0db2b9394247cce312c3fa1ef586a58e66c0100668d5",
+  "python_data_filter_source_observation": "The reviewer confirmed realpath(ALLOW_MISSING) and commonpath containment for member/link destinations, root-link replacement refusal and removal of special ownership/permission metadata.",
+  "not_an_independent_wan_administrator_attestation": true
+}

@@ -1,0 +1,7 @@
+
+running 1 test
+test ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission ... {"cpu_refusals":1,"honest_read_and_native_submit_recovered":true,"independently_verified_state":true,"meter_after_real_depletion_ns":-49897,"original_cpu_meter_start_ns":0,"paid_thread_cpu_ns":134816372,"production_activation":false,"replayed_actual_W1_invalid_proofs":118,"schema":"original-W1-paid-CPU-real-depletion-lab-v1","wan_and_sybil_qualified":false}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 768 filtered out; finished in 0.99s
+

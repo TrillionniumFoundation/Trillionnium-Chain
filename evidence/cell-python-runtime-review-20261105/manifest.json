@@ -1,0 +1,72 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 8122,
+      "sha256": "7f9e269d08122de00a66be26e9ffad0713b1c889c9d0f4d5c56642a9ee3499e5"
+    },
+    "bytecode-source.json": {
+      "bytes": 370,
+      "sha256": "9b4efa11e96858250ba925005f17ede82d81fac006ebcd473b3f9efb5ba46971"
+    },
+    "import_review.py": {
+      "bytes": 10019,
+      "sha256": "ca6fb7973d2e23a9a868c3c7807f7bddf42df4193f68603daa11ecbdd1377e2c"
+    },
+    "metadata-green.json": {
+      "bytes": 376,
+      "sha256": "f23feedaac1516eaacdc6b99e551b21db44efc4b6c660378123d54af2c8b0513"
+    },
+    "original-red-observations.json": {
+      "bytes": 791,
+      "sha256": "e1eff3deada47ee77d2b773abf8868a91258fbe32b4ea342b041049e03efbadb"
+    },
+    "project-shadow.json": {
+      "bytes": 745,
+      "sha256": "5767ac0565f6625de0d247c39fb69530ccb6d72c18538c27fcc891fcdfca78b6"
+    },
+    "provenance.json": {
+      "bytes": 2295,
+      "sha256": "74eca207a84959f93e08339b62b4c489e81f4e5bff0b76946bb54b4edf8ff93e"
+    },
+    "ready-field-shape.json": {
+      "bytes": 851,
+      "sha256": "d1819ae19294b6570449b270d0bdf9c316b56735f7101e3252caed85bfaef30e"
+    },
+    "startup-underscore-pth.json": {
+      "bytes": 699,
+      "sha256": "5eaa84518c7c0c4633b38b57c513da9bae5b07327e30bce0470cc63c44c4a95f"
+    },
+    "startup-zip.json": {
+      "bytes": 665,
+      "sha256": "bbc65d9d37e23fd4aebc0e6eb6f0677babc083f76ede30ee47eaf428a1724ea7"
+    },
+    "underscore_pth_review.py": {
+      "bytes": 3776,
+      "sha256": "9aca3d777ced810f275024bc5a827aa7c7b66bbccfc834396b1c46806a0afb0d"
+    },
+    "withdrawn-alternate-venv.json": {
+      "bytes": 545,
+      "sha256": "8a6ee5669b676071f56a8f074cff5851c17c06cc7b9ddb000245c53b538c9798"
+    }
+  },
+  "packaging_checks": {
+    "adapted_metadata_runner": {
+      "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+      "observed": {
+        "after_guard": {
+          "version": "1.2.3"
+        },
+        "before_guard": "1.2.3"
+      }
+    },
+    "existing_output_refused": true,
+    "import_review.py_help": "PASS",
+    "missing_hepta_checkout_refused_before_output": true,
+    "private_environment_path_scan": "PASS",
+    "python_ast_and_json_parse": "PASS",
+    "underscore_pth_review.py_help": "PASS"
+  },
+  "preflight": "PASS",
+  "schema": "cell-python-runtime-review-evidence-v1",
+  "scope": "Packaging and lightweight import observations only; no model or native Rust guard acceptance"
+}

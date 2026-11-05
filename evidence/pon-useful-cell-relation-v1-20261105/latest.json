@@ -1,0 +1,538 @@
+{
+  "absorbed_concurrent_head": "32c3d63c907d0060a5b02cd678c74b01e54ec0f9",
+  "executed_dependency_changed": "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+  "experiment": {
+    "admission_authority": "local-reproduction-fixture",
+    "batch_size": 64,
+    "behavior": {
+      "bf16_equivalence": null,
+      "comparison": "same-frozen-integer-model",
+      "numeric": {
+        "all_agree": true,
+        "count": 192,
+        "matches": 192,
+        "max_absolute_error": [
+          0,
+          1
+        ],
+        "mean_absolute_error": [
+          0,
+          1
+        ]
+      },
+      "routes": {
+        "agreement_fraction": [
+          1,
+          1
+        ],
+        "all_agree": true,
+        "count": 64,
+        "matches": 64
+      },
+      "stop_policy": "disabled; agreement is not a STOP-enabled-model experiment",
+      "stops": {
+        "agreement_fraction": [
+          1,
+          1
+        ],
+        "all_agree": true,
+        "count": 64,
+        "matches": 64
+      }
+    },
+    "contract_id": "9f7e250b736b8891e2999f783c5031d5509c19ec95a2660e5c76b06e6e7960ff",
+    "files": {
+      "admission/expected.json": {
+        "bytes": 700,
+        "sha256": "35a2ca7921bd4b00aa6a83d0f420d0e9f8cce7779a3adf7798b917a8f7a62d5f"
+      },
+      "after-state.json": {
+        "bytes": 257,
+        "sha256": "467a19332e1112aee6ab730c9fbb53774a8b448830ed9aef677ba863580a7892"
+      },
+      "before-state.json": {
+        "bytes": 257,
+        "sha256": "467a19332e1112aee6ab730c9fbb53774a8b448830ed9aef677ba863580a7892"
+      },
+      "behavior.json": {
+        "bytes": 408,
+        "sha256": "8cd67bdfea4b3c367f876fbcc82488e5da2ec8781341f2add1445f562d12de4f"
+      },
+      "contract.json": {
+        "bytes": 24199,
+        "sha256": "c50207b969012f83bcdc45e94e20dc7a4dc616229e1c0320c90543392df791ed"
+      },
+      "independent-verification.json": {
+        "bytes": 763,
+        "sha256": "99e88b89b9eefbec84ef419060ac63cc1a92875755ab6eb7e542dac456697dc0"
+      },
+      "input-provenance.json": {
+        "bytes": 3730,
+        "sha256": "c3e6f196a2e11049b59e0b26d39b98e16d7d070ee083edf0c468bc807b7666e3"
+      },
+      "output.json": {
+        "bytes": 2911,
+        "sha256": "19d5e58ece1d0476a03465c30582afe4d1faf2980ea30ecbb7101fd853ddc36d"
+      },
+      "preflight.json": {
+        "bytes": 158,
+        "sha256": "f067c39c724f0971d604a450f43a4182ae28151bd11c163e0f93d36e12842c02"
+      },
+      "program-identity.json": {
+        "bytes": 2340,
+        "sha256": "a3bc5e131ddd00509c0654a519f32744a010a2318e592e10fbc1163a1a5c47cd"
+      },
+      "quality.json": {
+        "bytes": 5260,
+        "sha256": "bcd94e73cc3f97db6a9cf817af9ca65f3aee095267838079dea22386386065ed"
+      },
+      "verification.json": {
+        "bytes": 763,
+        "sha256": "1ac642e92babc74d2e5587db8604a8da7102d348ad6a90ccd286f7dec9f39a9c"
+      },
+      "witness.json": {
+        "bytes": 557594,
+        "sha256": "c6fd6de6602d72ecdd2a486cc4fde658ec6cb401bd588762249577871aee6032"
+      }
+    },
+    "parameters_sha256": "0a09e5575ac0c5ac7b461fd5659fb5619907e7654e6a521dcd7f64b42d708722",
+    "program_sha256": "815db48f5e2ae73f5ff76990f1e348e59ac9789787b1f7767f36d40d2b0240c3",
+    "qualifications": {
+      "bf16": false,
+      "ordinary_hepta": false,
+      "production": false,
+      "public_reward": false,
+      "succinct_proof": false,
+      "work_security": false
+    },
+    "repository_head": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+    "schema": "useful-cell-int257-v1/reproduction",
+    "search_attempts_by_tile": [
+      1,
+      3,
+      1,
+      1,
+      1
+    ],
+    "separate_process_verified": true,
+    "source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "source_replayed": true,
+    "status": "reference-relation-verified",
+    "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "timing": {
+      "freeze": {
+        "process_cpu_ns": 280189636,
+        "wall_ns": 1794124950
+      },
+      "prove": {
+        "process_cpu_ns": 650739417,
+        "wall_ns": 650941304
+      },
+      "quality": {
+        "process_cpu_ns": 1437010792,
+        "wall_ns": 1439650630
+      },
+      "separate_process": {
+        "process_cpu_ns": 4049067,
+        "wall_ns": 2452431672
+      },
+      "verify": {
+        "process_cpu_ns": 532470036,
+        "wall_ns": 532983492
+      }
+    },
+    "timing_scope": "local-Python-reference; parent-process CPU excludes child source replay",
+    "w1_transcripts_verified": 5,
+    "witness_bytes": 557594
+  },
+  "identical_git_tree": "37953760dea7556922ebf6300ccd3aedd937c82e",
+  "independent_process_verification": {
+    "bf16_equivalence": null,
+    "calibration_qualified": false,
+    "clock_finish_ms": 1793872321763,
+    "clock_start_ms": 1793872319460,
+    "complete_w1_transcripts_verified": 5,
+    "contract_id": "9f7e250b736b8891e2999f783c5031d5509c19ec95a2660e5c76b06e6e7960ff",
+    "external_context_matched": true,
+    "integer_decision_verified": true,
+    "model_behavior_preserved": null,
+    "old_task_retention_qualified": false,
+    "ood_qualified": false,
+    "ordinary_hepta_encoder_verified": false,
+    "owner_authorization_verified": false,
+    "production_qualified": false,
+    "public_reward_eligible": false,
+    "read_only_state_verified": true,
+    "relation_valid": true,
+    "schema": "pon-useful-cell-int257-v1/verification",
+    "succinct_proof": false,
+    "upstream_scope": "frozen-public-source-extractor",
+    "upstream_verified": true,
+    "work_security_qualified": false
+  },
+  "large_raw_evidence_uploaded": false,
+  "local_tested_source_commit": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+  "old_program_sha256": "5cc3a91b8d85b0249d38cc479c13b76c6261224faaed5573e27c96149d7a6919",
+  "original_adoption_not_rerun_or_reclassified": true,
+  "prior_record": "manifest.json",
+  "production_activation": false,
+  "program_identity": {
+    "parameters_sha256": "0a09e5575ac0c5ac7b461fd5659fb5619907e7654e6a521dcd7f64b42d708722",
+    "program_sha256": "815db48f5e2ae73f5ff76990f1e348e59ac9789787b1f7767f36d40d2b0240c3",
+    "runtime": {
+      "cryptography": "50.0.0",
+      "implementation": "cpython",
+      "numpy": "2.3.5",
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "python_optimization": 0,
+      "unicode": "15.0.0"
+    },
+    "source_manifest": {
+      "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "config/pon/evaluation-round-v1.json": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33",
+      "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+      "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+      "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+      "formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+      "formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+      "formal/pon-nakamoto-v1/evaluation_bundle.py": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+      "formal/pon-nakamoto-v1/experiments/model_loop.py": "d29b4b426825afdd90b3db9e1fbe79f931a543c307b896853a249ae909412fd0",
+      "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+      "formal/pon-nakamoto-v1/ledger.py": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+      "formal/pon-nakamoto-v1/model_contract.py": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+      "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+      "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py": "62f3caec42a7cf8382cfe67bef1de710fcea4f685112e3465a1d52883a87c401",
+      "formal/pon-nakamoto-v1/useful_cell_relation_v1.py": "eb262ac3ec37cdc3b368481dbcc056745db2128e3075de0b7e46e28a9c382670",
+      "formal/pon-nakamoto-v1/work_backend.py": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+      "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+    }
+  },
+  "public_reward_eligible": false,
+  "publication_equivalence": [
+    {
+      "identical_git_tree": "a7bc2077097e13c7b50d106c74803fdc89122afd",
+      "local_tested_commit": "6541befe89742ea09d928864d0e6581213182382",
+      "published_commit": "74a7d9683c732023879bc75cf392494bfa82a905"
+    },
+    {
+      "identical_git_tree": "4ab4de91a418479e342f61a488c0ebddbaa35d16",
+      "local_tested_commit": "76cfac184a0e7d1002b9ce28aa1997341074c88a",
+      "published_commit": "c17e2782e9be80fd4d2656a2ec497d1ee6344d06"
+    },
+    {
+      "identical_git_tree": "37953760dea7556922ebf6300ccd3aedd937c82e",
+      "local_tested_commit": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+      "published_commit": "bdab616e853df2c373a850886a8220ed1fda5041"
+    }
+  ],
+  "publication_note": "Local Git push lacked credentials; connected GitHub created byte-identical Git trees with different commit author/time metadata. Original execution commit identities are preserved rather than relabeled.",
+  "published_equivalent_source_commit": "bdab616e853df2c373a850886a8220ed1fda5041",
+  "retrospective_quality": {
+    "calibration_role": "existing-strong-reference-selection-only",
+    "candidate": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+    "confidence_calibration_evaluated": false,
+    "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+    "independent_future_window": false,
+    "model_reward": 0,
+    "old_task_retention_evaluated": false,
+    "ood_evaluated": false,
+    "owner_adoption_authority": false,
+    "partitions": {
+      "consumer": {
+        "candidate_value": [
+          "157298971",
+          "198869580"
+        ],
+        "marginal": [
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 4,
+            "mean_gain_denominator": 4419324,
+            "mean_gain_numerator": -100421,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 4
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 0,
+            "mean_gain_denominator": 1,
+            "mean_gain_numerator": 0,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 0
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 3,
+            "mean_gain_denominator": 7102485,
+            "mean_gain_numerator": 342349,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 4
+          }
+        ],
+        "marginal_value": [
+          "-207029",
+          "79547832"
+        ],
+        "primary": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 27,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 5,
+          "mean_gain_denominator": 79547832,
+          "mean_gain_numerator": -207029,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "wins": 2
+        },
+        "reference_value": [
+          "5010049",
+          "6313320"
+        ],
+        "rows": 213,
+        "selected_reference": "mean_merge"
+      },
+      "evaluation_a": {
+        "candidate_value": [
+          "62011",
+          "83875"
+        ],
+        "marginal": [
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 25,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 2,
+            "mean_gain_denominator": 76250,
+            "mean_gain_numerator": 2879,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 4
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 25,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 1,
+            "mean_gain_denominator": 50,
+            "mean_gain_numerator": -1,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 0
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 25,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 1,
+            "mean_gain_denominator": 457500,
+            "mean_gain_numerator": 13547,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 3
+          }
+        ],
+        "marginal_value": [
+          "-2993",
+          "1677500"
+        ],
+        "primary": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 25,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 4,
+          "mean_gain_denominator": 1677500,
+          "mean_gain_numerator": -2993,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "wins": 2
+        },
+        "reference_value": [
+          "1243213",
+          "1677500"
+        ],
+        "rows": 170,
+        "selected_reference": "mean_merge"
+      },
+      "evaluation_b": {
+        "candidate_value": [
+          "19663576",
+          "25478145"
+        ],
+        "marginal": [
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 4,
+            "mean_gain_denominator": 9264780,
+            "mean_gain_numerator": -75193,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 4
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 1,
+            "mean_gain_denominator": 594,
+            "mean_gain_numerator": -1,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 0
+          },
+          {
+            "caller_future_window_claim": false,
+            "cluster_gate": false,
+            "clusters": 27,
+            "comparisons": 4,
+            "exploratory_score": 0,
+            "future_window_observed": false,
+            "losses": 2,
+            "mean_gain_denominator": 330885,
+            "mean_gain_numerator": 15152,
+            "public_reward_eligible": false,
+            "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+            "wins": 3
+          }
+        ],
+        "marginal_value": [
+          "-2039",
+          "110295"
+        ],
+        "primary": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 27,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 5,
+          "mean_gain_denominator": 110295,
+          "mean_gain_numerator": -2039,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "wins": 3
+        },
+        "reference_value": [
+          "211943",
+          "268191"
+        ],
+        "rows": 184,
+        "selected_reference": "mean_merge"
+      }
+    },
+    "schema": "useful-cell-int257-v1/retrospective-quality",
+    "scope": "recomputed-original-retrospective-protocol; W1-proven rows are reported separately"
+  },
+  "schema": "useful-cell-int257-v1/latest-source-reproduction",
+  "status": "reference-relation-verified",
+  "validation": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_useful_cell_numeric_v1",
+        "test_useful_cell_relation_v1",
+        "test_shared_cell_operator_v1"
+      ],
+      "elapsed_seconds": 14.46784538400243,
+      "environment_overrides": {
+        "PYTHONPATH": "formal/pon-nakamoto-v1"
+      },
+      "returncode": 0,
+      "source_commit": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+      "stderr_sha256": "4204f3461319bf84383ec44d943010c3704a87245aae1cfa84430e9866204a09",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": [
+        "test_v2_verifier_roster_is_complete_and_charged_exactly_once (test_shared_cell_operator_v1.SharedCellOperatorTests.test_v2_verifier_roster_is_complete_and_charged_exactly_once) ... ok",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 79 tests in 14.301s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "elapsed_seconds": 6.448682999005541,
+      "environment_overrides": {},
+      "returncode": 0,
+      "source_commit": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+      "stderr_sha256": "222460952b259e820aef1c7b6cd27faa362c431488c5a139c9c161dc5eef0e77",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": [
+        "test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells (__main__.W1ReuseV3LaneTests.test_v3_lane_is_additive_and_keeps_all_four_exact_source_cells) ... ok",
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 99 tests in 6.349s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+        "--out",
+        "/workspace/scratch/4618948b9483/useful-cell-latest-493750df3",
+        "--batch-size",
+        "64"
+      ],
+      "elapsed_seconds": 7.199133721995167,
+      "out": "/workspace/scratch/4618948b9483/useful-cell-latest-493750df3",
+      "returncode": 0,
+      "source_commit": "493750df3970aab910f53bf6aedeb3da67bc6b33",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c5bd07a7e7ea1374be46e3aaf72925589a71fbf62affcf6477a89252da80db20",
+      "tail": [
+        "{\"batch_size\": 64, \"contract_id\": \"9f7e250b736b8891e2999f783c5031d5509c19ec95a2660e5c76b06e6e7960ff\", \"program_sha256\": \"815db48f5e2ae73f5ff76990f1e348e59ac9789787b1f7767f36d40d2b0240c3\", \"qualifications\": {\"bf16\": false, \"ordinary_hepta\": false, \"production\": false, \"public_reward\": false, \"succinct_proof\": false, \"work_security\": false}, \"search_attempts_by_tile\": [1, 3, 1, 1, 1], \"separate_process_verified\": true, \"source_replayed\": true, \"status\": \"reference-relation-verified\", \"w1_transcripts_verified\": 5, \"witness_bytes\": 557594}"
+      ]
+    }
+  ]
+}

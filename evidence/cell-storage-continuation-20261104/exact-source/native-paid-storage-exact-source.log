@@ -1,0 +1,15 @@
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 11s
+     Running unittests src/lib.rs (/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440)
+
+running 7 tests
+test store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention ... ok
+test store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost ... ok
+test store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion ... ok
+test store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation ... ok
+test store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding ... ok
+test store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation ... ok
+test store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 994 filtered out; finished in 1.53s
+

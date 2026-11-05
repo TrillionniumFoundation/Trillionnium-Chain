@@ -1,0 +1,346 @@
+{
+  "earlier_native_setup_observations": {
+    "metadata_stderr": "error: no matching package named `ml-dsa` found\nlocation searched: crates.io index\nrequired by package `trnm-crypto-primitives v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-crypto-primitives)`\n    ... which satisfies path dependency `trnm-crypto-primitives` (locked to 0.1.0) of package `trnm-w1-independent-native-cost v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_native_cost)`\nAs a reminder, you're using offline mode (--offline) which can sometimes cause surprising resolution failures, if this error is too confusing you may wish to retry without `--offline`.\n",
+    "missing_input_process": {
+      "binary_sha256": "5db3fc47969324261c9acbf61546b78502b081cdbb0e6382ed815ed5163c4703",
+      "command": [
+        "/workspace/scratch/79360d3567d1/target-native/release/w1-native-cost",
+        "/workspace/scratch/79360d3567d1/chain/evidence/pon-w1-complete-succinct-20261028/input.bin"
+      ],
+      "exit_code": 1,
+      "max_rss_kib": 12544,
+      "system_seconds": 0.0,
+      "user_seconds": 0.0028109999999999997,
+      "wall_ns": 8424540
+    },
+    "scope": "Retained setup failures before the successful fixed-source run; neither produced verification samples."
+  },
+  "earlier_offline_metadata_failure": {
+    "command": "cargo metadata --locked --offline --all-features --format-version 1 --manifest-path formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+    "exit_code": 101,
+    "resolution": "The unchanged locked graph was subsequently resolved after downloading missing locked package archives; no dependency version was changed.",
+    "stderr": "error: failed to download `bitflags v1.3.2`\n\nCaused by:\n  attempting to make an HTTP request, but --offline was specified\n"
+  },
+  "locked_graphs": [
+    {
+      "graph": "hardened",
+      "lock_sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+      "members": 1,
+      "packages": 158
+    },
+    {
+      "graph": "native",
+      "lock_sha256": "729bdcda4a9f49d5757c2726cd98582ed420d6dd858f46ac453ed0625c7a593b",
+      "members": 1,
+      "packages": 69
+    },
+    {
+      "graph": "workspace",
+      "lock_sha256": "773cd1364a02cc70b017412350e2343172ae4f2a8770b044a5a307e33a638d0a",
+      "members": 26,
+      "packages": 180
+    }
+  ],
+  "python_test_counts": {
+    "ci_source_integrity": 34,
+    "project_boundary": 16,
+    "repository_negative_controls": 50,
+    "saved_proof_observer": 24,
+    "source_map": 7
+  },
+  "remote_ci_execution_observed": false,
+  "rust_test_counts": {
+    "hardened": 15,
+    "native_complete_relation": 6
+  },
+  "schema": "TRNM-W1-TRANSPARENT-VALIDATION1",
+  "scope": "Affected independent native/verifier packages, observer/map tests and retained source controls. Not a complete workspace runtime suite, hosted head/merge result, prover test or release qualification.",
+  "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+  "stages": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "preflight",
+      "log_sha256": "3b59c0fd17747ee95c6b6a74eaeba073106b8b1aeb1104482d83f52664bb667d",
+      "name": "preflight",
+      "raw_log_utf8": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-transparent-profile-20261104-local\", \"remote_policy_mutated\": false}\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.13818391999666346
+    },
+    {
+      "command": [
+        "rustc",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "label": "rustc",
+      "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "name": "rustc",
+      "raw_log_utf8": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.10819733799871756
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "label": "hardened-test",
+      "log_sha256": "63c26c6f31b67b1a29b680a1f437a5077fdc16832cb393534b3b70f66a343222",
+      "name": "hardened-test",
+      "raw_log_utf8": "    Finished `release` profile [optimized + debuginfo] target(s) in 1.32s\n     Running unittests src/main.rs (/workspace/scratch/79360d3567d1/target-w1/release/deps/trnm_w1_hardened_verifier-5ce7542556717fdd)\n\nrunning 15 tests\ntest profile::tests::context_has_only_the_named_transparent_construction ... ok\ntest tests::every_header_field_rejects_before_an_invalid_seal_is_examined ... ok\ntest tests::control_and_both_parameter_fields_are_checked_before_crypto ... ok\ntest tests::impossible_seal_lengths_fail_before_deserialization ... ok\ntest tests::control_path_length_and_unused_index_bits_are_not_alternate_encodings ... ok\ntest tests::rejects_non_succinct_tags_before_deserialization ... ok\ntest tests::recursion_diagnostic_also_rejects_noncanonical_control_leaf ... ok\ntest tests::short_public_statement_cannot_panic_or_authorize_work ... ok\ntest tests::valid_public_bytes_without_a_valid_seal_never_return_work_identity ... ok\ntest tests::sdk_supported_but_unapproved_suites_are_rejected_by_profile ... ok\ntest tests::actual_noncanonical_control_sibling_regression_is_rejected_without_panic ... ok\ntest tests::every_control_sibling_word_is_checked_at_field_boundaries ... ok\ntest tests::a_real_prefix_receipt_cannot_satisfy_the_full_w1_profile ... ok\ntest tests::actual_complete_receipt_verifies_under_the_explicit_profile ... ok\ntest tests::different_valid_claim_encodings_preserve_one_original_work_identity ... ok\n\ntest result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s\n\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 1.5780600139987655
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "label": "hardened-build",
+      "log_sha256": "49b43d9e78c0e99973d94b9b01c71c7051e3e105c1fae0f9c5666e1b2a44988c",
+      "name": "hardened-build",
+      "raw_log_utf8": "    Finished `release` profile [optimized + debuginfo] target(s) in 1.30s\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 1.380573390997597
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "label": "native-test",
+      "log_sha256": "25688c9a500a25bde63c34d1e8ffb272721826dc2f6c3836168f2feda261dcfb",
+      "name": "native-test",
+      "raw_log_utf8": "   Compiling typenum v1.20.1\n   Compiling proc-macro2 v1.0.106\n   Compiling unicode-ident v1.0.24\n   Compiling quote v1.0.45\n   Compiling version_check v0.9.5\n   Compiling generic-array v0.14.7\n   Compiling zeroize v1.8.2\n   Compiling syn v2.0.117\n   Compiling cmov v0.5.4\n   Compiling ctutils v0.4.6\n   Compiling cfg-if v1.0.4\n   Compiling find-msvc-tools v0.1.9\n   Compiling shlex v1.3.0\n   Compiling cc v1.2.59\n   Compiling hybrid-array v0.4.15\n   Compiling sha2-asm v0.6.4\n   Compiling crypto-common v0.1.7\n   Compiling block-buffer v0.10.4\n   Compiling serde_core v1.0.228\n   Compiling semver v1.0.27\n   Compiling autocfg v1.5.1\n   Compiling num-traits v0.2.19\n   Compiling rustc_version v0.4.1\n   Compiling digest v0.10.7\n   Compiling crypto-common v0.2.2\n   Compiling cpufeatures v0.2.17\n   Compiling digest v0.11.3\n   Compiling curve25519-dalek v4.1.3\n   Compiling serde v1.0.228\n   Compiling thiserror v1.0.69\n   Compiling sha2 v0.10.9\n   Compiling keccak v0.2.2\n   Compiling serde_derive v1.0.228\n   Compiling thiserror-impl v1.0.69\n   Compiling curve25519-dalek-derive v0.1.1\n   Compiling anyhow v1.0.103\n   Compiling sponge-cursor v0.1.0\n   Compiling subtle v2.6.1\n   Compiling signature v2.2.0\n   Compiling ed25519 v2.2.3\n   Compiling shake v0.1.0\n   Compiling module-lattice v0.2.3\n   Compiling signature v3.0.0\n   Compiling zmij v1.0.21\n   Compiling hex v0.4.3\n   Compiling trnm-protocol v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-protocol)\n   Compiling ml-dsa v0.1.1\n   Compiling ed25519-dalek v2.2.0\n   Compiling serde_json v1.0.149\n   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-crypto-primitives)\n   Compiling memchr v2.8.0\n   Compiling itoa v1.0.18\n   Compiling trnm-w1-zk-relation v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/relation)\n   Compiling trnm-w1-independent-native-cost v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_native_cost)\n    Finished `release` profile [optimized + debuginfo] target(s) in 3m 03s\n     Running unittests ../w1_zkvm/host/src/bin/w1-native-cost.rs (/workspace/scratch/79360d3567d1/target-native/release/deps/w1_native_cost-c09b779c31dfc1a2)\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n     Running ../w1_zkvm/relation/src/lib.rs (/workspace/scratch/79360d3567d1/target-native/release/deps/complete_relation-d53e6d9092f799ca)\n\nrunning 6 tests\ntest tests::every_noncanonical_u32_is_rejected_in_all_three_matrices ... ok\ntest tests::canonical_task_product_and_transcript_forgeries_match_scalar_rejection ... ok\ntest tests::rejects_all_omission_classes_before_any_proof_can_be_issued ... ok\ntest tests::public_binding_rejects_header_trace_ticket_id_and_noncanonical_product ... ok\ntest tests::exact_native_product_ticket_trace_and_unique_identity_are_public ... ok\ntest tests::boundary_products_and_journals_agree_with_full_scalar_replay ... ok\n\ntest result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s\n\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 183.6160826580017
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "label": "native-build",
+      "log_sha256": "74448ef7c8f780c0e4a92dde1504d5656d2c863639e8e925e9556a655e6a6da6",
+      "name": "native-build",
+      "raw_log_utf8": "    Finished `release` profile [optimized + debuginfo] target(s) in 0.16s\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.18019092099711997
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "hardened-fmt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "hardened-fmt",
+      "raw_log_utf8": "",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.05142173899366753
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "native-fmt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "native-fmt",
+      "raw_log_utf8": "",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.035935883002821356
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "workspace-fmt",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "workspace-fmt",
+      "raw_log_utf8": "",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 12.776481736000278
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_repository.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "source-boundary",
+      "log_sha256": "f1aaf88f1ecd8f3912d0540589718c727c1dda9986fec2d8af38924022e72edc",
+      "name": "source-boundary",
+      "raw_log_utf8": "test_acyclic (test_repository.DependencyTests.test_acyclic) ... ok\ntest_cycle_rejected (test_repository.DependencyTests.test_cycle_rejected) ... ok\ntest_self_cycle_rejected (test_repository.DependencyTests.test_self_cycle_rejected) ... ok\ntest_undeclared_dependency_rejected (test_repository.DependencyTests.test_undeclared_dependency_rejected) ... ok\ntest_current_claims_are_unactivated (test_repository.EvidenceBoundaryTests.test_current_claims_are_unactivated) ... ok\ntest_duplicate_json_claims (test_repository.EvidenceBoundaryTests.test_duplicate_json_claims) ... ok\ntest_explicit_missing_native_core (test_repository.EvidenceBoundaryTests.test_explicit_missing_native_core) ... ok\ntest_false_is_not_integer_zero (test_repository.EvidenceBoundaryTests.test_false_is_not_integer_zero) ... ok\ntest_no_release_from_nested_report (test_repository.EvidenceBoundaryTests.test_no_release_from_nested_report) ... ok\ntest_no_runtime_claim (test_repository.EvidenceBoundaryTests.test_no_runtime_claim) ... ok\ntest_no_work_qualification_from_reference (test_repository.EvidenceBoundaryTests.test_no_work_qualification_from_reference) ... ok\ntest_old_protocol_is_not_supported (test_repository.EvidenceBoundaryTests.test_old_protocol_is_not_supported) ... ok\ntest_actual_source (test_repository.RepositoryMutants.test_actual_source) ... ok\ntest_algorithm_cannot_be_replaced_with_tbd (test_repository.RepositoryMutants.test_algorithm_cannot_be_replaced_with_tbd) ... ok\ntest_broken_navigation (test_repository.RepositoryMutants.test_broken_navigation) ... ok\ntest_candidate_profile_is_not_production_qualified (test_repository.RepositoryMutants.test_candidate_profile_is_not_production_qualified) ... ok\ntest_duplicate_package (test_repository.RepositoryMutants.test_duplicate_package) ... ok\ntest_every_job_has_runner_stage_cargo_isolation (test_repository.RepositoryMutants.test_every_job_has_runner_stage_cargo_isolation) ... ok\ntest_external_path_dependency (test_repository.RepositoryMutants.test_external_path_dependency) ... ok\ntest_fake_public_model_efficacy (test_repository.RepositoryMutants.test_fake_public_model_efficacy) ... ok\ntest_fake_qualified_primitive (test_repository.RepositoryMutants.test_fake_qualified_primitive) ... ok\ntest_fault_harness_isolation_remains_explicit (test_repository.RepositoryMutants.test_fault_harness_isolation_remains_explicit) ... ok\ntest_job_env_cannot_use_unallocated_runner_context (test_repository.RepositoryMutants.test_job_env_cannot_use_unallocated_runner_context) ... ok\ntest_legacy_appendix_cannot_return (test_repository.RepositoryMutants.test_legacy_appendix_cannot_return) ... ok\ntest_missing_implementation_axis (test_repository.RepositoryMutants.test_missing_implementation_axis) ... ok\ntest_missing_module_contract (test_repository.RepositoryMutants.test_missing_module_contract) ... ok\ntest_missing_native_contract_test_is_rejected (test_repository.RepositoryMutants.test_missing_native_contract_test_is_rejected) ... ok\ntest_missing_procedure_commit_is_rejected (test_repository.RepositoryMutants.test_missing_procedure_commit_is_rejected) ... ok\ntest_missing_runtime_claim_is_not_false_evidence (test_repository.RepositoryMutants.test_missing_runtime_claim_is_not_false_evidence) ... ok\ntest_no_automatic_fallback (test_repository.RepositoryMutants.test_no_automatic_fallback) ... ok\ntest_no_checkout_credential_persistence (test_repository.RepositoryMutants.test_no_checkout_credential_persistence) ... ok\ntest_no_persistent_runner_for_untrusted_pr (test_repository.RepositoryMutants.test_no_persistent_runner_for_untrusted_pr) ... ok\ntest_no_privileged_pr_event (test_repository.RepositoryMutants.test_no_privileged_pr_event) ... ok\ntest_no_write_permission_for_untrusted_pr (test_repository.RepositoryMutants.test_no_write_permission_for_untrusted_pr) ... ok\ntest_omitted_package (test_repository.RepositoryMutants.test_omitted_package) ... ok\ntest_owner_unknown (test_repository.RepositoryMutants.test_owner_unknown) ... ok\ntest_quality_cannot_be_work (test_repository.RepositoryMutants.test_quality_cannot_be_work) ... ok\ntest_reference_does_not_imply_native_product_integration (test_repository.RepositoryMutants.test_reference_does_not_imply_native_product_integration) ... ok\ntest_removed_core_cannot_return_as_dependency (test_repository.RepositoryMutants.test_removed_core_cannot_return_as_dependency) ... ok\ntest_removed_decoder_requirement_cannot_return (test_repository.RepositoryMutants.test_removed_decoder_requirement_cannot_return) ... ok\ntest_removed_vote_symbol (test_repository.RepositoryMutants.test_removed_vote_symbol) ... ok\ntest_required_job_not_dropped (test_repository.RepositoryMutants.test_required_job_not_dropped) ... ok\ntest_review_policy_matches_owner_decision (test_repository.RepositoryMutants.test_review_policy_matches_owner_decision) ... ok\ntest_source_authority_cannot_be_issued (test_repository.RepositoryMutants.test_source_authority_cannot_be_issued) ... ok\ntest_undeclared_crate_directory (test_repository.RepositoryMutants.test_undeclared_crate_directory) ... ok\ntest_unknown_concrete_work_profile_rejected (test_repository.RepositoryMutants.test_unknown_concrete_work_profile_rejected) ... ok\ntest_unknown_implementation_axis (test_repository.RepositoryMutants.test_unknown_implementation_axis) ... ok\ntest_vote_cannot_return (test_repository.RepositoryMutants.test_vote_cannot_return) ... ok\ntest_wrong_fork_choice (test_repository.RepositoryMutants.test_wrong_fork_choice) ... ok\ntest_wrong_wire_width_is_rejected (test_repository.RepositoryMutants.test_wrong_wire_width_is_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 50 tests in 295.079s\n\nOK\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 295.16666019299737
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "source-integrity",
+      "log_sha256": "ef36ede70b35f19fe5965d93707d05c4e6cf2bb159947c9cd4df012119dcb184",
+      "name": "source-integrity",
+      "raw_log_utf8": "test_actual_bytes_are_checked_even_if_status_reports_clean (test_ci_source_integrity.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok\ntest_assume_unchanged_cannot_hide_modified_source (test_ci_source_integrity.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok\ntest_executable_mode_checked_even_when_git_ignores_filemode (test_ci_source_integrity.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok\ntest_graft_file_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_graft_file_is_rejected) ... ok\ntest_hidden_index_flag_is_rejected_even_without_changes (test_ci_source_integrity.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok\ntest_intermediate_directory_symlink_rejected (test_ci_source_integrity.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok\ntest_new_native_c_bytes_are_verified_without_an_extension_allowlist (test_ci_source_integrity.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok\ntest_nonregular_file_rejected_without_waiting_for_fifo (test_ci_source_integrity.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok\ntest_receipt_reuses_raw_source_guard (test_ci_source_integrity.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ok\ntest_regular_file_symlink_substitution_rejected (test_ci_source_integrity.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok\ntest_replacement_commit_cannot_relabel_different_source (test_ci_source_integrity.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok\ntest_same_size_stat_cached_change_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok\ntest_skip_worktree_cannot_hide_modified_source (test_ci_source_integrity.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok\ntest_source_fence_checked_retains_actual_failed_observation (test_ci_source_integrity.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ok\ntest_source_fence_clean_child_keeps_actual_success_and_bytes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ok\ntest_source_fence_clean_commit_switch_during_command_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ok\ntest_source_fence_clean_wrong_head_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ok\ntest_source_fence_dirty_before_command_cannot_start_child (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ok\ntest_source_fence_dirty_source_preserves_primary_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ok\ntest_source_fence_existing_fuzz_and_supply_callers_pin_every_command (test_ci_source_integrity.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ok\ntest_source_fence_finish_clean_other_commit_cannot_borrow_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ok\ntest_source_fence_finish_dirty_source_cannot_write_pass (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ok\ntest_source_fence_finish_requires_initial_pin (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ok\ntest_source_fence_finish_valid_source_never_upgrades_existing_failure (test_ci_source_integrity.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ok\ntest_source_fence_index_hidden_child_mutation_still_refuses (test_ci_source_integrity.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ok\ntest_source_fence_keeps_nonzero_primary_error_and_drift (test_ci_source_integrity.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ok\ntest_source_fence_pin_is_clean_and_does_not_follow_later_changes (test_ci_source_integrity.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ok\ntest_source_fence_timeout_and_source_failure_preserve_both (test_ci_source_integrity.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ok\ntest_source_fence_zero_exit_with_real_dirty_source_is_not_success (test_ci_source_integrity.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ok\ntest_staged_change_is_rejected (test_ci_source_integrity.TrackedSourceTests.test_staged_change_is_rejected) ... ok\ntest_subdirectory_is_not_a_complete_source_root (test_ci_source_integrity.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok\ntest_tracked_symlink_target_change_rejected (test_ci_source_integrity.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok\ntest_untracked_configuration_cannot_hide_new_source (test_ci_source_integrity.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok\ntest_valid_raw_files_modes_and_symlink (test_ci_source_integrity.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok\n\n----------------------------------------------------------------------\nRan 34 tests in 2.696s\n\nOK\n{\"receipt\": \"/tmp/trnm-ci-raw-source-2vfq87zb/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-cmbgpyir/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-t8h4vfd2/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-tix12hm_/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-j8q1o30j/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-j8q1o30j/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 2.7889531289984006
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_transparent_compare.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "comparison-tests",
+      "log_sha256": "3d99b050e8caa48832bcb9782dbdf7201748964265d505090509eed3bec8ee5f",
+      "name": "comparison-tests",
+      "raw_log_utf8": "test_boolean_and_float_counter_aliases_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_boolean_and_float_counter_aliases_rejected) ... ok\ntest_bounded_read_and_source_commit_format (test_w1_transparent_compare.SavedProofComparisonTests.test_bounded_read_and_source_commit_format) ... ok\ntest_complete_product_and_canonical_field_are_checked (test_w1_transparent_compare.SavedProofComparisonTests.test_complete_product_and_canonical_field_are_checked) ... ok\ntest_deep_json_is_controlled_rejection (test_w1_transparent_compare.SavedProofComparisonTests.test_deep_json_is_controlled_rejection) ... ok\ntest_duplicate_keys_even_nested_or_escaped_are_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_duplicate_keys_even_nested_or_escaped_are_rejected) ... ok\ntest_empty_zero_boolean_float_and_negative_samples_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_empty_zero_boolean_float_and_negative_samples_rejected) ... ok\ntest_encoding_alternatives_and_lengths_are_not_new_work (test_w1_transparent_compare.SavedProofComparisonTests.test_encoding_alternatives_and_lengths_are_not_new_work) ... ok\ntest_exit_zero_with_fake_accept_report_cannot_be_success (test_w1_transparent_compare.SavedProofComparisonTests.test_exit_zero_with_fake_accept_report_cannot_be_success) ... ok\ntest_final_acceptance_deadline_keeps_successful_stage_facts (test_w1_transparent_compare.SavedProofComparisonTests.test_final_acceptance_deadline_keeps_successful_stage_facts) ... ok\ntest_frozen_manifest_source_and_image_are_explicit (test_w1_transparent_compare.SavedProofComparisonTests.test_frozen_manifest_source_and_image_are_explicit) ... ok\ntest_input_source_and_statement_tampering_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_input_source_and_statement_tampering_rejected) ... ok\ntest_live_v2_schema_bindings_have_no_partial_or_unknown_profile_fallback (test_w1_transparent_compare.SavedProofComparisonTests.test_live_v2_schema_bindings_have_no_partial_or_unknown_profile_fallback) ... ok\ntest_missing_unknown_and_wrong_versions_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_missing_unknown_and_wrong_versions_rejected) ... ok\ntest_nested_manifest_fields_and_types_are_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_nested_manifest_fields_and_types_are_rejected) ... ok\ntest_nonfinite_json_and_overflow_cannot_enter_costs (test_w1_transparent_compare.SavedProofComparisonTests.test_nonfinite_json_and_overflow_cannot_enter_costs) ... ok\ntest_output_overflow_and_exhausted_deadline_are_failures (test_w1_transparent_compare.SavedProofComparisonTests.test_output_overflow_and_exhausted_deadline_are_failures) ... ok\ntest_preserved_real_records_reconstruct_previous_failed_component_comparison (test_w1_transparent_compare.SavedProofComparisonTests.test_preserved_real_records_reconstruct_previous_failed_component_comparison) ... ok\ntest_real_subprocess_nonzero_exit_preserves_stdout_and_status (test_w1_transparent_compare.SavedProofComparisonTests.test_real_subprocess_nonzero_exit_preserves_stdout_and_status) ... ok\ntest_real_subprocess_timeout_is_retained (test_w1_transparent_compare.SavedProofComparisonTests.test_real_subprocess_timeout_is_retained) ... ok\ntest_reaped_completion_after_deadline_is_not_reported_as_on_time (test_w1_transparent_compare.SavedProofComparisonTests.test_reaped_completion_after_deadline_is_not_reported_as_on_time) ... ok\ntest_unbound_historical_native_report_is_not_a_live_observation (test_w1_transparent_compare.SavedProofComparisonTests.test_unbound_historical_native_report_is_not_a_live_observation) ... ok\ntest_unbound_historical_verifier_is_not_a_live_observation (test_w1_transparent_compare.SavedProofComparisonTests.test_unbound_historical_verifier_is_not_a_live_observation) ... ok\ntest_wrong_work_digest_or_reinterpreted_trial_count_rejected (test_w1_transparent_compare.SavedProofComparisonTests.test_wrong_work_digest_or_reinterpreted_trial_count_rejected) ... ok\ntest_zero_target_is_not_accepted (test_w1_transparent_compare.SavedProofComparisonTests.test_zero_target_is_not_accepted) ... ok\n\n----------------------------------------------------------------------\nRan 24 tests in 5.247s\n\nOK\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 5.3499830789951375
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_w1_profile_source_map.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "source-map-tests",
+      "log_sha256": "e7793fdbe57e30db0560fb1e77b4e20de188df7db6490985965ad75d5dcb147c",
+      "name": "source-map-tests",
+      "raw_log_utf8": "test_archive_and_selected_members_match_locked_checksum (test_w1_profile_source_map.SourceMapTests.test_archive_and_selected_members_match_locked_checksum) ... ok\ntest_duplicate_and_missing_locked_packages_are_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_and_missing_locked_packages_are_refused) ... ok\ntest_duplicate_archive_member_is_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_archive_member_is_refused) ... ok\ntest_existing_output_is_never_overwritten (test_w1_profile_source_map.SourceMapTests.test_existing_output_is_never_overwritten) ... ok\ntest_locked_archive_checksum_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_locked_archive_checksum_drift_is_refused) ... ok\ntest_modified_extracted_source_is_refused (test_w1_profile_source_map.SourceMapTests.test_modified_extracted_source_is_refused) ... ok\ntest_stark_value_or_declaration_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_stark_value_or_declaration_drift_is_refused) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.049s\n\nOK\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.17471263100014767
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/test_project_boundary.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "project-boundary",
+      "log_sha256": "9654e07986f6623186a49cfba9f478845d1e212a397925c394c706a46a6883d2",
+      "raw_log_utf8": "test_activation_and_preservation_policy_are_not_relaxed (__main__.ProjectBoundaryTests.test_activation_and_preservation_policy_are_not_relaxed) ... ok\ntest_canonical_push_target_does_not_rescue_foreign_origin (__main__.ProjectBoundaryTests.test_canonical_push_target_does_not_rescue_foreign_origin) ... ok\ntest_checker_does_not_modify_refs_config_or_tracked_files (__main__.ProjectBoundaryTests.test_checker_does_not_modify_refs_config_or_tracked_files) ... ok\ntest_checkout_https_without_suffix_audits_detached_head (__main__.ProjectBoundaryTests.test_checkout_https_without_suffix_audits_detached_head) ... ok\ntest_detached_source_is_audit_only (__main__.ProjectBoundaryTests.test_detached_source_is_audit_only) ... ok\ntest_exact_repository_spellings_allow_audit_and_dev (__main__.ProjectBoundaryTests.test_exact_repository_spellings_allow_audit_and_dev) ... ok\ntest_foreign_or_decorated_origins_are_not_normalized (__main__.ProjectBoundaryTests.test_foreign_or_decorated_origins_are_not_normalized) ... ok\ntest_missing_updates_deletion_and_unchecked_sha_reject (__main__.ProjectBoundaryTests.test_missing_updates_deletion_and_unchecked_sha_reject) ... ok\ntest_new_branch_must_be_the_checked_out_continuation (__main__.ProjectBoundaryTests.test_new_branch_must_be_the_checked_out_continuation) ... ok\ntest_non_fast_forward_update_is_rejected (__main__.ProjectBoundaryTests.test_non_fast_forward_update_is_rejected) ... ok\ntest_protected_branch_cannot_become_a_development_branch (__main__.ProjectBoundaryTests.test_protected_branch_cannot_become_a_development_branch) ... ok\ntest_protected_remote_branch_and_mixed_updates_reject (__main__.ProjectBoundaryTests.test_protected_remote_branch_and_mixed_updates_reject) ... ok\ntest_push_hook_accepts_only_canonical_repository_spellings (__main__.ProjectBoundaryTests.test_push_hook_accepts_only_canonical_repository_spellings) ... ok\ntest_push_remote_name_and_destination_still_reject (__main__.ProjectBoundaryTests.test_push_remote_name_and_destination_still_reject) ... ok\ntest_source_inventory_and_external_path_dependency_still_reject (__main__.ProjectBoundaryTests.test_source_inventory_and_external_path_dependency_still_reject) ... ok\ntest_staged_and_push_modes_read_their_own_source (__main__.ProjectBoundaryTests.test_staged_and_push_modes_read_their_own_source) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 5.554s\n\nOK\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 5.7094649159989785
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--release",
+        "--all-targets",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "label": "hardened-clippy",
+      "log_sha256": "7939a1fa8507221d2abe020a31cbcdee9552afb6272397675a1614483f71a1f6",
+      "raw_log_utf8": "    Finished `release` profile [optimized + debuginfo] target(s) in 0.78s\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 0.856188874997315
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--release",
+        "--all-targets",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "label": "native-clippy",
+      "log_sha256": "d67c61b74a47f3446e75a34393a8b0c66c87317103234224eccf181d94e313fb",
+      "raw_log_utf8": "    Checking typenum v1.20.1\n    Checking zeroize v1.8.2\n    Checking cmov v0.5.4\n    Checking ctutils v0.4.6\n    Checking generic-array v0.14.7\n    Checking cfg-if v1.0.4\n    Checking hybrid-array v0.4.15\n    Checking crypto-common v0.1.7\n    Checking block-buffer v0.10.4\n    Checking digest v0.10.7\n    Checking crypto-common v0.2.2\n    Checking cpufeatures v0.2.17\n    Checking digest v0.11.3\n    Checking sha2-asm v0.6.4\n    Checking serde_core v1.0.228\n    Checking num-traits v0.2.19\n    Checking sha2 v0.10.9\n    Checking keccak v0.2.2\n    Checking sponge-cursor v0.1.0\n    Checking subtle v2.6.1\n    Checking signature v2.2.0\n    Checking ed25519 v2.2.3\n    Checking curve25519-dalek v4.1.3\n    Checking shake v0.1.0\n    Checking serde v1.0.228\n    Checking thiserror v1.0.69\n    Checking module-lattice v0.2.3\n    Checking signature v3.0.0\n    Checking hex v0.4.3\n    Checking trnm-protocol v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-protocol)\n    Checking ml-dsa v0.1.1\n    Checking ed25519-dalek v2.2.0\n    Checking anyhow v1.0.103\n    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/79360d3567d1/chain/trillionnium/crates/trnm-crypto-primitives)\n    Checking zmij v1.0.21\n    Checking memchr v2.8.0\n    Checking itoa v1.0.18\n    Checking serde_json v1.0.149\n    Checking trnm-w1-zk-relation v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/relation)\n    Checking trnm-w1-independent-native-cost v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_native_cost)\n    Finished `release` profile [optimized + debuginfo] target(s) in 34.56s\n",
+      "source_commit": "b13211ccf356fe16624da66d970ce71d77a5c51f",
+      "wall_seconds": 34.61991897400003
+    }
+  ]
+}

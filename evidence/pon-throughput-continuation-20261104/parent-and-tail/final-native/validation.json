@@ -1,0 +1,26 @@
+{
+  "schema": "final-native-archive-validation-v1",
+  "operation": "readback/copy/patch/link checks only; no native build or test run during packaging",
+  "copied_payloads_verified": 241,
+  "raw_original_and_stored_sha_verified": true,
+  "complete_observation_directories": 8,
+  "final_distinct_native_test_counts": {
+    "trnm_pon_node": 127,
+    "trnm_mvcc_fee": 113,
+    "trnm_sqlite_io_boundary": 13
+  },
+  "final_total_distinct_native_passed": 253,
+  "six_core_plus_nine_additional_exact_readers_passed": 15,
+  "full_node_suite_executed": false,
+  "node_registry_total": 1019,
+  "node_registry_ignored": 27,
+  "core_118_and_additional_9_overlap": [],
+  "strict_clippy_three_crates_exit": 0,
+  "source_patch_paths": 5,
+  "full_input_reconstructions": 2,
+  "native_inputs_verified_each": 1190,
+  "relative_readme_links_checked": 45,
+  "missing_links": [],
+  "large_json_compression": "gzip mtime 0; original payload SHA retained",
+  "native_production_or_workflow_files_modified_during_packaging": false
+}

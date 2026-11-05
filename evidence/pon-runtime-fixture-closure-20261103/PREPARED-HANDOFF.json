@@ -1,0 +1,135 @@
+{
+  "schema": "diagnostics-v2-evidence-prepared-handoff-v1",
+  "prepared_utc": "2026-11-03T21:36:00.494020+00:00",
+  "status": "AWAITING_PARENT_TERMINAL_NOT_FINAL_QUALIFICATION",
+  "directory": "/workspace/scratch/b5a148b09b11/next-validation/diagnostics-v2-evidence-stage",
+  "destination": "existing evidence/pon-runtime-fixture-closure-20261103/",
+  "files": [
+    {
+      "path": "README-diagnostics-v2-append.md",
+      "bytes": 9949,
+      "sha256": "3ab0248e22d7f4feb3bd2219bff71b86a8f1d8f81834d4129ef58d23a81cebc5"
+    },
+    {
+      "path": "README-fixture-activation-append.md",
+      "bytes": 4504,
+      "sha256": "1e56aef8b934b226e5ee0ea8e7cac5811b7e06dd220d9cb58c3cc186436e47cb"
+    },
+    {
+      "path": "diagnostics-116-historical-phase.json.gz",
+      "bytes": 375020,
+      "sha256": "5e7ebf0962cd7192dd8f17ebef2e3b3d38024ad9234d4af311eaa77fef851592"
+    },
+    {
+      "path": "diagnostics-artifact-index.json",
+      "bytes": 69309,
+      "sha256": "e04c7a2fa237e33cb93d34001c42d377aa0ceae8dbefe4bca85fe79ab8faa078"
+    },
+    {
+      "path": "diagnostics-build-static-records.json.gz",
+      "bytes": 269253,
+      "sha256": "30a1dce08f388bbe86099b0cff4d10ae540e8fd734911c73922ffccf1f6810f3"
+    },
+    {
+      "path": "diagnostics-historical-gap-readback.json",
+      "bytes": 8519,
+      "sha256": "4bf499a9f4bd3f8d1a37cef20dc3517e906a509bb2913ce0ed158dd19b2fdfaf"
+    },
+    {
+      "path": "diagnostics-independent-review.json",
+      "bytes": 24836,
+      "sha256": "d1cc4f505084cb1a0cadc34ae0e6b35560148233536f8863ffd632bd459ddb13"
+    },
+    {
+      "path": "diagnostics-interrupted-build-readback.json",
+      "bytes": 2333,
+      "sha256": "cc89c621d5b8957deb6a8ce49ebb8f4ead8959388162178748f2b20c5ee42e90"
+    },
+    {
+      "path": "diagnostics-layout-baseline.json",
+      "bytes": 4481,
+      "sha256": "6e42f70328ab5d634a5cf469a1e698bc17a21231415855c98a2a8229257a7520"
+    },
+    {
+      "path": "diagnostics-layout-candidate.json",
+      "bytes": 5934,
+      "sha256": "dadb515476c1d674f9eeb655aa84c8f298af759d5e3bcd39041f3fccd6af6571"
+    },
+    {
+      "path": "diagnostics-native-records.json.gz",
+      "bytes": 39252,
+      "sha256": "2504a6a18dbf5de84c9600d752402cf8d9c9526e95bfadaff6b4e4e6377796ed"
+    },
+    {
+      "path": "diagnostics-native-source-manifest.json",
+      "bytes": 173233,
+      "sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3"
+    },
+    {
+      "path": "diagnostics-packaging-check.json",
+      "bytes": 4510,
+      "sha256": "610d164d9f3802780d337a28307acfe1a6057627d038b2ce652058d11d964d25"
+    },
+    {
+      "path": "diagnostics-review-records.json.gz",
+      "bytes": 102470,
+      "sha256": "786a48bf4452846bd0754c418b7325ca72c07bd51309408f8e0590fba6359680"
+    },
+    {
+      "path": "diagnostics-selected-native-logs.json.gz",
+      "bytes": 54400,
+      "sha256": "b35236be1b5cde263fe5aca50275cda9cf682086fb7f396a0d3c69c0a4852c51"
+    },
+    {
+      "path": "diagnostics-stage-progress.json",
+      "bytes": 374,
+      "sha256": "8fe76190de57bf47a8a1b275e889250fb3ec4bfae4d9e1c46860ad0ab7dfc4b9"
+    },
+    {
+      "path": "diagnostics-v2-summary.json",
+      "bytes": 25076,
+      "sha256": "d187f574e2c95c90c88d75c2334e78596c5d2972a36aa632a30d77a42231c325"
+    },
+    {
+      "path": "fixture-activation-attempt-records.json.gz",
+      "bytes": 11385,
+      "sha256": "00820d3e5a941a31ef2749c676bce775777fb2923e85dd3279845fd7c1941b11"
+    },
+    {
+      "path": "fixture-activation-independent-review-v3.json",
+      "bytes": 4414,
+      "sha256": "71cc68eab778c57d99727b8eb4342cccb0c12a43daf68df4c28d4291f57edadf"
+    },
+    {
+      "path": "fixture-activation-summary.json",
+      "bytes": 19653,
+      "sha256": "ac40c310fd5a479ff7521e3711d8f63952e8e4442c0d8cb3d008194d5ee92b2e"
+    }
+  ],
+  "files_excluding_handoff": 20,
+  "bytes_excluding_handoff": 1208905,
+  "source_manifest_sha256": "22cd64ab7427e49ed5d844b2fe7c6b8d7ca11799b25b78d4cea8eccfa5e54af3",
+  "node_elf_sha256": "a937d88d3858e89b1583b870e5bde458ff024bd5034c3a38abb966b94d2c24b9",
+  "awaiting": [
+    "Actual full974 terminal result and immutable final native log from parent.",
+    "Exact formal final-fixture Cargo build/native result, separately source-bound."
+  ],
+  "actions_not_performed": [
+    "No repository/PR mutation.",
+    "No source/target edits or live target hash reads.",
+    "No Cargo/native/Host execution or session management.",
+    "No read of growing full974 native.log."
+  ],
+  "included_failed_attempts": [
+    "Reader v1 initial32PASS2ERROR.",
+    "First diagnostics build UNKNOWN without terminal.",
+    "Selected57 original UnixListener EPERM.",
+    "Fixture v1 native owner-bind wait failure after10.05s; supervisor not timed out.",
+    "Fixture v2 E0308 compile failure."
+  ],
+  "excluded_qualification": [
+    "No full974 outcome predicted.",
+    "No formal final-fixture Cargo/Host result predicted.",
+    "No performance benefit, service gate, whole-chain PQ or activation qualification."
+  ]
+}

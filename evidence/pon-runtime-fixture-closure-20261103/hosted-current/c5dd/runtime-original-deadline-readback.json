@@ -1,0 +1,93 @@
+{
+  "schema": "exact-c1-runtime-original-deadline-readback-v1",
+  "observed_utc": "2026-11-03T23:01:53.426Z",
+  "candidate": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+  "run_id": 41728500537,
+  "raw_metadata": {
+    "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/20261103T230153427Z-runtime-timed-jobs-via-run-subresource.json",
+    "bytes": 143514,
+    "sha256": "9ea7faa43299ef2d7a9d39f961d629584221dd81e089f0eb9f2c7460c36b746f"
+  },
+  "source_records": [
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/.github/workflows/trnm-required-baseline.yml",
+      "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "bytes": 34136,
+      "sha256": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/rust_baseline_shards.py",
+      "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "bytes": 8725,
+      "sha256": "3a2a0f960c0f58dd8dbe8a5b9c889fee963c9bba8ecadb9c751af6def4c543e5"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/run_public_fixture_native.py",
+      "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "bytes": 29037,
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    {
+      "path": "/workspace/scratch/b5a148b09b11/next-hosted/c5dd7c-review/source-c5dd7c/scripts/ci/ci_job.sh",
+      "source_commit": "c5dd7c7718925b951dc6e4d5ccc5a86ccfa8e3c1",
+      "bytes": 22306,
+      "sha256": "e20c602e1a378b391f6f37ed289041a70ea377a69b06e9f2911cf36ba910cb60"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": 126245171748,
+      "name": "rust-baseline shard (runtime)",
+      "status": "in_progress",
+      "conclusion": null,
+      "job_started_at": "2026-11-03T22:22:16Z",
+      "current_step": {
+        "name": "Run retained Rust shard",
+        "status": "in_progress",
+        "conclusion": null,
+        "number": 9,
+        "started_at": "2026-11-03T22:30:32Z",
+        "completed_at": null
+      },
+      "original_job_timeout_minutes": 180,
+      "derived_original_job_deadline_utc": "2026-11-04T01:22:16+00:00",
+      "job_elapsed_seconds_at_readback": 2377.426,
+      "step_elapsed_seconds_at_readback": 1881.426,
+      "deadline_scope": "computed from original workflow180min and provider job.started_at; no claim provider has fired or changed deadline"
+    },
+    {
+      "job_id": 126245171763,
+      "name": "prospective Rust shard (runtime)",
+      "status": "in_progress",
+      "conclusion": null,
+      "job_started_at": "2026-11-03T22:22:15Z",
+      "current_step": {
+        "name": "Run retained Rust shard",
+        "status": "in_progress",
+        "conclusion": null,
+        "number": 9,
+        "started_at": "2026-11-03T22:33:04Z",
+        "completed_at": null
+      },
+      "original_job_timeout_minutes": 180,
+      "derived_original_job_deadline_utc": "2026-11-04T01:22:15+00:00",
+      "job_elapsed_seconds_at_readback": 2378.426,
+      "step_elapsed_seconds_at_readback": 1729.426,
+      "deadline_scope": "computed from original workflow180min and provider job.started_at; no claim provider has fired or changed deadline"
+    }
+  ],
+  "bounds": {
+    "runtime_shard_extra_native_timeout": null,
+    "native_retries_added": false,
+    "architecture_selector_timeout_seconds": 120,
+    "other8_adapter_timeout_seconds": null,
+    "original_native_fixture_lifetimes_preserved": true
+  },
+  "observability": {
+    "currently_running_specific_Host_selector": "UNKNOWN_FROM_JOB_STEP_METADATA",
+    "terminal_native_pass_or_fail": "UNOBSERVED",
+    "in_progress_job_logs_requested": false,
+    "workflow_mutation": false
+  },
+  "scope": "Original workflow and actual started_at establish the outer deadline; no failure inferred from duration or absent final artifact/log. Step9 covers the complete original runtime recipe, including build, workspace tests, Host adapters and later checks."
+}

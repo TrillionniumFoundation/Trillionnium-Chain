@@ -1,0 +1,26 @@
+{
+  "executable": "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+  "executable_sha256": "dd6a1dee07568ba26022ccd690933af13788696e1925e442fe3ba471927f856f",
+  "base_head": "73ab6e9a83bcc836e261d93f9bb23ceafe556758",
+  "dirty_source_manifest_sha256": "f56cc35bd9c9462c931776cc4e08fedeeaa7c73df5f00b2907cc2a057bc81381",
+  "all": 1029,
+  "ignored": 28,
+  "unignored": 1001,
+  "registry_kind": "listed, not full suite executed",
+  "pre_write": {
+    "all": 12,
+    "ignored": 1
+  },
+  "post_write_readback": {
+    "all": 35,
+    "ignored": 1
+  },
+  "store::native_authenticated::": {
+    "all": 103,
+    "ignored": 2
+  },
+  "store::append_readback_tests::": {
+    "all": 2,
+    "ignored": 0
+  }
+}

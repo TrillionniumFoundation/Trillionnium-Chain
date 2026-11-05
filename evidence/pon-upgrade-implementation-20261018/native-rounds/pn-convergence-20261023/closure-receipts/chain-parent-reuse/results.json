@@ -1,0 +1,65 @@
+[
+  {
+    "name": "preflight-before-parent-tests",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.09841663402039558,
+    "log_sha256": "aad5fe72fdfb2416334d058d0ea1ebb520cd1960706c97cc9697ce6becd58ac2"
+  },
+  {
+    "name": "red-patch-check",
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-red.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.006985060987062752,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "red-patch-apply",
+    "command": [
+      "git",
+      "apply",
+      "/tmp/trnm-pn-convergence-20261023/evidence-root/final-closure-patches/admission-parent-reuse-red.patch"
+    ],
+    "returncode": 0,
+    "seconds": 0.0069883199175819755,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "red-preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0,
+    "seconds": 0.0869473940692842,
+    "log_sha256": "aad5fe72fdfb2416334d058d0ea1ebb520cd1960706c97cc9697ce6becd58ac2"
+  },
+  {
+    "name": "parent-reuse-red-native",
+    "command": [
+      "cargo",
+      "test",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::admission_parent_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "returncode": 101,
+    "seconds": 391.90172918804456,
+    "log_sha256": "a9e0be754faf77d4019e2aa13f31e3b6d730d24093c610718d6b98b7e13b4236"
+  }
+]

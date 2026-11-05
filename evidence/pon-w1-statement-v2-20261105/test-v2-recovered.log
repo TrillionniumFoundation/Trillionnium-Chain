@@ -1,0 +1,14 @@
+$ cargo test --locked --release --manifest-path formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml -p trnm-w1-zk-host-v2
+   Compiling trnm-w1-zk-methods-v2 v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/methods-v2)
+   Compiling trnm-w1-zk-host-v2 v0.1.0 (/workspace/scratch/79360d3567d1/chain/formal/pon-nakamoto-v1/w1_zkvm/host-v2)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.72s
+     Running unittests ../host/src/bin/w1-staged-prover.rs (/workspace/scratch/79360d3567d1/target-v2/release/deps/w1_staged_prover_v2-c6ef0186a089afcc)
+
+running 2 tests
+test tests::schema_is_strict_and_recursive_receipts_are_not_segment_receipts ... ok
+test tests::checkpoint_binds_source_input_journal_and_complete_order ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+exit_code=0

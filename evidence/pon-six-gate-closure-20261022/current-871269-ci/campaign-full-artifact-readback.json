@@ -1,0 +1,215 @@
+{
+  "artifact_manifest_sha256": "75c1c8dbd1c9de69caa3e6c86cfb30992615e4a31af51008052be95797d6b674",
+  "binary_payload_hash_verified": true,
+  "binary_sha256": "80090856a0ca78222c4a2f3333368d873f0a362976b11bfe9a024da40eb76732",
+  "coverage": "full-artifact",
+  "denominators": {
+    "all_hostile_rounds_depletion_overlapped": false,
+    "complete_runs": 3,
+    "confirmation_round_observations": 27,
+    "hostile_round_observations": 18,
+    "hostile_rounds_with_observed_depletion_overlap": 6,
+    "phases": 9,
+    "submitted_block_observations": 189,
+    "unique_observed_transaction_ids": 3
+  },
+  "measured_head": "87126992dd5634348cc1a788442126997b28c624",
+  "measured_tree": "579771a4735f58c9d3391edc76e1d7552bb9a606",
+  "original_manifest_file_count": 910,
+  "original_three_run_record_consistent": true,
+  "runs": [
+    {
+      "elapsed_ns": 98252062918,
+      "number": 1,
+      "phases": [
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 0,
+          "mode": "baseline",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            false
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "from-zero",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "late-product",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        }
+      ]
+    },
+    {
+      "elapsed_ns": 98274415570,
+      "number": 2,
+      "phases": [
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 0,
+          "mode": "baseline",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            false
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "from-zero",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "late-product",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        }
+      ]
+    },
+    {
+      "elapsed_ns": 98329054650,
+      "number": 3,
+      "phases": [
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 0,
+          "mode": "baseline",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            false
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "from-zero",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        },
+        {
+          "confirmed_observation_rounds": 3,
+          "depletion_overlapping_rounds": 1,
+          "mode": "late-product",
+          "observed_transaction_ids": [
+            "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21",
+            "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82",
+            "48b9ae81bd3f28ec8753c2976fb6c290cebf6b7a645bbd2045552c86cfac6d16"
+          ],
+          "round_depletion_overlap": [
+            false,
+            false,
+            true
+          ],
+          "scheduled_observation_rounds": 3,
+          "submitted_blocks": 21
+        }
+      ]
+    }
+  ],
+  "schema": "pon-original-native-campaign-readback-v1",
+  "scope": {
+    "cryptographic_hardness_qualified": false,
+    "current_source_qualification": false,
+    "depletion_overlap_is_full_sample_interval_inside_round_not_continuous_saturation": true,
+    "host_or_custody_attestation": false,
+    "hostile_round_counters_are_retained_original_snapshots_not_reexecuted": true,
+    "independent_operators_qualified": false,
+    "model_benefit_measured": false,
+    "omitted_files_or_complete_zip_verified": null,
+    "production_activation": false,
+    "reader_executes_native_test": false,
+    "reader_replays_consensus_or_verifies_signatures": false,
+    "resource_limits_are_ceilings_not_physical_reservations": true,
+    "same_host_controlled_loopback": true,
+    "source_binding_is_retained_observation_not_checkout_verification": true,
+    "sustainable_business_tps": null,
+    "unknown_is_not_zero": true,
+    "wan_qualified": false
+  },
+  "verified_original_bytes": 320779809,
+  "verified_original_file_count": 910
+}

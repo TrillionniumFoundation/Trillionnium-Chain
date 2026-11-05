@@ -1,0 +1,1491 @@
+{
+  "schema": "pq-owner-lexical-inventory-v2",
+  "source_commit": "31dc8b2247aed8cbb4e3f6912659da97a2cbc2b3",
+  "repository": "/workspace/scratch/56818e4fba76/chain-work",
+  "method": "Tracked native src Rust and Cargo manifests; exclude explicitly named test files/directories and test-support/vector files. Retain inline test matches and cfg(test)-guarded imports instead of incorrectly truncating a file at an early test-only import. Lexical audit aid, not a call graph or test result.",
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "file_sha256": "716644aa2d556ed6677233c4e43e42552ac18c3672df5a3ab514a6eaab73be76",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 17,
+          "text": "# Explicit development integration only; does not replace installed Ed25519"
+        },
+        {
+          "line": 19,
+          "text": "pq-native-openssl = [\"dep:openssl\"]"
+        },
+        {
+          "line": 25,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "file_sha256": "c050ffdc31115ffb38351a7f00e301baa21eca05526de1905fe1c5b7194b193b",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 4,
+          "text": "use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};"
+        },
+        {
+          "line": 64,
+          "text": "fn canonical_ed25519_point(bytes: &[u8; 32]) -> bool {"
+        },
+        {
+          "line": 91,
+          "text": "    ensure!(canonical_ed25519_point(&r), \"signature R is not canonical\");"
+        },
+        {
+          "line": 95,
+          "text": "pub fn verifying_key_from_hex(value: &str) -> Result<VerifyingKey> {"
+        },
+        {
+          "line": 98,
+          "text": "        canonical_ed25519_point(&bytes),"
+        },
+        {
+          "line": 101,
+          "text": "    VerifyingKey::from_bytes(&bytes)"
+        },
+        {
+          "line": 102,
+          "text": "        .map_err(|_| anyhow!(\"public_key_hex is not a valid Ed25519 key\"))"
+        },
+        {
+          "line": 105,
+          "text": "pub fn signing_key_from_hex(value: &str) -> Result<SigningKey> {"
+        },
+        {
+          "line": 107,
+          "text": "    Ok(SigningKey::from_bytes(&bytes))"
+        },
+        {
+          "line": 110,
+          "text": "pub fn public_key_hex(signing_key: &SigningKey) -> String {"
+        },
+        {
+          "line": 114,
+          "text": "pub fn sign_hex(signing_key: &SigningKey, message: &[u8]) -> String {"
+        },
+        {
+          "line": 121,
+          "text": "    key.verify_strict(message, &signature)"
+        },
+        {
+          "line": 122,
+          "text": "        .map_err(|_| anyhow!(\"Ed25519 signature verification failed\"))"
+        },
+        {
+          "line": 125,
+          "text": "pub fn verify_hex_strict(public_key_hex: &str, message: &[u8], signature_hex: &str) -> Result<()> {"
+        },
+        {
+          "line": 128,
+          "text": "    key.verify_strict(message, &signature)"
+        },
+        {
+          "line": 129,
+          "text": "        .map_err(|_| anyhow!(\"strict Ed25519 signature verification failed\"))"
+        },
+        {
+          "line": 200,
+          "text": "            verify_hex_strict(&hex::encode(identity), b\"message\", &hex::encode(signature)).is_err()"
+        },
+        {
+          "line": 211,
+          "text": "    fn ed25519_roundtrip_rejects_tamper() {"
+        },
+        {
+          "line": 212,
+          "text": "        let key = SigningKey::from_bytes(&[7u8; 32]);"
+        },
+        {
+          "line": 215,
+          "text": "        verify_hex_strict(&public_key_hex(&key), b\"payload\", &signature).unwrap();"
+        },
+        {
+          "line": 217,
+          "text": "        assert!(verify_hex_strict(&public_key_hex(&key), b\"tampered\", &signature).is_err());"
+        },
+        {
+          "line": 225,
+          "text": "#[cfg(feature = \"pq-native-openssl\")]"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "file_sha256": "03ccc8ca1a696ccd23ecb047c75b843ad90271664b6d1f2b13bf92885977fe0e",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 15,
+          "text": "    ML_DSA_65_SIGNATURE_BYTES, ML_DSA_65_SPKI_BYTES, TPQ1_SIGNED_BYTES, TPQ1_UNSIGNED_BYTES,"
+        },
+        {
+          "line": 19,
+          "text": "pub enum PqNativeError {"
+        },
+        {
+          "line": 28,
+          "text": "impl fmt::Display for PqNativeError {"
+        },
+        {
+          "line": 41,
+          "text": "impl std::error::Error for PqNativeError {}"
+        },
+        {
+          "line": 43,
+          "text": "impl From<PqFrameError> for PqNativeError {"
+        },
+        {
+          "line": 49,
+          "text": "impl From<ErrorStack> for PqNativeError {"
+        },
+        {
+          "line": 55,
+          "text": "fn require_provider_version() -> Result<(), PqNativeError> {"
+        },
+        {
+          "line": 57,
+          "text": "        return Err(PqNativeError::OpenSslVersion);"
+        },
+        {
+          "line": 67,
+          "text": "/// use trnm_crypto_primitives::pq_auth::PqSignatureObservation;"
+        },
+        {
+          "line": 68,
+          "text": "/// let forged = PqSignatureObservation {};"
+        },
+        {
+          "line": 71,
+          "text": "pub struct PqSignatureObservation<'a> {"
+        },
+        {
+          "line": 76,
+          "text": "impl<'a> PqSignatureObservation<'a> {"
+        },
+        {
+          "line": 88,
+          "text": "pub struct PqNativeVerifier {"
+        },
+        {
+          "line": 90,
+          "text": "    spki: [u8; ML_DSA_65_SPKI_BYTES],"
+        },
+        {
+          "line": 94,
+          "text": "impl PqNativeVerifier {"
+        },
+        {
+          "line": 95,
+          "text": "    pub fn from_pinned_spki(spki: &[u8], expected_key_id: [u8; 32]) -> Result<Self, PqNativeError> {"
+        },
+        {
+          "line": 99,
+          "text": "            return Err(PqNativeError::KeyPin);"
+        },
+        {
+          "line": 104,
+          "text": "            return Err(PqNativeError::KeyAlgorithm);"
+        },
+        {
+          "line": 106,
+          "text": "        let mut fixed_spki = [0; ML_DSA_65_SPKI_BYTES];"
+        },
+        {
+          "line": 119,
+          "text": "    ) -> Result<PqSignatureObservation<'a>, PqNativeError> {"
+        },
+        {
+          "line": 126,
+          "text": "            return Err(PqNativeError::SignatureRejected);"
+        },
+        {
+          "line": 128,
+          "text": "        Ok(PqSignatureObservation {"
+        },
+        {
+          "line": 138,
+          "text": "pub struct PqNativeSigningKey {"
+        },
+        {
+          "line": 140,
+          "text": "    verifier: PqNativeVerifier,"
+        },
+        {
+          "line": 143,
+          "text": "impl PqNativeSigningKey {"
+        },
+        {
+          "line": 147,
+          "text": "    ) -> Result<Self, PqNativeError> {"
+        },
+        {
+          "line": 150,
+          "text": "            return Err(PqNativeError::KeyAlgorithm);"
+        },
+        {
+          "line": 153,
+          "text": "            PqNativeVerifier::from_pinned_spki(&key.public_key_to_der()?, expected_key_id)?;"
+        },
+        {
+          "line": 163,
+          "text": "    ) -> Result<[u8; TPQ1_SIGNED_BYTES], PqNativeError> {"
+        },
+        {
+          "line": 167,
+          "text": "        let mut frame = [0; TPQ1_SIGNED_BYTES];"
+        },
+        {
+          "line": 170,
+          "text": "            .copy_from_slice(&(ML_DSA_65_SIGNATURE_BYTES as u16).to_be_bytes());"
+        },
+        {
+          "line": 172,
+          "text": "        // It cannot construct PqSignatureObservation or skip the EVP call below."
+        },
+        {
+          "line": 176,
+          "text": "        if length != ML_DSA_65_SIGNATURE_BYTES {"
+        },
+        {
+          "line": 177,
+          "text": "            return Err(PqNativeError::SignatureRejected);"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+      "file_sha256": "20b4270df1efee5bd5c10c1434173eff21f53d5add3388f543032b6076009c5b",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 4,
+          "text": "use crate::{pon_work, verify_hex_strict};"
+        },
+        {
+          "line": 205,
+          "text": "    verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs",
+      "file_sha256": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 7,
+          "text": "use crate::{pon_work, verify_hex_strict};"
+        },
+        {
+          "line": 63,
+          "text": "    verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "file_sha256": "33b6cd0006d255bdf55487798f77ea3d43906b84bc472aef188e38d02ed2729b",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 21,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+      "file_sha256": "897a9fd193b75530e1d98b10d7c769c04c90a1e6b363e2a4e9f2d130fa6163e7",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 56,
+          "text": "    use ed25519_dalek::SigningKey;"
+        },
+        {
+          "line": 305,
+          "text": "    fn signing_key(path: &Path) -> Result<SigningKey> {"
+        },
+        {
+          "line": 307,
+          "text": "        let key = SigningKey::from_bytes(&seed);"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "file_sha256": "37964c0d88ea6a1521f106f87418b8da9ae1dd7f25926b2fc20631605767cbbf",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 7,
+          "text": "use ed25519_dalek::{Signer, SigningKey};"
+        },
+        {
+          "line": 125,
+          "text": "    signature: [u8; 64],"
+        },
+        {
+          "line": 128,
+          "text": "    pub fn sign(statement: CellProviderStatementV1, key: &SigningKey) -> CellResultV1<Self> {"
+        },
+        {
+          "line": 210,
+          "text": "    fn verify_signature(&self) -> CellResultV1<()> {"
+        },
+        {
+          "line": 216,
+          "text": "        crate::types::verify_strict(&self.statement.owner, &self.message(), &self.signature)"
+        },
+        {
+          "line": 231,
+          "text": "        self.verify_signature()"
+        },
+        {
+          "line": 243,
+          "text": "// scalar/signature validation remain in the existing strict Ed25519 primitive."
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "file_sha256": "c0ef1562047339fc4d8c3d236a646abb104961e1218f7f6ec25529664629ea11",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 45,
+          "text": "    /// Each reserves at most one strict Ed25519 verification, including cheap"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/retrieval.rs",
+      "file_sha256": "188930642a116a212a6badef9f359fe48970e2f311f14f31bdba4584e823019e",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 10,
+          "text": "use ed25519_dalek::VerifyingKey;"
+        },
+        {
+          "line": 19,
+          "text": "        MERKLE_ROOT_DOMAIN, STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 65,
+          "text": "        let key = VerifyingKey::from_bytes(&public_key).map_err(|_| {"
+        },
+        {
+          "line": 202,
+          "text": "            requester_key_scheme: STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 221,
+          "text": "            || self.requester_key_scheme != STRICT_ED25519_SCHEME_V1"
+        },
+        {
+          "line": 249,
+          "text": "        verify_strict("
+        },
+        {
+          "line": 589,
+          "text": "    verify_strict("
+        },
+        {
+          "line": 598,
+          "text": "        responder_key_scheme: STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 801,
+          "text": "        || response.responder_key_scheme != STRICT_ED25519_SCHEME_V1"
+        },
+        {
+          "line": 870,
+          "text": "    verify_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/store.rs",
+      "file_sha256": "33ae114d6f7adbfb5706779be20ec863a2bfbf32288da9274d63d1a49863759c",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 485,
+          "text": "        if authority.public_key() != author_public_key(author) {"
+        },
+        {
+          "line": 1417,
+          "text": "        if authority.public_key() != author_public_key(author) {"
+        },
+        {
+          "line": 2012,
+          "text": "fn author_public_key(author: &DaBatchAuthorV1) -> &[u8; 32] {"
+        },
+        {
+          "line": 2444,
+          "text": "        || authority.public_key() != author_public_key(&author)"
+        },
+        {
+          "line": 2510,
+          "text": "        || authority.public_key() != author_public_key(&author)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/types.rs",
+      "file_sha256": "9251274c47edc1ddc5fef34c0130f5341d6977681a4e07c2eab89a235c6d55f1",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 4,
+          "text": "use ed25519_dalek::{Signature, VerifyingKey};"
+        },
+        {
+          "line": 12,
+          "text": "pub const STRICT_ED25519_SCHEME_V1: u16 = 0;"
+        },
+        {
+          "line": 213,
+          "text": "    attestation_public_key: [u8; 32],"
+        },
+        {
+          "line": 240,
+          "text": "        VerifyingKey::from_bytes(&public_key).map_err(|_| {"
+        },
+        {
+          "line": 243,
+          "text": "                \"DA member key is not strict Ed25519\","
+        },
+        {
+          "line": 246,
+          "text": "        if VerifyingKey::from_bytes(&public_key)"
+        },
+        {
+          "line": 256,
+          "text": "            attestation_key_scheme: STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 257,
+          "text": "            attestation_public_key: public_key,"
+        },
+        {
+          "line": 275,
+          "text": "        &self.body.attestation_public_key"
+        },
+        {
+          "line": 283,
+          "text": "        if self.body.attestation_key_scheme != STRICT_ED25519_SCHEME_V1"
+        },
+        {
+          "line": 292,
+          "text": "        let key = VerifyingKey::from_bytes(&self.body.attestation_public_key).map_err(|_| {"
+        },
+        {
+          "line": 295,
+          "text": "                \"invalid DA member Ed25519 key\","
+        },
+        {
+          "line": 493,
+          "text": "    author_public_key: [u8; 32],"
+        },
+        {
+          "line": 503,
+          "text": "        author_public_key: [u8; 32],"
+        },
+        {
+          "line": 511,
+          "text": "            author_public_key,"
+        },
+        {
+          "line": 526,
+          "text": "        &self.author_public_key"
+        },
+        {
+          "line": 564,
+          "text": "        let author_key = VerifyingKey::from_bytes(&self.author_public_key).map_err(|_| {"
+        },
+        {
+          "line": 567,
+          "text": "                \"author key is not strict Ed25519\","
+        },
+        {
+          "line": 658,
+          "text": "                || !keys.insert(authority.author_public_key)"
+        },
+        {
+          "line": 905,
+          "text": "    author_public_key: [u8; 32],"
+        },
+        {
+          "line": 927,
+          "text": "            author_key_scheme: STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 928,
+          "text": "            author_public_key: public_key,"
+        },
+        {
+          "line": 950,
+          "text": "        if self.author_key_scheme != STRICT_ED25519_SCHEME_V1"
+        },
+        {
+          "line": 964,
+          "text": "        verify_strict("
+        },
+        {
+          "line": 965,
+          "text": "            &self.author_public_key,"
+        },
+        {
+          "line": 976,
+          "text": "        &self.author_public_key"
+        },
+        {
+          "line": 1348,
+          "text": "        verify_strict("
+        },
+        {
+          "line": 1356,
+          "text": "            signature_scheme: STRICT_ED25519_SCHEME_V1,"
+        },
+        {
+          "line": 1363,
+          "text": "        if self.signature_scheme != STRICT_ED25519_SCHEME_V1"
+        },
+        {
+          "line": 1378,
+          "text": "        verify_strict("
+        },
+        {
+          "line": 1756,
+          "text": "pub(crate) fn verify_strict("
+        },
+        {
+          "line": 1761,
+          "text": "    let key = VerifyingKey::from_bytes(public_key).map_err(|_| {"
+        },
+        {
+          "line": 1764,
+          "text": "            \"invalid Ed25519 public key\","
+        },
+        {
+          "line": 1770,
+          "text": "            \"weak Ed25519 public key\","
+        },
+        {
+          "line": 1776,
+          "text": "            \"invalid Ed25519 signature length\","
+        },
+        {
+          "line": 1779,
+          "text": "    key.verify_strict(message, &signature).map_err(|_| {"
+        },
+        {
+          "line": 1782,
+          "text": "            \"strict Ed25519 verification failed\","
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-mempool/src/typed_admission.rs",
+      "file_sha256": "ac777c8fa3a9953343fd079a09aca43bd672d8c4c0998cb50a8f934d675e2fe4",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 399,
+          "text": "    fn verify_signature("
+        },
+        {
+          "line": 582,
+          "text": "        if let Err(reason) = hooks.verify_signature(envelope, &metadata) {"
+        },
+        {
+          "line": 656,
+          "text": "        if let Err(reason) = hooks.verify_signature(envelope, &metadata) {"
+        },
+        {
+          "line": 887,
+          "text": "        fn verify_signature("
+        },
+        {
+          "line": 1143,
+          "text": "            fn verify_signature("
+        },
+        {
+          "line": 1228,
+          "text": "            fn verify_signature("
+        },
+        {
+          "line": 1289,
+          "text": "            fn verify_signature("
+        },
+        {
+          "line": 1433,
+          "text": "            fn verify_signature("
+        },
+        {
+          "line": 1747,
+          "text": "        fn verify_signature("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/model_task_windows_v1.rs",
+      "file_sha256": "9503b0282adb69b74ed0155763f887da63fb777efd79cbd74ed5575a6b895252",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 279,
+          "text": "        trnm_crypto_primitives::verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "file_sha256": "630b0f6b01fbd157df433eed80c969c105d629b4128d410e372220a262040416",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 13,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 1251,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 1820,
+          "text": "            verify_hex_strict(text(&o, \"consumer\")?, &digest, &hex::encode(signature))"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "file_sha256": "00448d34f645ceb65554e935be06cacc39e24f2eec1bc3efb0ab3d918a8aca60",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 6,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 385,
+          "text": "        verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "file_sha256": "685ba1843dd3680ad4914af18f7d06236ffe3f94050eb5c4fc6658a481547d94",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 22,
+          "text": "    public_key_hex, sign_hex, signing_key_from_hex, verify_hex_strict, verifying_key_from_hex,"
+        },
+        {
+          "line": 171,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 504,
+          "text": "    verify_hex_strict(&envelope.session.peer, &authority, &envelope.signature)"
+        },
+        {
+          "line": 569,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 2006,
+          "text": "    verify_hex_strict(&envelope.session.peer, &authority, &envelope.signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+      "file_sha256": "a70722b025693e4efa976651d87cd978aef061bba4c237d7f9de8f11a21faca6",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 22,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 1029,
+          "text": "                                if verify_hex_strict("
+        },
+        {
+          "line": 1419,
+          "text": "    verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)"
+        },
+        {
+          "line": 1486,
+          "text": "    verify_hex_strict(pinned_server, &r.message()?, &r.signature)"
+        },
+        {
+          "line": 1578,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 1968,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 2018,
+          "text": "        assert!(verify_hex_strict(signer.public_key(), &actual_message, &signature).is_err());"
+        },
+        {
+          "line": 2280,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 2328,
+          "text": "        verify_hex_strict(server_key, &reply.message().unwrap(), &reply.signature).unwrap();"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "file_sha256": "5218dd6a574d4d881cd5b18f6884104873f7a7e50576188e0d25e65453979db1",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 52,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 2436,
+          "text": "                                if verify_hex_strict("
+        },
+        {
+          "line": 3077,
+          "text": "        verify_hex_strict(pinned_server, &r.message()?, &r.signature)"
+        },
+        {
+          "line": 3129,
+          "text": "    verify_hex_strict(pinned_server, &cookie.server_message()?, &cookie.signature)"
+        },
+        {
+          "line": 3584,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 3650,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 4198,
+          "text": "            verify_hex_strict("
+        },
+        {
+          "line": 4359,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 5666,
+          "text": "            verify_hex_strict("
+        },
+        {
+          "line": 5937,
+          "text": "            verify_hex_strict("
+        },
+        {
+          "line": 6082,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 6301,
+          "text": "            verify_hex_strict("
+        },
+        {
+          "line": 6401,
+          "text": "        assert!(verify_hex_strict(signer.public_key(), &new_message, &signature).is_err());"
+        },
+        {
+          "line": 6671,
+          "text": "        verify_hex_strict("
+        },
+        {
+          "line": 6719,
+          "text": "        verify_hex_strict(server_key, &reply.message().unwrap(), &reply.signature).unwrap();"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "file_sha256": "ae41f5c65da4c3b66750ea8896aa3ac09ea9646e5a50360d1c69bb5d3afebc61",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 111,
+          "text": "        &[b\"ed25519-strict/canonical-json/durable-replay\"],"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_checkpoint_tile.rs",
+      "file_sha256": "6642c695cfc8b0e570586b26997aafc71725725f7b586f5aa7cfaa2417afd339",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 16,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 211,
+          "text": "    verify_hex_strict(public, &bytes(message, 32)?, &a.signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_history.rs",
+      "file_sha256": "44bcbac93973226809464aee91fa97c472f53ec6cb5fa2efe7a1d345995aacca",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 21,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 488,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 494,
+          "text": "    verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_policy.rs",
+      "file_sha256": "5b2c2df3c6700b59ca85b854e3010ecaf6033bea964c6e6f849338cfe41a5431",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 21,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 325,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 331,
+          "text": "    verify_hex_strict(&b.identity.task_key, &message(b, 2)?, &v.task_signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_recipient.rs",
+      "file_sha256": "885aca2379565550fab8006012f0629245bc59388e98c63e0e36dc726f025d4d",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 7,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 367,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 373,
+          "text": "    verify_hex_strict(&e.identity.task_key, &message(b, 2)?, &v.task_signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_continuous_recovery.rs",
+      "file_sha256": "07c2993892f0b2d053fb096e4406d03e4e6970dceb667e49cfdc016ed9a2eb18",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 6,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 139,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 145,
+          "text": "    verify_hex_strict(&expected.task_key, &message(b, 2)?, &v.task_signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_deployment.rs",
+      "file_sha256": "df1954cf9c41315fef5ba23747fab473d33bdb18d6c11583676c80a60c1b9234",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 8,
+          "text": "use trnm_crypto_primitives::{pon_work, qualified_work_task::derive_matrices, verify_hex_strict};"
+        },
+        {
+          "line": 271,
+          "text": "    verify_hex_strict(public, &bytes(message, 32)?, &a.signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_mining_policy.rs",
+      "file_sha256": "2052d669e8fa1a1386d2393a100af0911349a2ea3af94ef0ff79254b46ee25a2",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 22,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 495,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 501,
+          "text": "    verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_pool_policy.rs",
+      "file_sha256": "d7b2936bcc985fae84c5bcc0730cc580ab9d5e848295b9808454eac57eb439bc",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 331,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 337,
+          "text": "    verify_hex_strict(&e.task_key, &pool_message(g, 2), &envelope.task_signature)"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_task_policy.rs",
+      "file_sha256": "d70447a334eba08c15a17b77d1f26d735d2e5e3518243369d24fff4f266d3efe",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 14,
+          "text": "use trnm_crypto_primitives::verify_hex_strict;"
+        },
+        {
+          "line": 647,
+          "text": "    verify_hex_strict("
+        },
+        {
+          "line": 653,
+          "text": "    verify_hex_strict("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/release_finality.rs",
+      "file_sha256": "5a70f3985c511a5bec6b107e9184ea5f5a6f533aa4be647b9ced23be0b7232df",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 11,
+          "text": "use trnm_crypto_primitives::{verify_hex_strict, verifying_key_from_hex};"
+        },
+        {
+          "line": 236,
+          "text": "        verify_hex_strict(signer, &message, signature).map_err(|_| VerificationError::Signature)?;"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "file_sha256": "d9d0dc87944b284a46ff597bf1793f10b836e216ed9b506f840a0966c7090047",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 247,
+          "text": "    fn verify_signature("
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "file_sha256": "b98a5beb32e9ba9f24efbf123692ffcfda83b18ff88f803e3ab03712cde599ea",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 6,
+          "text": "pub const MAX_TX_BYTES: usize = 2048;"
+        },
+        {
+          "line": 182,
+          "text": "    pub signature: [u8; 64],"
+        },
+        {
+          "line": 292,
+          "text": "        if bytes.len() > MAX_TX_BYTES {"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "file_sha256": "792916dcbf09efbd66a0342daabd3e354b730ea20686ff4e9b92089d51617971",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 10,
+          "text": "pub const ML_DSA_65_SIGNATURE_BYTES: usize = 3_309;"
+        },
+        {
+          "line": 12,
+          "text": "pub const ML_DSA_65_SPKI_BYTES: usize = 1_974;"
+        },
+        {
+          "line": 20,
+          "text": "pub const TPQ1_SIGNED_BYTES: usize = TPQ1_UNSIGNED_BYTES + 2 + ML_DSA_65_SIGNATURE_BYTES;"
+        },
+        {
+          "line": 100,
+          "text": "    if spki.len() != ML_DSA_65_SPKI_BYTES || !spki.starts_with(&ML_DSA_65_SPKI_PREFIX) {"
+        },
+        {
+          "line": 116,
+          "text": "    if bytes.len() != TPQ1_SIGNED_BYTES {"
+        },
+        {
+          "line": 150,
+          "text": "    if len != ML_DSA_65_SIGNATURE_BYTES {"
+        },
+        {
+          "line": 194,
+          "text": "        let mut v = vec![0xab; TPQ1_SIGNED_BYTES];"
+        },
+        {
+          "line": 207,
+          "text": "        v[176..178].copy_from_slice(&(ML_DSA_65_SIGNATURE_BYTES as u16).to_be_bytes());"
+        },
+        {
+          "line": 239,
+          "text": "        bad[5] = 0x19; // Ed25519 is not a PQ signature algorithm."
+        },
+        {
+          "line": 307,
+          "text": "        assert_eq!(spki.len(), ML_DSA_65_SPKI_BYTES);"
+        },
+        {
+          "line": 320,
+          "text": "            ML_DSA_65_SIGNATURE_BYTES"
+        },
+        {
+          "line": 348,
+          "text": "        // Ed25519's SPKI shape and OID differ fundamentally from ML-DSA."
+        },
+        {
+          "line": 360,
+          "text": "        assert!(TPQ1_SIGNED_BYTES > 2048);"
+        },
+        {
+          "line": 361,
+          "text": "        assert!(ML_DSA_65_SIGNATURE_BYTES > 2048);"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+      "file_sha256": "5a23c9241928e8e3a26279208ad54d71268714ffd8d58e6ce73bc4c9d8611c8e",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 315,
+          "text": "    pub signature: [u8; 64],"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+      "file_sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 248,
+          "text": "    pub signature: [u8; 64],"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/Cargo.toml",
+      "file_sha256": "c93aec7515bd0ecb8ef3fb7aca5e9a95a2d5517c9cb47ea22da21df9a7bb9b27",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 8,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/command.rs",
+      "file_sha256": "675c819160a7d8c7de56f5084bf187c576fe8365ff22da062e1c030919173ca5",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 7,
+          "text": "use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};"
+        },
+        {
+          "line": 51,
+          "text": "        signing_key: &SigningKey,"
+        },
+        {
+          "line": 88,
+          "text": "    /// payload validation, role authorization, and Ed25519 verification."
+        },
+        {
+          "line": 162,
+          "text": "        let verifying_key = VerifyingKey::from_bytes(&self.public_key)"
+        },
+        {
+          "line": 165,
+          "text": "            .verify_strict("
+        },
+        {
+          "line": 241,
+          "text": "    #[error(\"invalid Ed25519 public key\")]"
+        },
+        {
+          "line": 243,
+          "text": "    #[error(\"invalid Ed25519 signature\")]"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+      "file_sha256": "a162bc38f6550fe810fbd3c9832d1ff4d6a5ee8b19aa08cde68db5cb2dce8392",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 15,
+          "text": "use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};"
+        },
+        {
+          "line": 217,
+          "text": "        signing_key: &SigningKey,"
+        },
+        {
+          "line": 247,
+          "text": "    pub fn verify_signature(&self) -> Result<(), HeptaHandoffError> {"
+        },
+        {
+          "line": 254,
+          "text": "        let verifying_key = VerifyingKey::from_bytes(&self.public_key)"
+        },
+        {
+          "line": 257,
+          "text": "            .verify_strict("
+        },
+        {
+          "line": 268,
+          "text": "        self.verify_signature()?;"
+        },
+        {
+          "line": 347,
+          "text": "        signed.verify_signature()?;"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+      "file_sha256": "07f51485cc703f5dcf43ed489b6e78f5addf1ee959c4b97061eb8d4cc5b52ee2",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 21,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/engine.rs",
+      "file_sha256": "a0f54594849d850efe342765df24223df3cf859d01c6ac9eb273e4d3455efc22",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 3,
+          "text": "use ed25519_dalek::{Signature, VerifyingKey};"
+        },
+        {
+          "line": 116,
+          "text": "    VerifyingKey::from_bytes(&trust.provider.public_key).map_err(|_| {"
+        },
+        {
+          "line": 122,
+          "text": "    VerifyingKey::from_bytes(&trust.consumer.public_key).map_err(|_| {"
+        },
+        {
+          "line": 970,
+          "text": "    verify_signature_entry("
+        },
+        {
+          "line": 977,
+          "text": "    verify_signature_entry("
+        },
+        {
+          "line": 986,
+          "text": "fn verify_signature_entry("
+        },
+        {
+          "line": 999,
+          "text": "        || entry.signature_scheme != SIGNATURE_SCHEME_ED25519_V1"
+        },
+        {
+          "line": 1017,
+          "text": "    let key = VerifyingKey::from_bytes(&registered.public_key).map_err(|_| {"
+        },
+        {
+          "line": 1020,
+          "text": "            \"registered Ed25519 key is invalid\","
+        },
+        {
+          "line": 1026,
+          "text": "            \"Ed25519 signature length is invalid\","
+        },
+        {
+          "line": 1029,
+          "text": "    key.verify_strict(&digest.0, &signature).map_err(|_| {"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/src/types.rs",
+      "file_sha256": "002c1fd3fdc7f04e63d30cde86bd3ca60c87d30c1b0f616e3f64a1fd886a6992",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 10,
+          "text": "pub const SIGNATURE_SCHEME_ED25519_V1: u16 = 0;"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/Cargo.toml",
+      "file_sha256": "d0fe886e531a7a93fc091a73befa4724c5348d7687afb35a69c070e649d2e537",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 21,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/src/lib.rs",
+      "file_sha256": "235abe77de9c7bc6597bb466a9fee1e83c8a50bdd83109b70e83431a1114b54e",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 4,
+          "text": "//! strict Ed25519 authorization, a durable local SQLite kernel, and a bounded"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/src/store.rs",
+      "file_sha256": "9b55dc3354ab056edbd9bed34f3c5e02bd2b85ce3531efc565a84c9f653da1f7",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 10,
+          "text": "use ed25519_dalek::{Signature, VerifyingKey};"
+        },
+        {
+          "line": 898,
+          "text": "        bundle.requester.controller_public_key,"
+        },
+        {
+          "line": 899,
+          "text": "        bundle.requester.session_public_key,"
+        },
+        {
+          "line": 900,
+          "text": "        bundle.provider.controller_public_key,"
+        },
+        {
+          "line": 901,
+          "text": "        bundle.provider.session_public_key,"
+        },
+        {
+          "line": 924,
+          "text": "    VerifyingKey::from_bytes(&bundle.requester.controller_public_key).map_err(|_| {"
+        },
+        {
+          "line": 930,
+          "text": "    VerifyingKey::from_bytes(&bundle.requester.session_public_key).map_err(|_| {"
+        },
+        {
+          "line": 936,
+          "text": "    VerifyingKey::from_bytes(&bundle.provider.controller_public_key).map_err(|_| {"
+        },
+        {
+          "line": 942,
+          "text": "    VerifyingKey::from_bytes(&bundle.provider.session_public_key).map_err(|_| {"
+        },
+        {
+          "line": 1021,
+          "text": "            \"strict Ed25519 signature must be 64 bytes\","
+        },
+        {
+          "line": 1037,
+          "text": "        (agent.controller_key_id, agent.controller_public_key)"
+        },
+        {
+          "line": 1039,
+          "text": "        (agent.session_key_id, agent.session_public_key)"
+        },
+        {
+          "line": 1062,
+          "text": "    let key = VerifyingKey::from_bytes(&public_key).map_err(|_| {"
+        },
+        {
+          "line": 1065,
+          "text": "            \"invalid committed Ed25519 public key\","
+        },
+        {
+          "line": 1071,
+          "text": "            \"malformed strict Ed25519 signature\","
+        },
+        {
+          "line": 1074,
+          "text": "    key.verify_strict(&message.0, &signature).map_err(|_| {"
+        },
+        {
+          "line": 1077,
+          "text": "            \"strict Ed25519 verification failed\","
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/src/types.rs",
+      "file_sha256": "211e9bd2d7e51a78e5e6842600e034531845690e8b68dc870ba7d5479ad01522",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 73,
+          "text": "    pub controller_public_key: [u8; 32],"
+        },
+        {
+          "line": 75,
+          "text": "    pub session_public_key: [u8; 32],"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/Cargo.toml",
+      "file_sha256": "ff83cf759d5233c0cbb5b642f81f7e43fb4578716de5f76ff9128810148e9814",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 11,
+          "text": "ed25519-dalek = \"2\""
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/src/relay.rs",
+      "file_sha256": "610bba86023958c903e82e4bdff654297edf72be99bd9a5f8aee8f2f78357672",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 351,
+          "text": "        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,"
+        },
+        {
+          "line": 450,
+          "text": "        if !verify_signature(env) {"
+        },
+        {
+          "line": 461,
+          "text": "        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,"
+        },
+        {
+          "line": 463,
+          "text": "        self.verify_envelope_fields(env, verify_signature)?;"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+      "file_sha256": "4528d2e108d16bb395b1be9ea08da1ca49cce8a9f5c28036593a889a594cadc6",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 152,
+          "text": "        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,"
+        },
+        {
+          "line": 221,
+          "text": "        if !verify_signature(env) {"
+        },
+        {
+          "line": 232,
+          "text": "        verify_signature: impl Fn(&RelayAuthEnvelope) -> bool,"
+        },
+        {
+          "line": 234,
+          "text": "        self.verify_envelope_fields(env, verify_signature)?;"
+        }
+      ]
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/src/transfer.rs",
+      "file_sha256": "b707b1f094ee4fa38dfb397877b021ed73ea5bc9d676742d952ef415804985d1",
+      "scope": "Inline test modules may be present; each non-test owner claim requires manual surrounding-source review.",
+      "matches": [
+        {
+          "line": 1,
+          "text": "use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};"
+        },
+        {
+          "line": 49,
+          "text": "    pub fn derive_address_from_ed25519_pubkey(pubkey: &[u8]) -> String {"
+        },
+        {
+          "line": 66,
+          "text": "        let signing_key = SigningKey::from_bytes(&secret_bytes);"
+        },
+        {
+          "line": 70,
+          "text": "            \"ed25519:{}:{}\","
+        },
+        {
+          "line": 103,
+          "text": "        if parts.next().is_some() || algo != \"ed25519\" {"
+        },
+        {
+          "line": 113,
+          "text": "        let expected_from = Self::derive_address_from_ed25519_pubkey(&pubkey_bytes);"
+        },
+        {
+          "line": 125,
+          "text": "        let verifying_key = VerifyingKey::from_bytes(&pubkey_bytes)"
+        },
+        {
+          "line": 144,
+          "text": "        let sk = SigningKey::from_bytes(&seed);"
+        },
+        {
+          "line": 145,
+          "text": "        let from = TransferTx::derive_address_from_ed25519_pubkey(sk.verifying_key().as_bytes());"
+        }
+      ]
+    }
+  ]
+}

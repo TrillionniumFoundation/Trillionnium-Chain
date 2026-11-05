@@ -1,0 +1,22 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "cutoff-reader-controls",
+  "command": [
+    "python3",
+    "-c",
+    "import sys,unittest; sys.path.insert(0,\"scripts/ci\"); suite=unittest.defaultTestLoader.loadTestsFromNames([\"test_run_from_zero_native\",\"test_growth_scale_observation\",\"test_ci_source_integrity\",\"test_pq_research_integration\"]); result=unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "tree": "923c1aa59bc090baeff79979d950aebeec4def78",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T14:18:36.357764+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 52698051221,
+  "finished_at": "2026-11-04T14:19:29.059606+00:00",
+  "log_bytes": 814,
+  "log_sha256": "18ae8d3f75a684a0a5de4af35e3f1d2504c66581edc30d91903e4d49651d9482",
+  "final_head": "0647ba9e0a928e772946a2f055a2edfbe3fd2870",
+  "final_dirty_paths": []
+}

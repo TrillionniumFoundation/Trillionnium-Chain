@@ -1,0 +1,26 @@
+{
+  "scope": "Source/package/link checks and source-integrity fixtures only; no Rust/native/deployment acceptance",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "source_before": {
+    "head": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+    "status": ""
+  },
+  "source_after": {
+    "head": "e218ec649509e328eee4c7ef6021d96c647514ef",
+    "tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+    "status": ""
+  },
+  "source_unchanged": true,
+  "exit_code": 0,
+  "elapsed_seconds": 71.39835842399953,
+  "output_sha256": "551eccaa655b508a089c96b73f0bee3b4eb931dcbb572880e02e459b359164aa",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0"
+  }
+}

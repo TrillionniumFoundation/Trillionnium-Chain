@@ -1,0 +1,13 @@
+{
+  "schema": "validation-retarget-observation-v1",
+  "time_utc": "2026-11-05T09:03:37.614036+00:00",
+  "old_tested_commit": "5642591d89f1e0938ade32a5e2abe57504cb63ca",
+  "concurrent_candidate": "dda4cc47362065819e9591f11f713933e7a853bf",
+  "reason": "The shared candidate advanced with native History/schema-readback changes. The superseded compile session was interrupted through its supported session control before integrating. The incomplete native receipt is retained and is not a passing test result.",
+  "signal": "SIGTERM",
+  "signalled_rustc_pids": [],
+  "stop_method": "exec session write_stdin Ctrl-C",
+  "session_exit_code": 130,
+  "tests_observed_complete": 0,
+  "receipt_status": "running"
+}

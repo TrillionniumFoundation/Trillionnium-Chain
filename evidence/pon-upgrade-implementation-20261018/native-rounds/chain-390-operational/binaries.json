@@ -1,0 +1,42 @@
+{
+  "head": "390617cbe7b169843f60c5622ec26d2531f385d3",
+  "tree": "f2817209ce22b41fdffda284d37c9381edcd6dae",
+  "binaries": [
+    {
+      "target": "hepta_task_fixture",
+      "kind": [
+        "example"
+      ],
+      "path": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/hepta_task_fixture",
+      "bytes": 5856448,
+      "sha256": "9c2ac19bacaed7704e2238fd0aea26340d0f6f90a780eb1b780873f0af9b1cce"
+    },
+    {
+      "target": "continuous_pipeline",
+      "kind": [
+        "example"
+      ],
+      "path": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/continuous_pipeline",
+      "bytes": 6486504,
+      "sha256": "b2cdaa2fe89b31fde1f12813a4ece2272a7fba59f85ee1b89079dc4ce21b7a27"
+    },
+    {
+      "target": "distributed_pipeline",
+      "kind": [
+        "example"
+      ],
+      "path": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/examples/distributed_pipeline",
+      "bytes": 19031336,
+      "sha256": "9384ad4a3cf8f16d2170677386a567cdef0e9a0b5856183f1f66426c239cc9d6"
+    },
+    {
+      "target": "trnm-pon-node",
+      "kind": [
+        "bin"
+      ],
+      "path": "/home/qian-qi/work/pon-upgrade-implementation-20261018/target-chain-performance/release/trnm-pon-node",
+      "bytes": 11089600,
+      "sha256": "01b2bc314c4b7fd3d1032134ed36e727cffe627a7c5bf6312c4ef05d03c9b16c"
+    }
+  ]
+}

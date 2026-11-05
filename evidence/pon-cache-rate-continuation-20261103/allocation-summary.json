@@ -1,0 +1,194 @@
+{
+  "schema": "pon-valid-cache-allocation-comparison-v1",
+  "baseline_commit": "e1a41026a1b93a6cd3926a60e8af3d97f713ebb6",
+  "candidate_source_state": "working-tree",
+  "scope": "finite local successful allocation requests, no timing or peak RSS",
+  "variants": {
+    "baseline": {
+      "metadata": {
+        "schema": "w1-valid-cache-allocation-v1",
+        "classes": 3,
+        "challenges_per_task": 2,
+        "measured_calls": 24,
+        "scalar_reference_calls": 6,
+        "setup_verifier_calls": 12,
+        "fixture_generation_measured": false,
+        "cache_construction_measured": false,
+        "warm_setup_measured": false,
+        "parity_and_output_measured": false,
+        "target": "maximum-256-bit",
+        "ticket_search": false,
+        "counter": "successful-alloc-zeroed-realloc-full-request-size",
+        "rss_or_cpu_measurement": false,
+        "qualification": "HOLD"
+      },
+      "complete": {
+        "completed_calls": 24,
+        "scalar_parity_checks": 24,
+        "all_submitted_proofs_valid": true,
+        "qualification": "HOLD"
+      },
+      "paths": {
+        "raw_full": {
+          "calls": 6,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        },
+        "work_fact_cold": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            17
+          ],
+          "requested_bytes_per_call": [
+            153600
+          ]
+        },
+        "work_fact_warm": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            2
+          ],
+          "requested_bytes_per_call": [
+            49152
+          ]
+        },
+        "work_fact_changed_challenge": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            17
+          ],
+          "requested_bytes_per_call": [
+            153600
+          ]
+        },
+        "arithmetic_cold": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        },
+        "arithmetic_warm": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            2
+          ],
+          "requested_bytes_per_call": [
+            49152
+          ]
+        },
+        "arithmetic_changed_challenge": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        }
+      }
+    },
+    "candidate": {
+      "metadata": {
+        "schema": "w1-valid-cache-allocation-v1",
+        "classes": 3,
+        "challenges_per_task": 2,
+        "measured_calls": 24,
+        "scalar_reference_calls": 6,
+        "setup_verifier_calls": 12,
+        "fixture_generation_measured": false,
+        "cache_construction_measured": false,
+        "warm_setup_measured": false,
+        "parity_and_output_measured": false,
+        "target": "maximum-256-bit",
+        "ticket_search": false,
+        "counter": "successful-alloc-zeroed-realloc-full-request-size",
+        "rss_or_cpu_measurement": false,
+        "qualification": "HOLD"
+      },
+      "complete": {
+        "completed_calls": 24,
+        "scalar_parity_checks": 24,
+        "all_submitted_proofs_valid": true,
+        "qualification": "HOLD"
+      },
+      "paths": {
+        "raw_full": {
+          "calls": 6,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        },
+        "work_fact_cold": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            16
+          ],
+          "requested_bytes_per_call": [
+            120832
+          ]
+        },
+        "work_fact_warm": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            1
+          ],
+          "requested_bytes_per_call": [
+            16384
+          ]
+        },
+        "work_fact_changed_challenge": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            16
+          ],
+          "requested_bytes_per_call": [
+            120832
+          ]
+        },
+        "arithmetic_cold": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        },
+        "arithmetic_warm": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            1
+          ],
+          "requested_bytes_per_call": [
+            16384
+          ]
+        },
+        "arithmetic_changed_challenge": {
+          "calls": 3,
+          "successful_requests_per_call": [
+            15
+          ],
+          "requested_bytes_per_call": [
+            104448
+          ]
+        }
+      }
+    }
+  },
+  "qualification_status": "HOLD",
+  "invalid_rejection_cpu_measured": false,
+  "public_service_measured": false,
+  "work_hardness_qualified": false,
+  "production_activation": false,
+  "matching_legal_proofs_and_replay_paths": true
+}

@@ -1,0 +1,78 @@
+[
+  {
+    "name": "phase-protocol-controls",
+    "source_commit": "fe43f7c7f8971df37cbb7eda7080dac8ae4887aa",
+    "argv": [
+      "/tmp/history-phase-qualified-20261028/deadline-correction/public_v3_multiprocess",
+      "phase_host::",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "started_utc": "2026-10-28T00:59:54.560468+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01621928000531625,
+    "stdout": {
+      "path": "phase-protocol-controls.stdout.txt",
+      "bytes": 289,
+      "sha256": "47adf27ed10e2ef9862ca6f180d82728ea4187fb5b7cd69dab3bd646b95015bf"
+    },
+    "stderr": {
+      "path": "phase-protocol-controls.stderr.txt",
+      "bytes": 830,
+      "sha256": "d0dec13d7d8d62dcb3d5a76d82873273c19aa7bc7796ca6aa474d20dbf87f9a5"
+    }
+  },
+  {
+    "name": "rust-format",
+    "source_commit": "fe43f7c7f8971df37cbb7eda7080dac8ae4887aa",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "started_utc": "2026-10-28T00:59:54.577095+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 12.954960169001424,
+    "stdout": {
+      "path": "rust-format.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "rust-format.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "cargo-graph",
+    "source_commit": "fe43f7c7f8971df37cbb7eda7080dac8ae4887aa",
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--no-deps",
+      "--format-version=1"
+    ],
+    "started_utc": "2026-10-28T01:00:07.532480+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01824598199891625,
+    "stdout": {
+      "path": "cargo-graph.stdout.txt",
+      "bytes": 151456,
+      "sha256": "e290342b5920783e6e2d4e8491816e54b56019d74886f8b2bb29a73933ae652d"
+    },
+    "stderr": {
+      "path": "cargo-graph.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "name": "phase-host-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "python3",
+      "scripts/ci/test_native_phase_host.py",
+      "-v"
+    ],
+    "started_utc": "2026-10-28T00:55:46.219224+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 0.16523155300092185,
+    "stdout": {
+      "path": "phase-host-current.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "phase-host-current.stderr.txt",
+      "bytes": 1533,
+      "sha256": "9a37483115d574a28da5552f60c3ce1d01180f0b90b4ddaa16a1091dc26ca2eb"
+    }
+  },
+  {
+    "name": "source-negative-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "python3",
+      "scripts/ci/test_verify_ci_source.py",
+      "-v"
+    ],
+    "started_utc": "2026-10-28T00:55:46.385027+00:00",
+    "exit_code": 2,
+    "timed_out": false,
+    "elapsed_seconds": 0.03747958799795015,
+    "stdout": {
+      "path": "source-negative-current.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "source-negative-current.stderr.txt",
+      "bytes": 151,
+      "sha256": "a45a9d7e8299d227c4e53e06252da174e9725e3847f24b748cc985813813850a"
+    }
+  },
+  {
+    "name": "applicability-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "python3",
+      "scripts/ci/check_applicability.py"
+    ],
+    "started_utc": "2026-10-28T00:55:46.423347+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 28.758040458000323,
+    "stdout": {
+      "path": "applicability-current.stdout.txt",
+      "bytes": 260692,
+      "sha256": "12cfb4f9a276500ea1d4eb9cf6ec6220ce5280f80a31585573ced6f7c5dba6e4"
+    },
+    "stderr": {
+      "path": "applicability-current.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "python-lint-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "/tmp/pure-pon-hepta-python-20261028/bin/ruff",
+      "check",
+      "scripts/ci/run_native_phase_host.py",
+      "scripts/ci/test_native_phase_host.py"
+    ],
+    "started_utc": "2026-10-28T00:56:15.182402+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 0.1187488859941368,
+    "stdout": {
+      "path": "python-lint-current.stdout.txt",
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "stderr": {
+      "path": "python-lint-current.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "python-format-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "/tmp/pure-pon-hepta-python-20261028/bin/ruff",
+      "format",
+      "--check",
+      "scripts/ci/run_native_phase_host.py",
+      "scripts/ci/test_native_phase_host.py"
+    ],
+    "started_utc": "2026-10-28T00:56:15.301774+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 0.0407137399961357,
+    "stdout": {
+      "path": "python-format-current.stdout.txt",
+      "bytes": 26,
+      "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    },
+    "stderr": {
+      "path": "python-format-current.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "rust-format-current",
+    "source_commit": "48aa81da0435e55504503b25ccaaf58db013d94f",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "started_utc": "2026-10-28T00:56:15.343090+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 18.74208216900297,
+    "stdout": {
+      "path": "rust-format-current.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "rust-format-current.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

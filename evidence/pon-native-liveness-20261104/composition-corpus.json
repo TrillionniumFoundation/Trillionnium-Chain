@@ -1,0 +1,21 @@
+{
+  "schema": "local-native-liveness-command-v1",
+  "name": "composition-corpus",
+  "command": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/e537ad232c79/chain",
+  "head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "tree": "15f8b38fd9f320de4e987a6c635af2b39cb01333",
+  "dirty_paths": [],
+  "started_at": "2026-11-04T13:57:59.630727+00:00",
+  "returncode": 0,
+  "completed": true,
+  "wall_ns": 259837431,
+  "finished_at": "2026-11-04T13:57:59.890813+00:00",
+  "log_bytes": 557,
+  "log_sha256": "090ddef889f5a6714b4a5d56a7299342e3a0ddc22d23853134428359002228ec",
+  "final_head": "fc9ebe7accf99d6017a5a9046b1380ec8a40d03e",
+  "final_dirty_paths": []
+}

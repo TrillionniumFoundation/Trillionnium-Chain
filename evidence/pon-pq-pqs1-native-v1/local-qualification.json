@@ -1,0 +1,40 @@
+{
+  "counterexample": "self-consistent forged source/target/anchor passes; remains untrusted",
+  "external_acceptance": false,
+  "input_provenance": "self-constructed public synthetic byte fixtures only; no chain-controlled legacy source owner",
+  "measured_environment": {
+    "architecture": "x86_64",
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+    "filesystem": "overlay        overlay  32978704  5524  31279076   1% /",
+    "openssl": "OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)",
+    "os": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "rust_available": false
+  },
+  "normal": {
+    "command": "PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_import_projection_verify.py",
+    "failures": 0,
+    "log": "native-test.log",
+    "return_code": 0,
+    "test_methods": 21
+  },
+  "production_activation": false,
+  "research_only": true,
+  "sanitizer": {
+    "command": "PQN5_SANITIZE=1 ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 PYTHONWARNINGS=error::ResourceWarning python3 -m unittest -v test_pq_import_projection_verify.py",
+    "failures": 0,
+    "log": "native-sanitizer.log",
+    "return_code": 0,
+    "test_methods": 21
+  },
+  "schema": "trnm-pqn5-local-structural-evidence-v1",
+  "source_files_sha256": {
+    "PQ_PQS1_WHOLE_ROSTER_NATIVE_RESEARCH_V1.md": "4215b0d01fa1e144296016d1ff39550992aff1051da702187b79bdef7ed6ab29",
+    "native-sanitizer.log": "468aeb10875bd8fcfdb919fc855165c248bf0fe1be5ab6e52b5a67e20492b50e",
+    "native-test.log": "b744c391f4178bc17effb36fa0d55e959b413985a81883696ced3846aef815e2",
+    "pq_import_projection_verify.c": "7609dffd362ac6e61a7116d1d69953fdca5c2dfa943334338270c06abca16112",
+    "test_pq_import_projection_verify.py": "c862d6bafa76efaf3453c5f74713b802da9e36eaf1aa2e4efe4809a1472ce385"
+  },
+  "verified_properties": "structural PQG1 -> PQS1 full roster and liability projection; no crypto owner authority",
+  "whole_chain_post_quantum": false
+}

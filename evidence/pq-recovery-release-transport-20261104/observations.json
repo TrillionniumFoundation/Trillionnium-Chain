@@ -1,0 +1,327 @@
+{
+  "schema": "trnm-pq-recovery-release-transport-observations-v1",
+  "recorded_at_utc": "2026-11-04T12:43:21.904629+00:00",
+  "integration_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+  "old_cold_recovery_parent": "a4a0e2b561f057cfa3189979c5bf11f3a0eb2353",
+  "candidate_binding": "Exact files below plus the containing Git commit; no self-referential commit claim.",
+  "acceptance": {
+    "status": "COMPONENT_OBSERVATIONS_HOLD",
+    "production_activation": false,
+    "whole_chain_pq_qualified": false,
+    "hepta_final_use_integrated": false,
+    "independent_fault_domains_qualified": false,
+    "unix_transport_suite_accepted": false,
+    "complete_tuf_client_implemented": false,
+    "mldsa_native_v2_execution_claimed": false
+  },
+  "environment": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "cargo_packages": 175,
+    "workspace_packages": 26,
+    "cargo_incremental": "0 for candidate runs",
+    "checkpoint_debug": "dev/test=0",
+    "release_debug": "default dev/test profiles"
+  },
+  "provider": {
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "ec72bff5f6e4b2d9798e66b4ee338e81969ff6f8fa5a228bf312f1c57ff08818",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_DIR": "/workspace/scratch/7318d5f890d1/runtime93/provider/trnm-pq-provider-3.5.9.FzmBhGf2/install",
+    "static_libraries_sha256": {
+      "libssl.a": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9",
+      "libcrypto.a": "bdad0ad11bbd4e2583db15c46d02a85f452f27bee9710316cf6592770f939d68"
+    },
+    "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "path_provider_version": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)"
+  },
+  "source_files": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "48d77f8de96b697b8c8aa56d5fde1986179822c8649f79965cc1abfc9f308342",
+      "git_blob": "c1bc196d851d7a024c80ddb8525e32d20c178d82"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "c3cea5234b9d8791e1087c58461182d6ab28223d74a742aff3e6a64ad42b6f11",
+      "git_blob": "28f2d4db7060e3880477c04cf0ab5b65bbcf4511"
+    },
+    "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md": {
+      "sha256": "f76629cc6e2b0b0ce57dcf35f51bf57d69ce2d53a634f73d192601de1746c06e",
+      "git_blob": "ca064e50bd89b63bd656ce340ed2efd2940569fb"
+    },
+    "formal/pon-nakamoto-v1/pq_mtls_probe.c": {
+      "sha256": "3d6542730f13a019b4d0d877965b3746337e5df656c81c12e5fa884d7660a670",
+      "git_blob": "20783c634dd9b52addbe4e0ecb1b7d55130f969c"
+    },
+    "formal/pon-nakamoto-v1/test_pq_mtls_probe.py": {
+      "sha256": "8bb8d8b52f559b22053fef04576cb6f7eac49508fb3f4e0de04f986ad4519758",
+      "git_blob": "e329c5c7b2b97e876a0226f49417418a41259665"
+    },
+    "formal/pon-nakamoto-v1/test_pq_tls.py": {
+      "sha256": "898eb30795356a528bab6a09ed544b2d9e7bb5cedc26410c57ff87696ab2bb42",
+      "git_blob": "791277b4694939aba4174ced87f5cb7fffc780a0"
+    },
+    "scripts/ci/check_pq_research_integration.py": {
+      "sha256": "f1cb0d225520df61527bab4bcc7f5b76d04b507b6164ae2ac66756964ec5b924",
+      "git_blob": "b4f02f61e03c7463f6c338651384764d3ba108f4"
+    },
+    "scripts/ci/test_pq_research_integration.py": {
+      "sha256": "8616da271f3c52ca049e6bed4098a52fd9acff7da45efe77da06969195f5497f",
+      "git_blob": "f761aba61ae68025bfab421c114f3caa50fb35e2"
+    },
+    "trillionnium/Cargo.lock": {
+      "sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+      "git_blob": "17e1155502ae7a15a9eea151a045dd24df2aae50"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/README.md": {
+      "sha256": "b5d4290d0b375af5e62d7ab99f920a730051e0a423d3d4c76443ff6969228b27",
+      "git_blob": "971c9ceb4192bffd2f1f23b89f1c520517fbebd3"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs": {
+      "sha256": "459d5b0d193af13908b5890526f5dd8d13d9147027d3c863f3a08b55b9e8c87a",
+      "git_blob": "85e768c20161ecc32064e3e253b73f2070f30583"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": {
+      "sha256": "5d0cc1610fc861abd34cabf35905bb644e047b4233b4b30d8fc8e63057051096",
+      "git_blob": "8c49ef4c79b0edba265b586acf7a1a1c33ba3570"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/src/main.rs": {
+      "sha256": "ca8bfddb3ca1c511f44cb924ecc2bb7d14f57889d6a0af719d11089fad192b34",
+      "git_blob": "d7d098f7249a1fc80ab84c34eb309e4f094de889"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs": {
+      "sha256": "6efff90a74db75a1dfa6033bcc0e82458d5e7d1ef519ba0d77c351006658a7cd",
+      "git_blob": "718adc13e4a7cf610c14cb295f4c240d0187cfe3"
+    },
+    "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs": {
+      "sha256": "5ba928366b521a9ef2d66983a6da12fc74131ff24206769da955610142530b6e",
+      "git_blob": "979f18cd43bee5480ad9b540130fd09abadd49fa"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "sha256": "26f6245047c3d4b3d991ce5a606ba897173110dd6b2c41fbe956a7c8224faf7f",
+      "git_blob": "1de58e9ae4ac6e86e7a8df893c1d42111590d916"
+    },
+    "trillionnium/crates/trnm-release-bundle/Cargo.toml": {
+      "sha256": "e047dcd8e97697fa2d90462b3a1c92d92151f14799c860ff11ee381c0204218b",
+      "git_blob": "201c768b20e3afb44779bd6bc5da501def4241f5"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/lib.rs": {
+      "sha256": "ebe756fe5c54acc0be3ea88022383ab66169377a567799d6f7e46006cb477897",
+      "git_blob": "dd4e83155a2b1533c6d516908026ce159f84a5c9"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": {
+      "sha256": "58427450f4411d37e0320adc2563a568979931b95b9b48274552b6555490f2a1",
+      "git_blob": "a1ca50f68a023ce1c8d9cf62f06604900c521ca0"
+    },
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs": {
+      "sha256": "def28d03d12e5c3fabbc0a2bae5c02ad057fb0d88b78fea7c1ccce42cccb95d7",
+      "git_blob": "16da9022ef7f6946f6b5ae42767d4aa0398623e7"
+    }
+  },
+  "historical_reproduction_files": {
+    "before_empty_head_fix.patch": "35efd592c931c42626525b1c63279f7d58e6a874ae595780deac4c4803e24697",
+    "baseline_cold_recovery.rs": "f7703d3b8b32842e01b9c2eedb01680bd94a3b4314a14aa25365895713c0c28a"
+  },
+  "checkpoint": {
+    "commands": {
+      "baseline_red": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test cold_recovery -- --nocapture (old lib/main + baseline-cold-recovery.rs)",
+      "all_targets_attempt": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --all-targets --all-features",
+      "cold_recovery": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test cold_recovery -- --nocapture",
+      "cli_negatives": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test cross_process cli_ -- --nocapture",
+      "retained_ledger": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --bin trnm-external-node-checkpoint-v2 -- --nocapture",
+      "clippy": "cargo clippy --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --all-targets --all-features -- -D warnings",
+      "format": "cargo fmt --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -- --check",
+      "graph": "cargo tree --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --edges normal,build,dev",
+      "race_regression": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --lib pinned_recovery_rejects_head_deleted_after_precheck -- --nocapture"
+    },
+    "results": {
+      "baseline_red": {
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "exit_code": 101,
+        "meaning": "real old constructor accepted complete stale log plus matching anchor"
+      },
+      "race_counterexample": {
+        "passed": 0,
+        "failed": 1,
+        "ignored": 0,
+        "filtered_out": 9,
+        "exit_code": 101,
+        "meaning": "deterministic deletion after head precheck made old reconciliation helper recreate an empty head"
+      },
+      "race_regression_final": {
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "filtered_out": 9,
+        "exit_code": 0,
+        "meaning": "ExistingPinned passes InitialHeadCreationV2::Forbidden and actual NotFound branch refuses without reseeding"
+      },
+      "all_targets_final": {
+        "library_passed": 9,
+        "library_failed": 1,
+        "ignored": 0,
+        "exit_code": 101,
+        "cause": "original Unix socket bind EPERM; following binaries not run in that invocation"
+      },
+      "cold_recovery_final": {
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "exit_code": 0
+      },
+      "cli_negatives_final": {
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "filtered_out": 3,
+        "exit_code": 0
+      },
+      "retained_ledger_final": {
+        "passed": 15,
+        "failed": 0,
+        "ignored": 0,
+        "exit_code": 0
+      },
+      "strict_clippy_final": {
+        "exit_code": 0
+      },
+      "format_final": {
+        "exit_code": 0
+      },
+      "source_stability_final": {
+        "exit_code": 0,
+        "checked_paths": 8,
+        "meaning": "Cargo.lock, package manifest, five Rust sources/tests and crate README match before/after final execution"
+      }
+    },
+    "scope": "FinalUse effect consumption is not atomically composed with this checkpoint export. Independent authenticated pin custody is a caller obligation."
+  },
+  "release": {
+    "command": "cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle",
+    "passed": 16,
+    "new_actual_native_signature_tests": 14,
+    "failed": 0,
+    "ignored": 0,
+    "exit_code": 0,
+    "clippy_command": "cargo clippy --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --all-targets -- -D warnings",
+    "clippy_exit_code": 0,
+    "scope": "Typed authorization/replay kernel; external durable owner, installer, trusted time and independent current checkpoint remain required."
+  },
+  "tls": {
+    "baseline": {
+      "base_commit": "d0737cf5434894ce47fad8082376fc417313c2cb",
+      "exit_code": 1,
+      "setup_errors": 2,
+      "passed_tests_claimed": 0
+    },
+    "candidate": {
+      "command": "python3 -m unittest -v test_pq_tls test_pq_mtls_probe test_pq_openssl_backend",
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "source_hashes_unchanged_after_run": true
+    },
+    "source_files_sha256": {
+      "test_pq_tls.py": "898eb30795356a528bab6a09ed544b2d9e7bb5cedc26410c57ff87696ab2bb42",
+      "test_pq_mtls_probe.py": "8bb8d8b52f559b22053fef04576cb6f7eac49508fb3f4e0de04f986ad4519758",
+      "pq_mtls_probe.c": "3d6542730f13a019b4d0d877965b3746337e5df656c81c12e5fa884d7660a670",
+      "pq_envelope.py": "f2619f45b0bb569349e133cff2b81fdd156241bedb657f00ad401331d023cbbc",
+      "pq_peer_session.py": "2b29504e32cff51f2957174b9bed7b8779a58f1a3ee0aa26a01080827ae71871",
+      "pq_openssl_backend.py": "ac9217a8238ecb5ade4e877670b8f01243b20fe1f231c0eba7fbc1832a8c05c3",
+      "pq_operation_budget.py": "e4bca5d0d47b2d1f41822876df8771ee9b23665d5ea753b53b99562a4e143f4c",
+      "test_pq_openssl_backend.py": "cf874ae5973e20306a04d8ed1f99035d74476f035cb1f2b8c3c6edacd2cc41e9"
+    }
+  },
+  "source_gate": {
+    "command": "python3 -m unittest discover -s scripts/ci -p test_pq_research_integration.py -v",
+    "passed": 35,
+    "failed": 0,
+    "exit_code": 0,
+    "expected_exact_source_blobs": 410,
+    "acceptance_result": "HOLD_NO_GO",
+    "concurrent_parent_mapped_files": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/pq_storage.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs"
+    ],
+    "actual_corpus_result": {
+      "canonical_default_provider_contract_checked": true,
+      "canonical_pnq2_contract_checked": true,
+      "continuous_npq6_combination_accepted": false,
+      "cryptographic_acceptance": false,
+      "exact_source_blobs": 410,
+      "legacy_qtx1_optional_adapter_contract_checked": true,
+      "native_transfer_account_contract_checked": true,
+      "native_transport_contract_checked": true,
+      "node_activated": false,
+      "production_confidentiality_accepted": false,
+      "schema": "trnm-pq-cross-branch-check-v1",
+      "status": "HOLD_NO_GO",
+      "upstream_heads": 6,
+      "whole_native_authorization_migrated": false
+    }
+  },
+  "retained_log_sha256": {
+    "checkpoint/baseline-counterexample.log": "8906260f9ac56675110e9eb3a46f01afe0ba34863bab9dbeb0330f4298d89578",
+    "checkpoint/race-counterexample.log": "eea6311535057b1834db2dc0fb77c389a9d98879bc982886a190ba85c0f58ce3",
+    "checkpoint/race-regression-final.log": "ee9a017f9789795e67464a82bb9d21e50db6d64edae0eefae2b2289db49f8e21",
+    "checkpoint/all-targets-final.log": "fc2ff5cc0b4dd4bc6f95420e6bf38e5942191d2b375a27721a6056144a2dbcce",
+    "checkpoint/cold-recovery-final.log": "f7bfbfaf3d839d5b77d75458ef9a623a7547da59d5060d789dc425763091b3d2",
+    "checkpoint/cli-recovery-negatives-final.log": "4d3eb450805ce82009ccbbe865335ddabb81cfbc15bf672faf0110ca26a82fa4",
+    "checkpoint/retained-ledger-final.log": "6d490b7680d03cc53a0c33c1ac1fb3f0084255619bb41ab6de613695f1c85765",
+    "checkpoint/strict-clippy-race-final.log": "d8173bcad5dddb3974a000d892f0887ab0c8c4cd6a7b78762c7bae4350e43e23",
+    "checkpoint/format-race-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checkpoint/race-final-source-stability.log": "2433ca98a1e911b5f736bad9cd8c04af9952fd02d181e54acd24bb6fe6a94dc5",
+    "tls/baseline-unittest.log": "80c24a4d6abba67fe48439d7456e0b07c5614b4963fad638fc525281d4b23304",
+    "tls/candidate-unittest.log": "774c13c01b157eeef6f78149039c4539c8c7185f878964ae45469317c4fc2ba9",
+    "release-test-final.log": "26811b0703eb6e61c295991ea2b338a3ac8e1bfa1558ddfd9ba1123298725fb6",
+    "release-clippy-final.log": "589081ccf5721a47d27e1f9f896ca294df3c45abdecddf72b631b85a1e8b0571",
+    "release-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-gate-tests-final.log": "d54422b9a21e66eea5730f41b6ef8262d877f1726ec481e5941d8602a5fa644b",
+    "workspace-fmt-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "corpus-check-committed-candidate.log": "057c1baa126540e5035a97918bc9e3e5c230d6dee98c79f2874d16c8da581352",
+    "workspace-fmt-committed-candidate.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "corpus-check-rebased-candidate.log": "4be165aebc9d11e679c9b73f31f20de1b2d06fdd87fd46f176dae3a838fcb96c",
+    "corpus-check-rebased-before-inventory-refresh.log": "7ff852b1e8329df2a0bb724640bee1eb74e2ed6208d66a958cbec2cbbcca84c3",
+    "workspace-fmt-rebased-candidate.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "log_policy": "Compact results, exact inputs and regression source are committed. Raw local process logs and temporary keys/binaries are not uploaded. Reproduction commands above regenerate observations.",
+  "unqualified": [
+    "complete Unix transport execution in a permitted environment",
+    "FinalUse plus ProviderEffect atomic independent claim and recovery",
+    "signed append-consistency witness interoperability",
+    "independently fresh cross-fault-domain custody and availability cost",
+    "arbitrary external exactly-once",
+    "durable release installer and full TUF/TAP21 SDK integration",
+    "actual key generation, backups, recovery keys and signing-device custody",
+    "mldsa-native and cross-architecture differential execution in this patch"
+  ],
+  "documentation": {
+    "status": "PASS",
+    "local_links_checked": 11,
+    "log_sha256": "2a60cd8e276b5e683e55b2b1531c6f7cfc221fe1924465f3d5710dd2ba950927"
+  },
+  "formatting": {
+    "workspace_command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
+    "exit_code": 0,
+    "candidate_sources_match_recorded_hashes": true,
+    "rebased_workspace_exit_code": 0
+  },
+  "tested_component_source_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+  "concurrent_head_preservation": {
+    "old_parent": "d0737cf5434894ce47fad8082376fc417313c2cb",
+    "composed_parent": "bd2777f9cc74df10ba07ae8202584ed0fb90a519",
+    "mechanism": "fast-forward existing branch, three-way own patch, semantic source-manifest union, regenerated combined native inventory",
+    "changed_own_bindings": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "component_code_and_test_bytes_unchanged": true,
+    "additional_node_tests_claimed": false,
+    "pinned_inventory_refresh_required": true
+  }
+}

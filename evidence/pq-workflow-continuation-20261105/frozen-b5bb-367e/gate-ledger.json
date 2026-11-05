@@ -1,0 +1,371 @@
+{
+  "schema": "trnm-hepta-requested-workstream-gates-v1",
+  "recorded_at_utc": "2026-11-05 04:42:54 UTC",
+  "code_pair": {
+    "schema": "trnm-hepta-fixed-code-pair-v2",
+    "recorded_at_utc": "2026-11-05 04:42:54 UTC",
+    "chain": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "code_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+      "code_tree": "8be28a72673ce318d60a464898ab610d9ba39216",
+      "draft_pr": 688
+    },
+    "runtime": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "code_commit": "367e27fb6bf30443641b9e23a063d24e49eda9f7",
+      "code_tree": "6a2465606f0270eeecec83c2b7d9dbef5dc96076",
+      "draft_pr": 4812,
+      "production_test_source_commit": "d206c3c787f6b67c771b67a8e1d46c8261810042"
+    },
+    "historical_execution_scope": {
+      "chain_scoped_controls": {
+        "executed_chain_sha": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+        "runtime_sha_recorded_when_run": "29fcd2e88654d5bec2bf30134cc030b5bfa7831b",
+        "runtime_was_executed": false,
+        "tests_total": 233,
+        "relabelled_as_pair_acceptance": false
+      },
+      "runtime_source_projection": "../runtime-29-to-d206-source-map.json",
+      "current_pair_combined_native_run": "NOT_RUN",
+      "evidence_only_successors_are_new_executions": false,
+      "growth_red": {
+        "source_head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+        "pristine_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+        "overlay": "../../pon-growth-persistence-control-20261105/red-overlay.json",
+        "overlay_scope": "Recorded enum/test probes without the new callback calls",
+        "attempt_count": 4,
+        "unqualified_observed_assertion_red_attempts": 2,
+        "canonical_tests_executed": 0,
+        "b5bb_green_tests_executed": 0,
+        "canonical_compilation_resource_aborts": 2
+      }
+    },
+    "qualification": {
+      "status": "HOLD_NO_GO",
+      "all_blockers_closed": false,
+      "whole_chain_pq_qualified": false,
+      "quantum_pon_hardness_qualified": false,
+      "proof_backend_enabled": false,
+      "production_activation": false
+    },
+    "configuration_boundaries": [
+      {
+        "name": "new Growth persistence tests",
+        "backend": "GrowthV2",
+        "authorization": "classical development",
+        "complete_w1": true,
+        "green_native_result": "NOT_RUN"
+      },
+      {
+        "name": "completed fixed-Host F0",
+        "backend": "AuthenticatedV1",
+        "work_profile": "RawR14",
+        "hostile_producers": 24,
+        "phase_seconds": 30,
+        "phase_count": 2,
+        "scheduled_confirmations": 6,
+        "original_slo_seconds": 4,
+        "result": "FAILED"
+      },
+      {
+        "name": "original issue #639",
+        "original_slo_seconds": 4,
+        "hostile_producers": 16,
+        "status": "OPEN",
+        "replaced_by_f0": false
+      },
+      {
+        "name": "Hepta recovery V2",
+        "startup_guard": "configured EvidenceHost open only",
+        "signer": "Ed25519",
+        "trust_file_version": 1,
+        "independent_freshness_qualified": false
+      }
+    ],
+    "execution_policy": {
+      "remote_ci_dispatched_or_rerun": false,
+      "protected_main_merged": false,
+      "force_push": false,
+      "other_tasks_terminated": false,
+      "original_thresholds_relaxed": false
+    },
+    "late_integration_observation": {
+      "chain_head": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+      "chain_tree": "d4f4a85c439982d8decec9265c1993408f3577cf",
+      "native_source_changed": true,
+      "evidence": "late-integration.json",
+      "earlier_results_transferred": false,
+      "combined_head_acceptance": "OPEN"
+    }
+  },
+  "scope": "Original requested P0,A1,A2,A3,B1,B2,C1,C2,D,E closure conditions. This ledger is evidence under the sole development plan, not an additional plan.",
+  "all_blockers_closed": false,
+  "production_activation": false,
+  "workstream_count": 10,
+  "closed_workstream_count": 0,
+  "gates": [
+    {
+      "id": "P0",
+      "title": "Freeze baseline and targets",
+      "status": "PARTIAL_SOURCE_BINDING",
+      "closed": false,
+      "implemented": [
+        "Selected code pair, source/config anchors, preserved original configuration scope"
+      ],
+      "remaining_closure_conditions": [
+        "Complete authority reachability and deployment crypto-asset/custody inventory",
+        "Exact combined validation at the selected code pair"
+      ],
+      "current_observations": [
+        "Source scan: 1136 Rust files, 22 reviewed roles, 83 unreviewed indicator files",
+        "No combined native pair run"
+      ],
+      "evidence": [
+        "../initial-checkpoint/p0-callsite-profile-anchors-initial.json",
+        "../initial-checkpoint/static/authority-inventory.log",
+        "fixed-pair.json"
+      ]
+    },
+    {
+      "id": "A1",
+      "title": "Unified PQ current authority",
+      "status": "OPEN_ENGINEERING_AND_ACCEPTANCE",
+      "closed": false,
+      "implemented": [
+        "Existing ordinary PQ-policy changes retained; recovery guard scope explicitly recorded"
+      ],
+      "remaining_closure_conditions": [
+        "Actual task, payment, CURRENT and FinalUse positive/negative normal-entry coverage",
+        "All configured acceptance paths meet fixed encoding, purpose and PQ policies"
+      ],
+      "current_observations": [
+        "No new combined ordinary-entry native acceptance at final pair",
+        "Recovery signer remains Ed25519; configured guard is not universal"
+      ],
+      "evidence": [
+        "README.md",
+        "https://github.com/TrillionniumFoundation/hepta-private-ci/commit/367e27fb6bf30443641b9e23a063d24e49eda9f7"
+      ]
+    },
+    {
+      "id": "A2",
+      "title": "Normal migration completion",
+      "status": "OPEN_ENGINEERING_AND_ACCEPTANCE",
+      "closed": false,
+      "implemented": [
+        "Existing source/owner controls retained without relabelling"
+      ],
+      "remaining_closure_conditions": [
+        "Conservation, debt, nonce, task and key-generation migration controls",
+        "CLAIM and retirement cannot revive authority through restore or reorg",
+        "Cross-activation reorganization and normal migration on exact source"
+      ],
+      "current_observations": [
+        "No new whole normal-migration execution completed in this continuation"
+      ],
+      "evidence": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "A3",
+      "title": "Effects and recovery state machine",
+      "status": "OPEN_NATIVE_AND_INDEPENDENT_GATES",
+      "closed": false,
+      "implemented": [
+        "SQLite-consistent V2 frontier, effect digests and ACK provenance integrated",
+        "Static SQL test compile fix and exact 7+2 CI selection added"
+      ],
+      "remaining_closure_conditions": [
+        "Qualified owner7 and signed2 native controls",
+        "Real IPC product loop and rollback/clone/crash/reorg campaigns",
+        "Independently fresh nonrewindable witness/custody and unresolved-effect coordination",
+        "PQ recovery authorization and effect/revocation atomicity where required"
+      ],
+      "current_observations": [
+        "Corrected native RED BUILD_FAILED E0463, zero tests",
+        "Signed controls NOT_RUN",
+        "AF_UNIX creation EPERM in local environment",
+        "Optional configured startup guard, Ed25519 signer"
+      ],
+      "evidence": [
+        "https://github.com/TrillionniumFoundation/hepta-private-ci/tree/367e27fb6bf30443641b9e23a063d24e49eda9f7/evidence/recovery-v2-native-20261105"
+      ]
+    },
+    {
+      "id": "B1",
+      "title": "Native state hot path",
+      "status": "OPEN_NATIVE_AND_PERFORMANCE",
+      "closed": false,
+      "implemented": [
+        "Successful Growth state/receipt move removes redundant clone"
+      ],
+      "remaining_closure_conditions": [
+        "Run exact B1 account-prefix and Growth tests",
+        "Connect and accept the real ordinary business path",
+        "Explain retained parent clone, linear traversal and scale costs",
+        "Restore no-attack baseline without changing limits"
+      ],
+      "current_observations": [
+        "B1 native NOT_RUN",
+        "Old-backend F0 baseline FAILED",
+        "No measured new-code speedup"
+      ],
+      "evidence": [
+        "../../pon-growth-persistence-control-20261105/checkpoint-before-green.json",
+        "../../pon-fixed-host-root-f0-b5bb-readback-20261105/README.md"
+      ]
+    },
+    {
+      "id": "B2",
+      "title": "Operation budgets and scheduling",
+      "status": "OPEN_NATIVE_AND_PERFORMANCE",
+      "closed": false,
+      "implemented": [
+        "Original ExecutionControl propagated into actual Growth SQL delta write/readback",
+        "Bounded resource-aware runners and real SQLite build identity retained"
+      ],
+      "remaining_closure_conditions": [
+        "Qualified canonical RED/GREEN2",
+        "Strict all-target/all-feature Clippy completion",
+        "Original 4-second/16-producer campaign and all existing subconditions",
+        "Fixed service classes, real cancellation and Cell/sync isolation"
+      ],
+      "current_observations": [
+        "Two unqualified actual RED attempts each observed two intended failures",
+        "Two canonical attempts ABORTED_RESOURCE before tests",
+        "GREEN2 NOT_RUN",
+        "Strict Clippy ABORTED_RESOURCE",
+        "Original #639 OPEN"
+      ],
+      "evidence": [
+        "../../pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+        "../additional-checkpoint/strict-clippy/result.json",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain/issues/639"
+      ]
+    },
+    {
+      "id": "C1",
+      "title": "Fastest legal work-cost study",
+      "status": "OPEN_RESEARCH",
+      "closed": false,
+      "implemented": [
+        "Retained original work-cost boundaries; no honest-FLOPs substitution"
+      ],
+      "remaining_closure_conditions": [
+        "Cover legal solver families, selection, reuse and preprocessing on actual parameters",
+        "Review concrete fastest-known classical/hardware costs and applicable assumptions"
+      ],
+      "current_observations": [
+        "This continuation provides no new optimality or lower-bound result"
+      ],
+      "evidence": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "C2",
+      "title": "Quantum oracle and DAA research",
+      "status": "OPEN_RESEARCH_WITH_NUMERICAL_DEFECTS_FIXED",
+      "closed": false,
+      "implemented": [
+        "Exact-rational resource-budget decisions",
+        "Baseline controls: two observed arithmetic failures; GREEN resource25 PASS within quantum118"
+      ],
+      "remaining_closure_conditions": [
+        "Best legal complete quantum winner oracle cost under explicit resources",
+        "Private-branch and difficulty manipulation thresholds for deployment model",
+        "Chain growth, reorganization and candidate-protocol comparison with reviewable assumptions"
+      ],
+      "current_observations": [
+        "Model arithmetic fixes do not establish oracle optimality or deployment security"
+      ],
+      "evidence": [
+        "../../pon-quantum-exact-resource-budget-20261105/README.md",
+        "../initial-checkpoint/quantum/checks.json"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Proof backend candidate",
+      "status": "HOLD_DISABLED",
+      "closed": false,
+      "implemented": [
+        "Distinct complete-statement-v2 source and interrupted proof evidence retained"
+      ],
+      "remaining_closure_conditions": [
+        "Complete actual current-image W1 proof and independent verification",
+        "Exact parameter ledger and concrete security/QROM conditions",
+        "Full end-to-end benefit exceeds proof generation, transport and verification cost"
+      ],
+      "current_observations": [
+        "Last known 1/43 segments; complete result UNKNOWN after executor loss",
+        "58 controls NOT_RUN",
+        "Original proof bytes not recovered in replacement executor"
+      ],
+      "evidence": [
+        "../../pon-w1-statement-v2-20261105/continuation/checkpoint-observation-20261105.json"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Real closed loop and independent acceptance",
+      "status": "OPEN_INDEPENDENT_AND_COMBINED_GATES",
+      "closed": false,
+      "implemented": [
+        "Fixed-version failures and raw multi-process evidence preserved"
+      ],
+      "remaining_closure_conditions": [
+        "Real Hepta task and multi-node run at final pair",
+        "A/B engineering gates pass with C assumptions resolved or explicitly accepted",
+        "Independent operators/review and original deployment criteria"
+      ],
+      "current_observations": [
+        "No combined final-pair native acceptance",
+        "Fixed-Host F0 FAILED, 0/6 SLOs",
+        "No independent acceptance supplied"
+      ],
+      "evidence": [
+        "../../pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+        "README.md"
+      ]
+    }
+  ],
+  "demonstrated_defects_closed": [
+    {
+      "id": "C2-exact-error-budget-boundaries",
+      "scope": "Exact arithmetic acceptance/rejection under the existing assumed resource model",
+      "baseline_new_controls": {
+        "pass": 1,
+        "fail": 2
+      },
+      "green_resource_suite": {
+        "pass": 25,
+        "fail": 0
+      },
+      "whole_workstream_closed": false
+    }
+  ],
+  "required_native_next": {
+    "queue": [
+      "canonical Growth RED",
+      "Growth GREEN2",
+      "B1 account-prefix",
+      "required strict workspace Clippy",
+      "runtime owner7 after preserving/rebuilding inconsistent macro artifacts",
+      "runtime signed2",
+      "runtime real IPC product controls"
+    ],
+    "resource_guards_unchanged": true,
+    "no_automatic_retry_in_unstable_shared_oom_window": true,
+    "hosted_ci_wait_requested": false,
+    "last_bounded_resource_wait": {
+      "result": "OOM_DURING_WAIT",
+      "duration_seconds": 160.16535,
+      "actual_native_started": false,
+      "shared_oom_before": 4,
+      "shared_oom_after": 5,
+      "counts_as_native_attempt": false
+    }
+  }
+}

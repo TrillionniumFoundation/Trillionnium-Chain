@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-release-finality-candidate-v2",
+  "profile_id": "trnm-release-finality-v2",
+  "status": "executable-reference-disabled",
+  "activation": false,
+  "native_runtime_integrated": false,
+  "independent_accepted": false,
+  "hepta_final_use": false,
+  "active_pon_changed": false,
+  "automatic_fallback": false,
+  "new_genesis_required": true,
+  "new_namespace_required": true,
+  "membership": "externally-pinned sorted unique strict Ed25519 keys; 1..32 in reference; actual n",
+  "quorum": "n>=3f+1 AND 2q-n>f AND q<=n-f",
+  "phases": ["availability", "new_view", "proposal", "prepare", "precommit", "commit", "decide", "advance_or_seal", "epoch_ready"],
+  "reference": "formal/release-finality-v2/protocol.py",
+  "separate_reader": "formal/release-finality-v2/verify_certificate.py",
+  "crypto_owner": "formal/pon-nakamoto-v1/strict_signature.py",
+  "specification": "docs/protocol/release-finality-v2/SPEC.md",
+  "owner_scope": "formal single-owner disk reference only; no production learning, operation or signing owner",
+  "remaining": ["independent protocol/security review", "native owner integration", "real network pacemaker", "physical key/store rollback resistance", "independent operators and DA", "real prospective neural generations", "full exact-source paired acceptance"]
+}

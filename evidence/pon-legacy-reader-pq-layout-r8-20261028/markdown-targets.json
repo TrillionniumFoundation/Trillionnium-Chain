@@ -1,0 +1,13 @@
+{
+  "readme": "README.md",
+  "existing_file_links": [
+    "candidate-reader.diff",
+    "ddl-independent-binding.json",
+    "retained-test-methods.json",
+    "commands.json",
+    "source-binding.json",
+    "raw-observations.tar.gz",
+    "raw-files.json"
+  ],
+  "all_exist": true
+}

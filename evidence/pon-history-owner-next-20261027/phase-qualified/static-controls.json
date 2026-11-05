@@ -1,0 +1,43 @@
+[
+  {
+    "name": "source-negative",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_ci_source_integrity.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 2.6219611870037625
+  },
+  {
+    "name": "phase-host-negative",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/ci",
+      "-p",
+      "test_native_phase_host.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.11470329700387083
+  },
+  {
+    "name": "applicability",
+    "argv": [
+      "python3",
+      "scripts/ci/check_applicability.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 21.33219998700224
+  }
+]

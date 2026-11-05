@@ -1,0 +1,62 @@
+{
+  "schema": "fast-daa-author-slides-retarget-source-v1",
+  "component_id": "fast-daa-author-slides-2026-09-15-retarget-v1",
+  "source": {
+    "title": "Parallel Blockchains and Applications",
+    "author": "Yu Shen; joint work with Juan Garay and Aggelos Kiayias",
+    "talk_date": "2026-09-15",
+    "author_page": "https://shenyu-official.icu/",
+    "author_talk_links_resource": "https://shenyu-official.icu/static/js/821.3e5af1ae.chunk.js",
+    "institution_event_page": "https://www.cs.sjtu.edu.cn/en/xshd/1181.html",
+    "slides_url": "https://drive.google.com/file/d/11XmEh1BczmuDZhxzjvJW_K_unsCGugdD/view",
+    "public_download_url": "https://drive.google.com/uc?export=download&id=11XmEh1BczmuDZhxzjvJW_K_unsCGugdD",
+    "pdf_sha256": "4ec8a855db8ac45118eb15b0783d665a3deadd4f27302f2a500a2b19d3a9311a",
+    "pdf_bytes": 1182141,
+    "pdf_pages": 75,
+    "verified_formula_pdf_pages_1_based": [61, 62, 63],
+    "displayed_slide_numbers": [52, 53, 54],
+    "inspection": "Text extraction and rendered-page visual verification"
+  },
+  "related_manuscript": {
+    "eprint_url": "https://eprint.iacr.org/2026/1116",
+    "eprint_revision_date_from_metadata": "2026-09-10",
+    "revision_notice": "A major revision of an IACR publication in CRYPTO 2026",
+    "full_manuscript_read": false,
+    "full_pdf_retrieval": "HTTP 403 during this research run",
+    "publisher_url": "https://link.springer.com/chapter/10.1007/978-3-032-35428-0_4",
+    "publisher_first_online": "2026-08-13"
+  },
+  "formula": {
+    "reference_difficulty": "ApproxAgree([median(Diff(C_i))], eta)",
+    "reference_ratio": "ApproxAgree([sum(Diff(C_i))/(Lambda*median(Diff(C_i)))], eta)",
+    "next_difficulty": "reference_difficulty * max(min(reference_ratio, tau), 1/tau)",
+    "approx_agree": "Reduce eta extremes on each side; select first representative per eta-element chunk; average representatives"
+  },
+  "declared_component_interpretations": [
+    "Global ascending order before Reduce and Select; the inspected slide does not supply explicit sorting pseudocode",
+    "Odd nonempty histories only, so median is unambiguous",
+    "Complete eta-sized chunks only, with integer eta and 0 < eta/m < 1/3",
+    "Every named reference must be present exactly once; this is a synthetic numeric API and does not authenticate chain references",
+    "Positive bounded int/Fraction arithmetic with no floating-point, target conversion or integer chain-weight rounding",
+    "Container and arithmetic limits are operational research bounds, not claimed paper parameters"
+  ],
+  "explicit_refusals": [
+    "UNSPECIFIED_PARTIAL_REPRESENTATIVE_CHUNK",
+    "UNSPECIFIED_MISSING_CHAIN_REFERENCE",
+    "UNSPECIFIED_EMPTY_CHAIN_HISTORY",
+    "UNSPECIFIED_EVEN_LENGTH_MEDIAN"
+  ],
+  "not_established": [
+    "Full September ePrint algorithm fidelity",
+    "Kappa, mu, epoch duration and honest-majority theorem parameter mapping",
+    "Cross-chain reference validity, selection, missing-history and epoch-boundary rules",
+    "Mining procedure, target encoding, fork choice, chain work, common-prefix or ledger rules",
+    "Quantum adversary or PoN W1 resource-model security",
+    "Constant-second confirmation or production activation"
+  ],
+  "illustrative_slide_55_used_as_exact_vector": false,
+  "illustrative_slide_55_note": "Its displayed T_i and rounded reciprocal-looking ratios are not substituted for the explicit difficulty formula on slide 54.",
+  "complete_protocol_implemented": false,
+  "production_activation": false,
+  "quantum_security_established": false
+}

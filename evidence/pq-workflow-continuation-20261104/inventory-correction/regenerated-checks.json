@@ -1,0 +1,49 @@
+[
+  {
+    "name": "inventory",
+    "argv": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "base_sha": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "scope": "generator-rebuilt inventory and matching corpus pin",
+    "exit_code": 0,
+    "wall_seconds": 0.169925,
+    "log": "inventory.log",
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "name": "format",
+    "argv": [
+      "/root/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "base_sha": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "scope": "generator-rebuilt inventory and matching corpus pin",
+    "exit_code": 0,
+    "wall_seconds": 31.348947,
+    "log": "format.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "base_sha": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "scope": "generator-rebuilt inventory and matching corpus pin",
+    "exit_code": 0,
+    "wall_seconds": 0.063965,
+    "log": "whitespace.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

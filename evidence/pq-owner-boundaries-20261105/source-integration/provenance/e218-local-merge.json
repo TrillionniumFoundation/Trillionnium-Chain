@@ -1,0 +1,45 @@
+{
+  "fixed_remote_commit": "dba49c2f66d8a72d6845c70958c4a24d6c4e7e89",
+  "fixed_remote_tree": "25ae0d2035b763b916575292d04571e93a512dd1",
+  "local_evidence_source": "49a0bc43de0cb3c461671257c3dd439c62c38d68",
+  "combined_tree": "07add784b1e1be265ea0e4cc2fc4381a18c8e51f",
+  "intended_parents": [
+    "dba49c2f66d8a72d6845c70958c4a24d6c4e7e89",
+    "14fcbede085b414a9621aef3f288d2b1ca1839ae"
+  ],
+  "changed_paths": 49,
+  "evidence_paths": 45,
+  "all_untouched_remote_terminals_exact": true,
+  "all_historical_evidence_except_scope_readme_exact": true,
+  "plan_additive_bytes": 1234,
+  "plan_peer_bytes_exact_after_removing_insertion": true,
+  "corpus_only_pin_changes": [
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "before": "3ba50971df114f888373c833b787c5a97cdaa290",
+      "after": "f4af2dc570e705c80c11c1dca880f2e249fe7a12"
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "before": "0f2701da52c1756722fbabd7e996ca68824d402a",
+      "after": "046297918ece4753cfa595ca88885bbb44d1a660"
+    }
+  ],
+  "native_on_combined_source": "NOT_RUN",
+  "rust_clippy_on_combined_source": "NOT_RUN",
+  "rust_fmt_on_combined_source": "NOT_RUN",
+  "readme_blob": "215ede18e03673a918649a79b97c995ad662eee3",
+  "plan_blob": "8380ed1dfabacadbad5e8078356f6b0ced0a4324",
+  "corpus_blob": "7391dca78235e2a241142184b22d9cacd7612d53",
+  "combined_commit": "e218ec649509e328eee4c7ef6021d96c647514ef",
+  "combined_ref": "refs/heads/fix/chain-pq-owner-boundaries-20261105",
+  "author_name": "Tomasrgbsf",
+  "author_email": "273673612+Tomasrgbsf@users.noreply.github.com",
+  "committer_name": "Tomasrgbsf",
+  "committer_email": "273673612+Tomasrgbsf@users.noreply.github.com",
+  "raw_commit_sha256": "cc8345157c3cb610350674d82475e04b1b8ab442ab5b6c372590d7f7ff1f70be",
+  "raw_commit_hash_verified": true,
+  "working_tree_clean": true,
+  "all_tracked_working_copies_present": true,
+  "remote_ref_written": false
+}

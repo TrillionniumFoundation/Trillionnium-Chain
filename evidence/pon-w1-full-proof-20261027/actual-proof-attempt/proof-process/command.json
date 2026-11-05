@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/workspace/scratch/56818e4fba76/target-w1/release/trnm-w1-zk-host",
+    "--r0vm",
+    "/workspace/scratch/56818e4fba76/toolchains/risc0-prover-3.0.3/r0vm",
+    "/workspace/scratch/56818e4fba76/w1-real-proof-attempt1/proof",
+    "1"
+  ],
+  "timeout_seconds": 3600.0
+}

@@ -1,0 +1,210 @@
+[
+  {
+    "test": "admitted-custom-genesis",
+    "nested_stage_intervals_not_additive": true,
+    "stages": {
+      "record": {
+        "calls": 25,
+        "cpu_ns": 578366,
+        "cpu_unknown_calls": 0
+      },
+      "packet": {
+        "calls": 15,
+        "cpu_ns": 318408418,
+        "cpu_unknown_calls": 0
+      },
+      "delta": {
+        "calls": 14,
+        "cpu_ns": 677863,
+        "cpu_unknown_calls": 0
+      },
+      "verify_state": {
+        "calls": 9,
+        "cpu_ns": 1592438553,
+        "cpu_unknown_calls": 0
+      },
+      "verify_history": {
+        "calls": 2,
+        "cpu_ns": 682866106,
+        "cpu_unknown_calls": 0
+      },
+      "publish": {
+        "calls": 1,
+        "cpu_ns": 845056744,
+        "cpu_unknown_calls": 0
+      },
+      "read_active": {
+        "calls": 2,
+        "cpu_ns": 514488426,
+        "cpu_unknown_calls": 0
+      },
+      "state_at": {
+        "calls": 3,
+        "cpu_ns": 768119828,
+        "cpu_unknown_calls": 0
+      },
+      "execute": {
+        "calls": 1,
+        "cpu_ns": 184698559,
+        "cpu_unknown_calls": 0
+      },
+      "admission": {
+        "calls": 2,
+        "cpu_ns": 2416046234,
+        "cpu_unknown_calls": 0
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_ns": 389022798,
+        "cpu_unknown_calls": 0
+      },
+      "complete_commitment": {
+        "calls": 10,
+        "cpu_ns": 1588909055,
+        "cpu_unknown_calls": 0
+      },
+      "complete_state_root": {
+        "calls": 10,
+        "cpu_ns": 802091082,
+        "cpu_unknown_calls": 0
+      },
+      "account_graph": {
+        "calls": 9,
+        "cpu_ns": 1543963,
+        "cpu_unknown_calls": 0
+      },
+      "persisted_state_root": {
+        "calls": 6,
+        "cpu_ns": 472631467,
+        "cpu_unknown_calls": 0
+      },
+      "execution_parent_binding": {
+        "calls": 1,
+        "cpu_ns": 84191464,
+        "cpu_unknown_calls": 0
+      }
+    },
+    "root_counter_delta": {
+      "actual_changed_keys": 0,
+      "calculations": 16,
+      "cold_roots": 16,
+      "complete_computations": 10,
+      "complete_hits": 0,
+      "context_misses": 0,
+      "derived_checked_apply": 0,
+      "derived_full_root": 0,
+      "derived_rebuilt_tree": 0,
+      "exact_root_hits": 0,
+      "material_uses": 0,
+      "offers": 5,
+      "offers_absent_or_refused": 5,
+      "offers_borrow_conflicts": 0,
+      "offers_retained": 0,
+      "original_error_fallbacks": 0
+    }
+  },
+  {
+    "test": "authenticated-large-parent",
+    "nested_stage_intervals_not_additive": true,
+    "stages": {
+      "record": {
+        "calls": 25,
+        "cpu_ns": 571320,
+        "cpu_unknown_calls": 0
+      },
+      "packet": {
+        "calls": 15,
+        "cpu_ns": 298917863,
+        "cpu_unknown_calls": 0
+      },
+      "delta": {
+        "calls": 14,
+        "cpu_ns": 695424,
+        "cpu_unknown_calls": 0
+      },
+      "verify_state": {
+        "calls": 9,
+        "cpu_ns": 1566127767,
+        "cpu_unknown_calls": 0
+      },
+      "verify_history": {
+        "calls": 2,
+        "cpu_ns": 664500945,
+        "cpu_unknown_calls": 0
+      },
+      "publish": {
+        "calls": 1,
+        "cpu_ns": 850589916,
+        "cpu_unknown_calls": 0
+      },
+      "read_active": {
+        "calls": 2,
+        "cpu_ns": 514055536,
+        "cpu_unknown_calls": 0
+      },
+      "state_at": {
+        "calls": 3,
+        "cpu_ns": 756953640,
+        "cpu_unknown_calls": 0
+      },
+      "execute": {
+        "calls": 1,
+        "cpu_ns": 213715332,
+        "cpu_unknown_calls": 0
+      },
+      "admission": {
+        "calls": 2,
+        "cpu_ns": 2435433460,
+        "cpu_unknown_calls": 0
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_ns": 353959641,
+        "cpu_unknown_calls": 0
+      },
+      "complete_commitment": {
+        "calls": 10,
+        "cpu_ns": 1578679813,
+        "cpu_unknown_calls": 0
+      },
+      "complete_state_root": {
+        "calls": 10,
+        "cpu_ns": 766489567,
+        "cpu_unknown_calls": 0
+      },
+      "account_graph": {
+        "calls": 9,
+        "cpu_ns": 1457384,
+        "cpu_unknown_calls": 0
+      },
+      "persisted_state_root": {
+        "calls": 6,
+        "cpu_ns": 449339400,
+        "cpu_unknown_calls": 0
+      },
+      "execution_parent_binding": {
+        "calls": 1,
+        "cpu_ns": 103353545,
+        "cpu_unknown_calls": 0
+      }
+    },
+    "root_counter_delta": {
+      "actual_changed_keys": 0,
+      "calculations": 16,
+      "cold_roots": 16,
+      "complete_computations": 10,
+      "complete_hits": 0,
+      "context_misses": 0,
+      "derived_checked_apply": 0,
+      "derived_full_root": 0,
+      "derived_rebuilt_tree": 0,
+      "exact_root_hits": 0,
+      "material_uses": 0,
+      "offers": 5,
+      "offers_absent_or_refused": 5,
+      "offers_borrow_conflicts": 0,
+      "offers_retained": 0,
+      "original_error_fallbacks": 0
+    }
+  }
+]

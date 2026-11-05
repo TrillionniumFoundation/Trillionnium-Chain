@@ -1,0 +1,63 @@
+{
+  "guard_after": {
+    "elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "native_input_files": 1190,
+    "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "required_reader_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "wrapper_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8"
+  },
+  "guard_before": {
+    "elf_sha256": "5349b31b55279a52dd75b679c5c3a12cb0c0d784dc259098409bb376f056045d",
+    "head": "69d2e06c48bbbd1e22432f9b557727b140aba361",
+    "native_input_files": 1190,
+    "native_manifest_sha256": "ccc0b180a702aa012bb24ca0541c9d91592239083c141e3a289f0345acf9df8c",
+    "required_reader_sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "wrapper_sha256": "b5c6d58c907af6449034aeec7308774000dfba5696df11307ea2a86c51baf8d8"
+  },
+  "label": "test-2",
+  "native": {
+    "argv": [
+      "bash",
+      "/workspace/scratch/7318d5f890d1/run-throughput.sh",
+      "/workspace/scratch/7318d5f890d1/target-throughput/debug/deps/trnm_pon_node-05b4ed99663833c1",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+      "--exact",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "child_system_seconds": 0.008448,
+    "child_user_seconds": 0.030555999999999972,
+    "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput/trillionnium/crates/trnm-pon-node",
+    "exit_code": 0,
+    "finished_at": "2026-11-04T09:00:49.996382+00:00",
+    "label": "test-2",
+    "max_child_rss_kib": 15932,
+    "started_at": "2026-11-04T09:00:49.953648+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "3ca26eada50e5f18a1e795932894f7a09a7d636f07414a6ebd3c285884e90493",
+    "wall_ns": 42733596
+  },
+  "reader": {
+    "argv": [
+      "python3",
+      "/workspace/scratch/7318d5f890d1/chain-throughput/scripts/ci/check_required_native_test.py",
+      "/workspace/scratch/7318d5f890d1/throughput-readback/final-69d2-workspace-nine/test-2.stdout",
+      "--test",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order"
+    ],
+    "child_system_seconds": 0.008990999999999999,
+    "child_user_seconds": 0.017476000000000047,
+    "cwd": "/workspace/scratch/7318d5f890d1/chain-throughput",
+    "exit_code": 0,
+    "finished_at": "2026-11-04T09:00:50.023820+00:00",
+    "label": "test-2-reader",
+    "max_child_rss_kib": 15932,
+    "started_at": "2026-11-04T09:00:49.996876+00:00",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "8a328629afc26e50031f1c32c20a98b6924407d63e5b343edaf96ca2715f58f4",
+    "wall_ns": 26960308
+  },
+  "selector": "account_archive_prototype::native_root_digest::tests::native_root_digest_keeps_original_traversal_cancellation_and_collision_order",
+  "source_and_elf_unchanged": true
+}

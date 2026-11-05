@@ -1,0 +1,36 @@
+{
+  "schema": "trnm-w1-source-gate-review-package-v1",
+  "files": {
+    "candidate.patch": {
+      "bytes": 668,
+      "sha256": "c9530bea383e91f67a2deb81feebaff149f610f529037ca26d4c3941ea96d1af"
+    },
+    "hosted-original-readback.json": {
+      "bytes": 4536,
+      "sha256": "79aa3c32bd9f253e573d63eb89a932df868a1c3f6d42e0d3b5b1733b1540337f"
+    },
+    "hosted-original-records.json.gz": {
+      "bytes": 28657,
+      "sha256": "58e91ecf233a51df2f86c329ab043b211b2fb9fc68a2ee43a6cd8f01178104b6"
+    },
+    "independent-review.json": {
+      "bytes": 4055,
+      "sha256": "8353e0790c9aa71e81c59addbe976a1f300e11da7ad72dfc91349ca8530e8d1f"
+    },
+    "review.json": {
+      "bytes": 16177,
+      "sha256": "92c5c85cca8e470c4dc58786193e9f4f58a7f6f9317658604bb26220c5aa94d7"
+    },
+    "source-gate-original-records.json.gz": {
+      "bytes": 56403,
+      "sha256": "0515ac5cca8003370243b786217b6309dc180acfefa268a1267b791170449ce3"
+    }
+  },
+  "original_entries": 67,
+  "unique_raw_blobs": 39,
+  "raw_bundle_bytes": 209701,
+  "raw_bundle_sha256": "c7c7c5baee81e76001163455a998256cb0d01404893e84417af352b35ccb6cb7",
+  "gzip_mtime": 0,
+  "all_entries_decoded_and_verified": true,
+  "scope": "Original hosted failure and real clean c5dd producer/consumer regression only; no Host/native/performance acceptance."
+}

@@ -1,0 +1,76 @@
+   Compiling trnm-protocol v0.1.0 (/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/42d46a663b73/red-discovery/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 57.79s
+     Running unittests src/lib.rs (/workspace/scratch/42d46a663b73/target/debug/deps/trnm_data_availability-4afa79d63a34aeeb)
+
+running 12 tests
+test cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline' (138) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline' (140) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline' (142) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline' (144) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline' (146) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... 
+thread 'cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline' (148) panicked at crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline' (150) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline' (152) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline' (154) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline' (156) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline' (158) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+test cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... 
+thread 'cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline' (160) panicked at crates/trnm-data-availability/src/cell/discovery/pq/../directory_deadline_tests.rs:91:14:
+request remained blocked until its owner/SQLite lock was released: Timeout
+FAILED
+
+failures:
+
+failures:
+    cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline
+    cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline
+    cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline
+    cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline
+    cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline
+    cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline
+    cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline
+
+test result: FAILED. 0 passed; 12 failed; 0 ignored; 0 measured; 321 filtered out; finished in 37.41s
+
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

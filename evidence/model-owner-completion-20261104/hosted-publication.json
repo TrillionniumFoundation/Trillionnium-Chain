@@ -1,0 +1,25 @@
+{
+  "schema": "model-owner-single-publication-v1",
+  "observed_at": "2026-11-05T01:54:00.365229+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "fix/chain-model-owner-hosted-once-20261105",
+  "source_commit": "f388f46d9df150a3599b9d961b48918b3ff1fb48",
+  "intent_commit": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+  "source_tree": "05427bab302258016b930e703e7338ca277271c7",
+  "intent_tree": "b2c2b66ebf0490868cd3300f244f1d9e4274aff2",
+  "intent_sha256": "1bce00490405ab6c1e4eee3e2a9d8d45ba96a5efe3e61aa13b5b3f3977e26e1b",
+  "intent_size": 100969,
+  "remote_ref_readback": "6bdaf9598d72c118798eb51a03db2e1c0e7c8507",
+  "force": false,
+  "campaign_publication_spent": true,
+  "runtime_sqlite_spent": "not yet observed",
+  "model_result": "not yet observed",
+  "automatic_retry_allowed": false,
+  "qualifications": {
+    "public_network_ready": false,
+    "authenticated_inference_accepted": false,
+    "independent_accepted": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false
+  }
+}

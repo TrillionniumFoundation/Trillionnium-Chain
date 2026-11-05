@@ -1,0 +1,4009 @@
+{
+  "all_phase_costs": [
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9633926230308051,
+      "paired_costs": [
+        {
+          "baseline_ns": 144901141,
+          "candidate_ns": 155437203,
+          "candidate_over_baseline": 1.0727120706385604,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 119973475,
+          "candidate_ns": 119165494,
+          "candidate_over_baseline": 0.9932653363587243,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 148043292,
+          "candidate_ns": 139069362,
+          "candidate_over_baseline": 0.939383069109271,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 138169364,
+          "candidate_ns": 122024224,
+          "candidate_over_baseline": 0.8831496394526358,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 143807053,
+          "candidate_ns": 138542654,
+          "candidate_over_baseline": 0.9633926230308051,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9632170713247528,
+      "paired_costs": [
+        {
+          "baseline_ns": 144906878,
+          "candidate_ns": 157771626,
+          "candidate_over_baseline": 1.0887794159777564,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 120133860,
+          "candidate_ns": 119184348,
+          "candidate_over_baseline": 0.9920962166703042,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 148049501,
+          "candidate_ns": 139087972,
+          "candidate_over_baseline": 0.9394693738278793,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 138175024,
+          "candidate_ns": 122052989,
+          "candidate_over_baseline": 0.8833216413988102,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 143839335,
+          "candidate_ns": 138548503,
+          "candidate_over_baseline": 0.9632170713247528,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.14636171106908608,
+      "paired_costs": [
+        {
+          "baseline_ns": 368036546,
+          "candidate_ns": 65791311,
+          "candidate_over_baseline": 0.1787629835000136,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 299363400,
+          "candidate_ns": 42212620,
+          "candidate_over_baseline": 0.14100795220791854,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 365152815,
+          "candidate_ns": 65737294,
+          "candidate_over_baseline": 0.1800268032987778,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 330475387,
+          "candidate_ns": 41054317,
+          "candidate_over_baseline": 0.12422806240635403,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 342641314,
+          "candidate_ns": 50149569,
+          "candidate_over_baseline": 0.14636171106908608,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.14631766905839744,
+      "paired_costs": [
+        {
+          "baseline_ns": 368163684,
+          "candidate_ns": 65820883,
+          "candidate_over_baseline": 0.17878157423044475,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 299548357,
+          "candidate_ns": 42228118,
+          "candidate_over_baseline": 0.14097262432990076,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 365215985,
+          "candidate_ns": 65795883,
+          "candidate_over_baseline": 0.1801560876367446,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 330542321,
+          "candidate_ns": 41335790,
+          "candidate_over_baseline": 0.12505445558361647,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 342870812,
+          "candidate_ns": 50168058,
+          "candidate_over_baseline": 0.14631766905839744,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.18492950150658324,
+      "paired_costs": [
+        {
+          "baseline_ns": 45927677,
+          "candidate_ns": 8981862,
+          "candidate_over_baseline": 0.19556534505326711,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 37167135,
+          "candidate_ns": 5151387,
+          "candidate_over_baseline": 0.13860059431538105,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 44490738,
+          "candidate_ns": 8227650,
+          "candidate_over_baseline": 0.18492950150658324,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 44396636,
+          "candidate_ns": 5475409,
+          "candidate_over_baseline": 0.12332936666642941,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 42319911,
+          "candidate_ns": 7862739,
+          "candidate_over_baseline": 0.1857929001788307,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.18495898817111694,
+      "paired_costs": [
+        {
+          "baseline_ns": 45931416,
+          "candidate_ns": 8984807,
+          "candidate_over_baseline": 0.195613542591415,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 37170738,
+          "candidate_ns": 5153030,
+          "candidate_over_baseline": 0.138631361045347,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 44494480,
+          "candidate_ns": 8229654,
+          "candidate_over_baseline": 0.18495898817111694,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 44407475,
+          "candidate_ns": 5477411,
+          "candidate_over_baseline": 0.12334434686953041,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 42332453,
+          "candidate_ns": 7865055,
+          "candidate_over_baseline": 0.18579256439498085,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.18305563784688814,
+      "paired_costs": [
+        {
+          "baseline_ns": 42489452,
+          "candidate_ns": 8140661,
+          "candidate_over_baseline": 0.19159251571425304,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 40329077,
+          "candidate_ns": 5552504,
+          "candidate_over_baseline": 0.13767991764354043,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45275854,
+          "candidate_ns": 8502028,
+          "candidate_over_baseline": 0.1877828301151426,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 43776625,
+          "candidate_ns": 5855274,
+          "candidate_over_baseline": 0.1337534357662337,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 41157973,
+          "candidate_ns": 7534199,
+          "candidate_over_baseline": 0.18305563784688814,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.18305224005737544,
+      "paired_costs": [
+        {
+          "baseline_ns": 42492702,
+          "candidate_ns": 8151053,
+          "candidate_over_baseline": 0.19182242164783966,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 40688890,
+          "candidate_ns": 5554144,
+          "candidate_over_baseline": 0.1365027160976866,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45279973,
+          "candidate_ns": 8504027,
+          "candidate_over_baseline": 0.18780989555802077,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 43780189,
+          "candidate_ns": 5857994,
+          "candidate_over_baseline": 0.1338046759003256,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 41171624,
+          "candidate_ns": 7536558,
+          "candidate_over_baseline": 0.18305224005737544,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9495664504031532,
+      "paired_costs": [
+        {
+          "baseline_ns": 4605346,
+          "candidate_ns": 5299428,
+          "candidate_over_baseline": 1.1507122374735796,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 4851082,
+          "candidate_ns": 3396319,
+          "candidate_over_baseline": 0.7001157679874305,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 5933130,
+          "candidate_ns": 6054210,
+          "candidate_over_baseline": 1.0204074409291555,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 5050678,
+          "candidate_ns": 3817855,
+          "candidate_over_baseline": 0.7559094046383475,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 4987434,
+          "candidate_ns": 4735900,
+          "candidate_over_baseline": 0.9495664504031532,
+          "pair": 4
+        }
+      ],
+      "phase": "late_grammar",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.948378651969012,
+      "paired_costs": [
+        {
+          "baseline_ns": 4608031,
+          "candidate_ns": 5303028,
+          "candidate_over_baseline": 1.1508229870849394,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 4853161,
+          "candidate_ns": 3398088,
+          "candidate_over_baseline": 0.7001803566788738,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 5936253,
+          "candidate_ns": 6057132,
+          "candidate_over_baseline": 1.020362845047204,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 5052851,
+          "candidate_ns": 3866975,
+          "candidate_over_baseline": 0.7653055670946957,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 4995627,
+          "candidate_ns": 4737746,
+          "candidate_over_baseline": 0.948378651969012,
+          "pair": 4
+        }
+      ],
+      "phase": "late_grammar",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.1496606251635656,
+      "paired_costs": [
+        {
+          "baseline_ns": 41955328,
+          "candidate_ns": 8132359,
+          "candidate_over_baseline": 0.19383376051785364,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 36656387,
+          "candidate_ns": 4767407,
+          "candidate_over_baseline": 0.13005665288289323,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45799092,
+          "candidate_ns": 8156946,
+          "candidate_over_baseline": 0.17810278858803577,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 43049004,
+          "candidate_ns": 5226521,
+          "candidate_over_baseline": 0.12140863932647547,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 43369450,
+          "candidate_ns": 6490699,
+          "candidate_over_baseline": 0.1496606251635656,
+          "pair": 4
+        }
+      ],
+      "phase": "late_wire",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.14969976701701035,
+      "paired_costs": [
+        {
+          "baseline_ns": 41958918,
+          "candidate_ns": 8143681,
+          "candidate_over_baseline": 0.1940870114906204,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 37378622,
+          "candidate_ns": 4768442,
+          "candidate_over_baseline": 0.127571369538449,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45803571,
+          "candidate_ns": 8159358,
+          "candidate_over_baseline": 0.17813803207614534,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 43052824,
+          "candidate_ns": 5387646,
+          "candidate_over_baseline": 0.12514036245334337,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 43373982,
+          "candidate_ns": 6493075,
+          "candidate_over_baseline": 0.14969976701701035,
+          "pair": 4
+        }
+      ],
+      "phase": "late_wire",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.0122192632134603,
+      "paired_costs": [
+        {
+          "baseline_ns": 214202265,
+          "candidate_ns": 190168382,
+          "candidate_over_baseline": 0.8877981845803544,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 166615856,
+          "candidate_ns": 168651779,
+          "candidate_over_baseline": 1.0122192632134603,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 193069986,
+          "candidate_ns": 191943171,
+          "candidate_over_baseline": 0.9941636966814718,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 157532688,
+          "candidate_ns": 173941600,
+          "candidate_over_baseline": 1.1041619501852213,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 189368003,
+          "candidate_ns": 207554603,
+          "candidate_over_baseline": 1.0960383998980017,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0077879980019326,
+      "paired_costs": [
+        {
+          "baseline_ns": 214208867,
+          "candidate_ns": 190175596,
+          "candidate_over_baseline": 0.8878044997082217,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 167453818,
+          "candidate_ns": 168757948,
+          "candidate_over_baseline": 1.0077879980019326,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 193076152,
+          "candidate_ns": 191949438,
+          "candidate_over_baseline": 0.9941644061768954,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 157561657,
+          "candidate_ns": 175067748,
+          "candidate_over_baseline": 1.1111062890129417,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 189431130,
+          "candidate_ns": 207570607,
+          "candidate_over_baseline": 1.0957576349779468,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.6210364715728104,
+      "paired_costs": [
+        {
+          "baseline_ns": 774067988,
+          "candidate_ns": 467486086,
+          "candidate_over_baseline": 0.6039341417643019,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 779479902,
+          "candidate_ns": 484085448,
+          "candidate_over_baseline": 0.6210364715728104,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 707079287,
+          "candidate_ns": 484463534,
+          "candidate_over_baseline": 0.6851615411554263,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 730577981,
+          "candidate_ns": 453619781,
+          "candidate_over_baseline": 0.6209053554818263,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 734497751,
+          "candidate_ns": 487705842,
+          "candidate_over_baseline": 0.6639990950768752,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.6210164842828919,
+      "paired_costs": [
+        {
+          "baseline_ns": 774118972,
+          "candidate_ns": 467776022,
+          "candidate_over_baseline": 0.6042689029975098,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 779646290,
+          "candidate_ns": 484173198,
+          "candidate_over_baseline": 0.6210164842828919,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 707196640,
+          "candidate_ns": 484493956,
+          "candidate_over_baseline": 0.6850908624226495,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 730691948,
+          "candidate_ns": 453649767,
+          "candidate_over_baseline": 0.6208495498570897,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 734759698,
+          "candidate_ns": 487754533,
+          "candidate_over_baseline": 0.6638286426537238,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.6017871153187766,
+      "paired_costs": [
+        {
+          "baseline_ns": 75848612,
+          "candidate_ns": 40846319,
+          "candidate_over_baseline": 0.5385242778074831,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 98464852,
+          "candidate_ns": 56441402,
+          "candidate_over_baseline": 0.5732136986302483,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 100945920,
+          "candidate_ns": 60747954,
+          "candidate_over_baseline": 0.6017871153187766,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 70938713,
+          "candidate_ns": 52968600,
+          "candidate_over_baseline": 0.7466811527860676,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 97457214,
+          "candidate_ns": 61503327,
+          "candidate_over_baseline": 0.6310802912958295,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.601798628232972,
+      "paired_costs": [
+        {
+          "baseline_ns": 75852630,
+          "candidate_ns": 40850106,
+          "candidate_over_baseline": 0.5385456773219334,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 98470486,
+          "candidate_ns": 56471989,
+          "candidate_over_baseline": 0.5734915231351656,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 100950378,
+          "candidate_ns": 60751799,
+          "candidate_over_baseline": 0.601798628232972,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 70943107,
+          "candidate_ns": 53013223,
+          "candidate_over_baseline": 0.7472639026086072,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 97476660,
+          "candidate_ns": 61514172,
+          "candidate_over_baseline": 0.6310656520237767,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.5584254690598045,
+      "paired_costs": [
+        {
+          "baseline_ns": 100582590,
+          "candidate_ns": 56167880,
+          "candidate_over_baseline": 0.5584254690598045,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 99594641,
+          "candidate_ns": 47006977,
+          "candidate_over_baseline": 0.4719829955509353,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 98725379,
+          "candidate_ns": 61790614,
+          "candidate_over_baseline": 0.6258837861741711,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 111500530,
+          "candidate_ns": 59750322,
+          "candidate_over_baseline": 0.5358747801467849,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 77255854,
+          "candidate_ns": 58086985,
+          "candidate_over_baseline": 0.7518781036321208,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.5588078070764888,
+      "paired_costs": [
+        {
+          "baseline_ns": 100587512,
+          "candidate_ns": 56209087,
+          "candidate_over_baseline": 0.5588078070764888,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 99891407,
+          "candidate_ns": 47022368,
+          "candidate_over_baseline": 0.47073486511207113,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 98730413,
+          "candidate_ns": 61802902,
+          "candidate_over_baseline": 0.6259763341615922,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 111513451,
+          "candidate_ns": 59754756,
+          "candidate_over_baseline": 0.5358524506608624,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 77267971,
+          "candidate_ns": 58459979,
+          "candidate_over_baseline": 0.7565874740000614,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9537304705435571,
+      "paired_costs": [
+        {
+          "baseline_ns": 46932618,
+          "candidate_ns": 43373827,
+          "candidate_over_baseline": 0.9241723314902228,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 49177764,
+          "candidate_ns": 46902332,
+          "candidate_over_baseline": 0.9537304705435571,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 52775673,
+          "candidate_ns": 50010793,
+          "candidate_over_baseline": 0.9476107107151434,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 46829965,
+          "candidate_ns": 49012249,
+          "candidate_over_baseline": 1.0466001629512216,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 36365418,
+          "candidate_ns": 37924235,
+          "candidate_over_baseline": 1.0428653673113286,
+          "pair": 4
+        }
+      ],
+      "phase": "late_grammar",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9541006847328299,
+      "paired_costs": [
+        {
+          "baseline_ns": 46935929,
+          "candidate_ns": 43376848,
+          "candidate_over_baseline": 0.9241715019638793,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 49181518,
+          "candidate_ns": 46924120,
+          "candidate_over_baseline": 0.9541006847328299,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 52779621,
+          "candidate_ns": 50014523,
+          "candidate_over_baseline": 0.9476104991356418,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 46834431,
+          "candidate_ns": 49014883,
+          "candidate_over_baseline": 1.0465566027694455,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 36379394,
+          "candidate_ns": 37945270,
+          "candidate_over_baseline": 1.0430429379884667,
+          "pair": 4
+        }
+      ],
+      "phase": "late_grammar",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.1133772103896424,
+      "paired_costs": [
+        {
+          "baseline_ns": 36504055,
+          "candidate_ns": 70470431,
+          "candidate_over_baseline": 1.9304822710791993,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 51733283,
+          "candidate_ns": 63515418,
+          "candidate_over_baseline": 1.227747676481309,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 53169749,
+          "candidate_ns": 52710987,
+          "candidate_over_baseline": 0.9913717478711438,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 45580086,
+          "candidate_ns": 50747829,
+          "candidate_over_baseline": 1.1133772103896424,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 92132009,
+          "candidate_ns": 45458826,
+          "candidate_over_baseline": 0.4934096900025267,
+          "pair": 4
+        }
+      ],
+      "phase": "late_wire",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.1131763832201753,
+      "paired_costs": [
+        {
+          "baseline_ns": 36506956,
+          "candidate_ns": 70474278,
+          "candidate_over_baseline": 1.930434243819178,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 51736737,
+          "candidate_ns": 63548507,
+          "candidate_over_baseline": 1.2283052756110229,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 53173755,
+          "candidate_ns": 52714901,
+          "candidate_over_baseline": 0.9913706677288449,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 45592109,
+          "candidate_ns": 50752059,
+          "candidate_over_baseline": 1.1131763832201753,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 92136124,
+          "candidate_ns": 45466564,
+          "candidate_over_baseline": 0.4934716376825229,
+          "pair": 4
+        }
+      ],
+      "phase": "late_wire",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.0160844717500397,
+      "paired_costs": [
+        {
+          "baseline_ns": 134958581,
+          "candidate_ns": 140599777,
+          "candidate_over_baseline": 1.0417994614214268,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139044355,
+          "candidate_ns": 141280810,
+          "candidate_over_baseline": 1.0160844717500397,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 141610820,
+          "candidate_ns": 142930402,
+          "candidate_over_baseline": 1.0093183698816235,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 148253595,
+          "candidate_ns": 141240779,
+          "candidate_over_baseline": 0.9526971605646393,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 137806485,
+          "candidate_ns": 143238488,
+          "candidate_over_baseline": 1.0394176152160037,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": true
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0166917806888727,
+      "paired_costs": [
+        {
+          "baseline_ns": 134968596,
+          "candidate_ns": 140606113,
+          "candidate_over_baseline": 1.041769101606421,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139050473,
+          "candidate_ns": 141371473,
+          "candidate_over_baseline": 1.0166917806888727,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 141616760,
+          "candidate_ns": 142944637,
+          "candidate_over_baseline": 1.0093765526057792,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 148259634,
+          "candidate_ns": 141287659,
+          "candidate_over_baseline": 0.9529745567832711,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 137811829,
+          "candidate_ns": 143253241,
+          "candidate_over_baseline": 1.03948436095424,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.0067268459731458,
+      "paired_costs": [
+        {
+          "baseline_ns": 333653348,
+          "candidate_ns": 307755454,
+          "candidate_over_baseline": 0.9223808358128629,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 349351907,
+          "candidate_ns": 363973573,
+          "candidate_over_baseline": 1.04185368880783,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 363563401,
+          "candidate_ns": 366009036,
+          "candidate_over_baseline": 1.0067268459731458,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 356523867,
+          "candidate_ns": 363126152,
+          "candidate_over_baseline": 1.0185184937422436,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 368359342,
+          "candidate_ns": 318713809,
+          "candidate_over_baseline": 0.8652252641932453,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0067346291945907,
+      "paired_costs": [
+        {
+          "baseline_ns": 333688712,
+          "candidate_ns": 308426031,
+          "candidate_over_baseline": 0.9242926713085817,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 349380952,
+          "candidate_ns": 364293153,
+          "candidate_over_baseline": 1.0426817802019155,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 363594480,
+          "candidate_ns": 366043154,
+          "candidate_over_baseline": 1.0067346291945907,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 356647324,
+          "candidate_ns": 363162857,
+          "candidate_over_baseline": 1.018268840284359,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 368438080,
+          "candidate_ns": 318880435,
+          "candidate_over_baseline": 0.8654926086901766,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.8711882722158665,
+      "paired_costs": [
+        {
+          "baseline_ns": 47748880,
+          "candidate_ns": 39920085,
+          "candidate_over_baseline": 0.8360423323018257,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 44832565,
+          "candidate_ns": 46375010,
+          "candidate_over_baseline": 1.0344045673050382,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 44193956,
+          "candidate_ns": 46189292,
+          "candidate_over_baseline": 1.0451495222559393,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 46301739,
+          "candidate_ns": 40337532,
+          "candidate_over_baseline": 0.8711882722158665,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 45656971,
+          "candidate_ns": 32950251,
+          "candidate_over_baseline": 0.7216915681944823,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.8718829143566396,
+      "paired_costs": [
+        {
+          "baseline_ns": 47762343,
+          "candidate_ns": 40178004,
+          "candidate_over_baseline": 0.8412067222079118,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 44837145,
+          "candidate_ns": 46459427,
+          "candidate_over_baseline": 1.0361816525115504,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 44197442,
+          "candidate_ns": 46194005,
+          "candidate_over_baseline": 1.0451737229498486,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 46306275,
+          "candidate_ns": 40373650,
+          "candidate_over_baseline": 0.8718829143566396,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 45661427,
+          "candidate_ns": 32952926,
+          "candidate_over_baseline": 0.7216797232377341,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9782722482763067,
+      "paired_costs": [
+        {
+          "baseline_ns": 47218231,
+          "candidate_ns": 46192285,
+          "candidate_over_baseline": 0.9782722482763067,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 45032552,
+          "candidate_ns": 46242661,
+          "candidate_over_baseline": 1.026871872595628,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45271948,
+          "candidate_ns": 45829116,
+          "candidate_over_baseline": 1.0123071355356743,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 45569140,
+          "candidate_ns": 33501402,
+          "candidate_over_baseline": 0.7351774029529633,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 45909807,
+          "candidate_ns": 34672572,
+          "candidate_over_baseline": 0.7552323624449129,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9782643084722477,
+      "paired_costs": [
+        {
+          "baseline_ns": 47221778,
+          "candidate_ns": 46195380,
+          "candidate_over_baseline": 0.9782643084722477,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 45036444,
+          "candidate_ns": 46277472,
+          "candidate_over_baseline": 1.0275560832467145,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45276407,
+          "candidate_ns": 45832864,
+          "candidate_over_baseline": 1.0122902199372843,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 45572460,
+          "candidate_ns": 33503955,
+          "candidate_over_baseline": 0.7351798652080664,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 45940408,
+          "candidate_ns": 34676262,
+          "candidate_over_baseline": 0.7548096220651762,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9987898300493756,
+      "paired_costs": [
+        {
+          "baseline_ns": 195801586,
+          "candidate_ns": 237623517,
+          "candidate_over_baseline": 1.2135934230890244,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 180453422,
+          "candidate_ns": 195947443,
+          "candidate_over_baseline": 1.0858616080996237,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 194559450,
+          "candidate_ns": 194324000,
+          "candidate_over_baseline": 0.9987898300493756,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 220054909,
+          "candidate_ns": 183616843,
+          "candidate_over_baseline": 0.8344137553413998,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 193567676,
+          "candidate_ns": 168099738,
+          "candidate_over_baseline": 0.8684287659681361,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": true
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9987464816152976,
+      "paired_costs": [
+        {
+          "baseline_ns": 195807876,
+          "candidate_ns": 237638526,
+          "candidate_over_baseline": 1.2136310900997669,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 184049297,
+          "candidate_ns": 196009751,
+          "candidate_over_baseline": 1.0649850566938053,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 194574729,
+          "candidate_ns": 194330826,
+          "candidate_over_baseline": 0.9987464816152976,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 220074834,
+          "candidate_ns": 183622472,
+          "candidate_over_baseline": 0.834363787365165,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 194015728,
+          "candidate_ns": 168116019,
+          "candidate_over_baseline": 0.8665071679137271,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9738570764813976,
+      "paired_costs": [
+        {
+          "baseline_ns": 789606152,
+          "candidate_ns": 725490130,
+          "candidate_over_baseline": 0.9187999968875622,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 780846103,
+          "candidate_ns": 794275936,
+          "candidate_over_baseline": 1.017199077959668,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 781946603,
+          "candidate_ns": 769603873,
+          "candidate_over_baseline": 0.9842153799854797,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 762492381,
+          "candidate_ns": 742558601,
+          "candidate_over_baseline": 0.9738570764813976,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 796782427,
+          "candidate_ns": 774825045,
+          "candidate_over_baseline": 0.9724424369113251,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9738454826164628,
+      "paired_costs": [
+        {
+          "baseline_ns": 794177431,
+          "candidate_ns": 725526206,
+          "candidate_over_baseline": 0.9135568170030256,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 788717852,
+          "candidate_ns": 794695352,
+          "candidate_over_baseline": 1.0075787558058213,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 781985263,
+          "candidate_ns": 769704209,
+          "candidate_over_baseline": 0.9842950314013782,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 762609522,
+          "candidate_ns": 742663838,
+          "candidate_over_baseline": 0.9738454826164628,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 796852397,
+          "candidate_ns": 774906099,
+          "candidate_over_baseline": 0.972458766413173,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9844463055729493,
+      "paired_costs": [
+        {
+          "baseline_ns": 91590092,
+          "candidate_ns": 81456439,
+          "candidate_over_baseline": 0.8893586328093218,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 98362480,
+          "candidate_ns": 102136800,
+          "candidate_over_baseline": 1.0383715416691406,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 96686137,
+          "candidate_ns": 97650602,
+          "candidate_over_baseline": 1.0099752149576522,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 95454357,
+          "candidate_ns": 75810295,
+          "candidate_over_baseline": 0.794204658463102,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 95820000,
+          "candidate_ns": 94329645,
+          "candidate_over_baseline": 0.9844463055729493,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9837354412853146,
+      "paired_costs": [
+        {
+          "baseline_ns": 91594224,
+          "candidate_ns": 81460222,
+          "candidate_over_baseline": 0.8893598137803973,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 98367499,
+          "candidate_ns": 102167896,
+          "candidate_over_baseline": 1.0386346815628604,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 96691192,
+          "candidate_ns": 97655756,
+          "candidate_over_baseline": 1.0099757173331776,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 95459629,
+          "candidate_ns": 75847350,
+          "candidate_over_baseline": 0.7945489710629401,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 95894025,
+          "candidate_ns": 94334351,
+          "candidate_over_baseline": 0.9837354412853146,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.0552367205568383,
+      "paired_costs": [
+        {
+          "baseline_ns": 71298468,
+          "candidate_ns": 98820085,
+          "candidate_over_baseline": 1.3860057273600885,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 96061669,
+          "candidate_ns": 86179911,
+          "candidate_over_baseline": 0.897131102313036,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 96762171,
+          "candidate_ns": 102106996,
+          "candidate_over_baseline": 1.0552367205568383,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 95720632,
+          "candidate_ns": 83637396,
+          "candidate_over_baseline": 0.8737656057264644,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 84789373,
+          "candidate_ns": 95330202,
+          "candidate_over_baseline": 1.124317808081916,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0548358642022624,
+      "paired_costs": [
+        {
+          "baseline_ns": 71302640,
+          "candidate_ns": 98893061,
+          "candidate_over_baseline": 1.3869480989764194,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 96066622,
+          "candidate_ns": 86193802,
+          "candidate_over_baseline": 0.8972294456236839,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 96803380,
+          "candidate_ns": 102111677,
+          "candidate_over_baseline": 1.0548358642022624,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 95725178,
+          "candidate_ns": 83641614,
+          "candidate_over_baseline": 0.8737681741370071,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 84962074,
+          "candidate_ns": 95341398,
+          "candidate_over_baseline": 1.1221642023475087,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9485411575564809,
+      "paired_costs": [
+        {
+          "baseline_ns": 149263625,
+          "candidate_ns": 129754695,
+          "candidate_over_baseline": 0.8692988328536172,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139608003,
+          "candidate_ns": 143034736,
+          "candidate_over_baseline": 1.024545390854133,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 185450910,
+          "candidate_ns": 151016117,
+          "candidate_over_baseline": 0.8143185547053935,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 143219852,
+          "candidate_ns": 152760304,
+          "candidate_over_baseline": 1.0666140333673855,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 146425408,
+          "candidate_ns": 138890526,
+          "candidate_over_baseline": 0.9485411575564809,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": true
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9485389421457167,
+      "paired_costs": [
+        {
+          "baseline_ns": 149291030,
+          "candidate_ns": 129760021,
+          "candidate_over_baseline": 0.8691749330150647,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139613841,
+          "candidate_ns": 143039887,
+          "candidate_over_baseline": 1.0245394437647481,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 185507741,
+          "candidate_ns": 151021088,
+          "candidate_over_baseline": 0.8140958818532538,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 143236787,
+          "candidate_ns": 152765524,
+          "candidate_over_baseline": 1.0665243698883025,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 146431094,
+          "candidate_ns": 138895595,
+          "candidate_over_baseline": 0.9485389421457167,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.0497152883751915,
+      "paired_costs": [
+        {
+          "baseline_ns": 379222087,
+          "candidate_ns": 333866726,
+          "candidate_over_baseline": 0.8803989468050156,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 361100289,
+          "candidate_ns": 379052494,
+          "candidate_over_baseline": 1.0497152883751915,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 316670638,
+          "candidate_ns": 332426124,
+          "candidate_over_baseline": 1.049753542353996,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 287654519,
+          "candidate_ns": 351771006,
+          "candidate_over_baseline": 1.2228940717597419,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 392243262,
+          "candidate_ns": 340786762,
+          "candidate_over_baseline": 0.8688148274679605,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0501513553755435,
+      "paired_costs": [
+        {
+          "baseline_ns": 379279191,
+          "candidate_ns": 333966988,
+          "candidate_over_baseline": 0.8805307433805405,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 361140130,
+          "candidate_ns": 379251797,
+          "candidate_over_baseline": 1.0501513553755435,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 316737704,
+          "candidate_ns": 332661638,
+          "candidate_over_baseline": 1.0502748292953465,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 287679946,
+          "candidate_ns": 351840120,
+          "candidate_over_baseline": 1.2230262306848458,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 392305074,
+          "candidate_ns": 340830314,
+          "candidate_over_baseline": 0.8687889517330076,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9993365487340445,
+      "paired_costs": [
+        {
+          "baseline_ns": 56179873,
+          "candidate_ns": 45467429,
+          "candidate_over_baseline": 0.8093188284708298,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 44809030,
+          "candidate_ns": 46084025,
+          "candidate_over_baseline": 1.02845397456718,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45886382,
+          "candidate_ns": 43706121,
+          "candidate_over_baseline": 0.9524856633935532,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 33854796,
+          "candidate_ns": 43349922,
+          "candidate_over_baseline": 1.2804662004166263,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 43293308,
+          "candidate_ns": 43264585,
+          "candidate_over_baseline": 0.9993365487340445,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9993443329328994,
+      "paired_costs": [
+        {
+          "baseline_ns": 56183607,
+          "candidate_ns": 45471028,
+          "candidate_over_baseline": 0.8093290984325731,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 44812808,
+          "candidate_ns": 46101338,
+          "candidate_over_baseline": 1.0287536099054537,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 45890814,
+          "candidate_ns": 43709976,
+          "candidate_over_baseline": 0.9524776788661887,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 33858014,
+          "candidate_ns": 43352724,
+          "candidate_over_baseline": 1.2804272571923445,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 43296364,
+          "candidate_ns": 43267976,
+          "candidate_over_baseline": 0.9993443329328994,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.018387941313273,
+      "paired_costs": [
+        {
+          "baseline_ns": 46966297,
+          "candidate_ns": 45378698,
+          "candidate_over_baseline": 0.9661970582862855,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 45310075,
+          "candidate_ns": 46143234,
+          "candidate_over_baseline": 1.018387941313273,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 46509318,
+          "candidate_ns": 45230397,
+          "candidate_over_baseline": 0.9725018328585252,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 33327683,
+          "candidate_ns": 37454988,
+          "candidate_over_baseline": 1.1238401421424946,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 41186044,
+          "candidate_ns": 42439979,
+          "candidate_over_baseline": 1.0304456286211903,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.0185917518383307,
+      "paired_costs": [
+        {
+          "baseline_ns": 46970820,
+          "candidate_ns": 45382256,
+          "candidate_over_baseline": 0.9661797686308223,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 45314073,
+          "candidate_ns": 46156541,
+          "candidate_over_baseline": 1.0185917518383307,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 46513802,
+          "candidate_ns": 45234281,
+          "candidate_over_baseline": 0.9724915843258739,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 33331532,
+          "candidate_ns": 37464434,
+          "candidate_over_baseline": 1.123993760622824,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 41189601,
+          "candidate_ns": 42444215,
+          "candidate_over_baseline": 1.0304594841790287,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9827370660195555,
+      "paired_costs": [
+        {
+          "baseline_ns": 254399959,
+          "candidate_ns": 195330016,
+          "candidate_over_baseline": 0.7678067904091133,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 192914665,
+          "candidate_ns": 193838419,
+          "candidate_over_baseline": 1.0047884073509912,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 197120728,
+          "candidate_ns": 193349071,
+          "candidate_over_baseline": 0.9808662587731515,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 151501243,
+          "candidate_ns": 199811217,
+          "candidate_over_baseline": 1.3188750999224474,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 188993366,
+          "candidate_ns": 185730786,
+          "candidate_over_baseline": 0.9827370660195555,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": true
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.982785094458959,
+      "paired_costs": [
+        {
+          "baseline_ns": 254474748,
+          "candidate_ns": 195336638,
+          "candidate_over_baseline": 0.7676071576265006,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 192921336,
+          "candidate_ns": 193902997,
+          "candidate_over_baseline": 1.0050884003830451,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 197127311,
+          "candidate_ns": 193355357,
+          "candidate_over_baseline": 0.9808653910974314,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 151506388,
+          "candidate_ns": 200387249,
+          "candidate_over_baseline": 1.3226323433966363,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 188999701,
+          "candidate_ns": 185746089,
+          "candidate_over_baseline": 0.982785094458959,
+          "pair": 4
+        }
+      ],
+      "phase": "cold",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9863909681285343,
+      "paired_costs": [
+        {
+          "baseline_ns": 902398787,
+          "candidate_ns": 788527647,
+          "candidate_over_baseline": 0.8738128401318429,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 703329646,
+          "candidate_ns": 785393698,
+          "candidate_over_baseline": 1.1166793586289407,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 783357841,
+          "candidate_ns": 770658379,
+          "candidate_over_baseline": 0.9837884280525124,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 700365981,
+          "candidate_ns": 779641014,
+          "candidate_over_baseline": 1.1131908675615698,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 735108867,
+          "candidate_ns": 725104747,
+          "candidate_over_baseline": 0.9863909681285343,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": true
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9864083900883979,
+      "paired_costs": [
+        {
+          "baseline_ns": 906828730,
+          "candidate_ns": 788576146,
+          "candidate_over_baseline": 0.869597664820346,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 703547478,
+          "candidate_ns": 785716170,
+          "candidate_over_baseline": 1.1167919643939084,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 783507614,
+          "candidate_ns": 770877870,
+          "candidate_over_baseline": 0.9838805089135993,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 700453689,
+          "candidate_ns": 779916278,
+          "candidate_over_baseline": 1.1134444578533729,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 735233064,
+          "candidate_ns": 725240063,
+          "candidate_over_baseline": 0.9864083900883979,
+          "pair": 4
+        }
+      ],
+      "phase": "warm",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 0.9650006603264326,
+      "paired_costs": [
+        {
+          "baseline_ns": 92704149,
+          "candidate_ns": 89459565,
+          "candidate_over_baseline": 0.9650006603264326,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 67675322,
+          "candidate_ns": 81810936,
+          "candidate_over_baseline": 1.2088739821585186,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 98309571,
+          "candidate_ns": 99097001,
+          "candidate_over_baseline": 1.0080096982622373,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 93027289,
+          "candidate_ns": 79652506,
+          "candidate_over_baseline": 0.8562273162663054,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 97264357,
+          "candidate_ns": 91169416,
+          "candidate_over_baseline": 0.9373363358583658,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 0.9649948604370493,
+      "paired_costs": [
+        {
+          "baseline_ns": 92708272,
+          "candidate_ns": 89463006,
+          "candidate_over_baseline": 0.9649948604370493,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 67679405,
+          "candidate_ns": 81863659,
+          "candidate_over_baseline": 1.209580063536315,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 98314315,
+          "candidate_ns": 99101915,
+          "candidate_over_baseline": 1.008011040915049,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 93031983,
+          "candidate_ns": 79656118,
+          "candidate_over_baseline": 0.8562229400183805,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 97269053,
+          "candidate_ns": 91174690,
+          "candidate_over_baseline": 0.9373453034440461,
+          "pair": 4
+        }
+      ],
+      "phase": "changed",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "cpu_ns",
+      "median_paired_ratio": 1.1069129365672454,
+      "paired_costs": [
+        {
+          "baseline_ns": 78015633,
+          "candidate_ns": 115273139,
+          "candidate_over_baseline": 1.4775646183630915,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 67460252,
+          "candidate_ns": 78155876,
+          "candidate_over_baseline": 1.1585470507877735,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 100097659,
+          "candidate_ns": 100941202,
+          "candidate_over_baseline": 1.0084272000806733,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 92355961,
+          "candidate_ns": 102230008,
+          "candidate_over_baseline": 1.1069129365672454,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 98316732,
+          "candidate_ns": 90438080,
+          "candidate_over_baseline": 0.919864586223228,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "wall_ns",
+      "median_paired_ratio": 1.1069696131222064,
+      "paired_costs": [
+        {
+          "baseline_ns": 78019627,
+          "candidate_ns": 115278235,
+          "candidate_over_baseline": 1.4775542954082568,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 67463641,
+          "candidate_ns": 78159745,
+          "candidate_over_baseline": 1.158546201204883,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 100102559,
+          "candidate_ns": 100977520,
+          "candidate_over_baseline": 1.0087406456811958,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 92361052,
+          "candidate_ns": 102240878,
+          "candidate_over_baseline": 1.1069696131222064,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 98322169,
+          "candidate_ns": 90442648,
+          "candidate_over_baseline": 0.9198601792440116,
+          "pair": 4
+        }
+      ],
+      "phase": "restored",
+      "threshold_applies": false
+    }
+  ],
+  "artifacts": {
+    "baseline": {
+      "cargo_json_sha256": "500d0a25a3c6139f3135fed7f161faa9584471f73fab4f2e9b5e090876196b21",
+      "cargo_stderr_sha256": "79442065de3b49f739a98e8091861503b2199b8029d83ca59148b5b17c2b0a32",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-baseline-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 56664872,
+      "executable_sha256": "dbe480e4b1e0cae1423c05b36b2fc4f29a9a31fdc6f97578da94a43de6af4d21",
+      "preflight_sha256": "2b060e8a43ada8bc9c3e2a89d1f5b779628a8f2715621ecead29bd27c7a34562",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/value-pool-baseline/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    },
+    "candidate": {
+      "cargo_json_sha256": "0676e470e16ba72ba511e3867cf7b115d8a719178d69c37782e8d37f44b77d4e",
+      "cargo_stderr_sha256": "54288df52baedc5d6045ae50dae4f3dc9fa70ecd063504922360b8f4c1a01ee7",
+      "driver_features": [
+        "default"
+      ],
+      "driver_profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "executable": "/workspace/scratch/abae1861b451/value-pool-target/debug/deps/value_pool_component-48b8537ec2f28d14",
+      "executable_bytes": 57235680,
+      "executable_sha256": "474e1c85a9723acc6d748f118e000abdc5f45e2bb2ebf6d9edd97c32e425d305",
+      "preflight_sha256": "f9aa4ba34b76d9e434dfc941a8719cab42ac16284b95a59c4dc0011de38c91f0",
+      "profiles": {
+        "trnm_mvcc_fee": {
+          "features": [
+            "default"
+          ],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-mvcc-fee/src/lib.rs"
+        },
+        "trnm_protocol": {
+          "features": [],
+          "package_id": "path+file:///workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "source": "/workspace/scratch/abae1861b451/chain-value-pool/trillionnium/crates/trnm-protocol/src/lib.rs"
+        }
+      },
+      "source_identity": {
+        "driver_sha256": "e92fdd30b459f4afaf762458e7863d7cc1f1bb0a63e990f11a229cdd67c937d6",
+        "expected_measured_tree": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+        "head": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+        "tracked_patch_sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1",
+        "untracked_files": [
+          "trillionnium/crates/trnm-pon-node/tests/value_pool_component.rs"
+        ]
+      }
+    }
+  },
+  "data_quality_issues": [],
+  "data_quality_pass": true,
+  "direct_root_retained_charge": [
+    {
+      "case": "repeated",
+      "retained_payload_bytes": {
+        "max": 2094369,
+        "min": 2094369
+      },
+      "retained_string_charge_bytes": {
+        "max": 1867681,
+        "min": 1867681
+      },
+      "retained_string_entries": {
+        "max": 445,
+        "min": 445
+      },
+      "variant": "baseline",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 445,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 1655,
+          "retained_payload_bytes": 2094369,
+          "retained_string_charge_bytes": 1867681,
+          "retained_string_entries": 445,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 445
+        }
+      ]
+    },
+    {
+      "case": "unique",
+      "retained_payload_bytes": {
+        "max": 2094369,
+        "min": 2094369
+      },
+      "retained_string_charge_bytes": {
+        "max": 1867681,
+        "min": 1867681
+      },
+      "retained_string_entries": {
+        "max": 445,
+        "min": 445
+      },
+      "variant": "baseline",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 445,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 1655,
+          "retained_payload_bytes": 2094369,
+          "retained_string_charge_bytes": 1867681,
+          "retained_string_entries": 445,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 445
+        }
+      ]
+    },
+    {
+      "case": "collision",
+      "retained_payload_bytes": {
+        "max": 2094369,
+        "min": 2094369
+      },
+      "retained_string_charge_bytes": {
+        "max": 1867681,
+        "min": 1867681
+      },
+      "retained_string_entries": {
+        "max": 445,
+        "min": 445
+      },
+      "variant": "baseline",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 445,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 1655,
+          "retained_payload_bytes": 2094369,
+          "retained_string_charge_bytes": 1867681,
+          "retained_string_entries": 445,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 445
+        }
+      ]
+    },
+    {
+      "case": "repeated",
+      "retained_payload_bytes": {
+        "max": 459720,
+        "min": 455566
+      },
+      "retained_string_charge_bytes": {
+        "max": 233032,
+        "min": 228878
+      },
+      "retained_string_entries": {
+        "max": 2100,
+        "min": 2100
+      },
+      "variant": "candidate",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 2100,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 0,
+          "retained_payload_bytes": 455566,
+          "retained_string_charge_bytes": 228878,
+          "retained_string_entries": 2100,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 2100
+        }
+      ]
+    },
+    {
+      "case": "unique",
+      "retained_payload_bytes": {
+        "max": 2093030,
+        "min": 2093030
+      },
+      "retained_string_charge_bytes": {
+        "max": 1866342,
+        "min": 1866342
+      },
+      "retained_string_entries": {
+        "max": 438,
+        "min": 438
+      },
+      "variant": "candidate",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 438,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 1662,
+          "retained_payload_bytes": 2093030,
+          "retained_string_charge_bytes": 1866342,
+          "retained_string_entries": 438,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 438
+        }
+      ]
+    },
+    {
+      "case": "collision",
+      "retained_payload_bytes": {
+        "max": 2093030,
+        "min": 2093030
+      },
+      "retained_string_charge_bytes": {
+        "max": 1866342,
+        "min": 1866342
+      },
+      "retained_string_entries": {
+        "max": 438,
+        "min": 438
+      },
+      "variant": "candidate",
+      "warm_observations": [
+        {
+          "computed_partitions": 0,
+          "exact_string_hits": 438,
+          "input_keys": 2100,
+          "leaf_hashes_computed": 1662,
+          "retained_payload_bytes": 2093030,
+          "retained_string_charge_bytes": 1866342,
+          "retained_string_entries": 438,
+          "retention_refused": false,
+          "reused_partitions": 1648,
+          "string_encodings_reused": 438
+        }
+      ]
+    }
+  ],
+  "execution_freeze_sha256": "1a5c7712a558c506291c66ce1d524c9a0eccaf6cedec22230bc2a20e476c15e7",
+  "execution_sha256": "b9569a8e92027a8c5a0c3a055d2f4eace84afd23c458bf8252e2de6bd71d2856",
+  "limitations": [
+    "Five separately launched process pairs determine the median of paired ratios; eight warm calls within each process are correlated. Statistical independence and p95/p99 behavior are not established.",
+    "Whole-process VmHWM is not the bounded retained material charge and includes setup and references.",
+    "FullRootArithmetic private charge/failed-cache observation is not exposed by the public API; it remains null, with semantic unit controls separate.",
+    "Cold is an empty arithmetic owner after common setup, not cold OS/allocator/global hash state.",
+    "No new gate, threshold, profile, workload, provider, budget or Host-check frequency was changed."
+  ],
+  "observed_unique_samples": 700,
+  "overall_pass": true,
+  "plan_sha256": "ba7e661ff8871b3ed423a57cb2c2d71cdbf3df42096f72f07bd8908605114046",
+  "planned_processes": 10,
+  "planned_samples": 700,
+  "processes": [
+    {
+      "end": {
+        "pair": 0,
+        "process_peak_rss": "VmHWM:\t   68792 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "baseline"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 0,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2366316855,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 2370944267
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1792820985,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1792905101
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1780189475,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1787102749
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "5967d1ea810537fd39e58f5fa68d2d2e64ae85fa3b5c3408027cc0d9f98ca55e",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "baseline",
+      "wall_ns": 11569593824
+    },
+    {
+      "end": {
+        "pair": 0,
+        "process_peak_rss": "VmHWM:\t   68076 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "candidate"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 0,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2307683041,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 2310645039
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1941832027,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1943497508
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1823737821,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 0,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1823995819
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4e6283f68c7cf82a50f6d21ca0585142866409874851ac902a25380451d431d4",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "candidate",
+      "wall_ns": 10683248522
+    },
+    {
+      "end": {
+        "pair": 1,
+        "process_peak_rss": "VmHWM:\t   68080 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "candidate"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 1,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2290332785,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 2291257392
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1762661267,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1763553282
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1798760653,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1799790865
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "08e27908314b382a5ccb57f18ba015ba663eb7474a9d7b9eeec2976e7c35a408",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "candidate",
+      "wall_ns": 10465296315
+    },
+    {
+      "end": {
+        "pair": 1,
+        "process_peak_rss": "VmHWM:\t   68756 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "baseline"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 1,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2231683708,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 2238249691
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1849048913,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1849312000
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1852235324,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 1,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1852510950
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "fc1a40efc3d8719d711c2e597d9cfe3b1194b0dcb55f8b8df31e282c0121baa4",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "baseline",
+      "wall_ns": 11117671655
+    },
+    {
+      "end": {
+        "pair": 2,
+        "process_peak_rss": "VmHWM:\t   68744 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "baseline"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 2,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2326916317,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 2327339933
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1855149715,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1855452587
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1829721581,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1829824319
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e5dab944b7ed68a3517336320b1223c76a59bc11c6efd23ffed86cf9608be4ca",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "baseline",
+      "wall_ns": 11471534166
+    },
+    {
+      "end": {
+        "pair": 2,
+        "process_peak_rss": "VmHWM:\t   68116 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "candidate"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 2,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2258879669,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 2259178489
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1823649685,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1823731770
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1834935152,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 2,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1835094483
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "eec7de0e2580f0a9f46cee0b383a8f8cf2eaa21ed6549fe6ef37c828f1b47cf7",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "candidate",
+      "wall_ns": 10606773406
+    },
+    {
+      "end": {
+        "pair": 3,
+        "process_peak_rss": "VmHWM:\t   68092 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "candidate"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 3,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2336733102,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 2345085273
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1779553336,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1781055671
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1898600522,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1899128307
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e184b9748f44c11d0f4b3b67db8e1eb77ea6a022dd26bc87c154bcb067751300",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "candidate",
+      "wall_ns": 10515470723
+    },
+    {
+      "end": {
+        "pair": 3,
+        "process_peak_rss": "VmHWM:\t   68784 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "baseline"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 3,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2305934271,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 2320431416
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1825336601,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1825674212
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1651726829,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 3,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1651868055
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d3509663a589cca6453ce464844de6ca6d7ca060e307a356ff46057372935395",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "baseline",
+      "wall_ns": 10911411524
+    },
+    {
+      "end": {
+        "pair": 4,
+        "process_peak_rss": "VmHWM:\t   68780 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "baseline"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 4,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2299382281,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 2299581166
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1833441443,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1836539482
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1925926532,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "baseline",
+          "wall_ns": 1934497075
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "7cd61dd9586441c4e7db44ed4284f7c7066cdb77b5f6ba807acd8b6ca0f234a6",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "baseline",
+      "wall_ns": 11472629403
+    },
+    {
+      "end": {
+        "pair": 4,
+        "process_peak_rss": "VmHWM:\t   68076 kB",
+        "rss_scope": "whole test process, includes common setup/reference, allocator and temporary workspace; not retained charge",
+        "samples": 70,
+        "valid": true,
+        "variant": "candidate"
+      },
+      "expected_errors": 4,
+      "missing_samples": 0,
+      "pair": 4,
+      "returncode": 0,
+      "samples": 70,
+      "setup": [
+        {
+          "case": "repeated",
+          "cpu_ns": 2331583303,
+          "inputs": [
+            {
+              "digest": "0db52013440ae1712c5fc1e8bfb9aacd912388fe4fd6d07e636df0f00d2a98c0",
+              "expected_error": null,
+              "expected_root": "663284ee89469d79c93fdcc76632bc84ddaa5555a1040564075e27e807bf47c6",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "37edb6c9bc7570bfce8101cf38dad9b8320525ccf7ba815d73d6018850584c3c",
+              "expected_error": null,
+              "expected_root": "2c732a614231bc6da05964050e3e13d8cb8e3e6af420a8a100fc60170e8b594e",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "95c69741ca52eb93fce7f8ff269451e84df1aa297b2d3d8c9b6c167691e0ac0f",
+              "expected_error": "RANGE",
+              "expected_root": null,
+              "json_bytes": 8624781
+            },
+            {
+              "digest": "07e10b299825a4049c6e242487585f29b494086ce0237c27e35a2afd347053a9",
+              "expected_error": "LIMIT",
+              "expected_root": null,
+              "json_bytes": 8620670
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 2331789444
+        },
+        {
+          "case": "unique",
+          "cpu_ns": 1692375120,
+          "inputs": [
+            {
+              "digest": "b143dbff3fcd1b72e641262b5779e4e33c731d777ca1df08c99bd7f14e763c53",
+              "expected_error": null,
+              "expected_root": "ddddac35450edd33dc65cc2f51c15be691d1b859fd68b8b9f1eeb2117f4f7fbd",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "a31419b61b02409b9fcf860ad83c5cc0f3bc53559992e52a60b030fd0fc7d694",
+              "expected_error": null,
+              "expected_root": "993d7f18667087ec8c2e3ddc988094b1457314fe13f7a8f33e64bf5f3da4ef93",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1692525883
+        },
+        {
+          "case": "collision",
+          "cpu_ns": 1763416394,
+          "inputs": [
+            {
+              "digest": "9748ab0551f4e11326ed9ad30ee6340ee9c554e837b460a614222f405e1fd928",
+              "expected_error": null,
+              "expected_root": "db094e3974746c558e930b2e87766752a1a5ca28ddbdd4e8f71bfa42690a79d3",
+              "json_bytes": 8620501
+            },
+            {
+              "digest": "ebb28001a38fbf5c3acf3059a6324edef07dcaa2df42fcb4e4d29449b09455f2",
+              "expected_error": null,
+              "expected_root": "acd675d14f620de76d2c651066980ff26e065d012d5a54223560791d93dcaaa4",
+              "json_bytes": 8620501
+            }
+          ],
+          "pair": 4,
+          "scope": "input construction and independent original root/derive references; outside all operation samples",
+          "variant": "candidate",
+          "wall_ns": 1763538860
+        }
+      ],
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "1349e7dec63230477c58879d315eb776225f46ed9434b89a7cdf3d96be3bd449",
+      "successes": 66,
+      "timed_out": false,
+      "variant": "candidate",
+      "wall_ns": 10254811047
+    }
+  ],
+  "schema": "value-pool-preregistered-result-v1",
+  "scope": "finite x86_64 M06 component, not ARM/Host/service/TPS acceptance",
+  "sources": {
+    "baseline": {
+      "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "directory": "/workspace/scratch/abae1861b451/value-pool-baseline",
+      "measured_tree_with_driver": "372c0bbdf7a6eb396bca8cb59325576f3e30f3bc",
+      "production_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "production_tree": "58c31e8a6220c6be20029b33cb060f3a2034d1a7",
+      "target": "/workspace/scratch/abae1861b451/value-pool-baseline-target"
+    },
+    "candidate": {
+      "base_commit": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+      "directory": "/workspace/scratch/abae1861b451/chain-value-pool",
+      "measured_tree_with_driver": "414e1e6973019b127edab9e5c03ff9a1cc76efcf",
+      "production_patch_sha256": "111bb65c0a066ea02a793f8138f5afabd7ad5cafbf79c171d04aafcbc827c3c1",
+      "production_tree": "367bf61031f47fecc64123de644c3bf23b9d39b5",
+      "target": "/workspace/scratch/abae1861b451/value-pool-target"
+    }
+  },
+  "timing_rules": [
+    {
+      "api": "root",
+      "case": "repeated",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.14636171106908608,
+      "paired_ratios": [
+        {
+          "baseline_ns": 368036546,
+          "candidate_ns": 65791311,
+          "candidate_over_baseline": 0.1787629835000136,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 299363400,
+          "candidate_ns": 42212620,
+          "candidate_over_baseline": 0.14100795220791854,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 365152815,
+          "candidate_ns": 65737294,
+          "candidate_over_baseline": 0.1800268032987778,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 330475387,
+          "candidate_ns": 41054317,
+          "candidate_over_baseline": 0.12422806240635403,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 342641314,
+          "candidate_ns": 50149569,
+          "candidate_over_baseline": 0.14636171106908608,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 0.85,
+      "warm_calls_per_process": 8
+    },
+    {
+      "api": "commitment",
+      "case": "repeated",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.6210364715728104,
+      "paired_ratios": [
+        {
+          "baseline_ns": 774067988,
+          "candidate_ns": 467486086,
+          "candidate_over_baseline": 0.6039341417643019,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 779479902,
+          "candidate_ns": 484085448,
+          "candidate_over_baseline": 0.6210364715728104,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 707079287,
+          "candidate_ns": 484463534,
+          "candidate_over_baseline": 0.6851615411554263,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 730577981,
+          "candidate_ns": 453619781,
+          "candidate_over_baseline": 0.6209053554818263,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 734497751,
+          "candidate_ns": 487705842,
+          "candidate_over_baseline": 0.6639990950768752,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 0.95,
+      "warm_calls_per_process": 8
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 1.0160844717500397,
+      "paired_ratios": [
+        {
+          "baseline_ns": 134958581,
+          "candidate_ns": 140599777,
+          "candidate_over_baseline": 1.0417994614214268,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139044355,
+          "candidate_ns": 141280810,
+          "candidate_over_baseline": 1.0160844717500397,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 141610820,
+          "candidate_ns": 142930402,
+          "candidate_over_baseline": 1.0093183698816235,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 148253595,
+          "candidate_ns": 141240779,
+          "candidate_over_baseline": 0.9526971605646393,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 137806485,
+          "candidate_ns": 143238488,
+          "candidate_over_baseline": 1.0394176152160037,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "cold",
+      "threshold": 1.05,
+      "warm_calls_per_process": 1
+    },
+    {
+      "api": "root",
+      "case": "unique",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 1.0067268459731458,
+      "paired_ratios": [
+        {
+          "baseline_ns": 333653348,
+          "candidate_ns": 307755454,
+          "candidate_over_baseline": 0.9223808358128629,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 349351907,
+          "candidate_ns": 363973573,
+          "candidate_over_baseline": 1.04185368880783,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 363563401,
+          "candidate_ns": 366009036,
+          "candidate_over_baseline": 1.0067268459731458,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 356523867,
+          "candidate_ns": 363126152,
+          "candidate_over_baseline": 1.0185184937422436,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 368359342,
+          "candidate_ns": 318713809,
+          "candidate_over_baseline": 0.8652252641932453,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 1.05,
+      "warm_calls_per_process": 8
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.9987898300493756,
+      "paired_ratios": [
+        {
+          "baseline_ns": 195801586,
+          "candidate_ns": 237623517,
+          "candidate_over_baseline": 1.2135934230890244,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 180453422,
+          "candidate_ns": 195947443,
+          "candidate_over_baseline": 1.0858616080996237,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 194559450,
+          "candidate_ns": 194324000,
+          "candidate_over_baseline": 0.9987898300493756,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 220054909,
+          "candidate_ns": 183616843,
+          "candidate_over_baseline": 0.8344137553413998,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 193567676,
+          "candidate_ns": 168099738,
+          "candidate_over_baseline": 0.8684287659681361,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "cold",
+      "threshold": 1.05,
+      "warm_calls_per_process": 1
+    },
+    {
+      "api": "commitment",
+      "case": "unique",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.9738570764813976,
+      "paired_ratios": [
+        {
+          "baseline_ns": 789606152,
+          "candidate_ns": 725490130,
+          "candidate_over_baseline": 0.9187999968875622,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 780846103,
+          "candidate_ns": 794275936,
+          "candidate_over_baseline": 1.017199077959668,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 781946603,
+          "candidate_ns": 769603873,
+          "candidate_over_baseline": 0.9842153799854797,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 762492381,
+          "candidate_ns": 742558601,
+          "candidate_over_baseline": 0.9738570764813976,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 796782427,
+          "candidate_ns": 774825045,
+          "candidate_over_baseline": 0.9724424369113251,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 1.05,
+      "warm_calls_per_process": 8
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.9485411575564809,
+      "paired_ratios": [
+        {
+          "baseline_ns": 149263625,
+          "candidate_ns": 129754695,
+          "candidate_over_baseline": 0.8692988328536172,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 139608003,
+          "candidate_ns": 143034736,
+          "candidate_over_baseline": 1.024545390854133,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 185450910,
+          "candidate_ns": 151016117,
+          "candidate_over_baseline": 0.8143185547053935,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 143219852,
+          "candidate_ns": 152760304,
+          "candidate_over_baseline": 1.0666140333673855,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 146425408,
+          "candidate_ns": 138890526,
+          "candidate_over_baseline": 0.9485411575564809,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "cold",
+      "threshold": 1.05,
+      "warm_calls_per_process": 1
+    },
+    {
+      "api": "root",
+      "case": "collision",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 1.0497152883751915,
+      "paired_ratios": [
+        {
+          "baseline_ns": 379222087,
+          "candidate_ns": 333866726,
+          "candidate_over_baseline": 0.8803989468050156,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 361100289,
+          "candidate_ns": 379052494,
+          "candidate_over_baseline": 1.0497152883751915,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 316670638,
+          "candidate_ns": 332426124,
+          "candidate_over_baseline": 1.049753542353996,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 287654519,
+          "candidate_ns": 351771006,
+          "candidate_over_baseline": 1.2228940717597419,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 392243262,
+          "candidate_ns": 340786762,
+          "candidate_over_baseline": 0.8688148274679605,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 1.05,
+      "warm_calls_per_process": 8
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.9827370660195555,
+      "paired_ratios": [
+        {
+          "baseline_ns": 254399959,
+          "candidate_ns": 195330016,
+          "candidate_over_baseline": 0.7678067904091133,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 192914665,
+          "candidate_ns": 193838419,
+          "candidate_over_baseline": 1.0047884073509912,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 197120728,
+          "candidate_ns": 193349071,
+          "candidate_over_baseline": 0.9808662587731515,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 151501243,
+          "candidate_ns": 199811217,
+          "candidate_over_baseline": 1.3188750999224474,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 188993366,
+          "candidate_ns": 185730786,
+          "candidate_over_baseline": 0.9827370660195555,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "cold",
+      "threshold": 1.05,
+      "warm_calls_per_process": 1
+    },
+    {
+      "api": "commitment",
+      "case": "collision",
+      "clock": "calling_thread_cpu",
+      "median_paired_ratio": 0.9863909681285343,
+      "paired_ratios": [
+        {
+          "baseline_ns": 902398787,
+          "candidate_ns": 788527647,
+          "candidate_over_baseline": 0.8738128401318429,
+          "pair": 0
+        },
+        {
+          "baseline_ns": 703329646,
+          "candidate_ns": 785393698,
+          "candidate_over_baseline": 1.1166793586289407,
+          "pair": 1
+        },
+        {
+          "baseline_ns": 783357841,
+          "candidate_ns": 770658379,
+          "candidate_over_baseline": 0.9837884280525124,
+          "pair": 2
+        },
+        {
+          "baseline_ns": 700365981,
+          "candidate_ns": 779641014,
+          "candidate_over_baseline": 1.1131908675615698,
+          "pair": 3
+        },
+        {
+          "baseline_ns": 735108867,
+          "candidate_ns": 725104747,
+          "candidate_over_baseline": 0.9863909681285343,
+          "pair": 4
+        }
+      ],
+      "pass": true,
+      "phase": "warm",
+      "threshold": 1.05,
+      "warm_calls_per_process": 8
+    }
+  ],
+  "timing_rules_pass": true
+}
