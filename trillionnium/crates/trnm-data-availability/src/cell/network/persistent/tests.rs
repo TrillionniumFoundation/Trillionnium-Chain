@@ -498,3 +498,347 @@ fn invalid_persistent_limits_never_open_transport_or_mutate_the_cache() {
         assert!(cache.manifest(manifest.id()).unwrap().is_none());
     }
 }
+
+// Hold one real peer's connection slot while a different peer consumes the
+// shared release's last response bytes. The request counter proves the waiter
+// passed its first byte-budget check before the competing frame finishes.
+fn exhausted_while_waiting_for_connection(reused: bool, quarantined: bool) {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let peer = listener.local_addr().unwrap();
+    let other_listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let other_peer = other_listener.local_addr().unwrap();
+    let other = thread::spawn(move || {
+        let mut stream = accept(&other_listener);
+        let mut wire = [0; 37];
+        stream.read_exact(&mut wire).unwrap();
+        assert_eq!(wire, query(2, [8; 32]));
+        stream.write_all(&response(b"TCS2", b"y")).unwrap();
+    });
+    let mut limits = client_limits();
+    limits.peer.request_timeout = Duration::from_secs(5);
+    limits.peer.max_connections = 3;
+    limits.max_requests = 5;
+    limits.max_requests_per_connection = 5;
+    let pool = ConnectionPool::new(&[peer, other_peer], limits);
+    let connections_left = AtomicU64::new(limits.peer.max_connections);
+    let responses = ResponseBudget::new(if reused { 20 } else { 10 });
+    let transport = RequestContext {
+        timeout: limits.peer.request_timeout,
+        overall: Instant::now() + Duration::from_secs(10),
+        requests_left: &connections_left,
+        responses: &responses,
+    };
+    let mut existing_peer = if reused {
+        let listener = listener.try_clone().unwrap();
+        let server = thread::spawn(move || {
+            let mut stream = accept(&listener);
+            let mut wire = [0; 37];
+            stream.read_exact(&mut wire).unwrap();
+            assert_eq!(wire, query(2, [7; 32]));
+            stream.write_all(&response(b"TCS2", b"x")).unwrap();
+            stream
+        });
+        assert_eq!(
+            pool.request(peer, 2, [7; 32], 1, &transport).0.unwrap(),
+            b"x"
+        );
+        Some(server.join().unwrap())
+    } else {
+        None
+    };
+    let before_requests = pool.requests_left.load(Ordering::Relaxed);
+    let before_connections = connections_left.load(Ordering::Relaxed);
+    let original_connection = pool.peers[0]
+        .1
+        .lock()
+        .unwrap()
+        .as_ref()
+        .map(|connection| (connection.deadline, connection.requests));
+    let (result, observed_wait, competing) = thread::scope(|scope| {
+        let held = pool.peers[0].1.lock().unwrap();
+        let pending = scope.spawn(|| pool.request(peer, 2, [7; 32], 1, &transport));
+        let limit = Instant::now() + Duration::from_secs(2);
+        while pool.requests_left.load(Ordering::Relaxed) == before_requests
+            && Instant::now() < limit
+        {
+            thread::sleep(Duration::from_millis(1));
+        }
+        let observed_wait = pool.requests_left.load(Ordering::Relaxed) == before_requests - 1;
+        // This is a complete competing TCP frame, not manufactured accounting.
+        let competing = pool.request(other_peer, 2, [8; 32], 1, &transport).0;
+        if quarantined {
+            responses.quarantine(peer).unwrap();
+        }
+        // Release and join before asserting so a regression cannot strand work.
+        drop(held);
+        (pending.join().unwrap(), observed_wait, competing)
+    });
+    other.join().unwrap();
+    assert!(
+        observed_wait,
+        "the first request never reached the connection wait"
+    );
+    assert_eq!(competing.unwrap(), b"y");
+    assert_eq!(result.1, 1);
+    if quarantined {
+        assert!(matches!(
+            result.0,
+            Err(CellErrorV1::Invalid("cell peer quarantined"))
+        ));
+    } else {
+        assert!(matches!(result.0, Err(CellErrorV1::Io(error))
+            if error.to_string().contains("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED")));
+    }
+    assert_eq!(responses.received().unwrap(), responses.maximum);
+    assert_eq!(
+        pool.requests_left.load(Ordering::Relaxed),
+        before_requests - 2
+    );
+    assert_eq!(
+        connections_left.load(Ordering::Relaxed),
+        before_connections - 1
+    );
+    assert_eq!(
+        pool.peers[0]
+            .1
+            .lock()
+            .unwrap()
+            .as_ref()
+            .map(|connection| (connection.deadline, connection.requests)),
+        original_connection,
+        "a refused waiter cannot mutate, evict or extend the retained connection"
+    );
+    if let Some(stream) = existing_peer.as_mut() {
+        stream.set_nonblocking(true).unwrap();
+        assert_eq!(
+            stream.read(&mut [0; 37]).unwrap_err().kind(),
+            io::ErrorKind::WouldBlock
+        );
+    } else {
+        listener.set_nonblocking(true).unwrap();
+        assert_eq!(
+            listener.accept().unwrap_err().kind(),
+            io::ErrorKind::WouldBlock
+        );
+    }
+    // Another explicit attempt cannot reset the same exhausted reservation.
+    assert!(pool.request(peer, 2, [7; 32], 1, &transport).0.is_err());
+    assert_eq!(
+        pool.requests_left.load(Ordering::Relaxed),
+        before_requests - 2
+    );
+    assert_eq!(
+        connections_left.load(Ordering::Relaxed),
+        before_connections - 1
+    );
+}
+
+#[test]
+fn exhausted_response_budget_after_connection_wait_refuses_new_dial() {
+    exhausted_while_waiting_for_connection(false, false);
+}
+
+#[test]
+fn exhausted_response_budget_after_connection_wait_refuses_reused_frame() {
+    exhausted_while_waiting_for_connection(true, false);
+}
+
+#[test]
+fn quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion() {
+    exhausted_while_waiting_for_connection(false, true);
+}
+
+#[test]
+fn temporary_response_reservation_after_connection_wait_is_not_exhaustion() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let peer = listener.local_addr().unwrap();
+    let (sent, seen) = mpsc::channel();
+    let server = thread::spawn(move || {
+        let mut stream = accept(&listener);
+        let mut wire = [0; 37];
+        stream.read_exact(&mut wire).unwrap();
+        assert_eq!(wire, query(2, [7; 32]));
+        sent.send(()).unwrap();
+        stream.write_all(&response(b"TCS2", b"x")).unwrap();
+    });
+    let limits = client_limits();
+    let pool = ConnectionPool::new(&[peer], limits);
+    let connections_left = AtomicU64::new(1);
+    let responses = ResponseBudget::new(10);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let reserved = responses.reserve(10, deadline).unwrap();
+    let transport = RequestContext {
+        timeout: Duration::from_secs(5),
+        overall: deadline,
+        requests_left: &connections_left,
+        responses: &responses,
+    };
+    let (result, query_seen) = thread::scope(|scope| {
+        let held = pool.peers[0].1.lock().unwrap();
+        let worker = scope.spawn(|| pool.request(peer, 2, [7; 32], 1, &transport));
+        let limit = Instant::now() + Duration::from_secs(2);
+        while pool.requests_left.load(Ordering::Relaxed) == limits.max_requests
+            && Instant::now() < limit
+        {
+            thread::sleep(Duration::from_millis(1));
+        }
+        drop(held);
+        let query_seen = seen.recv_timeout(Duration::from_secs(2));
+        // Refund before joining/asserting, even if the request was rejected.
+        responses.complete(reserved, 0).unwrap();
+        (worker.join().unwrap(), query_seen)
+    });
+    server.join().unwrap();
+    assert!(query_seen.is_ok());
+    assert_eq!(result.0.unwrap(), b"x");
+    assert_eq!(result.1, 1);
+    assert_eq!(responses.received().unwrap(), 10);
+    assert_eq!(connections_left.load(Ordering::Relaxed), 0);
+    assert_eq!(
+        pool.requests_left.load(Ordering::Relaxed),
+        limits.max_requests - 1
+    );
+}
+
+#[test]
+fn zero_egress_service_does_not_accept_an_already_queued_connection() {
+    let (_dir, path, manifest, _) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let mut client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+    client
+        .write_all(&query(2, manifest.chunks()[0].sha256))
+        .unwrap();
+    let mut limits = server_limits();
+    limits.serving.max_connections = 1;
+    limits.serving.max_response_bytes = 0;
+    let report = serve_cells_persistent(&listener, &path, &AtomicBool::new(false), limits).unwrap();
+    assert_eq!(report.request_attempts, 0);
+    assert_eq!(report.serving, CellServeReportV1::default());
+    // The service never took ownership of the queued real socket.
+    let (mut queued, _) = listener.accept().unwrap();
+    let mut bytes = [0; 37];
+    queued.read_exact(&mut bytes).unwrap();
+    assert_eq!(bytes, query(2, manifest.chunks()[0].sha256));
+}
+
+#[test]
+fn last_response_byte_closes_reused_connection_without_admitting_idle_frame() {
+    let (_dir, path, manifest, bytes) = fixture();
+    let mut limits = server_limits();
+    limits.serving.request_timeout = Duration::from_secs(5);
+    limits.serving.overall_timeout = Duration::from_secs(10);
+    limits.serving.max_response_bytes = 9 + 16_384;
+    let server = Server::start(&path, limits);
+    let mut stream = TcpStream::connect(server.address).unwrap();
+    stream
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
+    stream
+        .set_write_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
+    stream
+        .write_all(&query(2, manifest.chunks()[0].sha256))
+        .unwrap();
+    assert_eq!(read_body(&mut stream), bytes[..16_384]);
+    // Wait for actual EOF before shutdown or the connection's original 5 s
+    // deadline. This observes drainage, not a percentile/performance claim.
+    let closed = stream.read(&mut [0; 1]);
+    drop(stream);
+    let report = server.finish();
+    assert!(
+        matches!(closed, Ok(0)),
+        "exhausted connection did not drain: {closed:?}"
+    );
+    assert_eq!(report.request_attempts, 1);
+    assert_eq!(report.serving.accepted_connections, 1);
+    assert_eq!(report.serving.completed_requests, 1);
+    assert_eq!(report.serving.sent_response_bytes, 9 + 16_384);
+}
+
+#[cfg(target_os = "linux")]
+fn wait_for_loopback_receive_queue(server: SocketAddr, peer: SocketAddr, queued: u64) -> bool {
+    assert_eq!(server.ip(), std::net::Ipv4Addr::LOCALHOST);
+    assert_eq!(peer.ip(), std::net::Ipv4Addr::LOCALHOST);
+    let local = format!("0100007F:{:04X}", server.port());
+    let remote = format!("0100007F:{:04X}", peer.port());
+    let deadline = Instant::now() + Duration::from_secs(2);
+    while Instant::now() < deadline {
+        let table = fs::read_to_string("/proc/self/net/tcp").unwrap();
+        if table.lines().skip(1).any(|line| {
+            let fields: Vec<_> = line.split_whitespace().collect();
+            fields.len() > 4
+                && fields[1] == local
+                && fields[2] == remote
+                && fields[3] == "01"
+                && fields[4]
+                    .split_once(':')
+                    .and_then(|(_, rx)| u64::from_str_radix(rx, 16).ok())
+                    == Some(queued)
+        }) {
+            return true;
+        }
+        thread::sleep(Duration::from_millis(1));
+    }
+    false
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+fn exhausted_service_still_joins_an_already_admitted_incomplete_frame() {
+    let (_dir, path, manifest, bytes) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    // Observe the actual unread prefix before starting the service. Socket
+    // acceptance order alone does not establish worker execution order.
+    let mut incomplete = TcpStream::connect(address).unwrap();
+    incomplete.write_all(b"TC").unwrap();
+    let incomplete_peer = incomplete.local_addr().unwrap();
+    assert!(wait_for_loopback_receive_queue(address, incomplete_peer, 2));
+    let mut honest = TcpStream::connect(address).unwrap();
+    honest
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
+    let mut limits = server_limits();
+    limits.serving.request_timeout = Duration::from_secs(5);
+    limits.serving.overall_timeout = Duration::from_secs(10);
+    limits.serving.max_connections = 2;
+    limits.serving.max_response_bytes = 9 + 16_384;
+    let (done, completion) = mpsc::channel();
+    let worker = thread::spawn(move || {
+        let report = serve_cells_persistent(&listener, &path, &AtomicBool::new(false), limits);
+        let _ = done.send(());
+        report
+    });
+    // The only reader of this exact accepted socket is the real service.
+    // A 2 -> 0 transition proves its incomplete frame reserved an attempt and
+    // read the prefix before the honest frame can consume the last byte.
+    if !wait_for_loopback_receive_queue(address, incomplete_peer, 0) {
+        drop(incomplete);
+        drop(honest);
+        let _ = worker.join();
+        panic!("the admitted worker did not consume the incomplete prefix");
+    }
+    honest
+        .write_all(&query(2, manifest.chunks()[0].sha256))
+        .unwrap();
+    assert_eq!(read_body(&mut honest), bytes[..16_384]);
+    let closed = honest.read(&mut [0; 1]);
+    let returned_before_release = completion.try_recv().is_ok();
+    // No unowned worker: close the old incomplete request, then join service.
+    drop(incomplete);
+    drop(honest);
+    let report = worker.join().unwrap().unwrap();
+    assert!(
+        matches!(closed, Ok(0)),
+        "completed connection did not drain: {closed:?}"
+    );
+    assert!(
+        !returned_before_release,
+        "service abandoned an admitted worker"
+    );
+    assert_eq!(report.request_attempts, 2);
+    assert_eq!(report.serving.accepted_connections, 2);
+    assert_eq!(report.serving.peak_active_workers, 2);
+    assert_eq!(report.serving.completed_requests, 1);
+    assert_eq!(report.serving.sent_response_bytes, 9 + 16_384);
+}

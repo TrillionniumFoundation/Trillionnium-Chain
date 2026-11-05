@@ -4,6 +4,9 @@ use super::*;
 use crate::account_archive_prototype::{multiproof::MultiproofProgress, ArchiveError};
 use crate::store::growth::CheckedRootSource;
 
+#[cfg(test)]
+mod account_prefix_tests;
+
 /// A computation relation and the caller's original control failure have
 /// different owners. A serialized marker cannot manufacture a control error.
 #[derive(Debug)]

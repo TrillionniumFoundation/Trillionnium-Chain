@@ -184,10 +184,11 @@ pub(super) fn dispatch(
             let mut owner = lock_owner(node, &mut wait)?;
             // Reacquired ORIGINAL owner. No cached State, clock or parent is
             // supplied; the typed entry rebinds all current inputs before commit.
-            let id = owner.admit_growth_work_checked_with_progress(
+            let id = owner.admit_growth_work_checked_with_worker_accounting(
                 checked,
                 super::super::now()?,
                 &checkpoint,
+                &charge.workers,
             )?;
             submit_result(&mut owner, id)
         }

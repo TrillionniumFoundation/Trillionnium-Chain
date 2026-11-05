@@ -172,6 +172,12 @@ impl ConnectionPool {
             !transport.responses.is_quarantined(peer)?,
             "cell peer quarantined",
         )?;
+        // Other frames share the original release reservation and can finish
+        // while this request waits for its peer connection. Actual exhaustion
+        // must refuse before either dialing or sending another reused frame.
+        // Keep the already charged request attempt; an in-flight reservation
+        // alone is not exhaustion and may still return unused capacity.
+        transport.responses.require_remaining()?;
         if slot.as_ref().is_some_and(|connection| {
             connection.requests >= self.per_connection || Instant::now() >= connection.deadline
         }) {
@@ -322,7 +328,9 @@ fn join(
 /// Explicit bounded V2 service. One reader and at most one in-flight frame per
 /// active connection; no admission queue and no socket namespace fallback.
 /// Shutdown stops intake and joins existing connections within their fixed
-/// deadline. Filesystem/hash calls retain the existing cooperative semantics.
+/// deadline. Actual egress exhaustion also stops new connections and frames,
+/// while already admitted work is still joined without refunding its attempts.
+/// Filesystem/hash calls retain the existing cooperative semantics.
 pub fn serve_cells_persistent(
     listener: &TcpListener,
     cache: &Path,
@@ -345,6 +353,7 @@ pub fn serve_cells_persistent(
         while !shutdown.load(Ordering::Relaxed)
             && report.accepted_connections < limits.serving.max_connections
             && requests_left.load(Ordering::Relaxed) > 0
+            && responses.received()? < limits.serving.max_response_bytes
             && Instant::now() < deadline
         {
             for (slot, reader) in active.iter_mut().zip(&mut readers) {
@@ -373,8 +382,12 @@ pub fn serve_cells_persistent(
                         .spawn_scoped(scope, move || {
                             let mut completed = 0;
                             for _ in 0..limits.max_requests_per_connection {
+                                // Only consumed bytes close intake. Another
+                                // frame's temporary reservation can still
+                                // return capacity under the same deadline.
                                 if Instant::now() >= connection_deadline
                                     || shutdown.load(Ordering::Relaxed)
+                                    || responses.require_remaining().is_err()
                                 {
                                     break;
                                 }

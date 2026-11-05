@@ -34,6 +34,9 @@ ROUNDS = 3
 MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
 ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
+CPU_SETTLEMENT_SCHEMA = 'public-v3-cpu-settlement-observation-v1'
+CPU_SETTLEMENT_KNOWN_FIELDS = ('owner_cpu_known', 'scoped_worker_cpu_known',
+                             'live_paid_cpu_known', 'residual_cpu_known')
 ERROR_DIAGNOSTIC_KINDS = {'protocol_invalid', 'capacity', 'cancelled', 'stale_context',
     'identity_conflict', 'policy_refusal', 'local_structure', 'dependency_unavailable',
     'transport', 'serialization', 'remote_refusal', 'unclassified'}
@@ -350,12 +353,73 @@ def validate_v4_record(row):
     require(type(row) is dict, 'v4 request record required')
     validate_request_error_diagnostics(row)
     validate_v4_phases(row.get('submit_phases'))
+    validate_cpu_settlement(row)
     for key in WAIT_FIELDS_V4:
         validate_v4_interval(row.get(key))
     require('terminal_error_code' in row, 'v4 terminal cause slot required')
     code = row['terminal_error_code']
     require(code is None or (isinstance(code, str) and re.fullmatch('[A-Z][A-Z0-9_]*', code)),
             'v4 terminal cause must be typed or unknown')
+
+
+def validate_cpu_settlement(row):
+    """Check optional actual settlement facts without reclassifying native work."""
+    if 'cpu_settlement' not in row:
+        return
+    value = row['cpu_settlement']
+    require(type(value) is dict and set(value) == {'schema', 'budget_settled',
+            'continuous_journal_persisted', 'has_control_authority',
+            'interval_is_additive_to_dispatch_cpu', *CPU_SETTLEMENT_KNOWN_FIELDS},
+            'cpu settlement exact shape required')
+    require(value['schema'] == CPU_SETTLEMENT_SCHEMA
+            and value['has_control_authority'] is False
+            and value['interval_is_additive_to_dispatch_cpu'] is False,
+            'cpu settlement scope required')
+    require(all(type(value[key]) is bool for key in (*CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled')),
+            'cpu settlement boolean facts required')
+    journal = value['continuous_journal_persisted']
+    require(journal is None or type(journal) is bool, 'cpu settlement journal boolean or no scope required')
+    phases = row.get('submit_phases')
+    require(type(phases) is list, 'cpu settlement phase required')
+    settled = [phase for phase in phases if type(phase) is dict and phase.get('phase') == 'cpu_settle']
+    require(len(settled) == 1 and settled[0].get('started') is True
+            and settled[0].get('completed') is True, 'cpu settlement completed phase required')
+    succeeded = all(value[key] for key in (*CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled')) and journal is not False
+    require(settled[0].get('accepted') is succeeded, 'cpu settlement phase outcome mismatch')
+
+
+def cpu_settlement_summary(rows):
+    observed = [row for row in rows if 'cpu_settlement' in row]
+    if not observed:
+        return None
+    for row in observed:
+        validate_v4_record(row)
+    facts = [row['cpu_settlement'] for row in observed]
+    succeeded = sum(all(value[key] for key in (*CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled'))
+                    and value['continuous_journal_persisted'] is not False for value in facts)
+    return {
+        'observed_records': len(observed),
+        'records_without_settlement_extension': len(rows) - len(observed),
+        'succeeded': succeeded, 'failed': len(observed) - succeeded,
+        'cpu_known_counts': {key: sum(value[key] for value in facts) for key in CPU_SETTLEMENT_KNOWN_FIELDS},
+        'budget_settled': sum(value['budget_settled'] for value in facts),
+        'budget_not_settled': sum(not value['budget_settled'] for value in facts),
+        'continuous_journal': {
+            'persisted': sum(value['continuous_journal_persisted'] is True for value in facts),
+            'failed': sum(value['continuous_journal_persisted'] is False for value in facts),
+            'no_scope': sum(value['continuous_journal_persisted'] is None for value in facts),
+        },
+        'scope': {
+            'has_control_authority': False,
+            'native_dispatch_outcome_is_independent': True,
+            'missing_extension_is_unknown': True,
+            'journal_null_means_no_continuous_scope': True,
+            'interval_overlaps_dispatch_cpu': True,
+            'interval_is_additive_to_dispatch_cpu': False,
+            'interval_extends_through_budget_and_journal': True,
+            'phase_thread_cpu_excludes_scoped_workers': True,
+        },
+    }
 
 
 def digest(value):
@@ -461,6 +525,9 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
     if diagnostics is not None:
         require(observer_v4, 'request error diagnostic extension requires v4 observer scope')
         result['error_diagnostics'] = diagnostics
+    if any('cpu_settlement' in row for row in rows):
+        require(observer_v4 and instrumented, 'cpu settlement extension requires v4 observer scope')
+        result['cpu_settlement'] = cpu_settlement_summary(rows)
     if arithmetic_profile:
         known = [arithmetic_observation(row['work_arithmetic']) for row in rows
                  if 'work_arithmetic' in row]
@@ -815,6 +882,16 @@ def analyze(report, *, interval_outcomes=True):
                       'submit_phase_cpu_excludes_response_signing': True,
                       'unknown_cpu_is_not_zero': True,
                       'v1_missing_phase_measurements_are_not_reconstructed': True}}
+    if any(phase['observations_available'] and 'cpu_settlement' in
+           phase['receiver']['all_retained_records'] for phase in result['phases']):
+        # Preserve historical derivations exactly when this extension is absent.
+        # CpuSettle overlaps dispatch and continues after its final CPU sample;
+        # ResponseEncoding includes signing. A uniform nested/exclusion claim
+        # cannot describe these new observations, although intervals stay non-additive.
+        result['scope'].update(cpu_intervals_are_nested_not_additive=False,
+                               cpu_intervals_are_not_additive=True,
+                               submit_phase_cpu_excludes_response_signing=False,
+                               submit_phase_cpu_scope_is_phase_specific=True)
     if arithmetic_profile:
         result.update(source_report_schema=report['schema'], work_profile=ARITHMETIC_PROFILE,
                       public_resource_policy=policy)

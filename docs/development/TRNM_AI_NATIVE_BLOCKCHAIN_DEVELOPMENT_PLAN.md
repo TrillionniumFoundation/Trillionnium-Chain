@@ -75,6 +75,36 @@ remain unavailable; no new native DAA, sqrt(D) chain weight or activation path
 is introduced. Evidence must pin the final implementation bytes and preserve
 pre-fix failures, subset exclusions, zero marked domains and explicit refusals.
 
+#### Metered Growth preparation and complete settlement observations
+
+Continue the existing #688 integration candidate after `f8d65e96`, preserving
+concurrent PQ migration and literal W1/quantum research work. The public worker observes its original CPU
+settlement and continuous journal tail through the existing `cpu_settle` phase.
+Unknown clocks, reservation-return failure and journal failure remain distinct
+from the native result and signed ACK; overlapping intervals are not additive.
+Optional diagnostic extensions are strictly validated without rewriting historic
+reports or turning retained per-stage tails into business-confirmation p99.
+
+The account parser now borrows the exact ordered `account:` namespace range.
+All malformed account suffixes and original parser/graph/root checks remain.
+Growth's writer and real public serve path support 1/2/4/8 preparation workers,
+default 1, using the original scoped CPU owner. Preparation and signatures may
+run in parallel; proof-account accesses and monetary state effects remain in
+canonical order under the unique Node/SQLite commit owner. All children are
+joined before apply/return, including cancellation and panic. Independent cold
+replay is serial. PQ signatures are not replaced by aggregation or batch claims.
+
+TCQ2 rechecks actual response-byte exhaustion after the original peer-slot wait
+and before new server connection/frame admission. Requests already charged stay
+charged; temporary reservations stay refundable; admitted workers still drain
+under their original absolute deadlines. This does not supply a host-wide
+resource-isolation guarantee.
+
+[Source, reproduction and remaining gates](../../evidence/pon-six-axis-execution-v1/README.md)
+retain the original #639 four-second/16-producer and 4,105-block History gates.
+Only actual source-bound runs in the reproduction record count as observations;
+implementation, test recipes and worker counts grant no performance qualification.
+
 #### Constructive W1 predicate and adversarial DAA closure checks — 2026-11-04
 
 The quantum/DAA research continuation is implemented at

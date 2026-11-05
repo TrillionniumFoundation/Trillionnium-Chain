@@ -239,13 +239,35 @@ pub fn execute_with_commitment_observed<E: Send>(
     progress: &(impl Fn(ExecutionProgress) -> std::result::Result<(), E> + Sync),
 ) -> ControlledResult<Output, E> {
     require(block.workers == 1, "GROWTH_WORKERS")?;
+    execute_with_commitment_observed_control(
+        view,
+        block,
+        cfg,
+        inputs,
+        commitment,
+        &ExecutionControl::new(progress, &()),
+    )
+}
+
+/// Bounded signature preparation with the caller's original worker accounting.
+/// State effects and witness access stay on the canonical caller thread; every
+/// started preparation worker is joined before this operation can return.
+pub fn execute_with_commitment_observed_control<E: Send>(
+    view: &State,
+    block: BlockExecution<'_>,
+    cfg: &Config,
+    inputs: GrowthExecutionInputs<'_>,
+    commitment: impl FnMut(&State, &State) -> Result<Hash>,
+    control: &ExecutionControl<'_, E>,
+) -> ControlledResult<Output, E> {
+    require([1, 2, 4, 8].contains(&block.workers), "GROWTH_WORKERS")?;
     require(cfg.params["state_profile"] == PROFILE, "GROWTH_PROFILE")?;
     execute_with_state_inputs(
         view,
         block,
         cfg,
         commitment,
-        &ExecutionControl::new(progress, &()),
+        control,
         StateInputs {
             accounts: Some(inputs.account_access),
             mandatory: None,
