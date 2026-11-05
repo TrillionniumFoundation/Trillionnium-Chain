@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-integration-precheck-observation-v1",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "comparison_base": "dfbec36ca8126a8d388218c4fada512e1deabf71",
+  "exit_code": 2,
+  "findings": [
+    {
+      "path": "evidence/pq-workflow-continuation-20261104/final-composition/native-cache-modes/cargo.log",
+      "line": 16,
+      "message": "new blank line at EOF"
+    },
+    {
+      "path": "evidence/pq-workflow-continuation-20261104/native-cache-modes/cargo.log",
+      "line": 102,
+      "message": "new blank line at EOF"
+    }
+  ],
+  "interpretation": "These raw logs are incoming immutable evidence from d995/81da. Their bytes are preserved, rather than editing an observation to satisfy a whitespace check. The delivery-owned delta is checked separately against the incoming parent.",
+  "native_tests_executed": false,
+  "delivery_owned_raw_log_check": {
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35"
+    ],
+    "exit_code": 2,
+    "raw_logs": [
+      "final/m09-doc.log",
+      "final/m09-tests.log",
+      "final/storage-native.log",
+      "red/tensor-old-parser-red.log"
+    ],
+    "findings": "Original libtest/compile-fail output includes trailing spaces or a final blank line. Raw evidence remains byte-exact to D. The metadata/source whitespace check excludes *.log explicitly; no functional gate or assertion changes."
+  }
+}

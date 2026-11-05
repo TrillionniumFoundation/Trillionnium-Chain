@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-owned-failed-node-object-cleanup-v1",
+  "observed_utc": "2026-11-05T01:29:52.637465+00:00",
+  "assessment_sha256": "02bfaa544d5030d708dcfd4a96ecd6689839424cb94aa5777a0cc4ba7dca6fbe",
+  "deleted_paths": [
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.02.rcgu.o",
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.13.rcgu.o",
+    "/workspace/scratch/73305aff6ced/target/debug/deps/trnm_pon_node-524e9bf7e3b64440.trnm_pon_node.71d4407208fc86bc-cgu.14.rcgu.o"
+  ],
+  "deleted_allocated_bytes": 114769920,
+  "deleted_logical_bytes": 114709584,
+  "successful_artifacts_deleted": false,
+  "sources_or_logs_deleted": false,
+  "local_node_retry_planned": false,
+  "global_free_space_gain_claimed": false
+}

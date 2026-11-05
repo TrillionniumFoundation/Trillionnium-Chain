@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-cell-selected-node-status-v1",
+  "observed_utc": "2026-11-05T00:59:56.571950+00:00",
+  "status": "NOT_RUN",
+  "intended_source_commit": "568c97590eee9e95e6b5021a49fd0a5d20716fa7",
+  "selected_test_names": [
+    "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+    "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+    "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+    "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+    "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+    "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+    "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect",
+    "store::legacy_reorg_observation_tests::legacy_observation_opt_in_is_local_and_keeps_unentered_unknown",
+    "store::legacy_reorg_observation_tests::legacy_observation_preserves_cancelled_and_failed_reorg_outcomes",
+    "store::legacy_reorg_observation_tests::legacy_observation_preserves_signed_reorg_state_and_progress",
+    "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+    "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline"
+  ],
+  "selected_count": 12,
+  "passed": null,
+  "failed": null,
+  "ignored": null,
+  "compiled_test_is_not_executed_test": true,
+  "original_profiles_preserved": true,
+  "original_deadlines_preserved": true,
+  "resource_snapshot": {
+    "uid": 0,
+    "filesystem_available_bytes": 149635072,
+    "filesystem_free_including_reserved_bytes": 3602382848,
+    "cgroup_current_bytes": 8589721600,
+    "cgroup_limit_bytes": 8589934592
+  },
+  "reason": "Selected runtime remains unstarted. Full workspace Clippy is still running on C while the shared 8 GiB cgroup is almost full; ordinary filesystem headroom has ranged from zero to less than 2 GiB. Reserved filesystem blocks exist and small evidence writes succeed, so no total-filesystem exhaustion or causal OOM for this task is asserted. No test profile, selection or timing condition was reduced."
+}

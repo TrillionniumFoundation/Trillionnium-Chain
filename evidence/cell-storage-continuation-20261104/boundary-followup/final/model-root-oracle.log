@@ -1,0 +1,9 @@
+test_every_context_pin_and_loader_policy_changes_identity (test_model_release_root.ModelRootTests.test_every_context_pin_and_loader_policy_changes_identity) ... ok
+test_independent_vector_reproduces (test_model_release_root.ModelRootTests.test_independent_vector_reproduces) ... ok
+test_noncanonical_or_unbounded_lineage_is_refused (test_model_release_root.ModelRootTests.test_noncanonical_or_unbounded_lineage_is_refused) ... ok
+test_router_presence_and_parent_roots_have_explicit_commitments (test_model_release_root.ModelRootTests.test_router_presence_and_parent_roots_have_explicit_commitments) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.004s
+
+OK
