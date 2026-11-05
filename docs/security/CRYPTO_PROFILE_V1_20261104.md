@@ -230,6 +230,76 @@ confirmation. Its empirical p99 at 64 samples is the sample maximum and is not
 a qualified production tail. Raw samples and incomplete-run failures must be
 retained with exact source, binary, dependency/toolchain and host identities.
 
+## Complete CPQ1 parameter observations
+
+The original `pq_parameter_bench` and its TRNMCPB1 observations remain intact.
+The separate [`pq_profile_bench`](../../trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs)
+now exercises the actual `candidate_message`, `candidate_wire` and
+`CandidateProfileVerifier` APIs, including the complete pinned signer set and
+its real cumulative verification budget. It uses neither a replacement parser
+nor a simplified signature-only frame. This is still a candidate protocol;
+CPQ1 does not become an accepted PNQ2 or NPQ2–NPQ6 runtime message.
+
+The matrix covers both parameter sets, one/two/four/eight signers, and payloads
+of 0, 176, 4,096 and the maximum allowed for that signer count. The maximum
+payload deducts the complete envelope and signer-ID bytes from the 65,536-byte
+signed-message limit. Report actual complete wire bytes, not a single-signature
+estimate. Separate phases retain full message/sign/self-verification/encoding,
+encoding with existing signatures, cold verifier construction and verification,
+warm verification, early syntax/profile/purpose refusals, late mathematical
+rejection and sticky shared-budget exhaustion.
+
+Every timing sample is an independent operation with an explicitly new owner
+budget. Within the shared-budget sample, one valid request and subsequent
+failing requests consume the same budget; no nested request or failed attempt
+can reset it. Reservation counts and actual mathematical verification work are
+different observations. The saturation phase reports its actual mix rather than
+claiming every reservation ran the cryptographic verifier.
+
+The [`independent reader`](../../scripts/ci/check_cpq1_parameter_observation.py)
+recomputes case coverage, configuration identity, framing and payload lengths,
+raw-sample quantiles and budget/outcome counts. Its mutation controls exercise
+missing or duplicated measurements, altered fields and unearned production
+claims. Reading a JSON observation does not independently prove signature
+mathematics; the native executable and existing independent-provider controls
+retain that obligation.
+
+```bash
+cargo build --release --locked --manifest-path trillionnium/Cargo.toml \
+  -p trnm-crypto-primitives --example pq_profile_bench
+# Use the corresponding examples/pq_profile_bench under the chosen target directory.
+pq_observation_dir="$(mktemp -d)"
+./trillionnium/target/release/examples/pq_profile_bench --samples 64 > "$pq_observation_dir/cpq1-observation.jsonl"
+python3 scripts/ci/check_cpq1_parameter_observation.py "$pq_observation_dir/cpq1-observation.jsonl"
+python3 -m unittest discover -s scripts/ci -p test_cpq1_parameter_observation.py -v
+```
+
+Record exact source, toolchain, provider and binary identities and all failed or
+interrupted commands. Retain observations outside the source tree, and use the
+existing exact-source recorder for acceptance. The example command's default
+Cargo target path changes if `CARGO_TARGET_DIR` is set. The
+[continuation record](../../evidence/crypto-profile-20261104/cpq1-owner-continuation/REPRODUCE.md)
+provides the actual commands, results and remaining boundaries.
+
+Fixed public keys/messages, a shared host and 64 samples cannot establish
+production p99, WAN capacity, stable relative speed or an activation budget.
+The default ML-DSA baseline, all candidate-only restrictions, existing message
+limits and complete W1 relation retain their existing behavior.
+
+### Canonical encoding and action identity
+
+FIPS 204 permits deterministic and hedged signing. Unique byte encoding does
+not mean a message has only one mathematically valid signature. Action IDs,
+consumed-use identities and work opportunities therefore need their own
+canonical-message or canonical-work rule; signature randomness alone must not
+be interpreted as fresh authority or an extra lottery trial. The new observer
+uses disclosed deterministic fixtures and makes no randomness-quality claim.
+
+Pure ML-DSA also does not strengthen a short application digest supplied as its
+message. CPQ1 signs the complete canonical message. Any future subsystem that
+signs only a commitment must audit the corresponding collision/second-preimage
+requirement and output length, even if its signature algorithm is ML-DSA-87.
+
 ## Remaining acceptance, not supplied by a descriptor
 
 Before any whole-system claim or 87 activation: migrate every real authorizer

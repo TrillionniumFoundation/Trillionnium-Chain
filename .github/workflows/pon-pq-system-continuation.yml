@@ -9,10 +9,69 @@ on:
       - scripts/ci/test_record_pq_native_command.py
       - scripts/ci/verify_ci_source.py
       - scripts/ci/check_required_native_test.py
+      - scripts/ci/check_cpq1_parameter_observation.py
+      - scripts/ci/test_cpq1_parameter_observation.py
       - .github/workflows/pon-pq-system-continuation.yml
 permissions:
   contents: read
 jobs:
+  cpq1-parameters:
+    name: CPQ1 complete candidate observations (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Observe actual CPQ1 APIs and independently recompute every sample
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/cpq1-parameter-observations"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/cpq1-parameter-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label compiler --output "$out" -- rustc +1.95.0 -Vv
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label locked-graph --output "$out" -- \
+            cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label reader-negatives --output "$out" -- \
+            python3 -m unittest discover -s scripts/ci -p test_cpq1_parameter_observation.py -v
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label build --output "$out" -- \
+            cargo +1.95.0 build --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_profile_bench
+          sha256sum "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" > "$out/binary.sha256"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cpq1 --output "$out" -- \
+            "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" --samples 64
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-readback --output "$out" -- \
+            python3 scripts/ci/check_cpq1_parameter_observation.py "$out/cpq1.log"
+      - name: Retain complete CPQ1 records including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cpq1-parameters-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cpq1-parameter-observations/
+          if-no-files-found: error
+          retention-days: 14
   primitive-interoperability:
     name: ML-DSA independent C implementation (${{ matrix.runner }}, ${{ matrix.source }})
     strategy:

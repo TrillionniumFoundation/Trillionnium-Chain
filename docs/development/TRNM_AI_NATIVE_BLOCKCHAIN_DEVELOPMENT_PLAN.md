@@ -6362,3 +6362,35 @@ CURRENT/FinalUse/recovery composition, key custody and independent capacity/work
 qualification. Height-valid historical observations still require separately
 authenticated accepted records and a durably authenticated retirement schedule.
 Native W1 challenge, ticket and complete relation remain unchanged.
+
+
+### 2026-11-04 complete CPQ1 observations and original owner controls
+
+Continue the existing PR #698 from
+`b525fbc6dc780343c78710c98a94616f7cff59e4`. Preserve its trusted-retirement
+implementation, all concurrent recovery/release changes, the original TRNMCPB1
+benchmark and original failed Node observations. Do not replace a real fixed
+owner check with a redundant comparison of a freshly generated descriptor ID.
+The Operator scope remains unregistered until its distinct full-message grammar,
+compound bounds and actual owner mapping are implemented and verified together.
+
+Add a separate executable observation of actual CPQ1 canonical message/wire
+construction and real multi-signature verification for both candidate parameter
+sets. Retain maximum legal payloads, exact public fixtures, independent raw
+statistical/framing readback, all failure charging and a single budget within
+each saturation sample. New CI observation lanes must preserve the original
+native selectors, compiler profiles, provider and budgets. Local results do not
+supply unobserved ARM or prospective-merge acceptance.
+
+Retry the unchanged all-feature Node library build and the original 49 required
+controls on an isolated exact source. Include all network canonical controls and
+PQ Operator/startup controls; the 49-control roster does not cover those suites
+in full. Attribute each result and any build/interruption failure to its actual
+source and command. The [continuation record](../../evidence/crypto-profile-20261104/cpq1-owner-continuation/REPRODUCE.md)
+retains the real results; no earlier pass is relabeled as a new execution.
+
+The registry still does not authenticate or persist every effect owner's active
+profile, retirement schedule or monotonic frontier. Production 87 activation,
+CURRENT/FinalUse, complete migration/recovery, original-budget network acceptance
+and independent W1 security remain separate blockers. Keep every whole-chain PQ
+qualification and production activation false until its own evidence closes.
