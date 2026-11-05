@@ -200,6 +200,26 @@ class ProcessLifecycleTests(unittest.TestCase):
 
 
 class BindingAndLocalCostTests(unittest.TestCase):
+    def test_v2_preflight_image_pin_matches_independent_verifier(self):
+        source = (ROOT / "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs").read_text()
+        match = re.search(r"IMAGE_ID: \[u32; 8\] = \[(.*?)\];", source, re.S)
+        self.assertIsNotNone(match)
+        words = tuple(int(word.strip()) for word in match[1].split(",") if word.strip())
+        self.assertEqual(coordinator.V2_IMAGE_ID, words)
+        self.assertEqual(coordinator.V2_IMAGE_ID, receipt_controls.EXPECTED_IMAGE_ID)
+
+    def test_wrong_v2_image_fails_before_checkpoint_payload_or_proving(self):
+        # Synthetic manifest parser controls only, never synthetic proof evidence.
+        base = {"schema": coordinator.SCHEMAS[2], "runner_sha256": "runner",
+                "r0vm_sha256": "r0vm", "image_id": list(coordinator.V2_IMAGE_ID)}
+        for index in range(8):
+            damaged = copy.deepcopy(base)
+            damaged["image_id"][index] ^= 1
+            with self.subTest(index=index), patch.object(coordinator, "read_json", return_value=damaged), \
+                    patch.object(coordinator, "sha", side_effect=AssertionError("payload read too early")), \
+                    self.assertRaisesRegex(ValueError, "independent v2 verifier pin"):
+                coordinator.checked_manifest(Path("unread-checkpoint"), 2, "runner", "r0vm")
+
     def test_old_journal_cannot_be_relabelled_v2(self):
         manifest = coordinator.read_json(FROZEN / "manifest.json")
         with self.assertRaisesRegex(ValueError, "domain"):
