@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/Documents/chain-pr204-continue-20260930-_ciy5p40/source/scripts/ci/check_client_confirmation_evidence.py", line 422, in <module>
+    value = validate(root=args.root, evidence=args.evidence)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continue-20260930-_ciy5p40/source/scripts/ci/check_client_confirmation_evidence.py", line 171, in validate
+    extra = validate_session(root, folder, manifest, q, records, originals) if session else {}
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/Documents/chain-pr204-continue-20260930-_ciy5p40/source/scripts/ci/check_client_confirmation_evidence.py", line 278, in validate_session
+    from ledger import execute_reference, public, key, Ledger, GENESIS, PARAMS
+  File "/home/qian-qi/Documents/chain-pr204-continue-20260930-_ciy5p40/source/formal/pon-nakamoto-v1/ledger.py", line 8, in <module>
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey,Ed25519PublicKey
+ModuleNotFoundError: No module named 'cryptography'

@@ -1,0 +1,12 @@
+{
+  "schema": "pon-paired-cost-retained-verification-v1",
+  "artifact_hashes_match": true,
+  "current_source_inputs_match": true,
+  "current_binary_matches": true,
+  "clean_current_source": true,
+  "source_commit": "3c63c8368187de895e1dc0df8bbc105c6f39f842",
+  "source_tree": "54d2f12c0d783f827d43bc626489f58ab75d7c31",
+  "experiment_reexecuted_by_verifier": false,
+  "independent_accepted": false,
+  "production_activation": false
+}

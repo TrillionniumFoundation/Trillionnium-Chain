@@ -1,0 +1,14 @@
+test_all_six_arrival_orders_close_to_the_same_state_with_all_workers (__main__.ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers) ... ok
+test_author_in_roster_is_excluded_not_permitted_to_evaluate_self (__main__.ClosedRoundTests.test_author_in_roster_is_excluded_not_permitted_to_evaluate_self) ... ok
+test_complete_round_can_publish_mature_and_claim_exactly_once (__main__.ClosedRoundTests.test_complete_round_can_publish_mature_and_claim_exactly_once) ... ok
+test_duplicate_replacement_wrong_plan_and_score_overflow_reject (__main__.ClosedRoundTests.test_duplicate_replacement_wrong_plan_and_score_overflow_reject) ... ok
+test_legacy_and_unknown_native_policy_cannot_accept_new_context (__main__.ClosedRoundTests.test_legacy_and_unknown_native_policy_cannot_accept_new_context) ... ok
+test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace (__main__.ClosedRoundTests.test_ordinary_native_cli_uses_successor_and_reopens_only_its_namespace) ... ok
+test_scalar_rule_rejects_boolean_and_unregistered_attestor (__main__.ClosedRoundTests.test_scalar_rule_rejects_boolean_and_unregistered_attestor) ... ok
+test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires (__main__.ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires) ... ok
+test_zero_full_round_has_no_adoption_or_reward (__main__.ClosedRoundTests.test_zero_full_round_has_no_adoption_or_reward) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.517s
+
+OK
