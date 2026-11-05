@@ -361,6 +361,7 @@
   "input_source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
   "integration_branch": "fix/chain-six-axis-performance-20261103",
   "large_raw_evidence_uploaded": false,
+  "latest_source_reproduction": "latest.json",
   "original_adoption_replay": {
     "asset": "test-unit-no-market-value",
     "chain_clock": "fixed logical timestamps; no live-clock acceptance",
@@ -437,6 +438,11 @@
     }
   },
   "public_reward_eligible": false,
+  "published_source_equivalence": {
+    "identical_git_tree": "a7bc2077097e13c7b50d106c74803fdc89122afd",
+    "local_tested_commit": "6541befe89742ea09d928864d0e6581213182382",
+    "published_commit": "74a7d9683c732023879bc75cf392494bfa82a905"
+  },
   "pull_request": 688,
   "raw_witness_uploaded": false,
   "reproduction_commands": [

@@ -11,14 +11,48 @@ quality/settlement replay still returned **`not_adopted`, model reward 0**.
 This is a bounded research result, not ordinary Hepta, a succinct proof,
 work-security qualification or production activation.
 
+## Latest source: actual fresh verification
+
+The latest locally tested source is `493750df3970aab910f53bf6aedeb3da67bc6b33`;
+the published [equivalent source](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/bdab616e853df2c373a850886a8220ed1fda5041)
+has the identical Git tree `37953760dea7556922ebf6300ccd3aedd937c82e`.
+[latest.json](latest.json) retains the exact publication mapping, runtime/source
+closure, command exits, hashes and complete bounded results.
+
+A concurrent cost-v2 change modified the shared adapter source file. Its tiling,
+consumption, numeric and routing functions are unchanged, but the full source
+hash changes, so a fresh program identity, contract and challenges were frozen.
+The tests and real proof experiment were then rerun in new processes:
+
+| Current-source observation | Actual result |
+| --- | --- |
+| Combined numeric / relation / shared-operator tests | 79 passed: 20 + 47 + 12; no skips |
+| Exact combined CI execution-contract controls | 99 passed |
+| New 64-task proof experiment | Five complete transcripts; attempts 1/3/1/1/1 |
+| Integer outputs / logits | 960 operator outputs checked; all 192 logits exact |
+| Routing | 64/64 exact agreement |
+| Separate process verifier | Passed against separately supplied expected context |
+| Canonical witness | 557,594 bytes; raw witness not committed |
+| Retrospective quality | Same original three negative comparisons; no new adoption claim |
+
+Current program: `815db48f5e2ae73f5ff76990f1e348e59ac9789787b1f7767f36d40d2b0240c3`.
+Current observed contract: `9f7e250b736b8891e2999f783c5031d5509c19ec95a2660e5c76b06e6e7960ff`.
+The original 76-test observation and its original contract/program identity remain
+below. The original settlement run is retained; it is not relabeled as a new run.
+These checks do not execute the concurrent Rust changes or qualify native/WAN/PQ
+acceptance, model benefit, ordinary Hepta or work security.
+
 ## Exact source and controls
 
-Tested implementation commit:
-[`6541befe89742ea09d928864d0e6581213182382`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/6541befe89742ea09d928864d0e6581213182382).
-It is retained in the integration history, including concurrent native and evidence updates
-merged afterward. Those other native changes are not qualified by this record. [manifest.json](manifest.json) records the exact bytes
-of 28 implementation/configuration/test/document files, the 18-file executed
-source closure, input hashes, runtime versions, commands, observations and limits.
+Original local tested implementation: `6541befe89742ea09d928864d0e6581213182382`.
+The published [source commit](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/74a7d9683c732023879bc75cf392494bfa82a905)
+has the **identical complete Git tree** `a7bc2077097e13c7b50d106c74803fdc89122afd`.
+GitHub publication changes commit metadata, not those source bytes; the record
+preserves the actual local execution identity. [manifest.json](manifest.json)
+records 28 exact source/configuration/test/document files, the original 18-file
+execution closure, inputs, runtime versions, commands, observations and limits.
+The following controls belong to that original source; current-source results
+are separately recorded above.
 
 | Executed control | Result |
 | --- | --- |
@@ -41,7 +75,8 @@ Rust implementation; concurrently merged native work retains its own gates.
 
 The [composition checks](composition.json) confirm that all 18 executed
 reference source files and the full program/parameter identity are unchanged
-through the latest recorded integration `76cfac184a0e7d1002b9ce28aa1997341074c88a`.
+through the intermediate local integration `76cfac184a0e7d1002b9ce28aa1997341074c88a`
+(published with the identical tree at `c17e2782e9be80fd4d2656a2ec497d1ee6344d06`).
 Both recorded compositions pass all 99 CI controls. The later integration retains
 concurrent grouped/native research, both required CI command sets and the exact
 combined source pins. It records each changed documentation/CI registration file
@@ -49,7 +84,11 @@ against the original 28-file snapshot; none is an executed dependency of this
 reference verifier. Concurrent grouped/native work is not qualified by these
 reference tests and retains its own native acceptance obligations.
 
-## Actual complete-operator observation
+The subsequent shared-cost dependency changes the full program digest and is
+covered by the fresh current-source checks above, not by this unchanged-closure
+statement.
+
+## Original complete-operator observation
 
 The experiment uses source commit
 `9fedf7ecbbe07177069c030592b4e03dcffebb81` and the existing model artifact

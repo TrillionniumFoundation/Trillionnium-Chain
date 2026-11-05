@@ -142,6 +142,12 @@
   "parameters_sha256": "0a09e5575ac0c5ac7b461fd5659fb5619907e7654e6a521dcd7f64b42d708722",
   "production_activation": false,
   "program_sha256": "5cc3a91b8d85b0249d38cc479c13b76c6261224faaed5573e27c96149d7a6919",
+  "published_composition_equivalence": {
+    "identical_git_tree": "4ab4de91a418479e342f61a488c0ebddbaa35d16",
+    "local_tested_commit": "76cfac184a0e7d1002b9ce28aa1997341074c88a",
+    "published_commit": "c17e2782e9be80fd4d2656a2ec497d1ee6344d06"
+  },
   "schema": "useful-cell-int257-v1/composition",
+  "subsequent_dependency_change": "The later shared-cost dependency changes the program hash. See latest.json for fresh 79-test, 99-control and 64-task verification under the new digest; prior unchanged-closure statements are confined to their recorded commits.",
   "tested_reference_source_commit": "6541befe89742ea09d928864d0e6581213182382"
 }
