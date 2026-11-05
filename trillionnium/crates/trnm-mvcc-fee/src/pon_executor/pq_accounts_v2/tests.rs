@@ -651,6 +651,86 @@ fn anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once() {
 }
 
 #[test]
+fn migration_refuses_unprojected_nonmonetary_source_state() {
+    let owner = [201; 32];
+    let provider = [202; 32];
+    let a = Key::public_test_seed(101);
+    let b = Key::public_test_seed(102);
+    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
+    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
+    // These are deliberately opaque source-reader fixtures, not claims that
+    // a particular application/retirement transition has already occurred.
+    // A root and a balanced monetary projection cannot authorize discarding
+    // records whose original owner and preservation rule are unknown.
+    for key in [
+        "debt:legacy",
+        "revoked:legacy",
+        "retired:legacy",
+        "execution:pending",
+        "contribution:retained",
+        "evaluation-archive:retained",
+        "meta:issued:legacy",
+        crate::continuity_v1::MAINTENANCE_KEY,
+    ] {
+        let mut source = material.clone();
+        source
+            .state
+            .insert(key.into(), json!("unresolved-source-owner"));
+        assert_eq!(
+            synthetic_repin(registry.clone(), &cfg, source).err(),
+            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
+            "unprojected source record {key} was silently omitted"
+        );
+    }
+}
+
+#[test]
+fn migration_refuses_zero_value_quota_and_release_records() {
+    let owner = [201; 32];
+    let provider = [202; 32];
+    let a = Key::public_test_seed(101);
+    let b = Key::public_test_seed(102);
+    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
+    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
+    for prefix in ["quota:", "release:"] {
+        let mut source = material.clone();
+        source.state.insert(
+            format!("{prefix}{}", hex::encode([213; 32])),
+            json!({"owner":hex::encode(owner),"remaining":0,"deadline":30,"status":"open"}),
+        );
+        assert_eq!(
+            synthetic_repin(registry.clone(), &cfg, source).err(),
+            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
+            "zero remaining value erased {prefix} lifecycle state"
+        );
+    }
+}
+
+#[test]
+fn migration_requires_the_explicit_empty_current_model_sentinel() {
+    let owner = [201; 32];
+    let provider = [202; 32];
+    let a = Key::public_test_seed(101);
+    let b = Key::public_test_seed(102);
+    let (cfg, material, _) = synthetic_legacy_checkpoint(owner, provider);
+    let registry = synthetic_registry(&cfg, &material, &[(owner, &a), (provider, &b)]);
+    for current in [Some(json!(hex::encode([214; 32]))), Some(Value::Null), None] {
+        let mut source = material.clone();
+        if let Some(value) = current {
+            source.state.insert("model:current".into(), value);
+        } else {
+            source.state.remove("model:current");
+        }
+        assert_eq!(
+            synthetic_repin(registry.clone(), &cfg, source).err(),
+            Some("PQ2_UNSUPPORTED_SOURCE_STATE"),
+            "source current-model state was reset to an empty destination"
+        );
+    }
+    assert!(synthetic_repin(registry, &cfg, material).is_ok());
+}
+
+#[test]
 fn migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unbound_roots() {
     let owner = [201; 32];
     let provider = [202; 32];
