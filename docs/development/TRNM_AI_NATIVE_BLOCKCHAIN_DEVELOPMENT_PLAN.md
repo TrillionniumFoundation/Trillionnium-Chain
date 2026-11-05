@@ -94,6 +94,39 @@ their results with the new Chain candidate. The same-source PQ/Growth/public/rec
 combination, host-wide capacity isolation, original 4s/16 and 4,105-block gates
 remain required. No qualification or activation flag changes.
 
+The [exact execution and request-accounting evidence](../../evidence/pon-ordered-request-cost-20261105/README.md)
+now binds the completed local validation to Chain
+`657bf2a462ff13a6101ebcb4fbe0fb91c515c972`, tree
+`7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73`. All 20 new feature tests pass
+(13 Rust and seven Python); strict workspace/all-targets/all-features Clippy,
+the 51 request-reader, 43 source-integrity and 140 from-zero-reader tests pass.
+M06 records 253 passed/eight ignored. The complete Node library remains
+1,083 passed/five failed/28 ignored: three independent Unix-witness EPERM
+failures, one original witness deadline and one owner-epoch diagnostic failure.
+The latter two pass isolated same-binary diagnostics without erasing the full
+suite's failures. The Node functional build has an explicit debug=0 override;
+the prior original-profile SIGKILL remains recorded.
+
+The original nine-cohort Growth attempt ends after two completed cohorts and
+a truncated stderr JSON mirror in the third; its errno remains unknown and its
+reader correctly refuses it. One same-source/binary/parameters diagnostic retry
+completes all nine cohorts, 72 measured blocks, 153 stage returns, nine original
+cancellations and nine cold reopens. All three touched owners remain fixed;
+cold work, the 101.686 ms maximum admission and the 210.997 ms cancellation are
+retained separately. This is local wall observation, not p99 or confirmed TPS.
+
+The unchanged release F0 runner's five named invocations return successfully,
+but original business acceptance fails CONFIRMATION_TARGET. Baseline and
+pressure each retain 7/7 ACKs, 16/16 History responses and 0/1 independent
+confirmation; separate execution/inclusion and successful latency remain null.
+All 32 independent replays stop in Host resolve with PUBLIC_HOST_KERNEL_PARENT,
+before native import. The separate original Host readiness check refused local
+provisioning. All 644 requests remain; 449 have known original CPU and 195 keep
+unknown costs, including actual CPU for all 435 rejected pressure requests.
+Later integrations contain additional production changes and do not inherit
+these frozen-source results. Combined configuration, original hosted and
+independent acceptance remain HOLD; no result is promoted to activation.
+
 **Schema readback preparation, 2026-11-05:** Reuse only the SQLite program for
 same-transaction catalog SELECTs, retaining fresh result rows, both freshly
 prepared PRAGMAs, all original scope/State/graph/Host checks and schema-reset

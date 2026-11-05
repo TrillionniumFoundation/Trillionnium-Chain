@@ -1,0 +1,2534 @@
+{
+  "additional_experiments_run_by_auditor": false,
+  "auditor_role": "independent read-only evidence audit; only these staged JSON/Markdown outputs were written",
+  "binary": {
+    "artifact_was_fresh_cache": false,
+    "binding_file": {
+      "bytes": 961,
+      "path": "validation/node-binary.json",
+      "sha256": "623f7ec6d3b4309ee6d75bde6141662a40ca8e10803090e7924c51ea32909976"
+    },
+    "bytes": 181809040,
+    "executable": "/workspace/scratch/7318042bb6cb/target/debug/deps/trnm_pon_node-33be7312af1f531b",
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "rehash_verified": true,
+    "sha256": "8253f1421239e28a4cbf9c520b23bbfa36f95942f94437045e4558ae41fc528c",
+    "size_and_mtime_stable_during_rehash": true
+  },
+  "diagnostic_retry": {
+    "argv": [
+      "python3",
+      "/workspace/scratch/add353b13222/monitor_growth_scale.py",
+      "/workspace/scratch/add353b13222/validation/growth-scale-retry-space.json",
+      "env",
+      "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/add353b13222/validation/growth-scale-retry-657bf2a",
+      "/workspace/scratch/7318042bb6cb/target/debug/deps/trnm_pon_node-33be7312af1f531b",
+      "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "--ignored",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cohorts": [
+      {
+        "accounts": 64,
+        "activation_median_interval_ns": [
+          2314625,
+          2464808
+        ],
+        "activation_min_max_ns": [
+          2062900,
+          2746949
+        ],
+        "activation_wall_ns_in_sample_order": [
+          2155368,
+          2062900,
+          2139454,
+          2464808,
+          2314625,
+          2493411,
+          2746949,
+          2700749
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          8778785,
+          9268424
+        ],
+        "admission_min_max_ns": [
+          8372981,
+          10544242
+        ],
+        "admission_wall_ns_in_sample_order": [
+          8372981,
+          9268424,
+          8613159,
+          8748399,
+          8778785,
+          9969797,
+          10332398,
+          10544242
+        ],
+        "cancelled_admission_wall_ns": 10580647,
+        "cancelled_header_ancestor_callbacks": 24,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 53678893,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 696320,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 1260752
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          6479433,
+          5534056,
+          6495757,
+          5880602,
+          5721225,
+          6281489,
+          6701243,
+          6716776
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 47215,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h0.jsonl",
+          "sha256": "5f7f74aed4b25f12d2fa475de87de2165d8712f2b1f18f7cf14f1a484ec55311"
+        },
+        "retained_cow_nodes_added_min_max": [
+          13,
+          13
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 8,
+          "typed_events": 8,
+          "wall_ns": 245516
+        },
+        "separate_successor_query_point_reads_min_max": [
+          16,
+          16
+        ],
+        "successful_native_admissions_including_warmup": 8,
+        "warmup_history_blocks": 0,
+        "witness_bytes_min_max": [
+          917,
+          917
+        ]
+      },
+      {
+        "accounts": 64,
+        "activation_median_interval_ns": [
+          4048685,
+          4054585
+        ],
+        "activation_min_max_ns": [
+          3439328,
+          4463192
+        ],
+        "activation_wall_ns_in_sample_order": [
+          3439328,
+          4099411,
+          4463192,
+          4048685,
+          4054585,
+          3853395,
+          3804473,
+          4266145
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          14595312,
+          14901117
+        ],
+        "admission_min_max_ns": [
+          13390859,
+          15554469
+        ],
+        "admission_wall_ns_in_sample_order": [
+          14901117,
+          13390859,
+          14279592,
+          14918923,
+          14595312,
+          15554469,
+          15374832,
+          14287350
+        ],
+        "cancelled_admission_wall_ns": 13811747,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 173730833,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 1658880,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 3085912
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 16
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          8351489,
+          9836674,
+          9985821,
+          8609714,
+          8592347,
+          8555203,
+          9045272,
+          9595110
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 49361,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h16.jsonl",
+          "sha256": "14109aab998f468868d4aaadb5a3e2e5313799f2f36ac2d529204ef81ef86461"
+        },
+        "retained_cow_nodes_added_min_max": [
+          13,
+          16
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 24,
+          "typed_events": 24,
+          "wall_ns": 892850
+        },
+        "separate_successor_query_point_reads_min_max": [
+          16,
+          16
+        ],
+        "successful_native_admissions_including_warmup": 24,
+        "warmup_history_blocks": 16,
+        "witness_bytes_min_max": [
+          917,
+          917
+        ]
+      },
+      {
+        "accounts": 64,
+        "activation_median_interval_ns": [
+          3653662,
+          4196896
+        ],
+        "activation_min_max_ns": [
+          3609166,
+          5112688
+        ],
+        "activation_wall_ns_in_sample_order": [
+          4196896,
+          3653662,
+          3649957,
+          3652541,
+          5112688,
+          3609166,
+          4559450,
+          4471718
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          15137123,
+          15578394
+        ],
+        "admission_min_max_ns": [
+          13631638,
+          27867851
+        ],
+        "admission_wall_ns_in_sample_order": [
+          15137123,
+          14412347,
+          15632826,
+          13631638,
+          22318008,
+          13709475,
+          27867851,
+          15578394
+        ],
+        "cancelled_admission_wall_ns": 17806061,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 1152014959,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 8667136,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 7450624,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 4223032
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 128
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          8952810,
+          8460522,
+          8421494,
+          8549456,
+          8552960,
+          9054361,
+          134572696,
+          11055289
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 62292,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h128.jsonl",
+          "sha256": "855c63ccd0e68b5ec6ba6fd4f2a659c8258c752eac9ae2b8603a4c69485cc69c"
+        },
+        "retained_cow_nodes_added_min_max": [
+          16,
+          16
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 136,
+          "typed_events": 136,
+          "wall_ns": 7824129
+        },
+        "separate_successor_query_point_reads_min_max": [
+          16,
+          16
+        ],
+        "successful_native_admissions_including_warmup": 136,
+        "warmup_history_blocks": 128,
+        "witness_bytes_min_max": [
+          917,
+          917
+        ]
+      },
+      {
+        "accounts": 1024,
+        "activation_median_interval_ns": [
+          2682738,
+          2792883
+        ],
+        "activation_min_max_ns": [
+          2206595,
+          5057836
+        ],
+        "activation_wall_ns_in_sample_order": [
+          3038796,
+          3142998,
+          2206595,
+          2334782,
+          2792883,
+          2682738,
+          2596570,
+          5057836
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          11035384,
+          11229189
+        ],
+        "admission_min_max_ns": [
+          8918188,
+          13415049
+        ],
+        "admission_wall_ns_in_sample_order": [
+          11425083,
+          9438167,
+          8918188,
+          11035384,
+          11229189,
+          12285802,
+          9983915,
+          13415049
+        ],
+        "cancelled_admission_wall_ns": 10521219,
+        "cancelled_header_ancestor_callbacks": 24,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 131531867,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 1101824,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 2158912
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          12844079,
+          6752013,
+          5530744,
+          7004261,
+          6298854,
+          9493309,
+          6190092,
+          7896177
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 47310,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h0.jsonl",
+          "sha256": "4722ee361a50178aede150fc447a9a67085a111ba0c8cd873131c920dc714002"
+        },
+        "retained_cow_nodes_added_min_max": [
+          23,
+          23
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 8,
+          "typed_events": 8,
+          "wall_ns": 254611
+        },
+        "separate_successor_query_point_reads_min_max": [
+          30,
+          30
+        ],
+        "successful_native_admissions_including_warmup": 8,
+        "warmup_history_blocks": 0,
+        "witness_bytes_min_max": [
+          1841,
+          1841
+        ]
+      },
+      {
+        "accounts": 1024,
+        "activation_median_interval_ns": [
+          3839382,
+          3929085
+        ],
+        "activation_min_max_ns": [
+          3604698,
+          4763918
+        ],
+        "activation_wall_ns_in_sample_order": [
+          3929085,
+          4160332,
+          3719621,
+          4763918,
+          3604698,
+          3839382,
+          4447313,
+          3691189
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          14060967,
+          14852959
+        ],
+        "admission_min_max_ns": [
+          13353085,
+          101685812
+        ],
+        "admission_wall_ns_in_sample_order": [
+          13353085,
+          101685812,
+          15025615,
+          14060967,
+          13899508,
+          24643859,
+          14852959,
+          13689041
+        ],
+        "cancelled_admission_wall_ns": 16463124,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 279023402,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 2076672,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 4058232
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 16
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          7663509,
+          46571878,
+          10636750,
+          9442613,
+          12306267,
+          8394177,
+          8394296,
+          8508357
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 49428,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h16.jsonl",
+          "sha256": "03553581a2948bd3f0ace68ac28227b65a3f34ea5a11ec7db75434b5a085dc86"
+        },
+        "retained_cow_nodes_added_min_max": [
+          23,
+          30
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 24,
+          "typed_events": 24,
+          "wall_ns": 621183
+        },
+        "separate_successor_query_point_reads_min_max": [
+          30,
+          30
+        ],
+        "successful_native_admissions_including_warmup": 24,
+        "warmup_history_blocks": 16,
+        "witness_bytes_min_max": [
+          1841,
+          1841
+        ]
+      },
+      {
+        "accounts": 1024,
+        "activation_median_interval_ns": [
+          4309322,
+          5091969
+        ],
+        "activation_min_max_ns": [
+          3818031,
+          6205476
+        ],
+        "activation_wall_ns_in_sample_order": [
+          6205476,
+          3818031,
+          4309322,
+          5463913,
+          4004493,
+          4149541,
+          5091969,
+          5199711
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          16521277,
+          17625623
+        ],
+        "admission_min_max_ns": [
+          14028989,
+          24658880
+        ],
+        "admission_wall_ns_in_sample_order": [
+          20878606,
+          24658880,
+          15149864,
+          20894775,
+          14940129,
+          14028989,
+          16521277,
+          17625623
+        ],
+        "cancelled_admission_wall_ns": 210996890,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 1218866162,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 9281536,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 8323072,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 4284832
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 128
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          10739481,
+          11755611,
+          8172842,
+          9871457,
+          9170112,
+          10005428,
+          9435791,
+          10116300
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 62378,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h128.jsonl",
+          "sha256": "e1decbebc6619f6cb1a30cd9b5ed92a4f467fe02aac15db8d4e472b5015caf31"
+        },
+        "retained_cow_nodes_added_min_max": [
+          30,
+          30
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 136,
+          "typed_events": 136,
+          "wall_ns": 8136882
+        },
+        "separate_successor_query_point_reads_min_max": [
+          30,
+          30
+        ],
+        "successful_native_admissions_including_warmup": 136,
+        "warmup_history_blocks": 128,
+        "witness_bytes_min_max": [
+          1841,
+          1841
+        ]
+      },
+      {
+        "accounts": 16384,
+        "activation_median_interval_ns": [
+          2764099,
+          2847164
+        ],
+        "activation_min_max_ns": [
+          1878220,
+          4433081
+        ],
+        "activation_wall_ns_in_sample_order": [
+          1878220,
+          4359236,
+          2764099,
+          2847164,
+          4433081,
+          2680017,
+          2553130,
+          2936107
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          14240019,
+          14795942
+        ],
+        "admission_min_max_ns": [
+          9001357,
+          23997091
+        ],
+        "admission_wall_ns_in_sample_order": [
+          9001357,
+          23997091,
+          14240019,
+          14795942,
+          16404583,
+          12454614,
+          13411987,
+          16347613
+        ],
+        "cancelled_admission_wall_ns": 14354209,
+        "cancelled_header_ancestor_callbacks": 24,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 1836394357,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 7155712,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 6615040,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 6653832
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          6994963,
+          21197517,
+          16604512,
+          9261935,
+          14298804,
+          10532725,
+          10053649,
+          14535668
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 47395,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h0.jsonl",
+          "sha256": "33367142009bfae171676fe4900d90e98414e745dbfe8c37149af08ef919f586"
+        },
+        "retained_cow_nodes_added_min_max": [
+          27,
+          27
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 8,
+          "typed_events": 8,
+          "wall_ns": 472032
+        },
+        "separate_successor_query_point_reads_min_max": [
+          37,
+          37
+        ],
+        "successful_native_admissions_including_warmup": 8,
+        "warmup_history_blocks": 0,
+        "witness_bytes_min_max": [
+          2303,
+          2303
+        ]
+      },
+      {
+        "accounts": 16384,
+        "activation_median_interval_ns": [
+          4726168,
+          4815644
+        ],
+        "activation_min_max_ns": [
+          3841448,
+          5036382
+        ],
+        "activation_wall_ns_in_sample_order": [
+          4849265,
+          5036382,
+          4423253,
+          4726168,
+          4848500,
+          4419114,
+          3841448,
+          4815644
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          17414278,
+          17993540
+        ],
+        "admission_min_max_ns": [
+          15061997,
+          20606878
+        ],
+        "admission_wall_ns_in_sample_order": [
+          18830000,
+          16579503,
+          17319852,
+          18589041,
+          17993540,
+          17414278,
+          15061997,
+          20606878
+        ],
+        "cancelled_admission_wall_ns": 13575172,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 2097381269,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 8134656,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 8134656,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 6653832
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 16
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          11838266,
+          10323097,
+          10629098,
+          10753445,
+          11434511,
+          11959405,
+          9009451,
+          10812134
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 49502,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h16.jsonl",
+          "sha256": "5154b045987d40d73e008d43375ea4e2834a751e71d6df586d5cddf05e0cfa7f"
+        },
+        "retained_cow_nodes_added_min_max": [
+          27,
+          37
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 24,
+          "typed_events": 24,
+          "wall_ns": 1237201
+        },
+        "separate_successor_query_point_reads_min_max": [
+          37,
+          37
+        ],
+        "successful_native_admissions_including_warmup": 24,
+        "warmup_history_blocks": 16,
+        "witness_bytes_min_max": [
+          2303,
+          2303
+        ]
+      },
+      {
+        "accounts": 16384,
+        "activation_median_interval_ns": [
+          4237683,
+          4581897
+        ],
+        "activation_min_max_ns": [
+          3646283,
+          6076394
+        ],
+        "activation_wall_ns_in_sample_order": [
+          3646283,
+          4172145,
+          5090417,
+          5875062,
+          3778804,
+          4237683,
+          6076394,
+          4581897
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          16340131,
+          18434229
+        ],
+        "admission_min_max_ns": [
+          14376192,
+          35066426
+        ],
+        "admission_wall_ns_in_sample_order": [
+          18434229,
+          35066426,
+          22278333,
+          20035622,
+          14914361,
+          14376192,
+          16261953,
+          16340131
+        ],
+        "cancelled_admission_wall_ns": 41057934,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 2813242488,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 15429632,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 14991360,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 6653832
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 128
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          9897972,
+          12011991,
+          13641116,
+          14804182,
+          14045383,
+          8383499,
+          9269184,
+          10262040
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 62417,
+          "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h128.jsonl",
+          "sha256": "d1e7840f97e430386166762e7e4c970d7e2582be385f2bb3278a8795834074a4"
+        },
+        "retained_cow_nodes_added_min_max": [
+          37,
+          37
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 136,
+          "typed_events": 136,
+          "wall_ns": 29131712
+        },
+        "separate_successor_query_point_reads_min_max": [
+          37,
+          37
+        ],
+        "successful_native_admissions_including_warmup": 136,
+        "warmup_history_blocks": 128,
+        "witness_bytes_min_max": [
+          2303,
+          2303
+        ]
+      }
+    ],
+    "directory": "validation/growth-scale-retry-657bf2a",
+    "exit_code": 0,
+    "libtest_summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1115 filtered out; finished in 336.95s",
+    "log_file": {
+      "bytes": 479797,
+      "path": "validation/growth-scale-diagnostic-retry.log",
+      "sha256": "88da1199bba94a4076ec4489dc7f63183f7524d46d17a4bb2ee4c85c09697e54"
+    },
+    "official_reader": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_growth_scale_observation.py",
+        "/workspace/scratch/add353b13222/validation/growth-scale-retry-657bf2a"
+      ],
+      "exit_code": 0,
+      "log_file": {
+        "bytes": 7502,
+        "path": "validation/growth-scale-retry-reader.log",
+        "sha256": "52c1a1622c6a67d3c9ebb6e3f7908c6a15f1b2ba0f37e2560ceecf7349ac5f3a"
+      },
+      "output": {
+        "cancellation_stage_measurements_available": true,
+        "cancelled_admissions": 9,
+        "cohorts": [
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              8778785,
+              9268424
+            ],
+            "cancelled_admission_wall_ns": 10580647,
+            "cold_reopen_wall_ns": 53678893,
+            "copied_nodes_min_max": [
+              13,
+              13
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              14595312,
+              14901117
+            ],
+            "cancelled_admission_wall_ns": 13811747,
+            "cold_reopen_wall_ns": 173730833,
+            "copied_nodes_min_max": [
+              13,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 64,
+            "admission_median_interval_ns": [
+              15137123,
+              15578394
+            ],
+            "cancelled_admission_wall_ns": 17806061,
+            "cold_reopen_wall_ns": 1152014959,
+            "copied_nodes_min_max": [
+              16,
+              16
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              16,
+              16
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              917,
+              917
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              11035384,
+              11229189
+            ],
+            "cancelled_admission_wall_ns": 10521219,
+            "cold_reopen_wall_ns": 131531867,
+            "copied_nodes_min_max": [
+              23,
+              23
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              14060967,
+              14852959
+            ],
+            "cancelled_admission_wall_ns": 16463124,
+            "cold_reopen_wall_ns": 279023402,
+            "copied_nodes_min_max": [
+              23,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 1024,
+            "admission_median_interval_ns": [
+              16521277,
+              17625623
+            ],
+            "cancelled_admission_wall_ns": 210996890,
+            "cold_reopen_wall_ns": 1218866162,
+            "copied_nodes_min_max": [
+              30,
+              30
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              30,
+              30
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              1841,
+              1841
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              14240019,
+              14795942
+            ],
+            "cancelled_admission_wall_ns": 14354209,
+            "cold_reopen_wall_ns": 1836394357,
+            "copied_nodes_min_max": [
+              27,
+              27
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 0,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              17414278,
+              17993540
+            ],
+            "cancelled_admission_wall_ns": 13575172,
+            "cold_reopen_wall_ns": 2097381269,
+            "copied_nodes_min_max": [
+              27,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 16,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          },
+          {
+            "accounts": 16384,
+            "admission_median_interval_ns": [
+              16340131,
+              18434229
+            ],
+            "cancelled_admission_wall_ns": 41057934,
+            "cold_reopen_wall_ns": 2813242488,
+            "copied_nodes_min_max": [
+              37,
+              37
+            ],
+            "measured_blocks": 8,
+            "p99_ns": null,
+            "separate_query_point_reads_min_max": [
+              37,
+              37
+            ],
+            "warmup_history_blocks": 128,
+            "witness_bytes_min_max": [
+              2303,
+              2303
+            ]
+          }
+        ],
+        "cold_reopens": 9,
+        "completed_cohorts": 9,
+        "files": [
+          {
+            "bytes": 2266,
+            "file": "run.jsonl",
+            "sha256": "1d03f5567e0bf4d3fa426403249fe2bbb711d763324504ae6bb7905afccbf307"
+          },
+          {
+            "bytes": 47215,
+            "file": "cohort-a64-h0.jsonl",
+            "sha256": "5f7f74aed4b25f12d2fa475de87de2165d8712f2b1f18f7cf14f1a484ec55311"
+          },
+          {
+            "bytes": 49361,
+            "file": "cohort-a64-h16.jsonl",
+            "sha256": "14109aab998f468868d4aaadb5a3e2e5313799f2f36ac2d529204ef81ef86461"
+          },
+          {
+            "bytes": 62292,
+            "file": "cohort-a64-h128.jsonl",
+            "sha256": "855c63ccd0e68b5ec6ba6fd4f2a659c8258c752eac9ae2b8603a4c69485cc69c"
+          },
+          {
+            "bytes": 47310,
+            "file": "cohort-a1024-h0.jsonl",
+            "sha256": "4722ee361a50178aede150fc447a9a67085a111ba0c8cd873131c920dc714002"
+          },
+          {
+            "bytes": 49428,
+            "file": "cohort-a1024-h16.jsonl",
+            "sha256": "03553581a2948bd3f0ace68ac28227b65a3f34ea5a11ec7db75434b5a085dc86"
+          },
+          {
+            "bytes": 62378,
+            "file": "cohort-a1024-h128.jsonl",
+            "sha256": "e1decbebc6619f6cb1a30cd9b5ed92a4f467fe02aac15db8d4e472b5015caf31"
+          },
+          {
+            "bytes": 47395,
+            "file": "cohort-a16384-h0.jsonl",
+            "sha256": "33367142009bfae171676fe4900d90e98414e745dbfe8c37149af08ef919f586"
+          },
+          {
+            "bytes": 49502,
+            "file": "cohort-a16384-h16.jsonl",
+            "sha256": "5154b045987d40d73e008d43375ea4e2834a751e71d6df586d5cddf05e0cfa7f"
+          },
+          {
+            "bytes": 62417,
+            "file": "cohort-a16384-h128.jsonl",
+            "sha256": "d1e7840f97e430386166762e7e4c970d7e2582be385f2bb3278a8795834074a4"
+          }
+        ],
+        "fixed_witness_owners": [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ],
+        "header_window_contract": {
+          "complete_admission_windows": 3,
+          "counter": "header_ancestors",
+          "maximum_ancestor_headers_per_window": 16,
+          "profile": "native-growth-single-header-window-v1",
+          "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU"
+        },
+        "historical_v1": false,
+        "historical_v2": false,
+        "measured_native_blocks": 72,
+        "native_stage_cpu_measurements_available": false,
+        "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
+        "observation_schema": "native-growth-fixed-owner-scale-observation-v3",
+        "p99_ns": null,
+        "production_activation": false,
+        "public_network_ready": false,
+        "requires_separate_source_binary_and_native_exit_verification": true,
+        "result": "COMPLETE_LOCAL_OBSERVATION",
+        "returned_native_outcomes": {
+          "accepted": 144,
+          "rejected": 9
+        },
+        "returned_native_stages": 153,
+        "schema": "native-growth-fixed-owner-scale-readback-v3",
+        "throughput_qualified": false
+      },
+      "receipt_file": {
+        "bytes": 2329,
+        "path": "validation/growth-scale-retry-reader.json",
+        "sha256": "b5b3da8da7f61758f9b4d4645baca9842f7dc35b89832188041ccdc17d256cb9"
+      },
+      "recorder_elapsed_ns": 2892404862,
+      "source_before_equals_after": true,
+      "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+      "started_utc": "2026-11-05T10:24:32.227685+00:00",
+      "status": "command_succeeded",
+      "tracked_worktree_verified": true
+    },
+    "raw_files": [
+      {
+        "bytes": 47310,
+        "jsonl_records": 39,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h0.jsonl",
+        "sha256": "4722ee361a50178aede150fc447a9a67085a111ba0c8cd873131c920dc714002"
+      },
+      {
+        "bytes": 62378,
+        "jsonl_records": 167,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h128.jsonl",
+        "sha256": "e1decbebc6619f6cb1a30cd9b5ed92a4f467fe02aac15db8d4e472b5015caf31"
+      },
+      {
+        "bytes": 49428,
+        "jsonl_records": 55,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a1024-h16.jsonl",
+        "sha256": "03553581a2948bd3f0ace68ac28227b65a3f34ea5a11ec7db75434b5a085dc86"
+      },
+      {
+        "bytes": 47395,
+        "jsonl_records": 39,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h0.jsonl",
+        "sha256": "33367142009bfae171676fe4900d90e98414e745dbfe8c37149af08ef919f586"
+      },
+      {
+        "bytes": 62417,
+        "jsonl_records": 167,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h128.jsonl",
+        "sha256": "d1e7840f97e430386166762e7e4c970d7e2582be385f2bb3278a8795834074a4"
+      },
+      {
+        "bytes": 49502,
+        "jsonl_records": 55,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a16384-h16.jsonl",
+        "sha256": "5154b045987d40d73e008d43375ea4e2834a751e71d6df586d5cddf05e0cfa7f"
+      },
+      {
+        "bytes": 47215,
+        "jsonl_records": 39,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h0.jsonl",
+        "sha256": "5f7f74aed4b25f12d2fa475de87de2165d8712f2b1f18f7cf14f1a484ec55311"
+      },
+      {
+        "bytes": 62292,
+        "jsonl_records": 167,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h128.jsonl",
+        "sha256": "855c63ccd0e68b5ec6ba6fd4f2a659c8258c752eac9ae2b8603a4c69485cc69c"
+      },
+      {
+        "bytes": 49361,
+        "jsonl_records": 55,
+        "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h16.jsonl",
+        "sha256": "14109aab998f468868d4aaadb5a3e2e5313799f2f36ac2d529204ef81ef86461"
+      },
+      {
+        "bytes": 2266,
+        "jsonl_records": 2,
+        "path": "validation/growth-scale-retry-657bf2a/run.jsonl",
+        "sha256": "1d03f5567e0bf4d3fa426403249fe2bbb711d763324504ae6bb7905afccbf307"
+      }
+    ],
+    "receipt_file": {
+      "bytes": 2747,
+      "path": "validation/growth-scale-diagnostic-retry.json",
+      "sha256": "81fed62c7505e28624b36c08ee937d1e34b5acb1f345b744c76b718428629f31"
+    },
+    "recorder_elapsed_ns": 346289460979,
+    "run_completed": {
+      "actual_distinct_witness_owner_sets": [
+        [
+          "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+          "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+          "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+        ]
+      ],
+      "completed_cohorts": 9,
+      "completed_measurements": 72,
+      "event": "run_completed",
+      "fixed_witness_owner_set_observed": true,
+      "p99_ns": null,
+      "production_qualified": false,
+      "returned_native_stages": 153,
+      "throughput_claim": false
+    },
+    "run_started": {
+      "accounts": [
+        64,
+        1024,
+        16384
+      ],
+      "cancelled_admission_timing_separate_from_successful_samples": true,
+      "completed": false,
+      "declared_transaction_owners": [
+        "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+        "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+        "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+      ],
+      "event": "run_started",
+      "fixture_scope": "preallocated dormant accounts; real empty maintenance warmup history; original 65,536 signed growth gate remains separate",
+      "header_window_contract": {
+        "complete_admission_windows": 3,
+        "counter": "header_ancestors",
+        "maximum_ancestor_headers_per_window": 16,
+        "profile": "native-growth-single-header-window-v1",
+        "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU"
+      },
+      "measured_blocks_per_cohort": 8,
+      "measurement_scope": "direct native Node only; no WAN, client confirmation, public admission qualification or throughput claim",
+      "native_stage_return_schema": "native-growth-stage-return-v1",
+      "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
+      "p99_ns": null,
+      "return_journal_scope": "one flushed record per returned measured admission, activation and deliberate cancellation; journal IO is outside native stage timings but remains campaign cost; panic, kill and nonreturning calls have no invented return receipt",
+      "returned_native_stages_recorded_before_assertions": true,
+      "schema": "native-growth-fixed-owner-scale-observation-v3",
+      "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings": true,
+      "sql_total_changes_include_rolled_back_writes": true,
+      "transaction": "one signed sender 0 to existing recipient 1, amount 1, consecutive nonce; miner 3",
+      "wall_time_acceptance_gate": false,
+      "warmup_history_blocks": [
+        0,
+        16,
+        128
+      ],
+      "work_search_attempt_limit": 4096,
+      "workers": 1
+    },
+    "source_before_equals_after": true,
+    "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+    "started_utc": "2026-11-05T10:18:28.154627+00:00",
+    "status": "command_succeeded",
+    "totals": {
+      "cohort_files": 9,
+      "completed_cohorts": 9,
+      "completed_cold_reopens": 9,
+      "completed_deliberate_cancellations": 9,
+      "completed_measurements": 72,
+      "planned_cohorts": 9,
+      "returned_accepted_stages": 144,
+      "returned_native_stages": 153,
+      "returned_rejected_stages": 9,
+      "successful_admissions_in_completed_cohorts_including_warmup": 504
+    },
+    "tracked_worktree_verified": true
+  },
+  "exact_prefix_comparison": {
+    "byte_prefix_length": 12059,
+    "byte_prefix_sha256": "299999fe8d0935cceeb8025ad8ebc73d98eb5efadf98329f108b7824e63dbc3c",
+    "entire_original_file_is_exact_retry_byte_prefix": true,
+    "includes_identical_cohort_started_record": true,
+    "index_104_parent": "68c251e65e50a4210ac7d1578442ce4a66c2547677f257eb3ccbe97260eda623",
+    "interpretation": "The failed cohort bytes, including all 105 recorded parent identities, are exactly reproduced as the successful retry prefix. This rules out a necessary deterministic failure at that input boundary, but not intermittent environmental or implementation faults.",
+    "matching_indices_inclusive": [
+      0,
+      104
+    ],
+    "matching_warmup_records": 105,
+    "original_raw_file": {
+      "bytes": 12059,
+      "path": "validation/growth-scale-final-657bf2a/cohort-a64-h128.jsonl",
+      "sha256": "299999fe8d0935cceeb8025ad8ebc73d98eb5efadf98329f108b7824e63dbc3c"
+    },
+    "retry_cohort_completed": true,
+    "retry_index_105_parent": "712185c3e36fabfd427684e7b0647843759cdf0e8202e58e1b7f767c17dfab11",
+    "retry_raw_file": {
+      "bytes": 62292,
+      "path": "validation/growth-scale-retry-657bf2a/cohort-a64-h128.jsonl",
+      "sha256": "855c63ccd0e68b5ec6ba6fd4f2a659c8258c752eac9ae2b8603a4c69485cc69c"
+    },
+    "retry_warmup_completed": true
+  },
+  "generated_at_utc": "2026-11-05T10:29:35.213855+00:00",
+  "independent_checks": [
+    "Both command and reader receipt states are terminal and their before/after source identities match the exact tested source.",
+    "All four receipt log byte lengths and SHA-256 values recomputed from raw files.",
+    "Binary independently rehashed with stable size/mtime; source binding and profile preserved.",
+    "Every original/retry JSONL file parsed with complete newline; hashes retained, including the incomplete original cohort.",
+    "All 72 retry sample IDs, native admission/activation returns, stage data, median intervals and full-state equality checked against raw cohort rows.",
+    "All nine deliberate cancelled return records preserve rows and active generation; all nine cold reopen summaries retain full-state equality.",
+    "All retry JSONL fingerprints agree with the formal reader output.",
+    "All 72 callback counts equal 3*min(parent_height,16); CPU fields and p99 remain null.",
+    "Original a64h128 complete byte sequence and all 105 warmup parent records exactly match the successful retry prefix.",
+    "Monitor source hash and unchanged native argv suffix verified; statvfs bounds computed from all 6592 samples."
+  ],
+  "measurement_interpretation": {
+    "cold_journal_peak_rows_scope": "Retained rows measured by the specific cold-journal verifier; not total open-state memory, RSS or SQL traffic",
+    "cold_reopen_scope": "Node::open_with_permanent_account_growth_v2 wall interval only; post-open complete-State checks and explicit journal differential are separate",
+    "f0_performance_acceptance": false,
+    "header_callback_formula": "3 * min(parent_height, 16)",
+    "limitations": [
+      "Native stage timers measure inclusive wall time only; thread_cpu_ns and process_cpu_ns are null. Nested offsets and intervals must not be summed.",
+      "The eight-observation median interval is the fourth and fifth sorted observations; it is neither a confidence interval nor a p99 estimate.",
+      "Packet/signature/full-W1 construction, setup, complete-State reference diagnostics and journal append/fsync are outside each native admission/activation timer but remain campaign cost.",
+      "The diagnostic retry adds an external Python process and statvfs polling. There is no randomized, paired or otherwise controlled performance comparison against the failed attempt; no speedup or regression is inferred from their timings.",
+      "The debug=0 package override preserves opt-level=3, overflow checks and debug assertions for functional validation, but does not establish the original debug-info profile or F0 performance acceptance.",
+      "Archive point reads are from the separate successor multiproof query; header_ancestors counts callbacks. Neither is a count of all SQL, epoch/schema fences, CPU work or total admission work.",
+      "The fixture preallocates 64/1024/16384 accounts and retains real 0/16/128-block warmup histories. It does not replace the separate 65,536 signed account-growth gate.",
+      "This is direct native Node validation, not public ingress, WAN, client inclusion/independent confirmation, confirmation TPS, production activation or whole-chain PQ qualification.",
+      "The original failed run remains failed and incomplete. A successful retry does not identify the original root cause or remove that failure from the record."
+    ],
+    "median_interval_definition": "Fourth and fifth sorted values of eight native stage wall-time observations; no averaging or confidence-interval claim",
+    "native_stage_cpu_measurements_available": false,
+    "p99_ns": null,
+    "paired_performance_comparison": false,
+    "point_read_scope": "Separate successor multiproof query over the fixed three account owners; not total SQL",
+    "production_qualified": false,
+    "public_network_ready": false,
+    "throughput_qualified": false,
+    "units": "raw timings in nanoseconds; Markdown tables render milliseconds"
+  },
+  "original_failed_run": {
+    "argv": [
+      "env",
+      "TRNM_GROWTH_SCALE_OBSERVATION_DIR=/workspace/scratch/add353b13222/validation/growth-scale-final-657bf2a",
+      "/workspace/scratch/7318042bb6cb/target/debug/deps/trnm_pon_node-33be7312af1f531b",
+      "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+      "--ignored",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cohorts": [
+      {
+        "accounts": 64,
+        "activation_median_interval_ns": [
+          2426569,
+          3143696
+        ],
+        "activation_min_max_ns": [
+          2161490,
+          4037980
+        ],
+        "activation_wall_ns_in_sample_order": [
+          2318636,
+          2426569,
+          2161490,
+          4037980,
+          3552036,
+          2409132,
+          3143696,
+          3810518
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          9582737,
+          9911832
+        ],
+        "admission_min_max_ns": [
+          7743422,
+          11963342
+        ],
+        "admission_wall_ns_in_sample_order": [
+          9911832,
+          7743422,
+          9582737,
+          8052467,
+          11963342,
+          9169075,
+          11108983,
+          11447647
+        ],
+        "cancelled_admission_wall_ns": 10584733,
+        "cancelled_header_ancestor_callbacks": 24,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 58871907,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 696320,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 1260752
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          7484654,
+          5570595,
+          7002938,
+          7476210,
+          5839669,
+          5700230,
+          6965973,
+          7510492
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 47227,
+          "path": "validation/growth-scale-final-657bf2a/cohort-a64-h0.jsonl",
+          "sha256": "f700ac55b56b2de10c3cdbba972373154868f0fafcf66539cd5c13da82624895"
+        },
+        "retained_cow_nodes_added_min_max": [
+          13,
+          13
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 8,
+          "typed_events": 8,
+          "wall_ns": 560944
+        },
+        "separate_successor_query_point_reads_min_max": [
+          16,
+          16
+        ],
+        "successful_native_admissions_including_warmup": 8,
+        "warmup_history_blocks": 0,
+        "witness_bytes_min_max": [
+          917,
+          917
+        ]
+      },
+      {
+        "accounts": 64,
+        "activation_median_interval_ns": [
+          4233535,
+          4619475
+        ],
+        "activation_min_max_ns": [
+          3740574,
+          6787685
+        ],
+        "activation_wall_ns_in_sample_order": [
+          4233535,
+          5795003,
+          4127826,
+          4795400,
+          6787685,
+          4079023,
+          4619475,
+          3740574
+        ],
+        "actual_witness_accounts_min_max": [
+          3,
+          3
+        ],
+        "admission_median_interval_ns": [
+          15809709,
+          16875212
+        ],
+        "admission_min_max_ns": [
+          13875051,
+          22564885
+        ],
+        "admission_wall_ns_in_sample_order": [
+          13875051,
+          15730219,
+          15809709,
+          16875212,
+          22564885,
+          18112071,
+          20047726,
+          14848955
+        ],
+        "cancelled_admission_wall_ns": 17782456,
+        "cancelled_header_ancestor_callbacks": 48,
+        "cancelled_rows_and_active_generation_equal": true,
+        "cold_complete_reference_equal": true,
+        "cold_reopen_wall_ns": 201589379,
+        "completed": true,
+        "disk_after_reopen": {
+          "file_bytes": {
+            "native.sqlite": 1658880,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 0
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "disk_before_close": {
+          "file_bytes": {
+            "native.sqlite": 4096,
+            "native.sqlite-shm": 32768,
+            "native.sqlite-wal": 3085912
+          },
+          "scope": "point sample; not peak disk, WAL, RSS or device memory"
+        },
+        "event_counts": {
+          "atomic_cancellation_completed": 1,
+          "atomic_cancellation_started": 1,
+          "cohort_completed": 1,
+          "cohort_started": 1,
+          "cold_reopen_started": 1,
+          "measurement_completed": 8,
+          "measurement_started": 8,
+          "native_stage_returned": 17,
+          "warmup_completed": 1,
+          "warmup_started": 16
+        },
+        "expanded_witnesses_allocated_min_max": [
+          0,
+          0
+        ],
+        "header_ancestor_callbacks_in_sample_order": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "header_callback_formula_verified": true,
+        "make_signed_packet_and_full_work_wall_ns_in_sample_order": [
+          10595500,
+          14196594,
+          9355315,
+          8741282,
+          35995268,
+          9855427,
+          10291518,
+          9278971
+        ],
+        "measurement_count": 8,
+        "native_stage_cpu_measurements_available": false,
+        "p99_ns": null,
+        "raw_file": {
+          "bytes": 49371,
+          "path": "validation/growth-scale-final-657bf2a/cohort-a64-h16.jsonl",
+          "sha256": "fc4e04ba2f6df88e70a8253e3c5eb35edd8eca63731d4d5e7e96e747540e56b1"
+        },
+        "retained_cow_nodes_added_min_max": [
+          13,
+          16
+        ],
+        "returned_accepted_stages": 16,
+        "returned_native_stages": 17,
+        "returned_rejected_stages": 1,
+        "separate_post_open_journal_differential": {
+          "latest_events": 1,
+          "latest_steps": 1,
+          "peak_event_rows": 2,
+          "semantic_events": 24,
+          "typed_events": 24,
+          "wall_ns": 524919
+        },
+        "separate_successor_query_point_reads_min_max": [
+          16,
+          16
+        ],
+        "successful_native_admissions_including_warmup": 24,
+        "warmup_history_blocks": 16,
+        "witness_bytes_min_max": [
+          917,
+          917
+        ]
+      },
+      {
+        "accounts": 64,
+        "completed": false,
+        "completion_or_return_invented": false,
+        "event_counts": {
+          "cohort_started": 1,
+          "warmup_started": 105
+        },
+        "last_record": {
+          "event": "warmup_started",
+          "index": 104,
+          "parent": "68c251e65e50a4210ac7d1578442ce4a66c2547677f257eb3ccbe97260eda623"
+        },
+        "measurement_count": 0,
+        "raw_file": {
+          "bytes": 12059,
+          "path": "validation/growth-scale-final-657bf2a/cohort-a64-h128.jsonl",
+          "sha256": "299999fe8d0935cceeb8025ad8ebc73d98eb5efadf98329f108b7824e63dbc3c"
+        },
+        "returned_accepted_stages": 0,
+        "returned_native_stages": 0,
+        "returned_rejected_stages": 0,
+        "warmup_history_blocks": 128,
+        "warmup_started_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100,
+          101,
+          102,
+          103,
+          104
+        ]
+      }
+    ],
+    "directory": "validation/growth-scale-final-657bf2a",
+    "exit_code": 101,
+    "libtest_summary": "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1115 filtered out; finished in 7.26s",
+    "log_file": {
+      "bytes": 110832,
+      "path": "validation/growth-scale-final.log",
+      "sha256": "711abd1369ec89ad9a7cb3f247e803848c3bb7354ca492b4f7c8381b0aa5af4f"
+    },
+    "official_reader": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_growth_scale_observation.py",
+        "/workspace/scratch/add353b13222/validation/growth-scale-final-657bf2a"
+      ],
+      "exit_code": 1,
+      "log_file": {
+        "bytes": 56,
+        "path": "validation/growth-scale-original-reader.log",
+        "sha256": "589f8b83fa640ceabe46a5766ef13580ed750aae6ba2300eaad36bc970fa91aa"
+      },
+      "output": {
+        "error": "exact cohort file set",
+        "result": "REFUSED"
+      },
+      "receipt_file": {
+        "bytes": 2327,
+        "path": "validation/growth-scale-original-reader.json",
+        "sha256": "bd1b45856c771397348209a798ea1c7bbc94a39b7884d50fcbb3c1c8f06e7bf7"
+      },
+      "recorder_elapsed_ns": 2882549510,
+      "source_before_equals_after": true,
+      "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+      "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+      "started_utc": "2026-11-05T10:24:32.228785+00:00",
+      "status": "command_failed",
+      "tracked_worktree_verified": true
+    },
+    "raw_files": [
+      {
+        "bytes": 47227,
+        "jsonl_records": 39,
+        "path": "validation/growth-scale-final-657bf2a/cohort-a64-h0.jsonl",
+        "sha256": "f700ac55b56b2de10c3cdbba972373154868f0fafcf66539cd5c13da82624895"
+      },
+      {
+        "bytes": 12059,
+        "jsonl_records": 106,
+        "path": "validation/growth-scale-final-657bf2a/cohort-a64-h128.jsonl",
+        "sha256": "299999fe8d0935cceeb8025ad8ebc73d98eb5efadf98329f108b7824e63dbc3c"
+      },
+      {
+        "bytes": 49371,
+        "jsonl_records": 55,
+        "path": "validation/growth-scale-final-657bf2a/cohort-a64-h16.jsonl",
+        "sha256": "fc4e04ba2f6df88e70a8253e3c5eb35edd8eca63731d4d5e7e96e747540e56b1"
+      },
+      {
+        "bytes": 1811,
+        "jsonl_records": 1,
+        "path": "validation/growth-scale-final-657bf2a/run.jsonl",
+        "sha256": "7f83947d84ae9ac0edff9d1983525f57147af248845df4bf72cfcf5ef29ef2d7"
+      }
+    ],
+    "receipt_file": {
+      "bytes": 2576,
+      "path": "validation/growth-scale-final.json",
+      "sha256": "07a79bcc3939e185540debc72cb3f787970da017604fc9bff1759eac3875e95d"
+    },
+    "recorder_elapsed_ns": 18948242854,
+    "run_completed": null,
+    "run_started": {
+      "accounts": [
+        64,
+        1024,
+        16384
+      ],
+      "cancelled_admission_timing_separate_from_successful_samples": true,
+      "completed": false,
+      "declared_transaction_owners": [
+        "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+        "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+        "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8"
+      ],
+      "event": "run_started",
+      "fixture_scope": "preallocated dormant accounts; real empty maintenance warmup history; original 65,536 signed growth gate remains separate",
+      "header_window_contract": {
+        "complete_admission_windows": 3,
+        "counter": "header_ancestors",
+        "maximum_ancestor_headers_per_window": 16,
+        "profile": "native-growth-single-header-window-v1",
+        "scope": "HeaderAncestor callbacks; excludes other SQL, epoch/schema checks, wall time and CPU"
+      },
+      "measured_blocks_per_cohort": 8,
+      "measurement_scope": "direct native Node only; no WAN, client confirmation, public admission qualification or throughput claim",
+      "native_stage_return_schema": "native-growth-stage-return-v1",
+      "native_stage_timing_scope": "wall only; no thread or process CPU measurement",
+      "p99_ns": null,
+      "return_journal_scope": "one flushed record per returned measured admission, activation and deliberate cancellation; journal IO is outside native stage timings but remains campaign cost; panic, kill and nonreturning calls have no invented return receipt",
+      "returned_native_stages_recorded_before_assertions": true,
+      "schema": "native-growth-fixed-owner-scale-observation-v3",
+      "setup_reference_diagnostics_and_journaling_excluded_from_native_stage_timings": true,
+      "sql_total_changes_include_rolled_back_writes": true,
+      "transaction": "one signed sender 0 to existing recipient 1, amount 1, consecutive nonce; miner 3",
+      "wall_time_acceptance_gate": false,
+      "warmup_history_blocks": [
+        0,
+        16,
+        128
+      ],
+      "work_search_attempt_limit": 4096,
+      "workers": 1
+    },
+    "source_before_equals_after": true,
+    "source_commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "source_tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73",
+    "started_utc": "2026-11-05T10:05:29.932468+00:00",
+    "status": "command_failed",
+    "totals": {
+      "cohort_files": 3,
+      "completed_cohorts": 2,
+      "completed_cold_reopens": 2,
+      "completed_deliberate_cancellations": 2,
+      "completed_measurements": 16,
+      "planned_cohorts": 9,
+      "returned_accepted_stages": 32,
+      "returned_native_stages": 34,
+      "returned_rejected_stages": 2,
+      "successful_admissions_in_completed_cohorts_including_warmup": 32
+    },
+    "tracked_worktree_verified": true
+  },
+  "original_failure_analysis": {
+    "best_supported_hypothesis": "A transient failure while writing the stderr mirror is compatible with the complete synced JSONL record, the 4096-aligned truncated mirror and later libtest summary. Rust eprintln can panic on stderr write failure. Exact OS error and original root cause were not captured.",
+    "deterministic_boundary_review": "The fixed candidate timestamps remain valid relative to now=100000 and strictly increasing median ancestry; classic measured expiry remains above height 137. Fixed 10-second spacing keeps the 16-header retarget interval at observed=desired=150. The retry completed the exact same warmup prefix and all original limits unchanged.",
+    "failing_cohort": {
+      "accounts": 64,
+      "warmup_history_blocks": 128
+    },
+    "first_FAILED_byte_offset_zero_based": 110592,
+    "first_FAILED_offset_divisible_by_4096": true,
+    "hypothesis_is_proven": false,
+    "last_complete_journal_record": {
+      "event": "warmup_started",
+      "index": 104,
+      "parent": "68c251e65e50a4210ac7d1578442ce4a66c2547677f257eb3ccbe97260eda623"
+    },
+    "last_mirrored_line_fragment": "{\"event\":\"warmup_started\",\"index\":104,\"parent\":\"68c251e65e50a4210ac7d1578442ce4a66c2547677f257eb3ccbe97260eda6",
+    "log_file_was_truncated_or_filtered_by_recorder": false,
+    "missing_return_policy": "Do not synthesize a native return or successful completion for the uncompleted original cohort.",
+    "missing_suffix_of_mirrored_line": "23\"}\n",
+    "not_established": [
+      "ENOSPC or any particular errno",
+      "W1 SEARCH_EXHAUSTED",
+      "make/admit returned an error at warmup index 104",
+      "deterministic fixture capacity or timestamp failure",
+      "a source regression"
+    ],
+    "official_rust_reference_url": "https://doc.rust-lang.org/std/macro.eprintln.html",
+    "original_statvfs_trace_available": false,
+    "os_errno_observed": null,
+    "panic_message_observed": false,
+    "recorder_behavior": "create-only binary log file; subprocess stdout points to it and stderr is redirected to stdout; no content filter or size cap in recorder",
+    "root_cause": "UNKNOWN",
+    "source_append_order": [
+      "serialize JSON into cohort JSONL",
+      "write newline",
+      "sync_all cohort JSONL",
+      "eprintln mirror to stderr",
+      "return to loop",
+      "make next packet",
+      "admit and activate packet"
+    ],
+    "source_panic_hook_audit": "No set_hook/take_hook occurrence in workspace Rust crates; no catch_unwind in the scale fixture/warmup path reviewed. This does not instrument the standard library or prove every dependency hook absent."
+  },
+  "retry_filesystem_monitor": {
+    "actual_adjacent_sample_gap_ns_min_median_max": [
+      633222,
+      50212314,
+      88703534
+    ],
+    "available_bytes_min_max": [
+      0,
+      0
+    ],
+    "exit_code": 0,
+    "first_sample": {
+      "available_bytes": 0,
+      "free_bytes": 2159104000,
+      "offset_ns": 19449
+    },
+    "formula": {
+      "available_bytes": "f_bavail * f_frsize",
+      "free_bytes": "f_bfree * f_frsize"
+    },
+    "free_bytes_min_max": [
+      1567744000,
+      2159104000
+    ],
+    "last_sample": {
+      "available_bytes": 0,
+      "free_bytes": 1646338048,
+      "offset_ns": 337031199090
+    },
+    "limitations": [
+      "Only the retry is monitored; no contemporaneous original-run trace exists.",
+      "Samples describe the whole filesystem containing the validation directory, including unrelated activity; they are not per-process disk use or peak allocation.",
+      "A roughly 50-ms sampling interval can miss shorter excursions and does not capture a failed write or its errno.",
+      "available_bytes=0 throughout a successful run does not itself prove a write failure or ENOSPC; free_bytes remained positive at every recorded sample.",
+      "The source records no shared monotonic timestamps for cohort events, so these samples are not assigned to individual native stages.",
+      "The monitor creates scheduling/filesystem overhead; its wall timings are not a paired performance control."
+    ],
+    "maximum_free_sample": {
+      "available_bytes": 0,
+      "free_bytes": 2159104000,
+      "offset_ns": 19449
+    },
+    "maximum_free_sample_index": 0,
+    "minimum_free_sample": {
+      "available_bytes": 0,
+      "free_bytes": 1567744000,
+      "offset_ns": 131294946427
+    },
+    "minimum_free_sample_index": 2566,
+    "monitor_source_file": {
+      "bytes": 1286,
+      "path": "monitor_growth_scale.py",
+      "sha256": "51dd98b7d52714be54e2af31fc19fb48f7a408c46b14152359deaf180b1bd9be"
+    },
+    "monitor_source_hash_matches_record": true,
+    "raw_file": {
+      "bytes": 690677,
+      "path": "validation/growth-scale-retry-space.json",
+      "sha256": "2f16e9f6592ba462170d37b02bd775bbd64c198e93cb7211969824efc587821f"
+    },
+    "requested_sample_interval_seconds": 0.05,
+    "sample_count": 6592,
+    "sample_span_ns": 337031179641,
+    "samples_with_zero_available_bytes": 6592,
+    "sampling_target": "/workspace/scratch/add353b13222/validation"
+  },
+  "schema": "native-growth-scale-independent-audit-v1",
+  "source": {
+    "commit": "657bf2a462ff13a6101ebcb4fbe0fb91c515c972",
+    "reviewed_files": [
+      {
+        "bytes": 32595,
+        "matches_tested_commit": true,
+        "path": "chain/trillionnium/crates/trnm-pon-node/src/store/growth/tests/scale_observation.rs",
+        "sha256": "5828aa9e90217c1bd5b7f1d7888c7da6aa79fd9f4986b17435f2b147fc05e8d0"
+      },
+      {
+        "bytes": 92421,
+        "matches_tested_commit": true,
+        "path": "chain/trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+        "sha256": "9189dca96f2d14802e54bbdc6c9a5d95bf6b5e9636863acd3dc6f44fcba2d2c6"
+      },
+      {
+        "bytes": 20098,
+        "matches_tested_commit": true,
+        "path": "chain/trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+      },
+      {
+        "bytes": 1964,
+        "matches_tested_commit": true,
+        "path": "chain/config/pon/devnet-v1.json",
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      {
+        "bytes": 4581,
+        "matches_tested_commit": true,
+        "path": "chain/scripts/ci/record_pq_native_command.py",
+        "sha256": "3cf16e76cae957cb34226a0d2118ac15bbe2d1946d3758efc9426c25612cdc39"
+      },
+      {
+        "bytes": 30332,
+        "matches_tested_commit": true,
+        "path": "chain/scripts/ci/check_growth_scale_observation.py",
+        "sha256": "33a9a4324a7de5357e021a3b6649143b057fdf8a0102eec76e7e84c340189d26"
+      }
+    ],
+    "tree": "7ce7ac50f788dd421e7cc0c9ddb957ade3e8df73"
+  },
+  "unchanged_native_input_contract": {
+    "account_counts": [
+      64,
+      1024,
+      16384
+    ],
+    "differences": [
+      "create-only observation output directory",
+      "external diagnostic monitor wrapper on retry"
+    ],
+    "fixture_time": {
+      "admission_observed_now": 100000,
+      "candidate_timestamp_formula": "1 + successor_height * 10",
+      "classic_transaction_expiry_height": 2000,
+      "genesis_timestamp": 1,
+      "maximum_deliberate_cancel_height": 137,
+      "maximum_successful_measured_height": 136,
+      "retarget_interval": 16,
+      "retarget_observed_equals_desired_seconds": 150,
+      "target_spacing_seconds": 10
+    },
+    "history_lengths": [
+      0,
+      16,
+      128
+    ],
+    "measurements_per_cohort": 8,
+    "same_binary_selector_and_native_arguments": true,
+    "selector": "store::growth::tests::scale_observation::native_growth_v2_fixed_owner_account_history_scale_observation",
+    "work_search_attempt_limit": 4096,
+    "workers": 1
+  }
+}
