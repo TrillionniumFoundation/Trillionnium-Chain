@@ -242,6 +242,18 @@ impl Node {
         observed_now: u64,
         progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
     ) -> Result<Hash> {
+        self.admit_growth_work_checked_with_worker_accounting(checked, observed_now, progress, &())
+    }
+
+    /// Public paid dispatch supplies its original scoped worker meter here.
+    /// Revalidation, SQL mutation and the durable commit keep the same owner.
+    pub(crate) fn admit_growth_work_checked_with_worker_accounting(
+        &mut self,
+        checked: GrowthWorkCheckedPacket,
+        observed_now: u64,
+        progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+        accounting: &dyn pon_executor::ExecutionWorkerAccounting,
+    ) -> Result<Hash> {
         let (packet, _verified_work) = checked.into_parts();
         if let Some(id) =
             self.precheck_growth_admission_with_progress(&packet, observed_now, progress)?
@@ -260,7 +272,14 @@ impl Node {
         self.check_growth_header_with_progress(&packet, observed_now, progress)?;
         let active_before = self.active()?;
         let parent = self.growth_parent(h.parent)?;
-        let mut executed = execute(&self.settings, &parent, &packet, progress)?;
+        let mut executed = execute_observed_with_workers(
+            &self.settings,
+            &parent,
+            &packet,
+            None,
+            (self.workers, accounting),
+            progress,
+        )?;
         ensure(
             h.state == executed.state.commitment.id
                 && h.receipts == sequence_root("receipts", &executed.receipts),

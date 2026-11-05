@@ -131,3 +131,32 @@ identify which missing predicate failed, and the independently reproduced
 cross-writer capture defect is not asserted to be that run's proven root cause.
 No service assertion, traffic window, queue, ticket, CPU budget or deadline is
 relaxed by the retention change.
+
+
+## Optional original CPU settlement observation
+
+Current public mutation dispatch fills the existing v4 `cpu_settle` slot around
+its actual original settlement, including the optional continuous journal tail.
+The optional `cpu_settlement` object has schema
+`public-v3-cpu-settlement-observation-v1`. Its four `*_cpu_known`/known sample
+flags, `budget_settled`, and nullable `continuous_journal_persisted` describe
+settlement facts; `has_control_authority` and
+`interval_is_additive_to_dispatch_cpu` are always false. A null journal value
+means this operation had no continuous scope. A missing object remains unknown
+or unentered and never inherits a positive settlement result from dispatch.
+
+The completed phase is successful only when owner, scoped-worker, live-paid and
+residual CPU are known, the original budget settled, and an actual journal did
+not fail. A known owner clock is insufficient. The existing native result,
+response signature and ACK remain factual even if subsequent settlement fails;
+failed accounting continues to fence future mutation under the original policy.
+Cancelled requests which actually acquired a permit also settle once. Reads,
+pre-dispatch cancellation and refused permit acquisition do not fabricate it.
+
+This interval starts before the original outer CPU stamp ends, then includes
+the original settlement/journal work after that stamp. It is neither wholly
+nested within dispatch CPU nor additive to that CPU. Response encoding includes
+response signing. The reader uses phase-specific scope for extended reports,
+validates exact diagnostic types and outcome consistency, and preserves the old
+v1/v2/v3/v4 derivation for reports without the extension. Per-stage retained
+percentiles still do not establish end-to-end business confirmation p99.

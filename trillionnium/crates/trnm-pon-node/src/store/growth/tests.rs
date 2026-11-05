@@ -8,6 +8,7 @@ use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_protocol::pon_wire::hash;
 
 mod header_window;
+mod parallel_preparation;
 mod scale_observation;
 
 fn base_settings() -> Settings {

@@ -20,9 +20,9 @@ mod work_arithmetic;
 use growth::ClientProfile;
 pub use growth::{call_public_protected_growth_v1, GROWTH_PROFILE};
 pub use request_observation::{
-    ApplicationFrameBytes, ApplicationFramePhase, PublicRequestObservation,
-    PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase, SubmitPhaseObservation,
-    MAX_REQUEST_OBSERVATION_RECORDS,
+    ApplicationFrameBytes, ApplicationFramePhase, PublicCpuSettlementObservation,
+    PublicRequestObservation, PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase,
+    SubmitPhaseObservation, MAX_REQUEST_OBSERVATION_RECORDS,
 };
 use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
 #[cfg(test)]
@@ -277,13 +277,26 @@ impl PaidMutationCpuPermit {
             settled: false,
         })
     }
-    // Settlement cannot replace an already completed native outcome or ACK.
+    #[cfg(test)]
     fn finish(
-        mut self,
+        self,
         measurement: &MutationCpuMeasurement,
         server: &PublicServer,
         metrics: &Mutex<PublicMetrics>,
     ) -> Option<u64> {
+        self.finish_observed(measurement, server, metrics, None)
+    }
+    // Settlement cannot replace an already completed native outcome or ACK.
+    // Observe the original finalization exactly once, including the original
+    // durable journal write. Neither the phase nor its facts grants CPU credit.
+    fn finish_observed(
+        mut self,
+        measurement: &MutationCpuMeasurement,
+        server: &PublicServer,
+        metrics: &Mutex<PublicMetrics>,
+        observation: Option<&TaskObservation>,
+    ) -> Option<u64> {
+        let phase = observation.map(|record| record.phase(SubmitPhase::CpuSettle));
         #[cfg(test)]
         if server
             .fail_next_live_cpu_finish
@@ -345,23 +358,41 @@ impl PaidMutationCpuPermit {
                     .saturating_add(measurement.response_ns.get().unwrap_or(0));
             }
         }
-        if let Some(scope) = measurement.continuous_scope.borrow_mut().take() {
-            let actual = ServiceMutationCpuSettlement {
-                schema: "service-owner-scoped-thread-cpu-settlement-v1",
-                owner_cpu_ns: outer,
-                scoped_worker_cpu_ns: children,
-                total_cpu_ns: charged,
-                live_paid_cpu_ns: already_charged,
-                residual_cpu_ns: residual,
-                spawned_workers: measurement.workers.spawned.load(Ordering::Acquire),
-                started_workers: measurement.workers.started.load(Ordering::Acquire),
-                finished_workers: measurement.workers.finished.load(Ordering::Acquire),
-                known_workers: measurement.workers.known.load(Ordering::Acquire),
-                live_refused,
-                accounting_unavailable: residual.is_none() || !budget_settled,
+        let journal_persisted =
+            if let Some(scope) = measurement.continuous_scope.borrow_mut().take() {
+                let actual = ServiceMutationCpuSettlement {
+                    schema: "service-owner-scoped-thread-cpu-settlement-v1",
+                    owner_cpu_ns: outer,
+                    scoped_worker_cpu_ns: children,
+                    total_cpu_ns: charged,
+                    live_paid_cpu_ns: already_charged,
+                    residual_cpu_ns: residual,
+                    spawned_workers: measurement.workers.spawned.load(Ordering::Acquire),
+                    started_workers: measurement.workers.started.load(Ordering::Acquire),
+                    finished_workers: measurement.workers.finished.load(Ordering::Acquire),
+                    known_workers: measurement.workers.known.load(Ordering::Acquire),
+                    live_refused,
+                    accounting_unavailable: residual.is_none() || !budget_settled,
+                };
+                // Journal failure latches future mutation. Native outcome/ACK remain factual.
+                Some(scope.finish(&actual))
+            } else {
+                None
             };
-            // Journal failure latches future mutation. Native outcome/ACK remain factual.
-            let _persisted = scope.finish(&actual);
+        if let (Some(record), Some(phase)) = (observation, phase) {
+            let actual = PublicCpuSettlementObservation::capture(
+                outer,
+                children,
+                already_charged,
+                residual,
+                budget_settled,
+                journal_persisted,
+            );
+            // This bool is the observed settlement result, not the earlier
+            // native result. A known owner clock alone does not establish it.
+            // No typed Err is invented from the journal's boolean return.
+            phase.finish(actual.succeeded());
+            record.settlement_finished(actual);
         }
         // The existing dispatch observer measures only its own actual thread.
         outer
@@ -2384,9 +2415,12 @@ fn serve_public_protected_v3_inner(
                             // Unknown accounting latches future mutation but never
                             // rewrites a completed native outcome or signed ACK.
                             let cpu = match accounting {
-                                Some((permit, measurement)) => {
-                                    permit.finish(&measurement, server, &metrics)
-                                }
+                                Some((permit, measurement)) => permit.finish_observed(
+                                    &measurement,
+                                    server,
+                                    &metrics,
+                                    observation.as_ref(),
+                                ),
                                 None => read_cpu.and_then(ThreadCpuStamp::finish),
                             };
                             if dispatch_started {
@@ -4246,16 +4280,19 @@ mod tests {
         let address = listener.local_addr().unwrap();
         let stop = Arc::new(AtomicBool::new(false));
         let metrics = Arc::new(Mutex::new(PublicMetrics::default()));
+        let observer = PublicRequestObserver::new(8).unwrap();
+        let records = observer.clone();
         let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
         let (signal, counters, node) = (stop.clone(), metrics.clone(), owner.clone());
         let worker = thread::spawn(move || {
-            serve_public_protected_v3_with_metrics(
+            serve_public_protected_v3_with_request_observer(
                 listener,
                 node,
                 Duration::from_secs(8),
                 signal,
                 PublicServer::new(identity(71), policy).unwrap(),
                 counters,
+                records,
             )
             .unwrap()
         });
@@ -4285,7 +4322,9 @@ mod tests {
         }
         // Initial Head was one task. Two Submit workers are waiting for this
         // actual owner lock, leaving the third preserved request in the queue.
-        wait_metric(&metrics, |m| m.tasks_enqueued == 4 && m.tasks_dequeued == 3);
+        wait_metric(&metrics, |m| {
+            m.tasks_enqueued == 4 && m.tasks_dequeued == 3 && m.mutation_cpu_reservations == 2
+        });
         sockets[0].shutdown(std::net::Shutdown::Write).unwrap();
         for socket in &sockets[1..] {
             socket.shutdown(std::net::Shutdown::Both).unwrap();
@@ -4323,6 +4362,53 @@ mod tests {
         assert_eq!(m.completed_submit, 1);
         assert_eq!(m.mutating_grants_after_shutdown, 0);
         assert_eq!(m.output_reserved_bytes_after_shutdown, 0);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        assert_eq!(m.mutation_cpu_reservations, 3);
+        assert_eq!(
+            snapshot
+                .records
+                .iter()
+                .filter(|row| row.cpu_settlement.is_some())
+                .count(),
+            3,
+            "both actually dispatched cancellations and the later success settle once"
+        );
+        let abandoned: Vec<_> = snapshot
+            .records
+            .iter()
+            .filter(|row| row.dispatch_error_code == Some("PUBLIC_REQUEST_CANCELLED"))
+            .collect();
+        assert_eq!(abandoned.len(), 2);
+        for row in abandoned {
+            assert_eq!(row.dispatch_accepted, Some(false));
+            assert!(!row.response_frame_complete);
+            assert!(!row.full_work_started);
+            let phase = row
+                .submit_phases
+                .iter()
+                .find(|phase| phase.phase == SubmitPhase::CpuSettle)
+                .unwrap();
+            assert!(phase.started && phase.completed);
+            assert_eq!(phase.accepted, Some(true));
+            assert!(phase.wall_ns.is_some());
+            assert!(row.cpu_settlement.unwrap().budget_settled);
+        }
+        let skipped: Vec<_> = snapshot
+            .records
+            .iter()
+            .filter(|row| row.operation == Some(1) && !row.dispatch_started)
+            .collect();
+        assert_eq!(skipped.len(), 1);
+        assert!(skipped[0].cpu_settlement.is_none());
+        assert!(
+            !skipped[0]
+                .submit_phases
+                .iter()
+                .find(|phase| phase.phase == SubmitPhase::CpuSettle)
+                .unwrap()
+                .started
+        );
     }
     #[test]
     fn disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work() {
@@ -6397,15 +6483,18 @@ mod tests {
             server
                 .fail_next_live_cpu_finish
                 .store(fail_at_live_finish, Ordering::Release);
+            let observer = PublicRequestObserver::new(8).unwrap();
+            let records = observer.clone();
             let (node, signal, counters) = (owner.clone(), stop.clone(), metrics.clone());
             let worker = thread::spawn(move || {
-                serve_public_protected_v3_with_metrics(
+                serve_public_protected_v3_with_request_observer(
                     listener,
                     node,
                     Duration::from_secs(8),
                     signal,
                     server,
                     counters,
+                    records,
                 )
                 .unwrap()
             });
@@ -6478,6 +6567,41 @@ mod tests {
             } else {
                 assert!(m.mutation_cpu_charged_ns > 0);
             }
+            let snapshot = observer.snapshot();
+            assert!(snapshot.coverage_complete());
+            assert_eq!(
+                snapshot
+                    .records
+                    .iter()
+                    .filter(|row| row.cpu_settlement.is_some())
+                    .count(),
+                1,
+                "refused CPU starts and reads have no mutation settlement"
+            );
+            let row = snapshot
+                .records
+                .iter()
+                .find(|row| row.full_work_accepted == Some(true))
+                .unwrap();
+            assert_eq!(row.dispatch_accepted, Some(true));
+            assert!(row.response_frame_complete);
+            let phase = row
+                .submit_phases
+                .iter()
+                .find(|phase| phase.phase == SubmitPhase::CpuSettle)
+                .unwrap();
+            assert!(phase.started && phase.completed);
+            assert_eq!(phase.accepted, Some(!failed_clock));
+            assert_eq!(phase.error_code, None);
+            assert!(phase.wall_ns.is_some() && phase.thread_cpu_ns.is_some());
+            let actual = row.cpu_settlement.unwrap();
+            assert_eq!(actual.owner_cpu_known, !fail_at_finish);
+            assert!(actual.scoped_worker_cpu_known);
+            assert_eq!(actual.live_paid_cpu_known, !fail_at_live_finish);
+            assert_eq!(actual.residual_cpu_known, !failed_clock);
+            assert_eq!(actual.budget_settled, !failed_clock);
+            assert_eq!(actual.continuous_journal_persisted, None);
+            assert_eq!(row.dispatch_thread_cpu_ns.is_some(), !fail_at_finish);
             println!(
                 "r5 postclockfailure={fail_at_finish} metrics={}",
                 serde_json::to_string(&m).unwrap()
@@ -7833,14 +7957,35 @@ mod paid_settlement_consistency_tests {
         let metrics = Mutex::new(PublicMetrics::default());
         let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
         let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
         // Actual local corruption at the reservation boundary; not a forged
         // remote proof. Keep known CPU and the already completed Native fact.
         server.mutation_cpu.lock().unwrap().in_flight = 0;
-        assert!(permit.finish(&measurement, &server, &metrics).is_some());
+        assert!(permit
+            .finish_observed(&measurement, &server, &metrics, Some(&task))
+            .is_some());
         let observed = metrics.lock().unwrap();
         assert_eq!(observed.mutation_cpu_clock_failures, 1);
         assert!(observed.mutation_cpu_charged_ns > 0);
         assert!(!server.mutation_cpu_domain().accounting_available());
+        drop((task, connection));
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        let row = &snapshot.records[0];
+        let phase = row
+            .submit_phases
+            .iter()
+            .find(|phase| phase.phase == SubmitPhase::CpuSettle)
+            .unwrap();
+        assert!(phase.started && phase.completed);
+        assert_eq!(phase.accepted, Some(false));
+        let actual = row.cpu_settlement.unwrap();
+        assert!(actual.owner_cpu_known && actual.scoped_worker_cpu_known);
+        assert!(actual.live_paid_cpu_known && actual.residual_cpu_known);
+        assert!(!actual.budget_settled);
+        assert_eq!(actual.continuous_journal_persisted, None);
     }
 
     #[test]

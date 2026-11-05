@@ -11,6 +11,14 @@ struct Fixture {
     _directory: tempfile::TempDir,
 }
 
+fn account_prefix_rows(state: &State) -> usize {
+    // Independent complete walk for the expected count, outside measurements.
+    state
+        .keys()
+        .filter(|key| key.starts_with("account:"))
+        .count()
+}
+
 fn fixture(extra_accounts: u64) -> Fixture {
     let directory = tempfile::tempdir().unwrap();
     let mut settings = Settings::development_with_profiles(
@@ -113,20 +121,20 @@ fn cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints() {
         let reference = verify(node, state, None, None);
         assert!(reference.0.is_ok(), "{reference:?}");
         let reference_parses = take_account_parse_observation();
-        assert_eq!(reference_parses, (2, state.len() * 2));
+        assert_eq!(reference_parses, (2, account_prefix_rows(state) * 2));
 
         let cache = ArithmeticCache::default();
         let cold = verify(node, state, Some(&cache), None);
         assert_eq!(cold, reference);
         let cold_parses = take_account_parse_observation();
-        assert_eq!(cold_parses, (1, state.len()));
+        assert_eq!(cold_parses, (1, account_prefix_rows(state)));
 
         // A complete-cache hit retains no account projection. The real graph
-        // still parses the complete actual State, with every original callback.
+        // still parses every actual account, with every original graph callback.
         let warm = verify(node, state, Some(&cache), None);
         assert_eq!(warm, reference);
         let warm_parses = take_account_parse_observation();
-        assert_eq!(warm_parses, (1, state.len()));
+        assert_eq!(warm_parses, (1, account_prefix_rows(state)));
         assert_eq!(node.db.total_changes(), changes);
 
         // Use two fresh arithmetic caches in the same actual writer. The control
@@ -171,7 +179,7 @@ fn cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints() {
         assert_eq!(scoped_control.1, reference_parses);
         let scoped_current = run_scoped(true);
         assert_eq!(scoped_current.0, scoped_control.0);
-        assert_eq!(scoped_current.1, (1, state.len()));
+        assert_eq!(scoped_current.1, (1, account_prefix_rows(state)));
         node.db.execute_batch("ROLLBACK").unwrap();
         assert_eq!(node.db.total_changes(), changes);
 
@@ -180,6 +188,7 @@ fn cold_complete_reuses_actual_account_parse_and_keeps_all_graph_checkpoints() {
             json!({
                 "schema": "trnm-current-account-parse-observation-v1",
                 "state_keys": state.len(),
+                "account_prefix_keys": account_prefix_rows(state),
                 "extra_zero_balance_accounts": extra_accounts,
                 "reference_parser_calls": reference_parses.0,
                 "reference_scanned_rows": reference_parses.1,
@@ -220,7 +229,10 @@ fn current_projection_is_bound_to_exact_state_and_never_hides_account_changes() 
         None,
     );
     assert!(identical_result.0.is_ok());
-    assert_eq!(take_account_parse_observation(), (1, identical.len()));
+    assert_eq!(
+        take_account_parse_observation(),
+        (1, account_prefix_rows(&identical))
+    );
 
     let account_key = state
         .keys()
@@ -450,7 +462,7 @@ fn cold_full_validation_projection_abba_observation_without_timing_gate() {
                 assert_eq!(result, expected);
                 let expected_calls = if reuse { 1 } else { 2 };
                 assert_eq!(parser_calls, expected_calls);
-                assert_eq!(scanned_rows, expected_calls * state.len());
+                assert_eq!(scanned_rows, expected_calls * account_prefix_rows(state));
                 samples.push(json!({
                     "round": round,
                     "reuse_current_accounts": reuse,
@@ -466,6 +478,7 @@ fn cold_full_validation_projection_abba_observation_without_timing_gate() {
             json!({
                 "schema": "trnm-current-account-full-validation-observation-v1",
                 "state_keys": state.len(),
+                "account_prefix_keys": account_prefix_rows(state),
                 "extra_zero_balance_accounts": extra_accounts,
                 "samples": samples,
                 "scope": "complete verify_state_with_cache call with fresh identical arithmetic caches, current record/block/delta checks, all roots and full SQL account graph; test-only parser counters are compiled in",

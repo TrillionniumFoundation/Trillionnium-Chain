@@ -887,3 +887,26 @@ Every original attack count, two-second client deadline, CPU/RAM setting,
 confirmation denominator and genuine depletion condition remains unchanged.
 Deep roots and individual SQLite operations remain cooperative observation
 intervals rather than hard CPU preemption; all observed overruns remain paid.
+
+
+## Metered preparation and post-dispatch settlement continuation
+
+The [native execution continuation](../../../../evidence/pon-six-axis-execution-v1/README.md)
+adds actual Growth signature preparation workers, exact account-prefix parser
+visits, original CPU settlement observations and TCQ2 exhaustion checks. Its
+reproduction record separates real runs, interrupted attempts and unexecuted
+recipes. No inherited benchmark qualifies the changed composition.
+
+For Growth 1/2/4/8 comparisons, retain the same signed transactions, parent/proof,
+state, total CPU budget and original deadline. Verify identical roots and nonce,
+fee, debt, reward, cancellation, rollback and cold-replay behavior before claiming
+speedup. Proof-account access and state effects remain canonical under the unique
+commit owner; all scoped workers are joined and charged. There is no PQ signature
+aggregation claim. The default remains one preparation worker.
+
+CPU settlement/journal time is explicitly observed without rewriting native ACKs.
+Its partial overlap with the original dispatch CPU sample prevents addition of
+the two. Cell tests use actual consumed bytes, not temporary reservation totals,
+and retain joined worker drain under original deadlines. Parser/component or
+loopback tests cannot close original four-second/16-hostile-W1 confirmation,
+4,105-block history, full-request p99 or cross-process host isolation.

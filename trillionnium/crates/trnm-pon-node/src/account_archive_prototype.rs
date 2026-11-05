@@ -16,6 +16,8 @@ use std::path::Path;
 use trnm_mvcc_fee::pon_executor::{self, State};
 use trnm_protocol::pon_wire::{hash, Hash};
 
+#[cfg(test)]
+mod account_prefix_tests;
 pub mod multiproof;
 #[cfg(test)]
 mod native_primitive_tests;
@@ -996,8 +998,8 @@ impl Drop for AccountParseObservation {
     }
 }
 
-/// Test-only actual parser invocations and visited State rows, including failed
-/// parses. Thread-local counters keep independent fixture threads separate.
+/// Test-only actual parser invocations and visited account-prefix rows, including
+/// failed parses. Thread-local counters keep independent fixture threads separate.
 #[cfg(test)]
 pub(crate) fn take_account_parse_observation() -> (usize, usize) {
     ACCOUNT_PARSE_COUNTS.with(|counts| counts.replace((0, 0)))
@@ -1007,7 +1009,14 @@ pub(crate) fn accounts(state: &State) -> Result<BTreeMap<Hash, Account>> {
     #[cfg(test)]
     let mut observation = AccountParseObservation::default();
     let mut out = BTreeMap::new();
-    for (key, value) in state {
+    // String ordering makes this half-open range exactly the complete
+    // `account:` prefix, including malformed suffixes. Seek past unrelated
+    // working rows; preserve the original account order and every parser check.
+    // This is a local State traversal, not a proof or a cached validity result.
+    for (key, value) in state.range::<str, _>((
+        std::ops::Bound::Included("account:"),
+        std::ops::Bound::Excluded("account;"),
+    )) {
         #[cfg(test)]
         {
             observation.rows += 1;

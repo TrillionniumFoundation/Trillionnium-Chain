@@ -236,7 +236,17 @@ impl Node {
     /// An explicitly selected fresh native namespace; the existing owner lock,
     /// WAL/FULL durability and atomic initialization remain in force.
     pub fn open_with_permanent_account_growth_v2(path: &Path, settings: Settings) -> Result<Self> {
-        Self::open_growth_selected(path, settings, false)
+        Self::open_growth_selected(path, settings, false, 1)
+    }
+    /// Select a bounded preparation pool. Only signatures/preparation use these
+    /// workers; the existing Node owner still serializes all state and commits.
+    /// The default opener and independent cold replay retain one worker.
+    pub fn open_with_permanent_account_growth_v2_and_workers(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+    ) -> Result<Self> {
+        Self::open_growth_selected(path, settings, false, workers)
     }
     /// Observe a locked existing namespace through a private SQLite snapshot.
     /// Any source WAL/SHM/rollback journal requires ordinary writer recovery.
@@ -261,7 +271,7 @@ impl Node {
             "OWNER_TASK_POLICY_REQUIRED",
         )?;
         let snapshot = observer::Snapshot::create(path, snapshot_byte_limit)?;
-        let mut node = Self::open_growth_selected(snapshot.path(), settings, true)?;
+        let mut node = Self::open_growth_selected(snapshot.path(), settings, true, 1)?;
         snapshot.check()?;
         node.growth_observer_snapshot = Some(snapshot);
         Ok(node)
@@ -270,7 +280,9 @@ impl Node {
         path: &Path,
         settings: Settings,
         observation_only: bool,
+        workers: usize,
     ) -> Result<Self> {
+        ensure([1, 2, 4, 8].contains(&workers), "GROWTH_WORKERS")?;
         profile::require(&settings)?;
         ensure(
             !super::owner_marker_present(path)?,
@@ -279,7 +291,7 @@ impl Node {
         Self::open_selected(
             path,
             settings,
-            1,
+            workers,
             None,
             NativeOwners {
                 policy: None,
@@ -628,6 +640,17 @@ fn execute_observed(
     observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
     progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
 ) -> Result<Executed> {
+    execute_observed_with_workers(settings, parent, packet, observer, (1, &()), progress)
+}
+
+fn execute_observed_with_workers(
+    settings: &Settings,
+    parent: &Parent,
+    packet: &GrowthPacket,
+    observer: Option<&dyn pon_executor::CanonicalTransitionObserver>,
+    preparation: (usize, &dyn pon_executor::ExecutionWorkerAccounting),
+    progress: &(impl Fn(GrowthProgress) -> Result<()> + Sync),
+) -> Result<Executed> {
     let checked = CheckedMultiproof::verify_with_progress(
         context(settings),
         &parent.checkpoint,
@@ -675,7 +698,7 @@ fn execute_observed(
     // one original control error locally and restore it before interpreting
     // that legacy result; never retry or overwrite a failed control operation.
     let mut commitment_control_error = None;
-    let result = limits::execute_with_commitment_observed(
+    let result = limits::execute_with_commitment_observed_control(
         &view,
         pon_executor::BlockExecution {
             timestamp: None,
@@ -683,7 +706,7 @@ fn execute_observed(
             height: h.height,
             miner: h.miner,
             parent_id: h.parent,
-            workers: 1,
+            workers: preparation.0,
         },
         &settings.app,
         limits::GrowthExecutionInputs {
@@ -711,7 +734,10 @@ fn execute_observed(
                 }
             }
         },
-        &|point| progress(GrowthProgress::Execution(point)),
+        &pon_executor::ExecutionControl::new(
+            &|point| progress(GrowthProgress::Execution(point)),
+            preparation.1,
+        ),
     );
     if let Some(error) = commitment_control_error {
         return Err(error);

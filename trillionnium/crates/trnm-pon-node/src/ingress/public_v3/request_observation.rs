@@ -104,8 +104,58 @@ impl Default for RequestErrorDiagnostics {
     }
 }
 
+/// Additive, local settlement facts. The existing CpuSettle span measures the
+/// actual call through the original budget/journal result, including refusal.
+/// It overlaps the end of the existing dispatch CPU sample; never add the two.
+/// An absent extension is unknown/unentered, not a successful settlement.
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct PublicCpuSettlementObservation {
+    schema: &'static str,
+    pub owner_cpu_known: bool,
+    pub scoped_worker_cpu_known: bool,
+    pub live_paid_cpu_known: bool,
+    pub residual_cpu_known: bool,
+    pub budget_settled: bool,
+    /// None means this operation had no continuous-owner journal scope.
+    pub continuous_journal_persisted: Option<bool>,
+    has_control_authority: bool,
+    interval_is_additive_to_dispatch_cpu: bool,
+}
+impl PublicCpuSettlementObservation {
+    pub(super) fn capture(
+        owner_cpu: Option<u64>,
+        scoped_worker_cpu: Option<u64>,
+        live_paid_cpu: Option<u64>,
+        residual_cpu: Option<u64>,
+        budget_settled: bool,
+        continuous_journal_persisted: Option<bool>,
+    ) -> Self {
+        Self {
+            schema: "public-v3-cpu-settlement-observation-v1",
+            owner_cpu_known: owner_cpu.is_some(),
+            scoped_worker_cpu_known: scoped_worker_cpu.is_some(),
+            live_paid_cpu_known: live_paid_cpu.is_some(),
+            residual_cpu_known: residual_cpu.is_some(),
+            budget_settled,
+            continuous_journal_persisted,
+            has_control_authority: false,
+            interval_is_additive_to_dispatch_cpu: false,
+        }
+    }
+    pub(super) fn succeeded(&self) -> bool {
+        self.owner_cpu_known
+            && self.scoped_worker_cpu_known
+            && self.live_paid_cpu_known
+            && self.residual_cpu_known
+            && self.budget_settled
+            && self.continuous_journal_persisted != Some(false)
+    }
+}
+
 /// Fixed local phases. Native/response phases are nested within dispatch; the
-/// initial CPU reservation wait precedes dispatch. None is CPU credit.
+/// initial CPU reservation wait precedes dispatch. CpuSettle overlaps the final
+/// dispatch CPU sample and continues through budget/journal settlement. None is
+/// CPU credit and overlapping samples must not be added together.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SubmitPhase {
@@ -282,6 +332,8 @@ pub struct PublicRequestObservation {
     pub dispatch_error_code: Option<&'static str>,
     pub error_diagnostics: RequestErrorDiagnostics,
     pub dispatch_thread_cpu_ns: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cpu_settlement: Option<PublicCpuSettlementObservation>,
     pub submit_phases: [SubmitPhaseObservation; 19],
     pub challenge_wait: RequestWaitObservation,
     pub grant_wait: RequestWaitObservation,
@@ -329,6 +381,7 @@ impl PublicRequestObservation {
             dispatch_error_code: None,
             error_diagnostics: RequestErrorDiagnostics::default(),
             dispatch_thread_cpu_ns: None,
+            cpu_settlement: None,
             submit_phases: submit_phases(),
             challenge_wait: RequestWaitObservation::default(),
             grant_wait: RequestWaitObservation::default(),
@@ -360,6 +413,7 @@ struct TaskProgress {
     dispatch_error_code: Option<&'static str>,
     dispatch_error_diagnostic: Option<ObservedErrorDiagnostic>,
     dispatch_thread_cpu_ns: Option<u64>,
+    cpu_settlement: Option<PublicCpuSettlementObservation>,
     paid_task_queue_wait: RequestWaitObservation,
 }
 struct Cell {
@@ -473,6 +527,7 @@ impl PublicRequestObserver {
                         value.dispatch_error_code = task.dispatch_error_code;
                         value.error_diagnostics.dispatch = task.dispatch_error_diagnostic;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
+                        value.cpu_settlement = task.cpu_settlement;
                         value.paid_task_queue_wait = task.paid_task_queue_wait;
                     }
                     Err(_) => {
@@ -782,6 +837,15 @@ impl TaskObservation {
         self.update_task(|r| {
             r.dispatch_thread_cpu_ns = cpu;
             r.dispatch_accepted = Some(accepted);
+        });
+    }
+    pub(super) fn settlement_finished(&self, actual: PublicCpuSettlementObservation) {
+        self.update_task(|r| {
+            if r.cpu_settlement.is_some() {
+                self.measurement_failed();
+            } else {
+                r.cpu_settlement = Some(actual);
+            }
         });
     }
     pub(super) fn dispatch_error(&self, error: &crate::Error) {
