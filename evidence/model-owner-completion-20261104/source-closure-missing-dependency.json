@@ -1,0 +1,56 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_llm_base_source_closure",
+    "test_llm_inherited_runtime",
+    "test_llm_runtime_parent_step",
+    "test_llm_runtime_parent_step_v2",
+    "test_llm_neural_read_worker",
+    "test_llm_runtime_candidate_observation_v1",
+    "test_llm_cell_release",
+    "scripts.ci.test_llm_cell_host_handoff.MissingOwnerTests"
+  ],
+  "elapsed_ns": 50069988066,
+  "exit_code": 1,
+  "log": {
+    "bytes": 15263,
+    "path": "/workspace/scratch/f4976366a32a/model-pilot-cost-audit/source-closure-regressions.log",
+    "sha256": "a49893851befece911f3e1938a55a306b26d250de3a3c1e5757298e6952495e2"
+  },
+  "model_executed": false,
+  "original_new_test_failure": {
+    "case": "candidate observer source gate",
+    "detail": "New test called nonexistent _original_training; corrected to actual _producer. Production code unchanged by correction.",
+    "error_type": "AttributeError",
+    "original_counts": {
+      "errors": 1,
+      "passed": 7,
+      "tests": 8
+    }
+  },
+  "schema": "local-source-closure-controls-v1",
+  "scope": "source-admission-and-existing-parser-controls-no-model-no-native-export-no-qualification",
+  "source_sha256_after": {
+    "scripts/llm_cell_host_handoff.py": "3721be33cd7ccd6b6b31f040c9dc707790cc80ff34c25e90ac52e820f0c04f57",
+    "scripts/llm_cell_release.py": "77b61ea2e4a135eab5fa20ed3f26439295f6a9a76f10f04720aae11ee4225216",
+    "scripts/llm_inherited_runtime.py": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+    "scripts/llm_initial_trainable_setup_v2.py": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+    "scripts/llm_runtime_parent_step.py": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+    "scripts/test_llm_base_source_closure.py": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c"
+  },
+  "source_sha256_before": {
+    "scripts/llm_cell_host_handoff.py": "3721be33cd7ccd6b6b31f040c9dc707790cc80ff34c25e90ac52e820f0c04f57",
+    "scripts/llm_cell_release.py": "77b61ea2e4a135eab5fa20ed3f26439295f6a9a76f10f04720aae11ee4225216",
+    "scripts/llm_inherited_runtime.py": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+    "scripts/llm_initial_trainable_setup_v2.py": "f5efaed18989631d4453357e36d839e8f5adc64dfd7d7121d1e6921a5473de79",
+    "scripts/llm_runtime_parent_step.py": "e5034a325645e73df977305eb0286a1d3319d52d13d3690ad79d68f171dd0c31",
+    "scripts/test_llm_base_source_closure.py": "253bb9b4343f30c6da3e913a574fd30749bb8ee1243e759ad14be7369c7fe57c"
+  },
+  "source_unchanged": true,
+  "trial_initialized": false,
+  "trial_reserved": false
+}

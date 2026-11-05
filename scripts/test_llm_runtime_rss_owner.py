@@ -583,24 +583,60 @@ class RssSupervisionTests(unittest.TestCase):
 
     def test_actual_child_delayed_exit_requires_owned_pidfd_and_exact_wait4(self):
         original_wait4 = runtime.os.wait4
+        original_child = runtime._Wait4Child
         injected = 0
+        children, waits, terminal = [], [], []
+
+        def terminal_ready_child(*args, **kwargs):
+            child = original_child(*args, **kwargs)
+            children.append(child)
+            try:
+                # Synchronize the positive fixture on this real owned pidfd,
+                # without reaping. Python startup is not assumed to fit the
+                # 50ms unproved-RSS window. This wait stays inside supervise's
+                # original wall budget and never supplies a wait4 receipt.
+                self.assertIsNotNone(child.termination_fd)
+                ready, _, _ = select.select([child.termination_fd], [], [], self.BUDGET['wall_seconds'])
+                self.assertEqual(ready, [child.termination_fd], 'fixture child did not reach owned terminal readiness')
+                self.assertFalse(child.reaped)
+                return child
+            except BaseException:
+                child.finish()
+                raise
 
         def initial_nonterminal(pid, options):
             nonlocal injected
+            waits.append((pid, options))
             if injected < 2:
                 injected += 1
                 return 0, 0, None
-            return original_wait4(pid, options)
+            result = original_wait4(pid, options)
+            if result[0] == pid:
+                terminal.append(result)
+            return result
 
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary) / 'actual-delayed-exit'
-            with patch.object(runtime.os, 'wait4', side_effect=initial_nonterminal), \
-                    patch.object(runtime, 'current_rss', return_value=None):
+            with patch.object(runtime, '_Wait4Child', side_effect=terminal_ready_child), \
+                    patch.object(runtime.os, 'wait4', side_effect=initial_nonterminal), \
+                    patch.object(runtime, 'current_rss', return_value=None) as observed:
                 result = runtime.supervise([sys.executable, '-c', 'print("done")'], directory, self.BUDGET)
             self.assertEqual((result['outcome'], result['stop_reason']), ('success', None))
             self.assertEqual(result['exit_code'], 0)
             self.assertTrue(result['waited_child_reaped'])
+            self.assertTrue(result['owned_child_reap_resolved'])
+            self.assertIsNone(result['waited_child_observation_error'])
+            self.assertEqual(injected, 2)
+            self.assertEqual(len(children), 1)
+            self.assertEqual({pid for pid, _ in waits}, {children[0].pid})
+            self.assertEqual(len(terminal), 1)
+            self.assertEqual(terminal[0][0], children[0].pid)
             self.assertGreater(result['waited_child_peak_rss_bytes'], 0)
+            self.assertEqual(result['waited_child_peak_rss_bytes'], terminal[0][2].ru_maxrss * 1024)
+            self.assertEqual(result['child_cpu_ns'], round((terminal[0][2].ru_utime + terminal[0][2].ru_stime) * 10**9))
+            self.assertEqual(result['sampled_peak_rss_bytes'], 0)
+            observed.assert_called_once_with(children[0].pid)
+            self.assert_receipt(directory, result)
 
     def test_terminal_receipt_cannot_bypass_wall_deadline(self):
         child = self.child_control()
