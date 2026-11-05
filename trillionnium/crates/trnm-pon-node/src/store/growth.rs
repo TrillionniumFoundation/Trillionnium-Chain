@@ -135,7 +135,15 @@ fn delta_hash(deltas: &[Delta]) -> Result<Hash> {
         &[&canonical(&deltas)?],
     ))
 }
+#[cfg(test)]
 fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
+    difference_with_progress(before, after, &|_| Ok(()))
+}
+fn difference_with_progress(
+    before: &State,
+    after: &State,
+    progress: &impl Fn(GrowthProgress) -> Result<()>,
+) -> Result<Vec<Delta>> {
     // Both immutable inputs already have canonical key order. Merge their
     // iterators instead of allocating a third key tree and looking up each
     // value again. Keep the original Value comparison BEFORE serialization:
@@ -145,7 +153,11 @@ fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
     let mut prior = left.next();
     let mut next = right.next();
     let mut deltas = Vec::new();
+    let mut index = 0;
     loop {
+        // Includes the final boundary: an expired/cancelled request cannot
+        // return a complete delta after its last value comparison/encoding.
+        progress(GrowthProgress::DeltaComparison { index })?;
         let (key, old, new) = match (prior, next) {
             (Some((old_key, old_value)), Some((new_key, new_value))) => {
                 match old_key.cmp(new_key) {
@@ -174,6 +186,7 @@ fn difference(before: &State, after: &State) -> Result<Vec<Delta>> {
             }
             (None, None) => break,
         };
+        index += 1;
         if old != new {
             deltas.push((
                 key.clone(),
@@ -668,8 +681,30 @@ fn execute_observed_with_workers(
         checked.len() <= limits::MAX_WITNESS_ACCOUNTS,
         "GROWTH_WITNESS_LIMIT",
     )?;
-    let mut view = parent.source.stored.working.clone();
-    for (owner, value) in checked.values() {
+    // Reuse the original public request control while materializing this
+    // bounded working partition. One full clone would defer cancellation and
+    // the live CPU check until all retained values had been copied.
+    // Collect fallibly before bulk map construction: Result<State> would
+    // still sort/build the successful prefix after its iterator reports Err.
+    // The temporary pair buffer is bounded by the existing working limits;
+    // the bulk construction itself is not interruptible.
+    let copied = parent
+        .source
+        .stored
+        .working
+        .iter()
+        .enumerate()
+        .map(|(index, (key, value))| {
+            progress(GrowthProgress::WorkingCopy { index })?;
+            Ok((key.clone(), value.clone()))
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let mut view: State = copied.into_iter().collect();
+    progress(GrowthProgress::WorkingCopy {
+        index: parent.source.stored.working.len(),
+    })?;
+    for (index, (owner, value)) in checked.values().enumerate() {
+        progress(GrowthProgress::WitnessAccount { index })?;
         if let Some(value) = value {
             view.insert(
                 format!("account:{}", hex::encode(owner)),
@@ -677,6 +712,9 @@ fn execute_observed_with_workers(
             );
         }
     }
+    progress(GrowthProgress::WitnessAccount {
+        index: checked.len(),
+    })?;
     let accessed = Mutex::new(BTreeSet::new());
     let access = |who: &str| -> pon_executor::Result<()> {
         let owner = crate::digest(who).map_err(|_| "GROWTH_ACCOUNT_KEY")?;
@@ -765,8 +803,12 @@ fn execute_observed_with_workers(
         native_growth::NativeGrowthFailure::Relation(error) => execution_error(error),
         native_growth::NativeGrowthFailure::Control(error) => error,
     })?;
-    let deltas = difference(&view, &output.state)?;
+    let deltas = difference_with_progress(&view, &output.state, progress)?;
+    // The canonical encoding and hash stay byte-identical to the original
+    // profile. Boundaries do not claim interruption inside serde or hashing.
+    progress(GrowthProgress::BeforeDeltaEncoding)?;
     let deltas_hash = delta_hash(&deltas)?;
+    progress(GrowthProgress::AfterDeltaEncoding)?;
     // All fallible checks consumed the full executed state. Move its working
     // partition into storage instead of cloning every retained key and value.
     let mut working = output.state;
