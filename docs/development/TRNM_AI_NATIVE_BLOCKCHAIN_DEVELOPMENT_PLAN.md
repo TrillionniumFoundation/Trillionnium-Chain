@@ -17,6 +17,31 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
+Continue the existing #688 candidate from
+`6ee529046d295e3175f09112492abee373f1f54c`. Retain the full verification already
+performed during native multiproof construction for the same read operation;
+keep the original context, authenticated parent, snapshot and storage-epoch
+checks. End the read transaction before the final epoch check, so a foreign WAL
+commit during the snapshot cannot hide behind snapshot-local `data_version`.
+No verified witness becomes a current-authority cache. Growth's common M06 input
+now carries the actual PGH2 header timestamp through construction, admission and
+retained/cold replay. Classic output compatibility and real PQ expiry checks are
+separate controls; classical Growth wire, PQ owner/profile composition and
+complete migration remain unclosed interfaces.
+
+Retain deterministic reverse-order preparation tests with shared task payer,
+receipt-before-settlement dependencies, provider spends and one reward/commit
+owner. The original complete-State serial oracle and failed-order atomicity stay
+mandatory. Record actual original owner/worker CPU values, unknown accounting,
+and actual post-connection task closure without inventing CPU for unmeasured
+tails or promoting them to business confirmation. The current runtime #4812
+`7530e4bc7aa61a0c23a5933fef4a65d86a586cf8` still pins the older V10 Chain source;
+this continuation does not rewrite that historical manifest or combine its
+results with the new Chain candidate. The same-source PQ/Growth/public/recovery
+combination, host-wide capacity isolation, original 4s/16 and 4,105-block gates
+remain required. No qualification or activation flag changes.
+
 **PQ owner-boundary continuation, 2026-11-04 America/New_York:** Continue the
 existing #688/#4812 candidates from Chain `ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155`
 and hepta-private-ci runtime `3558ced0fd983603a3082a42359e8da63dfc8418`.

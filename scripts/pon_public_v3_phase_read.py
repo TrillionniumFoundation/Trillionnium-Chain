@@ -35,8 +35,11 @@ MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
 ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
 CPU_SETTLEMENT_SCHEMA = 'public-v3-cpu-settlement-observation-v1'
+CPU_SETTLEMENT_VALUES_SCHEMA = 'public-v3-cpu-settlement-observation-v2'
 CPU_SETTLEMENT_KNOWN_FIELDS = ('owner_cpu_known', 'scoped_worker_cpu_known',
                              'live_paid_cpu_known', 'residual_cpu_known')
+CPU_SETTLEMENT_VALUE_FIELDS = ('owner_cpu_ns', 'scoped_worker_cpu_ns', 'total_cpu_ns',
+                             'live_paid_cpu_ns', 'residual_cpu_ns')
 ERROR_DIAGNOSTIC_KINDS = {'protocol_invalid', 'capacity', 'cancelled', 'stale_context',
     'identity_conflict', 'policy_refusal', 'local_structure', 'dependency_unavailable',
     'transport', 'serialization', 'remote_refusal', 'unclassified'}
@@ -367,11 +370,14 @@ def validate_cpu_settlement(row):
     if 'cpu_settlement' not in row:
         return
     value = row['cpu_settlement']
+    require(type(value) is dict, 'cpu settlement object required')
+    with_values = value.get('schema') == CPU_SETTLEMENT_VALUES_SCHEMA
     require(type(value) is dict and set(value) == {'schema', 'budget_settled',
             'continuous_journal_persisted', 'has_control_authority',
-            'interval_is_additive_to_dispatch_cpu', *CPU_SETTLEMENT_KNOWN_FIELDS},
+            'interval_is_additive_to_dispatch_cpu', *CPU_SETTLEMENT_KNOWN_FIELDS}
+            | (set(CPU_SETTLEMENT_VALUE_FIELDS) if with_values else set()),
             'cpu settlement exact shape required')
-    require(value['schema'] == CPU_SETTLEMENT_SCHEMA
+    require(value['schema'] in (CPU_SETTLEMENT_SCHEMA, CPU_SETTLEMENT_VALUES_SCHEMA)
             and value['has_control_authority'] is False
             and value['interval_is_additive_to_dispatch_cpu'] is False,
             'cpu settlement scope required')
@@ -379,6 +385,27 @@ def validate_cpu_settlement(row):
             'cpu settlement boolean facts required')
     journal = value['continuous_journal_persisted']
     require(journal is None or type(journal) is bool, 'cpu settlement journal boolean or no scope required')
+    if with_values:
+        for key in CPU_SETTLEMENT_VALUE_FIELDS:
+            require(value[key] is None or (type(value[key]) is int and 0 <= value[key] < 1 << 64),
+                    'cpu settlement measured u64 or unknown required')
+        for key in CPU_SETTLEMENT_KNOWN_FIELDS:
+            require(value[key] is (value[key.removesuffix('_known') + '_ns'] is not None),
+                    'cpu settlement known flag and value disagree')
+        owner, children, total, paid, residual = (value[key] for key in CPU_SETTLEMENT_VALUE_FIELDS)
+        # Unknown total is retained: other integrity/clock failures can make the
+        # original settlement refuse a sum even when these component clocks exist.
+        require(total is None or (owner is not None and children is not None
+                                 and owner + children == total),
+                'cpu settlement owner plus scoped workers mismatch')
+        # This field is the original checked subtraction, not a separate clock.
+        # Keep unavailable totals/live samples and subtraction underflow unknown;
+        # readable operands cannot invent an additional missing residual.
+        expected_residual = (total - paid if total is not None and paid is not None
+                             and paid <= total else None)
+        require(residual == expected_residual, 'cpu settlement paid plus residual mismatch')
+        require(not value['budget_settled'] or residual is not None,
+                'cpu settlement successful budget requires original residual')
     phases = row.get('submit_phases')
     require(type(phases) is list, 'cpu settlement phase required')
     settled = [phase for phase in phases if type(phase) is dict and phase.get('phase') == 'cpu_settle']
@@ -397,7 +424,7 @@ def cpu_settlement_summary(rows):
     facts = [row['cpu_settlement'] for row in observed]
     succeeded = sum(all(value[key] for key in (*CPU_SETTLEMENT_KNOWN_FIELDS, 'budget_settled'))
                     and value['continuous_journal_persisted'] is not False for value in facts)
-    return {
+    result = {
         'observed_records': len(observed),
         'records_without_settlement_extension': len(rows) - len(observed),
         'succeeded': succeeded, 'failed': len(observed) - succeeded,
@@ -418,6 +445,120 @@ def cpu_settlement_summary(rows):
             'interval_is_additive_to_dispatch_cpu': False,
             'interval_extends_through_budget_and_journal': True,
             'phase_thread_cpu_excludes_scoped_workers': True,
+        },
+    }
+    if any(value['schema'] == CPU_SETTLEMENT_VALUES_SCHEMA for value in facts):
+        def actual(row):
+            value = row.get('cpu_settlement')
+            return value if value is not None and value['schema'] == CPU_SETTLEMENT_VALUES_SCHEMA else {}
+
+        result['original_cpu_samples'] = {
+            'schema': 'public-v3-original-cpu-settlement-samples-v1',
+            'retained_records': len(rows),
+            'settlements_with_values': sum(bool(actual(row)) for row in rows),
+            'legacy_settlements_without_values': sum(value['schema'] == CPU_SETTLEMENT_SCHEMA
+                                                     for value in facts),
+            'records_without_settlement': len(rows) - len(observed),
+            # Retain the whole cohort denominator. A read/no-start/old record
+            # does not acquire a measured zero just because this scope is absent.
+            'values_ns': {key: stats([actual(row).get(key) for row in rows])
+                          for key in CPU_SETTLEMENT_VALUE_FIELDS},
+            'by_dispatch_outcome': {
+                name: {'records': sum(outcome(row.get('dispatch_accepted')) == name for row in rows),
+                       'total_cpu_ns': stats([actual(row).get('total_cpu_ns') for row in rows
+                                             if outcome(row.get('dispatch_accepted')) == name])}
+                for name in ('accepted', 'rejected', 'unknown')},
+            'scope': {
+                'original_owner_plus_joined_scoped_worker_samples': True,
+                'live_paid_plus_residual_equals_original_total_when_known': True,
+                'actual_values_are_additional_debits': False,
+                'cancelled_and_rejected_work_retained': True,
+                'missing_scope_or_clock_is_not_zero': True,
+                'includes_reactor_cpu': False,
+                'includes_settlement_tail_after_original_owner_sample': False,
+                'includes_durable_journal_after_original_owner_sample': False,
+                'total_is_whole_request_cpu': False,
+                'cpu_settle_phase_is_additive_to_original_total': False,
+            },
+        }
+    return result
+
+
+def request_owner_lifecycle_summary(rows):
+    """Read actual owner closes, preserving post-disconnect and unfinished work.
+
+    A connection close is not a cancellation-signal timestamp or a CPU sample.
+    A task close may precede or follow it; completion owns its output buffer too.
+    These clocks share only this observer's epoch and do not prove confirmation.
+    """
+    observed = [row for row in rows if 'lifecycle' in row]
+    lifetime, tails, after_close_costs = [], [], []
+    for row in observed:
+        value = row['lifecycle']
+        require(type(value) is dict and set(value) == {'schema', 'accepted_ns', 'connection_closed_ns',
+                'task_closed_ns', 'clock_is_observer_local', 'has_control_authority'}
+                and value['schema'] == 'public-v3-request-lifecycle-v1'
+                and value['clock_is_observer_local'] is True and value['has_control_authority'] is False,
+                'request lifecycle exact local scope required')
+        for key in ('accepted_ns', 'connection_closed_ns', 'task_closed_ns'):
+            require(value[key] is None or (type(value[key]) is int and 0 <= value[key] < 1 << 64),
+                    'request lifecycle u64 or unknown required')
+        require(all(type(row.get(key)) is bool for key in ('connection_closed', 'task_created',
+                'task_closed', 'observation_failed', 'complete')), 'request lifecycle owner flags required')
+        accepted, connection, task = (value[key] for key in
+                                     ('accepted_ns', 'connection_closed_ns', 'task_closed_ns'))
+        failed = row['observation_failed']
+        require(accepted is not None or failed, 'request lifecycle missing accept clock')
+        require((connection is None or row['connection_closed'])
+                and (not row['connection_closed'] or connection is not None or failed),
+                'request lifecycle connection close mismatch')
+        require(row['task_created'] or (not row['task_closed'] and task is None),
+                'request lifecycle uncreated task cannot close')
+        require((task is None or row['task_closed'])
+                and (not row['task_closed'] or task is not None or failed),
+                'request lifecycle task close mismatch')
+        require(all(accepted is None or end is None or accepted <= end for end in (connection, task)),
+                'request lifecycle close precedes accept')
+        owners_closed = row['connection_closed'] and (not row['task_created'] or row['task_closed'])
+        require(row['complete'] is (owners_closed and not failed), 'request lifecycle completion mismatch')
+        # No ordering between these independent owners is assumed. A live task
+        # after socket close remains a missing terminal duration, not zero.
+        closed = (max(connection, task if row['task_created'] else connection)
+                  if owners_closed and connection is not None
+                  and (not row['task_created'] or task is not None) else None)
+        lifetime.append(closed - accepted if closed is not None and accepted is not None else None)
+        if row['task_created'] and row['connection_closed']:
+            tail = max(0, task - connection) if task is not None and connection is not None else None
+            tails.append(tail)
+            if tail is not None and tail > 0:
+                cpu = row.get('cpu_settlement', {})
+                after_close_costs.append(cpu.get('total_cpu_ns')
+                    if cpu.get('schema') == CPU_SETTLEMENT_VALUES_SCHEMA else None)
+    return {
+        'schema': 'public-v3-request-owner-completion-v1',
+        'retained_records': len(rows), 'records_with_lifecycle': len(observed),
+        'records_without_lifecycle': len(rows) - len(observed),
+        'measurement_failed_records': sum(row['observation_failed'] for row in observed),
+        'owners_closed_records': sum(row['connection_closed'] and
+            (not row['task_created'] or row['task_closed']) for row in observed),
+        'connection_closed_task_still_open': sum(row['connection_closed'] and row['task_created']
+                                               and not row['task_closed'] for row in observed),
+        'no_task_created_records': sum(not row['task_created'] for row in observed),
+        'accept_to_all_owners_closed_wall_ns': stats(lifetime + [None] * (len(rows) - len(observed))),
+        'task_ownership_after_connection_close_wall_ns': stats(tails),
+        'original_total_cpu_for_completed_post_disconnect_owners_ns': stats(after_close_costs),
+        'scope': {
+            'closed_owners_do_not_establish_native_success': True,
+            'closed_owners_do_not_establish_independent_confirmation': True,
+            'local_monotonic_epoch_only': True,
+            'post_disconnect_tail_is_a_wall_interval': True,
+            'post_disconnect_tail_is_cpu_cost': False,
+            'cancellation_signal_time_measured': False,
+            'task_owner_includes_buffered_completion': True,
+            'original_total_cpu_includes_work_before_connection_close': True,
+            'missing_or_unfinished_terminal_duration_is_not_zero': True,
+            'whole_request_population_p99_ns': None,
+            'business_tps_capacity': None,
         },
     }
 
@@ -528,6 +669,11 @@ def execution_summary(rows, instrumented, arithmetic_profile=False, observer_v4=
     if any('cpu_settlement' in row for row in rows):
         require(observer_v4 and instrumented, 'cpu settlement extension requires v4 observer scope')
         result['cpu_settlement'] = cpu_settlement_summary(rows)
+        if 'original_cpu_samples' in result['cpu_settlement']:
+            # The new settlement version explicitly selects this extension.
+            # Old v1 settlements/lifecycle-bearing reports retain their exact
+            # historical derivation; no missing past CPU value is reconstructed.
+            result['request_owner_completion'] = request_owner_lifecycle_summary(rows)
     if arithmetic_profile:
         known = [arithmetic_observation(row['work_arithmetic']) for row in rows
                  if 'work_arithmetic' in row]

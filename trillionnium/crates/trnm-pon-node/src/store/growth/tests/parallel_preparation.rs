@@ -166,7 +166,7 @@ fn growth_parallel_preparation_has_only_canonical_witness_access() {
         let output = limits::execute_with_commitment_observed_control(
             &view,
             pon_executor::BlockExecution {
-                timestamp: None,
+                timestamp: Some(h.timestamp),
                 transactions: &packet.transactions,
                 height: h.height,
                 miner: h.miner,
@@ -418,5 +418,205 @@ fn growth_parallel_preparation_joins_panicked_workers_and_owner_can_retry() {
             .unwrap();
         retry_accounting.assert_joined(workers);
         assert_eq!(id, packet.id().unwrap());
+    }
+}
+
+#[test]
+fn growth_parallel_preparation_keeps_dependent_task_settlement_spends_and_reward_canonical() {
+    let settings = settings();
+    let source_dir = tempfile::tempdir().unwrap();
+    let source =
+        Node::open_with_permanent_account_growth_v2(source_dir.path(), settings.clone()).unwrap();
+    let mut transactions = Vec::new();
+    let mut tasks = Vec::new();
+    let mut spent = 0;
+    for (provider, reserve_nonce, budget) in [(1_u64, 1_u64, 12_345_u64), (2, 3, 23_456)] {
+        let deadline = 6_u64;
+        let task = hash(
+            b"task-instance-v3",
+            &[
+                &settings.network(),
+                &settings.parameters(),
+                &public(0),
+                &reserve_nonce.to_le_bytes(),
+                &public(provider),
+                &budget.to_le_bytes(),
+                &deadline.to_le_bytes(),
+            ],
+        );
+        let mut reserve = task.to_vec();
+        reserve.extend(public(provider));
+        reserve.extend(budget.to_le_bytes());
+        reserve.extend(deadline.to_le_bytes());
+        let mut receipt = task.to_vec();
+        receipt.extend([71_u8; 32]);
+        transactions.push(signed(&settings, 0, reserve_nonce, 2, reserve));
+        transactions.push(signed(&settings, provider, 1, 4, receipt.clone()));
+        transactions.push(signed(&settings, 0, reserve_nonce + 1, 5, receipt));
+        let balance = settings.initial[&format!("account:{}", hex::encode(public(provider)))]
+            ["balance"]
+            .as_u64()
+            .unwrap();
+        // Paying both fees and spending the entire genesis balance requires
+        // this provider's earlier settlement credit in the same block.
+        transactions.push(transfer(&settings, provider, 2, public(100), balance));
+        spent += balance;
+        tasks.push(task);
+    }
+    let packet = make(&source, settings.genesis(), transactions);
+    let expected = reference(&settings, &settings.initial, &packet);
+    assert_eq!(
+        expected[&format!("account:{}", hex::encode(public(0)))]["nonce"],
+        4
+    );
+    assert_eq!(
+        expected[&format!("account:{}", hex::encode(public(100)))]["balance"],
+        spent
+    );
+    for task in tasks {
+        let row = &expected[&format!("task:{}", hex::encode(task))];
+        assert_eq!(row["status"], "settled");
+        assert_eq!(row["remaining"], 0);
+    }
+    assert_eq!(
+        expected
+            .keys()
+            .filter(|key| key.starts_with("reward:"))
+            .count(),
+        1
+    );
+
+    // All envelopes, the transaction commitment and complete W1 are valid.
+    // Settlement before the provider's receipt is a canonical state error.
+    let mut wrong_order = packet.clone();
+    wrong_order.transactions.swap(1, 2);
+    wrong_order.header.ledger.transactions =
+        sequence_root("transactions", &wrong_order.transactions);
+    reseal(&mut wrong_order);
+
+    let mut prior_rows = None;
+    for workers in [1, 2, 4, 8] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = Node::open_with_permanent_account_growth_v2_and_workers(
+            dir.path(),
+            settings.clone(),
+            workers,
+        )
+        .unwrap();
+        let before = rows(&node.db);
+        let caller = std::thread::current().id();
+        for (candidate, succeeds) in [(&wrong_order, false), (&packet, true)] {
+            let accounting = JoinedWorkers::default();
+            let first_wave = Mutex::new(Vec::new());
+            let ready = std::sync::Condvar::new();
+            let applied = Mutex::new(Vec::new());
+            let rewards = AtomicUsize::new(0);
+            let commits = AtomicUsize::new(0);
+            let result = node.admit_growth_work_checked_with_worker_accounting(
+                checked(candidate),
+                100_000,
+                &|point| {
+                    if let GrowthProgress::Execution(ExecutionProgress::AfterPrepare { index }) =
+                        point
+                    {
+                        if index < workers {
+                            // Every worker owns one first-wave transaction. A
+                            // condition variable forces their preparation
+                            // callbacks to complete in reverse canonical order;
+                            // the timeout only bounds a broken scheduling test.
+                            let (mut order, timeout) = ready
+                                .wait_timeout_while(
+                                    first_wave.lock().unwrap(),
+                                    std::time::Duration::from_secs(30),
+                                    |order| order.len() != workers - index - 1,
+                                )
+                                .unwrap();
+                            assert!(
+                                !timeout.timed_out(),
+                                "reverse preparation stalled: workers={workers} index={index}"
+                            );
+                            order.push(index);
+                            ready.notify_all();
+                        }
+                    }
+                    if !matches!(
+                        point,
+                        GrowthProgress::Execution(
+                            ExecutionProgress::BeforePrepare { .. }
+                                | ExecutionProgress::AfterPrepare { .. }
+                        )
+                    ) {
+                        assert_eq!(
+                            std::thread::current().id(),
+                            caller,
+                            "state/proof/commit left owner"
+                        );
+                    }
+                    match point {
+                        GrowthProgress::Execution(ExecutionProgress::BeforeApply { .. }) => {
+                            assert_eq!(
+                                accounting.active.load(Ordering::SeqCst),
+                                0,
+                                "commit raced preparation"
+                            );
+                        }
+                        GrowthProgress::Execution(ExecutionProgress::AfterApply { index }) => {
+                            applied.lock().unwrap().push(index);
+                        }
+                        GrowthProgress::Execution(ExecutionProgress::BeforeReward) => {
+                            rewards.fetch_add(1, Ordering::SeqCst);
+                        }
+                        GrowthProgress::BeforeCommit => {
+                            commits.fetch_add(1, Ordering::SeqCst);
+                        }
+                        _ => {}
+                    }
+                    Ok(())
+                },
+                &accounting,
+            );
+            accounting.assert_joined(workers);
+            assert_eq!(
+                *first_wave.lock().unwrap(),
+                (0..workers).rev().collect::<Vec<_>>()
+            );
+            assert_eq!(node.active().unwrap(), (settings.genesis(), 0));
+            assert!(node.db.is_autocommit());
+            if succeeds {
+                assert_eq!(result.unwrap(), packet.id().unwrap());
+                assert_eq!(*applied.lock().unwrap(), (0..8).collect::<Vec<_>>());
+                assert_eq!(rewards.load(Ordering::SeqCst), 1);
+                assert_eq!(commits.load(Ordering::SeqCst), 1);
+            } else {
+                assert_eq!(
+                    result.unwrap_err().to_string(),
+                    "STATE",
+                    "workers={workers}"
+                );
+                assert_eq!(*applied.lock().unwrap(), vec![0]);
+                assert_eq!(rewards.load(Ordering::SeqCst), 0);
+                assert_eq!(commits.load(Ordering::SeqCst), 0);
+                assert_eq!(rows(&node.db), before);
+            }
+        }
+        let id = packet.id().unwrap();
+        assert_eq!(node.activate(id).unwrap(), id);
+        assert_reference(&node, id, &expected);
+        assert_eq!(
+            node.growth_observe(id).unwrap().commitment.escrow_balance,
+            0
+        );
+        let actual = rows(&node.db);
+        if let Some(prior) = &prior_rows {
+            assert_eq!(&actual, prior);
+        }
+        prior_rows = Some(actual.clone());
+        let active = node.active().unwrap();
+        drop(node);
+        let reopened =
+            Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+        assert_eq!(reopened.active().unwrap(), active);
+        assert_eq!(rows(&reopened.db), actual);
+        assert_reference(&reopened, id, &expected);
     }
 }

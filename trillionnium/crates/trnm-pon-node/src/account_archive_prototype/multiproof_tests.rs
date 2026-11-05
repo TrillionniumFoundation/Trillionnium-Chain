@@ -428,3 +428,163 @@ fn compact_wire_budget_is_finite_and_missing_archive_nodes_are_not_absence() {
         Err(ArchiveError::DataUnavailable)
     ));
 }
+
+#[test]
+fn native_constructed_query_retains_one_full_verification_and_identical_facts() {
+    for count in [0usize, 1, 64, 257] {
+        let (_dir, archive, checkpoint, values) = fixture(count);
+        for requested in [
+            vec![],
+            vec![owner(0)],
+            vec![owner(256), owner(3), owner(999)],
+        ] {
+            let prior_passes = AtomicUsize::new(0);
+            let prior_progress = |point| {
+                if point == MultiproofProgress::BeforeVerification {
+                    prior_passes.fetch_add(1, Ordering::SeqCst);
+                }
+                Ok::<_, ArchiveError>(())
+            };
+            // Retain the exact former caller sequence as a differential control:
+            // construction already verifies, then the consumer verifies again.
+            let (prior_proof, prior_observation) =
+                from_native_database(&archive.db, &checkpoint, &requested, &prior_progress)
+                    .unwrap();
+            let prior_checked = CheckedMultiproof::verify_with_progress(
+                context(),
+                &checkpoint,
+                &prior_proof,
+                &prior_progress,
+            )
+            .unwrap();
+            let passes = AtomicUsize::new(0);
+            let (proof, checked, observation) = from_native_database_checked(
+                &archive.db,
+                context(),
+                &checkpoint,
+                &requested,
+                &|point| {
+                    if point == MultiproofProgress::BeforeVerification {
+                        passes.fetch_add(1, Ordering::SeqCst);
+                    }
+                    Ok::<_, ArchiveError>(())
+                },
+            )
+            .unwrap();
+            assert_eq!(prior_passes.load(Ordering::SeqCst), 2);
+            assert_eq!(passes.load(Ordering::SeqCst), 1);
+            assert_eq!(proof.encode().unwrap(), prior_proof.encode().unwrap());
+            assert_eq!(
+                serde_json::to_value(&observation).unwrap(),
+                serde_json::to_value(&prior_observation).unwrap()
+            );
+            assert_eq!(checked.checkpoint(), prior_checked.checkpoint());
+            assert_eq!(checked.observation(), prior_checked.observation());
+            for identity in requested {
+                assert_eq!(
+                    checked.account(identity).unwrap(),
+                    values.get(&identity).copied()
+                );
+                assert_eq!(checked.account(identity), prior_checked.account(identity));
+            }
+            assert_eq!(
+                checked
+                    .root_for_updates(&[], &|_| Ok::<_, ArchiveError>(()))
+                    .unwrap()
+                    .0,
+                checkpoint.account_root()
+            );
+        }
+    }
+}
+
+#[test]
+fn native_constructed_query_preserves_every_cancellation_boundary_without_writes() {
+    use std::cell::RefCell;
+    let (_dir, archive, checkpoint, _) = fixture(64);
+    let requested = [owner(0), owner(31), owner(999)];
+    let trace = RefCell::new(Vec::new());
+    let before = archive.db.total_changes();
+    from_native_database_checked(&archive.db, context(), &checkpoint, &requested, &|point| {
+        trace.borrow_mut().push(point);
+        Ok::<_, ArchiveError>(())
+    })
+    .unwrap();
+    let expected = trace.into_inner();
+    assert!(expected
+        .iter()
+        .any(|point| matches!(point, MultiproofProgress::ArchiveRead { .. })));
+    assert!(expected
+        .iter()
+        .any(|point| matches!(point, MultiproofProgress::Hash { .. })));
+    assert_eq!(expected.last(), Some(&MultiproofProgress::BeforeOutput));
+    for cut in 0..expected.len() {
+        let reached = RefCell::new(Vec::new());
+        let result = from_native_database_checked(
+            &archive.db,
+            context(),
+            &checkpoint,
+            &requested,
+            &|point| {
+                let mut reached = reached.borrow_mut();
+                reached.push(point);
+                if reached.len() == cut + 1 {
+                    Err(ArchiveError::Cancelled)
+                } else {
+                    Ok(())
+                }
+            },
+        );
+        assert!(matches!(result, Err(ArchiveError::Cancelled)));
+        assert_eq!(*reached.borrow(), expected[..=cut]);
+        assert_eq!(archive.db.total_changes(), before);
+    }
+}
+
+#[test]
+fn native_constructed_query_rechecks_context_and_storage_on_each_operation() {
+    let (_dir, archive, checkpoint, values) = fixture(8);
+    let requested = [owner(0), owner(999)];
+    let mut wrong_context = context();
+    wrong_context.genesis[0] ^= 1;
+    assert!(matches!(
+        from_native_database_checked(
+            &archive.db,
+            wrong_context,
+            &checkpoint,
+            &requested,
+            &|_| Ok::<_, ArchiveError>(()),
+        ),
+        Err(ArchiveError::Context)
+    ));
+    let (mut proof, checked, _) =
+        from_native_database_checked(&archive.db, context(), &checkpoint, &requested, &|_| {
+            Ok::<_, ArchiveError>(())
+        })
+        .unwrap();
+    proof
+        .accounts
+        .iter_mut()
+        .find(|value| value.owner == owner(0))
+        .unwrap()
+        .account = None;
+    assert!(CheckedMultiproof::verify(context(), &checkpoint, &proof).is_err());
+    assert_eq!(
+        checked.account(owner(0)).unwrap(),
+        values.get(&owner(0)).copied()
+    );
+
+    // A prior checked result is an immutable historical fact, never a cache
+    // authorizing a later read of changed storage. Every new operation traverses
+    // the requested authenticated paths again.
+    archive.db.execute("DELETE FROM archive_nodes", []).unwrap();
+    assert!(matches!(
+        from_native_database_checked(&archive.db, context(), &checkpoint, &requested, &|_| Ok::<
+            _,
+            ArchiveError,
+        >(
+            ()
+        ),),
+        Err(ArchiveError::DataUnavailable)
+    ));
+}

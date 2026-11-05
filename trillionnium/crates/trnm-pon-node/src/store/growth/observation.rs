@@ -16,14 +16,14 @@ impl Node {
         self.growth_guard()?;
         let tx = self.db.unchecked_transaction()?;
         let parent = self.growth_parent(self.active()?.0)?;
-        let (proof, _) =
-            multiproof::from_native_database(&self.db, &parent.checkpoint, senders, &|_| {
-                Ok::<_, archive::ArchiveError>(())
-            })
-            .map_err(archive_error)?;
-        let checked =
-            CheckedMultiproof::verify(context(&self.settings), &parent.checkpoint, &proof)
-                .map_err(archive_error)?;
+        let (_, checked, _) = multiproof::from_native_database_checked(
+            &self.db,
+            context(&self.settings),
+            &parent.checkpoint,
+            senders,
+            &|_| Ok::<_, archive::ArchiveError>(()),
+        )
+        .map_err(archive_error)?;
         let values = senders
             .iter()
             .map(|&sender| {
@@ -37,6 +37,9 @@ impl Node {
             .collect::<Result<Vec<_>>>()?;
         self.growth_guard()?;
         tx.rollback()?;
+        // The snapshot itself hides later foreign commits from data_version.
+        // Recheck after release before returning current nonce observations.
+        self.growth_guard()?;
         Ok(values)
     }
 

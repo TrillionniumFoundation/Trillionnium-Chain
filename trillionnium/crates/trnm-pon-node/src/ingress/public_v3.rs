@@ -383,6 +383,7 @@ impl PaidMutationCpuPermit {
             let actual = PublicCpuSettlementObservation::capture(
                 outer,
                 children,
+                charged,
                 already_charged,
                 residual,
                 budget_settled,
@@ -4392,6 +4393,16 @@ mod tests {
             3,
             "both actually dispatched cancellations and the later success settle once"
         );
+        assert_eq!(
+            snapshot
+                .records
+                .iter()
+                .filter_map(|row| row.cpu_settlement)
+                .map(|actual| actual.total_cpu_ns.unwrap())
+                .sum::<u64>(),
+            m.mutation_cpu_charged_ns,
+            "per-request samples retain cancelled work and equal the original paid CPU total"
+        );
         let abandoned: Vec<_> = snapshot
             .records
             .iter()
@@ -4411,6 +4422,15 @@ mod tests {
             assert_eq!(phase.accepted, Some(true));
             assert!(phase.wall_ns.is_some());
             assert!(row.cpu_settlement.unwrap().budget_settled);
+            let actual = row.cpu_settlement.unwrap();
+            assert_eq!(actual.owner_cpu_ns, row.dispatch_thread_cpu_ns);
+            assert_eq!(
+                actual.total_cpu_ns,
+                actual
+                    .owner_cpu_ns
+                    .zip(actual.scoped_worker_cpu_ns)
+                    .and_then(|(owner, workers)| owner.checked_add(workers))
+            );
         }
         let skipped: Vec<_> = snapshot
             .records
@@ -6620,6 +6640,13 @@ mod tests {
             assert_eq!(actual.budget_settled, !failed_clock);
             assert_eq!(actual.continuous_journal_persisted, None);
             assert_eq!(row.dispatch_thread_cpu_ns.is_some(), !fail_at_finish);
+            assert_eq!(actual.owner_cpu_ns, row.dispatch_thread_cpu_ns);
+            assert_eq!(actual.scoped_worker_cpu_ns, Some(0));
+            assert_eq!(actual.live_paid_cpu_ns.is_some(), !fail_at_live_finish);
+            assert_eq!(actual.residual_cpu_ns.is_some(), !failed_clock);
+            if !failed_clock {
+                assert_eq!(actual.total_cpu_ns, Some(m.mutation_cpu_charged_ns));
+            }
             println!(
                 "r5 postclockfailure={fail_at_finish} metrics={}",
                 serde_json::to_string(&m).unwrap()
@@ -8023,6 +8050,98 @@ mod paid_settlement_consistency_tests {
         );
         assert_eq!(server.mutation_cpu.lock().unwrap().in_flight, 0);
         assert!(server.mutation_cpu_domain().accounting_available());
+    }
+
+    #[test]
+    fn cancelled_owner_retains_actual_scoped_work_until_join_and_original_settlement() {
+        for failed_worker_clock in [false, true] {
+            let server = server();
+            let metrics = Mutex::new(PublicMetrics::default());
+            let observer = PublicRequestObserver::new(1).unwrap();
+            let connection = observer.connection().unwrap();
+            let task = connection.task();
+            let permit = PaidMutationCpuPermit::acquire(&server, &metrics).unwrap();
+            let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+            measurement
+                .workers
+                .fail_next_finish
+                .store(failed_worker_clock, Ordering::Release);
+            let stop = Arc::new(AtomicBool::new(false));
+            let cancelled = Arc::new(AtomicBool::new(false));
+            let deadline = Instant::now() + Duration::from_millis(WORK_MS);
+            permit
+                .live
+                .bind_public_request(deadline, stop.clone(), cancelled.clone())
+                .unwrap();
+            task.dispatch_started();
+            let (started_tx, started_rx) = mpsc::sync_channel(1);
+            let (continue_tx, continue_rx) = mpsc::sync_channel(1);
+            thread::scope(|scope| {
+                let workers = &measurement.workers;
+                let child = scope.spawn(move || {
+                    let _interval = workers.worker_started().unwrap();
+                    started_tx.send(()).unwrap();
+                    continue_rx.recv().unwrap();
+                    // Already admitted, non-preemptive remainder after the
+                    // real request cancellation. This is metering work, not a
+                    // W1 proof or a native-state/confirmation success fixture.
+                    let mut value = 1u64;
+                    for i in 0..200_000u64 {
+                        value = std::hint::black_box(value.wrapping_mul(31).wrapping_add(i));
+                    }
+                    std::hint::black_box(value);
+                });
+                workers.worker_spawn_succeeded();
+                started_rx.recv().unwrap();
+                cancelled.store(true, Ordering::Release);
+                let error = task_alive(deadline, &stop, &cancelled).unwrap_err();
+                task.dispatch_error(&error);
+                connection.terminal_error("await", &error);
+                drop(connection);
+                let pending = observer.snapshot();
+                assert!(pending.records[0].connection_closed);
+                assert!(!pending.records[0].task_closed && !pending.records[0].complete);
+                assert!(pending.records[0].cpu_settlement.is_none());
+                continue_tx.send(()).unwrap();
+                child.join().unwrap();
+            });
+            let children = measurement.workers.complete();
+            assert_eq!(children.is_some(), !failed_worker_clock);
+            if let Some(cpu) = children {
+                assert!(cpu > 0);
+            }
+            let owner = permit.finish_observed(&measurement, &server, &metrics, Some(&task));
+            task.dispatch_finished(owner, false);
+            drop(task);
+            let snapshot = observer.snapshot();
+            assert!(snapshot.coverage_complete());
+            let row = &snapshot.records[0];
+            assert_eq!(row.dispatch_accepted, Some(false));
+            assert_eq!(row.terminal_error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+            assert!(row.lifecycle.task_closed_ns >= row.lifecycle.connection_closed_ns);
+            let actual = row.cpu_settlement.unwrap();
+            let observed = metrics.lock().unwrap();
+            assert_eq!(actual.owner_cpu_ns, owner);
+            assert_eq!(actual.scoped_worker_cpu_ns, children);
+            assert_eq!(actual.budget_settled, !failed_worker_clock);
+            if failed_worker_clock {
+                assert_eq!(actual.total_cpu_ns, None);
+                assert_eq!(actual.residual_cpu_ns, None);
+                assert!(observed.mutation_cpu_clock_failures > 0);
+            } else {
+                let total = owner.unwrap().checked_add(children.unwrap()).unwrap();
+                assert_eq!(actual.total_cpu_ns, Some(total));
+                assert_eq!(observed.mutation_cpu_charged_ns, total);
+                assert_eq!(
+                    actual.live_paid_cpu_ns.unwrap() + actual.residual_cpu_ns.unwrap(),
+                    total
+                );
+                assert_eq!(observed.mutation_cpu_clock_failures, 0);
+            }
+            let encoded = serde_json::to_value(actual).unwrap();
+            assert_eq!(encoded["schema"], "public-v3-cpu-settlement-observation-v2");
+            assert_eq!(encoded["scoped_worker_cpu_ns"], serde_json::json!(children));
+        }
     }
 
     #[test]

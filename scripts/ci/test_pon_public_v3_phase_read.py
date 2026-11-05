@@ -52,6 +52,26 @@ def settlement_record(**facts):
     return row
 
 
+def settlement_values_record(**facts):
+    """Original-sample field controls; these values are not native evidence."""
+    row = settlement_record()
+    row['cpu_settlement'].update(schema=reader.CPU_SETTLEMENT_VALUES_SCHEMA,
+        owner_cpu_ns=100, scoped_worker_cpu_ns=70, total_cpu_ns=170,
+        live_paid_cpu_ns=150, residual_cpu_ns=20, **facts)
+    return row
+
+
+def lifecycle_record(*, accepted=10, connection=40, task=90, created=True, failed=False):
+    row = settlement_values_record()
+    row.update(lifecycle=dict(schema='public-v3-request-lifecycle-v1', accepted_ns=accepted,
+        connection_closed_ns=connection, task_closed_ns=task,
+        clock_is_observer_local=True, has_control_authority=False),
+        connection_closed=connection is not None, task_created=created, task_closed=task is not None,
+        observation_failed=failed,
+        complete=connection is not None and (not created or task is not None) and not failed)
+    return row
+
+
 def attribution_phase(submissions, history, attacks, records):
     """Only role-matching fields vary; this is not a measured native campaign."""
     return {
@@ -452,6 +472,174 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual(json.dumps(restored, sort_keys=True), json.dumps(legacy, sort_keys=True))
         del report['phases'][0]['receiver_observation']['records'][0]['cpu_settlement']
         self.assertEqual(json.dumps(reader.analyze(report), sort_keys=True), json.dumps(legacy, sort_keys=True))
+
+    def test_original_settlement_values_keep_all_costs_outcomes_and_unknown_denominators(self):
+        rejected = settlement_values_record()
+        rejected['dispatch_error_code'] = 'PUBLIC_REQUEST_CANCELLED'
+        accepted = settlement_values_record(budget_settled=False)
+        accepted['dispatch_accepted'] = True
+        accepted['submit_phases'][reader.PHASES_V4.index('cpu_settle')]['accepted'] = False
+        unknown = settlement_values_record()
+        unknown.update(dispatch_accepted=None, dispatch_thread_cpu_ns=None)
+        unknown['cpu_settlement'].update(owner_cpu_ns=None, owner_cpu_known=False,
+            total_cpu_ns=None, residual_cpu_ns=None, residual_cpu_known=False, budget_settled=False)
+        unknown['submit_phases'][reader.PHASES_V4.index('cpu_settle')]['accepted'] = False
+        rows = [rejected, accepted, unknown, settlement_record(), record_v4()]
+        before = copy.deepcopy(rows)
+        result = reader.execution_summary(rows, True, observer_v4=True)
+        self.assertEqual(rows, before)
+        values = result['cpu_settlement']['original_cpu_samples']
+        self.assertEqual((values['retained_records'], values['settlements_with_values'],
+                          values['legacy_settlements_without_values'], values['records_without_settlement']),
+                         (5, 3, 1, 1))
+        total = values['values_ns']['total_cpu_ns']
+        self.assertEqual((total['known_count'], total['unknown_count'], total['sum_known_ns']), (2, 3, 340))
+        self.assertEqual(values['values_ns']['scoped_worker_cpu_ns']['sum_known_ns'], 210)
+        self.assertEqual(values['by_dispatch_outcome']['rejected']['records'], 3)
+        self.assertEqual(values['by_dispatch_outcome']['rejected']['total_cpu_ns']['sum_known_ns'], 170)
+        self.assertEqual(values['by_dispatch_outcome']['accepted']['total_cpu_ns']['sum_known_ns'], 170)
+        self.assertEqual(values['by_dispatch_outcome']['unknown']['total_cpu_ns']['unknown_count'], 1)
+        self.assertFalse(values['scope']['total_is_whole_request_cpu'])
+        self.assertFalse(values['scope']['cpu_settle_phase_is_additive_to_original_total'])
+        self.assertFalse(values['scope']['includes_settlement_tail_after_original_owner_sample'])
+        self.assertEqual(result['request_owner_completion']['records_without_lifecycle'], 5)
+        self.assertNotIn('original_cpu_samples', reader.cpu_settlement_summary([settlement_record()]))
+        self.assertNotIn('request_owner_completion', reader.execution_summary(
+            [settlement_record()], True, observer_v4=True))
+
+    def test_original_settlement_values_refuse_missing_negative_overflow_bool_and_forged_sums(self):
+        mutations = [
+            lambda r: r['cpu_settlement'].update(schema=reader.CPU_SETTLEMENT_SCHEMA),
+            lambda r: r['cpu_settlement'].update(owner_cpu_known=False),
+            lambda r: r['cpu_settlement'].update(total_cpu_ns=100),
+            lambda r: r['cpu_settlement'].update(total_cpu_ns=171),
+            lambda r: r['cpu_settlement'].update(live_paid_cpu_ns=170),
+            lambda r: r['cpu_settlement'].update(residual_cpu_ns=170),
+            lambda r: r['cpu_settlement'].update(scoped_worker_cpu_ns=None),
+            lambda r: r['cpu_settlement'].update(total_cpu_ns=None),
+            lambda r: r['cpu_settlement'].update(owner_cpu_ns=(1 << 64)-1, scoped_worker_cpu_ns=1,
+                                                total_cpu_ns=0, live_paid_cpu_ns=0, residual_cpu_ns=0),
+        ]
+        for key in reader.CPU_SETTLEMENT_VALUE_FIELDS:
+            mutations.append(lambda r, key=key: r['cpu_settlement'].pop(key))
+            for invalid in (True, -1, 1 << 64, '100', 1.5):
+                mutations.append(lambda r, key=key, invalid=invalid: r['cpu_settlement'].update({key: invalid}))
+        for index, mutate in enumerate(mutations):
+            row = settlement_values_record()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.execution_summary([row], True, observer_v4=True)
+
+    def test_unknown_original_total_is_not_reconstructed_from_readable_component_clocks(self):
+        row = settlement_values_record()
+        row['cpu_settlement'].update(total_cpu_ns=None, residual_cpu_ns=None,
+            residual_cpu_known=False, budget_settled=False)
+        row['submit_phases'][reader.PHASES_V4.index('cpu_settle')]['accepted'] = False
+        value = reader.execution_summary([row], True, observer_v4=True)['cpu_settlement']['original_cpu_samples']
+        self.assertEqual(value['values_ns']['owner_cpu_ns']['sum_known_ns'], 100)
+        self.assertEqual(value['values_ns']['scoped_worker_cpu_ns']['sum_known_ns'], 70)
+        self.assertEqual(value['values_ns']['total_cpu_ns']['unknown_count'], 1)
+        self.assertEqual(value['values_ns']['total_cpu_ns']['known_count'], 0)
+
+    def test_v2_original_residual_cannot_be_missing_with_known_nonnegative_subtraction(self):
+        row = settlement_values_record()
+        row['cpu_settlement'].update(residual_cpu_ns=None, residual_cpu_known=False,
+                                     budget_settled=False)
+        row['submit_phases'][reader.PHASES_V4.index('cpu_settle')]['accepted'] = False
+        with self.assertRaisesRegex(ValueError, 'paid plus residual mismatch'):
+            reader.execution_summary([row], True, observer_v4=True)
+        # The actual native checked subtraction can fail on underflow. Keep
+        # both readable original samples and the unknown residual, without
+        # turning their difference into a negative cost or a successful debit.
+        row['cpu_settlement']['live_paid_cpu_ns'] = 180
+        value = reader.execution_summary([row], True, observer_v4=True)['cpu_settlement']
+        self.assertEqual(value['budget_not_settled'], 1)
+        samples = value['original_cpu_samples']['values_ns']
+        self.assertEqual(samples['total_cpu_ns']['sum_known_ns'], 170)
+        self.assertEqual(samples['live_paid_cpu_ns']['sum_known_ns'], 180)
+        self.assertEqual(samples['residual_cpu_ns']['unknown_count'], 1)
+
+    def test_v2_budget_success_requires_a_known_original_residual(self):
+        for unavailable in ('total', 'live_paid', 'underflow'):
+            row = settlement_values_record()
+            value = row['cpu_settlement']
+            value.update(residual_cpu_ns=None, residual_cpu_known=False)
+            if unavailable == 'total':
+                value['total_cpu_ns'] = None
+            elif unavailable == 'live_paid':
+                value.update(live_paid_cpu_ns=None, live_paid_cpu_known=False)
+            else:
+                value['live_paid_cpu_ns'] = 180
+            row['submit_phases'][reader.PHASES_V4.index('cpu_settle')]['accepted'] = False
+            with self.subTest(unavailable=unavailable), self.assertRaisesRegex(
+                    ValueError, 'successful budget requires original residual'):
+                reader.execution_summary([row], True, observer_v4=True)
+        # V1 has no original numeric operands. Its historical validation and
+        # derivation stay unchanged; the v2 invariant is not backfilled into it.
+        old = settlement_record(residual_cpu_known=False)
+        value = reader.execution_summary([old], True, observer_v4=True)['cpu_settlement']
+        self.assertEqual((value['budget_settled'], value['failed']), (1, 1))
+        self.assertNotIn('original_cpu_samples', value)
+
+    def test_request_owner_clocks_keep_post_disconnect_tail_and_unfinished_costs(self):
+        late = lifecycle_record()
+        early = lifecycle_record(connection=90, task=40)
+        open_task = lifecycle_record(task=None)
+        refused = lifecycle_record(task=None, created=False)
+        del refused['cpu_settlement']
+        unreadable = lifecycle_record(accepted=None, failed=True)
+        legacy = settlement_record()
+        rows = [late, early, open_task, refused, unreadable, legacy]
+        before = copy.deepcopy(rows)
+        value = reader.execution_summary(rows, True, observer_v4=True)['request_owner_completion']
+        self.assertEqual(rows, before)
+        self.assertEqual((value['retained_records'], value['records_with_lifecycle'],
+                          value['records_without_lifecycle'], value['owners_closed_records'],
+                          value['connection_closed_task_still_open'], value['no_task_created_records']),
+                         (6, 5, 1, 4, 1, 1))
+        lifetime = value['accept_to_all_owners_closed_wall_ns']
+        self.assertEqual((lifetime['known_count'], lifetime['unknown_count'], lifetime['sum_known_ns']), (3, 3, 190))
+        tail = value['task_ownership_after_connection_close_wall_ns']
+        self.assertEqual((tail['known_count'], tail['unknown_count'], tail['sum_known_ns']), (3, 1, 100))
+        cost = value['original_total_cpu_for_completed_post_disconnect_owners_ns']
+        self.assertEqual((cost['known_count'], cost['sum_known_ns']), (2, 340))
+        self.assertFalse(value['scope']['post_disconnect_tail_is_cpu_cost'])
+        self.assertFalse(value['scope']['cancellation_signal_time_measured'])
+        self.assertIsNone(value['scope']['whole_request_population_p99_ns'])
+        self.assertIsNone(value['scope']['business_tps_capacity'])
+        self.assertEqual(reader.request_owner_lifecycle_summary([])['owners_closed_records'], 0)
+        # An old source with lifecycle clocks but no v2 values must reproduce
+        # the same historical derivation, rather than acquire new fields.
+        old = copy.deepcopy(late)
+        old['cpu_settlement'] = settlement_record()['cpu_settlement']
+        self.assertNotIn('request_owner_completion', reader.execution_summary([old], True, observer_v4=True))
+
+    def test_request_owner_clocks_reject_early_terminal_and_invalid_unknown_claims(self):
+        mutations = [
+            lambda r: r['lifecycle'].update(schema='unknown'),
+            lambda r: r['lifecycle'].update(has_control_authority=True),
+            lambda r: r['lifecycle'].update(clock_is_observer_local=False),
+            lambda r: r['lifecycle'].update(accepted_ns=None),
+            lambda r: r['lifecycle'].update(connection_closed_ns=None),
+            lambda r: r['lifecycle'].update(task_closed_ns=None),
+            lambda r: r['lifecycle'].update(connection_closed_ns=9),
+            lambda r: r['lifecycle'].update(task_closed_ns=9),
+            lambda r: r['lifecycle'].update(extra=True),
+            lambda r: r.update(connection_closed=False),
+            lambda r: r.update(task_created=False),
+            lambda r: r.update(task_closed=False),
+            lambda r: r.update(complete=False),
+            lambda r: r.update(observation_failed=True),
+            lambda r: r.pop('task_created'),
+        ]
+        for key in ('accepted_ns', 'connection_closed_ns', 'task_closed_ns'):
+            for invalid in (True, -1, 1 << 64, '100'):
+                mutations.append(lambda r, key=key, invalid=invalid: r['lifecycle'].update({key: invalid}))
+        for index, mutate in enumerate(mutations):
+            row = lifecycle_record()
+            mutate(row)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                reader.execution_summary([row], True, observer_v4=True)
 
     def test_client_history_import_readback_keeps_failure_unknowns_and_legacy_denominators(self):
         row = observed_history_call()
