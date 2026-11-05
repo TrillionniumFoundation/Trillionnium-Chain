@@ -56,7 +56,9 @@ class ControlledCellReadbackTests(unittest.TestCase):
             controlled_load_query_unload_observed=True,
             product_artifact_installed=False, ordinary_cognitive_context_qualified=False,
             public_reward_eligible=False)
-        args = SimpleNamespace(output=output, hepta=root / "hepta", python=root / "python",
+        snapshot = root / "runtime-snapshot.json"
+        snapshot.write_bytes(b"explicit unexecuted native orchestration contract fixture")
+        args = SimpleNamespace(runtime_snapshot=snapshot, runtime_snapshot_sha256=release.digest(snapshot.read_bytes()), output=output, hepta=root / "hepta", python=root / "python",
             chain=root / "chain", hepta_target=root / "target", just=root / "just")
         return args, parent, sidecar, report, native / "controlled-cell-loaded-readback-v1.json"
 
@@ -86,9 +88,10 @@ class ControlledCellReadbackTests(unittest.TestCase):
             self.assertEqual(command[-1], "test(=smollm_neural_read::tests::native::real_cell_release_original_signed_load_query_and_terminal_unload)")
             self.assertNotIn("timeout", run.call_args.kwargs)
             self.assertIs(report["product_artifact_installed"], False)
-            config = json.loads((args.output / "controlled-cell-native-v1.json").read_bytes())
+            config = json.loads((args.output / "controlled-cell-native-v2.json").read_bytes())
             self.assertEqual(config["native"]["parent_sha256"], release.digest(parent.read_bytes()))
-            self.assertEqual(config["schema"], "hepta-smollm-controlled-cell-native-check-v1")
+            self.assertEqual(config["native"]["schema"], "hepta-smollm-neural-native-check-v2")
+            self.assertEqual(config["schema"], "hepta-smollm-controlled-cell-native-check-v2")
 
     def test_rebound_or_promoted_readbacks_are_rejected(self):
         mutations = [("sidecar_sha256", "00" * 32), ("closure_commitment", "00" * 32),

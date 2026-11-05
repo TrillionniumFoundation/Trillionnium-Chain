@@ -351,6 +351,29 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
 ))
+# The ordinary Cell loader now consumes a separately pinned installed Python
+# runtime. Cover its real bootstrap/import dependencies and both discovery
+# deadline owners; these pins neither execute the model nor certify a DHT.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/llm_neural_read_worker.py",
+    "scripts/llm_python_runtime_contract.py",
+    "scripts/test_llm_python_runtime_contract.py",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py",
+    "scripts/llm_parent_material.py",
+    "scripts/llm_inherited_runtime.py",
+    "scripts/llm_runtime_pilot.py",
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "config/pon/ledger-v1.json",
+    "config/pon/model-family-v1.json",
+    "config/pon/model-family-smollm2-135m-v1.json",
+    "config/pon/work-profile-v1.json",
+    "scripts/run_smollm_cell_replica_research.py",
+    "scripts/ci/test_llm_cell_handoff_deadline.py",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_wait.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

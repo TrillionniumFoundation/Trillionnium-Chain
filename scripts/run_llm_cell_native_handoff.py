@@ -93,6 +93,8 @@ def main() -> None:
     parser.add_argument("--consumer-mode", choices=("original-v1", "cell-host-v2"), default="original-v1")
     parser.add_argument("--handoff-config", type=Path)
     parser.add_argument("--handoff-config-sha256")
+    parser.add_argument("--runtime-snapshot", type=Path, required=True)
+    parser.add_argument("--runtime-snapshot-sha256", required=True)
     args = parser.parse_args()
     if min(args.cache_max_bytes, args.cache_max_chunks, args.cache_max_manifests, args.cache_max_db_bytes) <= 0:
         parser.error("cache limits must be positive and finite")

@@ -30,12 +30,18 @@ NAMES = (
     "base/model.safetensors", "base/special_tokens_map.json", "base/tokenizer.json", "base/tokenizer_config.json",
 )
 SOURCES = {
+    "contract_wire.py": "formal/pon-nakamoto-v1/contract_wire.py",
+    "devnet-v1.json": "config/pon/devnet-v1.json",
+    "ledger-v1.json": "config/pon/ledger-v1.json",
+    "model-family-v1.json": "config/pon/model-family-v1.json",
+    "work-profile-v1.json": "config/pon/work-profile-v1.json",
     "llm_adapter_contract.py": "formal/pon-nakamoto-v1/llm_adapter_contract.py",
     "llm_inherited_runtime.py": "scripts/llm_inherited_runtime.py",
     "llm_neural_read_worker.py": "scripts/llm_neural_read_worker.py",
     "llm_parent_material.py": "scripts/llm_parent_material.py",
     "llm_runtime_pilot.py": "scripts/llm_runtime_pilot.py",
     "llm_base_material.py": "scripts/llm_base_material.py",
+    "llm_python_runtime_contract.py": "scripts/llm_python_runtime_contract.py",
     "model-family-smollm2-135m-v1.json": "config/pon/model-family-smollm2-135m-v1.json",
 }
 REQUIRED_ENV = ("HEPTA_FLEET_ROOT", "HEPTA_AGENT_ID", "HEPTA_AGENT_GENERATION",
@@ -277,8 +283,8 @@ def load(path, digest, output, environment):
             raise ValueError("original canonical Agentd workspace required")
         host = json.loads(pinned(value["host"], 65_536), object_pairs_hook=unique)
         exact(host, ("schema", "owner", "sidecar", "dependency_closure", "dependency_closure_id", "operation_id"), "host-v2")
-        if host["schema"] != HOST_SCHEMA or host["owner"].get("schema") != "hepta-smollm-cognitive-host-v1":
-            raise ValueError("original complete host-v2 and nested owner-v1 required")
+        if host["schema"] != HOST_SCHEMA or host["owner"].get("schema") != "hepta-smollm-cognitive-host-v2":
+            raise ValueError("original complete host-v2 and nested owner-v2 required")
         codec.digest(host["dependency_closure_id"])
         operation = host["operation_id"]
         if type(operation) is not str or not 1 <= len(operation) <= 128 or any(not 33 <= ord(c) <= 126 for c in operation):
@@ -290,6 +296,7 @@ def load(path, digest, output, environment):
                 raise ValueError("owner destination must match this exact initially absent run: " + name)
             codec.digest(host[name]["sha256"])
         worker = host["owner"]["worker"]
+        pinned(worker["runtime_snapshot"], 16 * 1024 * 1024)
         for actual, expected in ((worker["materials"], output / "consumer-materials"),
                                  (worker["target_contract"]["path"], output / "consumer-parent/target-contract.json"),
                                  (worker["wrapped_adapter"]["path"], output / "consumer-parent/wrapped-adapter.json")):
@@ -328,6 +335,9 @@ def prepare(plan, args, family, parent, members, release_file, release, producer
     if worker["source_pins"] != source_pins or worker["script"] != str(args.chain / SOURCES["llm_neural_read_worker.py"]) or worker["python"] != str(args.python):
         raise ValueError("original worker executable/source pins differ from producer checkout")
     sources = {name: source_pins[str(args.chain / relative)] for name, relative in sorted(SOURCES.items())}
+    if worker["runtime_snapshot"] != dict(path=str(args.runtime_snapshot), sha256=args.runtime_snapshot_sha256):
+        raise ValueError("original host runtime snapshot pin differs from this request")
+    pinned(worker["runtime_snapshot"], 16 * 1024 * 1024)
     parent_dir = Path(parent["directory"])
     contract_raw = bounded(parent_dir / "target-contract.json", 1024**2)
     wrapper = bounded(parent_dir / "wrapped-adapter.json", 1024**2)
@@ -343,7 +353,8 @@ def prepare(plan, args, family, parent, members, release_file, release, producer
     if worker["target_contract"]["sha256"] != checksum(contract_raw) or worker["wrapped_adapter"]["sha256"] != checksum(wrapper):
         raise ValueError("original host adapter file pins differ")
     actions = [dict(action_id=key, completion=value) for key, value in sorted(worker["action_completions"].items())]
-    profile = ["hepta-smollm-single-token-action-score-v1", sources, actions, parent["contract"], parent["adapter"],
+    profile = ["hepta-smollm-runtime-bound-execution-v2", "hepta-smollm-single-token-action-score-v1", sources, actions,
+               args.runtime_snapshot_sha256, parent["contract"], parent["adapter"],
                checksum(contract_raw), checksum(wrapper), context["base"], context["tokenizer"], 4]
     if len(actions) != 2 or checksum(canonical(profile)) != plan.value["loader_profile"]:
         raise ValueError("original exact loader execution profile mismatch")

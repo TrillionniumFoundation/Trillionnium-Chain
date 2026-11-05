@@ -1,0 +1,16 @@
+{
+  "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+  "mode": "project",
+  "observed": {
+    "host_required_names_match": true,
+    "script_shadow_help_exit": 0,
+    "source_path_count": 8,
+    "source_paths_match_actual_pins": true,
+    "torch_shadow_result": "NEURAL_RUNTIME_UNDECLARED_IMPORT: <temporary-project>/formal/pon-nakamoto-v1/torch.py",
+    "unadmitted_shadow_executed": false,
+    "worker_source_sha256": "2e0b0fa5641dfb668031e4f8bda67003c4207c822e59ff3eeb8aefa855a3a797",
+    "worker_sources_equal_host_pin_projection": true
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "scope": "independent lightweight import behavior only; no model or successful admission"
+}
