@@ -1,5 +1,6 @@
 //! Fixed-capacity replay high water. Expiry does not delete identities or release
 //! their quotas. This local owner does not resist complete host/database rollback.
+use super::super::directory_wait::{lock_before, with_sqlite_deadline};
 use super::*;
 #[cfg(unix)]
 use fs2::FileExt;
@@ -203,126 +204,134 @@ impl CellProviderDirectoryV2 {
             "discovery directory context",
         )?;
         self.identity()?;
-        let mut state = self
-            .state
-            .lock()
-            .map_err(|_| CellErrorV1::Invalid("discovery owner poisoned"))?;
-        let minimum = state.observed_revision;
-        let tx = state
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        validate_schema(&tx)?;
-        let (clock, revision) = metadata(&tx, self.context, self.keys.digest())?;
-        require(
-            now >= clock && revision >= minimum,
-            "discovery clock/revision rollback",
-        )?;
-        let prior = stored(
-            &tx,
-            record.statement.request.manifest,
-            record.statement.owner,
-        )?;
-        let source = match source {
-            IpAddr::V6(ip) => ip.to_ipv4_mapped().map(IpAddr::V4).unwrap_or(source),
-            _ => source,
-        };
-        let mut origin = ip_bytes(source);
-        let mut prefix = source_prefix(source);
-        let mut wire = record.encode();
-        let digest = record.digest();
-        let sequence = record.statement.sequence.to_be_bytes();
-        if let Some(prior) = &prior {
-            origin = prior.source;
-            prefix = prior.prefix;
-            let old = prior.record()?;
+        let mut state = lock_before(&self.state, deadline)?;
+        let State {
+            db,
+            observed_revision,
+        } = &mut *state;
+        let minimum = *observed_revision;
+        with_sqlite_deadline(db, deadline, |db, wait| {
+            let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            wait.before_sql(&tx)?;
+            validate_schema(&tx)?;
+            let (clock, revision) = metadata(&tx, self.context, self.keys.digest())?;
             require(
-                old.statement.request == record.statement.request,
-                "discovery immutable pin",
+                now >= clock && revision >= minimum,
+                "discovery clock/revision rollback",
             )?;
-            require(
-                record.statement.sequence >= old.statement.sequence,
-                "discovery sequence replay",
-            )?;
-            if record.statement.sequence == old.statement.sequence {
-                require(prior.digest == digest, "discovery sequence equivocation")?;
-                // Keep the original durable signature when an equivalent
-                // randomized valid signature is presented at the same seq.
-                wire = prior.wire.clone();
-            } else {
-                require(tx.execute("UPDATE discovery_providers_v2 SET sequence=?1,wire=?2,digest=?3 WHERE manifest=?4 AND owner=?5 AND sequence=?6 AND digest=?7",params![sequence.as_slice(),&wire,digest.as_slice(),record.statement.request.manifest.as_slice(),record.statement.owner.as_slice(),prior.sequence.to_be_bytes().as_slice(),prior.digest.as_slice()])?==1,"discovery sequence CAS")?;
-            }
-        } else {
-            let counts:(u64,u64,u64,u64,u64)=tx.query_row("SELECT count(*),coalesce(sum(owner=?1),0),coalesce(sum(manifest=?2),0),coalesce(sum(source=?3),0),coalesce(sum(prefix=?4),0) FROM discovery_providers_v2",params![record.statement.owner.as_slice(),record.statement.request.manifest.as_slice(),origin.as_slice(),prefix.as_slice()],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
-            require(
-                counts.0 < MAX_IDENTITIES
-                    && counts.1 < MAX_OWNER
-                    && counts.2 < MAX_MANIFEST
-                    && counts.3 < MAX_SOURCE
-                    && counts.4 < MAX_PREFIX,
-                "discovery identity capacity",
-            )?;
-            require(
-                tx.execute(
-                    "INSERT INTO discovery_providers_v2 VALUES(?1,?2,?3,?4,?5,?6,?7)",
-                    params![
-                        record.statement.request.manifest.as_slice(),
-                        record.statement.owner.as_slice(),
-                        sequence.as_slice(),
-                        &wire,
-                        digest.as_slice(),
-                        origin.as_slice(),
-                        prefix.as_slice()
-                    ],
-                )? == 1,
-                "discovery record insert",
-            )?;
-        }
-        let next = advance_clock(&tx, clock, revision, now)?;
-        validate_schema(&tx)?;
-        let expected = Stored {
-            sequence: record.statement.sequence,
-            wire,
-            digest,
-            source: origin,
-            prefix,
-        };
-        require(
-            stored(
+            check_deadline(deadline)?;
+            let prior = stored(
                 &tx,
                 record.statement.request.manifest,
                 record.statement.owner,
-            )?
-            .as_ref()
-                == Some(&expected),
-            "discovery transaction readback",
-        )?;
-        require(
-            metadata(&tx, self.context, self.keys.digest())? == (now, next),
-            "discovery transaction clock readback",
-        )?;
-        self.identity()?;
-        check_deadline(deadline)?;
-        tx.commit()?;
-        // The durable high water remains committed on a failed post-COMMIT
-        // check. Retry reconciles it; no caller receives a fabricated ACK.
-        self.identity()?;
-        let readback = state.db.transaction()?;
-        validate_schema(&readback)?;
-        require(
-            metadata(&readback, self.context, self.keys.digest())? == (now, next)
-                && stored(
-                    &readback,
+            )?;
+            let source = match source {
+                IpAddr::V6(ip) => ip.to_ipv4_mapped().map(IpAddr::V4).unwrap_or(source),
+                _ => source,
+            };
+            let mut origin = ip_bytes(source);
+            let mut prefix = source_prefix(source);
+            let mut wire = record.encode();
+            let digest = record.digest();
+            let sequence = record.statement.sequence.to_be_bytes();
+            check_deadline(deadline)?;
+            if let Some(prior) = &prior {
+                origin = prior.source;
+                prefix = prior.prefix;
+                let old = prior.record()?;
+                require(
+                    old.statement.request == record.statement.request,
+                    "discovery immutable pin",
+                )?;
+                require(
+                    record.statement.sequence >= old.statement.sequence,
+                    "discovery sequence replay",
+                )?;
+                if record.statement.sequence == old.statement.sequence {
+                    require(prior.digest == digest, "discovery sequence equivocation")?;
+                    // Keep the original durable signature when an equivalent
+                    // randomized valid signature is presented at the same seq.
+                    wire = prior.wire.clone();
+                } else {
+                    require(tx.execute("UPDATE discovery_providers_v2 SET sequence=?1,wire=?2,digest=?3 WHERE manifest=?4 AND owner=?5 AND sequence=?6 AND digest=?7",params![sequence.as_slice(),&wire,digest.as_slice(),record.statement.request.manifest.as_slice(),record.statement.owner.as_slice(),prior.sequence.to_be_bytes().as_slice(),prior.digest.as_slice()])?==1,"discovery sequence CAS")?;
+                }
+            } else {
+                let counts:(u64,u64,u64,u64,u64)=tx.query_row("SELECT count(*),coalesce(sum(owner=?1),0),coalesce(sum(manifest=?2),0),coalesce(sum(source=?3),0),coalesce(sum(prefix=?4),0) FROM discovery_providers_v2",params![record.statement.owner.as_slice(),record.statement.request.manifest.as_slice(),origin.as_slice(),prefix.as_slice()],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+                require(
+                    counts.0 < MAX_IDENTITIES
+                        && counts.1 < MAX_OWNER
+                        && counts.2 < MAX_MANIFEST
+                        && counts.3 < MAX_SOURCE
+                        && counts.4 < MAX_PREFIX,
+                    "discovery identity capacity",
+                )?;
+                require(
+                    tx.execute(
+                        "INSERT INTO discovery_providers_v2 VALUES(?1,?2,?3,?4,?5,?6,?7)",
+                        params![
+                            record.statement.request.manifest.as_slice(),
+                            record.statement.owner.as_slice(),
+                            sequence.as_slice(),
+                            &wire,
+                            digest.as_slice(),
+                            origin.as_slice(),
+                            prefix.as_slice()
+                        ],
+                    )? == 1,
+                    "discovery record insert",
+                )?;
+            }
+            check_deadline(deadline)?;
+            let next = advance_clock(&tx, clock, revision, now)?;
+            validate_schema(&tx)?;
+            let expected = Stored {
+                sequence: record.statement.sequence,
+                wire,
+                digest,
+                source: origin,
+                prefix,
+            };
+            require(
+                stored(
+                    &tx,
                     record.statement.request.manifest,
                     record.statement.owner,
                 )?
                 .as_ref()
                     == Some(&expected),
-            "discovery committed readback",
-        )?;
-        readback.commit()?;
-        self.identity()?;
-        state.observed_revision = next;
-        check_deadline(deadline)
+                "discovery transaction readback",
+            )?;
+            require(
+                metadata(&tx, self.context, self.keys.digest())? == (now, next),
+                "discovery transaction clock readback",
+            )?;
+            self.identity()?;
+            wait.before_sql(&tx)?;
+            tx.commit()?;
+            // The durable high water remains committed on a failed post-COMMIT
+            // check. Retry reconciles it; no caller receives a fabricated ACK.
+            self.identity()?;
+            wait.before_sql(db)?;
+            let readback = db.transaction()?;
+            wait.before_sql(&readback)?;
+            validate_schema(&readback)?;
+            require(
+                metadata(&readback, self.context, self.keys.digest())? == (now, next)
+                    && stored(
+                        &readback,
+                        record.statement.request.manifest,
+                        record.statement.owner,
+                    )?
+                    .as_ref()
+                        == Some(&expected),
+                "discovery committed readback",
+            )?;
+            wait.before_sql(&readback)?;
+            readback.commit()?;
+            self.identity()?;
+            *observed_revision = next;
+            check_deadline(deadline)
+        })
     }
 
     pub(super) fn records(
@@ -338,55 +347,62 @@ impl CellProviderDirectoryV2 {
             request.context == self.context,
             "discovery directory context",
         )?;
-        let mut state = self
-            .state
-            .lock()
-            .map_err(|_| CellErrorV1::Invalid("discovery owner poisoned"))?;
-        let minimum = state.observed_revision;
-        let tx = state
-            .db
-            .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        validate_schema(&tx)?;
-        let (clock, revision) = metadata(&tx, self.context, self.keys.digest())?;
-        require(
-            now >= clock && revision >= minimum,
-            "discovery clock/revision rollback",
-        )?;
-        // A still-valid signed old wire is not the current high water. Read
-        // every returned row through the same key/sequence/digest checks as a
-        // publication; accepting wire alone would hide a partial SQL rewind.
-        let rows = manifest_rows(&tx, request.manifest)?;
-        let mut records = Vec::with_capacity(rows.len());
-        for (_, row) in &rows {
-            let record = row.record()?;
+        let mut state = lock_before(&self.state, deadline)?;
+        let State {
+            db,
+            observed_revision,
+        } = &mut *state;
+        let minimum = *observed_revision;
+        with_sqlite_deadline(db, deadline, |db, wait| {
+            let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            wait.before_sql(&tx)?;
+            validate_schema(&tx)?;
+            let (clock, revision) = metadata(&tx, self.context, self.keys.digest())?;
             require(
-                record.statement.request.context == self.context,
-                "discovery stored namespace",
+                now >= clock && revision >= minimum,
+                "discovery clock/revision rollback",
             )?;
-            records.push(record);
-        }
-        let next = advance_clock(&tx, clock, revision, now)?;
-        validate_schema(&tx)?;
-        require(
-            metadata(&tx, self.context, self.keys.digest())? == (now, next),
-            "discovery lookup clock readback",
-        )?;
-        self.identity()?;
-        check_deadline(deadline)?;
-        tx.commit()?;
-        self.identity()?;
-        let readback = state.db.transaction()?;
-        validate_schema(&readback)?;
-        require(
-            metadata(&readback, self.context, self.keys.digest())? == (now, next)
-                && manifest_rows(&readback, request.manifest)? == rows,
-            "discovery committed lookup readback",
-        )?;
-        readback.commit()?;
-        self.identity()?;
-        state.observed_revision = next;
-        check_deadline(deadline)?;
-        Ok(records)
+            // A still-valid signed old wire is not the current high water. Read
+            // every returned row through the same key/sequence/digest checks as a
+            // publication; accepting wire alone would hide a partial SQL rewind.
+            let rows = manifest_rows(&tx, request.manifest, deadline)?;
+            let mut records = Vec::with_capacity(rows.len());
+            for (_, row) in &rows {
+                check_deadline(deadline)?;
+                let record = row.record()?;
+                require(
+                    record.statement.request.context == self.context,
+                    "discovery stored namespace",
+                )?;
+                records.push(record);
+            }
+            check_deadline(deadline)?;
+            let next = advance_clock(&tx, clock, revision, now)?;
+            validate_schema(&tx)?;
+            require(
+                metadata(&tx, self.context, self.keys.digest())? == (now, next),
+                "discovery lookup clock readback",
+            )?;
+            self.identity()?;
+            wait.before_sql(&tx)?;
+            tx.commit()?;
+            self.identity()?;
+            wait.before_sql(db)?;
+            let readback = db.transaction()?;
+            wait.before_sql(&readback)?;
+            validate_schema(&readback)?;
+            require(
+                metadata(&readback, self.context, self.keys.digest())? == (now, next)
+                    && manifest_rows(&readback, request.manifest, deadline)? == rows,
+                "discovery committed lookup readback",
+            )?;
+            wait.before_sql(&readback)?;
+            readback.commit()?;
+            self.identity()?;
+            *observed_revision = next;
+            check_deadline(deadline)?;
+            Ok(records)
+        })
     }
 }
 
@@ -411,7 +427,9 @@ impl Stored {
 fn manifest_rows(
     db: &Connection,
     manifest: CellDigestV1,
+    deadline: Instant,
 ) -> CellResultV1<Vec<(CellDigestV1, Stored)>> {
+    check_deadline(deadline)?;
     let owners = {
         let mut query=db.prepare("SELECT substr(owner,1,33) FROM discovery_providers_v2 WHERE manifest=?1 ORDER BY owner LIMIT 17")?;
         let rows = query.query_map([manifest.as_slice()], |r| r.get::<_, Vec<u8>>(0))?;
@@ -424,6 +442,7 @@ fn manifest_rows(
     owners
         .into_iter()
         .map(|owner| {
+            check_deadline(deadline)?;
             let owner = fixed(owner)?;
             Ok((
                 owner,
@@ -569,4 +588,68 @@ fn check_identity(path: &Path, file: &File) -> CellResultV1<()> {
     {
         Err(CellErrorV1::Invalid("discovery file identity unsupported"))
     }
+}
+
+#[cfg(all(test, unix))]
+mod deadline_fixture {
+    use super::*;
+    use crate::cell::pq::CellPqKeyPinV2;
+    use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+    use zeroize::Zeroizing;
+
+    pub(super) type Directory = CellProviderDirectoryV2;
+    pub(super) type Record = CellProviderRecordV2;
+    pub(super) const META_TABLE: &str = "discovery_meta_v2";
+    pub(super) const RECORD_TABLE: &str = "discovery_providers_v2";
+
+    pub(super) fn fixture(path: &Path) -> (Directory, Record, Record, u64) {
+        let context = CellDiscoveryContextV1 {
+            namespace: [81; 32],
+            network: [82; 32],
+            parameters: [83; 32],
+            genesis: [84; 32],
+        };
+        let request = CellDiscoveryRequestV1 {
+            context,
+            cell_context: [85; 32],
+            manifest: [86; 32],
+        };
+        let seed = Zeroizing::new([87; 32]);
+        let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
+        let key_id = ml_dsa_65_key_id_from_spki(&spki).unwrap();
+        let key = PqNativeSigningKey::from_owned_seed(seed, key_id).unwrap();
+        let keys = CellPqKeyPinsV2::new(vec![CellPqKeyPinV2 {
+            key_id,
+            generation: 1,
+            spki,
+            not_before: 1,
+            expires_at: u64::MAX,
+            revoked_at: None,
+        }])
+        .unwrap();
+        let directory = Directory::open(path, context, keys).unwrap();
+        let now = wall_now().unwrap().as_secs();
+        let record = |sequence| {
+            CellProviderRecordV2::sign(
+                CellProviderStatementV2 {
+                    request,
+                    owner: key_id,
+                    owner_generation: 1,
+                    endpoint: "127.0.0.1:19081".parse().unwrap(),
+                    sequence,
+                    issued_unix_seconds: now,
+                    expires_unix_seconds: now + 240,
+                    withdrawn: false,
+                },
+                &key,
+            )
+            .unwrap()
+        };
+        (directory, record(1), record(2), now)
+    }
+}
+
+#[cfg(all(test, unix))]
+mod deadline_tests {
+    crate::cell::discovery::directory_deadline_tests::declare_tests!();
 }

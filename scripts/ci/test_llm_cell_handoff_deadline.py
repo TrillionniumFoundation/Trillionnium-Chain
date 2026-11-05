@@ -50,7 +50,8 @@ def controlled_release(command, flags, payloads):
 class CellHandoffDeadlineTests(unittest.TestCase):
     def test_database_cap_rejects_before_any_output_creation(self):
         for value in ("0", "4096", "262145", "2199023259648"):
-            argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+            argv = [str(SCRIPT), "--runtime-snapshot", "/absent/unused-no-model-snapshot.json",
+                "--runtime-snapshot-sha256", "00" * 32, "--cache-max-bytes", "67108864",
                 "--cache-max-chunks", "4096", "--cache-max-manifests", "256",
                 "--cache-max-db-bytes", value]
             for key in ("chain", "hepta", "source-parent", "source-materials", "output",
@@ -116,7 +117,8 @@ class CellHandoffDeadlineTests(unittest.TestCase):
             arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
                 "source-materials": materials, "output": output, "python": root / "python",
                 "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-            argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+            argv = [str(SCRIPT), "--runtime-snapshot", str(root / "unused-no-model-snapshot.json"),
+                "--runtime-snapshot-sha256", "00" * 32, "--cache-max-bytes", "67108864",
                 "--cache-max-chunks", "4096", "--cache-max-manifests", "256", "--cache-max-db-bytes", "134217728"]
             for key, value in arguments.items():
                 argv.extend(("--" + key, str(value)))
@@ -232,7 +234,8 @@ class CellHandoffConsumerTests(unittest.TestCase):
         arguments = {"chain": chain, "hepta": root / "hepta", "source-parent": parent_file,
             "source-materials": materials, "output": output, "python": root / "python",
             "cell-bin": cell_bin, "just": root / "just", "hepta-target": root / "hepta-target"}
-        argv = [str(SCRIPT), "--cache-max-bytes", "67108864",
+        argv = [str(SCRIPT), "--runtime-snapshot", str(root / "unused-no-model-snapshot.json"),
+                "--runtime-snapshot-sha256", "00" * 32, "--cache-max-bytes", "67108864",
                 "--cache-max-chunks", "4096", "--cache-max-manifests", "256", "--cache-max-db-bytes", "134217728"]
         for key, value in arguments.items():
             argv.extend(("--" + key, str(value)))

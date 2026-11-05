@@ -256,6 +256,69 @@ not relabeled as fresh measurements of this second merge. No later upstream
 movement, model improvement, deployment, real payment or acceptance promotion is
 included in this fixed-source scope.
 
+This second merge was committed locally as
+`a5937a3c5bf8399fe36bae4f830a71196eb8cc93` and published as
+`674b1340fd30b33b63de5fdc4ddbc5af6b2a6252`, both with tree
+`333f253cd74f506354283321d320c4c8f480c90a` and the ordered parents above.
+
+## Final fixed-base merge: source preservation and static checks only
+
+The final normal merge uses ordered parents
+`674b1340fd30b33b63de5fdc4ddbc5af6b2a6252` and
+`cbead1508ce8b6d9deb2a86b4bc3181da09694e7`. The fixed upstream tree is
+`624c8aad419ee05dc71a4aac507abea429018289`, and the common ancestor is
+`f3a597f274833121d5ec408cb6a1cad83996d7f2`. No later base is part of this scope.
+
+Only the manifest conflicted. Its resolved bytes preserve the entire fixed
+upstream manifest, replacing the same three work-value Rust pins. All 521 pins
+and 440 required paths survive. Before this note was extended, eight candidate
+files and 108 other upstream files were checked against their parent blobs; the
+plan retains both additions. Historical evidence remains byte-for-byte upstream.
+
+The added DA Cell work changes delta cancellation/deadline propagation and
+discovery-directory owner/SQLite waiting. Source-level call inspection finds no
+calls to those delta/discovery entry points in Node or M12 production source.
+M12 does not depend on the DA crate, and the native funding/payment state,
+transition and original work-verification paths are unchanged. The newer Python
+runtime handoff also does not introduce authority into this fee observer.
+
+This final composition receives source-preservation and static contract checks
+only. No Cargo test, native rebuild, Clippy or Rust formatting run is attributed
+to it. The native results in the second-merge table remain measurements of tree
+`333f253cd74f506354283321d320c4c8f480c90a`, not of this newer composition.
+
+The static reproduction adds these checks to the original preflight, source-pin
+checker and PQ negative controls:
+
+```bash
+python3 -B scripts/ci/check_ci_contract.py
+python3 -B scripts/ci/test_ci_contract.py \
+  EvaluationQuorumLaneTests.test_actual_lane_preserves_quorum_reference_and_retained_vector_checks \
+  EvaluationQuorumLaneTests.test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved \
+  EvaluationQuorumLaneTests.test_current_runtime_controls_must_follow_pilot_and_parent_material \
+  EvaluationQuorumLaneTests.test_current_runtime_controls_cannot_split_parent_material_and_parent_step
+git diff --check cbead1508ce8b6d9deb2a86b4bc3181da09694e7 HEAD
+```
+
+| Final fixed-source static check | Observed result |
+| --- | --- |
+| Original development preflight | PASS, 26 packages; no remote-policy mutation |
+| Independent source preservation | PASS, 8 candidate / 108 upstream files, plus exact manifest and plan composition |
+| Upgraded PQ source-integrity negative controls | PASS, 37 tests |
+| Merged source-pin contract | PASS, 521 pins / 440 required paths; `HOLD_NO_GO` retained |
+| Actual CI contract and selected runtime-command controls | PASS, contract check and 4 test methods; no CI campaign execution claimed |
+| Candidate diff relative to fixed upstream | PASS, ten work-value files |
+| Whole upstream-import whitespace check | Exit 2; unchanged upstream observations retained below |
+| Changed Markdown references | PASS, 440 local references in 29 changed files resolve in the merged Git tree |
+| Native tests, rebuild, Clippy and Rust formatter on this composition | Not run; prior native receipts keep their original tree identities |
+
+The whole import's `git diff --check` reports existing upstream raw-log trailing
+spaces/EOF blank lines and an EOF blank line in
+`scripts/llm_python_runtime_contract.py`. This failed observation is retained;
+upstream evidence and source were not reformatted. The separate diff check of
+the ten work-value files relative to the fixed upstream passes. No check or
+qualification gate was altered to suppress the whole-import observation.
+
 ## Remaining acceptance requirements
 
 Independent future-window benefit, training/calibration/selection/evaluation

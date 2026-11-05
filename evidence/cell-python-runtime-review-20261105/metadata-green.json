@@ -1,0 +1,12 @@
+{
+  "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+  "mode": "metadata",
+  "observed": {
+    "after_guard": {
+      "version": "1.2.3"
+    },
+    "before_guard": "1.2.3"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "scope": "independent lightweight import behavior only; no model or successful admission"
+}

@@ -6925,3 +6925,98 @@ Full native State replay and the original 4105-block 1800-second public service
 campaign still require separate exact-source observations.
 The historical 2345-returned-import/connection-refused failure remains intact.
 All six P0 domains, independent acceptance, release and activation remain HOLD.
+
+
+### 2026-11-05 fixed cross-repository candidate and source-bound evidence
+
+The published candidate input for this continuation is Chain
+`619c5f80856fb15bb6896d8008df91f58c215229` (tree
+`501607a6f76d4e5fc4e31a79bfdbff00c4bb007f`) and private Hepta
+`f55752abbf516febfa0db89cb833dcf1fd1a2221` (tree
+`039577d88899ddc1725f44dbf508e69d58506fe3`). Both were actually published to
+the existing Draft candidate PRs. Later concurrent branch descendants remain
+preserved and do not receive these observations or the earlier native results.
+The [fixed-pair report](../../evidence/system-integration-20261105/README.md)
+and [machine record](../../evidence/system-integration-20261105/fixed-pair.json)
+bind the exact commits, lockfiles and configuration identities. No final-pair
+release binary set or ordinary-entry native execution has been completed.
+
+The combination preserves the current Growth/owner and History/readback changes,
+Snapshot V3/PQ Frontier V4 recovery, and complete sealed qualification consumers.
+It adds actual ELF dependency/interpreter validation and makes three formerly
+omittable authenticated-read dependencies mandatory in the source corpus.
+Six original omission controls fail against the old checker and remain recorded.
+The legal no-update path retains its independent evaluation inputs before later
+control refusals; the native assertion for that path has not run on the final pair.
+
+On the real clean Chain commit, all 10,034 tracked entries / 965,549,861 bytes
+match, 505 source pins pass with HOLD_NO_GO, 37 source controls pass, and inventory
+and repository checks pass. On the real Hepta commit, 11,710 tracked entries /
+181,087,282 bytes match actual contents, executable modes and symlink targets;
+Lane A, source registry and source receipt checks pass. These checks do not
+certify runtime behavior. Earlier 141 Chain tests/full-workspace strict Clippy
+at `eaacd1ef` and 218 Hepta tests at tree `285b7510` stay historical; later
+source changes and resource-stopped attempts are not covered by those successes.
+
+Four real same-material operator observations and two adversarial campaigns
+remain bound to `6ee529046d295e3175f09112492abee373f1f54c` and its recorded
+binary. Native child wall time / ordinary warm-batch median is 309.623–1289.841;
+cold preparation and all diagnostic phases remain recorded. Eighty constructed
+candidates produced 360 rejected calls (80 native, 80 scalar-reference, 200 cache),
+not 360 independent attacks. The offline settlement returned not_adopted with
+zero model reward. These finite, contended-host observations certify neither
+the cheapest solver nor the complete safety/benefit budget, future-window value,
+ordinary installation, funded settlement or the later grouped relation.
+
+The immutable historical archive is under
+[observations-through-2a8](../../evidence/system-integration-20261105/observations-through-2a8/README.md);
+its earlier boundary is not rewritten. New fixed-source controls are under
+[frozen-source-619](../../evidence/system-integration-20261105/frozen-source-619/README.md).
+Private source snapshots and native logs remain in
+[Hepta evidence commit c90d1322](https://github.com/TrillionniumFoundation/hepta-private-ci/tree/c90d13228514440e82d4bbb0da2bdaf13d145c8a/evidence/pq-sealed-composition-20261105).
+
+All four P0 gates, both P1 gates and independent release acceptance remain HOLD.
+Original no-attack, four-second/16-hostile and separate fixed-Host F0 obligations,
+complete PQ effect authorization, real evolution and funded archive custody,
+WAN failures, physical power loss and independent long-running acceptance remain
+open. No denominator, timeout, resource budget, activation flag or protection
+was relaxed; no main merge or production activation was performed.
+
+
+### 2026-11-05 Cell deadline, delta and installed-runtime continuation
+
+The existing candidate preserves concurrent reverse-ancestry and readback
+changes. Classic and PQ discovery directories now spend the caller's original
+deadline while waiting for their Rust owner mutex and SQLite transaction,
+including commit and readback. Twelve actual mutex/SQLite contention controls
+fail on the original production implementation. The fixed path never treats a
+late durable commit as rollback or success. This is a finite local ownership
+repair, not mature DHT, eclipse resistance or independent-administrator evidence.
+
+Delta fetch captures its original relative deadline before metadata work and
+accepts caller cancellation through the existing transport reservation. New
+controls cover no-dial pre-cancellation, a real partial TCP response and owner
+events after actual create-only target publication. Late refusal preserves the
+durable target. A 32-version history control reconstructs from only the direct
+base, explicitly testing TCX1's existing depth-one recipe semantics. It does not
+measure representative model-corpus savings or local reconstruction cost.
+
+The paired ordinary Hepta candidate binds an independently pinned installed
+Python snapshot and the complete thirteen-file project source/configuration
+closure into a new execution namespace. The native host checks installed bytes
+before interpreter startup; the worker uses isolated entry, exact Python source
+loading and a snapshot-bound Ready exchange. Real independent CPython controls
+exposed a distribution-metadata regression and undeclared startup ZIP/`._pth`
+paths; their original observations are retained. Persisted owner and worker
+schemas change explicitly, without promoting historical worker-v1 evidence.
+All hashing and admission still use the original resource/deadline owners.
+
+Execution receipts and exact source identities are maintained in the
+[continuation evidence](../../evidence/cell-contract-continuation-20261105/README.md),
+with separate [discovery controls](../../evidence/cell-discovery-deadline-20261105/README.md),
+[delta semantics](../../evidence/cell-delta-cancellation-20261105/README.md) and
+[independent Python review](../../evidence/cell-python-runtime-review-20261105/README.md).
+Full model architecture/expert ABI, device/VRAM ownership, an ordinary multi-Cell
+model-use loop, independent long WAN/fairness, real coin lock/payment, automated
+paid renewal and long-term independent custody remain unaccepted. No local
+journal, parser, self-reported version or passing byte test closes those gates.
