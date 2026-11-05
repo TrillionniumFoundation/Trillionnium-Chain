@@ -1,0 +1,213 @@
+{
+  "schema": "six-experiments-handoff-v4-python-controls-v1",
+  "scope": "Python preflight and original native CLI argument binding only; not native installation, signed recovery, model delivery, CURRENT, FinalUse, or next-task qualification",
+  "hepta_target": {
+    "pull_request": 4812,
+    "head_sha": "1556a4df6e279055fd8196f81a4ca2fe0f19384a",
+    "head_ref": "fix/hepta-ordinary-pq-effects-20261104",
+    "updated_at": "2026-11-05T10:57:45Z",
+    "sources": [
+      {
+        "path": "codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs",
+        "git_blob_sha1": "fd879087bad8b6245d3d7ef4a6812bb04ee00c2f",
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/1556a4df6e279055fd8196f81a4ca2fe0f19384a/codex-rs/hepta-infer-worker-host/src/bin/hepta-neural-agentd.rs"
+      },
+      {
+        "path": "codex-rs/hepta-agentd/src/evidence_frontier.rs",
+        "git_blob_sha1": "e17b055dc942cf2582911f03cec59695640e9950",
+        "url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/1556a4df6e279055fd8196f81a4ca2fe0f19384a/codex-rs/hepta-agentd/src/evidence_frontier.rs"
+      }
+    ]
+  },
+  "change": {
+    "schema": "pon-smollm-cell-host-handoff-v4",
+    "execution_profile": "protected-installed-elf-v1",
+    "recovery_profile": "hepta-pq-evidence-recovery-files-v1",
+    "required_independent_pins": [
+      "frontier",
+      "signer_trust"
+    ],
+    "native_limits_bytes": {
+      "frontier": 65536,
+      "signer_trust": 8192
+    },
+    "native_flags": [
+      "--evidence-recovery-frontier-file",
+      "--evidence-recovery-frontier-trust-file"
+    ],
+    "checks": [
+      "explicit v4/profile with exact fields",
+      "original protected bounded regular canonical unaliased files",
+      "independent SHA256 pins at load and immediately before exec",
+      "file paths excluded from Agent home/run/workspace/fleet roots",
+      "no output file creation or new authority",
+      "v2 and v3 retain previous semantics without recovery injection",
+      "no sealed or no-recovery fallback"
+    ],
+    "remaining_limits": [
+      "Python pre-exec digest checks do not make files immutable across the subsequent native open; native owner independently reads and authenticates the signed inputs.",
+      "Path exclusion is not physical independent custody or protection against whole-host rollback."
+    ]
+  },
+  "verification": {
+    "merged_runtime": {
+      "pilot_sha256": "59e1c14d3cd8ffd977e33502f174adebe42c9db7d0887de3c3e20abff50e0b52",
+      "trial_ledger": {
+        "total": 24,
+        "passed": 24,
+        "elapsed_seconds": 14.052,
+        "log": "trial-ledger.log"
+      },
+      "history_replay": {
+        "total": 20,
+        "passed": 20,
+        "elapsed_seconds": 58.933,
+        "log": "trial-replay.log"
+      },
+      "actual_stop_controls": {
+        "total": 12,
+        "passed": 12,
+        "elapsed_seconds": 5.941,
+        "log": "runtime-stop.log"
+      },
+      "denominator_note": "Regression reruns; the 24+20 overlap previous controls and are not additional model trials."
+    },
+    "installed_host": {
+      "total": 15,
+      "passed": 8,
+      "skipped": 7,
+      "elapsed_seconds": 0.102,
+      "log": "installed-host-v4-final.log",
+      "skip_groups": [
+        {
+          "count": 5,
+          "reason": "No independently installed native fixtures and exact TRNM_CELL_BIN"
+        },
+        {
+          "count": 2,
+          "reason": "Executor uid=0 with CapEff=0; cannot run protected nonroot ELF probe"
+        }
+      ]
+    },
+    "host_handoff_regression": {
+      "total": 14,
+      "passed": 4,
+      "skipped": 10,
+      "elapsed_seconds": 0.672,
+      "log": "host-handoff-regression.log"
+    },
+    "initial_failed_control": {
+      "log": "installed-host-v4-first-no-setuid.log",
+      "reason": "Actual child privilege drop failed with PermissionError EPERM before owner admission; raw failure retained.",
+      "qualification": false
+    },
+    "incomplete_log": {
+      "log": "installed-host-v4.log",
+      "usable_terminal_result": false,
+      "authoritative_complete_log": "installed-host-v4-final.log"
+    },
+    "recovery_class": {
+      "total": 7,
+      "passed": 5,
+      "skipped": 2,
+      "log": "recovery-class.log",
+      "subset_of": "installed_host",
+      "command": "PYTHONPATH=scripts/ci python3 -m unittest test_llm_cell_installed_host.RecoveryHandoffTests -v"
+    }
+  },
+  "open_native_requirements": [
+    "Full pinned Chain and current Hepta Cargo workspaces/toolchains and actual trnm-cell/protected reopenable hepta-neural-agentd ELF",
+    "Ordinary nonroot Agent caller with original Fleet/Agent identity, manifest, home/run/workspace",
+    "Original pinned base/tokenizer/runtime and parent adapter tensor artifacts; repository receipts alone do not reconstruct weights",
+    "Original independently qualified selection, generation, resource-grant and withdrawal descriptors",
+    "Independent Unix FinalUse issuer and live revocation state",
+    "Authentic externally retained signed evidence recovery frontier and signer trust",
+    "Actual installed ordinary model task and original CURRENT/FinalUse/inference/effect readback across faults on the same source pair"
+  ],
+  "disallowed_claims": [
+    "No new full Cell succinct proof",
+    "No ordinary Hepta model installed or inferred here",
+    "No recovery/FinalUse authorization manufactured",
+    "No successful native or nonroot argv probe executed in this environment",
+    "No spent model campaign reset or re-use"
+  ],
+  "local_sources_sha256": {
+    "scripts/llm_cell_host_handoff.py": "6e821c1d6d93565df71e9aca8a63361d1f5c54da6a04d1b6932e6dfe8c58010d",
+    "scripts/ci/test_llm_cell_installed_host.py": "ab9b6a5799a98cdda89cc74f36973aa48ea6fb165d66fc86e134943c62283af0"
+  },
+  "logs": {
+    "ci-contract-with-v4.log": {
+      "path": "logs/ci-contract-with-v4.log.json",
+      "original_bytes": 16673,
+      "original_sha256": "0ead81aa2b18e56895220c25ba801d20eab78cb4cfa99a8d9030c33195984055",
+      "wrapper_sha256": "4da645330da64b0622380ffd365d303cd5d9a64633b9b5f6404ca5b4c4041a36"
+    },
+    "host-handoff-regression.log": {
+      "path": "logs/host-handoff-regression.log.json",
+      "original_bytes": 3596,
+      "original_sha256": "195c38970ae8b3273d4f79a38f0767820480fc831daaa59fdcb05edd9f286afe",
+      "wrapper_sha256": "fd80fe29421a37736bb307c015af29f337ded2c427d3659977a3395c920b2158"
+    },
+    "installed-host-before-new-controls.log": {
+      "path": "logs/installed-host-before-new-controls.log.json",
+      "original_bytes": 2173,
+      "original_sha256": "53986d168b41edd7e1f6fda0c7192b4c6e0e9f9fcf9d88d63ace4581a9c1e4f9",
+      "wrapper_sha256": "807918c126c1aa1e882eaa0e9414d85a276d1c645170528d029f22e98f0e6645"
+    },
+    "installed-host-v4-final.log": {
+      "path": "logs/installed-host-v4-final.log.json",
+      "original_bytes": 3687,
+      "original_sha256": "0afc315dd5fde0e8fb28846ee2631b0f514506ac0fb66460e131e8981863acff",
+      "wrapper_sha256": "4742cf329d34292276151815c678e25483b52cf9a4f822f02efd6ef25bc8488d"
+    },
+    "installed-host-v4-first-no-setuid.log": {
+      "path": "logs/installed-host-v4-first-no-setuid.log.json",
+      "original_bytes": 6659,
+      "original_sha256": "945eb0a4c2d9f01852af81bbd0487b5d1d77f058832cb5ecc56b9bd1e16c03a0",
+      "wrapper_sha256": "81a1de0dd2fb679269f0f8cf602a3367e636f813949bbdeb414afc22ecb678dc"
+    },
+    "installed-host-v4.log": {
+      "path": "logs/installed-host-v4.log.json",
+      "original_bytes": 2992,
+      "original_sha256": "ce8d84e06360bf4bb60cad64d44e9e74ab5f13ab467aa0cc2eba5fde637dd4f7",
+      "wrapper_sha256": "d63ddfc4e1203aa688f7e16a0bd59ad2dd49b15ce149e6284d240dad7a77106f"
+    },
+    "recovery-class.log": {
+      "path": "logs/recovery-class.log.json",
+      "original_bytes": 1623,
+      "original_sha256": "d6d4da2ef79f8691b0665fd0697728d01a2fdf29bbc3c1ec00d455f5b35c631b",
+      "wrapper_sha256": "8c1da4a577aa88540b8fce01227530e8a1a2a7e1bbc40c020ece6f25c7648214"
+    },
+    "runtime-stop.log": {
+      "path": "logs/runtime-stop.log.json",
+      "original_bytes": 2145,
+      "original_sha256": "b3c619e420ac762c0009d0b689d497c392ff616e32586f33088fa6cf6ec58ebc",
+      "wrapper_sha256": "ef11a5050e8141d3efe771667d0205682523c1e2b6e4ffcac3c2b89dea5c15d9"
+    },
+    "trial-ledger.log": {
+      "path": "logs/trial-ledger.log.json",
+      "original_bytes": 4538,
+      "original_sha256": "b0287ca09a353a4adc96dae9ddafde8bd05d49a3c1c42140e0750ff2bc0e9d79",
+      "wrapper_sha256": "20f4d8f6aa55703fcd7f665932d9c1f1389ef807af0e32c909617108608daa9d"
+    },
+    "trial-replay.log": {
+      "path": "logs/trial-replay.log.json",
+      "original_bytes": 4142,
+      "original_sha256": "2c87b61419f818b160318d75ad1ad6e10b66dded32bbfdea109e26ee78732494",
+      "wrapper_sha256": "84b0778dabeb483edf6884b4bc9fbe7b2e8cc160e35dd257671678615fcf15fe"
+    }
+  },
+  "commands": {
+    "installed_host": "python3 -m unittest discover -s scripts/ci -p test_llm_cell_installed_host.py -v",
+    "host_handoff_regression": "python3 -m unittest discover -s scripts/ci -p test_llm_cell_host_handoff.py -v",
+    "merged_trial_ledger": "python3 -m unittest discover -s scripts/ci -p test_llm_runtime_trial_ledger.py -v",
+    "merged_history_replay": "python3 -m unittest discover -s scripts/ci -p test_llm_runtime_trial_replay.py -v",
+    "merged_actual_stop_controls": "python3 -m unittest discover -s scripts/ci -p test_llm_runtime_stop.py -v"
+  },
+  "observed_environment": {
+    "effective_uid": 0,
+    "cap_eff": "0000000000000000",
+    "cap_setgid": false,
+    "cap_setuid": false
+  }
+}

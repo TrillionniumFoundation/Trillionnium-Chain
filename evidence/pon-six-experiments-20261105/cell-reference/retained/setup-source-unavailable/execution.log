@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 315, in <module>
+    main()
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 310, in main
+    result = run(args)
+             ^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 148, in run
+    return run_admitted(args, output_dir, records, deadline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 186, in run_admitted
+    raw, freeze_time = elapsed(lambda: relation.freeze_contract(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 42, in elapsed
+    value = call()
+            ^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 186, in <lambda>
+    raw, freeze_time = elapsed(lambda: relation.freeze_contract(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 386, in freeze_contract
+    _verify_upstream(model, rows, identity)
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 313, in _verify_upstream
+    reproduced = json.loads(_replayed_source(source, identity['program_sha256']))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 300, in _replayed_source
+    require(result.returncode == 0, 'SOURCE_REPLAY_UNAVAILABLE')
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 83, in require
+    raise ValueError(code)
+ValueError: SOURCE_REPLAY_UNAVAILABLE

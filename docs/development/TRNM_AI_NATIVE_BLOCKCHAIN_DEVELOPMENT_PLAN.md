@@ -7136,6 +7136,74 @@ coverage is not sufficient production security. No threshold, denominator,
 resource budget, activation flag or protection is relaxed.
 
 
+### 2026-11-05 six requested experiments: complete local grouped-delivery costs
+
+The existing M01 grouped relation now has a paired Python/NumPy complete local
+delivery observer and nine denominator/identity/deadline controls, included by
+the existing grouped CI discovery. The [retained experiment 4 record](../../evidence/pon-six-experiments-20261105/grouped-delivery/README.md)
+keeps all 48 final-source arm executions, 1,020 processing occurrences and 64
+distinct retrospective inputs. Both legal arms reload and validate the frozen
+model/tasks/bundle, prepare material, bind the full statement, serialize/decode
+and pass independent full scalar recomputation. All complete within the declared
+local diagnostic budget. Six paired repetitions show broad uncertainty and no
+stable end-to-end packed advantage; both medians and aggregate costs are kept.
+The initial observation and a separate eight-case late-output negative control
+are preserved. No failed or missing case disappears from its planned denominator.
+
+This is not native Rust/CUDA, ordinary Hepta, original F0 resource service, a
+succinct proof, or a measured external request stream. Startup/import, actual
+queue/fill waits, device load, WAN, PoN proof costs, independent confirmation and
+energy remain unknown. Existing budgets, owners, relations, rewards and activation
+flags are unchanged. Experiment 4 original-resource acceptance remains HOLD.
+
+
+### 2026-11-05 experiments 5/6: complete-W1 cost and anchored Unknown readback
+
+The existing staged W1 coordinator now derives a bounded cost comparison after
+its original complete v2 verification and delivery checks. The [independent
+experiment records](../../evidence/pon-proof-recovery-six-experiments-20261105/README.md)
+retain one archived complete proof, 100 reuses of that receipt and 1,000 native
+replays without turning them into independent proof trials. The archived
+verification median is 28.8823595 ms versus native 0.9549835 ms (30.243831x),
+with 5.189787x local envelope bytes and 5.069296x same-rate loopback time.
+The earlier 7,200-second failed observation remains separate. This turn does
+not regenerate or cryptographically reverify that archived proof. Full Cell
+coverage, minimum-node configuration and complete-system proof economics stay HOLD.
+
+The existing SQLite TrialLedger gains exact trial/plan reconciliation against an
+externally retained checkpoint. It accepts an authentic successor history and
+rejects a restored journal that lacks the checkpoint. Committed child/roster/
+terminal identities are reported without another event, refund or effect retry.
+A missing reservation retains UNKNOWN external effects; it is never permission
+to rerun. The pilot recovery command no longer imports current model/native
+dependencies just to parse historical ledger readback. Twenty-four ledger,
+twenty immutable-history and thirty-four proof-observer controls passed, including
+actual SQLite/child-process and TCP loopback cases. CURRENT, FinalUse, actual
+installed-generation next-task use and native recovery remain unproved. Existing
+allowances, immutable history interpretation, owners and activation flags remain.
+
+
+### 2026-11-05 experiment 3: original baseline first, without a new success claim
+
+The existing shared History owner no longer repeats two adjacent full Host reads
+before its first lock attempt. Each acquisition attempt and busy retry still
+observes the Host outside the Node writer; exclusive actions still observe it on
+each call. A post-observation time fence refuses work when the full Host read
+crosses the original deadline. Four native regression controls accompany the
+repair but remain uncompiled and unexecuted in this toolchain-free environment.
+The original fixed-Host F0 workflow watches these source paths and retains its
+original source attestation, budgets, denominator and always-finalization path.
+
+The [separate experiment 3 record](../../evidence/pon-six-experiments-20261105/fixed-host-readback.md)
+keeps the old baseline at 0/3 and ROOT phase at 0/3 scheduled four-second
+confirmations, with all 42 business exposures. Fourteen readback mutation
+controls pass; they do not count as new native runs. The old no-attack client
+import, account-graph and Host costs remain independently visible, with nested
+intervals never summed. The next gate is BASELINE_MUST_PASS under the original
+AuthenticatedV1/RawR14, quarter-core, 2-GiB public Host. Continuous novel-input
+availability and cheapest-legal-work economics remain separate unclosed gates.
+
+
 ### 2026-11-05 joint-candidate component repairs and eight open gates
 
 Source review used Chain #688 at
@@ -7248,3 +7316,73 @@ campaign; and the rejection collector's 30-second identity, 900-second build,
 campaign minimum of three administrators/failure domains and 72 hours is
 unchanged. No source-control, local component, model-quality, economic,
 public-service or activation claim is promoted by this entry.
+
+
+### 2026-11-05 six experiments: first-hit binding and corrected paired delivery
+
+The [six-experiment disposition](../../evidence/pon-six-experiments-20261105/README.md)
+keeps separate HOLD decisions. The bounded source-router reference actually
+processes 64 source rows using five complete W1 transcripts. Its durable diagnostic
+attempt stream retains 11 attempts, five hits and six misses; a deliberately
+exhausted search retains one miss and four unrun tiles. Fresh independent
+processes replay every attempt and verify the complete bounded relation. This is
+read-only integer state, not ordinary Hepta masks, mutable state or installation.
+
+Independent review reproduced a valid-witness substitution: replacing a
+journalled first hit with another genuinely valid nonce preserved W1 validity
+while corrupting the economic linkage. The repaired reader binds every delivered
+tile's nonce and proof bytes to its measured first hit. A retained fsync failure
+cannot become a nested successful batch; only the process-observed acknowledged
+prefix counts as durable diagnostic completion. Diagnostic source identities
+are captured before execution and checked for drift. Ninety-two functional
+controls pass, including the independent review subset, without a work-security
+or external rollback-resistance claim.
+
+The corrected grouped v2 observer binds committed model/requests to scalar
+arithmetic, enforces the original predeclared budget for both arms, requires
+successful identities, and retains zero-CPU/unavailable comparisons. A fresh
+48-case paired run preserves all 1,020 processing occurrences and the 64 distinct
+old inputs. Packed/direct median total observed CPU is approximately
+1.029/1.040/1.060/0.972 for sizes 1/4/16/64, with no stable speedup established.
+Eight separately declared one-millisecond controls all remain late. Sixteen
+loaded repository file observations match before/after; external runtime and
+full-source attestation remain unclaimed. Fifty grouped controls pass with two
+native controls skipped. All nine earlier raw v1 artifacts remain byte-identical.
+
+Original F0 client confirmation uses Exclusive ownership; Shared Host-read
+deduplication is not a measured repair of its dominant state cost. Baseline and
+continuous novel-input service remain unaccepted. Prior native legal-strategy
+rho values remain attached to their original source/profile and finite tested
+arms, separate from invalid-input rejection costs. The complete local quality
+readback has negative marginal values on all three frozen partitions and zero
+model reward; it does not authorize a next-generation adoption.
+
+
+### 2026-11-05 experiment 6: explicit recovery handoff and remaining native work
+
+The current ordinary Hepta CLI at exact source
+`1556a4df6e279055fd8196f81a4ca2fe0f19384a` requires two recovery-file arguments
+that the existing Chain handoff omitted. The
+[new explicit handoff-v4 record](../../evidence/pon-six-experiments-20261105/handoff-recovery-v4/README.md)
+retains the protected installed-ELF owner and adds independently pinned external
+frontier/trust paths, their original 64-KiB/8-KiB bounds, and load/pre-exec checks.
+The original Rust owner retains PQ, lineage and generation authorization. Old
+v2/v3 semantics remain explicit; no fallback, copied recovery authority or new
+owner grant is introduced. Pre-exec hashing is not an atomic native reopen or
+physical independent custody claim.
+
+Eight installed-host Python controls pass with seven explicit skips; four
+existing handoff controls pass with ten native skips. The new recovery class is
+a subset, with five passes and two unavailable nonroot exec controls in this
+uid-zero, capability-empty environment. A real initial EPERM failure and an
+incomplete log remain retained. The exact recovery class is added once to the
+original protocol lane, and the 100-case CI command/negative suite passes again.
+These controls do not execute a model, CURRENT, FinalUse or the actual next task.
+
+The [F0 hotspot source diagnosis](../../evidence/pon-six-experiments-20261105/fixed-host-hotspots.md)
+records the actual Exclusive client path and the already-existing epoch/root/
+frontier reuse. Existing controls prohibit promoting partial graph traversals to
+whole-root receipts. Accurate failed/cancelled graph-work attribution requires
+native loop-boundary observations; no uncompiled multi-layer cache or observer
+change is substituted for the still-failing original baseline. All six complete
+system experiment gates remain HOLD.

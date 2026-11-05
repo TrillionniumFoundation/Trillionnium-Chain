@@ -18,11 +18,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from contract_wire import H, canonical
 from experiments import shared_cell_operator_v1 as cell
 from model_contract import infer
 import useful_cell_relation_v1 as relation
+from useful_cell_attempt_journal_v1 import (AttemptJournal, bind_delivered_witness,
+                                          inspect_acknowledged_journal, inspect_journal)
 import work_oracle as work
 
 
@@ -132,6 +135,120 @@ class UsefulCellRelationTests(unittest.TestCase):
         snapshot = copy.deepcopy((before, after, output, expected))
         self.verify(before=before, after=after, output=output, expected=expected)
         self.assertEqual((before, after, output, expected), snapshot)
+
+    def test_durable_attempt_journal_replays_every_tile_and_preserves_relation_bytes(self):
+        tiles, _ = cell.build_tiles(self.model, self.rows)
+        expected_plan = relation.reference_search_plan(self.raw, self.before, tiles, len(self.rows), 1)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'search.jsonl'
+            with AttemptJournal(path) as journal:
+                result = relation.prove_reference(self.raw, self.model, self.rows, self.before,
+                                                  max_attempts=1, attempt_sink=journal.append)
+                retained_endpoint = journal.head
+            observed = inspect_journal(path.read_bytes(), expected_plan=expected_plan,
+                                       materials={tile['index']: tile['material'] for tile in tiles},
+                                       expected_final_sha256=retained_endpoint)
+        self.assertEqual(result, self.proved)
+        self.assertEqual(observed['mathematical_attempts_replayed'], 5)
+        self.assertEqual(observed['counts']['started_attempts'], 5)
+        self.assertEqual(observed['counts']['hits'], 5)
+        self.assertEqual(observed['counts']['misses'], 0)
+        self.assertTrue(self.verify(witness=result['witness'])['relation_valid'])
+
+    def test_sink_failure_aborts_before_an_attempt_and_does_not_emit_success(self):
+        events = []
+
+        def reject_start(event):
+            if event['kind'] == 'attempt-start':
+                raise OSError('evidence device unavailable')
+            events.append(event)
+
+        with self.assertRaisesRegex(OSError, 'evidence device unavailable'):
+            relation.prove_reference(self.raw, self.model, self.rows, self.before,
+                                     max_attempts=1, attempt_sink=reject_start)
+        self.assertEqual([event['kind'] for event in events], ['plan'])
+
+    def test_sink_receives_copies_and_cannot_modify_the_search_or_output(self):
+        def mutate(event):
+            if event['kind'] == 'plan':
+                event['tiles'].clear()
+            event.clear()
+
+        result = relation.prove_reference(self.raw, self.model, self.rows, self.before,
+                                          max_attempts=1, attempt_sink=mutate)
+        self.assertEqual(result, self.proved)
+
+    def test_another_genuine_valid_nonce_cannot_replace_the_measured_first_hit(self):
+        from experiments import useful_cell_relation_v1 as driver
+
+        tiles, _ = cell.build_tiles(self.model, self.rows)
+        events = []
+        proved = relation.prove_reference(self.raw, self.model, self.rows, self.before,
+                                          max_attempts=1, attempt_sink=events.append)
+        witness = json.loads(proved['witness'])
+        tile = tiles[0]
+        words = list(struct.unpack('<' + 'I' * (2 * work.CELLS), tile['material']))
+        challenge = relation._challenge(self.raw, self.before, tile, 1)
+        alternate = work.prove(challenge, words[:work.CELLS], words[work.CELLS:])
+        witness['tiles'][0] = {'index': 0, 'nonce': 1, 'proof_hex': alternate.hex()}
+        different_witness = canonical(witness)
+        # This is a genuinely valid W1/Cell witness. Rejecting it is specifically
+        # the accounting/delivery binding, not a changed W1 acceptance rule.
+        self.assertTrue(self.verify(witness=different_witness)['relation_valid'])
+        events[-1]['witness_sha256'] = hashlib.sha256(different_witness).hexdigest()
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            with AttemptJournal(out / 'proof-search.jsonl') as journal:
+                for event in events:
+                    journal.append(event)
+                acknowledgement = journal.acknowledgement()
+            report = inspect_acknowledged_journal(
+                (out / 'proof-search.jsonl').read_bytes(), expected_plan=events[0],
+                acknowledgement=acknowledgement,
+                materials={item['index']: item['material'] for item in tiles})
+            self.assertEqual(report['status'], 'complete')
+            self.assertEqual(report['winning_attempts'][0]['nonce'], 0)
+            with self.assertRaisesRegex(ValueError, 'SEARCH_DELIVERED_FIRST_HIT'):
+                bind_delivered_witness(report, different_witness)
+            for name, value in (
+                    ('contract.json', self.raw), ('before-state.json', self.before),
+                    ('proof-search-input.json', {'model': self.model, 'rows': self.rows}),
+                    ('expected.json', self.expected), ('plan.json', events[0]),
+                    ('acknowledgement.json', acknowledgement), ('witness.json', different_witness),
+                    ('output.json', proved['output']), ('after-state.json', proved['after_state'])):
+                driver.save(out / name, value)
+            with self.assertRaisesRegex(ValueError, 'SEARCH_DELIVERED_FIRST_HIT'):
+                driver.inspect_search_directory(out, out / 'expected.json', out / 'plan.json',
+                                                out / 'acknowledgement.json')
+
+    def test_final_fsync_failure_does_not_make_readable_end_a_completed_producer(self):
+        tiles, _ = cell.build_tiles(self.model, self.rows)
+        plan = relation.reference_search_plan(self.raw, self.before, tiles, len(self.rows), 1)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'search.jsonl'
+            with AttemptJournal(path) as journal:
+                def sink(event):
+                    if event['kind'] == 'end':
+                        with patch('useful_cell_attempt_journal_v1.os.fsync',
+                                   side_effect=OSError('final fsync failed')):
+                            journal.append(event)
+                    else:
+                        journal.append(event)
+
+                with self.assertRaisesRegex(OSError, 'final fsync failed'):
+                    relation.prove_reference(self.raw, self.model, self.rows, self.before,
+                                             max_attempts=1, attempt_sink=sink)
+                acknowledgement = journal.acknowledgement()
+            raw = path.read_bytes()
+            # Reading a complete last line is not proof that its fsync returned.
+            self.assertEqual(inspect_journal(raw, expected_plan=plan)['status'], 'complete')
+            report = inspect_acknowledged_journal(raw, expected_plan=plan,
+                                                  acknowledgement=acknowledgement)
+            self.assertEqual(report['status'], 'incomplete')
+            self.assertEqual(report['completed_producer_batches'], 0)
+            self.assertEqual(report['producer_reported_complete_outputs'], 0)
+            self.assertEqual(report['counts']['completed_attempts'], 5)
+            self.assertGreater(report['unacknowledged_suffix_bytes'], 0)
 
     def test_external_expected_policy_is_closed_and_mandatory(self):
         for key in self.expected:

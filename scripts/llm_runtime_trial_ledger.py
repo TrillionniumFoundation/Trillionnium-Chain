@@ -892,8 +892,53 @@ class TrialLedger:
         return self._transition(trial, 'terminal', dict(outcome=outcome, record=record,
                                                        record_id=_identity(record)))
 
+    def reconcile(self, trial, expected_plan, minimum_checkpoint):
+        """Observe one uncertain trial without retrying any of its effects.
+
+        The caller must retain minimum_checkpoint outside a database rollback.
+        A current journal may extend that checkpoint, but must contain it. A
+        missing trial only means that this journal has no committed reservation;
+        it cannot settle external effects or authorize a new attempt. Restoring
+        both the database and the caller's anchor remains outside this guarantee.
+        """
+        for value in (trial, expected_plan, minimum_checkpoint):
+            _digest(value)
+        with self._transaction() as (db, policy, checkpoint, attempts, count):
+            # _transaction has already replayed every immutable event and checked
+            # its policy, schema and hash links under this same SQLite snapshot.
+            if minimum_checkpoint == _genesis(self.expected_policy):
+                minimum_sequence = 0
+            else:
+                anchored = db.execute('SELECT seq FROM events WHERE root=?',
+                                      (minimum_checkpoint,)).fetchall()
+                _require(len(anchored) == 1, 'RECONCILE_CHECKPOINT_NOT_RETAINED')
+                minimum_sequence = anchored[0][0]
+            attempt = attempts.get(trial)
+            if attempt is not None:
+                _require(attempt['reservation']['plan_id'] == expected_plan,
+                         'RECONCILE_PLAN_BINDING')
+            events = [dict(sequence=seq, kind=kind, checkpoint=root)
+                      for seq, kind, root in db.execute(
+                          'SELECT seq, kind, root FROM events WHERE trial=? ORDER BY seq', (trial,))]
+            terminal = attempt['terminal'] if attempt else None
+            return dict(schema='llm-runtime-trial-reconciliation-v1', scope=SCOPE,
+                policy=self.expected_policy, trial=trial, plan=expected_plan,
+                minimum_checkpoint=minimum_checkpoint, minimum_sequence=minimum_sequence,
+                checkpoint=checkpoint, event_count=count,
+                spent=len(attempts), maximum=policy['max_attempts'],
+                target_observed=attempt is not None,
+                state=attempt['state'] if attempt else 'not-observed',
+                committed_events=events,
+                child_receipt_ids={name: _identity(receipt) for name, receipt in
+                                   attempt['receipts'].items()} if attempt else {},
+                roster_id=_identity(attempt['roster']) if attempt and attempt['roster'] else None,
+                terminal_record_id=terminal['record_id'] if terminal else None,
+                external_effects_state='UNKNOWN', retry_authorized=False,
+                refund_authorized=False, installation_verified=False,
+                final_use_verified=False, statistical_acceptance=False)
+
     def inspect(self):
-        """Readback for reconciliation; returned checkpoint is not an external anchor."""
+        """Unanchored readback; use reconcile for exact trial and retained-checkpoint checks."""
         with self._transaction() as (_, policy, checkpoint, attempts, _):
             return dict(policy=policy, policy_id=self.expected_policy, checkpoint=checkpoint,
                         spent=len(attempts), attempts=attempts, scope=SCOPE)

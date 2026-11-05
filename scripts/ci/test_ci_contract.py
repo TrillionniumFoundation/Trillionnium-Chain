@@ -159,6 +159,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_run_w1_reused_cost_v3.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/ci/test_fixed_host_service_readback_v1.py',
+            'scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v',
+            'scripts/test_llm_runtime_trial_ledger.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_runtime_stop.py',
@@ -400,7 +403,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 check_independent_conformance(changed, self.lanes)
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
-        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py'):
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py'):
             command = ("    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p '"
                        + name + "' -v\n")
             self.assertEqual(self.script.count(command), 1)
@@ -412,6 +416,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 'swallowed': self.script.replace(command, command.rstrip() + ' || true\n'),
                 'moved': self.script.replace(command, '').replace('  fuzz-smoke)\n',
                                                                   '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace('  fuzz-smoke)\n',
+                                                           '  fuzz-smoke)\n  ' + command.lstrip()),
             }
             for label, script in variants.items():
                 with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):

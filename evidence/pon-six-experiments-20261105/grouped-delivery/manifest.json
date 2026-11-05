@@ -1,0 +1,32 @@
+{
+  "base_source_commit": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+  "files_sha256": {
+    "evidence/pon-six-experiments-20261105/grouped-delivery/grouped-tests-v2.log": "1a964b37027fef87ca30671896bf85cdd26c8931db24f76dd085d1725ef2cdf2",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/observations.jsonl": "3652c8b9abb2ae9dda47987b6f52e2e469c7abf11436f63f3f83033624cfd82c",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/plan.json": "fbc36348466d683dcd24861e853a7b76bcd945daebe5a1adeb48cf77dadafd18",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/initial-observation/report.json": "e6be039ea6364e1dd98570908339f178b752fe35b55e2a2da0fa652d296cdbf5",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/observations.jsonl": "1f1583c3770c0bc11d56b8ab4af3b0531c91a825f15ac3ee3c9502881142093c",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/plan.json": "83d2397fb0332ec77c435aa6016ddd266fcd5e9f0a295eabbb161bf92893b206",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-negative-control/report.json": "c6ae1ee3d83826c3d73f50e6c1da1a18252b54fa39074e7b0b9147be5574084b",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-v2-negative-control/observations.jsonl": "0fe099c4c4f2488972e71a0bf8aa0219be728f7b3e19e847e45689ba01d31fdd",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-v2-negative-control/plan.json": "da3b0e28206c58a13a620bc8a1ab7967828a5ee17e03be7d1a7509cbfb06ac52",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/late-v2-negative-control/report.json": "d8bce0d0c43b5bb24b0106a1670ea7f25fe35f9b099cf54db964ccdfe96af854",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/observations.jsonl": "0c6c2ba69260f796c213682bd5b60a2cb66090e046f0317e45c39cd29c3fe9b1",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/plan.json": "9e1b754c31362abe0a070c831ba2ea2a1ab28adfc6b200204f0375528e9b48c0",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-final/report.json": "239ae120e72dcd56d1d83431552b622bd2cf8b03b2a5610792e0485d84d0d57e",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-v2-final/observations.jsonl": "0e1798d4c51db5f25454ee4914472b88a4aa531cc92440eba8f36a23337953cd",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-v2-final/plan.json": "d5f96b024199abf3f30b65aee3eb621d65e78a474cd9cefeca339bf2356e9b15",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/paired-v2-final/report.json": "1667f33e4db3dc06ebfc959081f91a2d30f6732fc4776270508ca87d1155f625",
+    "evidence/pon-six-experiments-20261105/grouped-delivery/v1-reanalysis.json": "a7d41e9ae0cc0a507e538d7f194691284a1e5870f72298edb7d8af14b2c52a96"
+  },
+  "grouped_python_tests_passed": 50,
+  "native_grouped_executed": false,
+  "native_tests_skipped": 2,
+  "ordinary_hepta_executed": false,
+  "original_host_resource_gate_qualified": false,
+  "production_activation": false,
+  "retained_v1_files_unchanged": 9,
+  "schema": "pon-six-experiment-4-local-evidence-v2",
+  "v2_loaded_repository_files": 16,
+  "whole_source_attestation": false
+}

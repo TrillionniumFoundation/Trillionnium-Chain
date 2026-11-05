@@ -1,0 +1,309 @@
+{
+  "schema": "pon-six-experiments-native-cost-readback-v1",
+  "kind": "read-only extraction of prior 15-arm native record; not a new benchmark",
+  "source_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_read_commit": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+  "source_path": "evidence/pon-work-expensive-v1-20261105/summary.json",
+  "source_git_blob_sha": "be9d130ad312d51e93677e7c3625ca11ca362b61",
+  "executed_source": "dd10f0aee7de54cbbf6e67c78bf85a5e1d59244d",
+  "executed_tree": "21eec0a14631db0de94cabad07a1d4c14bfe0388",
+  "work_profile": "pon-matmul-transcript-64-v1",
+  "native_record_schema": "pon-work-expensive-native-v2",
+  "definition": "rho_cost_observed = evaluation_producer_cpu_ns / generic_evaluation_producer_cpu_ns; smaller is cheaper than dense lazy-full-limb; not a security or globally best honest baseline",
+  "comparison_denominator": "Same material, challenge/target cohort, six held-out samples 2..7, 64 completed attempts per applicable sample; producer CPU includes setup, attempts, per-attempt cleanup and completed cache teardown; excludes verification and separately reported global preparation",
+  "original_counts": {
+    "attempts": 115712,
+    "completed_cells": 1808,
+    "completed_losing_attempts": 84845,
+    "failed_cells": 0,
+    "hits": 30867,
+    "planned_cells": 3360,
+    "unsupported_cells": 1552,
+    "verified_hits": 30867
+  },
+  "selection_scope": {
+    "baseline_scope": "Best among finite tested legal arms chosen by earlier calibration; dense generic comparison retained as a diagnostic, not a universal honest optimum.",
+    "choice_counts": {
+      "lazy-full-limb": 3,
+      "lazy-full-limb-sparse": 7
+    },
+    "combinations": 10,
+    "rule": "Original choices from samples 0 and 1; evaluation samples 2 through 7 never replace the chosen arm.",
+    "sparse_selected_by_prior_calibration": 7
+  },
+  "selected_representative_cases": [
+    {
+      "source_json_pointer": "/primary_census/calibration_selections/25",
+      "calibration_samples": [
+        0,
+        1
+      ],
+      "class": "supplied-material",
+      "evaluation_budget_counts": [
+        {
+          "aggregate_budget_ceiling_cpu_ns": 6000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 1000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 30000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 5000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 120000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 7,
+          "generic_mean_hits_per_replicate": 1.1666666666666667,
+          "per_sample_budget_cpu_ns": 20000000,
+          "selected_hits_across_replicates": 8,
+          "selected_mean_hits_per_replicate": 1.3333333333333333
+        }
+      ],
+      "evaluation_producer_cpu_ns": 120135077,
+      "evaluation_samples": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "generic_evaluation_producer_cpu_ns": 132169469,
+      "generic_to_selected_cpu_ratio": 1.1001738401516152,
+      "selected_arm": "lazy-full-limb-sparse",
+      "selection_rule": "minimum aggregate producer CPU on earlier calibration samples; fixed tie order",
+      "shard": "material-2-target-1",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "rho_cost_selected_over_dense_exact": [
+        120135077,
+        132169469
+      ],
+      "rho_cost_selected_over_dense": 0.9089472622455644
+    },
+    {
+      "source_json_pointer": "/primary_census/calibration_selections/24",
+      "calibration_samples": [
+        0,
+        1
+      ],
+      "class": "supplied-material",
+      "evaluation_budget_counts": [
+        {
+          "aggregate_budget_ceiling_cpu_ns": 6000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 1000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 30000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 1,
+          "generic_mean_hits_per_replicate": 0.16666666666666666,
+          "per_sample_budget_cpu_ns": 5000000,
+          "selected_hits_across_replicates": 3,
+          "selected_mean_hits_per_replicate": 0.5
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 120000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 9,
+          "generic_mean_hits_per_replicate": 1.5,
+          "per_sample_budget_cpu_ns": 20000000,
+          "selected_hits_across_replicates": 11,
+          "selected_mean_hits_per_replicate": 1.8333333333333333
+        }
+      ],
+      "evaluation_producer_cpu_ns": 133486672,
+      "evaluation_samples": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "generic_evaluation_producer_cpu_ns": 144508411,
+      "generic_to_selected_cpu_ratio": 1.0825680858984934,
+      "selected_arm": "lazy-full-limb-sparse",
+      "selection_rule": "minimum aggregate producer CPU on earlier calibration samples; fixed tie order",
+      "shard": "material-1-target-1",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "rho_cost_selected_over_dense_exact": [
+        133486672,
+        144508411
+      ],
+      "rho_cost_selected_over_dense": 0.9237294291472072
+    },
+    {
+      "source_json_pointer": "/primary_census/calibration_selections/2",
+      "calibration_samples": [
+        0,
+        1
+      ],
+      "class": "zero",
+      "evaluation_budget_counts": [
+        {
+          "aggregate_budget_ceiling_cpu_ns": 6000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 1000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 30000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 5000000,
+          "selected_hits_across_replicates": 24,
+          "selected_mean_hits_per_replicate": 4
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 120000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 138,
+          "generic_mean_hits_per_replicate": 23,
+          "per_sample_budget_cpu_ns": 20000000,
+          "selected_hits_across_replicates": 165,
+          "selected_mean_hits_per_replicate": 27.5
+        }
+      ],
+      "evaluation_producer_cpu_ns": 123049780,
+      "evaluation_samples": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "generic_evaluation_producer_cpu_ns": 129669992,
+      "generic_to_selected_cpu_ratio": 1.0538010876573691,
+      "selected_arm": "blocked-zero",
+      "selection_rule": "minimum aggregate producer CPU on earlier calibration samples; fixed tie order",
+      "shard": "synthetic-target-0",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "rho_cost_selected_over_dense_exact": [
+        123049780,
+        129669992
+      ],
+      "rho_cost_selected_over_dense": 0.9489456897629792
+    },
+    {
+      "source_json_pointer": "/primary_census/calibration_selections/13",
+      "calibration_samples": [
+        0,
+        1
+      ],
+      "class": "rank-one",
+      "evaluation_budget_counts": [
+        {
+          "aggregate_budget_ceiling_cpu_ns": 6000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 1000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 30000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 0,
+          "generic_mean_hits_per_replicate": 0,
+          "per_sample_budget_cpu_ns": 5000000,
+          "selected_hits_across_replicates": 0,
+          "selected_mean_hits_per_replicate": 0
+        },
+        {
+          "aggregate_budget_ceiling_cpu_ns": 120000000,
+          "evaluation_replicates": 6,
+          "generic_hits_across_replicates": 6,
+          "generic_mean_hits_per_replicate": 1,
+          "per_sample_budget_cpu_ns": 20000000,
+          "selected_hits_across_replicates": 6,
+          "selected_mean_hits_per_replicate": 1
+        }
+      ],
+      "evaluation_producer_cpu_ns": 135294098,
+      "evaluation_samples": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "generic_evaluation_producer_cpu_ns": 128008276,
+      "generic_to_selected_cpu_ratio": 0.9461482643537045,
+      "selected_arm": "lazy-full-limb-sparse",
+      "selection_rule": "minimum aggregate producer CPU on earlier calibration samples; fixed tie order",
+      "shard": "synthetic-target-1",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "rho_cost_selected_over_dense_exact": [
+        135294098,
+        128008276
+      ],
+      "rho_cost_selected_over_dense": 1.056916804347869
+    }
+  ],
+  "preserved_scope": {
+    "arm_count": 15,
+    "calibration_available_to_honest_miners": true,
+    "driver_schema_unchanged_as_recorded": "pon-work-expensive-campaign-v1",
+    "finite_observations_not_cost_lower_bounds": true,
+    "gamma": null,
+    "live_chain_accepted_work": null,
+    "native_registry_version": "pon-work-expensive-native-v2",
+    "no_old_log_relabeling": true,
+    "no_post_hoc_selection_replacement": true,
+    "node_fairness_qualified": false,
+    "production_activation": false,
+    "reader_version": "pon-work-expensive-reader-v2"
+  },
+  "uncertainty": [
+    "Finite measured implementation set, not minimum legal-cost theorem",
+    "Two prior calibration samples; no post-hoc held-out reselection",
+    "Small noisy sample and unqualified device/distribution transfer; no confidence or security upper bound supplied",
+    "Legal optimization is available to honest miners; dense baseline is not the upgraded best known honest optimum",
+    "Original native results do not transfer to this turn's Python Cell profile, new code or grouped profile"
+  ],
+  "invalid_input_adversary": {
+    "separate": true,
+    "measured_this_turn": false,
+    "prior_verifier_counts": {
+      "actual_native_verification_calls": 216,
+      "completed_losing_trials": 51,
+      "completed_search_trials": 81,
+      "exact_byte_reuses": 34,
+      "outcomes": {
+        "Accepted": 24,
+        "Field": 9,
+        "Length": 3,
+        "Target": 6,
+        "Task": 3,
+        "Transcript": 168,
+        "Version": 3
+      },
+      "submitted_candidates": 72
+    },
+    "prior_denominator": "preparation plus every operation construction/search/clone; diagnostic-inclusive denominator retained separately",
+    "resource_fairness_qualified": false
+  },
+  "current_turn_native_census_rerun": false,
+  "current_turn_cheapest_legal_rho": null
+}

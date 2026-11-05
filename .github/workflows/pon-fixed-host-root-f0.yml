@@ -15,6 +15,8 @@ on:
       - scripts/ci/test_fixed_root_resources.py
       - scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json
       - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs
+      - trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs
       - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs
       - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs
       - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs

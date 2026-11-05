@@ -1,0 +1,101 @@
+{
+  "aggregate_process_tree_peak_rss_bytes": null,
+  "all_new_stage_wait4_usage_available": true,
+  "attempt_scope": "two archived observations; not a random sample, p99 estimate, failure probability or new trial",
+  "benefit_gate_passed": null,
+  "comparison": "slower-than-native-on-observed-verification",
+  "complete_cell_relation_proven": false,
+  "complete_relation": "W1-v2",
+  "consensus_admission": false,
+  "cpu_accounting_scope": "new stages only; prior raw costs retained separately; no reconstruction of unreaped or missed descendants",
+  "derivation": {
+    "archived_repository_commit": "f9977c5d6d1b57880967ef36dcd1570010cbbe4f",
+    "archived_result": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+    "archived_result_sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+    "new_cryptographic_verification": false,
+    "new_proof_execution": false,
+    "source_sha256": "562bf6b566d6896daa95a06173b89ab990bfc66473bb9ee4d8761be02e1c477d"
+  },
+  "fresh_local_delivery_seconds_from_start": 6248.950040854999,
+  "fresh_proof_pipeline_seconds": 6248.484106799,
+  "full_delivery_cost_complete": false,
+  "generation_and_fresh_verification_scope": "preparation, full execution, all segments, recursion, source/checkpoint checks, controller pauses, and fresh strict verification; starts after fixture availability; excludes build/setup",
+  "independent_full_proof_trials_observed": 1,
+  "local_delivery": {
+    "native": {
+      "body_bytes": 49188,
+      "durable_local_file_write_ns": 1211276,
+      "envelope_encode_ns": 24401,
+      "offered_bytes_per_second": 1000000,
+      "payload_bytes": 49603,
+      "send_receive_and_durable_write_seconds": 0.051178386001993204
+    },
+    "transparent": {
+      "body_bytes": 257014,
+      "durable_local_file_write_ns": 1699299,
+      "envelope_encode_ns": 701264,
+      "offered_bytes_per_second": 1000000,
+      "payload_bytes": 257429,
+      "send_receive_and_durable_write_seconds": 0.2594384110016108
+    }
+  },
+  "minimum_node_configuration_measured": false,
+  "observed_new_stage_wait4_system_cpu_seconds": 358.916421,
+  "observed_new_stage_wait4_user_cpu_seconds": 44039.733324,
+  "production_qualification": false,
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+  "retained_attempt_controller_wall_sum_seconds": 13453.792694345,
+  "retained_attempts": [
+    {
+      "complete_proof_claim": false,
+      "observed_wall_seconds": 7200.081220201,
+      "outcome": "TIMEOUT",
+      "sha256": "33f202f7530f7ea35287df99be29564f33b2325db824820a130e11813b3e7636",
+      "source": "evidence/pon-w1-v2-deadline-20261105/summary.json"
+    },
+    {
+      "complete_proof_claim": true,
+      "observed_wall_seconds": 6253.711474144,
+      "outcome": "complete W1 v2 proof and local observation",
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc",
+      "source": "evidence/pon-w1-full-v2-20261105/proof-result.json"
+    }
+  ],
+  "reused_receipt_replays": 100,
+  "schema": "TRNM-W1-OBSERVED-COST-COMPARISON1",
+  "scope": "derived same-host v2 observations; no seal verification or independent machine qualification",
+  "transparent_over_native_loopback_seconds_ratio": 5.069296460257787,
+  "transparent_over_native_median_verify_ratio": 30.243830914356113,
+  "transparent_over_native_payload_bytes_ratio": 5.189786908049916,
+  "unmeasured_costs": [
+    "build/setup",
+    "aggregate process-tree peak memory",
+    "failures across independent proof trials",
+    "production queueing",
+    "WAN propagation",
+    "Node admission",
+    "independent confirmation"
+  ],
+  "verification": {
+    "fresh": {
+      "iterations": 1,
+      "maximum_ns": 18210936,
+      "median_ns": 18210936,
+      "minimum_ns": 18210936
+    },
+    "native": {
+      "iterations": 1000,
+      "maximum_ns": 7287306,
+      "median_ns": 954983.5,
+      "minimum_ns": 448141
+    },
+    "transparent": {
+      "iterations": 100,
+      "maximum_ns": 52819761,
+      "median_ns": 28882359.5,
+      "minimum_ns": 17566284
+    }
+  },
+  "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+}

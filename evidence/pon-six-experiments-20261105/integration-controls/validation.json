@@ -1,0 +1,62 @@
+{
+  "count_boundary": "ledger24/history20 overlap earlier proof/recovery report; no combined count or model trials",
+  "full_source_attested": false,
+  "logs": {
+    "ci-contract-before-new-controls.log": {
+      "bytes": 16673,
+      "sha256": "21a1d651f5bf2a26f69462835b22cae562742189218c44311b8e5934b2f35afb"
+    },
+    "ci-contract-cross-lane-duplicate-red.log.json": {
+      "bytes": 19525,
+      "original_utf8_bytes": {
+        "bytes": 19032,
+        "sha256": "6a31622943b843e1dca8d96c9381a69979b0b58c0e1b6e0298429d78755527b3"
+      },
+      "sha256": "888bcd60e93e955c92148503eed7dbd20c664b90a9288f61e83859570291d494"
+    },
+    "ci-contract-tests.log": {
+      "bytes": 16673,
+      "sha256": "762ea86e0f4e1ba3c96905bad2c2b0a243c069ffb3bd74bb90779af22b388c27"
+    },
+    "runtime-stop.log": {
+      "bytes": 2145,
+      "sha256": "b3c619e420ac762c0009d0b689d497c392ff616e32586f33088fa6cf6ec58ebc"
+    },
+    "trial-ledger.log": {
+      "bytes": 4538,
+      "sha256": "b0287ca09a353a4adc96dae9ddafde8bd05d49a3c1c42140e0750ff2bc0e9d79"
+    },
+    "trial-replay.log": {
+      "bytes": 4142,
+      "sha256": "2c87b61419f818b160318d75ad1ad6e10b66dded32bbfdea109e26ee78732494"
+    }
+  },
+  "native_commands_executed": false,
+  "passing_test_selections": {
+    "ci-contract-tests.log": 100,
+    "runtime-stop.log": 12,
+    "trial-ledger.log": 24,
+    "trial-replay.log": 20
+  },
+  "production_activation": false,
+  "retained_failed_selection": {
+    "cause": "new ledger/F0 commands could be duplicated into another lane; fixed by global command cardinality checks",
+    "failures": 2,
+    "file": "ci-contract-cross-lane-duplicate-red.log.json",
+    "tests_run": 100
+  },
+  "schema": "pon-six-experiments-integration-controls-v1",
+  "source_sha256": {
+    "scripts/ci/check_ci_contract.py": "edd81e40ffd26b77ebeb359b693110c2cce5249ea0bc8ea03244f6f520aefef8",
+    "scripts/ci/ci_job.sh": "6e79c1e861af61d5bc28807e18192cb97daf23ec0b3c23cc3f1bb3e0d71fef77",
+    "scripts/ci/test_ci_contract.py": "a8af6042ee1c1b33c428640bda267c6ba2e2e2dc1fffad50221a99d5fe0b0705",
+    "scripts/llm_neural_read_worker.py": "8911819bc65304c6b8b981e6efaf103cbe8770ce4647871695e46110b79b6396",
+    "scripts/llm_runtime_pilot.py": "59e1c14d3cd8ffd977e33502f174adebe42c9db7d0887de3c3e20abff50e0b52",
+    "scripts/llm_runtime_trial_ledger.py": "56d04adad59a365ba832e4297e25b39d667dbd54b6bb9e356e62e077c6507d83",
+    "scripts/test_llm_runtime_stop.py": "648f73a4e967c17e690fcde50d6b6dd350e6500a7a34007ddb59df6cd51674e7",
+    "scripts/test_llm_runtime_trial_ledger.py": "e0e8fc0d765b4778e569d6383b7a3a1a16a2702dd6351c117ba5af96e1acc474",
+    "scripts/test_llm_runtime_trial_replay.py": "8db662e19f9ecc0fafef2077d83dcacf82a449fd7030df517ede9a7d97505ecb"
+  },
+  "upstream_commit_preserved": "9ecdbebc897d35f07b998d084b015db8474be84b",
+  "whole_ci_lanes_executed": false
+}

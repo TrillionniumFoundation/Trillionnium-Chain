@@ -1,0 +1,17 @@
+test_neural_serve_entry_passes_stop_through_real_supervision (test_llm_runtime_stop.RealStopTests.test_neural_serve_entry_passes_stop_through_real_supervision) ... ok
+test_real_int_and_term_at_each_handoff_have_one_original_terminal_owner (test_llm_runtime_stop.RealStopTests.test_real_int_and_term_at_each_handoff_have_one_original_terminal_owner) ... ok
+test_repeated_signals_cannot_interrupt_original_cleanup (test_llm_runtime_stop.RealStopTests.test_repeated_signals_cannot_interrupt_original_cleanup) ... ok
+test_second_term_inside_original_grace_keeps_the_kill_and_reap_owner (test_llm_runtime_stop.RealStopTests.test_second_term_inside_original_grace_keeps_the_kill_and_reap_owner) ... ok
+test_stop_never_turns_unresolved_cleanup_into_success (test_llm_runtime_stop.RealStopTests.test_stop_never_turns_unresolved_cleanup_into_success) ... ok
+test_terminal_exit_zero_after_stop_still_cannot_succeed (test_llm_runtime_stop.RealStopTests.test_terminal_exit_zero_after_stop_still_cannot_succeed) ... ok
+test_sticky_stop_aborts_existing_exit_reconciliation_without_authority (test_llm_runtime_stop.StopObservationTests.test_sticky_stop_aborts_existing_exit_reconciliation_without_authority) ... ok
+test_background_scope_refuses_before_modifying_main_thread_handlers (test_llm_runtime_stop.StopRequestTests.test_background_scope_refuses_before_modifying_main_thread_handlers) ... ok
+test_partial_handler_install_failure_restores_the_exact_original (test_llm_runtime_stop.StopRequestTests.test_partial_handler_install_failure_restores_the_exact_original) ... ok
+test_pre_requested_stop_never_spawns_or_invents_accounting (test_llm_runtime_stop.StopRequestTests.test_pre_requested_stop_never_spawns_or_invents_accounting) ... ok
+test_signal_request_is_sticky_and_restores_handlers_on_error (test_llm_runtime_stop.StopRequestTests.test_signal_request_is_sticky_and_restores_handlers_on_error) ... ok
+test_untyped_stop_is_rejected_before_side_effects (test_llm_runtime_stop.StopRequestTests.test_untyped_stop_is_rejected_before_side_effects) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 5.941s
+
+OK

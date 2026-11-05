@@ -289,6 +289,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
+    python3 scripts/test_llm_runtime_trial_ledger.py
     python3 scripts/test_llm_parent_material.py
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
@@ -330,6 +331,9 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     python3 formal/pon-nakamoto-v1/test_model_contract.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_numeric_v1.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_attempt_journal_v1.py' -v
+    python3 scripts/ci/test_fixed_host_service_readback_v1.py
+    python3 scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
@@ -363,11 +367,22 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
-    runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
+    runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n    python3 scripts/test_llm_runtime_trial_ledger.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1
-                    for command in code_lines(LLM_RUNTIME_TESTS)),
+                    for command in code_lines(runtime_pilot + LLM_RUNTIME_TESTS)),
             'runtime owner, exit, inheritance and neural worker controls must retain their straight-line command sequence exactly once after pilot, parent material and parent step in protocol-contract')
+    useful_cell_commands = [
+        "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p '" + name + "' -v"
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py')
+    ]
+    for command in useful_cell_commands + [
+            'python3 scripts/ci/test_fixed_host_service_readback_v1.py',
+            'python3 scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v']:
+        require(code_lines(lanes['protocol-contract']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'useful Cell and fixed-Host reader controls must execute exactly once in protocol-contract')
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
             'five-lane reward budget controls must execute exactly once in protocol-contract')

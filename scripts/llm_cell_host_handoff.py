@@ -23,6 +23,13 @@ _spec.loader.exec_module(codec)
 
 SCHEMA = "pon-smollm-cell-host-handoff-v2"
 INSTALLED_SCHEMA = "pon-smollm-cell-host-handoff-v3"
+RECOVERY_SCHEMA = "pon-smollm-cell-host-handoff-v4"
+RECOVERY_PROFILE = "hepta-pq-evidence-recovery-files-v1"
+# Ordinary CLI and bounded external files at Hepta 1556a4df6e279055fd8196f81a4ca2fe0f19384a.
+# Only the original Rust evidence owner authenticates PQ signatures, the database
+# lineage and the generation floor. These independent pins grant no such authority.
+RECOVERY_INPUTS = (("frontier", "--evidence-recovery-frontier-file", 64 * 1024),
+                   ("signer_trust", "--evidence-recovery-frontier-trust-file", 8 * 1024))
 HOST_SCHEMA = "hepta-smollm-cognitive-cell-host-v2"
 NAMES = (
     "adapter/artifact.safetensors", "adapter/target-contract.json", "adapter/wrapped-adapter.json",
@@ -205,10 +212,42 @@ def authentication(value):
     return result, snapshots
 
 
+def recovery_arguments(value, workspace, environment):
+    """Read the two owner-pinned external files, preserving their original paths.
+
+    The daemon rechecks their protected identity and verifies its original signed
+    recovery relation. A copy inside the run would violate its rollback boundary.
+    Rechecking here before exec also refuses a changed owner pin after transport.
+    """
+    exact(value, ("profile", "frontier", "signer_trust"), "evidence recovery")
+    if value["profile"] != RECOVERY_PROFILE:
+        raise ValueError("explicit hepta-pq-evidence-recovery-files-v1 profile required")
+    roots = []
+    for raw in (workspace, *(environment[name] for name in
+                            ("HEPTA_AGENT_HOME", "HEPTA_AGENT_RUN_ROOT", "HEPTA_FLEET_ROOT"))):
+        root = Path(raw)
+        if not root.is_absolute():
+            raise ValueError("recovery owner roots must be absolute")
+        # Missing normal tails are allowed by the native owner. No root is
+        # created here; its original identity validation remains authoritative.
+        roots.append(root.resolve(strict=False))
+    arguments = []
+    for name, flag, maximum in RECOVERY_INPUTS:
+        spec = value[name]
+        pinned(spec, maximum)
+        path = Path(spec["path"])
+        if any(path.is_relative_to(root) for root in roots):
+            raise ValueError("recovery files must be outside Agent home/run/workspace/fleet rollback domains")
+        arguments.extend((flag, str(path)))
+    return arguments
+
+
 class Plan:
     def __init__(self, value, host, executable, execution_profile):
         self.value, self.host, self.executable = value, host, executable
         self.execution_profile = execution_profile
+        self._recovery = (json.loads(canonical(value["evidence_recovery"]), object_pairs_hook=unique)
+                          if value["schema"] == RECOVERY_SCHEMA else None)
         self._auth_arguments, self._auth_snapshots = authentication(value["authentication"])
         self._prepared_auth = None
         self.sidecar = None
@@ -241,14 +280,17 @@ class Plan:
         # Keep the independently measured image FD through the selected profile's exec. The unchanged
         # protected host is re-read against its original pin by the real daemon.
         environment = checked_environment(os.environ)
+        arguments = [self.value["executable"]["path"],
+            "--host-format", "cell-v2", "--host-config", self.value["host"]["path"],
+            "--host-config-sha256", self.value["host"]["sha256"]]
+        if self._recovery is not None:
+            arguments.extend(recovery_arguments(self._recovery, self.value["workspace"], environment))
         if self.execution_profile == "protected-installed-elf-v1":
             import llm_cell_installed_executable as installed
             installed.require_subject()
             installed.verify_installed_path(self.value["executable"]["path"], self.executable)
         os.chdir(self.value["workspace"])
-        os.execve(self.executable.fileno(), [self.value["executable"]["path"],
-            "--host-format", "cell-v2", "--host-config", self.value["host"]["path"],
-            "--host-config-sha256", self.value["host"]["sha256"]], environment)
+        os.execve(self.executable.fileno(), arguments, environment)
 
 
 def load(path, digest, output, environment):
@@ -267,8 +309,9 @@ def load(path, digest, output, environment):
         if schema == SCHEMA:
             exact(value, fields, "handoff-v2")
             execution_profile = "sealed-elf-v1"
-        elif schema == INSTALLED_SCHEMA:
-            exact(value, (*fields, "execution_profile"), "handoff-v3")
+        elif schema in (INSTALLED_SCHEMA, RECOVERY_SCHEMA):
+            extra = ("execution_profile", "evidence_recovery") if schema == RECOVERY_SCHEMA else ("execution_profile",)
+            exact(value, (*fields, *extra), "handoff-v4" if schema == RECOVERY_SCHEMA else "handoff-v3")
             execution_profile = value["execution_profile"]
             if execution_profile != "protected-installed-elf-v1":
                 raise ValueError("explicit protected-installed-elf-v1 execution profile required")
@@ -281,6 +324,8 @@ def load(path, digest, output, environment):
         workspace = Path(value["workspace"])
         if not workspace.is_absolute() or workspace.resolve(strict=True) != workspace or not workspace.is_dir():
             raise ValueError("original canonical Agentd workspace required")
+        if schema == RECOVERY_SCHEMA:
+            recovery_arguments(value["evidence_recovery"], workspace, environment)
         host = json.loads(pinned(value["host"], 65_536), object_pairs_hook=unique)
         exact(host, ("schema", "owner", "sidecar", "dependency_closure", "dependency_closure_id", "operation_id"), "host-v2")
         if host["schema"] != HOST_SCHEMA or host["owner"].get("schema") != "hepta-smollm-cognitive-host-v2":

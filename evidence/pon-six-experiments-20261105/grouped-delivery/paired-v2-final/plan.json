@@ -1,0 +1,338 @@
+{
+  "budget_ns": 4000000000,
+  "budget_scope": "declared local corpus replay diagnostic; not original F0 service SLO",
+  "cases": [
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 0,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 1,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 2,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 3,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 4,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 5,
+      "repeat": 0
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 6,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 7,
+      "repeat": 0
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 8,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 9,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 10,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 11,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 12,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 13,
+      "repeat": 1
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 14,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 15,
+      "repeat": 1
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 16,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 17,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 18,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 19,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 20,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 21,
+      "repeat": 2
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 22,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 23,
+      "repeat": 2
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 24,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 25,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 26,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 27,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 28,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 29,
+      "repeat": 3
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 30,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 31,
+      "repeat": 3
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 32,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 33,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 34,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 35,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 36,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 37,
+      "repeat": 4
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 38,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 39,
+      "repeat": 4
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 1,
+      "index": 40,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 1,
+      "index": 41,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 4,
+      "index": 42,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 4,
+      "index": 43,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 16,
+      "index": 44,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 16,
+      "index": 45,
+      "repeat": 5
+    },
+    {
+      "arm": "packed_grouped",
+      "batch_size": 64,
+      "index": 46,
+      "repeat": 5
+    },
+    {
+      "arm": "selected_direct",
+      "batch_size": 64,
+      "index": 47,
+      "repeat": 5
+    }
+  ],
+  "input_sha256": {
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/consumer.json": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/evaluation-bundle.json": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+    "/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/model.json": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e"
+  },
+  "native_backend_executed": false,
+  "production_activation": false,
+  "real_demand_authenticated": false,
+  "schema": "pon-grouped-local-delivery-cost-v2",
+  "source_module_paths": {
+    "__main__": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_delivery_cost_v1.py",
+    "bounded_process": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/bounded_process.py",
+    "contract_wire": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/contract_wire.py",
+    "evaluation": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/evaluation.py",
+    "evaluation_bundle": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/evaluation_bundle.py",
+    "experiments.grouped_cell_operator_v0": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py",
+    "experiments.shared_cell_operator_v1": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+    "ledger": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/ledger.py",
+    "model_contract": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/model_contract.py",
+    "strict_signature": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/strict_signature.py",
+    "work_backend": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/work_backend.py",
+    "work_oracle": "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/work_oracle.py"
+  },
+  "source_replayed_from_git": false,
+  "source_scope": "Loaded repository Python modules and contract_wire configuration files; before/after path and file-byte observations, not whole-source, loaded-bytecode, interpreter, NumPy, native-library, or independent execution attestation",
+  "source_sha256": {
+    "/workspace/scratch/32ba45a9a98a/chain-work/config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "/workspace/scratch/32ba45a9a98a/chain-work/config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "/workspace/scratch/32ba45a9a98a/chain-work/config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "/workspace/scratch/32ba45a9a98a/chain-work/config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/bounded_process.py": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/evaluation.py": "64abdc175b20a446421371380e244f401f658662a55e925f4bfb76c956f87842",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/evaluation_bundle.py": "69468989c22369f812a866fde48ed4c8dd16f15306620a222527d4e645f5699f",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_cell_operator_v0.py": "a5facb904ff068fe72a957bbf48c396bf3fecd37f3390973286a32d4c9251a8a",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/grouped_delivery_cost_v1.py": "293e3c78d535aa498bd8ee054885a4f00f65a7873ac6472f0a3e3f1437f2bcd4",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py": "5c2c6d900c6a6898a5d5eb8b28d48a44217159b0efe11fb84d8f0f58277dbaf6",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/ledger.py": "129e64be6e26a97f0bfbbc698fee573c6d5b8fea2ef361e9e7ab2fe0ddd0333e",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/model_contract.py": "e09bc14470c4115803fbb831700078f9b050d5c36d3b19693565e5047d5531bd",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/work_backend.py": "cdda8a8ee3cc6fa280dbb7bce2e7527527f26602ea7056173d7e7e31ec4d1e27",
+    "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "whole_source_attestation": false
+}

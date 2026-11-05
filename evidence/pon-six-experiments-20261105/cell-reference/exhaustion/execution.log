@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 375, in <module>
+    main()
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 370, in main
+    result = run(args)
+             ^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 172, in run
+    return run_admitted(args, output_dir, records, deadline, execution)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 242, in run_admitted
+    proved, prove_time = elapsed(lambda: relation.prove_reference(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 55, in elapsed
+    value = call()
+            ^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 242, in <lambda>
+    proved, prove_time = elapsed(lambda: relation.prove_reference(
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 515, in prove_reference
+    raise ValueError('SEARCH_EXHAUSTED')
+ValueError: SEARCH_EXHAUSTED
