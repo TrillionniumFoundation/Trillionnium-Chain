@@ -182,7 +182,7 @@ pub fn fetch_delta_to_file(
         .min(Instant::now() + limits.peer.overall_timeout);
     require(Instant::now() <= deadline, "delta deadline")?;
     let base = store
-        .manifest(delta.base)?
+        .manifest_with_deadline(delta.base, Some(deadline))?
         .ok_or(CellErrorV1::Unavailable)?;
     let plan = delta.verify(&base)?;
     require(
@@ -215,6 +215,7 @@ pub fn fetch_delta_to_file(
     let requests_left = AtomicU64::new(limits.peer.max_connections);
     let responses = ResponseBudget::new(limits.peer.max_response_bytes);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.peer.request_timeout,
         overall: deadline,
         requests_left: &requests_left,

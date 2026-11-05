@@ -1,0 +1,201 @@
+{
+  "schema": "trnm-cell-storage-runtime-verification-v1",
+  "status": "development_observations_retained_exact_source_verification_pending",
+  "original_source_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+  "concurrent_evidence_parent_preserved": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "original_cancellation_failure": {
+    "baseline": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+    "scope": "working-tree test-only regression on original source",
+    "selector": "cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels",
+    "result": "FAIL",
+    "passed": 0,
+    "failed": 1,
+    "expected_and_observed_failure": "original prefetch acquired second payload after external cancellation",
+    "input_files": {
+      "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs": "6032171ccb22582e3f4c70704282616824ee03e9840fe3abba9bcaa65f341078",
+      "trillionnium/crates/trnm-data-availability/src/cell/network.rs": "1c0c626f1c9671106ca559925e948e290c8c67086f8565c1c76c83de2b3248a5",
+      "trillionnium/crates/trnm-data-availability/src/cell/residency.rs": "83eac45643808a0fc579c7b8642f35af0e6d4d671564daa15162da5a2f37ee72",
+      "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "trillionnium/Cargo.lock": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61"
+    },
+    "logs": {
+      "cancellation-red.log": "70c5e3356e4e4baf0d15daa2333b6995c7acba17cd6f15f283ffa0fa313eb55e",
+      "cancellation-red.patch": "68d0100eca88559fe446b39593d9caf951e417d57fd66997ef1b45dbd450c7d2"
+    }
+  },
+  "development_m09": {
+    "scope": "working-tree development, not final committed source",
+    "passed": 350,
+    "failed": 0,
+    "ignored": 0,
+    "log_sha256": "c95dd1139f38cb315c4829420d18cf028365874813308c54ccc337fa4c9b3f7a"
+  },
+  "development_workloads": {
+    "scope": "finite synthetic loopback, not final committed source",
+    "source_sha256": "0498e64644c31c62c10ced7ce7c77d16349b55c017c336b6cd47f62085e13ea5",
+    "status": "complete",
+    "groups": [
+      {
+        "workload": "identical",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 331776,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 299008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 0
+            }
+          },
+          "key_logical_bytes": 544,
+          "manifest_rows": 1,
+          "manifest_wire_bytes": 827,
+          "total_logical_bytes": 263515,
+          "unique_chunk_rows": 16,
+          "unique_payload_bytes": 262144
+        },
+        "provider_response_bytes": 0
+      },
+      {
+        "workload": "single-chunk-sparse-change",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 495840,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 430080
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 32992
+            }
+          },
+          "key_logical_bytes": 1056,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 401715,
+          "unique_chunk_rows": 24,
+          "unique_payload_bytes": 393216
+        },
+        "provider_response_bytes": 131144
+      },
+      {
+        "workload": "chunk-reordering",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 360600,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 307200
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 20632
+            }
+          },
+          "key_logical_bytes": 800,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 270387,
+          "unique_chunk_rows": 16,
+          "unique_payload_bytes": 262144
+        },
+        "provider_response_bytes": 0
+      },
+      {
+        "workload": "one-to-eight-byte-shift",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 2536368,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 2347008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 156592
+            }
+          },
+          "key_logical_bytes": 4896,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 2371635,
+          "unique_chunk_rows": 144,
+          "unique_payload_bytes": 2359296
+        },
+        "provider_response_bytes": 2098304
+      },
+      {
+        "workload": "dense-full-change",
+        "status": "passed",
+        "versions": 9,
+        "baseline_payload_bytes": 2359296,
+        "receiver_cache": {
+          "closed_cache_file_length_sum_bytes": 2536368,
+          "closed_cache_files": {
+            "main": {
+              "exists": true,
+              "file_length_bytes": 2347008
+            },
+            "shm": {
+              "exists": true,
+              "file_length_bytes": 32768
+            },
+            "wal": {
+              "exists": true,
+              "file_length_bytes": 156592
+            }
+          },
+          "key_logical_bytes": 4896,
+          "manifest_rows": 9,
+          "manifest_wire_bytes": 7443,
+          "total_logical_bytes": 2371635,
+          "unique_chunk_rows": 144,
+          "unique_payload_bytes": 2359296
+        },
+        "provider_response_bytes": 2098304
+      }
+    ]
+  },
+  "qualifications": {
+    "whole_model_semantics": false,
+    "ordinary_model_runtime": false,
+    "device_residency": false,
+    "independent_wan": false,
+    "mature_dht_and_independent_administration": false,
+    "automatic_funded_renewal": false,
+    "independent_holding_proof": false,
+    "native_coin_lock_or_payout": false,
+    "production_activation": false
+  }
+}

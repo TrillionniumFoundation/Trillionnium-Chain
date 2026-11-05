@@ -127,6 +127,14 @@ pub struct CellTensorReadbackV1 {
     pub payload_sha256: CellDigestV1,
 }
 
+/// Internal layout from the same complete metadata and payload verification as
+/// `verify_reader`. Ranges follow the contract's canonical tensor order and use
+/// absolute file offsets. No caller can construct a verified layout.
+pub(super) struct VerifiedTensorFileLayout {
+    pub(super) readback: CellTensorReadbackV1,
+    pub(super) ranges: Vec<(u64, u64)>,
+}
+
 impl CellTensorContractV1 {
     pub fn new(model_root: CellDigestV1, files: Vec<CellTensorFileV1>) -> CellResultV1<Self> {
         let value = Self { model_root, files };
@@ -348,6 +356,29 @@ impl CellTensorContractV1 {
         reader: &mut R,
         deadline: Instant,
     ) -> CellResultV1<CellTensorReadbackV1> {
+        self.verify_reader_impl::<false, _>(root, pinned, file_index, reader, deadline)
+            .map(|layout| layout.readback)
+    }
+
+    pub(super) fn verify_reader_layout<R: Read + Seek>(
+        &self,
+        root: &CellModelReleaseRootV1,
+        pinned: CellDigestV1,
+        file_index: u16,
+        reader: &mut R,
+        deadline: Instant,
+    ) -> CellResultV1<VerifiedTensorFileLayout> {
+        self.verify_reader_impl::<true, _>(root, pinned, file_index, reader, deadline)
+    }
+
+    fn verify_reader_impl<const RETAIN_LAYOUT: bool, R: Read + Seek>(
+        &self,
+        root: &CellModelReleaseRootV1,
+        pinned: CellDigestV1,
+        file_index: u16,
+        reader: &mut R,
+        deadline: Instant,
+    ) -> CellResultV1<VerifiedTensorFileLayout> {
         check_deadline(deadline)?;
         self.verify_for_model(root, pinned)?;
         let spec = self
@@ -391,6 +422,11 @@ impl CellTensorContractV1 {
         )?;
         let data_bytes = file.payload_bytes - header_bytes - 8;
         let mut intervals = Vec::with_capacity(spec.tensors.len());
+        let mut ranges = if RETAIN_LAYOUT {
+            Vec::with_capacity(spec.tensors.len())
+        } else {
+            Vec::new()
+        };
         for (expected, (name, actual)) in spec.tensors.iter().zip(&decoded.tensors) {
             require(
                 &expected.name == name
@@ -404,6 +440,9 @@ impl CellTensorContractV1 {
                 "tensor data range",
             )?;
             intervals.push((start, end));
+            if RETAIN_LAYOUT {
+                ranges.push((header_bytes + 8 + start, end - start));
+            }
         }
         intervals.sort_unstable();
         let mut covered = 0u64;
@@ -447,13 +486,16 @@ impl CellTensorContractV1 {
             payload_sha256 == file.payload_sha256,
             "tensor payload digest",
         )?;
-        Ok(CellTensorReadbackV1 {
-            contract_id: pinned,
-            model_root: self.model_root,
-            file_index,
-            tensor_count: spec.tensors.len(),
-            payload_bytes: file.payload_bytes,
-            payload_sha256,
+        Ok(VerifiedTensorFileLayout {
+            readback: CellTensorReadbackV1 {
+                contract_id: pinned,
+                model_root: self.model_root,
+                file_index,
+                tensor_count: spec.tensors.len(),
+                payload_bytes: file.payload_bytes,
+                payload_sha256,
+            },
+            ranges,
         })
     }
 }

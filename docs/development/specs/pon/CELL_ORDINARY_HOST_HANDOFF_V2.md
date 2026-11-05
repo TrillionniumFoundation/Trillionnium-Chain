@@ -130,7 +130,15 @@ not enable acquisition or native host entry.
 
 The existing aggregate transfer window remains **35 seconds**, from listener
 announcement through TCD1 acquisition, all cache-only materializations and final
-consumer readbacks. Connection, response-byte and cache caps remain aggregate.
+consumer readbacks. The producer now explicitly requests the separate
+`trnm.cell.ready.v1` event and waits for all bounded cache readers to pass their
+ordinary validation before its first fetch. This wait consumes that same
+35-second window; it does not start a replacement window or spend a probe
+connection. Listener and Ready addresses must match. Bounded, deadline-aware
+pipe reads reject partial lines, EOF, wrong events and late completion, even if
+both events arrive in one write. A Ready observation proves only completed local
+startup, not WAN availability or model admission. Connection, response-byte and
+cache caps remain aggregate.
 Only the native TCD1 completion marker and rehashed files qualify this data step.
 The finite provider exits before host entry. The sidecar is then published with
 create-only protected-file semantics.

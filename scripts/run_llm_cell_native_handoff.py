@@ -49,6 +49,38 @@ def remaining_fetch_budget(deadline: float) -> tuple[float, int, int]:
     return remaining, overall_ms, min(2000, overall_ms)
 
 
+def read_provider_event(stream, deadline: float, schema: str, address: str | None = None):
+    """Read one bounded startup line without buffered-read or partial-line waits.
+
+    The caller owns the absolute deadline. Reading one byte per readiness poll
+    deliberately leaves a following line in the pipe, even if both events were
+    written together. No probe connection or fresh request budget is consumed.
+    """
+    raw = bytearray()
+    with selectors.DefaultSelector() as poll:
+        poll.register(stream, selectors.EVENT_READ)
+        while not raw.endswith(b"\n"):
+            remaining = deadline - time.monotonic()
+            if remaining <= 0 or not poll.select(remaining):
+                raise TimeoutError("provider startup event exceeded its original deadline")
+            byte = os.read(stream.fileno(), 1)
+            if not byte:
+                raise RuntimeError("provider ended before its complete startup event")
+            raw.extend(byte)
+            if len(raw) > 4096:
+                raise ValueError("provider startup event exceeds 4096 bytes")
+    if time.monotonic() >= deadline:
+        raise TimeoutError("provider startup event completed after its original deadline")
+    line = raw.decode("utf-8")
+    value = json.loads(line)
+    if (type(value) is not dict or set(value) != {"schema", "address"}
+            or value["schema"] != schema or type(value["address"]) is not str
+            or not 1 <= len(value["address"]) <= 128
+            or (address is not None and value["address"] != address)):
+        raise ValueError("provider startup event differs from expected schema or listener")
+    return value, line
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     # Retain original invocation compatibility. Only the explicit v2 owner
@@ -205,25 +237,30 @@ def main() -> None:
         with (args.output / "server-stderr.log").open("w") as server_error:
             server = subprocess.Popen([str(args.cell_bin), "serve", "--store", str(producer),
                 "--bind", "127.0.0.1:0", "--seconds", "45", "--bounded-workers", "2",
+                "--announce-ready", "true",
                 "--max-connections", str(connection_budget),
                 "--max-served-bytes", str(response_budget)], stdout=subprocess.PIPE,
                 stderr=server_error, text=True)
-            with selectors.DefaultSelector() as poll:
-                poll.register(server.stdout, selectors.EVENT_READ)
-                if not poll.select(5):
-                    raise TimeoutError("finite producer did not announce its listener")
-                listen_line = server.stdout.readline()
-            address = json.loads(listen_line)["address"]
+            listen_event, listen_line = read_provider_event(
+                server.stdout, time.monotonic() + 5, "trnm.cell.listen.v1")
+            address = listen_event["address"]
             transfer_started = time.monotonic()
             transfer_deadline = transfer_started + 35
+            (args.output / "server-stdout.log").write_text(listen_line)
             transfer = {"schema": "cell-native-aggregate-transfer-v2", "clock": "monotonic",
-                "limit_seconds": 35, "all_members_verified": False,
+                "limit_seconds": 35, "all_members_verified": False, "provider_ready_observed": False,
                 "scope": "listener announced through aggregate TCR1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and Hepta load"}
             if plan is not None:
                 transfer.update(schema="cell-native-aggregate-transfer-v3",
                     scope="listener announced through aggregate TCD1 fetch, cache-only materialization and final consumer readback; excludes packing, release preparation, provider drain and original Hepta startup")
             evidence["transfer"] = transfer
             try:
+                _, ready_line = read_provider_event(server.stdout, transfer_deadline,
+                    "trnm.cell.ready.v1", address)
+                transfer["provider_ready_observed"] = True
+                transfer["provider_ready_seconds"] = time.monotonic() - transfer_started
+                with (args.output / "server-stdout.log").open("a") as log:
+                    log.write(ready_line)
                 remaining, overall_ms, request_ms = remaining_fetch_budget(transfer_deadline)
                 complete_release = args.output / "consumer-release.tcr1"
                 command = [str(args.cell_bin), "fetch-release", *cache_limits, "--store", str(consumer),
@@ -327,7 +364,8 @@ def main() -> None:
             if not transfer["within_original_deadline"]:
                 raise TimeoutError("original aggregate transfer deadline exhausted after consumer readback")
             tail, _ = server.communicate(timeout=50)
-            (args.output / "server-stdout.log").write_text(listen_line + tail)
+            with (args.output / "server-stdout.log").open("a") as log:
+                log.write(tail)
             if server.returncode != 0:
                 raise RuntimeError("finite producer did not stop successfully")
             evidence["producer_exit_code_before_consumer_load"] = server.returncode

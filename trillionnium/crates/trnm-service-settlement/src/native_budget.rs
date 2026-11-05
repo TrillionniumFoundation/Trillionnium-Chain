@@ -269,6 +269,16 @@ pub enum NativeBudgetReplayV1 {
     Done,
 }
 
+/// Read-only composition preflight. These borrowed inputs are not an execution
+/// capability: every actual open/reserve/intent still rechecks its own owner.
+pub struct NativeBudgetEffectCheckV1<'a> {
+    pub policy: &'a NativeBudgetPolicyV1,
+    pub claim: &'a NativeBudgetClaimV1,
+    pub operation: NativeBudgetHashV1,
+    pub effect: NativeBudgetHashV1,
+    pub window: Option<(u64, u64)>,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 struct FundingPin {
     source: NativeFundingSourceV1,
@@ -854,6 +864,98 @@ impl NativeBudgetStoreV1 {
             ))
         })
     }
+
+    /// Check an entire proposed composition before its first journal mutation.
+    /// The original event validator runs against an in-memory snapshot, so later
+    /// elements see earlier proposed reservations and cannot overbook a source.
+    /// Exact effects keep their readback-only semantics after a reorganization;
+    /// an absent source cannot authorize a new intent. All observations still
+    /// belong to the original journal's network, genesis and owner generations.
+    /// This is neither a transaction across owners nor a reservation. State may
+    /// change after return; actual mutations repeat the original checks.
+    pub fn check_effects(
+        &self,
+        owner: &mut impl NativeFundingOwnerV1,
+        checks: &[NativeBudgetEffectCheckV1<'_>],
+    ) -> NativeBudgetResultV1<Vec<NativeBudgetReplayV1>> {
+        require(
+            !checks.is_empty() && checks.len() <= self.configuration.max_records as usize,
+            "BUDGET_PREFLIGHT_COUNT",
+        )?;
+        let (mut state, _, _) = load_snapshot(&self.connection, &self.configuration)?;
+        let mut replays = Vec::with_capacity(checks.len());
+        for check in checks {
+            require(
+                check.policy.budget == check.claim.budget,
+                "BUDGET_PREFLIGHT_POLICY_BINDING",
+            )?;
+            let observed = owner.observe_funding(check.policy.source)?;
+            require(
+                observed.source == check.policy.source,
+                "BUDGET_NATIVE_SOURCE_BINDING",
+            )?;
+            state.observe_anchor(observed.anchor, &self.configuration)?;
+            if let Some(previous) = state.budgets.get(&check.policy.budget) {
+                require(
+                    previous.policy == *check.policy,
+                    "BUDGET_POLICY_REPLAY_MISMATCH",
+                )?;
+            } else {
+                state.apply(
+                    &Event::Open {
+                        anchor: observed.anchor,
+                        funding: funding(&observed, check.policy.resource_cap.lane())?,
+                        policy: check.policy.clone(),
+                    },
+                    &self.configuration,
+                )?;
+            }
+            if let Some(previous) = state.claims.get(&check.claim.claim) {
+                require(
+                    previous.specification == *check.claim,
+                    "BUDGET_CLAIM_REPLAY_MISMATCH",
+                )?;
+            } else {
+                state.apply(
+                    &Event::Reserve {
+                        anchor: observed.anchor,
+                        funding: funding(&observed, check.policy.resource_cap.lane())?,
+                        claim: check.claim.clone(),
+                    },
+                    &self.configuration,
+                )?;
+            }
+            if let Some(previous) = &state.claim(check.claim.claim)?.effect {
+                require(
+                    previous.operation == check.operation
+                        && previous.effect == check.effect
+                        && previous.window == check.window
+                        && state.operations.get(&check.operation) == Some(&check.claim.claim),
+                    "BUDGET_EFFECT_REPLAY_MISMATCH",
+                )?;
+                replays.push(if previous.receipt.is_some() {
+                    NativeBudgetReplayV1::Done
+                } else {
+                    NativeBudgetReplayV1::Pending
+                });
+            } else {
+                state.apply(
+                    &Event::Intent {
+                        anchor: observed.anchor,
+                        funding: funding(&observed, check.policy.resource_cap.lane())?,
+                        claim: check.claim.claim,
+                        operation: check.operation,
+                        effect: check.effect,
+                        window: check.window,
+                    },
+                    &self.configuration,
+                )?;
+                replays.push(NativeBudgetReplayV1::New);
+            }
+        }
+        Ok(replays)
+    }
+
     pub fn reserve(
         &mut self,
         owner: &mut impl NativeFundingOwnerV1,

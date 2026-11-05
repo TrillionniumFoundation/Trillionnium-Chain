@@ -78,6 +78,7 @@ fn fetch(
     let requests_left = AtomicU64::new(limits.peer.max_connections);
     let responses = ResponseBudget::new(limits.peer.max_response_bytes);
     let transport = RequestContext {
+        cancelled: None,
         timeout: limits.peer.request_timeout,
         overall,
         requests_left: &requests_left,
@@ -146,6 +147,7 @@ impl ConnectionPool {
             digest,
             maximum,
         } = request;
+        transport.check_cancelled()?;
         remaining(deadline)?;
         require(
             !transport.responses.is_quarantined(peer)?,
@@ -165,7 +167,8 @@ impl ConnectionPool {
             .find(|(address, _)| *address == peer)
             .ok_or(CellErrorV1::Invalid("persistent unconfigured peer"))?;
         *phase = "connection-wait";
-        let mut slot = lock_before(connection, deadline)?;
+        let mut slot = lock_before(connection, deadline, transport)?;
+        transport.check_cancelled()?;
         // A different completed request may have quarantined this peer while
         // this worker waited. A denied peer receives no further request bytes.
         require(
@@ -184,6 +187,7 @@ impl ConnectionPool {
             *slot = None;
         }
         if slot.is_none() {
+            transport.check_cancelled()?;
             remaining(deadline)?;
             transport
                 .requests_left
@@ -193,6 +197,7 @@ impl ConnectionPool {
                 .map_err(|_| CellErrorV1::Invalid("connection budget exhausted"))?;
             *phase = "connect";
             let stream = TcpStream::connect_timeout(&peer, remaining(deadline)?)?;
+            transport.check_cancelled()?;
             *slot = Some(PersistentConnection {
                 stream,
                 // The attempt's original deadline precedes its mutex wait and
@@ -261,11 +266,13 @@ impl ObjectRequests for ConnectionPool {
     }
 }
 
-fn lock_before(
-    connection: &Mutex<Option<PersistentConnection>>,
+fn lock_before<'a>(
+    connection: &'a Mutex<Option<PersistentConnection>>,
     deadline: Instant,
-) -> CellResultV1<MutexGuard<'_, Option<PersistentConnection>>> {
+    transport: &RequestContext<'_>,
+) -> CellResultV1<MutexGuard<'a, Option<PersistentConnection>>> {
     loop {
+        transport.check_cancelled()?;
         let wait = remaining(deadline)?;
         match connection.try_lock() {
             Ok(guard) => return Ok(guard),
@@ -382,12 +389,36 @@ pub fn serve_cells_persistent(
     shutdown: &AtomicBool,
     limits: CellPersistentServeLimitsV2,
 ) -> CellResultV1<CellPersistentServeReportV2> {
+    serve_cells_persistent_inner(listener, cache, shutdown, limits, None)
+}
+
+/// Announce only after all bounded readers and the listener are usable.
+/// Startup and the observation share the original service deadline; no probe
+/// socket or frame is charged to the peer's connection/request reservations.
+pub fn serve_cells_persistent_with_ready(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellPersistentServeLimitsV2,
+    ready: &dyn Fn() -> CellResultV1<()>,
+) -> CellResultV1<CellPersistentServeReportV2> {
+    serve_cells_persistent_inner(listener, cache, shutdown, limits, Some(ready))
+}
+
+fn serve_cells_persistent_inner(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellPersistentServeLimitsV2,
+    ready: Option<&dyn Fn() -> CellResultV1<()>>,
+) -> CellResultV1<CellPersistentServeReportV2> {
     limits.validate()?;
     let deadline = Instant::now() + limits.serving.overall_timeout;
     let mut readers = (0..limits.serving.max_workers)
         .map(|_| CellStoreV1::open_read_only(cache).map(Some))
         .collect::<CellResultV1<Vec<_>>>()?;
     listener.set_nonblocking(true)?;
+    serving::announce_service_ready(ready, shutdown, deadline, limits.serving.max_response_bytes)?;
     let responses = ResponseBudget::new(limits.serving.max_response_bytes);
     let requests_left = AtomicU64::new(limits.max_requests);
     let mut report = CellServeReportV1::default();

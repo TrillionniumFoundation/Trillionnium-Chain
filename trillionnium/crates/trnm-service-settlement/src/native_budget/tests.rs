@@ -181,6 +181,134 @@ fn setup(
 }
 
 #[test]
+fn composition_preflight_checks_late_funding_failure_without_changing_the_journal() {
+    let (_directory, store, mut owner, policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    let before = store.report().unwrap();
+    let changes = store.connection.total_changes();
+    let mut other_policy = policy.clone();
+    other_policy.budget = [51; 32];
+    other_policy.source = NativeFundingSourceV1::Task([41; 32]);
+    let mut other_claim = claim.clone();
+    other_claim.claim = [61; 32];
+    other_claim.budget = other_policy.budget;
+    other_claim.subject = [71; 32];
+    let checks = [
+        NativeBudgetEffectCheckV1 {
+            policy: &policy,
+            claim: &claim,
+            operation: [80; 32],
+            effect: claim.subject,
+            window: Some((1, 20)),
+        },
+        NativeBudgetEffectCheckV1 {
+            policy: &other_policy,
+            claim: &other_claim,
+            operation: [81; 32],
+            effect: other_claim.subject,
+            window: Some((1, 20)),
+        },
+    ];
+    assert!(store.check_effects(&mut owner, &checks).is_err());
+    assert_eq!(store.report().unwrap(), before);
+    assert_eq!(store.connection.total_changes(), changes);
+    owner
+        .rows
+        .insert(other_policy.source, native_row(NativeBudgetLaneV1::Storage));
+    assert_eq!(
+        store.check_effects(&mut owner, &checks).unwrap(),
+        vec![NativeBudgetReplayV1::New, NativeBudgetReplayV1::New],
+    );
+    assert_eq!(store.report().unwrap(), before);
+    assert_eq!(store.connection.total_changes(), changes);
+
+    // A distinct budget/claim does not turn the same indivisible task into a
+    // second source. Earlier proposed reservations count inside the preview.
+    other_policy.source = policy.source;
+    let alias = [
+        NativeBudgetEffectCheckV1 {
+            policy: &policy,
+            claim: &claim,
+            operation: [80; 32],
+            effect: claim.subject,
+            window: Some((1, 20)),
+        },
+        NativeBudgetEffectCheckV1 {
+            policy: &other_policy,
+            claim: &other_claim,
+            operation: [81; 32],
+            effect: other_claim.subject,
+            window: Some((1, 20)),
+        },
+    ];
+    assert!(store.check_effects(&mut owner, &alias).is_err());
+    assert_eq!(store.report().unwrap(), before);
+    assert_eq!(store.connection.total_changes(), changes);
+}
+
+#[test]
+fn composition_preflight_is_not_authority_and_exact_recovery_keeps_original_context() {
+    let (_directory, mut store, mut owner, policy, claim) = setup(NativeBudgetLaneV1::Storage);
+    let checks = [NativeBudgetEffectCheckV1 {
+        policy: &policy,
+        claim: &claim,
+        operation: [80; 32],
+        effect: claim.subject,
+        window: Some((1, 20)),
+    }];
+    let before = store.report().unwrap();
+    assert_eq!(
+        store.check_effects(&mut owner, &checks).unwrap(),
+        vec![NativeBudgetReplayV1::New]
+    );
+    owner.rows.remove(&policy.source);
+    owner.advance(6);
+    assert!(store.reserve(&mut owner, claim.clone()).is_err());
+    assert_eq!(store.report().unwrap(), before);
+
+    owner
+        .rows
+        .insert(policy.source, native_row(NativeBudgetLaneV1::Storage));
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    assert_eq!(
+        store.check_effects(&mut owner, &checks).unwrap(),
+        vec![NativeBudgetReplayV1::New]
+    );
+    owner.rows.remove(&policy.source);
+    owner.advance(7);
+    let reserved = store.report().unwrap();
+    assert!(store
+        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], claim.subject, 1, 20)
+        .is_err());
+    assert_eq!(store.report().unwrap(), reserved);
+
+    owner
+        .rows
+        .insert(policy.source, native_row(NativeBudgetLaneV1::Storage));
+    store
+        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], claim.subject, 1, 20)
+        .unwrap();
+    owner.rows.remove(&policy.source);
+    owner.advance(21);
+    let pending = store.report().unwrap();
+    assert_eq!(
+        store.check_effects(&mut owner, &checks).unwrap(),
+        vec![NativeBudgetReplayV1::Pending]
+    );
+    assert_eq!(store.report().unwrap(), pending);
+    store
+        .complete_effect(claim.claim, [80; 32], [90; 32])
+        .unwrap();
+    let complete = store.report().unwrap();
+    assert_eq!(
+        store.check_effects(&mut owner, &checks).unwrap(),
+        vec![NativeBudgetReplayV1::Done]
+    );
+    owner.anchor.genesis = [99; 32];
+    assert!(store.check_effects(&mut owner, &checks).is_err());
+    assert_eq!(store.report().unwrap(), complete);
+}
+
+#[test]
 fn all_six_lanes_bind_actual_row_shapes_and_payment_stays_an_owner_proof() {
     for lane in [
         NativeBudgetLaneV1::Mining,

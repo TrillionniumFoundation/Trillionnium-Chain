@@ -118,7 +118,71 @@ pub fn serve_cells_bounded_with_availability(
     shutdown: &AtomicBool,
     limits: CellServeLimitsV1,
 ) -> CellResultV1<CellServeReportV1> {
-    serve_cells_profile(listener, cache, shutdown, limits, &|_| (), true)
+    serve_cells_profile(listener, cache, shutdown, limits, &|_| (), true, None)
+}
+
+/// Announce the completed reader setup without opening a probe connection.
+/// The callback runs after every cache reader has passed its ordinary checks
+/// and the listener is nonblocking, inside the original service deadline.
+/// It is a local startup observation, not availability or custody authority.
+pub fn serve_cells_bounded_with_ready(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellServeLimitsV1,
+    ready: &dyn Fn() -> CellResultV1<()>,
+) -> CellResultV1<CellServeReportV1> {
+    serve_cells_profile(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        &|_| (),
+        false,
+        Some(ready),
+    )
+}
+
+/// The same startup observation for the explicit bounded inventory profile.
+pub fn serve_cells_bounded_with_availability_and_ready(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellServeLimitsV1,
+    ready: &dyn Fn() -> CellResultV1<()>,
+) -> CellResultV1<CellServeReportV1> {
+    serve_cells_profile(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        &|_| (),
+        true,
+        Some(ready),
+    )
+}
+
+pub(super) fn announce_service_ready(
+    ready: Option<&dyn Fn() -> CellResultV1<()>>,
+    shutdown: &AtomicBool,
+    deadline: Instant,
+    response_bytes: u64,
+) -> CellResultV1<()> {
+    if let Some(ready) = ready {
+        let available = || {
+            require(
+                !shutdown.load(Ordering::Acquire)
+                    && Instant::now() < deadline
+                    && response_bytes > 0,
+                "cell service not ready within original budget",
+            )
+        };
+        available()?;
+        ready()?;
+        // Publishing or flushing the observation cannot renew the service.
+        available()?;
+    }
+    Ok(())
 }
 
 fn serve_cells_inner(
@@ -128,7 +192,7 @@ fn serve_cells_inner(
     limits: CellServeLimitsV1,
     observed: &(impl Fn(&CellServeReportV1) + Sync),
 ) -> CellResultV1<CellServeReportV1> {
-    serve_cells_profile(listener, cache, shutdown, limits, observed, false)
+    serve_cells_profile(listener, cache, shutdown, limits, observed, false, None)
 }
 
 fn serve_cells_profile(
@@ -138,6 +202,7 @@ fn serve_cells_profile(
     limits: CellServeLimitsV1,
     observed: &(impl Fn(&CellServeReportV1) + Sync),
     allow_availability: bool,
+    ready: Option<&dyn Fn() -> CellResultV1<()>>,
 ) -> CellResultV1<CellServeReportV1> {
     limits.validate()?;
     let deadline = Instant::now() + limits.overall_timeout;
@@ -145,6 +210,7 @@ fn serve_cells_profile(
         .map(|_| CellStoreV1::open_read_only(cache).map(Some))
         .collect::<CellResultV1<Vec<_>>>()?;
     listener.set_nonblocking(true)?;
+    announce_service_ready(ready, shutdown, deadline, limits.max_response_bytes)?;
     let responses = ResponseBudget::new(limits.max_response_bytes);
     let mut report = CellServeReportV1::default();
     thread::scope(|scope| -> CellResultV1<()> {

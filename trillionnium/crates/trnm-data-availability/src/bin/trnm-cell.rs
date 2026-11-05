@@ -19,10 +19,11 @@ use trnm_data_availability::cell::{
     digest_hex, fetch_cell_persistent_to_file, fetch_cell_rarest_first_to_file, fetch_cell_to_file,
     fetch_release_to_file, fetch_release_with_options_to_file, parse_digest, read_pinned_release,
     serve_cells, serve_cells_bounded, serve_cells_bounded_with_availability,
-    serve_cells_persistent, CellCacheConfigV4, CellContextV1, CellErrorV1, CellFetchTransportV2,
-    CellPeerLimitsV1, CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2,
-    CellReleaseFetchLimitsV1, CellReleaseFetchOptionsV2, CellReleaseLimitsV1,
-    CellReleaseManifestV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    serve_cells_bounded_with_availability_and_ready, serve_cells_bounded_with_ready,
+    serve_cells_persistent, serve_cells_persistent_with_ready, CellCacheConfigV4, CellContextV1,
+    CellErrorV1, CellFetchTransportV2, CellPeerLimitsV1, CellPersistentPeerLimitsV2,
+    CellPersistentServeLimitsV2, CellReleaseFetchLimitsV1, CellReleaseFetchOptionsV2,
+    CellReleaseLimitsV1, CellReleaseManifestV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
 };
 
 use trnm_data_availability::cell::pq::{
@@ -38,6 +39,7 @@ Writers (pack,fetch,verify,prepare-release,fetch-release,fetch-closure,verify-re
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N --availability true|false]
   --transport single-request-v1 (default) or persistent-v2. Persistent requires bounded workers, --max-served-bytes N, --max-requests N and --max-requests-per-connection N; availability must be false.
+  --announce-ready true is opt-in and requires bounded workers. The separate ready event follows full reader setup; listener publication alone does not establish readiness. Startup does not renew the service deadline.
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N] [--scheduling ordered|rarest-first-v1]
   --transport single-request-v1 (default) or persistent-v2. Persistent requires explicit --max-requests N and --max-requests-per-connection N, with ordered scheduling. One fixed deadline applies to each connection; frames do not renew it.
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
@@ -134,6 +136,7 @@ fn serve(args: &mut Args) -> Result<()> {
     let explicit_workers = args.0.contains_key("--bounded-workers");
     let workers = args.optional("--bounded-workers", "0").parse::<usize>()?;
     let availability = args.optional("--availability", "false").parse::<bool>()?;
+    let announce_ready = args.optional("--announce-ready", "false").parse::<bool>()?;
     let transport = args.optional("--transport", "single-request-v1");
     let persistent_requests = match transport.as_str() {
         "single-request-v1" => None,
@@ -148,6 +151,9 @@ fn serve(args: &mut Args) -> Result<()> {
     }
     if availability && workers == 0 {
         return Err(CellErrorV1::Invalid("availability requires bounded serving").into());
+    }
+    if announce_ready && workers == 0 {
+        return Err(CellErrorV1::Invalid("ready observation requires bounded serving").into());
     }
     if persistent_requests.is_some() && (workers == 0 || availability) {
         return Err(CellErrorV1::Invalid(
@@ -182,8 +188,18 @@ fn serve(args: &mut Args) -> Result<()> {
                 listener.local_addr()?
             );
             std::io::stdout().flush()?;
-            let report =
-                serve_cells_persistent(&listener, &store, &AtomicBool::new(false), limits)?;
+            let ready = || publish_service_ready(&listener);
+            let report = if announce_ready {
+                serve_cells_persistent_with_ready(
+                    &listener,
+                    &store,
+                    &AtomicBool::new(false),
+                    limits,
+                    &ready,
+                )?
+            } else {
+                serve_cells_persistent(&listener, &store, &AtomicBool::new(false), limits)?
+            };
             println!("{{\"schema\":\"trnm.cell.serve.persistent.v2\",\"request_attempts\":{},\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
                 report.request_attempts, report.serving.accepted_connections,
                 report.serving.overloaded_connections, report.serving.completed_requests,
@@ -196,12 +212,23 @@ fn serve(args: &mut Args) -> Result<()> {
             listener.local_addr()?
         );
         std::io::stdout().flush()?;
-        let serve = if availability {
-            serve_cells_bounded_with_availability
+        let report = if announce_ready {
+            let serve = if availability {
+                serve_cells_bounded_with_availability_and_ready
+            } else {
+                serve_cells_bounded_with_ready
+            };
+            serve(&listener, &store, &AtomicBool::new(false), serving, &|| {
+                publish_service_ready(&listener)
+            })?
         } else {
-            serve_cells_bounded
+            let serve = if availability {
+                serve_cells_bounded_with_availability
+            } else {
+                serve_cells_bounded
+            };
+            serve(&listener, &store, &AtomicBool::new(false), serving)?
         };
-        let report = serve(&listener, &store, &AtomicBool::new(false), serving)?;
         println!("{{\"schema\":\"trnm.cell.serve.bounded.v1\",\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
             report.accepted_connections, report.overloaded_connections, report.completed_requests, report.peak_active_workers, report.sent_response_bytes);
         return Ok(());
@@ -227,6 +254,17 @@ fn serve(args: &mut Args) -> Result<()> {
         },
     )?;
     println!("{{\"schema\":\"trnm.cell.serve.v1\",\"connections\":{accepted}}}");
+    Ok(())
+}
+
+fn publish_service_ready(listener: &TcpListener) -> trnm_data_availability::cell::CellResultV1<()> {
+    let mut output = std::io::stdout().lock();
+    writeln!(
+        output,
+        "{{\"schema\":\"trnm.cell.ready.v1\",\"address\":\"{}\"}}",
+        listener.local_addr()?
+    )?;
+    output.flush()?;
     Ok(())
 }
 
