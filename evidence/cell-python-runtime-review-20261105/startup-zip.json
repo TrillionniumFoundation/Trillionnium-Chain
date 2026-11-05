@@ -1,0 +1,17 @@
+{
+  "helper_sha256": "650927fe80d3d9b07689261a861b06878cf76488ad4b6571be25dfb5ecebe855",
+  "mode": "zip",
+  "observed": {
+    "actual_canary_trace": true,
+    "after_exit": 1,
+    "before_exit": 0,
+    "declared_interpreter_bytes_unchanged": true,
+    "inventory_count": 1031,
+    "managed_inventory_unchanged": true,
+    "worker_source_sha256": "2e0b0fa5641dfb668031e4f8bda67003c4207c822e59ff3eeb8aefa855a3a797",
+    "zip_canary_executed": true,
+    "zip_is_under_pinned_prefix_or_stdlib": false
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "scope": "independent lightweight import behavior only; no model or successful admission"
+}

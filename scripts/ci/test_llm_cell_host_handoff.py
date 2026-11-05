@@ -54,8 +54,9 @@ def fixture(root):
     parent = {"directory": str(parent_dir), "generation": 3, "file_sha256": payload["sha256"], "contract": "33" * 32, "adapter": "44" * 32}
     save(parent_dir / "parent.json", handoff.canonical(parent))
     sources = {name: handoff.checksum((chain / relative).read_bytes()) for name, relative in sorted(handoff.SOURCES.items())}
+    snapshot = save(root / "runtime-snapshot.json", b"explicit transport-only snapshot fixture; never a model runtime")
     actions = [dict(action_id="native-answer-no", completion="no"), dict(action_id="native-answer-yes", completion="yes")]
-    profile = handoff.checksum(handoff.canonical(["hepta-smollm-single-token-action-score-v1", sources, actions,
+    profile = handoff.checksum(handoff.canonical(["hepta-smollm-runtime-bound-execution-v2", "hepta-smollm-single-token-action-score-v1", sources, actions, snapshot["sha256"],
         parent["contract"], parent["adapter"], target["sha256"], wrapped["sha256"], "11" * 32, "22" * 32, 4]))
     context = dict(family=family["id"], base="11" * 32, parent=payload["sha256"], tokenizer="22" * 32,
                    layout=parent["contract"], runtime=sources["llm_neural_read_worker.py"])
@@ -91,12 +92,12 @@ def fixture(root):
     descriptor = save(root / "owned-descriptor.json", b'{"scope":"present-for-pin-read-only-not-qualified"}')
     issuer = save(root / "owned-issuer.json", b'{"scope":"not-an-issuer-config"}')
     worker = dict(python=str(Path(sys.executable).resolve()), script=str(chain / handoff.SOURCES["llm_neural_read_worker.py"]), materials=str(output / "consumer-materials"),
-        run_directory=str(root / "must-not-claim-a-model-run"),
+        run_directory=str(root / "must-not-claim-a-model-run"), runtime_snapshot=snapshot,
         source_pins={str(chain / relative): sources[name] for name, relative in handoff.SOURCES.items()}, action_completions={row["action_id"]: row["completion"] for row in actions},
         target_contract=dict(path=str(output / "consumer-parent/target-contract.json"), sha256=target["sha256"]),
         wrapped_adapter=dict(path=str(output / "consumer-parent/wrapped-adapter.json"), sha256=wrapped["sha256"]),
         contract_digest=parent["contract"], adapter_digest=parent["adapter"], backbone_digest=context["base"], tokenizer_digest=context["tokenizer"])
-    owner = dict(schema="hepta-smollm-cognitive-host-v1", worker=worker, descriptor=descriptor,
+    owner = dict(schema="hepta-smollm-cognitive-host-v2", worker=worker, descriptor=descriptor,
         worker_id="explicit-unqualified-probe", resource_grant=dict(grant_id="unissued-fixture",
             authority_epoch=1, generation=1, expires_at_ms=9_999_999_999_999, revoked=False,
             maximum_models=1, maximum_active_requests=1, maximum_memory_bytes=8 * 1024**3, semantic_digest="55" * 32),
@@ -113,7 +114,8 @@ def fixture(root):
                  generation=3, loader_profile=profile, context=context, authentication={"profile": "content-cache-v1"})
     config_pin = save(root / "owned-handoff-v2.json", handoff.canonical(value))
     args = SimpleNamespace(chain=chain, source_parent=parent_dir / "parent.json", source_materials=materials, output=output,
-                           python=Path(worker["python"]), cell_bin=Path(NATIVE))
+                           python=Path(worker["python"]), cell_bin=Path(NATIVE),
+                           runtime_snapshot=Path(snapshot["path"]), runtime_snapshot_sha256=snapshot["sha256"])
     for name in ("empty-fleet", "agent-home", "agent-run"):
         (root / name).mkdir()
     environment = dict(HEPTA_FLEET_ROOT=str(root / "empty-fleet"),
@@ -152,6 +154,8 @@ class MissingOwnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             argv = [sys.executable, str(SCRIPTS / "run_llm_cell_native_handoff.py"), *CAPS,
+                    "--runtime-snapshot", str(root / "unused-runtime-snapshot.json"),
+                    "--runtime-snapshot-sha256", "00" * 32,
                     "--consumer-mode", "cell-host-v2"]
             for name in ("chain", "hepta", "source-parent", "source-materials", "output", "python", "cell-bin", "just", "hepta-target"):
                 argv.extend(("--" + name, str(root / name)))
@@ -420,12 +424,20 @@ class NativeProducerTests(unittest.TestCase):
             raw = handoff.canonical(bad); path.write_bytes(raw)
             with self.assertRaisesRegex(ValueError, "schema"):
                 handoff.load(path, handoff.checksum(raw), f.args.output, f.environment)
+            legacy = copy.deepcopy(f.host)
+            legacy["owner"]["schema"] = "hepta-smollm-cognitive-host-v1"
+            host_pin = save(Path(f.value["host"]["path"]), handoff.canonical(legacy))
+            raw = handoff.canonical(dict(f.value, host=host_pin)); path.write_bytes(raw)
+            with self.assertRaisesRegex(ValueError, "nested owner-v2"):
+                handoff.load(path, handoff.checksum(raw), f.args.output, f.environment)
             self.assertFalse(f.args.output.exists())
 
     def test_real_transport_to_exec_contract_probe_never_claims_model_success(self):
         with tempfile.TemporaryDirectory() as directory:
             f = fixture(Path(directory))
             argv = [sys.executable, str(SCRIPTS / "run_llm_cell_native_handoff.py"), *CAPS,
+                    "--runtime-snapshot", str(f.args.runtime_snapshot),
+                    "--runtime-snapshot-sha256", f.args.runtime_snapshot_sha256,
                 "--consumer-mode", "cell-host-v2", "--handoff-config", f.config_pin["path"],
                 "--handoff-config-sha256", f.config_pin["sha256"]]
             for key, value in {"chain": f.args.chain, "hepta": Path(directory) / "hepta-not-used-for-probe",

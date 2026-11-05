@@ -98,6 +98,7 @@ case "${1:?required job}" in
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
+    python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v

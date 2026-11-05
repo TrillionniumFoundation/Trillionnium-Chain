@@ -1,0 +1,13 @@
+{
+  "baseline": "6ee529046d295e3175f09112492abee373f1f54c",
+  "scope": "Original production directories plus current regression test-only fixtures; intentionally expected to fail",
+  "production_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "0ec86d5e348e3be8604f3f832f9c0667455d2b0d96d8d43de3b4030532098ddd",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs": "9dcf0e04da1f7d1786fca20ac3eb02b9dc6d110df5f28e90354363c3810189f4"
+  },
+  "test_sha256": {
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs": "5d5d8f99b084e8d9f5b2bedad94dc6207183c10a0567dfacea0b8dc721e55452",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs": "16e074b6b24a38ee7f5c3d6135a0944afdda4b228cfc6a0ce84f3114c395740e",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs": "04bca59ba709c93ba03b3bb72d11fa9dc85a7df67af6c25672d5e8352684bc3a"
+  }
+}

@@ -118,6 +118,49 @@ the Hepta host's FinalUse algorithm or make the whole pair PQ qualified.
 
 ## Actual data and time boundaries
 
+### Explicit installed-runtime input
+
+The runtime-bound worker requires `--runtime-snapshot ABSOLUTE_JSON` and
+`--runtime-snapshot-sha256 HEX` on the native handoff/release entry. This is the
+independently selected `hepta-controlled-cold-runtime-snapshot-v2` document
+captured by the existing Hepta runtime-snapshot owner; loading never generates
+a replacement snapshot from whatever happens to be installed. The nested
+cognitive owner uses `hepta-smollm-cognitive-host-v2` with a required
+`worker.runtime_snapshot: {path, sha256}`. The outer Cell-v2 container and the
+sealed/installed handoff containers keep their own unchanged transport fields.
+An old owner schema, missing snapshot, changed digest or incompatible execution
+profile is refused and needs a separately authorized new owner configuration.
+
+`hepta-smollm-runtime-bound-execution-v2` commits the exact snapshot digest,
+thirteen project source/configuration identities, existing model identities,
+action vocabulary and unchanged CPU settings. It is a new execution namespace;
+old execution-profile pins cannot be carried over. The worker-plan, Ready and
+stop exchange use `hepta-smollm-neural-read-worker-v2`. Ready includes the
+snapshot digest and twelve dependent source identities in addition to the
+worker's own identity. This source closure includes `llm_base_material.py`, the
+runtime helper, `contract_wire.py` and its four configuration documents.
+
+Before spawning Python, the native host hashes the bounded interpreter and
+installed file inventory under the original startup deadline/cancellation
+owner. This unpacked CPython profile refuses adjacent startup ZIP archives,
+`._pth` search overrides and changed bootstrap stdlib aliases. It rejects ELF
+loader environment overrides before invoking the interpreter. The isolated
+`-I -S -B` child verifies its snapshot and actual import roots; the pinned loader
+executes the checked Python source bytes rather than an ambient bytecode cache.
+Installed distribution metadata remains available through the standard finder.
+Before Ready, the worker compares actual module origins and executable native
+maps against the declared runtime/project files. No package-reported version
+alone serves as executable identity.
+
+These are byte/inventory observations with cooperative time bounds. They do
+not keep an immutable operating-system namespace between check and use, prevent
+a privileged writer from replacing native libraries, qualify a model, own VRAM
+or establish FinalUse. Full inventory hashing consumes the existing startup
+window; a large or slow installation can exhaust it. No new preparation,
+transfer, startup or inference allowance is introduced. Historical research
+entrypoints pinned to worker-v1 remain separate and do not inherit worker-v2
+acceptance.
+
 The producer exports all eleven actual native TCM1 manifests from its verified
 cache. It checks the same owner source/profile/context, builds the existing
 controlled sidecar and exact TCD1 with the adapter root depending on the ten

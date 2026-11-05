@@ -2,7 +2,12 @@
 //! tensor arithmetic or second byte store is introduced.
 
 use std::{
-    collections::BTreeMap, net::SocketAddr, path::Path, sync::atomic::AtomicU64, time::Instant,
+    collections::BTreeMap,
+    io,
+    net::SocketAddr,
+    path::Path,
+    sync::atomic::{AtomicBool, AtomicU64, Ordering},
+    time::Instant,
 };
 
 use sha2::{Digest, Sha256};
@@ -66,6 +71,31 @@ impl CellChunkDeltaV1 {
     }
     pub fn target(&self) -> &CellManifestV1 {
         &self.target
+    }
+
+    /// Acquire this exact byte recipe under the caller's cancellation flag.
+    /// Cancellation is checked before cache mutation, around base validation,
+    /// and by the existing shared transport reservation during every request.
+    /// Filesystem/cache operations remain cooperatively bounded by the original
+    /// deadline; cancellation is not a separate grant to undo durable output.
+    pub fn fetch_cancellable_to_file(
+        &self,
+        store: &CellStoreV1,
+        expected: (CellDigestV1, CellDigestV1, CellDigestV1),
+        peers: &[SocketAddr],
+        limits: CellReleaseFetchLimitsV1,
+        output: &Path,
+        cancelled: &AtomicBool,
+    ) -> CellResultV1<(CellDeltaPlanV1, CellFetchReportV1)> {
+        fetch_delta_controlled(
+            store,
+            self,
+            expected,
+            peers,
+            limits,
+            output,
+            Some(cancelled),
+        )
     }
 
     pub fn verify(&self, base: &CellManifestV1) -> CellResultV1<CellDeltaPlanV1> {
@@ -162,7 +192,28 @@ pub fn fetch_delta_to_file(
     limits: CellReleaseFetchLimitsV1,
     output: &Path,
 ) -> CellResultV1<(CellDeltaPlanV1, CellFetchReportV1)> {
+    fetch_delta_controlled(store, delta, expected, peers, limits, output, None)
+}
+
+fn fetch_delta_controlled(
+    store: &CellStoreV1,
+    delta: &CellChunkDeltaV1,
+    expected: (CellDigestV1, CellDigestV1, CellDigestV1),
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    output: &Path,
+    cancelled: Option<&AtomicBool>,
+) -> CellResultV1<(CellDeltaPlanV1, CellFetchReportV1)> {
+    // As for the ordinary release entries, start the relative allowance before
+    // hashing or validating metadata. Neither the base nor the target gets a
+    // fresh timeout after this work has already consumed the caller's budget.
+    let started = Instant::now();
     limits.peer.validate()?;
+    let deadline = limits
+        .release
+        .deadline
+        .min(started + limits.peer.overall_timeout);
+    check_operation(deadline, cancelled)?;
     require(
         delta.id() == expected.0 && delta.base == expected.1 && delta.target.id() == expected.2,
         "delta owner pins",
@@ -176,11 +227,7 @@ pub fn fetch_delta_to_file(
                 == peers.len(),
         "configured peer count/duplicates",
     )?;
-    let deadline = limits
-        .release
-        .deadline
-        .min(Instant::now() + limits.peer.overall_timeout);
-    require(Instant::now() <= deadline, "delta deadline")?;
+    check_operation(deadline, cancelled)?;
     let base = store
         .manifest_with_deadline(delta.base, Some(deadline))?
         .ok_or(CellErrorV1::Unavailable)?;
@@ -207,15 +254,17 @@ pub fn fetch_delta_to_file(
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
         Err(error) => return Err(error.into()),
     }
+    check_operation(deadline, cancelled)?;
     store.verify_complete_until(&base, deadline)?;
-    require(Instant::now() <= deadline, "delta deadline")?;
+    check_operation(deadline, cancelled)?;
     // Local writer contention spends the same caller reservation as the base
     // verification and the later transfer, never a new standalone allowance.
     store.put_manifest_with_deadline(delta.target.id(), &delta.target.encode(), Some(deadline))?;
+    check_operation(deadline, cancelled)?;
     let requests_left = AtomicU64::new(limits.peer.max_connections);
     let responses = ResponseBudget::new(limits.peer.max_response_bytes);
     let transport = RequestContext {
-        cancelled: None,
+        cancelled,
         timeout: limits.peer.request_timeout,
         overall: deadline,
         requests_left: &requests_left,
@@ -229,5 +278,30 @@ pub fn fetch_delta_to_file(
         &transport,
         Some(output),
     )?;
+    #[cfg(test)]
+    AFTER_TARGET_FETCH.with(|hook| {
+        if let Some(event) = hook.borrow_mut().take() {
+            event();
+        }
+    });
+    // Publication may already have completed its no-replace link and directory
+    // durability. Preserve that output for exact readback, but do not report a
+    // successful return after the original operation expired or was cancelled.
+    check_operation(deadline, cancelled)?;
     Ok((plan, report))
+}
+
+fn check_operation(deadline: Instant, cancelled: Option<&AtomicBool>) -> CellResultV1<()> {
+    if cancelled.is_some_and(|flag| flag.load(Ordering::Acquire)) {
+        return Err(io::Error::new(io::ErrorKind::Interrupted, "CELL_OPERATION_CANCELLED").into());
+    }
+    require(Instant::now() <= deadline, "delta deadline")
+}
+
+// Inject an owner cancellation/clock event only after the real target helper
+// completed. The test still executes its real cache verification, no-replace
+// publication, sync and cleanup; no byte or result is supplied by this hook.
+#[cfg(test)]
+thread_local! {
+    pub(super) static AFTER_TARGET_FETCH: std::cell::RefCell<Option<Box<dyn FnOnce()>>> = const { std::cell::RefCell::new(None) };
 }
