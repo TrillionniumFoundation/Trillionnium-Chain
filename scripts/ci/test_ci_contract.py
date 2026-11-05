@@ -161,6 +161,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_llm_cell_handoff_deadline.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',
+            'scripts/test_llm_runtime_stop.py',
             'scripts/test_llm_inherited_runtime.py',
             'scripts/test_llm_neural_read_worker.py',
             'scripts/test_llm_python_runtime_contract.py',
@@ -184,6 +185,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         parent = '    python3 scripts/test_llm_parent_material.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_runtime_stop.py',
                      'scripts/test_llm_inherited_runtime.py',
                      'scripts/test_llm_neural_read_worker.py',
                      'scripts/test_llm_python_runtime_contract.py'):
@@ -196,6 +198,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_runtime_stop.py',
                      'scripts/test_llm_inherited_runtime.py',
                      'scripts/test_llm_neural_read_worker.py',
                      'scripts/test_llm_python_runtime_contract.py'):

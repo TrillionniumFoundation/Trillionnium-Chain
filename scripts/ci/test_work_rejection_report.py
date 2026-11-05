@@ -72,16 +72,20 @@ def update_winner(row):
     row['mutations'] = mutations(proof, challenge, row['target'])
     proof_hashes = {'legal': cost.digest(proof), **{m['id']: m['proof_sha256'] for m in row['mutations']}}
     measured = []
-    for position in range(9):
-        arm = (position + row['sample']) % 9
-        variant, kernel = cost.VARIANTS[arm // 3], cost.KERNELS[arm % 3]
-        durations = {'legal': (101, 303, 90), 'transcript': (80, 240, 72), 'product-last-cell': (100, 300, 90)}
+    for position in range(cost.ARMS):
+        arm = (position + row['sample']) % cost.ARMS
+        variant, kernel = cost.VARIANTS[arm // len(cost.KERNELS)], cost.KERNELS[arm % len(cost.KERNELS)]
+        durations = {'legal': (101, 303, 90, 70), 'transcript': (80, 240, 72, 60), 'product-last-cell': (100, 300, 90, 75)}
         measured.append({'position': position, 'variant': variant, 'kernel': kernel, 'proof_sha256': proof_hashes[variant],
-            'elapsed_ns': durations[variant][arm % 3], 'actual_result': cost.RESULTS[arm // 3],
+            'elapsed_ns': durations[variant][arm % len(cost.KERNELS)], 'actual_result': cost.RESULTS[arm // len(cost.KERNELS)],
             'returned_product_sha256': cost.digest(prefix[-cost.CELLS * 4:]) if variant == 'legal' else None,
             'probe': cost.expected_progress(challenge, variant)})
     row['measurements'] = measured
 
+
+def arm_for(row, variant, kernel='retained-transposed'):
+    return next(value for value in row['measurements']
+                if (value['variant'], value['kernel']) == (variant, kernel))
 
 @lru_cache(maxsize=1)
 def fixture_template():
@@ -128,23 +132,44 @@ class RejectionAccountingTests(unittest.TestCase):
 
     def test_complete_synthetic_accounting_counts_flows_once(self):
         value = summarize_fixture(fixture())
-        self.assertEqual(value['cohorts'], 72)
-        self.assertEqual(value['timed_verifications'], 648)
-        self.assertEqual(value['independent_winning_transcript_replays'], 72)
+        self.assertEqual(value['cohorts'], 96)
+        self.assertEqual(value['timed_verifications'], 1152)
+        self.assertEqual(value['independent_winning_transcript_replays'], 96)
         for group in value['groups']:
-            self.assertEqual(group['honest_acquisition_ns'], 9 * 161)
-            self.assertEqual(group['setup_ns'], 9 * 41)
+            self.assertEqual(group['honest_acquisition_ns'], 12 * 161)
+            self.assertEqual(group['setup_ns'], 12 * 41)
             self.assertTrue(group['complete_balanced_group'])
-            product = group['variants']['product-last-cell/production-transposed']
-            self.assertEqual(product['construction_total_ns'], 9 * 13)
-            self.assertEqual(product['first_construction_including_honest_acquisition_ns'], 9 * 174)
-            self.assertEqual(product['rejection_to_first_construction_ratio']['numerator'], '50')
-            self.assertEqual(product['rejection_to_existing_proof_mutation_ratio']['numerator'], '100')
+            product = group['variants']['product-last-cell/production-full-limb']
+            self.assertEqual(product['construction_total_ns'], 12 * 13)
+            self.assertEqual(product['first_construction_including_honest_acquisition_ns'], 12 * 174)
+            self.assertEqual(product['rejection_to_first_construction_ratio']['numerator'], '25')
+            self.assertEqual(product['rejection_to_existing_proof_mutation_ratio']['numerator'], '75')
             self.assertEqual(product['rejection_to_existing_proof_mutation_ratio']['denominator'], '13')
+            retained = group['variants']['product-last-cell/retained-transposed']
+            self.assertEqual(retained['kernel_to_production_total_ratio']['numerator'], '4')
+            self.assertEqual(retained['kernel_to_production_total_ratio']['denominator'], '3')
+            self.assertEqual(product['kernel_to_production_total_ratio']['numerator'], '1')
+            self.assertEqual(product['kernel_to_production_total_ratio']['denominator'], '1')
         self.assertFalse(value['worst_case_rejection_qualified'])
 
     def test_old_v3_cannot_be_relabelled_new_late_rejection(self):
         self.reject(lambda r: r.update(schema='pon-structured-cost-v3'))
+
+    def test_legacy_v1_raw_is_not_a_v2_observation(self):
+        self.reject(lambda r: r.update(schema='pon-work-rejection-cost-v1'))
+
+    def test_relabelled_nine_sample_plan_is_not_balanced_v2(self):
+        self.reject(lambda r: r.update(samples_per_group=9))
+
+    def test_production_full_limb_arm_cannot_be_omitted(self):
+        def mutate(r):
+            row = r['samples'][0]
+            row['measurements'] = [value for value in row['measurements']
+                                   if value['kernel'] != 'production-full-limb']
+        self.reject(mutate)
+
+    def test_retained_transposed_cannot_be_relabelled_production(self):
+        self.reject(lambda r: r['kernels'].__setitem__(0, 'production-transposed'))
 
     def test_missing_setup_rejects(self):
         self.reject(lambda r: r['samples'][0]['setup'].pop('reusable_preprocessing_ns'))
@@ -153,28 +178,28 @@ class RejectionAccountingTests(unittest.TestCase):
         self.reject(lambda r: r['samples'][0].update(honest_acquisition_ns=120))
 
     def test_actual_error_required_not_is_err_boolean(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(actual_result=True))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell').update(actual_result=True))
 
     def test_product_error_cannot_be_inferred_from_transcript_label(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(actual_result='Transcript'))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell').update(actual_result='Transcript'))
 
     def test_callback_probe_cannot_be_timed_verifier_cost(self):
         self.reject(lambda r: r['samples'][0]['measurements'][0]['probe'].update(timed=True))
 
     def test_probe_result_cannot_disagree_with_actual_timed_result(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(actual_result='Transcript'))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell')['probe'].update(actual_result='Transcript'))
 
     def test_product_must_reach_full_correction_boundary(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(before_product=0))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell')['probe'].update(before_product=0))
 
     def test_transcript_must_skip_corrections(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][3]['probe'].update(before_product=1))
+        self.reject(lambda r: arm_for(r['samples'][0], 'transcript')['probe'].update(before_product=1))
 
     def test_equal_counts_cannot_replace_exact_progress_order(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6]['probe'].update(sequence_sha256='0' * 64))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell')['probe'].update(sequence_sha256='0' * 64))
 
     def test_changed_timed_proof_binding_rejects(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(proof_sha256='0' * 64))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell').update(proof_sha256='0' * 64))
 
     def test_product_cannot_search_another_ticket(self):
         self.reject(lambda r: r['samples'][0]['mutations'][1].update(ticket_origin='new-fake-trace-search'))
@@ -240,10 +265,11 @@ class RejectionAccountingTests(unittest.TestCase):
         self.reject(lambda r: r['samples'][0]['measurements'].__setitem__(1, copy.deepcopy(r['samples'][0]['measurements'][0])))
 
     def test_pairwise_only_rotation_does_not_replace_nine_arm_order(self):
+        # Preserve the historical selector; v2 requires the full twelve-arm cycle.
         self.reject(lambda r: r['samples'][1]['measurements'].reverse())
 
     def test_product_rejection_must_not_return_verified_product(self):
-        self.reject(lambda r: r['samples'][0]['measurements'][6].update(returned_product_sha256='0' * 64))
+        self.reject(lambda r: arm_for(r['samples'][0], 'product-last-cell').update(returned_product_sha256='0' * 64))
 
     def test_changed_failed_attempt_proof_bytes_reject(self):
         self.reject(lambda r: r['samples'][0]['honest_search']['attempts'][0].update(proof_sha256='0' * 64))
@@ -267,8 +293,8 @@ class RejectionAccountingTests(unittest.TestCase):
         row['honest_acquisition_ns'] = 281
         update_winner(row)
         result = summarize_fixture(raw)
-        self.assertEqual(result['groups'][0]['honest_attempts'], 10)
-        self.assertEqual(result['groups'][0]['honest_acquisition_ns'], 9 * 161 + 120)
+        self.assertEqual(result['groups'][0]['honest_attempts'], 13)
+        self.assertEqual(result['groups'][0]['honest_acquisition_ns'], 12 * 161 + 120)
         row['honest_search']['attempts'].pop(0)
         with self.assertRaises(ValueError): summarize_fixture(raw)
 
@@ -299,11 +325,11 @@ class RejectionAccountingTests(unittest.TestCase):
         with patch.object(cost, 'h', side_effect=controlled_ticket):
             result = summarize_fixture(raw)
         group = result['groups'][0]
-        expected = sum(r['mutations'][0]['construction_ns'] for r in raw['samples'][:9])
-        entry = group['variants']['transcript/production-transposed']
+        expected = sum(r['mutations'][0]['construction_ns'] for r in raw['samples'][:12])
+        entry = group['variants']['transcript/production-full-limb']
         self.assertEqual(group['fake_exhausted'], 1)
         self.assertFalse(group['complete_balanced_group'])
-        self.assertEqual(entry['verifications'], 8)
+        self.assertEqual(entry['verifications'], 11)
         self.assertEqual(entry['construction_total_ns'], expected)
         self.assertEqual(entry['matched_construction_total_ns'], expected - fake['construction_ns'])
         self.assertEqual(entry['first_construction_including_honest_acquisition_ns'], expected + group['honest_acquisition_ns'])
@@ -369,7 +395,7 @@ class RejectionReceiptTests(unittest.TestCase):
         context.update(GITHUB_ACTIONS='true', GITHUB_RUN_ID='123', GITHUB_RUN_ATTEMPT='1',
             GITHUB_JOB='cross-arch-cost', GITHUB_REPOSITORY='TrillionniumFoundation/Trillionnium-Chain',
             RUNNER_ARCH='X64', RUNNER_OS='Linux', TRNM_COST_RUNNER_LABEL=spec['runner'])
-        self.record = {'schema': 'pon-work-rejection-execution-v1', 'result': 'PASS', 'execution_context': 'github-hosted',
+        self.record = {'schema': 'pon-work-rejection-execution-v2', 'result': 'PASS', 'execution_context': 'github-hosted',
             'observed_at_utc': '2026-10-05T00:00:00+00:00',
             'runner_context': context, 'uname': {'system': 'Linux', 'machine': spec['machine']},
             'compiler_channel': '1.95.0', 'build_profile': 'release', 'observations': observations,
@@ -404,6 +430,9 @@ class RejectionReceiptTests(unittest.TestCase):
         value = self.verify()
         self.assertFalse(value['experiment_reexecuted_by_verifier'])
         self.assertTrue(value['current_measured_inputs_match'])
+
+    def test_legacy_v1_execution_receipt_is_not_v2(self):
+        self.reject_record(lambda r: r.update(schema='pon-work-rejection-execution-v1'))
 
     def test_wrong_native_architecture_rejects(self):
         self.reject_record(lambda r: r.update(architecture='arm64'))

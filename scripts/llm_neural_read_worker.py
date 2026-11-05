@@ -212,14 +212,15 @@ def serve(args):
     root.mkdir(mode=0o700, parents=False, exist_ok=False)
     plan_path = root/'worker-plan.json'
     runtime.save(plan_path, plan)
-    result = runtime.supervise([sys.executable, '-I', '-S', '-B', '-X',
-        'pycache_prefix=' + sys.pycache_prefix, str(Path(__file__).resolve()), '_worker',
-        '--materials', str(Path(args.materials).resolve()), '--output', str(root/'worker'),
-        '--runtime-snapshot', str(Path(args.runtime_snapshot).resolve()),
-        '--runtime-snapshot-sha256', args.runtime_snapshot_sha256,
-        '--source-pins', args.source_pins, '--source-pins-sha256', args.source_pins_sha256,
-        '--plan', str(plan_path), '--plan-sha256', runtime.file_sha(plan_path)], root/'worker',
-        plan['runtime']['inference_budget'])
+    with runtime.cooperative_supervisor_stop() as stop_request:
+        result = runtime.supervise([sys.executable, '-I', '-S', '-B', '-X',
+            'pycache_prefix=' + sys.pycache_prefix, str(Path(__file__).resolve()), '_worker',
+            '--materials', str(Path(args.materials).resolve()), '--output', str(root/'worker'),
+            '--runtime-snapshot', str(Path(args.runtime_snapshot).resolve()),
+            '--runtime-snapshot-sha256', args.runtime_snapshot_sha256,
+            '--source-pins', args.source_pins, '--source-pins-sha256', args.source_pins_sha256,
+            '--plan', str(plan_path), '--plan-sha256', runtime.file_sha(plan_path)], root/'worker',
+            plan['runtime']['inference_budget'], stop_request=stop_request)
     runtime.require(result['outcome'] == 'success', 'NEURAL_READ_WORKER_FAILED')
 
 
