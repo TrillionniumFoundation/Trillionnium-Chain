@@ -1,0 +1,30 @@
+{
+  "tested_local_commit": "1257461dabde5cd0f2feddaf3c47617e07eaa5a0",
+  "published_commit": "60dae3cf66d1e651af8e61eccf761abf43285e63",
+  "identical_complete_git_tree": "38d77248282cec7c8fb96a5d9f681cbe6d6cd06c",
+  "full_diff_empty": true,
+  "local_validation_same_complete_source_tree": true,
+  "commit_identity_not_equal": true,
+  "native_acceptance_inferred": false,
+  "current_code_commit": "30e0cd5940f8cd465636106933c3243f5df7cbd7",
+  "current_code_tree": "f4169674698044b08e0a9f183e69407c9093e2c2",
+  "delta_after_native_source": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/test_read_original_native_campaign.py",
+    "scripts/read_original_native_campaign.py"
+  ],
+  "native_rust_cargo_workflow_bytes_unchanged": true,
+  "native_execution_commit": "60dae3cf66d1e651af8e61eccf761abf43285e63",
+  "full_diff_empty_pair": [
+    "1257461dabde5cd0f2feddaf3c47617e07eaa5a0",
+    "60dae3cf66d1e651af8e61eccf761abf43285e63"
+  ],
+  "native_execution_tree": "38d77248282cec7c8fb96a5d9f681cbe6d6cd06c",
+  "reader_execution_commit": "30e0cd5940f8cd465636106933c3243f5df7cbd7",
+  "native_to_reader_changed_paths_independently_read": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/test_read_original_native_campaign.py",
+    "scripts/read_original_native_campaign.py"
+  ],
+  "later_evidence_commit_is_not_a_new_native_execution": true
+}

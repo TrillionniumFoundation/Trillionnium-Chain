@@ -360,8 +360,9 @@ def cost_clocks(sample, *, legal):
                        for phase in ('setup', 'search')]
             require(all(integer(value) <= total for value in nested if value is not None),
                     'nested acquisition clock exceeds complete cost')
-            if all(value is not None for value in nested):
-                require(sum(nested) <= total, 'disjoint setup/search clocks exceed complete cost')
+            # Unknown phases cannot erase the measured disjoint cost lower bound.
+            require(sum(value for value in nested if value is not None) <= total,
+                    'disjoint setup/search clocks exceed complete cost')
 
 
 def cost_search(search, template, transactions, sample, number, *, legal):

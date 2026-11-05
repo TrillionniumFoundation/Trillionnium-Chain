@@ -358,6 +358,40 @@ class ActualArtifactReaderTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             reader.economics(value)
 
+    def test_cost_known_disjoint_subclocks_bound_total_when_another_is_unknown(self):
+        for axis in ('cpu_ns', 'wall_ns'):
+            for unknown in ('initial_setup', 'search_setup', 'search'):
+                with self.subTest(axis=axis, unknown=unknown):
+                    value = self.cost_input()
+                    sample = value['economics'][0]['report']['result']['modes'][0]['samples'][0]
+                    total = sample['acquisition_' + axis]
+                    if unknown == 'initial_setup':
+                        sample['initial_setup_' + axis] = None
+                    else:
+                        phase = 'setup' if unknown == 'search_setup' else 'search'
+                        sample['searches'][1][phase + '_' + axis] = None
+                    # Both intervals fit individually, but their disjoint sum
+                    # already exceeds the inclusive acquisition denominator.
+                    sample['searches'][0]['setup_' + axis] = total
+                    sample['searches'][0]['search_' + axis] = total
+                    with self.assertRaisesRegex(ValueError, 'disjoint setup/search clocks exceed complete cost'):
+                        reader.economics(value)
+
+    def test_cost_known_subclock_sum_accepts_equality_and_slack_without_filling_unknown(self):
+        for axis in ('cpu_ns', 'wall_ns'):
+            for slack in (0, 1):
+                with self.subTest(axis=axis, slack=slack):
+                    value = self.cost_input()
+                    sample = value['economics'][0]['report']['result']['modes'][0]['samples'][0]
+                    sample['initial_setup_' + axis] = None
+                    for search in sample['searches']:
+                        search['setup_' + axis] = search['search_' + axis] = 0
+                    sample['searches'][0]['search_' + axis] = sample['acquisition_' + axis] - slack
+                    costs = reader.economics(value)
+                    self.assertIsNone(sample['initial_setup_' + axis])
+                    if axis == 'cpu_ns':
+                        self.assertEqual(costs['legal_cohorts'][0]['nested_initial_setup_cpu_ns']['unknown_count'], 1)
+
     def test_cost_selection_uses_one_complete_method_not_each_fastest_sample(self):
         value = self.cost_input()
         candidates = []

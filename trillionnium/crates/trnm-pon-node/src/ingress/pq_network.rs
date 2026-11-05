@@ -18,33 +18,32 @@ use std::{
 };
 use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
 use trnm_protocol::{
+    crypto_profile::{
+        BoundCryptoProfile, CryptoProfile, CryptoProfileId, ProfileBinding, ProfileScope,
+    },
     pon_wire::{hash, Hash},
     pq_frame::{
         ml_dsa_65_key_id_from_spki, payload_commitment, PqFrameExpectation, TPQ1_SIGNED_BYTES,
         TPQ1_UNSIGNED_BYTES,
     },
+    pq_legacy_profile::{
+        MAX_LIFETIME_SECONDS, MAX_PEERS, MAX_SIGNED_PAYLOAD_BYTES, OPERATION_DOMAIN,
+        PEER_CONTEXT_DOMAIN, PEER_PURPOSE, POLICY_DOMAIN, REQUEST_DIRECTION, REQUEST_MAGIC,
+        RESPONSE_DIRECTION, RESPONSE_MAGIC, RESPONSE_SCHEMA, TRANSPORT_MODE,
+    },
 };
 
-pub const PROFILE: &str = "native-pq-network-owner-v2";
-pub(crate) const MAX_WIRE: usize = 2 * 1024 * 1024;
-pub(crate) const MAX_LEDGER_BYTES: u64 = 16 * 1024 * 1024;
-pub(crate) const MAX_RECORDS: u64 = 4096;
-pub(crate) const MAX_INGRESS_CONNECTIONS: u64 = 64;
-pub(crate) const MAX_INGRESS_BYTES: u64 = 32 * 1024 * 1024;
-pub(crate) const MAX_INBOUND_VERIFICATIONS: u64 = 64;
-const MAX_LIFETIME_SECONDS: u64 = 60;
-// The signed frame and the outer length prefix are not part of the JSON body.
-// Refuse untransmittable inputs before computing SHA-384 or ML-DSA signatures.
-const MAX_SIGNED_PAYLOAD_BYTES: usize = MAX_WIRE - 8 - TPQ1_SIGNED_BYTES;
-const REQUEST_MAGIC: &[u8; 4] = b"PNQ2";
-const RESPONSE_MAGIC: &[u8; 4] = b"PNP2";
-// TPQ1 purpose 6 is the existing peer-authorization purpose. Directions are
-// separate owner contexts; transaction/artifact purpose assignments stay intact.
-const PEER_PURPOSE: u8 = 6;
+pub use trnm_protocol::pq_legacy_profile::PROFILE;
+pub(crate) use trnm_protocol::pq_legacy_profile::{
+    MAX_INBOUND_VERIFICATIONS, MAX_INGRESS_BYTES, MAX_INGRESS_CONNECTIONS, MAX_LEDGER_BYTES,
+    MAX_RECORDS, MAX_WIRE,
+};
+
 #[derive(Clone, Copy)]
+#[repr(u8)]
 enum Direction {
-    Request = 1,
-    Response = 2,
+    Request = REQUEST_DIRECTION,
+    Response = RESPONSE_DIRECTION,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
@@ -70,6 +69,9 @@ pub struct PqNetworkPolicy {
     record: PolicyRecord,
     bytes: Vec<u8>,
     id: Hash,
+    // A fixed owner selection, never deserialized or selected by a TPQ1 frame.
+    // The existing policy record and signed owner context stay byte-identical.
+    crypto_profile: BoundCryptoProfile,
     network: Hash,
     server_id: Hash,
     server: PqNativeVerifier,
@@ -91,12 +93,23 @@ impl PqNetworkPolicy {
             (1..=i64::MAX as u64).contains(&generation),
             "PQ_NETWORK_GENERATION",
         )?;
+        let crypto_profile = CryptoProfile::LegacyMlDsa65V1
+            .bind(ProfileBinding {
+                network: settings.network(),
+                parameters: settings.parameters(),
+                genesis: settings.genesis(),
+                protocol_version: 2,
+                scope: ProfileScope::NativePeer,
+                activation_height: 0,
+                retirement_height: None,
+            })
+            .map_err(crypto)?;
         let server_id = ml_dsa_65_key_id_from_spki(server_spki).map_err(crypto)?;
         let server = PqNativeVerifier::from_pinned_spki(server_spki, server_id).map_err(crypto)?;
         let mut peers = BTreeMap::new();
         let mut public = BTreeMap::new();
         for spki in peer_spkis {
-            ensure(peers.len() < 64, "PQ_NETWORK_PEER_LIMIT")?;
+            ensure(peers.len() < MAX_PEERS, "PQ_NETWORK_PEER_LIMIT")?;
             let id = ml_dsa_65_key_id_from_spki(&spki).map_err(crypto)?;
             ensure(
                 id != server_id && !peers.contains_key(&id),
@@ -122,14 +135,15 @@ impl PqNetworkPolicy {
             ingress_connection_limit: MAX_INGRESS_CONNECTIONS,
             ingress_byte_limit: MAX_INGRESS_BYTES,
             inbound_verification_limit: MAX_INBOUND_VERIFICATIONS,
-            transport_confidentiality: "loopback-signed-plaintext-dev-only".into(),
+            transport_confidentiality: TRANSPORT_MODE.into(),
         };
         let bytes = serde_json::to_vec(&record)?;
-        let id = hash(b"native-pq-network-policy-v2", &[&bytes]);
+        let id = hash(POLICY_DOMAIN, &[&bytes]);
         Ok(Self {
             record,
             bytes,
             id,
+            crypto_profile,
             network: settings.network(),
             server_id,
             server,
@@ -139,6 +153,20 @@ impl PqNetworkPolicy {
 
     pub fn id(&self) -> Hash {
         self.id
+    }
+    /// Identifies the existing fixed TPQ1 algorithm/encoding/hash contract.
+    /// This descriptor does not activate another wire or authorize an effect.
+    pub fn crypto_profile_id(&self) -> CryptoProfileId {
+        self.crypto_profile.id()
+    }
+    /// Compare a caller's declaration to the independently selected owner.
+    /// A declaration can never select a weaker or experimental configuration.
+    /// PNQ2 itself has no new profile field; its original signed bytes remain.
+    pub fn require_profile_claim(&self, claimed: CryptoProfileId) -> Result<()> {
+        ensure(
+            claimed == self.crypto_profile_id(),
+            "PQ_NETWORK_CRYPTO_PROFILE",
+        )
     }
     pub fn server_key_id(&self) -> Hash {
         self.server_id
@@ -158,10 +186,7 @@ impl PqNetworkPolicy {
             && self.record.genesis == hex::encode(settings.genesis())
     }
     fn context(&self, peer: Hash, direction: Direction) -> Hash {
-        hash(
-            b"native-pq-network-peer-context-v2",
-            &[&self.id, &peer, &[direction as u8]],
-        )
+        hash(PEER_CONTEXT_DOMAIN, &[&self.id, &peer, &[direction as u8]])
     }
     fn expectation<'a>(
         &self,
@@ -196,6 +221,26 @@ impl PqNetworkPolicy {
         now: u64,
         before_verification: &mut impl FnMut() -> Result<()>,
     ) -> Result<VerifiedRequest> {
+        let authenticated = self.authenticate_request(wire, now, before_verification)?;
+        Ok(VerifiedRequest {
+            policy: self.id,
+            peer: authenticated.peer,
+            sequence: authenticated.sequence,
+            expiry: authenticated.expiry,
+            operation: authenticated.operation,
+            wire: wire.to_vec(),
+            request: authenticated.request,
+        })
+    }
+    // Shared signature/encoding verification returns only private observations.
+    // The caller separately selects live verification or retained-record audit;
+    // historical verification never constructs a live VerifiedRequest.
+    fn authenticate_request(
+        &self,
+        wire: &[u8],
+        now: u64,
+        before_verification: &mut impl FnMut() -> Result<()>,
+    ) -> Result<AuthenticatedRequest> {
         let (frame, payload) = decode_wire(wire, REQUEST_MAGIC)?;
         let peer: Hash = frame[72..104].try_into().map_err(|_| "PQ_NETWORK_KEY")?;
         let verifier = self.peers.get(&peer).ok_or("PQ_NETWORK_UNKNOWN_PEER")?;
@@ -221,30 +266,33 @@ impl PqNetworkPolicy {
             "PQ_NETWORK_LIFETIME",
         )?;
         let observed = verifier.verify(frame, &expected).map_err(crypto)?;
-        let operation = hash(
-            b"native-pq-network-operation-v2",
-            &[observed.authenticated_statement()],
-        );
+        let operation = hash(OPERATION_DOMAIN, &[observed.authenticated_statement()]);
         let request: Request = serde_json::from_slice(payload)?;
         ensure(
             serde_json::to_vec(&request)? == payload,
             "PQ_NETWORK_NONCANONICAL",
         )?;
-        Ok(VerifiedRequest {
-            policy: self.id,
+        Ok(AuthenticatedRequest {
             peer,
             sequence,
             expiry,
             operation,
-            wire: wire.to_vec(),
             request,
         })
     }
-    pub(crate) fn verify_retained_request(&self, wire: &[u8]) -> Result<VerifiedRequest> {
+    pub(crate) fn verify_retained_request(&self, wire: &[u8]) -> Result<RetainedRequest> {
         // Historical validation checks a past signature at its own signed expiry.
         // It grants no live dispatch. Live ingress separately imposes current time.
         let (frame, _) = decode_wire(wire, REQUEST_MAGIC)?;
-        self.verify_request(wire, u64_field(frame, 120))
+        let authenticated =
+            self.authenticate_request(wire, u64_field(frame, 120), &mut || Ok(()))?;
+        Ok(RetainedRequest {
+            policy: self.id,
+            peer: authenticated.peer,
+            sequence: authenticated.sequence,
+            expiry: authenticated.expiry,
+            operation: authenticated.operation,
+        })
     }
     pub(crate) fn verify_response(
         &self,
@@ -252,25 +300,53 @@ impl PqNetworkPolicy {
         request: &VerifiedRequest,
         now: u64,
     ) -> Result<PqResponse> {
+        self.verify_response_fields(
+            wire,
+            request.peer,
+            request.sequence,
+            request.expiry,
+            request.operation,
+            now,
+        )
+    }
+    /// Recheck retained response evidence without returning a live response.
+    pub(crate) fn verify_retained_response(
+        &self,
+        wire: &[u8],
+        request: &RetainedRequest,
+    ) -> Result<()> {
+        ensure(request.policy == self.id, "PQ_NETWORK_CONTEXT")?;
+        self.verify_response_fields(
+            wire,
+            request.peer,
+            request.sequence,
+            request.expiry,
+            request.operation,
+            request.expiry,
+        )
+        .map(|_| ())
+    }
+    fn verify_response_fields(
+        &self,
+        wire: &[u8],
+        peer: Hash,
+        sequence: u64,
+        expiry: u64,
+        operation: Hash,
+        now: u64,
+    ) -> Result<PqResponse> {
         let (frame, payload) = decode_wire(wire, RESPONSE_MAGIC)?;
         self.server
             .verify(
                 frame,
-                &self.expectation(
-                    request.peer,
-                    Direction::Response,
-                    request.sequence,
-                    request.expiry,
-                    now,
-                    payload,
-                ),
+                &self.expectation(peer, Direction::Response, sequence, expiry, now, payload),
             )
             .map_err(crypto)?;
         let response: PqResponse = serde_json::from_slice(payload)?;
         ensure(
             serde_json::to_vec(&response)? == payload
-                && response.schema == "native-pq-network-response-v2"
-                && response.operation == hex::encode(request.operation),
+                && response.schema == RESPONSE_SCHEMA
+                && response.operation == hex::encode(operation),
             "PQ_NETWORK_RESPONSE_CONTEXT",
         )?;
         Ok(response)
@@ -293,14 +369,71 @@ pub(crate) fn peer_ids_from_policy_record(bytes: &[u8]) -> Result<Vec<Hash>> {
         .collect()
 }
 
+// This observation is private to the verification owner. It is not a live
+// request and cannot reach Node admission without the live verifier's wrapper.
+struct AuthenticatedRequest {
+    peer: Hash,
+    sequence: u64,
+    expiry: u64,
+    operation: Hash,
+    request: Request,
+}
+
+/// Historical signature facts only. Deliberately carries no request body or
+/// wire, and has no conversion/Deref to the live request accepted by admission.
+pub(crate) struct RetainedRequest {
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    expiry: u64,
+    operation: Hash,
+}
+impl RetainedRequest {
+    pub(crate) fn peer(&self) -> Hash {
+        self.peer
+    }
+    pub(crate) fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub(crate) fn expiry(&self) -> u64 {
+        self.expiry
+    }
+    pub(crate) fn operation(&self) -> Hash {
+        self.operation
+    }
+}
+
+/// Constructed only by the live request verifier. Private fields prevent other
+/// crate modules from promoting historical observations into current requests.
+/// The original current-time, replay, revocation and owner checks remain needed.
 pub(crate) struct VerifiedRequest {
-    pub(crate) policy: Hash,
-    pub(crate) peer: Hash,
-    pub(crate) sequence: u64,
-    pub(crate) expiry: u64,
-    pub(crate) operation: Hash,
-    pub(crate) wire: Vec<u8>,
-    pub(crate) request: Request,
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    expiry: u64,
+    operation: Hash,
+    wire: Vec<u8>,
+    request: Request,
+}
+impl VerifiedRequest {
+    pub(crate) fn policy(&self) -> Hash {
+        self.policy
+    }
+    pub(crate) fn peer(&self) -> Hash {
+        self.peer
+    }
+    pub(crate) fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub(crate) fn expiry(&self) -> u64 {
+        self.expiry
+    }
+    pub(crate) fn operation(&self) -> Hash {
+        self.operation
+    }
+    pub(crate) fn wire(&self) -> &[u8] {
+        &self.wire
+    }
 }
 
 fn u64_field(bytes: &[u8], offset: usize) -> u64 {
@@ -539,7 +672,7 @@ impl PqServer {
             (ok, value)
         };
         let response = PqResponse {
-            schema: "native-pq-network-response-v2".into(),
+            schema: RESPONSE_SCHEMA.into(),
             operation: hex::encode(request.operation),
             ok,
             value,

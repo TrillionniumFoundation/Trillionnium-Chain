@@ -96,6 +96,27 @@ profile and new evidence. The existing internal `verify-recursion` diagnostic
 uses its separately labelled integrity-only contract and cannot satisfy this
 full profile.
 
+Both full verification and the integrity-only diagnostic obtain the same
+Poseidon2 parameter digest from `profile::context`. The digest is independently
+present in the
+[retained complete-proof readback](../../../evidence/pon-w1-complete-succinct-20261028/measurements/fresh-hardened-full-gate/stdout.log)
+and the upstream
+[3.0.6 parameter stability test](https://github.com/risc0/risc0/blob/v3.0.6/risc0/zkvm/src/receipt/succinct.rs).
+The context starts empty and installs only the pinned succinct construction;
+matching untrusted metadata never replaces actual seal, control, claim and
+image verification. There is no retry under another hash suite.
+
+The original execution segment limit was 18; the retained SDK control root's
+allowed maximum is 22. Preserving that root does not reinterpret the prover's
+execution limit as a verifier bound or shrink the recursive program set. The
+full profile additionally pins the final join while keeping the existing
+frozen guest and receipt; it does not generate a new proof.
+
+Historical measurements retain their historical verifier source identity.
+They do not qualify newly composed source or establish post-quantum
+Fiat-Shamir soundness, a 128-bit security argument, production admission or
+practical benefit over native W1.
+
 The [QROM reduction framework](https://eprint.iacr.org/2025/2166) is conditional
 on the actual interactive oracle reduction and commitment/extraction properties.
 Mapping this AIR, every recursive layer, Merkle encoding, Fiat-Shamir transcript,

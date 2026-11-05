@@ -32,6 +32,7 @@ CRITICAL = {
     # These hints confer no authority and do not establish PQ implementation.
     'trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs': 'classic-client-profile-refusal',
     'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs': 'mixed-client-profile-and-owner-boundary',
+    'trillionnium/crates/trnm-pon-node/src/public_submit.rs': 'classical-submit-recovery-requires-original-network-owner',
     'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs': 'history-admission-original-owner-required',
     'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs': 'continuous-receiver-durable-permission-and-work',
     'trillionnium/crates/trnm-pon-node/src/store/funding.rs': 'original-m06-funding-observation',

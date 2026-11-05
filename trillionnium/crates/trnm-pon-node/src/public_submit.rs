@@ -604,6 +604,11 @@ pub fn submit_with_verified_parent_recovery(
     let result = (|| -> Result<()> {
         plan.validate()?;
         plan.alive()?;
+        // PQ transport owners may retain a classical account ledger. Checking
+        // only its Settings in the V3 client would still send classical
+        // credentials and bypass the owner's persisted network-only policy.
+        // Refuse before packet reads, parent recovery or any network call.
+        local_producer.require_classical_network_profile()?;
         digest(client.server_public)?;
         PublicPolicy::new(
             client.policy.bits,
