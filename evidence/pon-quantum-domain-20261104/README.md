@@ -30,13 +30,45 @@ execution attestations or validation of unrelated native changes.
 | Source check | PASS; 2,636 local links, 26 packages, 25 dependency edges, 1,125 Rust files; committed and clean; 211.517 seconds |
 | Source-integrity controls | PASS; 34 tests, 12.446 seconds |
 | Rust formatting / locked offline metadata | PASS; 54.832 / 0.994 seconds |
-| Strict Clippy | First attempt timed out after 600.013 seconds (exit 124); no pass claimed. A separately recorded cache-assisted retry is in progress. |
+| Strict Clippy | Not closed: first attempt timed out at 600.013 seconds (exit 124); the single 1,200-second-budget retry lost its execution environment before a final receipt was recovered. Retry exit/timeout status is unknown. |
 
 The domain campaign exited 0 in 26.934271 seconds; its complete replay exited 0
 in 27.304513 seconds. Network run/replay took 19.601445/24.427285 seconds;
 adversarial run/replay took 21.469694/28.217809 seconds, all with exit 0. These are
 classical observer/simulator runtimes, including serialization and verification,
 not mining speed or quantum oracle clocks.
+
+The published integration checkpoint is
+`f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c`, with parents `7a88207...` and
+`4cf25c59...`. Its separate committed-and-clean repository gate passed in
+135.484 seconds: 26 packages, 25 normal dependency edges, 1,130 Rust files and
+2,654 local links. Independent byte review found all 221 frozen formal Python
+files unchanged and preserved all 16 concurrent non-overlap files. The merged CI
+retains all four relevant old/new test invocations and its recalculated source
+pin. These structural results do not certify concurrent native migration logic.
+
+### Native Clippy gate remains unclosed
+
+The strict workspace command was
+`cargo clippy --workspace --all-targets --locked --offline -- -D warnings`
+from `trillionnium/`, at the frozen source. The first invocation reached its
+600-second limit. One cache-assisted retry used the same command, Rust/Cargo
+1.95.0, `CARGO_BUILD_JOBS=1`, and a 1,200-second budget. At the last successful
+progress observation (979.5 seconds), its log had advanced through later workspace
+packages, with no completion receipt.
+
+The executor then disconnected. After the environment was restored, one
+read-only recovery returned `Unknown process id 70143`; no final retry JSON
+existed. Thus the retry's actual exit code, whether its timeout handler ran, final
+elapsed time and child-group cleanup remain **unknown**. A configured limit is
+not an observed timeout. No further build was started. The frozen tracked source
+was read back clean, and integration changes during recovery were confined to
+these two evidence files. The last saved retry log hash and exact start parameters
+are retained in the reproduction record.
+
+This gate is not green. The completed Python research tests, independent replays
+and committed integration structural gate keep their separate source scope;
+these observations do not certify a complete native build or release.
 
 ## Actual fixed-header nonce domains
 
@@ -113,6 +145,9 @@ not a complete Fast DAA network backend. The complete backend still refuses;
 cross-chain reference validation, epoch rules, ledger extraction, integer target
 encoding and security-parameter mapping remain open. No seconds-level native
 confirmation promise follows from the source's constant-time asymptotic result.
+A later targeted author/IOG lookup recovered only a two-page official explainer;
+its full-paper link still points to ePrint. This does not fill the formal
+protocol or establish equivalence between published versions.
 
 ## Event observations, including unsuccessful outcomes
 

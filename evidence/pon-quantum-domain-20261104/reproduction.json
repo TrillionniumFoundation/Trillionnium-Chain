@@ -1,10 +1,27 @@
 {
+  "additional_fast_daa_primary_source_lookup": {
+    "author_bibliography": "https://jagaray.com/publications/",
+    "component_direct_source_unchanged": "author-linked September 15 SJTU slides, pinned in source manifest",
+    "explainer_pages": 2,
+    "explainer_scope": "official overview, not full formal algorithm; constant adjustment time means independent of security parameter",
+    "full_paper_recovered": false,
+    "official_explainer": "https://www.iog.io/api/research/pdf/explainer/CMS48YZX",
+    "official_paper_page": "https://www.iog.io/papers/fast-difficulty-adjustment-in-proof-of-work-consensus",
+    "same_failed_pdf_endpoints_retried": false,
+    "version_equivalence_claimed": false
+  },
   "artifact_policy": {
     "large_reports_and_traces_committed": false,
     "original_run_paths_are_observation_labels": true,
     "raw_file_hashes_distinct_from_canonical_json_hashes": true,
     "regeneration_commands": "README.md",
     "small_setup_traces_committed": true
+  },
+  "environment_interruption": {
+    "core_integration_published_before_loss": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+    "implementation_change_during_recovery": false,
+    "native_strict_clippy_accepted": false,
+    "research_tests_and_replays_completed_before_loss": true
   },
   "events": {
     "all_campaign_sources_committed_at_head": true,
@@ -353,6 +370,18 @@
       "trace_rows": 217783,
       "trace_truncated_runs": 0
     }
+  },
+  "integration_committed_source_gate": {
+    "command": [
+      "python",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_seconds": 135.48360228538513,
+    "exit_code": 0,
+    "log": "/workspace/scratch/7d6915ae5ed9/integration-committed-source-check.log",
+    "log_sha256": "929c6e76bac419f65cf44ca2bfdc95ed864a216d38f00fd8cbc6371080c4149a",
+    "parsed_output": "{\"activation\": false, \"head\": \"f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c\", \"local_links\": 2654, \"normal_dependency_edges\": 25, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1130, \"source_state\": \"committed-clean\", \"tree\": \"82f2a5e3045cf65eb8b4dbfd2a055e5159265ce4\", \"workspace_packages\": 26}\n",
+    "source_commit": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c"
   },
   "integration_parent_preserved": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
   "joint_suite": {
@@ -771,6 +800,25 @@
     "worktree": "/workspace/scratch/7d6915ae5ed9/chain-quantum-integration",
     "worktree_delta_exactly_own_paths_plus_disclosed_evidence_subtree": true
   },
+  "published_integration_checkpoint": {
+    "branch": "fix/chain-six-axis-performance-20261103",
+    "draft": true,
+    "force_push": false,
+    "hosted_ci_waited": false,
+    "lease_expected_sha": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+    "parents": [
+      "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+      "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c"
+    ],
+    "pr_number": 688,
+    "protected_base_sha": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "published_commit": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+    "remote_changed_file_count": 24,
+    "remote_changed_file_set_exact": true,
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "schema": "trnm-quantum-integration-publication-v1",
+    "tree": "82f2a5e3045cf65eb8b4dbfd2a055e5159265ce4"
+  },
   "qualification": {
     "activation": false,
     "attacker_minimum_proved": false,
@@ -1163,7 +1211,7 @@
       "run_internal_observer_scope": "perf_counter and process_time start immediately before measure(); end after the following source-hash recheck while observer metadata is constructed. Excludes initial source_record() and final JSON serialization/writing; this is not whole-command wall time."
     }
   },
-  "result": "FROZEN_SOURCE_RESEARCH_OBSERVATIONS_REPLAYED",
+  "result": "FROZEN_RESEARCH_REPLAYED_NATIVE_CLIPPY_UNCLOSED",
   "rust_gates": {
     "correct_workspace": "trillionnium",
     "observations": [
@@ -1269,8 +1317,97 @@
         "log": "/workspace/scratch/7d6915ae5ed9/frozen-rust-gate-2.log"
       }
     ],
-    "strict_clippy_result": "TIMED_OUT_NOT_PASS",
-    "strict_clippy_retry": "running separately; not qualified by this record"
+    "strict_clippy_result": "NOT_QUALIFIED_FIRST_TIMEOUT_RETRY_EXIT_UNKNOWN",
+    "strict_clippy_retry": {
+      "actual_final_wall_seconds": null,
+      "exit_code": null,
+      "last_saved_log": {
+        "bytes": 1968,
+        "sha256": "e97e11ea1c0cbe35c268dd2ec02ab7a240dbe41be6c642e1e3690594a620e62f"
+      },
+      "last_successful_progress_observation": {
+        "completion_record_present": false,
+        "elapsed_seconds": 979.5,
+        "log_bytes": 1968,
+        "tail_target": "trnm-worker-agent"
+      },
+      "not_a_passing_or_timeout_receipt": true,
+      "process_group_cleanup_completed": null,
+      "restored_read_only_recovery": {
+        "completion_record_present": false,
+        "existing_session": 70143,
+        "new_build_started": false,
+        "response": "Unknown process id 70143"
+      },
+      "restored_source_observation": {
+        "frozen_worktree_clean": true,
+        "integration_changes_only_evidence_readme_and_json": true,
+        "scope": "readback after environment restoration, not a subprocess completion receipt"
+      },
+      "result": "UNKNOWN_AFTER_EXECUTOR_ENVIRONMENT_LOSS",
+      "start_record": {
+        "build_environment": {
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": null,
+          "CARGO_TARGET_DIR": null,
+          "RUSTFLAGS": null,
+          "RUSTUP_TOOLCHAIN": null
+        },
+        "cargo_executable": "/root/.cargo/bin/cargo",
+        "command": [
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/workspace/scratch/7d6915ae5ed9/chain-quantum/trillionnium",
+        "environment_overrides": {
+          "CARGO_BUILD_JOBS": "1",
+          "PATH_prepended": "/root/.cargo/bin"
+        },
+        "execution_timeout_seconds": 1200,
+        "git_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+        "git_tree": "96c075e9aa71ff32c6d9c43e9da22b710b343f4d",
+        "log": "/workspace/scratch/7d6915ae5ed9/frozen-clippy-retry.log",
+        "new_session": true,
+        "pid": 44,
+        "prior_attempt": {
+          "command": [
+            "cargo",
+            "clippy",
+            "--workspace",
+            "--all-targets",
+            "--locked",
+            "--offline",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "cwd_relative_to_repo": "trillionnium",
+          "elapsed_seconds": 600.013,
+          "exit_code": 124,
+          "log": "/workspace/scratch/7d6915ae5ed9/frozen-workspace-rust-gate-2.log"
+        },
+        "prior_cleanup_needed": false,
+        "prior_log_sha256": "74b8febd59f96930e5f5aeb8dc11fcec1f1ae2cad82e446a819cc20f3456ebc3",
+        "prior_process_inspection": "/workspace/scratch/7d6915ae5ed9/frozen-clippy-retry-process-inspection.json",
+        "process_group": 44,
+        "runner_sha256": "480bc5e07a5ab92eaccfc8c6bc69538de03081470c10540b63ab50a35079c7b5",
+        "schema": "frozen-clippy-retry-start-v1",
+        "started_utc": "2026-11-05T00:43:42.402211+00:00",
+        "versions": {
+          "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+          "rustc": "rustc 1.95.0 (59807616e 2026-04-14)"
+        }
+      },
+      "timed_out": null,
+      "transport_error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s"
+    }
   },
   "schema": "trnm-quantum-literal-domain-reproduction-v1",
   "source_files_changed_from_parent": [
