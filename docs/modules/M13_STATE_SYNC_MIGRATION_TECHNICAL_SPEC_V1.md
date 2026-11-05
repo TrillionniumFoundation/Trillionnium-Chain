@@ -5,7 +5,7 @@ Revision: invariant-driven revision3. Selected target: `pon-nakamoto-v1`.
 
 ## Scope and ownership
 
-Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.
+Native bounded history delivery and separate reference root-verified storage replay. The reference 4101-height fixture is not 4101 real mined native blocks.
 
 The claims below apply to their named component and tests, not to an independently accepted full native node.
 
@@ -27,7 +27,7 @@ For each block use M02 exact parent work and M06 state validation. Work matrices
 
 **Invariant:** A height beyond4096 does not alone reject a shallow-fork state reconstruction; local checkpoint contents must match stored block roots.
 
-**Scope:** Root-verified local storage replay. The4101-height fixture is not4101 real mined blocks.
+**Scope:** Native bounded history delivery and separate reference root-verified storage replay. The reference 4101-height fixture is not 4101 real mined native blocks.
 
 **Atomic boundary:** Find verified checkpoint or genesis, follow decreasing heights, verify every delta precondition and resultant root.
 
@@ -53,14 +53,65 @@ State maps and root recomputation are still complete reference values; resumable
 
 ## Current source and verification
 
+- [`trillionnium/crates/trnm-pon-node/src/store.rs`](../../trillionnium/crates/trnm-pon-node/src/store.rs).
+- [`trillionnium/crates/trnm-pon-node/src/ingress.rs`](../../trillionnium/crates/trnm-pon-node/src/ingress.rs).
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).
 
 No test binding or local campaign grants independent acceptance, ordinary Hepta execution or production activation. Preserve the exact source, profile and environment of every outcome.
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M13` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
+
+## Bounded receiver / confirmation continuation
+
+The actual controlled caller is `formal/pon-nakamoto-v1/client_confirmation.py`.
+[N2](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md#n2--executed-bounded-history-receiver-and-local-confirmation)
+defines page fields, caller-pinned cursors, full work/state validation, per-block commit,
+interrupted-prefix recovery, local confirmation and clock/currentness limits. The existing
+Ledger remains the only persistent owner. Maturity now binds this caller and its exact
+regressions; native public-host and ordinary Hepta integration flags remain false.
+
+A receiver computes work and transaction membership rather than accepting RPC assertions.
+This is a full-verifying reference client with explicit optional native work/execution
+components, NOT a succinct light client or proof of the globally latest tip. Completed
+lower-work delivery does not replace the receiver's heavier observed branch. Successful
+logical-clock tests cannot be reported as live confirmed public throughput.
+
+## Native cache / receiver continuation
+
+The exact continuation is specified in [native execution](../protocol/pon-nakamoto-v1/details/EXECUTION_PARALLEL.md), [admission](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md) and [client/recovery](../protocol/pon-nakamoto-v1/details/NETWORK_CLIENT.md). It does not promote native persistence, independent acceptance or public-network capacity. Exact additional counterexamples:
+
+- `formal/pon-nakamoto-v1/test_native_session.py::SessionBoundaryTests.test_client_pages_confirm_and_reorg_with_explicit_session_after_restart`.
+
+## Native development continuation and remaining scope
+
+Ordinary native History export now traverses actual parent records in batches of at
+most 64 and retains at most 16 candidate hashes in memory, removing its full-path
+temporary spool. Every ancestor is still checked before packet bodies are loaded;
+complete packet bytes, error origin, cancellation and reopen behavior remain part
+of the [native resource contract](../protocol/pon-nakamoto-v1/details/HISTORY_STATE_RESOURCE_BOUNDS_V1.md).
+The implementation is [store/history_page.rs](../../trillionnium/crates/trnm-pon-node/src/store/history_page.rs).
+Export and complete ancestry confirmation retain history-sized work. Native sync
+recomputes admission and retains valid interrupted prefixes; snapshots/delta replay
+do not impose a height finality threshold. The separately selected public one-packet
+page location uses the [derived ancestry index](../protocol/pon-nakamoto-v1/details/NATIVE_ANCESTRY_INDEX.md)
+with a 1024-step budget; each received packet still undergoes full native admission.
+
+Whole-call comparisons use the current binary's retained reference algorithm,
+complete packet frames and actual SQLite fixtures. The bounded hash counter does
+not measure RSS, physical SQL reads or all internal allocation. The complete
+512-block experiment has its own execution receipt and does not inherit a result
+from these source bindings.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.
