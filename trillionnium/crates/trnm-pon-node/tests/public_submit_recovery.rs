@@ -209,13 +209,9 @@ fn pq_transport_owner_refuses_classical_submit_recovery_before_connect_and_after
     for reopen in [false, true] {
         if reopen {
             drop(node);
-            node = Node::open_with_pq_network(
-                directory.path(),
-                settings.clone(),
-                1,
-                &network_policy,
-            )
-            .unwrap();
+            node =
+                Node::open_with_pq_network(directory.path(), settings.clone(), 1, &network_policy)
+                    .unwrap();
         }
         let outcome = submit_with_verified_parent_recovery(
             &node,
@@ -240,7 +236,10 @@ fn pq_transport_owner_refuses_classical_submit_recovery_before_connect_and_after
             "refusal must precede TCP connect, including after cold reopen"
         );
         assert_eq!(node.stats().unwrap(), state_before);
-        assert_eq!(node.pq_network_status(&network_policy).unwrap(), network_before);
+        assert_eq!(
+            node.pq_network_status(&network_policy).unwrap(),
+            network_before
+        );
     }
 }
 
