@@ -3,6 +3,7 @@
 //! custody. The native M12 adapter must admit the funding operation first.
 
 use std::{
+    collections::BTreeSet,
     fs::{self, File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
@@ -308,10 +309,11 @@ impl CellRetentionStoreV1 {
         self.readback(&row)
     }
 
-    /// Release catalog operations keep their original deadline while acquiring
-    /// the physical writer. Recompute the live layout under that writer so a
-    /// waiting reservation cannot allocate against an earlier free-slot view.
-    pub(super) fn reserve_until(
+    /// Reserve under the caller's original absolute wall deadline, including
+    /// physical writer contention, commit and readback. Recompute the live
+    /// layout under that writer; an earlier free-slot view grants no capacity.
+    /// Funding admission remains with the caller's original M12 owner.
+    pub fn reserve_until(
         &mut self,
         contract: CellRetentionContractV1,
         deadline: Instant,
@@ -390,6 +392,90 @@ impl CellRetentionStoreV1 {
         let result = self.readback(&durable)?;
         control.check()?;
         Ok(result)
+    }
+
+    /// Read-only admission for a complete new catalog intent. Reject a set
+    /// that can never fit this immutable arena/history or reuses a terminal
+    /// identity. Current occupancy and fragmentation remain recoverable at the
+    /// actual reservation step; this check allocates no slots or byte charges.
+    pub(super) fn check_reservation_set(
+        &self,
+        contracts: &[CellRetentionContractV1],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        let mut checkpoint = || Ok(());
+        let mut control = OperationControl {
+            deadline,
+            checkpoint: &mut checkpoint,
+            stopped: false,
+        };
+        control.check()?;
+        self.check_arena_controlled(&mut control)?;
+        require(
+            !contracts.is_empty() && contracts.len() <= self.config.maximum_obligations as usize,
+            "retention record capacity",
+        )?;
+        let mut operations = BTreeSet::new();
+        let mut funding = BTreeSet::new();
+        let mut reserved = 0_u64;
+        for contract in contracts {
+            control.check()?;
+            validate_contract(contract, &self.config)?;
+            require(
+                operations.insert(contract.operation) && funding.insert(contract.funding_operation),
+                "retention reservation identity alias",
+            )?;
+            reserved = reserved
+                .checked_add(aligned(contract.manifest.size())?)
+                .ok_or(CellErrorV1::Invalid("retention size overflow"))?;
+        }
+        require(
+            reserved <= self.config.capacity_bytes,
+            "retention reservation set capacity",
+        )?;
+        control.check()?;
+        let original_busy_ms: u64 =
+            self.connection
+                .pragma_query_value(None, "busy_timeout", |row| row.get(0))?;
+        let original_busy = Duration::from_millis(original_busy_ms);
+        self.connection
+            .busy_timeout(original_busy.min(deadline.saturating_duration_since(Instant::now())))?;
+        let result = (|| {
+            control.check()?;
+            let read = self.connection.unchecked_transaction()?;
+            validate_schema(&read)?;
+            let rows = Self::audit_layout_from(&read, &self.config, &mut || control.check())?;
+            let mut new_records = 0_usize;
+            for contract in contracts {
+                control.check()?;
+                if let Some(previous) = rows
+                    .iter()
+                    .find(|row| row.contract.operation == contract.operation)
+                {
+                    require(
+                        previous.contract == *contract,
+                        "retention operation changed",
+                    )?;
+                    require(previous.status != 2, "retention retired reservation")?;
+                } else {
+                    require(
+                        rows.iter().all(|row| {
+                            row.contract.funding_operation != contract.funding_operation
+                        }),
+                        "retention funding alias",
+                    )?;
+                    new_records += 1;
+                }
+            }
+            require(
+                rows.len() + new_records <= self.config.maximum_obligations as usize,
+                "retention record capacity",
+            )?;
+            read.rollback()?;
+            control.check()
+        })();
+        self.connection.busy_timeout(original_busy)?;
+        result
     }
 
     /// Copy at most once under the original obligation identity. The entire

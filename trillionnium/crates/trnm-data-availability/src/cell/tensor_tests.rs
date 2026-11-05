@@ -212,6 +212,54 @@ fn tensor_correct_hash_garbage_and_oversized_or_invalid_header_are_refused() {
 }
 
 #[test]
+fn tensor_entry_sequence_cannot_replace_required_named_object() {
+    let payload = data();
+    for header in [
+        HEADER.to_owned(),
+        HEADER.replacen(
+            r#"{"dtype":"F32","shape":[2],"data_offsets":[0,8]}"#,
+            r#"{"data_offsets":[0,8],"shape":[2],"dtype":"F32"}"#,
+            1,
+        ),
+    ] {
+        let raw = container(&header, &payload);
+        let report = verify_hostile_bytes(&raw).unwrap();
+        assert_eq!(report.tensor_count, 3);
+        assert_eq!(report.payload_bytes, raw.len() as u64);
+        assert_eq!(
+            report.payload_sha256,
+            <CellDigestV1>::from(Sha256::digest(&raw))
+        );
+    }
+
+    // Each array has the original field values and identical tensor data. The
+    // pins cover its actual bytes, so rejection must come from the object rule.
+    for (object, sequence) in [
+        (
+            r#"{"dtype":"F32","shape":[2],"data_offsets":[0,8]}"#,
+            r#"["F32",[2],[0,8]]"#,
+        ),
+        (
+            r#"{"dtype":"F16","shape":[2],"data_offsets":[8,12]}"#,
+            r#"["F16",[2],[8,12]]"#,
+        ),
+        (
+            r#"{"dtype":"BF16","shape":[],"data_offsets":[12,14]}"#,
+            r#"["BF16",[],[12,14]]"#,
+        ),
+    ] {
+        let header = HEADER.replacen(object, sequence, 1);
+        assert!(
+            matches!(
+                verify_hostile_bytes(&container(&header, &payload)),
+                Err(CellErrorV1::Invalid("tensor header JSON"))
+            ),
+            "expected a tensor header JSON error for: {header}"
+        );
+    }
+}
+
+#[test]
 fn tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused() {
     let entry = r#""a":{"dtype":"F32","shape":[2],"data_offsets":[0,8]}"#;
     for header in [
@@ -239,7 +287,16 @@ fn tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused() {
         HEADER.replacen("\"shape\":[2]", "\"shape\":[2],\"strides\":[1]", 1),
         HEADER.replacen("\"format\":\"pt\"", "\"format\":42", 1),
         HEADER.replacen("\"dtype\":\"F32\"", "\"dtype\":{\"F32\":null}", 1),
+        HEADER.replacen("\"dtype\":\"F32\"", "\"dtype\":[\"F32\"]", 1),
         HEADER.replacen("\"shape\":[2]", "\"shape\":[2.0]", 1),
+        HEADER.replacen("\"shape\":[2]", "\"shape\":{\"0\":2}", 1),
+        HEADER.replacen("\"shape\":[2],", "", 1),
+        HEADER.replacen(
+            "\"data_offsets\":[0,8]",
+            "\"data_offsets\":{\"0\":0,\"1\":8}",
+            1,
+        ),
+        HEADER.replacen("\"data_offsets\":[0,8]", "\"data_offsets\":[0,8,14]", 1),
     ] {
         assert!(
             matches!(

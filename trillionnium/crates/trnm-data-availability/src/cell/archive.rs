@@ -434,15 +434,25 @@ impl CellReleaseRetentionStoreV2 {
                     .iter()
                     .map(|object| (object.manifest.id(), object.operation))
                     .collect();
+                let new_funding: BTreeMap<_, _> = contract
+                    .objects
+                    .iter()
+                    .map(|object| (object.funding_operation, object.operation))
+                    .collect();
+                let mut all_operations: BTreeSet<_> = new_terms.keys().copied().collect();
                 for id in ids {
                     check_deadline(deadline)?;
                     let prior = required_row(tx, &self.config, id)?;
                     for old in &prior.contract.objects {
+                        all_operations.insert(old.operation);
                         if let Some(commitment) = new_terms.get(&old.operation) {
                             require(
                                 *commitment == old.commitment(self.config.retention.store_id),
                                 "archive shared object contract changed",
                             )?;
+                        }
+                        if let Some(operation) = new_funding.get(&old.funding_operation) {
+                            require(*operation == old.operation, "archive object funding alias")?;
                         }
                         if prior.status != 2 {
                             if let Some(operation) = new_manifests.get(&old.manifest.id()) {
@@ -454,6 +464,16 @@ impl CellReleaseRetentionStoreV2 {
                         }
                     }
                 }
+                // Pending roots also reserve future immutable row identities.
+                // Retired history cannot create new record capacity. Check only
+                // NEW intents: older pending rows remain readable/protected and
+                // exact retry never rewrites their original terms or status.
+                require(
+                    all_operations.len() <= self.config.retention.maximum_obligations as usize,
+                    "archive physical record capacity",
+                )?;
+                self.retention
+                    .check_reservation_set(&contract.objects, deadline)?;
                 write_row(
                     tx,
                     &DutyRow {
