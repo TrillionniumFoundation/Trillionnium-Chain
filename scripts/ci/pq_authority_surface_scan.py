@@ -54,6 +54,38 @@ class AuditError(ValueError):
     pass
 
 
+def source_identity(metadata):
+    return (metadata.st_dev, metadata.st_ino, metadata.st_mode,
+            metadata.st_size, metadata.st_mtime_ns, metadata.st_ctime_ns)
+
+
+def read_source(path: Path) -> bytes:
+    # Bind limits and bytes to one descriptor. NONBLOCK prevents a replaced
+    # FIFO from hanging before fstat; NOFOLLOW rejects a replaced final link.
+    # This is not a snapshot against a same-UID concurrent writer or a proof
+    # that the whole directory tree stayed unchanged during the inventory.
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC)
+        try:
+            before = os.fstat(fd)
+            if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_SOURCE_BYTES:
+                raise AuditError('oversize/nonregular Rust source')
+            with os.fdopen(fd, 'rb', closefd=False) as source:
+                data = source.read(MAX_SOURCE_BYTES + 1)
+            after = os.fstat(fd)
+            named = path.lstat()
+            if (len(data) > MAX_SOURCE_BYTES
+                    or len(data) != before.st_size
+                    or source_identity(before) != source_identity(after)
+                    or source_identity(after) != source_identity(named)):
+                raise AuditError('source changed during scan')
+            return data
+        finally:
+            os.close(fd)
+    except OSError as exc:
+        raise AuditError('unreadable Rust source') from exc
+
+
 def sources(root: Path):
     base = root / 'trillionnium' / 'crates'
     # Checking the three immediate components is insufficient if an earlier
@@ -89,15 +121,7 @@ def sources(root: Path):
             path = Path(current) / filename
             if path.is_symlink():
                 raise AuditError('symlink source in scan scope')
-            try:
-                size = path.stat()
-                if not stat.S_ISREG(size.st_mode) or size.st_size > MAX_SOURCE_BYTES:
-                    raise AuditError('oversize/nonregular Rust source')
-                data = path.read_bytes()
-            except OSError as exc:
-                raise AuditError('unreadable Rust source') from exc
-            if len(data) != size.st_size:
-                raise AuditError('source changed during scan')
+            data = read_source(path)
             try:
                 content = data.decode('utf-8')
             except UnicodeDecodeError as exc:
