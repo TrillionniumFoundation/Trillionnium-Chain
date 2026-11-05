@@ -7,6 +7,46 @@ It does not change the original [#639](https://github.com/TrillionniumFoundation
 four-second, sixteen-hostile-producer, six-deep independent confirmation gate,
 its fixed Host, CPU credit/refill, memory allowance, proof checks or activation.
 
+## Verification scope
+
+The accompanying [verification record](verification.json) pins the executed
+component checks to commit `fc86ed8e927a8eb4e048b160437126a6c0b96c0d` and tree
+`bd26fb15aa023cbd090662384c25fa52f52b0bc8`. Subsequent integration commits can
+preserve this record without inheriting its native test qualification. The record
+keeps every attempted command's actual outcome, including failed compilation and
+interrupted earlier checkpoints. Its five product metrics remain unmeasured.
+
+Raw logs and binaries are not added here. Log hashes are indexes of the retained
+local execution receipts, not a portable raw-log archive or independent acceptance.
+The committed test sources, complete exact-test roster, lossless argv templates,
+pinned toolchain/provider inputs and commands support fresh reproduction.
+
+## Recorded component checks
+
+All results in this table belong to the frozen commit above, with its tracked
+source verified before and after each recorded command.
+
+| Check | Recorded result | Scope |
+| --- | --- | --- |
+| `trnm-mvcc-fee`, all targets and features | 250 passed, 0 failed, 8 ignored | 25 harnesses, including 7 zero-test examples; ignored cost observations were not run. |
+| Exact Node regression roster | 50 passed, 0 failed or ignored; 50 required-test validators passed | Request lifecycle, intake domain, parallel preparation, durable owner and Growth activation controls. |
+| Python request/report controls | 282 passed | 140 native-report reader, 78 Host runner, 20 W1 fresh-service and 44 phase-reader controls. |
+| Source/claim controls | 100 passed | 43 source-integrity, 35 PQ integration and 22 claim-guard controls; 486 source pins retain `HOLD_NO_GO`. |
+| Strict Clippy | Passed | Workspace, all targets, all features, `-D warnings`; this type-checking does not execute native tests. |
+| Repository links, formatting and locked Cargo graph | Passed | Source inventory, CI contract, repository checker, `cargo fmt --check` and locked/offline all-feature metadata. |
+
+The first Node attempt on this source failed in compilation with SIGKILL and
+Cargo exit 101, before any native test executed. Its full fifty-case denominator
+is retained. The later unchanged-profile compile-only retry and the fifty actual
+executions have distinct successful receipts. Compiler affinity and shared-build
+admission are recorded as development build settings. Historical failed and
+interrupted attempts are preserved separately, including the zero-build disk-wait
+interruption; no earlier source result is promoted to this checkpoint.
+
+The original `public_v3_from_zero` confirmation/clock acceptance test remains
+unexecuted here. The original fixed-Host gates and all five product measurements
+remain open or unmeasured. Component regressions do not close those gates.
+
 ## Actual changes
 
 Non-progress continuity capacity and Growth partition/mandatory-owner checks
@@ -41,8 +81,10 @@ The original finite signed-confirmation test adds a same-process clock binding
 after the unchanged traffic window. It retains the first business packet's exact
 public request digest and converts the existing traffic/final-observation instants
 to the observer epoch. A Hello digest is a peer claim, not authenticated body
-receipt. Every matching retry and every unbound or unretained connection must be
-kept. The final verifier method may return an unconfirmed observation; a timestamp
+receipt. The latency origin is the same-process socket accept observation; this
+binding does not establish independent-operator end-to-end receipt or confirmation.
+Incomplete binding or clock coverage cannot yield an exact whole-cohort latency.
+Every matching retry and every unbound or unretained connection must be kept. The final verifier method may return an unconfirmed observation; a timestamp
 alone never establishes successful confirmation.
 Positive v2 confirmation observations additionally bind the actual required
 transaction, network/parameters/genesis, included block, six-deep tip/work,
@@ -103,6 +145,37 @@ with `--exact --format pretty --color never`, preserve its Cargo exit and comple
 log, then run `scripts/ci/check_required_native_test.py LOG --test FULL_NAME`.
 That checker requires exactly one passed, nonignored invocation. Module-filter
 exit zero alone is not proof that its expected tests ran.
+
+The exact Node case roster and command templates are under
+`completed_current_source_commands.node_50_exact_regressions` in the verification
+record. The accompanying [exact regression helper](run-node-regressions.py) is
+byte-for-byte the helper used for the recorded executions; its SHA-256 is in the
+record. It predeclares all fifty cases, records each Cargo and execution-checker
+exit, and keeps failed, interrupted and unexecuted cases.
+
+For a fresh run, copy the helper outside the checkout. Place it directly beside
+an isolated checkout directory named `chain`, as required by the unchanged
+helper's `ROOT`. Select `fc86ed8e927a8eb4e048b160437126a6c0b96c0d` on an allowed
+`fix/` development branch in that checkout, load the pinned provider environment,
+and run the following from `chain`. Use new absolute output paths:
+
+```sh
+bash scripts/project-preflight.sh
+python3 scripts/ci/record_pq_native_command.py \
+  --kind head \
+  --candidate fc86ed8e927a8eb4e048b160437126a6c0b96c0d \
+  --tested fc86ed8e927a8eb4e048b160437126a6c0b96c0d \
+  --output /absolute/path/to/new-node-logs \
+  --label node-regressions -- \
+  python3 /absolute/parent-of-chain/run-node-regressions.py \
+    --expected-head fc86ed8e927a8eb4e048b160437126a6c0b96c0d \
+    --output /absolute/path/to/new-node-logs/node-cases
+```
+
+The outer recorder verifies every tracked source byte before and after execution.
+The helper saves the complete case denominator, both process exits and both logs;
+an abrupt termination of the recorder remains incomplete. This is a new execution
+of functional component controls, not original fixed-Host acceptance.
 
 The native clock binding is exercised only by the original
 `public_v3_from_zero` integration test named
