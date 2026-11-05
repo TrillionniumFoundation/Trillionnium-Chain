@@ -425,6 +425,70 @@ class AdversarialPolicyControls(unittest.TestCase):
         self.assertEqual(summary["miners"]["q"]["candidate_checks_completed"], 32)
         self.assertEqual(summary["miners"]["q"]["proofs_started"], 0)
 
+    def test_interrupted_domain_setup_resumes_paid_remaining_work(self):
+        case = NetworkScenario("interrupted_setup", duration_seconds=4,
+                               classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,
+                               quantum_prepare_seconds=0, quantum_measure_seconds=0.5,
+                               quantum_candidate_check_seconds=0.5, quantum_domain_size=16,
+                               quantum_domain_marked_count=0, quantum_domain_setup_seconds=2,
+                               shocks=(ParticipationShock(0.5, 1, 0), ParticipationShock(1, 1, 1)))
+        summary, rows = run_network_scenario(case)
+        starts = [r for r in rows if r["kind"] == "search-start"]
+        self.assertEqual([r["domain_setup_seconds"] for r in starts], [2, 1.5, 0])
+        self.assertEqual(len({r["domain_id"] for r in starts}), 1)
+        self.assertEqual(summary["adversarial"]["domains_created"], 1)
+        self.assertEqual(summary["adversarial"]["domain_setup_seconds_charged"], 2)
+        self.assertEqual(summary["miners"]["q"]["searches_completed"], 1)
+        self.assertEqual(summary["miners"]["q"]["candidate_checks_completed"], 1)
+
+    def test_repeated_shocks_do_not_forgive_or_duplicate_domain_setup(self):
+        case = NetworkScenario("repeated_setup_shocks", duration_seconds=4,
+                               classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,
+                               quantum_prepare_seconds=0, quantum_measure_seconds=0.5,
+                               quantum_candidate_check_seconds=0.5, quantum_domain_size=16,
+                               quantum_domain_marked_count=0, quantum_domain_setup_seconds=2,
+                               shocks=(ParticipationShock(0.5, 1, 2), ParticipationShock(0.75, 1, 1)))
+        summary, rows = run_network_scenario(case)
+        starts = [r for r in rows if r["kind"] == "search-start"]
+        self.assertEqual([r["domain_setup_seconds"] for r in starts], [2, 1.5, 1.25, 0, 0])
+        self.assertEqual(summary["adversarial"]["domain_setup_seconds_charged"], 2)
+        self.assertEqual(summary["miners"]["q"]["searches_completed"], 2)
+
+    def test_parent_change_discards_only_unfinished_old_domain_setup(self):
+        sim = Simulator(NetworkScenario("changed_setup_parent", duration_seconds=4,
+                                        classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,
+                                        quantum_prepare_seconds=0, quantum_measure_seconds=0.5,
+                                        quantum_candidate_check_seconds=0.5, quantum_domain_size=16,
+                                        quantum_domain_marked_count=0, quantum_domain_setup_seconds=2))
+        sim.start()
+        sim.now = 0.5
+        block = append_block(sim, "new-parent")
+        sim.receive("q", block.block_id)
+        summary, rows = sim.run()
+        domains = [r for r in rows if r["kind"] == "quantum-domain"]
+        self.assertEqual(len(domains), 2)
+        self.assertNotEqual(domains[0]["domain_id"], domains[1]["domain_id"])
+        starts = [r for r in rows if r["kind"] == "search-start"]
+        self.assertEqual([r["domain_setup_seconds"] for r in starts], [2, 2, 0])
+        self.assertEqual(summary["adversarial"]["domain_setup_seconds_charged"], 2.5)
+        self.assertEqual(summary["miners"]["q"]["searches_completed"], 1)
+
+    def test_setup_remainder_uses_exact_elapsed_and_upward_conversion(self):
+        sim = Simulator(NetworkScenario("setup_rounding", duration_seconds=4,
+                                        classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,
+                                        quantum_prepare_seconds=0, quantum_measure_seconds=0.5,
+                                        quantum_candidate_check_seconds=0.5, quantum_domain_size=16,
+                                        quantum_domain_marked_count=0, quantum_domain_setup_seconds=0.3,
+                                        quantum_clock_rounding="upward"))
+        sim.start()
+        sim.now = 0.1
+        sim._shock(ParticipationShock(sim.now, 1, 2))
+        remaining = Fraction.from_float(0.3) - Fraction.from_float(0.1)
+        self.assertGreaterEqual(Fraction.from_float(sim.active["q"].domain_setup_seconds), remaining)
+        self.assertLess(Fraction.from_float(sim.active["q"].domain_setup_seconds), remaining + Fraction(1, 10**15))
+        summary, _ = sim.run()
+        self.assertAlmostEqual(summary["adversarial"]["domain_setup_seconds_charged"], 0.3)
+
     def test_refresh_is_after_measured_batches_and_pays_setup_again(self):
         case = NetworkScenario("refresh", duration_seconds=10,
                                classical_block_rate_at_initial_target=0, quantum_fixed_iterations=0,

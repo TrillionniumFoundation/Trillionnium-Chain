@@ -340,6 +340,9 @@ class DomainTemplate:
     contains_probe: bool
     marked_count: int
     completed_batches: int = 0
+    # Classical template setup can resume after interruption. Its sampled
+    # marked set already exists conceptually, but is not usable until paid.
+    setup_remaining_seconds: Fraction = Fraction(0)
 
 
 @dataclass
@@ -714,14 +717,16 @@ class Simulator:
         refresh = case.quantum_domain_trials_before_refresh
         if (current is not None and current.parent == parent and current.target == target
                 and (not refresh or current.completed_batches < refresh)):
-            return current, 0.0
+            return current, upward_float(current.setup_remaining_seconds)
         self.domain_count += 1
         identity = [self.profile, parent, timestamp, target, contains_probe, self.domain_count]
         domain_id = hashlib.sha256(json.dumps(identity, separators=(",", ":")).encode()).hexdigest()
         marked = case.quantum_domain_marked_count
         if marked is None:
             marked = sample_marked_count(self.domain_rng, case.quantum_domain_size, target)
-        current = DomainTemplate(domain_id, parent, timestamp, target, contains_probe, marked)
+        current = DomainTemplate(
+            domain_id, parent, timestamp, target, contains_probe, marked,
+            setup_remaining_seconds=Fraction.from_float(float(case.quantum_domain_setup_seconds)))
         self.quantum_domain = current
         self.zero_marked_domains += int(marked == 0)
         self._emit("quantum-domain", domain_id=domain_id, domain_number=self.domain_count,
@@ -804,10 +809,17 @@ class Simulator:
         counts["classical_query_equivalents"] += elapsed * trial.query_rate
         logical = 0
         if trial.miner == "q":
-            self.domain_setup_seconds_charged += min(elapsed, trial.domain_setup_seconds)
+            exact_elapsed = max(Fraction(0),
+                                Fraction.from_float(float(min(self.now, trial.finishes)))
+                                - Fraction.from_float(float(trial.started)))
+            setup_elapsed = min(exact_elapsed, Fraction.from_float(float(trial.domain_setup_seconds)))
+            self.domain_setup_seconds_charged += float(setup_elapsed)
+            if trial.domain_id is not None:
+                domain = self.quantum_domain
+                if domain is None or domain.domain_id != trial.domain_id:
+                    raise ValueError("ACTIVE_DOMAIN_MISMATCH")
+                domain.setup_remaining_seconds = max(Fraction(0), domain.setup_remaining_seconds - setup_elapsed)
             if self.case.quantum_clock_rounding == "upward":
-                exact_elapsed = (Fraction.from_float(float(min(self.now, trial.finishes)))
-                                 - Fraction.from_float(float(trial.started)))
                 exact_prepare = (Fraction.from_float(float(self.case.quantum_prepare_seconds))
                                  + Fraction.from_float(float(trial.domain_setup_seconds)))
                 logical = min(trial.iterations, max(0, (exact_elapsed - exact_prepare)
