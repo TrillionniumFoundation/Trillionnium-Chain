@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ owner-boundary continuation, 2026-11-04 America/New_York:** Continue the
+existing #688/#4812 candidates from Chain `ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155`
+and hepta-private-ci runtime `3558ced0fd983603a3082a42359e8da63dfc8418`.
+The [concrete owner audit and reproduction record](../../evidence/pq-owner-boundaries-20261105/README.md)
+targets the actual migration importer's omission of unhandled committed state and
+the ordinary Agentd shared-store recovery entry. Reject unsupported historical
+rights rather than silently projecting them away; require current explicit PQ
+recovery authority before ordinary shared-store use, including governance paths
+that are enabled independently of the evidence append service. Preserve actual
+red/green source and execution identities. Existing release-role component tests
+do not close the still-unwired Fleet installer/updater, and the separate governance
+invocation tables are not covered by the inspected effect snapshot. Fixed complete
+binaries, all current owners, root custody, migration/retirement, atomic provider
+effects, QROM/quantum-work security and original same-source PQ/WAN capacity gates
+remain open. No activation, acceptance threshold or security claim is promoted.
+
 **Throughput path and request accounting, 2026-11-04 America/New_York:**
 Continue #688 from `47b4a62463d8e1371a175c74196d52d99c5fccb8`.
 Non-progress continuity capacity and Growth partition/mandatory-owner scans use

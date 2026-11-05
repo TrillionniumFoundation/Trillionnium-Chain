@@ -1,0 +1,22 @@
+{
+  "head": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "scope": "new regression tests on unchanged production source",
+  "command": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--all-features",
+    "--lib",
+    "migration_",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 158.31829714775085
+}

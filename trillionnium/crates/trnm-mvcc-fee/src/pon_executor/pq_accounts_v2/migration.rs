@@ -1,6 +1,8 @@
 //! Explicit operator-selected checkpoint trust for a NEW research network.
 //! No wire decoder, authenticated Boolean, source-chain retirement proof or
 //! retroactive recovery of Shor-compromised Ed ownership exists in this module.
+//! Unsupported source state is refused, even when its monetary value is zero;
+//! complete funds conservation cannot establish its preservation or retirement.
 use super::*;
 use trnm_protocol::pon_wire::Header;
 
@@ -156,6 +158,10 @@ impl TrustedPqPrecommitments {
             material.header.height,
             source_cfg,
         )?;
+        require(
+            material.state.get("model:current") == Some(&json!(hex::encode([0; 32]))),
+            "PQ2_UNSUPPORTED_SOURCE_STATE",
+        )?;
         let issued = super::super::num(material.state.get("meta:issued").ok_or("STATE")?)?;
         let mut projection = State::new();
         let mut needed = BTreeSet::new();
@@ -271,8 +277,24 @@ impl TrustedPqPrecommitments {
                     field(value, "remaining")? == 0,
                     "PQ2_UNSUPPORTED_SOURCE_LIABILITY",
                 )?;
+                // A spent/zero monetary row can still bind lifecycle,
+                // settlement or replay state. This importer has no rule for
+                // preserving those owners, so zero is not permission to drop it.
+                return Err("PQ2_UNSUPPORTED_SOURCE_STATE");
             } else if name.starts_with("pq-") {
                 return Err("PQ2_SOURCE_PROFILE");
+            } else {
+                // These are the only rows re-established by the destination's
+                // own genesis constructor. Everything else needs an explicit
+                // preservation rule before this trusted anchor can be created.
+                require(
+                    name == "meta:issued"
+                        || name == "model:current"
+                        || (name == crate::continuity_v1::MAINTENANCE_KEY
+                            && crate::continuity_v1::enabled(source_cfg)
+                            && value == &crate::continuity_v1::maintenance_record(source_cfg)?),
+                    "PQ2_UNSUPPORTED_SOURCE_STATE",
+                )?;
             }
         }
         require(
