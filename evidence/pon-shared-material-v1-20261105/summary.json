@@ -611,505 +611,7 @@
     "unselected_expert_multiply_adds": 98688,
     "w1_product_multiply_adds_per_batch": 1310720
   },
-  "host": {
-    "cgroup_observations": {
-      "/proc/self/cgroup": "0::/",
-      "/sys/fs/cgroup/cpu.max": "800000 100000",
-      "/sys/fs/cgroup/cpu.stat": "usage_usec 24049748058\nuser_usec 18470338048\nsystem_usec 5579410009\nnice_usec 0\nnr_periods 52554\nnr_throttled 9622\nthrottled_usec 698275627\nnr_bursts 0\nburst_usec 0",
-      "/sys/fs/cgroup/cpuset.cpus.effective": "0-8",
-      "/sys/fs/cgroup/memory.current": "8588922880",
-      "/sys/fs/cgroup/memory.max": "8589934592"
-    },
-    "cpu_affinity": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8
-    ],
-    "cpu_count": 9,
-    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
-    "isolation": "uncontrolled-shared-host; observations are not a performance qualification",
-    "numpy_version": "2.3.5",
-    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
-    "processor": "x86_64",
-    "python": "3.12.14",
-    "thread_environment": {
-      "OMP_NUM_THREADS": "1",
-      "OPENBLAS_NUM_THREADS": "1"
-    }
-  },
-  "host_snapshot_scope": "representative last-run snapshot; each raw manifest retains its own observed counters",
-  "integrated_repository_source_check": {
-    "activation": false,
-    "head": "90fa328265b73adc87b4ece23e2c797cd8982982",
-    "local_links": 2947,
-    "normal_dependency_edges": 25,
-    "result": "PASS",
-    "runtime_implemented": false,
-    "rust_files": 1138,
-    "source_state": "committed-clean",
-    "tree": "82e01abcfd5125f708f96b775cf222076a6fd6c9",
-    "workspace_packages": 26
-  },
-  "intermediate_doc_only_integration_commit": "90fa328265b73adc87b4ece23e2c797cd8982982",
-  "measurement_scope": "finite offline fixed batch; uncontrolled shared host; no production performance qualification",
-  "model_loop": {
-    "end_to_end_seconds": 7.244869708999431,
-    "evaluations": [
-      {
-        "composed_correct": 165,
-        "evaluation_partition": "evaluation_a",
-        "samples": 347,
-        "strong_reference": "best_single",
-        "strong_reference_correct": 164,
-        "whole_gain": {
-          "caller_future_window_claim": false,
-          "cluster_gate": false,
-          "clusters": 29,
-          "comparisons": 4,
-          "exploratory_score": 0,
-          "future_window_observed": false,
-          "losses": 2,
-          "mean_gain_denominator": 39229344,
-          "mean_gain_numerator": 2689,
-          "public_reward_eligible": false,
-          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
-          "score": 0,
-          "wins": 2
-        }
-      },
-      {
-        "composed_correct": 147,
-        "evaluation_partition": "evaluation_b",
-        "samples": 281,
-        "strong_reference": "best_single",
-        "strong_reference_correct": 151,
-        "whole_gain": {
-          "caller_future_window_claim": false,
-          "cluster_gate": false,
-          "clusters": 28,
-          "comparisons": 4,
-          "exploratory_score": 0,
-          "future_window_observed": false,
-          "losses": 3,
-          "mean_gain_denominator": 960792,
-          "mean_gain_numerator": -14477,
-          "public_reward_eligible": false,
-          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
-          "score": 0,
-          "wins": 1
-        }
-      },
-      {
-        "composed_correct": 155,
-        "evaluation_partition": "consumer",
-        "samples": 251,
-        "strong_reference": "best_single",
-        "strong_reference_correct": 154,
-        "whole_gain": {
-          "caller_future_window_claim": false,
-          "cluster_gate": false,
-          "clusters": 29,
-          "comparisons": 4,
-          "exploratory_score": 0,
-          "future_window_observed": false,
-          "losses": 1,
-          "mean_gain_denominator": 12615,
-          "mean_gain_numerator": 14,
-          "public_reward_eligible": false,
-          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
-          "score": 0,
-          "wins": 1
-        }
-      }
-    ],
-    "file_counts": {
-      "calibration": 28,
-      "consumer": 29,
-      "evaluation_a": 29,
-      "evaluation_b": 28,
-      "train": 163
-    },
-    "settlement": {
-      "asset": "test-unit-no-market-value",
-      "chain_clock": "fixed logical timestamps; no live-clock acceptance",
-      "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
-      "future_window_accepted": false,
-      "independent_evaluators": false,
-      "model_reward": 0,
-      "observed_evaluation_recomputed": true,
-      "ordinary_hepta_entry": false,
-      "outcome": "not_adopted",
-      "production_activation": false,
-      "reason": "preregistered statistical gate not met",
-      "schema": "pon-observed-artifact-settlement-v1",
-      "source_model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671"
-    },
-    "task_counts": {
-      "calibration": 228,
-      "consumer": 251,
-      "evaluation_a": 347,
-      "evaluation_b": 281,
-      "train": 1119
-    },
-    "training_is_real_parameter_optimization": true,
-    "training_report_sha256": "133835f4e47f4fdbea05dfe81cc984fa9d95011db0fc7be67a4fbe10121985d4"
-  },
-  "model_provenance": {
-    "batch_offset": 0,
-    "batch_size": 64,
-    "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
-    "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
-    "independent_administration": false,
-    "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
-    "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
-    "ordinary_hepta_product_entry": false,
-    "partition": "consumer",
-    "production_activation": false,
-    "prospective_evaluation": false,
-    "public_reward_eligible": false,
-    "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
-    "selected_tasks": {
-      "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
-      "groups": [
-        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
-        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
-        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
-        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
-        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
-        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
-        "trillionnium/crates/trnm-types/src/relay/verifier.rs"
-      ],
-      "rows": 64,
-      "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
-      "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
-    },
-    "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
-    "source_replayed": true,
-    "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10",
-    "whole_partition": {
-      "content_root": "e9aceda8a0b6c30b309748c84e94d0fabb205929f02d34ac6228916393d9e3d5",
-      "groups": [
-        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
-        "trillionnium/crates/trnm-peer-lease/src/payload.rs",
-        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
-        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
-        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
-        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
-        "trillionnium/crates/trnm-research-protocol/src/lib.rs",
-        "trillionnium/crates/trnm-task-kernel/src/archive.rs",
-        "trillionnium/crates/trnm-task-kernel/src/error.rs",
-        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
-        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
-        "trillionnium/crates/trnm-types/src/relay/verifier.rs",
-        "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
-        "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
-        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
-        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
-        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
-        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
-        "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs"
-      ],
-      "rows": 251,
-      "task_id_root": "c38b32f84fc09a9880fedf8dfb0ef0742f2876fc8b7529eeafd8dd9329ea448e",
-      "tasks_digest": "60dc37bacae2cce4b039e64fb380d735b904616cf46453501b7b3825673a2df2"
-    }
-  },
-  "native_binary_bytes": 817128,
-  "native_binary_sha256": "ad4ddcb32a0128ce5b26b5c66628d851c593e916d88bfab3163a8169f7059ee1",
-  "observation_date_utc": "2026-11-05",
-  "ordinary_control": "numpy-int64-cached-base-plus-delta-selected-expert",
-  "qualifications": {
-    "cheapest_attack": false,
-    "cheapest_legal_work": false,
-    "complete_integer_operator_consumption_observed": true,
-    "durable_service_recovery": false,
-    "full_v2_proof": false,
-    "independent_future_model_benefit": false,
-    "ordinary_hepta_entry": false,
-    "original_public_service_budget": false,
-    "production_activation": false,
-    "production_payment": false
-  },
-  "repository_source_check": {
-    "activation": false,
-    "head": "59321c326313b78640b2df11122e00b3c7cfd71f",
-    "local_links": 2929,
-    "normal_dependency_edges": 25,
-    "result": "PASS",
-    "runtime_implemented": false,
-    "rust_files": 1138,
-    "source_state": "committed-clean",
-    "tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
-    "workspace_packages": 26
-  },
-  "schema": "pon-shared-material-observation-v1",
-  "security_runs": [
-    {
-      "all_attack_outcomes": "Transcript",
-      "all_planned_tiles_completed": true,
-      "cache_attack_verify_calls": 100,
-      "cheapest_work_qualified": false,
-      "child_cpu_ns": 229462000,
-      "cycles_per_tile": 4,
-      "legal_attempts": 42,
-      "legal_prepare_calls": 5,
-      "name": "security-frozen-t0",
-      "physical_recovery_qualified": false,
-      "planned_tiles": 5,
-      "public_service_qualified": false,
-      "raw_attack_verify_calls": 40,
-      "raw_native_to_attacker_cpu_ratio": 15.14962290841101,
-      "raw_report_sha256": "129b37277dc57accd4718a20af6aac699b6d7ab850e336d008b16415d62d6e39",
-      "scalar_attack_verify_calls": 40,
-      "status": "complete",
-      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "totals": {
-        "attacker_cpu_ns": 1160063,
-        "attempts": 78,
-        "cache_cpu_ns": {
-          "after-churn": 11057227,
-          "after-owner-recreation": 10069845,
-          "churn-other": 9811542,
-          "cold": 12790427,
-          "warm": 607925
-        },
-        "cache_reset_cpu_ns": 34499,
-        "cache_setup_cpu_ns": 21171,
-        "candidates": 40,
-        "raw_native_rejection_cpu_ns": 17574517,
-        "scalar_rejection_cpu_ns": 26765173,
-        "searches": 40,
-        "setups": 20
-      },
-      "whole_tiles_wall_ns": 364553026
-    },
-    {
-      "all_attack_outcomes": "Transcript",
-      "all_planned_tiles_completed": true,
-      "cache_attack_verify_calls": 100,
-      "cheapest_work_qualified": false,
-      "child_cpu_ns": 498179000,
-      "cycles_per_tile": 4,
-      "legal_attempts": 624,
-      "legal_prepare_calls": 5,
-      "name": "security-frozen-t1",
-      "physical_recovery_qualified": false,
-      "planned_tiles": 5,
-      "public_service_qualified": false,
-      "raw_attack_verify_calls": 40,
-      "raw_native_to_attacker_cpu_ratio": 9.07022231488134,
-      "raw_report_sha256": "fa9a355969fe5ae12c45543a6ceabed8ed7ed36d7a1b93b3d03ea4543b443f1e",
-      "scalar_attack_verify_calls": 40,
-      "status": "complete",
-      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "totals": {
-        "attacker_cpu_ns": 2139263,
-        "attempts": 1192,
-        "cache_cpu_ns": {
-          "after-churn": 9693565,
-          "after-owner-recreation": 9697198,
-          "churn-other": 10072829,
-          "cold": 11975132,
-          "warm": 626492
-        },
-        "cache_reset_cpu_ns": 23515,
-        "cache_setup_cpu_ns": 21754,
-        "candidates": 40,
-        "raw_native_rejection_cpu_ns": 19403591,
-        "scalar_rejection_cpu_ns": 25722874,
-        "searches": 40,
-        "setups": 20
-      },
-      "whole_tiles_wall_ns": 1006991355
-    }
-  ],
-  "source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
-  "source_corpus_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
-  "source_tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
-  "target_values": [
-    {
-      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "target_index": 0
-    },
-    {
-      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "target_index": 1
-    }
-  ],
-  "tiles": [
-    {
-      "a_sha256": "36cb735c1ccd75efd0cede11f0c7f6a13b66dea839ae9870b680f1b62c838df8",
-      "active_output_rows": 15,
-      "active_requests": 64,
-      "b_sha256": "1ffcf581b49a192f46f28eb76d9e7ade0e5fb6c61bd1c6221a2d01753a0e0b91",
-      "feature_count": 64,
-      "feature_start": 0,
-      "index": 0,
-      "material_bytes": 32768,
-      "material_sha256": "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
-      "nonzero_a_cells": 944,
-      "nonzero_b_cells": 482,
-      "signed_decode_bounds": [
-        6427,
-        4722,
-        4933,
-        22469,
-        30659,
-        22042,
-        26882,
-        24960,
-        28020,
-        26348,
-        23048,
-        26318,
-        30480,
-        25570,
-        29341
-      ],
-      "task": "f40e7ae27d720f33957aaa3308d1770826a85b88346194bfcc23296fb14c4280"
-    },
-    {
-      "a_sha256": "3ad759118301ed5f992da8c0f6cc90122d9d2fb81a6ce4521b122c800d53e568",
-      "active_output_rows": 15,
-      "active_requests": 64,
-      "b_sha256": "9158886ae833036cf84bd42bf29a8ea517a3521e1f00893b5dc35217496b3615",
-      "feature_count": 64,
-      "feature_start": 64,
-      "index": 1,
-      "material_bytes": 32768,
-      "material_sha256": "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
-      "nonzero_a_cells": 933,
-      "nonzero_b_cells": 401,
-      "signed_decode_bounds": [
-        3257,
-        3304,
-        2829,
-        20888,
-        21881,
-        19108,
-        19653,
-        23102,
-        20525,
-        22505,
-        23881,
-        21821,
-        25215,
-        24331,
-        20902
-      ],
-      "task": "509fb5fc0308dc7da848b258feb19c1430a530d05dc790280f68a0b5ec25d59b"
-    },
-    {
-      "a_sha256": "dcd3e37c5dbbed8e32ce1414af12b6e7cfd5c082914dab15160656c6b52f44b9",
-      "active_output_rows": 15,
-      "active_requests": 64,
-      "b_sha256": "fe989300efde02f93b84bc5558ec1df2845c45ed9e09e2d55ee844f4f6e5de42",
-      "feature_count": 64,
-      "feature_start": 128,
-      "index": 2,
-      "material_bytes": 32768,
-      "material_sha256": "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
-      "nonzero_a_cells": 942,
-      "nonzero_b_cells": 363,
-      "signed_decode_bounds": [
-        2027,
-        2669,
-        2324,
-        19992,
-        18569,
-        18493,
-        22874,
-        16995,
-        20027,
-        20990,
-        18917,
-        17104,
-        24155,
-        22243,
-        20234
-      ],
-      "task": "58cd9bedcf419ce687205826b1c00546059f740c638ea51afad6a857409e99c7"
-    },
-    {
-      "a_sha256": "8dc64d6a4fd3df8a2d9541825adbb39f60898a00d40d23765f0d02bcbfb6bc8b",
-      "active_output_rows": 15,
-      "active_requests": 64,
-      "b_sha256": "ff326787bf66da5bfeabcff60212976c069eab60c0770cbee25c3e9ee5df0657",
-      "feature_count": 64,
-      "feature_start": 192,
-      "index": 3,
-      "material_bytes": 32768,
-      "material_sha256": "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
-      "nonzero_a_cells": 936,
-      "nonzero_b_cells": 426,
-      "signed_decode_bounds": [
-        5082,
-        4106,
-        4174,
-        18040,
-        21209,
-        19865,
-        25741,
-        24717,
-        19952,
-        25607,
-        27152,
-        19875,
-        24785,
-        26300,
-        20943
-      ],
-      "task": "50c2f2fea8b88a17cc9260487acb6e3547849e9d35f6bc25a63a3824ea54e663"
-    },
-    {
-      "a_sha256": "403cb6486d396b4c48efb955b49b7d0b68051e5948ed35f81c4f4aed067b3a0a",
-      "active_output_rows": 15,
-      "active_requests": 64,
-      "b_sha256": "f1afafb9023b7628be8a2aa2cf2b28fb7dca01dbe2225b5234920eab76a3433d",
-      "feature_count": 1,
-      "feature_start": 256,
-      "index": 4,
-      "material_bytes": 32768,
-      "material_sha256": "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b",
-      "nonzero_a_cells": 15,
-      "nonzero_b_cells": 64,
-      "signed_decode_bounds": [
-        56,
-        192,
-        136,
-        512,
-        1384,
-        1896,
-        1512,
-        16,
-        1496,
-        760,
-        464,
-        1224,
-        968,
-        664,
-        1624
-      ],
-      "task": "48388860dda726d35b2ae8a2df910092f4eff5b26c47607d3c5cfec738f79059"
-    }
-  ],
-  "v2_current_preflight": {
+  "historical_v2_preflight": {
     "compilation_started": false,
     "current_source": {
       "data": {
@@ -1731,6 +1233,504 @@
       }
     }
   },
+  "host": {
+    "cgroup_observations": {
+      "/proc/self/cgroup": "0::/",
+      "/sys/fs/cgroup/cpu.max": "800000 100000",
+      "/sys/fs/cgroup/cpu.stat": "usage_usec 24049748058\nuser_usec 18470338048\nsystem_usec 5579410009\nnice_usec 0\nnr_periods 52554\nnr_throttled 9622\nthrottled_usec 698275627\nnr_bursts 0\nburst_usec 0",
+      "/sys/fs/cgroup/cpuset.cpus.effective": "0-8",
+      "/sys/fs/cgroup/memory.current": "8588922880",
+      "/sys/fs/cgroup/memory.max": "8589934592"
+    },
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "cpu_count": 9,
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "isolation": "uncontrolled-shared-host; observations are not a performance qualification",
+    "numpy_version": "2.3.5",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "python": "3.12.14",
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "host_snapshot_scope": "representative last-run snapshot; each raw manifest retains its own observed counters",
+  "integrated_repository_source_check": {
+    "activation": false,
+    "head": "90fa328265b73adc87b4ece23e2c797cd8982982",
+    "local_links": 2947,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1138,
+    "source_state": "committed-clean",
+    "tree": "82e01abcfd5125f708f96b775cf222076a6fd6c9",
+    "workspace_packages": 26
+  },
+  "intermediate_doc_only_integration_commit": "90fa328265b73adc87b4ece23e2c797cd8982982",
+  "measurement_scope": "finite offline fixed batch; uncontrolled shared host; no production performance qualification",
+  "model_loop": {
+    "end_to_end_seconds": 7.244869708999431,
+    "evaluations": [
+      {
+        "composed_correct": 165,
+        "evaluation_partition": "evaluation_a",
+        "samples": 347,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 164,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 29,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 2,
+          "mean_gain_denominator": 39229344,
+          "mean_gain_numerator": 2689,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 2
+        }
+      },
+      {
+        "composed_correct": 147,
+        "evaluation_partition": "evaluation_b",
+        "samples": 281,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 151,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 28,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 3,
+          "mean_gain_denominator": 960792,
+          "mean_gain_numerator": -14477,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 1
+        }
+      },
+      {
+        "composed_correct": 155,
+        "evaluation_partition": "consumer",
+        "samples": 251,
+        "strong_reference": "best_single",
+        "strong_reference_correct": 154,
+        "whole_gain": {
+          "caller_future_window_claim": false,
+          "cluster_gate": false,
+          "clusters": 29,
+          "comparisons": 4,
+          "exploratory_score": 0,
+          "future_window_observed": false,
+          "losses": 1,
+          "mean_gain_denominator": 12615,
+          "mean_gain_numerator": 14,
+          "public_reward_eligible": false,
+          "reason": "independent time/source-owner receipts must be verified by the accepting owner",
+          "score": 0,
+          "wins": 1
+        }
+      }
+    ],
+    "file_counts": {
+      "calibration": 28,
+      "consumer": 29,
+      "evaluation_a": 29,
+      "evaluation_b": 28,
+      "train": 163
+    },
+    "settlement": {
+      "asset": "test-unit-no-market-value",
+      "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+      "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+      "future_window_accepted": false,
+      "independent_evaluators": false,
+      "model_reward": 0,
+      "observed_evaluation_recomputed": true,
+      "ordinary_hepta_entry": false,
+      "outcome": "not_adopted",
+      "production_activation": false,
+      "reason": "preregistered statistical gate not met",
+      "schema": "pon-observed-artifact-settlement-v1",
+      "source_model": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671"
+    },
+    "task_counts": {
+      "calibration": 228,
+      "consumer": 251,
+      "evaluation_a": 347,
+      "evaluation_b": 281,
+      "train": 1119
+    },
+    "training_is_real_parameter_optimization": true,
+    "training_report_sha256": "133835f4e47f4fdbea05dfe81cc984fa9d95011db0fc7be67a4fbe10121985d4"
+  },
+  "model_provenance": {
+    "batch_offset": 0,
+    "batch_size": 64,
+    "evaluation_bundle": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+    "evaluation_bundle_sha256": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+    "independent_administration": false,
+    "model_artifact": "16443887511f5ffbcdf611ce3ca6b6811bc699aad649961fce5a83c168534671",
+    "model_sha256": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd",
+    "ordinary_hepta_product_entry": false,
+    "partition": "consumer",
+    "production_activation": false,
+    "prospective_evaluation": false,
+    "public_reward_eligible": false,
+    "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+    "selected_tasks": {
+      "content_root": "eec6cacd71c4545039427fdf1088dadeb910c810b17046f7f6c5c3d3c143defe",
+      "groups": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/relay/verifier.rs"
+      ],
+      "rows": 64,
+      "task_id_root": "a1fa250ddb0ef5e41d50a308cdc2e3414ffcafe35a093d7c04c8477c37de0243",
+      "tasks_digest": "7892e0aab9e23f370dc4ed339a8a5d136fa07aaa1921be45daaa879354ca52e4"
+    },
+    "source_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+    "source_replayed": true,
+    "tasks_file_sha256": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10",
+    "whole_partition": {
+      "content_root": "e9aceda8a0b6c30b309748c84e94d0fabb205929f02d34ac6228916393d9e3d5",
+      "groups": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+        "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+        "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+        "trillionnium/crates/trnm-task-kernel/src/archive.rs",
+        "trillionnium/crates/trnm-task-kernel/src/error.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+        "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+        "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_reputation.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs"
+      ],
+      "rows": 251,
+      "task_id_root": "c38b32f84fc09a9880fedf8dfb0ef0742f2876fc8b7529eeafd8dd9329ea448e",
+      "tasks_digest": "60dc37bacae2cce4b039e64fb380d735b904616cf46453501b7b3825673a2df2"
+    }
+  },
+  "native_binary_bytes": 817128,
+  "native_binary_sha256": "ad4ddcb32a0128ce5b26b5c66628d851c593e916d88bfab3163a8169f7059ee1",
+  "observation_date_utc": "2026-11-05",
+  "ordinary_control": "numpy-int64-cached-base-plus-delta-selected-expert",
+  "qualifications": {
+    "cheapest_attack": false,
+    "cheapest_legal_work": false,
+    "complete_integer_operator_consumption_observed": true,
+    "durable_service_recovery": false,
+    "full_v2_proof": false,
+    "independent_future_model_benefit": false,
+    "ordinary_hepta_entry": false,
+    "original_public_service_budget": false,
+    "production_activation": false,
+    "production_payment": false
+  },
+  "repository_source_check": {
+    "activation": false,
+    "head": "59321c326313b78640b2df11122e00b3c7cfd71f",
+    "local_links": 2929,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1138,
+    "source_state": "committed-clean",
+    "tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
+    "workspace_packages": 26
+  },
+  "schema": "pon-shared-material-observation-v1",
+  "security_runs": [
+    {
+      "all_attack_outcomes": "Transcript",
+      "all_planned_tiles_completed": true,
+      "cache_attack_verify_calls": 100,
+      "cheapest_work_qualified": false,
+      "child_cpu_ns": 229462000,
+      "cycles_per_tile": 4,
+      "legal_attempts": 42,
+      "legal_prepare_calls": 5,
+      "name": "security-frozen-t0",
+      "physical_recovery_qualified": false,
+      "planned_tiles": 5,
+      "public_service_qualified": false,
+      "raw_attack_verify_calls": 40,
+      "raw_native_to_attacker_cpu_ratio": 15.14962290841101,
+      "raw_report_sha256": "129b37277dc57accd4718a20af6aac699b6d7ab850e336d008b16415d62d6e39",
+      "scalar_attack_verify_calls": 40,
+      "status": "complete",
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "totals": {
+        "attacker_cpu_ns": 1160063,
+        "attempts": 78,
+        "cache_cpu_ns": {
+          "after-churn": 11057227,
+          "after-owner-recreation": 10069845,
+          "churn-other": 9811542,
+          "cold": 12790427,
+          "warm": 607925
+        },
+        "cache_reset_cpu_ns": 34499,
+        "cache_setup_cpu_ns": 21171,
+        "candidates": 40,
+        "raw_native_rejection_cpu_ns": 17574517,
+        "scalar_rejection_cpu_ns": 26765173,
+        "searches": 40,
+        "setups": 20
+      },
+      "whole_tiles_wall_ns": 364553026
+    },
+    {
+      "all_attack_outcomes": "Transcript",
+      "all_planned_tiles_completed": true,
+      "cache_attack_verify_calls": 100,
+      "cheapest_work_qualified": false,
+      "child_cpu_ns": 498179000,
+      "cycles_per_tile": 4,
+      "legal_attempts": 624,
+      "legal_prepare_calls": 5,
+      "name": "security-frozen-t1",
+      "physical_recovery_qualified": false,
+      "planned_tiles": 5,
+      "public_service_qualified": false,
+      "raw_attack_verify_calls": 40,
+      "raw_native_to_attacker_cpu_ratio": 9.07022231488134,
+      "raw_report_sha256": "fa9a355969fe5ae12c45543a6ceabed8ed7ed36d7a1b93b3d03ea4543b443f1e",
+      "scalar_attack_verify_calls": 40,
+      "status": "complete",
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "totals": {
+        "attacker_cpu_ns": 2139263,
+        "attempts": 1192,
+        "cache_cpu_ns": {
+          "after-churn": 9693565,
+          "after-owner-recreation": 9697198,
+          "churn-other": 10072829,
+          "cold": 11975132,
+          "warm": 626492
+        },
+        "cache_reset_cpu_ns": 23515,
+        "cache_setup_cpu_ns": 21754,
+        "candidates": 40,
+        "raw_native_rejection_cpu_ns": 19403591,
+        "scalar_rejection_cpu_ns": 25722874,
+        "searches": 40,
+        "setups": 20
+      },
+      "whole_tiles_wall_ns": 1006991355
+    }
+  ],
+  "source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
+  "source_corpus_commit": "ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155",
+  "source_tree": "8164d7eda29de5ca93a08b1fb6a8691a7f9c242c",
+  "target_values": [
+    {
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "target_index": 0
+    },
+    {
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "target_index": 1
+    }
+  ],
+  "tiles": [
+    {
+      "a_sha256": "36cb735c1ccd75efd0cede11f0c7f6a13b66dea839ae9870b680f1b62c838df8",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "1ffcf581b49a192f46f28eb76d9e7ade0e5fb6c61bd1c6221a2d01753a0e0b91",
+      "feature_count": 64,
+      "feature_start": 0,
+      "index": 0,
+      "material_bytes": 32768,
+      "material_sha256": "36335a31bfcde0ecdf7b7b13601ac1094b25d4c76adc1be31f598e2395d3a7c7",
+      "nonzero_a_cells": 944,
+      "nonzero_b_cells": 482,
+      "signed_decode_bounds": [
+        6427,
+        4722,
+        4933,
+        22469,
+        30659,
+        22042,
+        26882,
+        24960,
+        28020,
+        26348,
+        23048,
+        26318,
+        30480,
+        25570,
+        29341
+      ],
+      "task": "f40e7ae27d720f33957aaa3308d1770826a85b88346194bfcc23296fb14c4280"
+    },
+    {
+      "a_sha256": "3ad759118301ed5f992da8c0f6cc90122d9d2fb81a6ce4521b122c800d53e568",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "9158886ae833036cf84bd42bf29a8ea517a3521e1f00893b5dc35217496b3615",
+      "feature_count": 64,
+      "feature_start": 64,
+      "index": 1,
+      "material_bytes": 32768,
+      "material_sha256": "0f1607af113b101e81a04976419b0d3f14378d29cc8587576ccb7260b351fcce",
+      "nonzero_a_cells": 933,
+      "nonzero_b_cells": 401,
+      "signed_decode_bounds": [
+        3257,
+        3304,
+        2829,
+        20888,
+        21881,
+        19108,
+        19653,
+        23102,
+        20525,
+        22505,
+        23881,
+        21821,
+        25215,
+        24331,
+        20902
+      ],
+      "task": "509fb5fc0308dc7da848b258feb19c1430a530d05dc790280f68a0b5ec25d59b"
+    },
+    {
+      "a_sha256": "dcd3e37c5dbbed8e32ce1414af12b6e7cfd5c082914dab15160656c6b52f44b9",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "fe989300efde02f93b84bc5558ec1df2845c45ed9e09e2d55ee844f4f6e5de42",
+      "feature_count": 64,
+      "feature_start": 128,
+      "index": 2,
+      "material_bytes": 32768,
+      "material_sha256": "233a96c663c32e769fd952f023a0aae34ab5e59f6b8fa916ac8ec09af7df084c",
+      "nonzero_a_cells": 942,
+      "nonzero_b_cells": 363,
+      "signed_decode_bounds": [
+        2027,
+        2669,
+        2324,
+        19992,
+        18569,
+        18493,
+        22874,
+        16995,
+        20027,
+        20990,
+        18917,
+        17104,
+        24155,
+        22243,
+        20234
+      ],
+      "task": "58cd9bedcf419ce687205826b1c00546059f740c638ea51afad6a857409e99c7"
+    },
+    {
+      "a_sha256": "8dc64d6a4fd3df8a2d9541825adbb39f60898a00d40d23765f0d02bcbfb6bc8b",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "ff326787bf66da5bfeabcff60212976c069eab60c0770cbee25c3e9ee5df0657",
+      "feature_count": 64,
+      "feature_start": 192,
+      "index": 3,
+      "material_bytes": 32768,
+      "material_sha256": "f8fe8b6fe6e7b06c2583df08fd5441472297cc53107395770a51ceb95be31a93",
+      "nonzero_a_cells": 936,
+      "nonzero_b_cells": 426,
+      "signed_decode_bounds": [
+        5082,
+        4106,
+        4174,
+        18040,
+        21209,
+        19865,
+        25741,
+        24717,
+        19952,
+        25607,
+        27152,
+        19875,
+        24785,
+        26300,
+        20943
+      ],
+      "task": "50c2f2fea8b88a17cc9260487acb6e3547849e9d35f6bc25a63a3824ea54e663"
+    },
+    {
+      "a_sha256": "403cb6486d396b4c48efb955b49b7d0b68051e5948ed35f81c4f4aed067b3a0a",
+      "active_output_rows": 15,
+      "active_requests": 64,
+      "b_sha256": "f1afafb9023b7628be8a2aa2cf2b28fb7dca01dbe2225b5234920eab76a3433d",
+      "feature_count": 1,
+      "feature_start": 256,
+      "index": 4,
+      "material_bytes": 32768,
+      "material_sha256": "981fcbc8b7eee42bf0558b4bf1205489f5ae6e933140367dd054e6188b06b52b",
+      "nonzero_a_cells": 15,
+      "nonzero_b_cells": 64,
+      "signed_decode_bounds": [
+        56,
+        192,
+        136,
+        512,
+        1384,
+        1896,
+        1512,
+        16,
+        1496,
+        760,
+        464,
+        1224,
+        968,
+        664,
+        1624
+      ],
+      "task": "48388860dda726d35b2ae8a2df910092f4eff5b26c47607d3c5cfec738f79059"
+    }
+  ],
   "v2_locked_dependencies": {
     "command": [
       "cargo",
@@ -1745,5 +1745,222 @@
     "proof_started": false,
     "returncode": 0,
     "wall_ns": 14181737157
+  },
+  "v2_setup_followup": {
+    "acquisition": {
+      "all_archives_verified": true,
+      "finished_unix_ns": 1793856024083245771,
+      "lockfile_relaxed": false,
+      "original_proof_disk_floor_bytes": 1073741824,
+      "proof_started": false,
+      "results": [
+        {
+          "end_free_disk_bytes": 4636127232,
+          "expected_bytes": 490849318,
+          "expected_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "file": "risc0-rust-1.88.0.tar.gz",
+          "finished_unix_ns": 1793856009263059483,
+          "process_cpu_ns": 4057733115,
+          "received_bytes": 490849318,
+          "received_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "response_status": 200,
+          "start_free_disk_bytes": 4372324352,
+          "started_unix_ns": 1793855984229948647,
+          "status": "downloaded-and-pin-verified",
+          "url": "https://github.com/risc0/rust/releases/download/r0.1.88.0/rust-toolchain-x86_64-unknown-linux-gnu.tar.gz",
+          "wall_ns": 25033099550
+        },
+        {
+          "end_free_disk_bytes": 3981094912,
+          "expected_bytes": 72795381,
+          "expected_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "file": "cargo-risczero-3.0.3.tgz",
+          "finished_unix_ns": 1793856024083022926,
+          "process_cpu_ns": 536352615,
+          "received_bytes": 72795381,
+          "received_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "response_status": 200,
+          "start_free_disk_bytes": 4636123136,
+          "started_unix_ns": 1793856009263346055,
+          "status": "downloaded-and-pin-verified",
+          "url": "https://github.com/risc0/risc0/releases/download/v3.0.3/cargo-risczero-x86_64-unknown-linux-gnu.tgz",
+          "wall_ns": 14819668088
+        }
+      ],
+      "schema": "pon-v2-pinned-runtime-acquisition-v1",
+      "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+      "started_unix_ns": 1793855984229587223
+    },
+    "both_official_archives_verified": true,
+    "build_admission": {
+      "command": [
+        "python3",
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+        "--wall-seconds",
+        "900",
+        "--out",
+        "/workspace/scratch/8de1bcb09af8/v2-runtime/build-host",
+        "--",
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "build",
+        "--locked",
+        "--release",
+        "--jobs",
+        "1",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "-p",
+        "trnm-w1-zk-host-v2",
+        "--bin",
+        "w1-staged-prover-v2"
+      ],
+      "declared_environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/8de1bcb09af8/v2-runtime/target",
+        "PATH": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin:/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu:/root/.cargo/bin:/root/.codex/tmp/arg0-linux/codex-arg0DUr19p:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "RISC0_BUILD_LOCKED": "1",
+        "RISC0_HOME": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0",
+        "RUSTUP_TOOLCHAIN": "1.95.0"
+      },
+      "original_proof_disk_floor_bytes": 1073741824,
+      "proof_started": false,
+      "schema": "pon-v2-build-setup-v1",
+      "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+      "start_free_disk_bytes": 773115904,
+      "started_unix_ns": 1793856285509713771,
+      "status": "not-started-disk-floor"
+    },
+    "build_started": false,
+    "declared_proof_budget_unchanged": true,
+    "fresh_verifier_built": false,
+    "full_v2_proof_observed": false,
+    "guest_compiler_version": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n",
+    "guest_toolchain_installed_and_version_checked": true,
+    "installation": {
+      "checks": [
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+            "-Vv"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "rustc 1.88.0-dev (de85b1d3d 2025-06-26)\nbinary: rustc\ncommit-hash: de85b1d3d7f48a865174798819d943994ed23a37\ncommit-date: 2025-06-26\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0-dev\nLLVM version: 20.1.5\n"
+        },
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/bin/rustc",
+            "--print",
+            "target-libdir",
+            "--target",
+            "riscv32im-risc0-zkvm-elf"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu/lib/rustlib/riscv32im-risc0-zkvm-elf/lib\n"
+        },
+        {
+          "command": [
+            "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu/r0vm",
+            "--version"
+          ],
+          "returncode": 0,
+          "stderr": "",
+          "stdout": "risc0-r0vm 3.0.3\n"
+        }
+      ],
+      "free_disk_bytes": 1210310656,
+      "installations": [
+        {
+          "archive": "risc0-rust-1.88.0.tar.gz",
+          "archive_sha256": "222651797ba58f0bafd959191a48d23b35b3266d9e082fc49fb4d84733064fce",
+          "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/toolchains/v1.88.0-rust-x86_64-unknown-linux-gnu",
+          "expanded_regular_bytes": 1518201915,
+          "free_disk_after_bytes": 1348661248,
+          "free_disk_before_bytes": 3168120832,
+          "status": "extracted"
+        },
+        {
+          "archive": "cargo-risczero-3.0.3.tgz",
+          "archive_sha256": "71a0adaa64235be13e9b8471bea5c4ded64bf97c6bd1eb9c2285b966c0b62fee",
+          "destination": "/workspace/scratch/8de1bcb09af8/v2-runtime/risc0/extensions/v3.0.3-cargo-risczero-x86_64-unknown-linux-gnu",
+          "expanded_regular_bytes": 123785448,
+          "free_disk_after_bytes": 1210335232,
+          "free_disk_before_bytes": 1337712640,
+          "status": "extracted"
+        }
+      ],
+      "original_disk_floor_bytes": 1073741824,
+      "private_cargo_wrapper": {
+        "path": "/workspace/scratch/8de1bcb09af8/v2-runtime/bin/cargo",
+        "purpose": "propagate one build job through SDK CARGO environment sanitation; preserve all other arguments and full guest build",
+        "sha256": "b8996b2a8c912c268f6db052cadb5e42e397dd9c69ef6bd0542f3574dae18926"
+      },
+      "process_cpu_ns": 20788449934,
+      "proof_started": false,
+      "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+      "schema": "pon-v2-pinned-runtime-install-v1",
+      "status": "installed-and-version-checked",
+      "wall_ns": 21452705903
+    },
+    "meaning": "This is an observed build-setup admission refusal, not an executed cryptographic proof failure. Earlier absent-tool and zero-free-space observations remain historical records.",
+    "normal_locked_dependencies_resolved": true,
+    "proof_started": false,
+    "r0vm_installed_and_sha256_checked": true,
+    "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+    "records": [
+      {
+        "bytes": 940,
+        "path": "v2-runtime/predeclared.json",
+        "sha256": "a0f7ade61ad22d6a6786d081ad9193b1d81b335e8b7f01f8ca5d9921599ac54c"
+      },
+      {
+        "bytes": 1853,
+        "path": "v2-runtime/acquisition.json",
+        "sha256": "5026994a3b9bd13d991c8fde9b5cf1c40741d74da5360cd40870480ca4252cfb"
+      },
+      {
+        "bytes": 686,
+        "path": "v2-runtime/risc0-rust-1.88.0.tar.gz.result.json",
+        "sha256": "596965e4b843f9bbb2469949c4dbe1b5e556601774a85feebd1cd2dcdcdbdc78"
+      },
+      {
+        "bytes": 678,
+        "path": "v2-runtime/cargo-risczero-3.0.3.tgz.result.json",
+        "sha256": "b09fb8a155e2736bd07b4c991aaad332daa7af7a8f63eff89be20c0e696f1e50"
+      },
+      {
+        "bytes": 1722,
+        "path": "v2-runtime/guest-archive-layout.json",
+        "sha256": "23fb2ee4864bd7d3f55e6c25c7e9e354b84874f685cf8c4503977763ffc0df83"
+      },
+      {
+        "bytes": 2744,
+        "path": "v2-runtime/install.json",
+        "sha256": "7cf810498810e543acbc442a4c2d482f919c1e7841f3b9d5a734028a96cdaa52"
+      },
+      {
+        "bytes": 528,
+        "path": "v2-runtime/archive-cache-cleanup.json",
+        "sha256": "59e41ce3bb92aadbb75453bda218f8188f40111e629d8f7c3f5683b7168e5c1e"
+      },
+      {
+        "bytes": 1681,
+        "path": "v2-runtime/build-host-predeclared.json",
+        "sha256": "f6845e692a9ec1acd25816f2e10aa2082af5445d95254708e160be0e1b1b552c"
+      },
+      {
+        "bytes": 1719,
+        "path": "v2-runtime/build-host-launch.json",
+        "sha256": "d285a46b1bf8af0e0512c77ae98134d6b23e0662e28271566aae67f96e17adca"
+      }
+    ],
+    "runner_built": false,
+    "saved_receipt_controls_run": false,
+    "schema": "pon-v2-setup-followup-v1",
+    "source_commit": "6c315984b12015eb38406ec0d8d1116bb64d13de",
+    "status": "pinned-tools-restored-build-not-started-disk-floor"
   }
 }
