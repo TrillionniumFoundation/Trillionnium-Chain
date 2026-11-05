@@ -12,6 +12,13 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[cfg(test)]
+std::thread_local! {
+    // Actual bytes passed to this optional cache's full-proof digest. This is
+    // separate from task hashing and arithmetic, and absent from production.
+    static CACHE_KEY_PROOF_BYTES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
 #[derive(Clone, Copy)]
 struct InvalidFact {
     key: Hash,
@@ -47,6 +54,8 @@ impl RejectionCache {
         if bytes.len() != PROOF_BYTES {
             return None;
         }
+        #[cfg(test)]
+        CACHE_KEY_PROOF_BYTES.with(|count| count.set(count.get() + bytes.len()));
         Some(hash(
             b"w1-exact-invalid-math-v1",
             &[PROFILE.as_bytes(), &challenge, &task, &target, bytes],
@@ -88,6 +97,16 @@ impl RejectionCache {
         proof: &[u8],
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
+        // Keep the native Length, Version, zero-Target, Field ordering before
+        // hashing all proof bytes for optional reuse. Delegate the first three
+        // failures to the original verifier; the shared encoding filter then
+        // checks every canonical field without allocating or hashing A/B.
+        // Task/ticket checks stay with the native verifier on a miss, so this
+        // filter does not add a second task hash to ordinary cold verification.
+        if proof.len() != PROOF_BYTES || &proof[..4] != b"PNW1" || target == [0; 32] {
+            return verify_with_progress(challenge, expected_task, target, proof, progress);
+        }
+        super::precheck_proof_encoding(proof)?;
         let Some(key) = Self::key(challenge, expected_task, target, proof) else {
             // Preserve the native error ordering and cancellation semantics;
             // malformed lengths never consult or populate the cache.
@@ -338,6 +357,70 @@ mod tests {
             ));
         }
         assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+    }
+
+    #[test]
+    fn cheap_structural_refusals_never_hash_the_whole_proof_for_optional_reuse() {
+        let cache = RejectionCache::new(1, Duration::from_secs(30)).unwrap();
+        let challenge = [47; 32];
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        let mut malformed = Vec::new();
+        malformed.push((vec![255; PROOF_BYTES + 1], [0; 32], WorkError::Length));
+        let mut version = valid.clone();
+        version[0] = b'X';
+        // Simultaneous failures exercise the original precedence, including
+        // zero target before a noncanonical field word.
+        version[4..8].copy_from_slice(&(super::super::Q as u32).to_le_bytes());
+        malformed.push((version, [0; 32], WorkError::Version));
+        malformed.push((valid.clone(), [0; 32], WorkError::Target));
+        for matrix in 0..3 {
+            for word in [0, CELLS - 1] {
+                let mut fields = valid.clone();
+                let start = 4 + (matrix * CELLS + word) * 4;
+                fields[start..start + 4].copy_from_slice(&(super::super::Q as u32).to_le_bytes());
+                malformed.push((fields.clone(), [0; 32], WorkError::Target));
+                malformed.push((fields, [255; 32], WorkError::Field));
+            }
+        }
+        for (proof, target, error) in malformed {
+            let mut expected_points = Vec::new();
+            let expected = verify_with_progress(challenge, task, target, &proof, &mut |point| {
+                expected_points.push(point);
+                Err::<(), _>("must not reach cancellation")
+            });
+            CACHE_KEY_PROOF_BYTES.with(|count| count.set(0));
+            let mut actual_points = Vec::new();
+            let actual =
+                cache.verify_with_progress(challenge, task, target, &proof, &mut |point| {
+                    actual_points.push(point);
+                    Err::<(), _>("must not reach cancellation")
+                });
+            assert_eq!(expected.unwrap_err(), VerificationError::Relation(error));
+            assert_eq!(actual.unwrap_err(), VerificationError::Relation(error));
+            assert!(expected_points.is_empty());
+            assert_eq!(actual_points, expected_points);
+            assert_eq!(CACHE_KEY_PROOF_BYTES.with(std::cell::Cell::get), 0);
+            assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+        }
+        // Positive control for the counter and the complete native path: a
+        // well-formed legal proof still hashes once and replays all 512 tiles.
+        CACHE_KEY_PROOF_BYTES.with(|count| count.set(0));
+        let accepted = observed(Some(&cache), challenge, task, &valid, None);
+        assert!(accepted.0.is_ok());
+        assert_eq!(
+            CACHE_KEY_PROOF_BYTES.with(std::cell::Cell::get),
+            PROOF_BYTES
+        );
+        assert_eq!(
+            accepted
+                .1
+                .iter()
+                .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+                .count(),
+            512
+        );
     }
 
     #[test]
