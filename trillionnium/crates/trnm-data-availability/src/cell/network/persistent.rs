@@ -319,6 +319,51 @@ fn join(
     }
 }
 
+fn serve_connection(
+    stream: &mut TcpStream,
+    store: &CellStoreV1,
+    shutdown: &AtomicBool,
+    deadline: Instant,
+    max_requests: u64,
+    requests_left: &AtomicU64,
+    responses: &ResponseBudget,
+) -> u64 {
+    let mut completed = 0;
+    for _ in 0..max_requests {
+        // A fully spent egress quota cannot admit another read slot. Only
+        // actual writes spend it; other workers' reservations may be refunded.
+        if Instant::now() >= deadline
+            || shutdown.load(Ordering::Relaxed)
+            || responses.require_remaining().is_err()
+        {
+            break;
+        }
+        if requests_left
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |left| {
+                left.checked_sub(1)
+            })
+            .is_err()
+        {
+            break;
+        }
+        if serve_one_wire(
+            stream,
+            store,
+            deadline,
+            Some(responses),
+            false,
+            b"TCQ2",
+            b"TCS2",
+        )
+        .is_err()
+        {
+            break;
+        }
+        completed += 1;
+    }
+    completed
+}
+
 /// Explicit bounded V2 service. One reader and at most one in-flight frame per
 /// active connection; no admission queue and no socket namespace fallback.
 /// Shutdown stops intake and joins existing connections within their fixed
@@ -345,6 +390,7 @@ pub fn serve_cells_persistent(
         while !shutdown.load(Ordering::Relaxed)
             && report.accepted_connections < limits.serving.max_connections
             && requests_left.load(Ordering::Relaxed) > 0
+            && responses.received()? < limits.serving.max_response_bytes
             && Instant::now() < deadline
         {
             for (slot, reader) in active.iter_mut().zip(&mut readers) {
@@ -371,36 +417,15 @@ pub fn serve_cells_persistent(
                     match thread::Builder::new()
                         .name("cell-persistent-serve".into())
                         .spawn_scoped(scope, move || {
-                            let mut completed = 0;
-                            for _ in 0..limits.max_requests_per_connection {
-                                if Instant::now() >= connection_deadline
-                                    || shutdown.load(Ordering::Relaxed)
-                                {
-                                    break;
-                                }
-                                if requests_left
-                                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |left| {
-                                        left.checked_sub(1)
-                                    })
-                                    .is_err()
-                                {
-                                    break;
-                                }
-                                if serve_one_wire(
-                                    &mut stream,
-                                    &store,
-                                    connection_deadline,
-                                    Some(responses),
-                                    false,
-                                    b"TCQ2",
-                                    b"TCS2",
-                                )
-                                .is_err()
-                                {
-                                    break;
-                                }
-                                completed += 1;
-                            }
+                            let completed = serve_connection(
+                                &mut stream,
+                                &store,
+                                shutdown,
+                                connection_deadline,
+                                limits.max_requests_per_connection,
+                                requests_left,
+                                responses,
+                            );
                             (store, completed)
                         }) {
                         Ok(worker) => active[index] = Some(worker),

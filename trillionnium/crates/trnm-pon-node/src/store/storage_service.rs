@@ -157,6 +157,10 @@ fn task_policy(policy: &NativeBudgetPolicyV1, claim: &NativeBudgetClaimV1) -> Re
     )
 }
 
+fn storage_deadline(deadline: Instant) -> Result<()> {
+    ensure(Instant::now() < deadline, "NATIVE_CELL_DEADLINE_EXHAUSTED")
+}
+
 impl Node {
     pub fn retain_native_cell(
         &mut self,
@@ -166,6 +170,7 @@ impl Node {
         request: NativeCellRetentionRequestV1,
         deadline: Instant,
     ) -> Result<NativeCellEffectReadbackV1> {
+        storage_deadline(deadline)?;
         let NativeCellRetentionRequestV1 {
             policy,
             claim,
@@ -192,14 +197,20 @@ impl Node {
                     if retained_bytes >= contract.manifest.size() && retained_byte_blocks >= required),
             "NATIVE_CELL_STORAGE_BINDING",
         )?;
+        storage_deadline(deadline)?;
         budgets
             .open_budget(self, policy.clone())
             .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         budgets.reserve(self, claim.clone()).map_err(owner_error)?;
+        storage_deadline(deadline)?;
         // Physical capacity is reserved before the intent. A failure consumes
         // the original local monetary hold until native expiry; no refund is
         // invented from an unavailable destination or a changed branch.
-        let reserved = retention.reserve(contract.clone()).map_err(owner_error)?;
+        let reserved = retention
+            .reserve_until(contract.clone(), deadline)
+            .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         ensure(!reserved.retired, "NATIVE_CELL_RETIRED")?;
         let replay = budgets
             .begin_effect_in_window(
@@ -211,6 +222,7 @@ impl Node {
                 contract.retain_until_height,
             )
             .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         let target = match replay {
             NativeBudgetReplayV1::New => retention
                 .acknowledge(contract.operation, cache, deadline)
@@ -228,9 +240,14 @@ impl Node {
             "NATIVE_CELL_TARGET_ACK",
         )?;
         let target_receipt = hash(b"trnm.native-cell-initial-readback.v1\0", &[&effect]);
+        storage_deadline(deadline)?;
         budgets
             .complete_effect(claim.claim, contract.operation, target_receipt)
             .map_err(owner_error)?;
+        // A late/unknown committed completion retains the same original claim
+        // and operation. The caller must reconcile them, never obtain a refund
+        // or redispatch by choosing a fresh identity.
+        storage_deadline(deadline)?;
         // Future retention has not happened. Keep the original reservation
         // charged; no Positive outcome, resource refund or payment is issued.
         Ok(NativeCellEffectReadbackV1 {
@@ -277,6 +294,7 @@ impl Node {
                     if download_bytes >= contract.manifest.size() && attempts >= 1),
             "NATIVE_CELL_REPAIR_BINDING",
         )?;
+        cpu.check().map_err(owner_error)?;
         budgets
             .open_budget(self, policy.clone())
             .map_err(owner_error)?;
@@ -311,6 +329,7 @@ impl Node {
             "NATIVE_CELL_TARGET_ACK",
         )?;
         let target_receipt = hash(b"trnm.native-cell-repair-readback.v1\0", &[&effect]);
+        cpu.check().map_err(owner_error)?;
         budgets
             .complete_effect(claim.claim, repair_operation, target_receipt)
             .map_err(owner_error)?;
@@ -341,9 +360,12 @@ impl Node {
         successor: Option<&mut CellRetentionStoreV1>,
         deadline: Instant,
     ) -> Result<CellRetentionReadbackV1> {
+        storage_deadline(deadline)?;
         let contract = retention.contract(operation).map_err(owner_error)?;
+        storage_deadline(deadline)?;
         let effect = contract.commitment(retention.store_id());
         let target_receipt = hash(b"trnm.native-cell-initial-readback.v1\0", &[&effect]);
+        storage_deadline(deadline)?;
         // Reuse the existing M12 effect and chain pins. Funding may have become
         // absent; reconciliation must neither redispatch nor adopt another chain.
         let current = budgets
@@ -356,6 +378,7 @@ impl Node {
                 target_receipt,
             )
             .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         retention
             .retire(operation, current.height, successor, deadline)
             .map_err(owner_error)

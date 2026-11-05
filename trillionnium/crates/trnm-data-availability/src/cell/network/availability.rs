@@ -108,7 +108,7 @@ pub(super) fn serve_page(
         "availability page bound",
     )?;
     remaining(deadline)?;
-    let Some(manifest) = store.manifest(manifest_id)? else {
+    let Some(manifest) = store.manifest_with_deadline(manifest_id, Some(deadline))? else {
         return Ok(None);
     };
     let end = start

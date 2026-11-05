@@ -507,6 +507,130 @@ fn native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_
 }
 
 #[test]
+fn native_cell_expired_storage_request_creates_no_budget_or_physical_obligation() {
+    for backend in [
+        StateBackend::Legacy,
+        StateBackend::AuthenticatedV1,
+        StateBackend::PermanentAccountGrowthV2,
+    ] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut node = open_node(&dir.path().join("node"), backend);
+        let source = fund(&mut node, 1000);
+        let (cache, manifest, _) = material(dir.path());
+        let request = request(source, &manifest);
+        let mut budgets =
+            NativeBudgetStoreV1::open(&dir.path().join("budgets.sqlite"), config(&node)).unwrap();
+        let path = dir.path().join("retention");
+        let mut retained = CellRetentionStoreV1::create(&path, retention_config()).unwrap();
+        let before = budgets.report().unwrap();
+        let arena = fs::read(path.join("payload.arena")).unwrap();
+        let error = node
+            .retain_native_cell(
+                &mut budgets,
+                &mut retained,
+                &cache,
+                request.clone(),
+                Instant::now(),
+            )
+            .unwrap_err();
+        assert!(error.to_string().contains("NATIVE_CELL_DEADLINE_EXHAUSTED"));
+        assert_eq!(budgets.report().unwrap(), before);
+        assert!(retained.contract(request.contract.operation).is_err());
+        assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+
+        // Reuse the original identities after refusal. No pending effect was
+        // created, so this is still the first dispatch rather than recovery.
+        let first = node
+            .retain_native_cell(
+                &mut budgets,
+                &mut retained,
+                &cache,
+                request.clone(),
+                deadline(),
+            )
+            .unwrap();
+        assert_eq!(first.replay, NativeBudgetReplayV1::New);
+        let charged = budgets.report().unwrap();
+        let error = node
+            .retire_native_cell(
+                &budgets,
+                &mut retained,
+                request.contract.operation,
+                None,
+                Instant::now(),
+            )
+            .unwrap_err();
+        assert!(error.to_string().contains("NATIVE_CELL_DEADLINE_EXHAUSTED"));
+        assert_eq!(budgets.report().unwrap(), charged);
+        assert_eq!(
+            retained
+                .verify(request.contract.operation, deadline())
+                .unwrap(),
+            first.target
+        );
+    }
+}
+
+#[test]
+fn native_cell_physical_writer_wait_spends_original_storage_deadline() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut node = open_node(&dir.path().join("node"), StateBackend::Legacy);
+    let source = fund(&mut node, 1000);
+    let (cache, manifest, _) = material(dir.path());
+    let request = request(source, &manifest);
+    let mut budgets =
+        NativeBudgetStoreV1::open(&dir.path().join("budgets.sqlite"), config(&node)).unwrap();
+    budgets
+        .open_budget(&mut node, request.policy.clone())
+        .unwrap();
+    budgets.reserve(&mut node, request.claim.clone()).unwrap();
+    let path = dir.path().join("retention");
+    let mut retained = CellRetentionStoreV1::create(&path, retention_config()).unwrap();
+    let blocker = rusqlite::Connection::open(path.join("retention.sqlite")).unwrap();
+    blocker.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let started = Instant::now();
+    let error = node
+        .retain_native_cell(
+            &mut budgets,
+            &mut retained,
+            &cache,
+            request.clone(),
+            started + Duration::from_millis(150),
+        )
+        .unwrap_err();
+    assert!(error.to_string().contains("database is locked"), "{error}");
+    // The physical owner's ordinary busy wait is two seconds. Its caller's
+    // original 150ms budget must cap that wait instead of being restarted.
+    assert!(started.elapsed() < Duration::from_secs(1));
+    assert!(retained.contract(request.contract.operation).is_err());
+    let held = budgets.report().unwrap();
+    assert_eq!(held["budgets"][0]["pending_effects"], 0);
+    assert_eq!(
+        held["budgets"][0]["resource_charge"],
+        serde_json::json!([37_000, 703_000, 0, 0])
+    );
+    blocker.execute_batch("ROLLBACK").unwrap();
+
+    let recovered = node
+        .retain_native_cell(&mut budgets, &mut retained, &cache, request, deadline())
+        .unwrap();
+    assert_eq!(recovered.replay, NativeBudgetReplayV1::New);
+    assert_eq!(
+        recovered.target.initial_copy_bytes_committed,
+        manifest.size()
+    );
+    let completed = budgets.report().unwrap();
+    assert_eq!(
+        completed["budgets"][0]["resource_charge"],
+        held["budgets"][0]["resource_charge"]
+    );
+    assert_eq!(
+        completed["budgets"][0]["committed_units"],
+        held["budgets"][0]["committed_units"]
+    );
+}
+
+#[test]
 fn native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost() {
     let dir = tempfile::tempdir().unwrap();
     let mut node = open_node(
