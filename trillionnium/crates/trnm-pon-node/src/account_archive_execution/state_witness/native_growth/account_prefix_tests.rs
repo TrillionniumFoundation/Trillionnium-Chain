@@ -2,12 +2,12 @@
 //! parsing skips unrelated working rows. Full-State roots remain the oracle.
 use super::*;
 use crate::account_archive_prototype::take_account_parse_observation;
-use crate::{development_public, Error, GrowthPacket, GrowthProgress, Node};
+use crate::{development_public, sequence_root, Error, GrowthPacket, GrowthProgress, Node};
 use serde_json::json;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
 use trnm_mvcc_fee::{continuity_v1, pon_executor::growth as limits};
-use trnm_protocol::pon_wire::{sequence_root, Envelope};
+use trnm_protocol::pon_wire::Envelope;
 
 fn selected_settings(working_rows: usize, dormant_accounts: u64) -> Settings {
     let mut source = Settings::development_with_profiles(
