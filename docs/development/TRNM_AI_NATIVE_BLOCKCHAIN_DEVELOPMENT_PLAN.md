@@ -19,9 +19,10 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 **Throughput path and request accounting, 2026-11-04 America/New_York:**
 Continue #688 from `47b4a62463d8e1371a175c74196d52d99c5fccb8`.
-Continuity/Growth capacity and mandatory-owner scans use complete ordered
-namespaces while retaining total capacity, future liabilities, canonical errors,
-proof callbacks and cancellation. Public startup reserves its existing listener
+Non-progress continuity capacity and Growth partition/mandatory-owner scans use
+complete ordered namespaces. The public progress entry retains the original
+full-source callback schedule and cancellation/error precedence, alongside total
+capacity, future liabilities and proof callbacks. Public startup reserves its existing listener
 slot before Node contention and retains its original deadline through the second
 owner acquisition and Growth checkpoints. Optional receive/owner-close clocks
 and a same-process original-confirmation binding retain failed retries, unknown
@@ -6645,3 +6646,73 @@ source-integrity suite remain equal. The [late integration scope](../../evidence
 preserves both histories and prevents historical execution results from being
 relabelled to the new combined source. Fresh head checks remain separate from
 original native, prospective-merge, custody, use-time and activation gates.
+
+
+### 2026-11-05 fixed-pair recovery, Growth cancellation and exact resource budgets
+
+Continue this plan at Chain `b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c` and
+Hepta `367e27fb6bf30443641b9e23a063d24e49eda9f7`; the
+[fixed-pair evidence and open gate ledger](../../evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/README.md)
+preserve earlier executions under their actual identities. Incoming Cell source
+and all evidence history remain. No combined native acceptance of this pair is
+claimed, and the original P0–E workstreams remain open.
+
+GrowthV2 now passes the original execution control through actual admission-delta
+SQL writes and paged readback, retaining transaction rollback and error precedence.
+The successful state path moves the complete output and receipts after all prior
+checks instead of cloning them again; the parent clone and linear retain remain.
+Two real signed classical-development Growth tests cover partial mutation,
+cancellation/deadline/CPU refusal, cold reopen and legal retry. Their canonical
+native RED/GREEN and the existing B1 account-prefix acceptance are still required.
+The bounded runner's actual resource aborts and unqualified earlier RED observations
+are retained separately; no measured speedup or owned-VFS qualification is inferred.
+
+Hepta integrates the V2 recovery frontier over one SQLite snapshot, including
+provider intent/uncertainty/ACK digests and provenance. Fixed literal SQL repairs
+the new tests' repository SQLx type-check failure. Seven owner and two signed
+frontier controls are now selected and audited by the existing workflow, whose
+original controls, budgets and four pull-request matrix lanes remain. Forty-three actual selector-audit
+fixtures pass; the new native controls have not passed. The retained corrected RED
+fails compilation with E0463, not an expected assertion. Optional configuration,
+Ed25519 recovery signatures, independent freshness/custody, effect coordination,
+the real IPC product loop and complete rollback/reorg acceptance remain explicit
+limits rather than closed gates.
+
+Exact rational resource decisions repair two demonstrated Decimal boundary errors.
+The three new baseline controls produced two failures and one pass; the complete
+25-control resource suite passes after the fix, within the six-suite quantum total
+of 118. This is numerical correctness under the assumed model, not oracle
+optimality, physical-cost evidence or a quantum consensus theorem.
+
+At the unchanged Chain code, 47 source/recorder, 57 PQ, 11 scanner and 118 quantum
+controls pass: 233 scoped checks. Formatting, inventory, 472 pins, the locked
+26-member/175-package graph, 2,925 links and the full tracked source check also
+pass. Original receipts name the then-selected runtime `29fcd` and do not execute
+Hepta; they were not relabelled to the later pair. The actual prospective merge
+`f135eb86` has the same source tree and passes the original source checker, while
+its native acceptance remains unexecuted. The strict Clippy attempt stops on the
+original resource guard and has no passing result.
+
+The already completed fixed-Host F0 run at `b5bb` genuinely fails its no-attack
+baseline and all six scheduled four-second SLOs. Original denominators, Host
+observations and cleanup are intact. That campaign uses AuthenticatedV1/RawR14,
+24 hostile producers and two 30-second phases, so it neither measures the new
+GrowthV2 tests nor replaces issue #639's original four-second/16-producer gate.
+Ordinary-client replay and frequent fresh Host checks account for observed cost;
+nested CPU intervals cannot be added or used to justify removing required
+checks. The complete failure bundle and exact source trace remain reviewable.
+
+The new W1 statement-v2 proof last completed one of 43 segments before executor
+loss; complete proof/verification remain unknown and the 58 controls are NOT_RUN.
+The original process termination is not established. Cost-model, private-branch,
+DAA, concrete recursive QROM, proof-benefit, independent operator, whole-runtime
+and production gates remain HOLD. No threshold, denominator, activation flag or
+original security obligation was relaxed by this continuation.
+
+A late concurrent source commit `04be5f02c84cf5cb626a53f34bc03a5bd6ff5137`
+adds Growth activation fences and exact M06 namespace scans after these checks.
+Its eight changed source/configuration paths are preserved without transferring
+the frozen `b5bb` results to that different tree. Current combined-head validation
+remains open. One finite scheduling wait subsequently observed a new shared OOM,
+ended after 160.165350 seconds and started no native process; it does not add a
+test result or alter the prior attempt receipts.

@@ -170,9 +170,8 @@ pub(crate) fn capacity_with_account_access(
 ) -> Result<Capacity> {
     capacity_with_sources(state, height, cfg, account_access, None)
 }
-/// Maximum inspected liability rows between capacity-scan cancellation checks.
-/// Exact namespace seeks skip unrelated rows; all state keys still contribute
-/// to the capacity total. This is not a wall-clock bound for loading or roots.
+/// Maximum inspected rows between capacity-scan cancellation checks. This is
+/// a row bound, not a wall-clock bound for state loading or root construction.
 pub const CAPACITY_PROGRESS_INTERVAL: usize = 256;
 
 /// A cancelled observation says nothing about the validity of its input state.
@@ -209,11 +208,33 @@ fn capacity_with_sources(
     monetary: Option<&State>,
 ) -> Result<Capacity> {
     let mut progress = || Ok::<(), std::convert::Infallible>(());
-    match scan_capacity_with_sources(state, height, cfg, account_access, monetary, &mut progress) {
+    match scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (
+            liability_rows(monetary.unwrap_or(state)),
+            prefix_rows(state, "contribution:").map(|(key, _)| key),
+        ),
+        &mut progress,
+    ) {
         Ok(capacity) => Ok(capacity),
         Err(CapacityScanError::State(error)) => Err(error),
         Err(CapacityScanError::Cancelled(impossible)) => match impossible {},
     }
+}
+
+/// The capacity relation reads only these disjoint namespaces. Their lexical
+/// order matches the original complete-State walk, including malformed suffixes
+/// and the first failing liability. Every relevant row is still inspected;
+/// accounts are looked up only when a liability may create one. State length,
+/// imported rewards, account access gates and all reserve checks stay separate.
+fn liability_rows(state: &State) -> impl Iterator<Item = (&String, &Value)> {
+    ["contribution:", "quota:", "release:", "reward:", "task:"]
+        .into_iter()
+        .flat_map(move |prefix| prefix_rows(state, prefix))
 }
 
 fn scan_capacity_with_sources<E>(
@@ -222,6 +243,33 @@ fn scan_capacity_with_sources<E>(
     cfg: &Config,
     account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
     monetary: Option<&State>,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    // Public observations retain their original complete-row callback schedule.
+    // Skipping unrelated rows here could change cancellation/error precedence.
+    // Native validation above has no cancellable callback and can seek directly
+    // to the exact liability namespaces without changing its returned result.
+    scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (monetary.unwrap_or(state).iter(), state.keys()),
+        progress,
+    )
+}
+
+fn scan_capacity_rows<'a, E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+    rows: (
+        impl Iterator<Item = (&'a String, &'a Value)>,
+        impl Iterator<Item = &'a String>,
+    ),
     progress: &mut dyn FnMut() -> std::result::Result<(), E>,
 ) -> std::result::Result<Capacity, CapacityScanError<E>> {
     if !enabled(cfg) {
@@ -239,20 +287,8 @@ fn scan_capacity_with_sources<E>(
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    let source = monetary.unwrap_or(state);
-    // Preserve the original first cancellation check even when a nonempty
-    // source has no liability rows. These complete disjoint ranges are in the
-    // original map's lexical order, so malformed obligations retain their error
-    // precedence. Future and zero-valued obligations are never filtered out.
-    if !source.is_empty() {
-        progress().map_err(CapacityScanError::Cancelled)?;
-    }
-    let rows = ["contribution:", "quota:", "release:", "reward:", "task:"]
-        .into_iter()
-        .filter(|prefix| *prefix != "contribution:" || evaluation_enabled)
-        .flat_map(|prefix| prefix_rows(source, prefix));
-    for (index, (key, value)) in rows.enumerate() {
-        if index > 0 && index % CAPACITY_PROGRESS_INTERVAL == 0 {
+    for (index, (key, value)) in rows.0.enumerate() {
+        if index % CAPACITY_PROGRESS_INTERVAL == 0 {
             progress().map_err(CapacityScanError::Cancelled)?;
         }
         if key.starts_with("reward:") {
@@ -284,12 +320,12 @@ fn scan_capacity_with_sources<E>(
     if monetary.is_some() && evaluation_enabled {
         // Monetary certificates do not authenticate this separate cleanup /
         // future-archive relation. Its complete State reference remains explicit.
-        if !state.is_empty() {
-            progress().map_err(CapacityScanError::Cancelled)?;
-        }
-        for (index, (key, _)) in prefix_rows(state, "contribution:").enumerate() {
-            if index > 0 && index % CAPACITY_PROGRESS_INTERVAL == 0 {
+        for (index, key) in rows.1.enumerate() {
+            if index % CAPACITY_PROGRESS_INTERVAL == 0 {
                 progress().map_err(CapacityScanError::Cancelled)?;
+            }
+            if !key.starts_with("contribution:") {
+                continue;
             }
             let candidate = key
                 .strip_prefix("contribution:")
@@ -382,6 +418,10 @@ pub(crate) fn check_state_with_account_access_and_monetary(
 }
 
 #[cfg(test)]
+#[path = "continuity_v1/capacity_range_tests.rs"]
+mod capacity_range_tests;
+
+#[cfg(test)]
 mod range_tests {
     use super::*;
     use std::sync::Mutex;
@@ -464,7 +504,11 @@ mod range_tests {
         assert_eq!(expected.credit_account_reserve, 1);
         assert_eq!(expected.archive_reserve, count);
         let before = state.clone();
-        let checks = 2 * count.div_ceil(CAPACITY_PROGRESS_INTERVAL) + 1;
+        // The public cancellable scan retains its original complete-row
+        // schedule for each source, even when native capacity uses ranges.
+        let checks = monetary.len().div_ceil(CAPACITY_PROGRESS_INTERVAL)
+            + state.len().div_ceil(CAPACITY_PROGRESS_INTERVAL)
+            + 1;
         for cut in 0..=checks {
             let mut seen = 0;
             let actual =

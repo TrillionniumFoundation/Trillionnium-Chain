@@ -1,0 +1,58 @@
+{
+  "schema": "growth-resource-final-scope-review-v1",
+  "reviewed_at_utc": "2026-11-05 04:52:22 UTC",
+  "reviewer": "state_scheduling",
+  "review_type": "Read-only evidence scope and identity review; no native or performance execution",
+  "result": "NO_BLOCKING_SCOPE_FINDINGS",
+  "resolved_before_final_review": "All four Growth RED attempts now explicitly bind ffb43113 plus the recorded enum/test overlay; b5bb GREEN2 and B1 remain NOT_RUN.",
+  "files": [
+    {
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/README.md",
+      "bytes": 19694,
+      "sha256": "edbeb0b5880b68020ff30f0b0cd85cdc55dd902d22f5aab300c2853fdd14b062"
+    },
+    {
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/fixed-pair.json",
+      "bytes": 3375,
+      "sha256": "eb4dc5af8271f27f61f643ed4d0af267fb23a4150d14bc0dbbeb11b87de2b342"
+    },
+    {
+      "path": "/workspace/scratch/822cc50e24f0/round2-evidence/final/gate-ledger.json",
+      "bytes": 14081,
+      "sha256": "3a2140d7df79701121d7df3fc3fde0d3dacc8480e04405eeea315d3316be31ef"
+    }
+  ],
+  "findings": [],
+  "conclusions": {
+    "embedded_gate_ledger_pair_matches_fixed_pair": true,
+    "red_source_head": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+    "red_source_overlay": "Recorded enum/test probes without new callback calls",
+    "native_attempt_count": 4,
+    "unqualified_assertion_red_attempts": 2,
+    "canonical_resource_aborts": 2,
+    "canonical_tests_executed": 0,
+    "final_wait": {
+      "result": "OOM_DURING_WAIT",
+      "duration_seconds": 160.16535,
+      "actual_native_started": false,
+      "counts_as_fifth_native_attempt": false,
+      "shared_oom_and_kill_before": 4,
+      "shared_oom_and_kill_after": 5,
+      "prior_attempt_oom_deltas_not_rewritten": true
+    },
+    "green2": "NOT_RUN",
+    "b1_account_prefix": "NOT_RUN",
+    "growth_test_authorization_scope": "Classical development; not ordinary PQ or owned-VFS resource qualification",
+    "b1_performance_gain_claimed": false,
+    "old_f0_scope": "AuthenticatedV1 / RawR14, 24 hostile producers, two 30-second phases, six scheduled confirmations; FAILED",
+    "original_4_second_16_producer_gate": "OPEN; not replaced by F0",
+    "fixed_chain_observation_head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+    "late_concurrent_chain_head": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "earlier_results_transferred_to_late_head": false,
+    "combined_head_acceptance": "OPEN"
+  },
+  "native_tests_started_by_this_review": 0,
+  "source_modified_by_reviewer": false,
+  "qualification": "HOLD",
+  "production_activation": false
+}

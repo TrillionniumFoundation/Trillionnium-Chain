@@ -1,0 +1,213 @@
+{
+  "artifact_id": 13386124417,
+  "changes_to_source_or_acceptance_criteria": false,
+  "code_head": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "file_count": 33,
+  "files": [
+    {
+      "bytes": 8011,
+      "git_blob": "ac7b4e2ff9adddf300480b23f33960d626c60764",
+      "path": "README.md",
+      "sha256": "20ea58405fdfeaa5f321de1c4c143aa19408c05bb995d8b50011e782fad6c910"
+    },
+    {
+      "bytes": 30173,
+      "git_blob": "ab774d5bb8b532dcd08dc069c23e8e877c6d0a00",
+      "path": "analysis.json",
+      "sha256": "391eeaa68b235d1c8d79dd450849ef596d07a7b4b98989eb22cb84f1e45df176"
+    },
+    {
+      "bytes": 306,
+      "git_blob": "08fdcfa27e063171e00c26bdbf1a394402ba3ea5",
+      "path": "artifact/SCOPE.txt",
+      "sha256": "3fafedb71efd488ccd3622197ff7a158c727872c96663c4bd7c15aa92706ac48"
+    },
+    {
+      "bytes": 11325,
+      "git_blob": "125e6bde9d4586f7486bad00c5138e7ee94f2fad",
+      "path": "artifact/execution/predeclared.json",
+      "sha256": "3e7425f69a671c2edbfcf7697270350f717dd19ba3f4ba5f65b86d76b3fda073"
+    },
+    {
+      "bytes": 1725,
+      "git_blob": "308d7336bec986b922cd8440760d5fa420277f84",
+      "path": "artifact/execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "sha256": "3c7942602cf71a4864e4a4b182167512eebad35d4d3a2d96cb6f69f953499f85"
+    },
+    {
+      "bytes": 1711,
+      "git_blob": "1de5df9ef0ba1bdac6bbf9abe46dfed901799369",
+      "path": "artifact/execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "sha256": "613cf2d590894faa2b13cf835ea1bf982518deba23cd8d084b99d2a7c45841b1"
+    },
+    {
+      "bytes": 1727,
+      "git_blob": "d913f1b7ae0fcd1602a32993602b6a3e0134954e",
+      "path": "artifact/execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "sha256": "9897ba1b42c0f48954289e62e1a9d2c80ef4b430bcdf3647e0063ee8122a432b"
+    },
+    {
+      "bytes": 1686,
+      "git_blob": "be93d09ad0e1158cd4b6ec47728feeb0c2d50dc2",
+      "path": "artifact/execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "sha256": "163ff2d79d47b86819e11bbf6388b0af31017e07b8fc39af15586c8d8edc7ad3"
+    },
+    {
+      "bytes": 8061,
+      "git_blob": "115f89c7390b610ada3f232735a411acccc2d01f",
+      "path": "artifact/execution/raw/predeclared-denominators.json",
+      "sha256": "633a84a7a4c9a4ddb499c2abb2877e30926f5e6d854aa4efb4ffad0d85b105ab"
+    },
+    {
+      "bytes": 1743,
+      "git_blob": "54ce501749dc86809022b1dd1ca59fb3baa8b544",
+      "path": "artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "sha256": "ce045170e4cb653153ce2317e76f6c36aca1b3349ec6d7407aa9c20e45ffd447"
+    },
+    {
+      "bytes": 1740,
+      "git_blob": "d251a2c78d7878fc595a68eb7343497f85f046ae",
+      "path": "artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "sha256": "89759fec1f790dc1cfcf6e918bba3a677c59141e0de460a5897c57470931e1fc"
+    },
+    {
+      "bytes": 1738,
+      "git_blob": "2dd792f1eb916d82d00a92c61b7ddeed75e52109",
+      "path": "artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "sha256": "f3cf9b470f200c9e8ebc76a9012d7e1d7b20b7fdb669220da8ea9c4e0d3b449c"
+    },
+    {
+      "bytes": 1735,
+      "git_blob": "fbd561022ac56f4acc6c44f51fa67fa689ba0208",
+      "path": "artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "sha256": "2a9ac06ace918130b0ff3c6f91ac926f5f4e827bf2066ffaf55ba066983da37e"
+    },
+    {
+      "bytes": 73821,
+      "git_blob": "f3fb17ef5649f566271cd2bb485bcdc8bb4fefe1",
+      "path": "artifact/execution/results.json",
+      "sha256": "9a545b0104f29438163f1707abb143c3896ee6d0f73083de4fbd3cfecef67181"
+    },
+    {
+      "bytes": 374,
+      "git_blob": "7d0b5e279747b8c56015add2a95798fee66e0d51",
+      "path": "artifact/execution/supplement.stderr.log",
+      "sha256": "498b4a2d6ce131a35faa327b7bd3ab59542efeb2c6d2b88144b34076f8a09990"
+    },
+    {
+      "bytes": 296,
+      "git_blob": "56f014821d8e5480e591827faa51e14c4d793b35",
+      "path": "artifact/execution/supplement.stdout.log",
+      "sha256": "9df073ce63a6f2767b4256c42e93c1942f0187bd0acc2ee43e908d2fa3f90136"
+    },
+    {
+      "bytes": 21487,
+      "git_blob": "02cebd9c899bede4dbe302df33fbf7ab87a91361",
+      "path": "artifact/finalization/result.json",
+      "sha256": "bfdf124aa573b087ba865a93e91d11078c61840539a8962db50dbdcf5e7837cf"
+    },
+    {
+      "bytes": 935,
+      "git_blob": "2476f05280fe24023c2744eae413925bf8f0a41d",
+      "path": "artifact/prepared/build.step.json",
+      "sha256": "e6893cc10d61559a690e1b057fbb504c76f67567de3b9087c92681c394e38b0d"
+    },
+    {
+      "bytes": 2029,
+      "git_blob": "464d125363b24da8231f02261f170cf28c068762",
+      "path": "artifact/prepared/hardware.json",
+      "sha256": "7894769ce233277d301fc4199c8f26ea82b168ad18ac7f8561fba90138633886"
+    },
+    {
+      "bytes": 17215,
+      "git_blob": "91161c05221d08964fffb1f159dc450e31b08682",
+      "path": "artifact/prepared/prepared.json",
+      "sha256": "b3e843ebe3f88a4644de63d4b76a76a1bc93fc5c0f8c7a0358376b6e020c36b0"
+    },
+    {
+      "bytes": 421,
+      "git_blob": "e009659910e4f1b1ca876fc604b5ac6ba673e030",
+      "path": "artifact/source-after.json",
+      "sha256": "f87e0920748006bfff9c83594fd4c0f66cc5e58b174a646593016b069ca0d899"
+    },
+    {
+      "bytes": 421,
+      "git_blob": "e009659910e4f1b1ca876fc604b5ac6ba673e030",
+      "path": "artifact/source-before.json",
+      "sha256": "f87e0920748006bfff9c83594fd4c0f66cc5e58b174a646593016b069ca0d899"
+    },
+    {
+      "bytes": 258,
+      "git_blob": "1483842b674f6a28e10b5f3d0373285f889e1942",
+      "path": "artifact/systemd-run.stderr.log",
+      "sha256": "f0ee9771245a68fd62d3833bc5cb02a5b25ad183c7108698c2757a599606f958"
+    },
+    {
+      "bytes": 128,
+      "git_blob": "efa147ae56ad75f645717881557de36a1fd214b9",
+      "path": "artifact/systemd-run.stdout.log",
+      "sha256": "8cf377c16dcc53844ae29e8a3d79336bb35d7113a50093425b0edcfc45c2a67c"
+    },
+    {
+      "bytes": 236,
+      "git_blob": "579dd17538e06ad8afd6d936333bd2a5ea80814c",
+      "path": "artifact/workflow-outcomes.json",
+      "sha256": "a3e023e04d1ff00c6735635aa9abc9cc15fead2c1c2d13e63296035f0698e4f9"
+    },
+    {
+      "bytes": 10906,
+      "git_blob": "c581ee4c44cd185a65dbb93387a2a70a981c935a",
+      "path": "artifact/workflow-predeclared.json",
+      "sha256": "303dd72d02c6f5b31857431e9af392001bb03883239c73b9edfd03c36905e862"
+    },
+    {
+      "bytes": 142899,
+      "git_blob": "f05eb285b814e8e7751de4e1a5eb36ac58b91ef8",
+      "path": "artifact-inventory.json",
+      "sha256": "8112d1e3575cf4a5c82f98326029cb2552008dfae958f87b73d500d96af99b4d"
+    },
+    {
+      "bytes": 7785,
+      "git_blob": "4bc773aca79536e7de6472ae639980a60dda37d1",
+      "path": "client-import-summary.json",
+      "sha256": "624361d4c8dde0f8d25f399e4e15c1f43693a92e8413e72a56f5e550df48ac8d"
+    },
+    {
+      "bytes": 11781,
+      "git_blob": "d94df590e77a3a12c98d5c975fda8f4bfd9000a4",
+      "path": "extract_analysis.py",
+      "sha256": "cd4ab22bdb1f744038b23f0297290e0d047ff7ed4aed6d4a536ef80bf8b4bb77"
+    },
+    {
+      "bytes": 4402,
+      "git_blob": "ae943fba6e45b1bcd3ae8cabd3fd5d9ebc4def99",
+      "path": "issue-639-observation.json",
+      "sha256": "f50c0d38ed491506f4d121ae8d52d1079f88c2c42dcc7a0d7930940aeb69e27e"
+    },
+    {
+      "bytes": 423179,
+      "git_blob": "08bd464409b11737b70672b97880f534229430f6",
+      "path": "phase-client-import-extracts.json",
+      "sha256": "72317e483a2af9431d717205d9853c01f7f0a29a79cccc062d973fccf19fa64e"
+    },
+    {
+      "bytes": 14327,
+      "git_blob": "f94c40b4d870795566495e86e63bcea30886a629",
+      "path": "phase-performance-summary.json",
+      "sha256": "0c1e1bb16592a603cff7e0e493a2901117cae847ac606a85013c0cbf9719d170"
+    },
+    {
+      "bytes": 224557,
+      "git_blob": "8bfbd2d804ff28cc693e74ae9d5e8dfeff62a84e",
+      "path": "workflow-job-127038806677.log",
+      "sha256": "fe73af52586afd3f57aa9045fd8511aa759af470f48c9bb4c4c0e1d35803b2a4"
+    }
+  ],
+  "job_id": 127038806677,
+  "native_tests_executed_during_analysis": false,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 41964674522,
+  "schema": "f0-b5bb-readback-evidence-manifest-v1",
+  "suggested_prefix": "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105",
+  "total_bytes": 1029138
+}

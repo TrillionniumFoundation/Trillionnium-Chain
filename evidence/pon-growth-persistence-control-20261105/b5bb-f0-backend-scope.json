@@ -1,0 +1,47 @@
+{
+  "schema": "b5bb-f0-backend-scope-v1",
+  "source_commit": "b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c",
+  "observed_backend": "authenticated-v1",
+  "observed_work_profile": "raw-r14",
+  "source_files": {
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs": {
+      "sha256": "22ba99066afa5afee448e180d33d9b2b5ad6fb6bf7e46ecc42206df2dd7ccb11",
+      "bytes": 70379
+    },
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs": {
+      "sha256": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "bytes": 111313
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "sha256": "e622114e8c03bfd35128eb6690e79793b1f7a6db351df1655d1461f562d5c4ed",
+      "bytes": 339626
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/growth.rs": {
+      "sha256": "8d91d31bee99594a450dc0809d1fecb98a1cb5789c053d5ebac849d719d6fd53",
+      "bytes": 32174
+    }
+  },
+  "call_path": [
+    {
+      "file": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+      "lines": "415-418,431,443,1340-1341",
+      "finding": "Root phase and producer explicitly choose AuthenticatedV1; receiver, verifier and producer use StateBackendChoice.open."
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "lines": "135-169",
+      "finding": "StateBackendChoice has LegacyV2 and AuthenticatedV1 only. AuthenticatedV1 directly calls Node::open_with_authenticated_state."
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "lines": "1083-1109",
+      "finding": "The authenticated opener delegates to open_selected with StateBackend::AuthenticatedV1."
+    },
+    {
+      "file": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "lines": "238-249",
+      "finding": "Permanent-account GrowthV2 selects its separate open_growth_selected entry."
+    }
+  ],
+  "scope": "Configuration applicability, confirmed against fixed source in addition to actual artifact labels. F0 results do not validate the modified GrowthV2 execute/admission path. The focused Growth regressions cannot substitute for F0 or the original 4-second/16-producer acceptance gate."
+}

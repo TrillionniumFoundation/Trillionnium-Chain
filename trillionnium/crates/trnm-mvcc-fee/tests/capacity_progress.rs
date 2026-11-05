@@ -120,10 +120,10 @@ fn complete_scan_matches_legacy_at_batch_and_capacity_boundaries() {
         })
         .unwrap();
         assert_eq!(actual, full_scan_reference(&state, 0, &cfg).unwrap());
-        // Only the initial nonempty-source and completion checks remain when
-        // there are no liabilities. This is a scan-bound control, not a CPU or
-        // request-latency measurement; all keys still count in required_keys.
-        assert_eq!(checks, 1 + usize::from(count > 0));
+        // The public progress API retains each original complete-row batch
+        // check and its final publication check. Ordinary native capacity can
+        // seek liability ranges without changing this cancellation schedule.
+        assert_eq!(checks, count.div_ceil(CAPACITY_PROGRESS_INTERVAL) + 1);
         assert_eq!(state, before);
     }
 }
@@ -141,7 +141,7 @@ fn every_interruption_cut_stops_without_publishing_or_mutating_and_can_retry() {
     }
     let before = state.clone();
     let expected = full_scan_reference(&state, 0, &cfg).unwrap();
-    let checks = liabilities.div_ceil(CAPACITY_PROGRESS_INTERVAL) + 1;
+    let checks = state.len().div_ceil(CAPACITY_PROGRESS_INTERVAL) + 1;
     for cut in 0..checks {
         let mut seen = 0;
         let result = continuity_v1::capacity_with_progress(&state, 0, &cfg, &mut || {
@@ -233,7 +233,7 @@ fn malformed_state_keeps_original_error_and_cannot_publish_partial_capacity() {
     });
     assert_eq!(observed, Err(CapacityScanError::State(legacy)));
     assert_eq!(legacy, "CONTINUITY_STATE");
-    assert_eq!(checks, 1); // before the first liability, never a publication callback
+    assert_eq!(checks, 2); // before rows 0 and 256, never a publication callback
 }
 
 #[test]

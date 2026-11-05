@@ -9,14 +9,18 @@ its fixed Host, CPU credit/refill, memory allowance, proof checks or activation.
 
 ## Actual changes
 
-Continuity capacity and Growth partition/mandatory-owner checks seek the complete
-relevant ordered namespaces. Future liabilities, zero-valued rewards, all state
-keys in capacity totals, canonical bytes, nonce floors and proof-account callbacks
-remain checked. An independent retained full-map capacity oracle covers outputs,
-malformed rows, error precedence and cancellation. This removes unrelated-row
-traversal in these functions; complete state cloning, roots and other global
-validation remain separate costs. No throughput improvement is inferred from
-fewer traversal callbacks.
+Non-progress continuity capacity and Growth partition/mandatory-owner checks
+seek the complete relevant ordered namespaces. Future liabilities, zero-valued
+rewards, all state keys in capacity totals, canonical bytes, nonce floors and
+proof-account callbacks remain checked. The public `capacity_with_progress`
+entry retains its full-source traversal and original callback positions: skipping
+unrelated rows there would change cancellation versus malformed-state error
+precedence. Both independent full-map oracles and all interruption positions are
+retained. This composition preserves incoming Growth activation fences and
+monetary scans from `04be5f02c84cf5cb626a53f34bc03a5bd6ff5137` plus the concurrent
+records at `2e7fbaeabc396d501d9d802adc63df963f1d288c`. Complete state cloning, roots,
+public progress traversal and other global validation remain separate costs.
+No throughput improvement is inferred from source inspection or callback counts.
 
 Public service startup reserves its existing shared listener slot before entering
 Node/profile work. Its second owner acquisition and Growth observation checkpoints
