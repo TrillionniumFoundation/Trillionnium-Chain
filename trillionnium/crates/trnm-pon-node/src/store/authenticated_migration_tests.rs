@@ -1888,3 +1888,45 @@ fn growth_rehearsal_file_receipt_retains_one_mib_limit() {
     );
     assert_eq!(fs::metadata(&path).unwrap().len(), 1_048_577);
 }
+
+#[test]
+fn migration_genesis_packet_copy_keeps_null_and_type_semantics() {
+    use rusqlite::types::Value;
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    check_genesis(&node).unwrap();
+    for value in [
+        Value::Null,
+        Value::Blob(vec![]),
+        Value::Blob(vec![0]),
+        Value::Blob(vec![0; 2 * 1024 * 1024]),
+        Value::Text("packet".into()),
+        Value::Integer(7),
+        Value::Real(1.5),
+    ] {
+        node.db.execute_batch("SAVEPOINT genesis_bound").unwrap();
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![value, settings.genesis().as_slice()],
+            )
+            .unwrap();
+        let result = check_genesis(&node);
+        match value {
+            Value::Null => result.unwrap(),
+            Value::Blob(_) => assert_eq!(
+                result.unwrap_err().to_string(),
+                "AUTHENTICATED_MIGRATION_GENESIS"
+            ),
+            _ => assert!(result
+                .unwrap_err()
+                .to_string()
+                .contains("Invalid column type")),
+        }
+        node.db
+            .execute_batch("ROLLBACK TO genesis_bound; RELEASE genesis_bound")
+            .unwrap();
+        check_genesis(&node).unwrap();
+    }
+}

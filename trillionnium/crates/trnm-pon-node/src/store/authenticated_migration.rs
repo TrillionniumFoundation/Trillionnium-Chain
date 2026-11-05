@@ -961,7 +961,7 @@ fn check_genesis(node: &Node) -> Result<()> {
     let packet: Option<Vec<u8>> = node.db.query_row(
         "SELECT packet FROM blocks WHERE id=?",
         [genesis.as_slice()],
-        |row| row.get(0),
+        |row| super::optional_fixed_blob::<0>(row, 0),
     )?;
     ensure(
         record.parent.is_none()

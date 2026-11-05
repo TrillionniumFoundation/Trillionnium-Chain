@@ -233,12 +233,16 @@ impl Node {
         let bytes = packet.encode()?;
         self.check_growth_header_with_progress(packet, observed_now, progress)?;
         let id = packet.id()?;
+        // encode already enforces Growth's own codec ceiling. Keep one excess
+        // byte so an oversized stored BLOB cannot equal this packet, while
+        // preserving required-BLOB conversion errors and a genuinely missing
+        // row. This bounds the Rust copy, not SQLite cell memory or read cost.
         let previous: Option<Vec<u8>> = self
             .db
             .query_row(
                 "SELECT packet FROM blocks WHERE id=?",
                 [id.as_slice()],
-                |r| r.get(0),
+                |r| super::super::fixed_blob::<{ limits::MAX_PACKET_BYTES }>(r, 0),
             )
             .optional()?;
         let existing = if let Some(previous) = previous {
@@ -703,10 +707,13 @@ impl Node {
                 .map_err(execution_error)?;
         let genesis = self.growth_parent(self.settings.genesis())?;
         let genesis_record = self.record(self.settings.genesis())?;
+        // Only SQL NULL is valid here. Retain empty BLOB as Some(empty) and
+        // at most one byte of any other BLOB; the original GROWTH_GENESIS
+        // check below still decides validity after the same SQL conversions.
         let genesis_packet: Option<Vec<u8>> = self.db.query_row(
             "SELECT packet FROM blocks WHERE id=?",
             [self.settings.genesis().as_slice()],
-            |r| r.get(0),
+            |r| super::super::optional_fixed_blob::<0>(r, 0),
         )?;
         ensure(
             genesis_record.height == 0
