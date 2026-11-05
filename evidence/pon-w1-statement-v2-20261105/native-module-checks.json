@@ -1,0 +1,148 @@
+{
+  "schema": "TRNM-W1-V2-NATIVE-MODULE-CHECKS1",
+  "base_commit": "a9b8602706b66adba82655c3c2ce90bde88620a2",
+  "state": "working-tree-module-validation; final committed-source and proof checks belong to integration",
+  "sources_at_module_handoff": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "sha256": "c17117eee5daae02bfa47ed5692f2601924370d990b88a21fd0b2f052ed1496e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/qualified_tasks.rs",
+      "sha256": "23b8b4ecb40b7ec517b13f2543d491f481e0ef7b561e8d3e03b0c1729964330d"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "sha256": "9eb533e5746b597225d6dd91131efd1dec481464dc3d776ba4aa1bfc927bcabe"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "sha256": "2954f96dc14828be02479fa41a7a2c8cf4a8291fb1d8bf67b0351f2e8a9aabbb"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "sha256": "bcac5608cf572726a6b4bbe2c54817a202aec00e6fea285c9dd41728907c9bbd"
+    }
+  ],
+  "logs": [
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-artifact-tests.txt",
+      "sha256": "abab54e85519120ea0838c93e64a031a040be46095223ed7a47f7dca501a8ccb",
+      "exit_code": 0,
+      "rust_passed": 2,
+      "rust_ignored": 0,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-crypto-retained-tests.txt",
+      "sha256": "728ff4e4fcb62c9124c9bfb0198ab0a0cf5ead3e1eb061fd1de15a4fc14a161c",
+      "exit_code": 0,
+      "rust_passed": 176,
+      "rust_ignored": 0,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-node-qualified-tests.txt",
+      "sha256": "c6d55393ffe37e5ae733150173c12a6828b3687161125635f65fd263abfe3deb",
+      "exit_code": 0,
+      "rust_passed": 4,
+      "rust_ignored": 0,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-relation-tests.txt",
+      "sha256": "a4561b6a1fe71c88b2091c25d60da07977fc3bc7abdd7b58ce6d66946dfe7f50",
+      "exit_code": 0,
+      "rust_passed": 10,
+      "rust_ignored": 0,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-relation-clippy.txt",
+      "sha256": "b81c64ce4ff4837dd1ba051b13c40a4015261049dfae8cf2c38229fe7f820773",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/native-clippy.txt",
+      "sha256": "fe7a665d0c3ef604c3213e4ad3271269f9a7d201b23a89684118f5dd7a2e8f76",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": null
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/source-integrity-controls.txt",
+      "sha256": "a59aa23292637e9bb6dd735c8667d52fe320021fe54629724114673e2e031bf5",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": 34
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/legacy-observer-controls.txt",
+      "sha256": "611a622fc2488ac2d28158fadbb840aee5ddf400240a908b8dd63bbf7532c7a1",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": 24
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/source-map-controls.txt",
+      "sha256": "3e30cb71b6f4f43f3745ccb57b2ef7759482f677149b23b3fc74e2bf31fa120d",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": 7
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/staged-observer-controls.txt",
+      "sha256": "f67ea30af8fba0297636292581e7a096e91404bdc0e6c5b6524b57513fe7218e",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": 16
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/security-budget-controls.txt",
+      "sha256": "97aec393fc508ff3a7ebeb1e37463cf8d87365b7e8f356d791c50e60ff507268",
+      "exit_code": 0,
+      "rust_passed": null,
+      "rust_ignored": null,
+      "python_executed": 21
+    }
+  ],
+  "retained_old_guest_source_unchanged": true,
+  "retained_v1_journal_namespace": true,
+  "new_proofs_generated_by_these_native_tests": 0,
+  "parent_eligibility_bypassed": false,
+  "proof_only_node_admission_added": false,
+  "all_input_equivalence_established": false,
+  "quantum_soundness_qualified": false
+}

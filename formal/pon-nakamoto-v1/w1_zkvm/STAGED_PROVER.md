@@ -147,3 +147,101 @@ execution or create a proof. `... import-prefix NEW_DIR OLD_DIR` then imports
 only cryptographically verified original receipts with that same entire session.
 Freshly randomized second-execution assets are never mixed with first-execution
 receipts. All second-attempt preparation/import costs remain in the run ledger.
+
+## Versioned statement end-to-end observer
+
+The same coordinator now supports a fresh v2 run, while preserving the v1
+runner interface and historical failed evidence. The v2 runner and independent
+fresh verifier are explicit executables. V2 uses a new guest image and journal
+domain; an old v1 proof cannot qualify the new statement. The caller supplies
+the expected model/input commitments as a separate 64-byte file (`model ||
+input`) from its trusted parent context. The observer checks this file against
+the prepared journal before starting expensive segment proofs. This comparison
+does not grant a checkpoint or a journal independent cryptographic authority.
+
+The following command is a new experiment declaration, not evidence that it has
+already completed. Build/setup and fixture construction precede its start and
+must be reported separately. The source and executables must be frozen before
+starting; the staged runner still checks clean committed source at each stage.
+
+```sh
+RAYON_NUM_THREADS=8 PYTHONDONTWRITEBYTECODE=1 python3 \
+  formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py \
+  --runner /absolute/host/w1-staged-prover-v2 \
+  --r0vm /absolute/pinned/r0vm \
+  --fresh-verifier /absolute/host/w1-verify-v2 \
+  --statement-version 2 \
+  --prepare-input /absolute/frozen/input.bin \
+  --expected-artifacts /absolute/trusted/expected-artifacts.bin \
+  --checkpoint /absolute/new/checkpoint \
+  --out /absolute/new/observation \
+  --total-wall-seconds 7200 \
+  --local-bytes-per-second 1000000
+```
+
+One monotonic deadline covers preparation/execution, every prefix check and
+segment, recursive compression, fresh receipt verification, local serialization
+and transfer, and the fixed-receipt/native replay measurements. Per-segment
+300-second bounds, the 7,200-second maximum total, 1-GiB free-space floor and
+256-MiB checkpoint cap are unchanged. Pauses, controller work and failures
+consume the declared budget. Termination settlement adds no proof budget. A
+process exit first observed after its deadline is recorded as late even if its
+exit code is zero. A failed later cost/transport step preserves the earlier
+cryptographic result, while `end_to_end_observation_complete` remains false.
+
+The coordinator invokes the existing stage observer directly. The observer
+records commands, raw stdout/stderr, timestamps, actual `wait4` usage, cancellation
+signals, escalation, and surviving owned-session members. `/proc` samples record
+PID and kernel birth ticks. When the environment exposes an ancestor PID
+namespace in procfs, `NSpid`, `NSpgid` and `NSsid` are mapped only after matching
+the observer's PID namespace. An empty comparison against the wrong namespace
+cannot establish that descendants are gone. Process-group/namespace escapes
+and missed short-lived descendants remain outside this measurement's coverage.
+Permission failures, malformed proc records and unknown group-probe outcomes are
+retained and fail the stage; they are never converted into an empty membership
+set. ENOENT/ESRCH disappearance races are recorded separately. Independent
+`killpg(group, 0)` probes cover the original session's process group and every
+additional group actually observed in that session. Cleanup retains these
+known group IDs even if subsequent proc reads fail, attempts TERM/KILL as
+required, and records unresolved state. This establishes no coverage of
+descendants that escape the observed PID namespace or session.
+Neither sampled RSS nor `wait4.ru_maxrss` is an aggregate process-tree peak.
+Uncatchable termination, host loss or an unreapable kernel wait cannot be turned
+into a successful terminal observation by this program.
+
+The v2 fresh report must match the exact input/header/journal/work identity and
+the saved receipt digest, under the fixed v2 profile. The same verifier then
+performs 100 decode-and-verify replays, and the v2 native path performs 1,000
+complete relation replays with the external A/B commitments. Those replay
+counts remain separate from the number of independently generated proofs.
+No proof-randomness tickets, proof population p99, deployment authorization or
+benefit threshold are inferred by the observer.
+
+### What the local delivery stage measures
+
+`w1_local_payload.py` serializes both the original native witness and the actual
+saved transparent receipt with the same header/external-artifact statement.
+It records payload bytes, SHA-256 digests, envelope encoding time and durable
+local-file write time. The envelope is explicitly an **experimental local
+format**, not the Node's production network encoding. The transparent and native
+payloads are each transferred over a real TCP connection on `127.0.0.1` with
+the declared user-space sender pacing. The receiver counts and hashes every
+byte, requires exact equality, writes its received file and records completion.
+
+| Observation | Scope |
+| --- | --- |
+| Fresh proof pipeline seconds | Preparation through fresh strict verification, including controller overhead and pauses; excludes build/setup and finding work |
+| Serialization and file write | Actual experimental envelope bytes and local durable writes |
+| TCP byte transfer | Actual single-host loopback at declared sender pacing; no production peer |
+| `post_find_publish_seconds` | Unmeasured; finding/publication endpoints are not present |
+| WAN propagation, Node admission, confirmation and stale rate | Unmeasured (`null`); local transmission and analytical formulas cannot fill these fields |
+
+The observer's negative controls exercise real nonzero exits, deadlines,
+cancellation, ignored SIGTERM, orphaned descendants and output overflow. They
+also reject wrong report identities, old-journal relabeling and changed transfer
+digests. Control executables never stand in for a successful cryptographic
+backend. Run them with:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/ci/test_w1_staged_observer.py
+```

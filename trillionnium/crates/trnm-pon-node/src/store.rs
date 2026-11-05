@@ -3659,28 +3659,10 @@ impl Node {
             // The fixed recipe's actual model and input artifacts are precisely the
             // proof's A/B bytes. An untrusted miner can bypass every local builder;
             // the validator must bind these commitments before transcript replay.
-            let artifact_bytes = pon_work::CELLS * 4;
-            ensure(
-                packet.proof.len() == pon_work::PROOF_BYTES
-                    && packet.proof.get(..4) == Some(b"PNW1"),
-                "TASK_PROOF_MATERIAL",
-            )?;
-            let model = packet
-                .proof
-                .get(4..4 + artifact_bytes)
-                .ok_or("TASK_PROOF_MATERIAL")?;
-            let input = packet
-                .proof
-                .get(4 + artifact_bytes..4 + 2 * artifact_bytes)
-                .ok_or("TASK_PROOF_MATERIAL")?;
-            ensure(
-                hash(b"artifact", &[model]) == manifest.model,
-                "TASK_MODEL_BINDING",
-            )?;
-            ensure(
-                hash(b"qualified-task-input-v1", &[input]) == manifest.input,
-                "TASK_INPUT_BINDING",
-            )?;
+            let artifacts = pon_work::artifacts::commitments(&packet.proof)
+                .map_err(|_| Error::from("TASK_PROOF_MATERIAL"))?;
+            ensure(artifacts.model == manifest.model, "TASK_MODEL_BINDING")?;
+            ensure(artifacts.input == manifest.input, "TASK_INPUT_BINDING")?;
         }
         let epoch = (self.admission_state_epoch()? == before).then_some(before);
         Ok(CheckedAdmissionParent {

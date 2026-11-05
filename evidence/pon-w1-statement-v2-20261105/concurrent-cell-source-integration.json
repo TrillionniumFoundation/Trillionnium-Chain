@@ -1,0 +1,26 @@
+{
+  "previous_parent": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+  "new_parent": "44ebe1ae95bd27cfc9eee3a9be27f0e06a084771",
+  "paths_preserved": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/CELL_MODEL_STORAGE_V1.md",
+    "evidence/cell-storage-continuation-20261104/boundary-followup/README.md",
+    "evidence/pon-quantum-domain-20261104/README.md",
+    "evidence/pon-quantum-domain-20261104/reproduction.json",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/tensor_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs"
+  ],
+  "sole_plan_merge": "clean three-way merge",
+  "full_w1_prover_and_guest_inputs_changed": false,
+  "native_node_cell_inputs_changed": true,
+  "native_integrated_tests_in_progress": true
+}

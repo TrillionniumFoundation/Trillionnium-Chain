@@ -3,6 +3,7 @@
 //!
 //! The exact native verifier is a dependency, not an independently weakened
 //! circuit. This produces public bytes, never a Node admission capability.
+pub mod v2;
 use trnm_crypto_primitives::pon_work;
 use trnm_protocol::pon_wire::{Header, HEADER_BYTES};
 

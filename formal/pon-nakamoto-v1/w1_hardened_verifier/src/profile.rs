@@ -84,6 +84,12 @@ pub fn verify_recursion(inner: &SuccinctReceipt<ReceiptClaim>) -> Result<()> {
 }
 
 pub fn verify(receipt: &Receipt) -> Result<()> {
+    verify_image(receipt, IMAGE_ID)
+}
+
+/// The caller must pin the image in its own reviewed profile; receipt metadata
+/// and untrusted command-line input must never select this value.
+pub fn verify_image(receipt: &Receipt, image_id: [u32; 8]) -> Result<()> {
     let inner = receipt
         .inner
         .succinct()
@@ -106,7 +112,7 @@ pub fn verify(receipt: &Receipt) -> Result<()> {
     // Full successful image/claim/journal verification remains mandatory.
     // Integrity-only verification of a prefix can never satisfy this call.
     receipt
-        .verify_with_context(&context, IMAGE_ID)
+        .verify_with_context(&context, image_id)
         .context("full frozen image proof")
 }
 

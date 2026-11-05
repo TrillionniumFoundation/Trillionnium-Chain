@@ -17,10 +17,43 @@ use std::{
     process::Command,
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
+#[cfg(not(feature = "statement-v2"))]
 use trnm_w1_zk_methods::{TRNM_W1_FULL_GUEST_ELF, TRNM_W1_FULL_GUEST_ID};
-use trnm_w1_zk_relation::{check_complete_relation, check_public_journal, INPUT_BYTES};
+#[cfg(feature = "statement-v2")]
+use trnm_w1_zk_methods::{
+    TRNM_W1_FULL_GUEST_V2_ELF as TRNM_W1_FULL_GUEST_ELF,
+    TRNM_W1_FULL_GUEST_V2_ID as TRNM_W1_FULL_GUEST_ID,
+};
+#[cfg(feature = "statement-v2")]
+use trnm_w1_zk_relation::v2::{check_complete_relation, INPUT_BYTES};
+#[cfg(not(feature = "statement-v2"))]
+use trnm_w1_zk_relation::{check_complete_relation, INPUT_BYTES};
 
+#[cfg(not(feature = "statement-v2"))]
 const SCHEMA: &str = "TRNM-W1-STAGED-PROOF1";
+#[cfg(feature = "statement-v2")]
+const SCHEMA: &str = "TRNM-W1-STAGED-PROOF2";
+
+fn check_staged_journal(input: &[u8], journal: &[u8]) -> Result<[u8; 32]> {
+    #[cfg(not(feature = "statement-v2"))]
+    let identity = trnm_w1_zk_relation::check_public_journal(&input[..318], journal);
+    #[cfg(feature = "statement-v2")]
+    let identity = {
+        // Staging owns the original complete input. Independent final verification
+        // takes expected artifacts from the caller, never from a receipt journal.
+        let expected = check_complete_relation(input).map_err(|e| anyhow::anyhow!("{e:?}"))?;
+        let artifacts = trnm_w1_zk_relation::v2::ArtifactCommitments {
+            model: expected
+                [trnm_w1_zk_relation::v2::MODEL_OFFSET..trnm_w1_zk_relation::v2::INPUT_OFFSET]
+                .try_into()?,
+            input: expected
+                [trnm_w1_zk_relation::v2::INPUT_OFFSET..trnm_w1_zk_relation::v2::PRODUCT_OFFSET]
+                .try_into()?,
+        };
+        trnm_w1_zk_relation::v2::check_public_journal(&input[..318], &artifacts, journal)
+    };
+    identity.map_err(|e| anyhow::anyhow!("{e:?}"))
+}
 const R0VM_SHA256: &str = "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6";
 const MAX_ASSET: u64 = 64 * 1024 * 1024;
 const MAX_RECEIPT: u64 = 16 * 1024 * 1024;
@@ -718,8 +751,7 @@ fn compress(r0vm: &Path, out: &Path, commit: &str, runner: &str) -> Result<()> {
         succinct.journal.bytes == journal,
         "succinct full journal mismatch"
     );
-    let work_id = check_public_journal(&input[..318], &succinct.journal.bytes)
-        .map_err(|e| anyhow::anyhow!("{e:?}"))?;
+    let work_id = check_staged_journal(&input, &succinct.journal.bytes)?;
     let bytes = bincode::serialize(&succinct)?;
     ensure!(
         bytes.len() as u64 <= MAX_RECEIPT && bytes.get(..4) == Some(1u32.to_le_bytes().as_slice()),
