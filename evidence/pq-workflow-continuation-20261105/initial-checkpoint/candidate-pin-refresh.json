@@ -1,0 +1,53 @@
+{
+  "parent": "30b09171cadf5a6f4d868f5d2a8df8b3316f7114",
+  "pins": 472,
+  "required": 390,
+  "changes": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "before": "d5a09cf485dfc4d27d332c251b6633501f890c1d",
+      "after": "d3d158a67e25fef03f035638d3090fdadfbdfd78",
+      "sha256": "8d91d31bee99594a450dc0809d1fecb98a1cb5789c053d5ebac849d719d6fd53"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "before": null,
+      "after": "40200a846f6bc19b1bfd03f59d12fe42ddf67ab4",
+      "sha256": "b63257386f21d5b9088807e5170883169f37b5e242363de8ef20b295842f1e26"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/growth_persistence_cancellation.rs",
+      "before": null,
+      "after": "336b191524aeaad6fc9d97e25f9c2f2563e16949",
+      "sha256": "28c49b7211208f3a74269798b1cb34b45c925e158530e516a72e120c82195a37"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "before": "b7eb36f77d93bf2c3ae272b34c5b8e66de7d8f5e",
+      "after": "bd5d00991e49de57a41e3633625f152b2623297d",
+      "sha256": "0b7019da9173407ff73d93fcba4f613ff05f258d2d7e8928c68ee6ccac5ee490"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+      "before": null,
+      "after": "e903407e792b77db97878e29e8c04b1d8994ae0e",
+      "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+      "before": null,
+      "after": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802",
+      "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef"
+    }
+  ],
+  "assertions": {
+    "production_activation": false,
+    "independent_accepted": false,
+    "native_pq_node_integrated": false,
+    "quantum_pon_hardness_qualified": false,
+    "physical_rollback_resistant": false,
+    "hepta_final_use_integrated": false,
+    "public_wan_accepted": false,
+    "allow_legacy_fallback": false
+  }
+}

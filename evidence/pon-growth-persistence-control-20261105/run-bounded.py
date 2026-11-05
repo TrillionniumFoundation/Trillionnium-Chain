@@ -24,12 +24,17 @@ parser.add_argument("--expected-head", required=True)
 parser.add_argument("--target", required=True, type=Path)
 parser.add_argument("--cargo-home", required=True, type=Path)
 parser.add_argument("--toolchain-bin", required=True, type=Path)
+parser.add_argument("--rustc", required=True, type=Path)
 parser.add_argument("--out", required=True, type=Path)
 args = parser.parse_args()
 ROOT = args.source.resolve()
 BASE = args.expected_head
 TARGET = args.target.resolve()
 TOOLCHAIN = args.toolchain_bin.resolve()
+RUSTC = args.rustc
+if (not RUSTC.is_absolute() or RUSTC.resolve() != RUSTC or
+        not RUSTC.is_file() or RUSTC.name != "rustc"):
+    parser.error("--rustc must name the canonical absolute real compiler binary")
 PHASE = args.phase
 OUT = args.out.resolve()
 if not re.fullmatch(r"[0-9a-f]{40}", BASE):
@@ -63,12 +68,12 @@ ENV_OVERRIDES = {
     "PATH": str(TOOLCHAIN) + ":/root/.cargo/bin:" + os.environ.get("PATH", ""),
     "CARGO_HOME": str(args.cargo_home.resolve()),
     "CARGO_TARGET_DIR": str(TARGET), "CARGO_BUILD_JOBS": "1",
-    "CARGO_INCREMENTAL": "0", "CARGO_NET_OFFLINE": "true",
+    "CARGO_INCREMENTAL": "0", "CARGO_NET_OFFLINE": "true", "RUSTC": str(RUSTC),
     "RUSTUP_HOME": "/root/.rustup", "RUSTUP_TOOLCHAIN": "1.95.0-x86_64-unknown-linux-gnu",
     "RUST_TEST_THREADS": "1", "PYTHONDONTWRITEBYTECODE": "1", "GIT_OPTIONAL_LOCKS": "0",
     "TMPDIR": str(TARGET / "tmp"),
 }
-UNSET = ["RUSTC", "RUSTDOC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTFLAGS"]
+UNSET = ["RUSTDOC", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER", "RUSTFLAGS"]
 ENV = dict(os.environ, **ENV_OVERRIDES)
 for key in UNSET:
     ENV.pop(key, None)
@@ -174,7 +179,8 @@ record = {
     "preflight_exit_code": preflight.returncode,
     "preflight_log_sha256": sha(OUT / "preflight.log"),
     "cargo_version": subprocess.check_output([str(TOOLCHAIN / "cargo"), "--version"], env=ENV, text=True).strip(),
-    "rustc_version": subprocess.check_output([str(TOOLCHAIN / "rustc"), "-vV"], env=ENV, text=True).strip(),
+    "rustc_version": subprocess.check_output([str(RUSTC), "-vV"], env=ENV, text=True).strip(),
+    "rustc_path": str(RUSTC), "rustc_sha256": sha(RUSTC),
     "timeout_seconds": 600, "effective_available_memory_stop_bytes": 512 * 1024 * 1024,
     "target_storage_available_stop_bytes": 128 * 1024 * 1024,
     "memory_before": memory(), "target_storage_before": shutil.disk_usage(TARGET)._asdict(),

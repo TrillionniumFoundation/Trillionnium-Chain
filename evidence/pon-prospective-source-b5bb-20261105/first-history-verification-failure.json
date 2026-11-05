@@ -1,0 +1,27 @@
+{
+  "merge-base --is-ancestor dd6e1c3cbeacbdc532b0679297835b3a0aac78f0 b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "rev-list --count b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c": {
+    "exit_code": 0,
+    "stdout": "12771\n",
+    "stderr": ""
+  },
+  "show -s --format=%P f135eb867d10ead2058073f78d9d82af2e174f29": {
+    "exit_code": 128,
+    "stdout": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0 b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c\n",
+    "stderr": "fatal: unable to read tree (dd6e1c3cbeacbdc532b0679297835b3a0aac78f0)\n"
+  },
+  "cat-file -p f135eb867d10ead2058073f78d9d82af2e174f29": {
+    "exit_code": 0,
+    "stdout": "tree 8be28a72673ce318d60a464898ab610d9ba39216\nparent dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\nparent b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c\nauthor Tomasrgbsf <273673612+Tomasrgbsf@users.noreply.github.com> 1793850981 +0000\ncommitter GitHub <noreply@github.com> 1793850981 +0000\ngpgsig -----BEGIN PGP SIGNATURE-----\n \n wsFcBAABCAAQBQJq6/5lCRC1aQ7uu5UhlAAALDMQAIyJQN51BjNxBpXu6SS7ABBx\n ceCRUahgWjSTMgaqjEE696Ief9Ch4dkO1BSRlcNnZo/yInvgvEBoK1F/SLPWBAba\n brITwSR4vqqQf3qWgMJ+CW7gEOyS9TmHvOpSmy84w4+w0sJeIjdRGDtlFIOSX0Y+\n Dxyk2piCyP1SwyKMY7J0oIiyZaTAThcm6KZ2ut35nodbggX644o8bXL/GtjfmkJ8\n LfhzAJ03QH908AUlBg3RPy3Je9SZy2OMi9jjGrzbgW5kaPBWIl+gNnj6DP8ue8RO\n xADtyn01Go9c0dK5PUKV4/N77rh8ANwq/A5967XOLV2GcV6gymHvPDHsge5yvsgs\n vIeUZPcEMmjOXg6aGS7StaFkU3l5EioYiTWbtZCTDRER/BNGsrIGyASRmKh6O0gu\n gGFg8eplE5260Ym175wMjvxLbpivbf5dpSu+zdxYf8rTJVYyqLFyGtNedMKpWJcm\n FotlJMzqBn1bG7EwfblEX928+FPoCviZ6XBDgMs3RCLA30jzmn+oanbeYrzKWQOj\n iOSAUetAQovDgxp4DjePn8wL7ZHi7DO6klGK7eaaNTY+jwqlneeUEptUsSFSmVDH\n MU3+7aqq5SP5NofWFbtIZBuqq5S+1IvSZgo36aclCOTLNMsL8I9QjMJQn7tsw5QV\n 79VYLi3OMdJINGM0Tdc4\n =7ipW\n -----END PGP SIGNATURE-----\n \n\nMerge b5bb7bc8d7ffe79d46c6a58fd5189e2bb9e4550c into dd6e1c3cbeacbdc532b0679297835b3a0aac78f0\n",
+    "stderr": ""
+  },
+  "count-objects -v": {
+    "exit_code": 0,
+    "stdout": "count: 0\nsize: 0\nin-pack: 12772\npacks: 2\nsize-pack: 2950\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0\n",
+    "stderr": ""
+  }
+}
