@@ -2046,6 +2046,21 @@ struct OrdinaryPublicServiceCrashFence {
     finished: bool,
 }
 impl OrdinaryPublicServiceCrashFence {
+    fn begin(node: Arc<Mutex<Node>>, startup_deadline: Instant, stop: &AtomicBool) -> Result<Self> {
+        // This is the same original startup attempt as profile validation.
+        // Contention after that first owner scope must not become an unbounded
+        // mutex wait or publish a new durable epoch after cancellation.
+        let mut progress = |_: u64| public_startup_alive(startup_deadline, stop);
+        let mut owner = lock_owner(&node, &mut progress)?;
+        let ordinary = owner.begin_ordinary_public_service_epoch()?;
+        drop(owner);
+        Ok(Self {
+            node,
+            ordinary,
+            finished: false,
+        })
+    }
+
     fn complete(&mut self, clean: bool) -> Result<()> {
         if self.ordinary {
             self.node
@@ -2071,6 +2086,13 @@ impl Drop for OrdinaryPublicServiceCrashFence {
     }
 }
 
+fn public_startup_alive(deadline: Instant, stop: &AtomicBool) -> Result<()> {
+    ensure(
+        !stop.load(Ordering::Acquire) && Instant::now() < deadline,
+        "PUBLIC_STARTUP_DEADLINE",
+    )
+}
+
 fn serve_public_protected_v3_inner(
     listener: TcpListener,
     node: Arc<Mutex<Node>>,
@@ -2090,13 +2112,16 @@ fn serve_public_protected_v3_inner(
     let host_kernel = crate::host_kernel_parent::require_for_listener(listener.local_addr()?)?;
     listener.set_nonblocking(true)?;
     let startup_deadline = Instant::now() + Duration::from_millis(WORK_MS);
+    let intake = server.listener_intake()?;
+    // Reserve the existing whole-service slot before waiting for the Node or
+    // allocating its queues. A fifth listener cannot contend with an admitted
+    // service's profile/State work before discovering that its domain is full.
+    // RAII returns this slot on every pre-worker error; no new budget is made.
+    let _listener_permit =
+        BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
+            .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
     let settings = {
-        let mut progress = |_: u64| {
-            ensure(
-                !stop.load(Ordering::Acquire) && Instant::now() < startup_deadline,
-                "PUBLIC_STARTUP_DEADLINE",
-            )
-        };
+        let mut progress = |_: u64| public_startup_alive(startup_deadline, &stop);
         let mut owner = lock_owner(&node, &mut progress)?;
         owner.require_continuous_public_authentication(server.identity.is_pq())?;
         if server.identity.is_pq() {
@@ -2105,7 +2130,9 @@ fn serve_public_protected_v3_inner(
             owner.require_classical_network_profile()?;
         }
         if server.native_growth {
-            owner.growth_head_observation_with_progress(&|_| Ok(()))?;
+            owner.growth_head_observation_with_progress(&|_| {
+                public_startup_alive(startup_deadline, &stop)
+            })?;
             ensure(!owner.is_continuous(), "PUBLIC_GROWTH_OWNER")?;
         } else if !owner.is_continuous() && !server.identity.is_pq() {
             owner.pool_status_snapshot()?;
@@ -2125,12 +2152,6 @@ fn serve_public_protected_v3_inner(
     let mut connections = BTreeMap::<u64, Connection>::new();
     let mut next_id = 0u64;
     let mut spent = Spent::new();
-    let intake = server.listener_intake()?;
-    // One slot for the entire scoped service, not one per connection/request.
-    // A fifth distinct listener must not allocate another worker/queue/spent set.
-    let _listener_permit =
-        BufferPermit::try_acquire(intake.listeners.clone(), 1, MAX_LISTENERS_PER_CPU_DOMAIN)?
-            .ok_or_else(|| crate::Error::from("PUBLIC_LISTENER_DOMAIN_CAPACITY"))?;
     let body_pool = intake.body_pool.clone();
     let output_pool = intake.output_pool.clone();
     let mutating_grants = intake.mutating_grants.clone();
@@ -2139,15 +2160,8 @@ fn serve_public_protected_v3_inner(
     // is a single metadata row in the original Node store, not a parallel
     // per-request or reward journal. A previously unclean plain-Node process
     // cannot reset CPU debt by opening a new PublicServer/process.
-    let mut epoch_fence = {
-        let mut owner = node.lock().map_err(|_| "PUBLIC_OWNER")?;
-        let ordinary = owner.begin_ordinary_public_service_epoch()?;
-        OrdinaryPublicServiceCrashFence {
-            node: node.clone(),
-            ordinary,
-            finished: false,
-        }
-    };
+    let mut epoch_fence =
+        OrdinaryPublicServiceCrashFence::begin(node.clone(), startup_deadline, &stop)?;
     let mut next_pending_order = 0u64;
     let mut last_cleanup = Instant::now();
     let mut last_kernel_check = Instant::now();
@@ -2478,13 +2492,14 @@ fn serve_public_protected_v3_inner(
                 for _ in 0..8 {
                     match listener.accept() {
                         Ok((socket, peer)) => {
+                            let accepted_at = Instant::now();
                             let mut accepted = AcceptedConnection {
                                 socket,
                                 intake_lease: None,
                                 connection_permit: None,
                                 observation: observer
                                     .as_ref()
-                                    .and_then(PublicRequestObserver::connection),
+                                    .and_then(|capture| capture.connection_at(accepted_at)),
                             };
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
                             m.accepted_connections += 1;

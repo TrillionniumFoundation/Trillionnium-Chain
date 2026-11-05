@@ -1275,6 +1275,383 @@ class ConfirmationObservationTests(unittest.TestCase):
                 self.summarize(edit)
 
 
+class CompleteConfirmationObservationTests(unittest.TestCase):
+    """Synthetic accounting only; no request, runtime or performance is run."""
+
+    def summarize(self, edit=lambda doc: None, **options):
+        document = simulated_confirmation_report()
+        edit(document)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(document))
+            return driver.summarize_confirmation_report(path, **options)
+
+    @staticmethod
+    def current_receiver(doc):
+        captured = doc['phases'][0]['observations']
+        captured.update(schema='public-v3-local-request-resource-observation-v4',
+            cpu_includes_reactor_authentication_or_response_signing=True,
+            cpu_includes_reactor_authentication=False,
+            dispatch_cpu_includes_paid_body_decode=True,
+            dispatch_cpu_includes_response_signing=True,
+            phase_parent_links_are_inclusive=True, cpu_wait_is_outside_dispatch=True,
+            monotonic_epoch_is_observer_local=True)
+        for row in captured['records']:
+            row.update(terminal_error_code=None, dispatch_error_code=None,
+                dispatch_started=False, dispatch_accepted=None,
+                dispatch_thread_cpu_ns=None, full_work_started=False,
+                full_work_thread_cpu_ns=None, application_bytes_read=None,
+                application_bytes_written=None,
+                submit_phases=[dict(phase=name, started=False, completed=False,
+                    accepted=None, error_code=None, started_ns=None, ended_ns=None,
+                    wall_ns=None, thread_cpu_ns=None, parent_phase=PHASE_PARENTS_V4.get(name))
+                    for name in PHASES_V4])
+            for name in ('challenge_wait', 'grant_wait', 'paid_task_queue_wait', 'response_write'):
+                row[name] = dict(started_ns=None, ended_ns=None, wall_ns=None,
+                                 completed=False, accepted=None, error_code=None)
+        return captured
+
+    def test_default_v2_separates_five_products_and_keeps_unmeasured_products_unknown(self):
+        result = self.summarize()
+        self.assertEqual(result['schema'], 'trnm-original-confirmation-observation-v2')
+        metrics = result['phases'][0]['product_metrics']
+        self.assertEqual(set(metrics), {'confirmation', 'complete_release_download',
+                                      'first_token', 'inference', 'model_net_benefit_per_cost'})
+        self.assertEqual(metrics['confirmation']['finite_offer_transactions_per_second'], .25)
+        self.assertIsNone(metrics['confirmation']['saturated_capacity_tps'])
+        for name in set(metrics) - {'confirmation'}:
+            self.assertEqual(metrics[name]['status'], 'not_observed_by_this_report')
+            self.assertIsNone(metrics[name]['value'])
+
+    def test_explicit_v1_reproduces_unchanged_historical_summary(self):
+        result = self.summarize(observation_version=1)
+        self.assertEqual(result['schema'], 'trnm-original-confirmation-observation-v1')
+        # Captured from the pinned original implementation before this change.
+        self.assertEqual(driver.digest(json.dumps(result, sort_keys=True, separators=(',', ':')).encode()),
+                         '868038bb147c31963efaf6db6f83ca824fb46701815ca4d9f27de462400e6ea1')
+        self.assertNotIn('product_metrics', result['phases'][0])
+
+    def test_cli_selects_historical_schema_only_for_readback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(simulated_confirmation_report()))
+            for version in (1, 2):
+                output = io.StringIO()
+                with redirect_stdout(output):
+                    status = driver.main(['--summarize-confirmation', str(path),
+                                          '--observation-version', str(version)])
+                self.assertEqual(status, 0)
+                self.assertEqual(json.loads(output.getvalue())['schema'],
+                                 f'trnm-original-confirmation-observation-v{version}')
+            with patch.object(driver, 'run') as run, patch('sys.stderr', io.StringIO()), \
+                    self.assertRaises(SystemExit) as error:
+                driver.main(['--out', directory, '--observation-version', '1'])
+            self.assertEqual(error.exception.code, 2)
+            run.assert_not_called()
+
+    def test_clock_keeps_initial_delay_without_inventing_receiver_clock_correlation(self):
+        phase = self.summarize()['phases'][0]
+        clock = phase['request_clock']
+        self.assertEqual(clock['original_window_to_independent_confirmation_ns'], 1000)
+        self.assertEqual(clock['business_start_to_independent_confirmation_ns'], 990)
+        self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+        self.assertFalse(clock['receiver_and_client_epochs_correlated'])
+
+    def test_missing_confirmation_never_produces_zero_latency_or_rate(self):
+        def edit(doc):
+            ConfirmationObservationTests.fail_pressure(doc)
+            del doc['phases'][1]['client_confirmed_transactions']
+        phase = self.summarize(edit)['phases'][1]
+        self.assertIsNone(phase['request_clock']['original_window_to_independent_confirmation_ns'])
+        self.assertIsNone(phase['product_metrics']['confirmation']['finite_offer_transactions_per_second'])
+
+    def test_untrusted_client_error_text_is_retained_without_typing_it_as_cancellation(self):
+        def edit(doc):
+            row = doc['phases'][0]['honest_submissions'][0]
+            row.update(status='error', error='PUBLIC_REQUEST_CANCELLED')
+            doc['phases'][0]['honest_submissions'][1].update(status='refused',
+                response={'value': {'error': 'PUBLIC_REQUEST_DEADLINE'}})
+        detail = self.summarize(edit)['phases'][0]['signed_submit_ack']['outcome_detail']
+        self.assertEqual(detail['status_counts'], {'ok': 5, 'refused': 1, 'error': 1})
+        self.assertEqual(detail['raw_client_error_counts'], {'PUBLIC_REQUEST_CANCELLED': 1})
+        self.assertEqual(detail['raw_refusal_error_counts'], {'PUBLIC_REQUEST_DEADLINE': 1})
+        self.assertFalse(detail['diagnostic_text_is_typed_error'])
+
+    def test_receiver_retains_cancel_timeout_unfinished_and_missing_outcomes_separately(self):
+        def edit(doc):
+            captured = self.current_receiver(doc)
+            rows = captured['records']
+            rows[0].update(dispatch_started=True, dispatch_accepted=True)
+            rows[1].update(dispatch_started=True, dispatch_accepted=False,
+                           dispatch_error_code='PUBLIC_REQUEST_CANCELLED')
+            rows[2].update(terminal_error_code='PUBLIC_REQUEST_DEADLINE')
+            rows[3].update(complete=False)
+            del rows[4]['complete']
+        detail = self.summarize(edit)['phases'][0]['receiver_requests']
+        self.assertEqual(detail['dispatch_outcomes'], {'accepted': 1, 'rejected': 1, 'unknown': 13})
+        self.assertEqual(detail['record_lifecycle'], {'closed': 13, 'unfinished': 1, 'unknown': 1})
+        self.assertEqual(detail['typed_cancelled_records'], 1)
+        self.assertEqual(detail['typed_deadline_records'], 1)
+        self.assertEqual(detail['missing_terminal_error_slots'], 0)
+
+    def test_receiver_dropped_records_remain_in_seen_denominator(self):
+        def edit(doc):
+            captured = self.current_receiver(doc)
+            captured['records'].pop()
+            captured['records_not_retained'] = 1
+        detail = self.summarize(edit)['phases'][0]['receiver_requests']
+        self.assertEqual((detail['accepted_connections_seen'], detail['retained_records'],
+                          detail['records_not_retained']), (15, 14, 1))
+        self.assertFalse(detail['all_seen_records_closed_and_retained'])
+        self.assertIsNone(detail['unobserved_client_attempts'])
+
+    def test_complete_record_does_not_erase_late_cancellation_after_dispatch(self):
+        def edit(doc):
+            row = self.current_receiver(doc)['records'][0]
+            row.update(dispatch_started=True, dispatch_accepted=True,
+                       terminal_error_code='PUBLIC_REQUEST_CANCELLED')
+        detail = self.summarize(edit)['phases'][0]['receiver_requests']
+        self.assertEqual(detail['dispatch_outcomes']['accepted'], 1)
+        self.assertEqual(detail['typed_cancelled_records'], 1)
+        self.assertFalse(detail['typed_causes_are_disjoint_outcomes'])
+
+    def test_failed_and_unfinished_resource_samples_are_counted_without_nested_cpu_sum(self):
+        def edit(doc):
+            rows = self.current_receiver(doc)['records']
+            rows[0].update(dispatch_started=True, dispatch_accepted=False,
+                dispatch_thread_cpu_ns=7, full_work_started=True, full_work_thread_cpu_ns=5,
+                application_bytes_read=90, application_bytes_written=10)
+            rows[1].update(complete=False, dispatch_started=True, dispatch_thread_cpu_ns=None,
+                          application_bytes_read=30, application_bytes_written=0)
+        resources = self.summarize(edit)['phases'][0]['resource_coverage']
+        cpu = resources['receiver_dispatch_thread_cpu_ns']
+        self.assertEqual((cpu['known_count'], cpu['missing_count'], cpu['known_sum']), (1, 1, 7))
+        self.assertEqual(resources['receiver_full_work_thread_cpu_ns']['known_sum'], 5)
+        self.assertEqual(resources['application_bytes_read']['known_sum'], 120)
+        self.assertEqual(resources['application_bytes_read']['missing_count'], 13)
+        self.assertIsNone(resources['all_worker_cpu_ns'])
+        self.assertIsNone(resources['physical_network_bytes'])
+        self.assertIsNone(resources['disk_growth_bytes'])
+        self.assertEqual(resources['request_peak_rss_bytes']['known_count'], 0)
+        self.assertEqual(resources['request_peak_rss_bytes']['missing_count'], 15)
+
+    def test_v2_cannot_report_timely_ack_when_deadline_flag_disagrees_with_real_elapsed(self):
+        edit = lambda doc: doc['phases'][0]['honest_submissions'][0].update(
+            elapsed_wall_ns=2_000_000_001, returned_after_deadline=False)
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_CALL_DEADLINE_FACT'):
+            self.summarize(edit)
+        # Historical shape remains replayable; the original strict gate still rejects it.
+        legacy = self.summarize(edit, observation_version=1)
+        self.assertFalse(legacy['original_gate_validated'])
+
+    def test_missing_worker_cpu_keeps_original_sixteen_worker_denominator(self):
+        def edit(doc):
+            workers = doc['phases'][1]['attacks']
+            workers.pop()
+            workers[0]['calling_thread_cpu_ns'] = None
+        cpu = self.summarize(edit)['phases'][1]['resource_coverage']['attacker_workers_calling_thread_cpu_ns']
+        self.assertEqual((cpu['scheduled_workers'], cpu['observed_worker_records']), (16, 15))
+        self.assertEqual((cpu['known_count'], cpu['missing_count']), (14, 2))
+        self.assertEqual(cpu['known_sum'], 28)
+        with self.assertRaisesRegex(ValueError, 'CONFIRMATION_ATTACKER_CPU_IDENTITY'):
+            self.summarize(lambda doc: doc['phases'][1]['attacks'][1].update(worker=0))
+
+    def test_invalid_version_counter_and_typed_error_are_rejected(self):
+        for version in (True, 0, 3, '2'):
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, 'OBSERVATION_VERSION'):
+                self.summarize(observation_version=version)
+        for edit in (
+            lambda doc: doc['phases'][0]['observations'].update(accepted_connections_seen=14),
+            lambda doc: self.current_receiver(doc)['records'][0].update(terminal_error_code=True),
+            lambda doc: self.current_receiver(doc)['records'][0].update(dispatch_thread_cpu_ns=True,
+                                                                        dispatch_started=True),
+        ):
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                self.summarize(edit)
+
+
+class ReceiveClockObservationTests(unittest.TestCase):
+    """One synthetic local epoch and peer claims, never authenticated execution."""
+
+    summarize = CompleteConfirmationObservationTests.summarize
+
+    @staticmethod
+    def receive_clock(doc):
+        captured = CompleteConfirmationObservationTests.current_receiver(doc)
+        phase = doc['phases'][0]
+        offset = 100
+        expected = driver.H('public-request-body-v3', json.dumps(
+            {'op': 'submit', 'packet': doc['signed_honest_packets'][0]}, separators=(',', ':')).encode())
+        phase['business_receive_clock'] = dict(schema='public-v3-business-receive-clock-v1',
+            clock_scope='same-process-monotonic-observer', traffic_epoch_in_observer_ns=offset,
+            first_business_packet_body_digest=expected.hex(),
+            independent_confirmation_in_observer_ns=offset+phase['confirmation_ended_ns'],
+            request_binding_stage='hello-claimed-body-digest', has_control_authority=False)
+        for index, row in enumerate(captured['records']):
+            row.update(connection_id=index+1, operation=2, body_digest=[index+1]*32,
+                connection_closed=True, task_created=False, task_closed=False,
+                lifecycle=dict(schema='public-v3-request-lifecycle-v1', accepted_ns=offset+200+index,
+                    connection_closed_ns=offset+1200+index, task_closed_ns=None,
+                    clock_is_observer_local=True, has_control_authority=False))
+        # Deliberately out of order: earliest receive must include a failed retry.
+        for index, at in ((0, offset+500), (1, offset+100)):
+            row = captured['records'][index]
+            row.update(operation=1, body_digest=list(expected))
+            row['lifecycle']['accepted_ns'] = at
+        captured['records'][1].update(dispatch_started=True, dispatch_accepted=False,
+            dispatch_error_code='PUBLIC_REQUEST_CANCELLED')
+        return phase
+
+    def test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency(self):
+        phase = self.summarize(self.receive_clock)['phases'][0]
+        clock = phase['request_clock']
+        self.assertTrue(clock['receiver_and_client_epochs_correlated'])
+        self.assertEqual(clock['receiver_to_independent_confirmation_ns'], 900)
+        detail = clock['business_receive_observation']
+        self.assertEqual(detail['matched_claim_records'], 2)
+        self.assertEqual(detail['earliest_matched_claim_received_ns'], 200)
+        self.assertEqual(detail['observed_matched_claim_to_confirmation_ns'], 900)
+        self.assertTrue(detail['exact_claim_cohort_covered'])
+        self.assertFalse(detail['body_or_sender_authenticated_by_clock'])
+        self.assertFalse(detail['has_control_authority'])
+
+    def test_unknown_prehello_or_dropped_record_prevents_shorter_exact_claim_latency(self):
+        for kind in ('prehello', 'dropped', 'missing-lifecycle', 'failed-observation'):
+            def edit(doc):
+                phase = self.receive_clock(doc)
+                captured = phase['observations']
+                if kind == 'prehello':
+                    captured['records'][2].update(operation=None, body_digest=None)
+                elif kind == 'dropped':
+                    captured['records'].pop()
+                    captured['records_not_retained'] = 1
+                elif kind == 'missing-lifecycle':
+                    del captured['records'][2]['lifecycle']
+                else:
+                    captured['records'][2].update(observation_failed=True, complete=False)
+                    captured['measurement_failures'] = 1
+            with self.subTest(kind=kind):
+                clock = self.summarize(edit)['phases'][0]['request_clock']
+                self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+                detail = clock['business_receive_observation']
+                self.assertEqual(detail['observed_matched_claim_to_confirmation_ns'], 900)
+                self.assertFalse(detail['exact_claim_cohort_covered'])
+
+    def test_matching_payload_with_wrong_operation_is_not_a_business_receive(self):
+        def edit(doc):
+            phase = self.receive_clock(doc)
+            phase['observations']['records'][1]['operation'] = 2
+        detail = self.summarize(edit)['phases'][0]['request_clock']['business_receive_observation']
+        self.assertEqual(detail['matched_claim_records'], 1)
+        self.assertEqual(detail['observed_matched_claim_to_confirmation_ns'], 500)
+
+    def test_wrong_body_digest_offset_or_promoted_clock_scope_is_rejected(self):
+        mutations = (
+            lambda phase: phase['business_receive_clock'].update(first_business_packet_body_digest='a'*64),
+            lambda phase: phase['business_receive_clock'].update(independent_confirmation_in_observer_ns=1101),
+            lambda phase: phase['business_receive_clock'].update(traffic_epoch_in_observer_ns=None),
+            lambda phase: phase['business_receive_clock'].update(has_control_authority=True),
+            lambda phase: phase['business_receive_clock'].update(clock_scope='remote-wall-clock'),
+            lambda phase: phase['business_receive_clock'].update(request_binding_stage='authenticated-body'),
+            lambda phase: phase['business_receive_clock'].update(another_epoch=1),
+        )
+        for mutation in mutations:
+            def edit(doc):
+                mutation(self.receive_clock(doc))
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'RECEIVE_CLOCK'):
+                self.summarize(edit)
+
+    def test_lifecycle_owner_clocks_are_ordered_only_after_receive_not_each_other(self):
+        def edit(doc):
+            rows = self.receive_clock(doc)['observations']['records']
+            for index, task_end in ((0, 700), (1, 2000)):
+                rows[index].update(task_created=True, task_closed=True)
+                rows[index]['lifecycle']['task_closed_ns'] = task_end
+        result = self.summarize(edit)['phases'][0]['request_clock']
+        self.assertEqual(result['receiver_to_independent_confirmation_ns'], 900)
+        for mutation in (
+            lambda row: row['lifecycle'].update(connection_closed_ns=0),
+            lambda row: row['lifecycle'].update(task_closed_ns=900),
+            lambda row: row.update(connection_closed=False),
+            lambda row: row['lifecycle'].update(accepted_ns=None),
+            lambda row: row['lifecycle'].update(clock_is_observer_local=False),
+            lambda row: row['lifecycle'].update(accepted_ns=True),
+        ):
+            def bad(doc):
+                mutation(self.receive_clock(doc)['observations']['records'][0])
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'LIFECYCLE'):
+                self.summarize(bad)
+
+    def test_live_matching_task_keeps_receive_diagnostic_without_claiming_complete_coverage(self):
+        def edit(doc):
+            row = self.receive_clock(doc)['observations']['records'][1]
+            row.update(task_created=True, task_closed=False, complete=False)
+        clock = self.summarize(edit)['phases'][0]['request_clock']
+        self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+        self.assertEqual(clock['business_receive_observation']['observed_matched_claim_to_confirmation_ns'], 900)
+
+    def test_missing_confirmation_and_overflow_never_become_a_measured_zero(self):
+        def missing(doc):
+            phase = self.receive_clock(doc)
+            phase.update(client_confirmed_transactions=0, client_confirmed_before_original_window_end=False,
+                confirmation_ended_ns=None, client_confirmation_latency_ns=None, independent_client_confirmation=None)
+            phase['business_receive_clock']['independent_confirmation_in_observer_ns'] = None
+        def overflow(doc):
+            phase = self.receive_clock(doc)
+            phase['business_receive_clock'].update(traffic_epoch_in_observer_ns=2**64-1,
+                                                  independent_confirmation_in_observer_ns=None)
+        for edit in (missing, overflow):
+            with self.subTest(edit=edit):
+                clock = self.summarize(edit)['phases'][0]['request_clock']
+                self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+                self.assertIsNone(clock['business_receive_observation']['observed_matched_claim_to_confirmation_ns'])
+
+    def test_ok_final_observation_and_late_confirmation_do_not_become_successful_latency(self):
+        for late in (False, True):
+            def edit(doc):
+                phase = self.receive_clock(doc)
+                phase.update(client_confirmed_transactions=0, client_confirmed_before_original_window_end=False)
+                if late:
+                    phase.update(confirmation_ended_ns=4_000_000_001,
+                                 client_confirmation_latency_ns=4_000_000_001-phase['business_started_ns'])
+                    phase['business_receive_clock']['independent_confirmation_in_observer_ns'] = 4_000_000_101
+                else:
+                    phase['independent_client_confirmation']['confirmed'] = False
+            with self.subTest(late=late):
+                clock = self.summarize(edit)['phases'][0]['request_clock']
+                detail = clock['business_receive_observation']
+                self.assertIsNotNone(detail['final_observation_in_observer_ns'])
+                self.assertIsNotNone(detail['observed_matched_claim_to_final_observation_ns'])
+                self.assertFalse(detail['confirmation_observed_in_original_window'])
+                self.assertIsNone(detail['observed_matched_claim_to_confirmation_ns'])
+                self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+
+    def test_failed_receive_clock_retains_unknown_instead_of_zero(self):
+        def edit(doc):
+            phase = self.receive_clock(doc)
+            row = phase['observations']['records'][1]
+            row.update(observation_failed=True, complete=False)
+            row['lifecycle']['accepted_ns'] = None
+            phase['observations']['measurement_failures'] = 1
+        clock = self.summarize(edit)['phases'][0]['request_clock']
+        detail = clock['business_receive_observation']
+        self.assertEqual(detail['matching_claims_without_receive_clock'], 1)
+        self.assertEqual(detail['earliest_matched_claim_received_ns'], 600)
+        self.assertEqual(detail['observed_matched_claim_to_confirmation_ns'], 500)
+        self.assertIsNone(clock['receiver_to_independent_confirmation_ns'])
+
+    def test_duplicate_receiver_identity_or_malformed_digest_cannot_supply_coverage(self):
+        for mutation in (
+            lambda rows: rows[1].update(connection_id=1),
+            lambda rows: rows[1].update(body_digest=[True]*32),
+            lambda rows: rows[1].update(body_digest=[1]*31),
+        ):
+            def edit(doc):
+                mutation(self.receive_clock(doc)['observations']['records'])
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'RECEIVE_CLOCK'):
+                self.summarize(edit)
+
+
 class ConfirmationReportTests(unittest.TestCase):
     def validate(self, edit=lambda doc: None):
         document = simulated_confirmation_report()

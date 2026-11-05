@@ -8,6 +8,7 @@ introduced. Process CPU encloses the entire test, not a per-actor cost allocatio
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 import os
 from pathlib import Path
@@ -849,7 +850,316 @@ def save_manifest(out: Path, result: dict) -> None:
     os.replace(temporary, out / 'manifest.json')
 
 
-def summarize_confirmation_report(path: Path) -> dict:
+def validate_request_lifecycle(row: dict) -> bool:
+    """Validate optional local owner clocks, without ordering the two owners."""
+    if 'lifecycle' not in row:
+        return False
+    value = row['lifecycle']
+    require(type(value) is dict and set(value) == {'schema', 'accepted_ns', 'connection_closed_ns',
+            'task_closed_ns', 'clock_is_observer_local', 'has_control_authority'}
+            and value['schema'] == 'public-v3-request-lifecycle-v1'
+            and value['clock_is_observer_local'] is True and value['has_control_authority'] is False,
+            'CONFIRMATION_LIFECYCLE_SCHEMA')
+    for name in ('accepted_ns', 'connection_closed_ns', 'task_closed_ns'):
+        require(value[name] is None or (type(value[name]) is int and 0 <= value[name] < 1 << 64),
+                'CONFIRMATION_LIFECYCLE_NUMBER')
+    require(all(type(row.get(key)) is bool for key in ('connection_closed', 'task_created',
+            'task_closed', 'observation_failed', 'complete')), 'CONFIRMATION_LIFECYCLE_OWNER_FLAGS')
+    accepted, disconnected, task_closed = (value[name] for name in
+                                          ('accepted_ns', 'connection_closed_ns', 'task_closed_ns'))
+    require(accepted is not None or row['observation_failed'], 'CONFIRMATION_LIFECYCLE_RECEIVE_UNKNOWN')
+    require(disconnected is None or row['connection_closed'], 'CONFIRMATION_LIFECYCLE_CONNECTION_OWNER')
+    require(not row['connection_closed'] or disconnected is not None or row['observation_failed'],
+            'CONFIRMATION_LIFECYCLE_CONNECTION_CLOCK')
+    require(row['task_created'] or (not row['task_closed'] and task_closed is None),
+            'CONFIRMATION_LIFECYCLE_TASK_NOT_CREATED')
+    require(task_closed is None or row['task_closed'], 'CONFIRMATION_LIFECYCLE_TASK_OWNER')
+    require(not row['task_closed'] or task_closed is not None or row['observation_failed'],
+            'CONFIRMATION_LIFECYCLE_TASK_CLOCK')
+    require(all(accepted is None or ended is None or accepted <= ended
+                for ended in (disconnected, task_closed)), 'CONFIRMATION_LIFECYCLE_CHRONOLOGY')
+    require(row['complete'] is (row['connection_closed'] and (not row['task_created'] or row['task_closed'])
+                               and not row['observation_failed']), 'CONFIRMATION_LIFECYCLE_COMPLETION')
+    return True
+
+
+def business_receive_observation(doc: dict, phase: dict, receiver: dict | None) -> dict | None:
+    """Bind an optional same-process clock to all matching Hello claims.
+
+    Hello is peer-controlled. Even a fully covered matching-claim clock does not
+    authenticate the complete request body, sender, durable effect or operator.
+    A record lost before identity binding can be an earlier retry, so its absence
+    prevents an exact earliest-claim latency rather than shortening that latency.
+    """
+    if 'business_receive_clock' not in phase:
+        return None
+    value = phase['business_receive_clock']
+    require(type(value) is dict and set(value) == {'schema', 'clock_scope',
+            'traffic_epoch_in_observer_ns', 'first_business_packet_body_digest',
+            'independent_confirmation_in_observer_ns', 'request_binding_stage', 'has_control_authority'}
+            and value['schema'] == 'public-v3-business-receive-clock-v1'
+            and value['clock_scope'] == 'same-process-monotonic-observer'
+            and value['request_binding_stage'] == 'hello-claimed-body-digest'
+            and value['has_control_authority'] is False, 'CONFIRMATION_RECEIVE_CLOCK_SCHEMA')
+
+    def optional_time(time):
+        require(time is None or (type(time) is int and 0 <= time < 1 << 64),
+                'CONFIRMATION_RECEIVE_CLOCK_NUMBER')
+        return time
+
+    offset = optional_time(value['traffic_epoch_in_observer_ns'])
+    final = optional_time(value['independent_confirmation_in_observer_ns'])
+    ended = optional_time(phase.get('confirmation_ended_ns'))
+    translated = offset + ended if offset is not None and ended is not None else None
+    overflowed = translated is not None and translated >= 1 << 64
+    require(final == (None if overflowed else translated), 'CONFIRMATION_RECEIVE_CLOCK_TRANSLATION')
+    packets = doc.get('signed_honest_packets')
+    require(isinstance(packets, list) and len(packets) == 7 and isinstance(packets[0], str)
+            and len(packets[0]) % 2 == 0 and re.fullmatch('[0-9a-f]+', packets[0]) is not None,
+            'CONFIRMATION_RECEIVE_CLOCK_PACKET')
+    expected = H('public-request-body-v3', json.dumps(
+        {'op': 'submit', 'packet': packets[0]}, separators=(',', ':')).encode())
+    require(value['first_business_packet_body_digest'] == expected.hex(), 'CONFIRMATION_RECEIVE_CLOCK_DIGEST')
+    captured = phase.get('observations')
+    require(captured is None or captured.get('schema') == 'public-v3-local-request-resource-observation-v4',
+            'CONFIRMATION_RECEIVE_CLOCK_OBSERVER')
+    records = captured['records'] if captured is not None else []
+    identities, matched, missing_binding, missing_lifecycle, missing_receive_clock = set(), [], 0, 0, 0
+    for row in records:
+        identity = row.get('connection_id')
+        optional_time(identity)
+        if identity is not None:
+            require(identity not in identities, 'CONFIRMATION_RECEIVE_CLOCK_DUPLICATE_IDENTITY')
+            identities.add(identity)
+        op, body = row.get('operation'), row.get('body_digest')
+        require(op is None or (type(op) is int and 0 <= op <= 255), 'CONFIRMATION_RECEIVE_CLOCK_OPERATION')
+        require(body is None or (type(body) is list and len(body) == 32
+                and all(type(byte) is int and 0 <= byte <= 255 for byte in body)),
+                'CONFIRMATION_RECEIVE_CLOCK_BODY_DIGEST')
+        missing_binding += identity is None or op is None or body is None
+        lifecycle = row.get('lifecycle')
+        if lifecycle is None:
+            missing_lifecycle += 1
+            received = None
+        else:
+            validate_request_lifecycle(row)
+            received = lifecycle['accepted_ns']
+        missing_receive_clock += received is None
+        if op == 1 and body == list(expected):
+            matched.append(received)
+    known_receives = [time for time in matched if time is not None]
+    earliest = min(known_receives) if known_receives else None
+    native = phase.get('independent_client_confirmation')
+    confirmed = (phase.get('client_confirmed_transactions') == 1
+                 and phase.get('client_confirmed_before_original_window_end') is True
+                 and isinstance(native, dict) and native.get('confirmed') is True
+                 and native.get('finalized') is False and native.get('execution_authority') is False
+                 and type(native.get('depth')) is int and native['depth'] == 6)
+    observed_final_latency = final - earliest if final is not None and earliest is not None and final >= earliest else None
+    covered = (receiver is not None and receiver['all_seen_records_closed_and_retained']
+               and not missing_binding and not missing_lifecycle and not missing_receive_clock and bool(matched))
+    return {
+        'schema': value['schema'], 'request_binding_stage': value['request_binding_stage'],
+        'traffic_epoch_in_observer_ns': offset, 'final_observation_in_observer_ns': final,
+        'clock_translation_overflowed': overflowed, 'epochs_correlated': offset is not None,
+        'retained_records': len(records), 'matched_claim_records': len(matched),
+        'matching_claims_without_receive_clock': len(matched) - len(known_receives),
+        'records_without_complete_identity_binding': missing_binding,
+        'records_without_lifecycle': missing_lifecycle, 'records_without_receive_clock': missing_receive_clock,
+        'earliest_matched_claim_received_ns': earliest,
+        'observed_matched_claim_to_final_observation_ns': observed_final_latency,
+        'observed_matched_claim_to_confirmation_ns': observed_final_latency if confirmed else None,
+        'confirmation_observed_in_original_window': confirmed,
+        'exact_claim_cohort_covered': covered,
+        'body_or_sender_authenticated_by_clock': False, 'has_control_authority': False,
+        'scope': 'same-process receive time for the peer-claimed first business packet, including failed retries; '
+                 'an Ok final observation is not necessarily confirmation; no full-body validation, sender or operator '
+                 'independence is inferred; unknown bindings or lost records prevent an exact earliest-claim latency',
+    }
+
+
+def complete_confirmation_observation(doc: dict, report: dict) -> dict:
+    """Add v2 accounting from existing facts without correlating distinct clocks.
+
+    Caller returns, receiver dispatch and receiver record closure are different
+    observations. A cancellation after dispatch cannot undo a native effect, and
+    an error's display text is not the receiver's typed cancellation/deadline.
+    Missing snapshots/resources remain unknown; no source of this report measures
+    release download, token generation or complete machine resource consumption.
+    """
+    number = ConfirmationReportChecks.number
+
+    def optional_number(value):
+        return None if value is None else number(value)
+
+    def samples(values):
+        known = [number(value) for value in values if value is not None]
+        return {'known_count': len(known), 'missing_count': len(values) - len(known),
+                'known_sum': sum(known) if known else None,
+                'max_known': max(known) if known else None}
+
+    def text_counts(values):
+        require(all(value is None or isinstance(value, str) for value in values),
+                'CONFIRMATION_DIAGNOSTIC_TEXT')
+        return dict(Counter(value for value in values if value is not None))
+
+    def client_detail(rows, window):
+        for row in rows:
+            require(number(row.get('deadline_ms')) == 2000
+                    and row['returned_after_deadline'] is (row['elapsed_wall_ns'] > 2_000_000_000)
+                    and (row['ended_ns'] < window or row['returned_after_window'] is True),
+                    'CONFIRMATION_CALL_DEADLINE_FACT')
+        statuses = [row.get('status') for row in rows]
+        refusals = []
+        for row in rows:
+            response = row.get('response')
+            value = response.get('value') if isinstance(response, dict) else None
+            refusals.append(value.get('error') if isinstance(value, dict) else None)
+        return {'status_counts': text_counts(statuses),
+                'status_missing': sum(value is None for value in statuses),
+                'raw_client_error_counts': text_counts([row.get('error') for row in rows]),
+                'raw_refusal_error_counts': text_counts(refusals),
+                'returned_after_call_deadline': sum(row['returned_after_deadline'] for row in rows),
+                'returned_after_original_window': sum(row['returned_after_window'] for row in rows),
+                'diagnostic_text_is_typed_error': False,
+                'unobserved_attempts': None,
+                'scope': 'observed client returns only; retries and polls are not unique business transactions; '
+                         'late flags overlap status counts; missing calls cannot be reconstructed'}
+
+    for phase, measured in zip(doc['phases'], report['phases']):
+        for source, destination in (('honest_submissions', 'signed_submit_ack'),
+                                    ('honest_history', 'history_response'),
+                                    ('honest_heads', 'head_response')):
+            measured[destination]['outcome_detail'] = client_detail(phase[source], measured['window_ns'])
+
+        captured = phase.get('observations')
+        receiver = None
+        records = None
+        if captured is not None:
+            require(isinstance(captured, dict), 'CONFIRMATION_RECEIVER_SNAPSHOT')
+            records = captured.get('records')
+            require(isinstance(records, list) and len(records) <= 16384
+                    and all(isinstance(row, dict) for row in records), 'CONFIRMATION_RECEIVER_RECORDS')
+            seen = number(captured.get('accepted_connections_seen'))
+            omitted = number(captured.get('records_not_retained'))
+            failures = number(captured.get('measurement_failures'))
+            require(type(captured.get('counter_overflow')) is bool
+                    and len(records) + omitted <= seen, 'CONFIRMATION_RECEIVER_DENOMINATOR')
+            current = captured.get('schema') == 'public-v3-local-request-resource-observation-v4'
+            if current:
+                for row in records:
+                    validate_v4_record(row)
+            for row in records:
+                validate_request_lifecycle(row)
+                require(all(row.get(key) is None or type(row[key]) is bool for key in
+                            ('complete', 'observation_failed', 'dispatch_started', 'dispatch_accepted',
+                             'full_work_started')), 'CONFIRMATION_RECEIVER_BOOLEAN')
+                for key in ('terminal_error_code', 'dispatch_error_code'):
+                    value = row.get(key)
+                    require(value is None or (isinstance(value, str)
+                            and re.fullmatch('[A-Z][A-Z0-9_]*', value) is not None),
+                            'CONFIRMATION_RECEIVER_TYPED_ERROR')
+            # No precedence between dispatch and terminal causes: an accepted
+            # dispatch can be followed by response cancellation. Keep both.
+            cancelled = sum(current and any(row.get(key) == 'PUBLIC_REQUEST_CANCELLED'
+                            for key in ('terminal_error_code', 'dispatch_error_code')) for row in records)
+            timed_out = sum(current and any(row.get(key) == 'PUBLIC_REQUEST_DEADLINE'
+                            for key in ('terminal_error_code', 'dispatch_error_code')) for row in records)
+            lifecycle = {name: sum(row.get('complete') is value for row in records)
+                         for name, value in (('closed', True), ('unfinished', False), ('unknown', None))}
+            receiver = {
+                'accepted_connections_seen': seen, 'retained_records': len(records),
+                'records_not_retained': omitted,
+                'seen_without_snapshot_or_omission_record': seen - len(records) - omitted,
+                'measurement_failures': failures, 'counter_overflow': captured['counter_overflow'],
+                'record_lifecycle': lifecycle,
+                'record_observation_failed': sum(row.get('observation_failed') is True for row in records),
+                'dispatch_outcomes': {name: sum(row.get('dispatch_accepted') is value for row in records)
+                                      for name, value in (('accepted', True), ('rejected', False), ('unknown', None))},
+                'typed_terminal_error_counts': text_counts([row.get('terminal_error_code') for row in records]) if current else None,
+                'typed_dispatch_error_counts': text_counts([row.get('dispatch_error_code') for row in records]) if current else None,
+                'missing_terminal_error_slots': sum('terminal_error_code' not in row for row in records),
+                'typed_cancelled_records': cancelled if current else None,
+                'typed_deadline_records': timed_out if current else None,
+                'typed_causes_are_disjoint_outcomes': False,
+                'all_seen_records_closed_and_retained': seen == len(records) and not omitted
+                    and not failures and not captured['counter_overflow'] and lifecycle['closed'] == len(records)
+                    and all(row.get('observation_failed') is False for row in records),
+                'unobserved_client_attempts': None,
+                'scope': 'receiver connections, not transactions; complete means observation closure, not execution success; '
+                         'unfinished may include measurement failure; typed causes require the v4 source namespace',
+            }
+        measured['receiver_requests'] = receiver
+
+        resources = {'all_worker_cpu_ns': None, 'physical_network_bytes': None, 'disk_growth_bytes': None,
+                     'request_peak_rss_bytes': samples([None] * len(records)) if records is not None else None,
+                     'unretained_receiver_records': receiver['accepted_connections_seen'] - len(records)
+                        if records is not None else None,
+                     'scope': 'source-report coverage only; full-work CPU is nested inside dispatch CPU; '
+                              'neither is complete worker/process CPU; stream bytes are not physical network bytes; '
+                              'receiver samples cover retained records only; unretained records remain unmeasured; '
+                              'RSS and disk growth are not captured by this source; missing values are not zero'}
+        for started, field, output in (
+                ('dispatch_started', 'dispatch_thread_cpu_ns', 'receiver_dispatch_thread_cpu_ns'),
+                ('full_work_started', 'full_work_thread_cpu_ns', 'receiver_full_work_thread_cpu_ns')):
+            resources[output] = None if records is None else {
+                **samples([row.get(field) for row in records if row.get(started) is True]),
+                'unentered_or_start_unknown_records': sum(row.get(started) is not True for row in records)}
+        for field in ('application_bytes_read', 'application_bytes_written'):
+            resources[field] = None if records is None else samples([row.get(field) for row in records])
+        workers = phase.get('attacks')
+        require(workers is None or (isinstance(workers, list) and len(workers) <= 16
+                and all(isinstance(worker, dict) for worker in workers)), 'CONFIRMATION_ATTACKER_CPU_ROWS')
+        roster = {}
+        for worker in workers or []:
+            identity = number(worker.get('worker'))
+            require(identity < phase['workers'] and identity not in roster, 'CONFIRMATION_ATTACKER_CPU_IDENTITY')
+            roster[identity] = worker.get('calling_thread_cpu_ns')
+        resources['attacker_workers_calling_thread_cpu_ns'] = {
+            **samples([roster.get(index) for index in range(phase['workers'])]),
+            'scheduled_workers': phase['workers'], 'observed_worker_records': len(roster),
+            'worker_roster_observed': workers is not None}
+        measured['resource_coverage'] = resources
+
+        business = measured['business']
+        in_window = business['reported_independently_confirmed_in_window'] == 1
+        measured['request_clock'] = {
+            'clock_scope': 'client phase-local monotonic epoch; original pressure window begins at zero',
+            'business_started_ns': phase['business_started_ns'],
+            'reported_final_observation_ended_ns': optional_number(phase.get('confirmation_ended_ns')),
+            'original_window_to_independent_confirmation_ns': phase['confirmation_ended_ns'] if in_window else None,
+            'business_start_to_independent_confirmation_ns': business['observed_success_latency_ns'],
+            'receiver_to_independent_confirmation_ns': None,
+            'receiver_and_client_epochs_correlated': False,
+            'scope': 'in-window independent confirmation only; reported late returns retain their timestamp without success credit; '
+                     'no receiver arrival can be joined to the client confirmation from this report',
+        }
+        receive = business_receive_observation(doc, phase, receiver)
+        measured['request_clock']['business_receive_observation'] = receive
+        if receive is not None:
+            measured['request_clock'].update(
+                receiver_and_client_epochs_correlated=receive['epochs_correlated'],
+                receiver_to_independent_confirmation_ns=receive['observed_matched_claim_to_confirmation_ns']
+                    if receive['exact_claim_cohort_covered'] else None,
+                scope='original client window and optional same-process receiver epoch; exact receive latency '
+                      'is for a completely observed Hello-claim cohort, not authenticated sender/body attribution; '
+                      'failed, late or unconfirmed returns never receive successful-confirmation credit')
+        measured['product_metrics'] = {
+            'confirmation': {'finite_offer_transactions_per_second':
+                                 business['independent_confirmed_transactions_per_window_second'],
+                             'required_unique_transactions': 1, 'window_ns': measured['window_ns'],
+                             'saturated_capacity_tps': None,
+                             'scope': 'one original signed business transaction, not ACKs, blocks or saturated TPS'},
+            **{name: {'status': 'not_observed_by_this_report', 'value': None, 'unit': unit}
+               for name, unit in (('complete_release_download', 'verified-release-bytes/second'),
+                                  ('first_token', 'nanoseconds'), ('inference', 'tokens/second'),
+                                  ('model_net_benefit_per_cost', 'net-model-utility/cost-unit'))},
+        }
+    report['schema'] = 'trnm-original-confirmation-observation-v2'
+    return report
+
+
+def summarize_confirmation_report(path: Path, *, observation_version: int = 2) -> dict:
     """Describe both passing and failing original reports; never confer authority.
 
     ACK and page response counts have separate denominators from the one signed
@@ -857,6 +1167,8 @@ def summarize_confirmation_report(path: Path) -> dict:
     Successful latency samples exclude failed/late calls; incomplete business
     keeps its denominator and the lower bound supported by actual timestamps.
     """
+    require(type(observation_version) is int and observation_version in (1, 2),
+            'CONFIRMATION_OBSERVATION_VERSION')
     require(path.is_file() and not path.is_symlink(), 'CONFIRMATION_REPORT_REQUIRED')
     with path.open('rb') as stream:
         raw = stream.read(REPORT_LIMIT + 1)
@@ -1023,13 +1335,14 @@ def summarize_confirmation_report(path: Path) -> dict:
         require(accepted['sha256'] == digest(raw), 'CONFIRMATION_REPORT_CHANGED')
     except (OSError, ValueError, TypeError, KeyError) as failure:
         error = str(failure)
-    return {'schema': 'trnm-original-confirmation-observation-v1', 'sha256': digest(raw),
+    report = {'schema': 'trnm-original-confirmation-observation-v1', 'sha256': digest(raw),
             'original_gate_validated': error is None, 'original_gate_validation_error': error,
             'simulated_control': doc.get('simulated_control') is True,
             'phases': output, 'network_capacity_qualified': False,
             'tail_latency_qualified': False, 'production_activation': False,
             'scope': 'same original finite offer, 1 signed transaction per 4s phase; not saturated chain TPS; '
                      'reported native observations only, no independent proof/state oracle'}
+    return complete_confirmation_observation(doc, report) if observation_version == 2 else report
 
 
 def report_file_identity(path: Path) -> dict:
@@ -1241,11 +1554,16 @@ def main(argv: list[str] | None = None) -> int:
     action.add_argument('--out', type=Path)
     action.add_argument('--summarize-confirmation', type=Path,
                         help='read an original raw report, retaining business failures and missing samples')
+    parser.add_argument('--observation-version', type=int, choices=(1, 2), default=2,
+                        help='read-only summary schema; v1 reproduces historical output, default v2 retains complete outcome coverage')
     args = parser.parse_args(argv)
     if args.summarize_confirmation is not None:
-        observation = summarize_confirmation_report(args.summarize_confirmation)
+        observation = summarize_confirmation_report(args.summarize_confirmation,
+                                                     observation_version=args.observation_version)
         print(json.dumps(observation, indent=2, sort_keys=True))
         return 0 if observation['original_gate_validated'] else 1
+    if args.observation_version != 2:
+        parser.error('--observation-version 1 is only for --summarize-confirmation historical readback')
     receipt = run(args.out)
     print(json.dumps({'passed': receipt['passed'], 'failures': receipt['failures']}))
     return 0 if receipt['passed'] else 1

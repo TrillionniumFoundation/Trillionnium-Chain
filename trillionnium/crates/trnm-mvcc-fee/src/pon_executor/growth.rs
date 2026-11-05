@@ -4,11 +4,12 @@
 //! native owner authenticates the parent aggregates and every account in `view`.
 //! Existing transaction, mandatory, signature and receipt code remains shared.
 use super::{
-    add, canonical, continuity_v1, execute_with_state_inputs, field, funds, num, require,
-    AccountPointAccess, BlockExecution, Config, ControlledResult, ExecutionControl,
-    ExecutionProgress, Output, Result, State, StateInputs,
+    add, canonical, continuity_v1, execute_with_state_inputs, field, funds, num, prefix_rows,
+    require, AccountPointAccess, BlockExecution, Config, ControlledResult, ExecutionControl,
+    ExecutionProgress, Output, Result, State, StateInputs, MONETARY_OBLIGATION_PREFIXES,
 };
 use std::collections::BTreeSet;
+use std::ops::Bound::{Excluded, Included, Unbounded};
 use trnm_protocol::pon_wire::Hash;
 
 pub const PROFILE: &str = "permanent-account-growth-native-v2";
@@ -29,13 +30,19 @@ pub struct AccountPartition {
 }
 
 fn present(state: &State) -> Result<(u64, u64)> {
+    prefix_rows(state, "account:").try_fold((0u64, 0u64), |(count, balance), (_, value)| {
+        field(value, "nonce")?;
+        Ok((add(count, 1)?, add(balance, field(value, "balance")?)?))
+    })
+}
+
+// `account:` has the exact exclusive successor `account;`. Borrow both other
+// ranges in original order; no account's value or claimed cached count is used
+// to decide which working rows must be checked.
+fn working_rows(state: &State) -> impl Iterator<Item = (&String, &serde_json::Value)> {
     state
-        .iter()
-        .filter(|(key, _)| key.starts_with("account:"))
-        .try_fold((0u64, 0u64), |(count, balance), (_, value)| {
-            field(value, "nonce")?;
-            Ok((add(count, 1)?, add(balance, field(value, "balance")?)?))
-        })
+        .range::<str, _>((Unbounded, Excluded("account:")))
+        .chain(state.range::<str, _>((Included("account;"), Unbounded)))
 }
 
 /// Complete future monetary owners, not only records which mature this block.
@@ -45,7 +52,12 @@ fn present(state: &State) -> Result<(u64, u64)> {
 /// the remaining actual encoded budget.
 pub fn mandatory_owners(state: &State) -> Result<BTreeSet<String>> {
     let mut owners = BTreeSet::new();
-    for (key, value) in state {
+    // All four complete namespaces in lexical order, including future and
+    // zero-valued rows. No scan of unrelated accounts or model bytes is needed.
+    for (key, value) in MONETARY_OBLIGATION_PREFIXES
+        .into_iter()
+        .flat_map(|prefix| prefix_rows(state, prefix))
+    {
         let obligation = if key.starts_with("reward:") {
             field(value, "amount")?;
             true
@@ -113,7 +125,7 @@ impl AccountPartition {
     ) -> Result<()> {
         let (prior_count, prior_balance) = present(parent)?;
         let (next_count, next_balance) = present(state)?;
-        for (key, before) in parent.iter().filter(|(key, _)| key.starts_with("account:")) {
+        for (key, before) in prefix_rows(parent, "account:") {
             let after = state.get(key).ok_or("GROWTH_ACCOUNT_DELETION")?;
             require(
                 field(after, "nonce")? >= field(before, "nonce")?,
@@ -152,10 +164,7 @@ impl AccountPartition {
         )?;
         continuity_v1::check_maintenance(state, continuity_v1::maintenance_task()?, cfg)?;
         let capacity = continuity_v1::capacity_with_account_access(state, height, cfg, access)?;
-        let working_count = state
-            .keys()
-            .filter(|key| !key.starts_with("account:"))
-            .count();
+        let working_count = working_rows(state).count();
         require(
             working_count
                 .checked_add(capacity.archive_reserve)
@@ -170,7 +179,7 @@ impl AccountPartition {
             "STATE_CAPACITY",
         )?;
         let mut bytes = 0usize;
-        for (key, value) in state.iter().filter(|(key, _)| !key.starts_with("account:")) {
+        for (key, value) in working_rows(state) {
             bytes = bytes
                 .checked_add(key.len())
                 .and_then(|n| n.checked_add(8))
@@ -289,4 +298,157 @@ pub fn check_complete_genesis(state: &State, cfg: &Config) -> Result<()> {
         parent_balance,
     }
     .check_parent(state, 0, cfg, None)
+}
+
+#[cfg(test)]
+mod range_tests {
+    use super::*;
+    use serde_json::json;
+
+    fn original_present(state: &State) -> Result<(u64, u64)> {
+        state
+            .iter()
+            .filter(|(key, _)| key.starts_with("account:"))
+            .try_fold((0u64, 0u64), |(count, balance), (_, value)| {
+                field(value, "nonce")?;
+                Ok((add(count, 1)?, add(balance, field(value, "balance")?)?))
+            })
+    }
+
+    fn original_owners(state: &State) -> Result<BTreeSet<String>> {
+        let mut owners = BTreeSet::new();
+        for (key, value) in state {
+            let obligation = if key.starts_with("reward:") {
+                field(value, "amount")?;
+                true
+            } else if key.starts_with("task:")
+                || key.starts_with("quota:")
+                || key.starts_with("release:")
+            {
+                field(value, "remaining")? > 0
+            } else {
+                false
+            };
+            if obligation {
+                let owner = value
+                    .get("owner")
+                    .and_then(serde_json::Value::as_str)
+                    .ok_or("STATE")?;
+                require(
+                    owner.len() == 64
+                        && owner
+                            .bytes()
+                            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+                    "STATE",
+                )?;
+                owners.insert(owner.to_owned());
+                require(
+                    owners.len() <= MAX_MANDATORY_OWNERS,
+                    "GROWTH_MANDATORY_CAPACITY",
+                )?;
+            }
+        }
+        Ok(owners)
+    }
+
+    #[test]
+    fn borrowed_working_ranges_preserve_all_nonaccount_keys_and_pointer_identity() {
+        let state: State = [
+            "",
+            "\0",
+            "account",
+            "account9",
+            "account:",
+            "account:\0",
+            "account:invalid",
+            "account:\u{10ffff}",
+            "account;",
+            "account;\0",
+            "account\u{10ffff}",
+            "contribution:",
+            "meta:issued",
+            "模型:甲",
+            "\u{10ffff}",
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(index, key)| (key.to_owned(), json!(index)))
+        .collect();
+        let original = state.iter().filter(|(key, _)| !key.starts_with("account:"));
+        assert!(working_rows(&state).eq(original));
+        for (key, value) in working_rows(&state) {
+            let (actual_key, actual_value) = state.get_key_value(key).unwrap();
+            assert!(std::ptr::eq(key, actual_key));
+            assert!(std::ptr::eq(value, actual_value));
+        }
+        assert!(working_rows(&State::new()).next().is_none());
+    }
+
+    #[test]
+    fn proved_account_aggregation_keeps_malformed_suffix_rows_overflow_and_error_order() {
+        let mut state: State = (0..2048)
+            .map(|index| (format!("model:{index:08x}"), json!({"opaque":true})))
+            .collect();
+        for count in [0, 1, 512, MAX_WITNESS_ACCOUNTS] {
+            for index in 0..count {
+                state.insert(
+                    format!("account:{index:064x}"),
+                    json!({"balance":index,"nonce":17}),
+                );
+            }
+            assert_eq!(present(&state), original_present(&state));
+        }
+        // This calculation has never validated account-key syntax. Such a row
+        // must remain included rather than disappearing as an absent account;
+        // the caller's original canonical-key gate remains responsible for it.
+        state.insert(
+            "account:invalid".into(),
+            json!({"balance":3,"nonce":u64::MAX}),
+        );
+        assert_eq!(present(&state), original_present(&state));
+        state.insert("account:".into(), json!({"balance":u64::MAX,"nonce":0}));
+        assert_eq!(present(&state), Err("RANGE"));
+        assert_eq!(present(&state), original_present(&state));
+        state.insert("account:".into(), json!({"balance":u64::MAX}));
+        assert_eq!(present(&state), original_present(&state));
+        assert!(present(&state).is_err());
+    }
+
+    #[test]
+    fn mandatory_owner_ranges_keep_shared_future_zero_and_lexical_capacity_errors() {
+        let mut state: State = (0..4096)
+            .map(|index| (format!("account:{index:064x}"), json!(null)))
+            .collect();
+        for prefix in ["quota:", "release:", "task:"] {
+            state.insert(prefix.into(), json!({"remaining":0}));
+            state.insert(
+                format!("{prefix}future"),
+                json!({"remaining":1,"deadline":u64::MAX,"owner":format!("{:064x}", 17)}),
+            );
+        }
+        state.insert(
+            "reward:zero".into(),
+            json!({"amount":0,"owner":format!("{:064x}", 18)}),
+        );
+        for key in ["quota", "quota;", "release;", "reward;", "task;", "模型:甲"] {
+            state.insert(key.into(), json!(null));
+        }
+        assert_eq!(mandatory_owners(&state), original_owners(&state));
+        assert_eq!(mandatory_owners(&state).unwrap().len(), 2);
+        for key in ["quota:", "release:", "reward:", "task:"] {
+            let mut malformed = state.clone();
+            malformed.insert(key.into(), json!(null));
+            assert_eq!(mandatory_owners(&malformed), original_owners(&malformed));
+            assert!(mandatory_owners(&malformed).is_err());
+        }
+        for index in 0..=MAX_MANDATORY_OWNERS {
+            state.insert(
+                format!("quota:{index:03}"),
+                json!({"remaining":1,"owner":format!("{index:064x}")}),
+            );
+        }
+        state.insert("reward:bad".into(), json!(null));
+        assert_eq!(mandatory_owners(&state), Err("GROWTH_MANDATORY_CAPACITY"));
+        assert_eq!(mandatory_owners(&state), original_owners(&state));
+    }
 }

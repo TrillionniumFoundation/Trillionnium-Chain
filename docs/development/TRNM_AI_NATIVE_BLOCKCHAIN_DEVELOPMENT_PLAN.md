@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Throughput path and request accounting, 2026-11-04 America/New_York:**
+Continue #688 from `47b4a62463d8e1371a175c74196d52d99c5fccb8`.
+Continuity/Growth capacity and mandatory-owner scans use complete ordered
+namespaces while retaining total capacity, future liabilities, canonical errors,
+proof callbacks and cancellation. Public startup reserves its existing listener
+slot before Node contention and retains its original deadline through the second
+owner acquisition and Growth checkpoints. Optional receive/owner-close clocks
+and a same-process original-confirmation binding retain failed retries, unknown
+identities, incomplete coverage and distinct client/receiver outcomes. Preserve
+the v1 report derivation; v2 cannot turn contradictory deadline flags into success.
+The [reproduction and scope record](../../evidence/throughput-contracts-20261104/REPRODUCE.md)
+separates confirmation, release download, first token, inference and model-benefit
+observations. Full PQ/Growth/public/recovery integration, six-domain host
+isolation and the original fixed-Host 4s/16 and 4,105-block gates remain open;
+no result, safety profile or activation is promoted by this implementation.
+
 **Cell storage completion boundaries, 2026-11-04 America/New_York:** Continue
 the existing #688 candidate from `ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637`.
 Classic and PQ rendezvous admission must stop before a new connection when the

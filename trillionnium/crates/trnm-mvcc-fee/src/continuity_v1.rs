@@ -1,7 +1,7 @@
 //! Explicit revision12 continuity: reserve mandatory state liabilities and bind
 //! an immutable, genesis-defined maintenance task. No work hardness, useful demand,
 //! production authority or legacy/task substitution follows from availability.
-use crate::pon_executor::{canonical, Config, Result, State};
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use trnm_crypto_primitives::pon_work;
@@ -170,8 +170,9 @@ pub(crate) fn capacity_with_account_access(
 ) -> Result<Capacity> {
     capacity_with_sources(state, height, cfg, account_access, None)
 }
-/// Maximum inspected rows between capacity-scan cancellation checks. This is
-/// a row bound, not a wall-clock bound for state loading or root construction.
+/// Maximum inspected liability rows between capacity-scan cancellation checks.
+/// Exact namespace seeks skip unrelated rows; all state keys still contribute
+/// to the capacity total. This is not a wall-clock bound for loading or roots.
 pub const CAPACITY_PROGRESS_INTERVAL: usize = 256;
 
 /// A cancelled observation says nothing about the validity of its input state.
@@ -238,8 +239,20 @@ fn scan_capacity_with_sources<E>(
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    for (index, (key, value)) in monetary.unwrap_or(state).iter().enumerate() {
-        if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+    let source = monetary.unwrap_or(state);
+    // Preserve the original first cancellation check even when a nonempty
+    // source has no liability rows. These complete disjoint ranges are in the
+    // original map's lexical order, so malformed obligations retain their error
+    // precedence. Future and zero-valued obligations are never filtered out.
+    if !source.is_empty() {
+        progress().map_err(CapacityScanError::Cancelled)?;
+    }
+    let rows = ["contribution:", "quota:", "release:", "reward:", "task:"]
+        .into_iter()
+        .filter(|prefix| *prefix != "contribution:" || evaluation_enabled)
+        .flat_map(|prefix| prefix_rows(source, prefix));
+    for (index, (key, value)) in rows.enumerate() {
+        if index > 0 && index % CAPACITY_PROGRESS_INTERVAL == 0 {
             progress().map_err(CapacityScanError::Cancelled)?;
         }
         if key.starts_with("reward:") {
@@ -271,12 +284,12 @@ fn scan_capacity_with_sources<E>(
     if monetary.is_some() && evaluation_enabled {
         // Monetary certificates do not authenticate this separate cleanup /
         // future-archive relation. Its complete State reference remains explicit.
-        for (index, key) in state.keys().enumerate() {
-            if index % CAPACITY_PROGRESS_INTERVAL == 0 {
+        if !state.is_empty() {
+            progress().map_err(CapacityScanError::Cancelled)?;
+        }
+        for (index, (key, _)) in prefix_rows(state, "contribution:").enumerate() {
+            if index > 0 && index % CAPACITY_PROGRESS_INTERVAL == 0 {
                 progress().map_err(CapacityScanError::Cancelled)?;
-            }
-            if !key.starts_with("contribution:") {
-                continue;
             }
             let candidate = key
                 .strip_prefix("contribution:")
@@ -348,10 +361,7 @@ pub(crate) fn check_state_with_account_access_and_monetary(
     check_maintenance(state, maintenance_task()?, cfg)?;
     let capacity = capacity_with_sources(state, height, cfg, account_access, monetary)?;
     if crate::growth_profile_v2::enabled(cfg) {
-        let accounts = state
-            .keys()
-            .filter(|key| key.starts_with("account:"))
-            .count();
+        let accounts = prefix_rows(state, "account:").count();
         let working = state.len().checked_sub(accounts).ok_or("RANGE")?;
         let required_accounts = accounts
             .checked_add(capacity.credit_account_reserve)
@@ -369,4 +379,112 @@ pub(crate) fn check_state_with_account_access_and_monetary(
         return Err("STATE_CAPACITY");
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod range_tests {
+    use super::*;
+    use std::sync::Mutex;
+
+    #[test]
+    fn complete_liability_ranges_keep_account_proof_calls_in_canonical_order() {
+        let cfg =
+            Config::installed_with_profiles(crate::public_evaluation::PROFILE, PROFILE).unwrap();
+        let owners: Vec<_> = (0..4).map(|i| format!("{i:064x}")).collect();
+        let state = State::from([
+            ("account:opaque".into(), json!(null)),
+            ("contribution:one".into(), json!(null)),
+            ("quota:one".into(), json!({"remaining":1,"owner":owners[0]})),
+            ("release:zero".into(), json!({"remaining":0})),
+            (
+                "release:one".into(),
+                json!({"remaining":1,"owner":owners[1]}),
+            ),
+            (
+                "reward:zero".into(),
+                json!({"maturity":21,"amount":0,"owner":owners[2]}),
+            ),
+            (
+                "task:future".into(),
+                json!({"remaining":1,"deadline":u64::MAX,"owner":owners[3]}),
+            ),
+        ]);
+        let monetary = state
+            .iter()
+            .filter(|(key, _)| crate::pon_executor::is_monetary_obligation(key))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect::<State>();
+        for selected in [None, Some(&monetary)] {
+            for deny in [None, Some(0usize), Some(2), Some(3)] {
+                let seen = Mutex::new(Vec::new());
+                let access = |owner: &str| {
+                    let mut seen = seen.lock().unwrap();
+                    let position = seen.len();
+                    seen.push(owner.to_owned());
+                    if deny == Some(position) {
+                        Err("MISSING_ACCOUNT_PROOF")
+                    } else {
+                        Ok(())
+                    }
+                };
+                let actual = capacity_with_sources(&state, 1, &cfg, Some(&access), selected);
+                if let Some(position) = deny {
+                    assert_eq!(actual, Err("MISSING_ACCOUNT_PROOF"));
+                    assert_eq!(*seen.lock().unwrap(), owners[..=position]);
+                } else {
+                    assert_eq!(actual, capacity(&state, 1, &cfg));
+                    assert_eq!(*seen.lock().unwrap(), owners);
+                    assert_eq!(actual.unwrap().archive_reserve, 1);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn split_monetary_and_archive_ranges_keep_all_cancellation_cuts() {
+        let cfg =
+            Config::installed_with_profiles(crate::public_evaluation::PROFILE, PROFILE).unwrap();
+        let mut state: State = (0..4096)
+            .map(|i| (format!("account:{i:064x}"), json!({"balance":0,"nonce":17})))
+            .collect();
+        let count = 513usize;
+        for i in 0..count {
+            state.insert(
+                format!("quota:{i:04}"),
+                json!({"remaining":1,"owner":format!("{:064x}", 9999)}),
+            );
+            state.insert(format!("contribution:{i:04}"), json!(null));
+        }
+        let monetary = state
+            .iter()
+            .filter(|(key, _)| crate::pon_executor::is_monetary_obligation(key))
+            .map(|(key, value)| (key.clone(), value.clone()))
+            .collect::<State>();
+        let expected = capacity(&state, 0, &cfg).unwrap();
+        assert_eq!(expected.credit_account_reserve, 1);
+        assert_eq!(expected.archive_reserve, count);
+        let before = state.clone();
+        let checks = 2 * count.div_ceil(CAPACITY_PROGRESS_INTERVAL) + 1;
+        for cut in 0..=checks {
+            let mut seen = 0;
+            let actual =
+                scan_capacity_with_sources(&state, 0, &cfg, None, Some(&monetary), &mut || {
+                    let index = seen;
+                    seen += 1;
+                    if index == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                });
+            if cut < checks {
+                assert_eq!(actual, Err(CapacityScanError::Cancelled(cut)));
+                assert_eq!(seen, cut + 1);
+            } else {
+                assert_eq!(actual, Ok(expected.clone()));
+                assert_eq!(seen, checks);
+            }
+            assert_eq!(state, before);
+        }
+    }
 }

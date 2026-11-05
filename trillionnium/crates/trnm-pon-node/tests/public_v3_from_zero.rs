@@ -1640,6 +1640,25 @@ fn signed_confirmation_phase_with_builder(
         "public_network_ready": false, "independent_operator_accepted": false,
         "work_profile_qualified": false, "resource_fairness_qualified": false, "production_activation": false})
         .as_object().unwrap().clone());
+    // Convert the retained original traffic epoch after the run. No new clock
+    // origin, deadline, retry or confirmation drain is introduced. The peer's
+    // Hello digest is only a claimed request identity until actual body checks;
+    // unknown/pre-Hello or unretained connections must remain in the denominator.
+    let traffic_epoch_in_observer_ns = observer.timestamp_ns(epoch);
+    let first_business_body = serde_json::to_vec(&Request::Submit {
+        packet: hex::encode(packets[0].encode().unwrap()),
+    })
+    .unwrap();
+    report["business_receive_clock"] = json!({
+        "schema": "public-v3-business-receive-clock-v1",
+        "clock_scope": "same-process-monotonic-observer",
+        "traffic_epoch_in_observer_ns": traffic_epoch_in_observer_ns,
+        "first_business_packet_body_digest": hex::encode(hash(b"public-request-body-v3", &[&first_business_body])),
+        "independent_confirmation_in_observer_ns": traffic_epoch_in_observer_ns
+            .zip(confirmation_ended_ns).and_then(|(offset, ended)| offset.checked_add(ended)),
+        "request_binding_stage": "hello-claimed-body-digest",
+        "has_control_authority": false,
+    });
     report
 }
 

@@ -497,12 +497,34 @@ fn one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain() {
     )
     .unwrap();
     let listen = TcpListener::bind("127.0.0.1:0").unwrap();
-    let result = serve_public_protected_v3(
-        listen,
-        owner.clone(),
-        Duration::from_secs(2),
-        Arc::new(AtomicBool::new(false)),
-        server(&domain, 72),
+    // Saturated service admission must not first wait behind existing native
+    // work. Keep the actual Node mutex held until the refusal is observed.
+    let blocked_owner = owner.lock().unwrap();
+    let rejected_owner = owner.clone();
+    let rejected_server = server(&domain, 72);
+    let stopped = Arc::new(AtomicBool::new(false));
+    let rejected_stop = stopped.clone();
+    let (completed, completion) = mpsc::channel();
+    let rejected = thread::spawn(move || {
+        let result = serve_public_protected_v3(
+            listen,
+            rejected_owner,
+            Duration::from_secs(2),
+            rejected_stop,
+            rejected_server,
+        );
+        completed.send(()).unwrap();
+        result
+    });
+    let refused_without_owner = completion.recv_timeout(Duration::from_secs(2));
+    // Always release/join on the regression path; this timeout is a deadlock
+    // guard for the test, not a replacement native confirmation deadline.
+    stopped.store(true, Ordering::Release);
+    drop(blocked_owner);
+    let result = rejected.join().unwrap();
+    assert!(
+        refused_without_owner.is_ok(),
+        "a full listener domain waited for the native owner before refusing"
     );
     let error = result.unwrap_err();
     assert!(error.is(crate::error::ErrorCode::PublicListenerDomainCapacity));
@@ -555,6 +577,55 @@ fn one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain() {
     println!("NODE_DOMAIN_WORKER_CAP max_listeners={} max_workers={} max_proof_queued={} max_read_queued={} fifth_refused=true recovered=true",
         MAX_LISTENERS_PER_CPU_DOMAIN,MAX_LISTENERS_PER_CPU_DOMAIN*3,
         MAX_LISTENERS_PER_CPU_DOMAIN*2,MAX_LISTENERS_PER_CPU_DOMAIN*2);
+}
+
+#[test]
+fn public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy() {
+    for expired in [false, true] {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut node = Node::open(directory.path(), settings, 2).unwrap();
+        let domain = ServiceMutationCpuDomain::standalone();
+        node.bind_public_service_cpu_domain(&domain).unwrap();
+        let node = Arc::new(Mutex::new(node));
+        let held = node.lock().unwrap();
+        let waiting_node = node.clone();
+        let stop = Arc::new(AtomicBool::new(false));
+        let waiting_stop = stop.clone();
+        let deadline = if expired {
+            Instant::now() - Duration::from_millis(1)
+        } else {
+            Instant::now() + Duration::from_millis(WORK_MS)
+        };
+        let (started, starting) = mpsc::channel();
+        let (completed, completion) = mpsc::channel();
+        let worker = thread::spawn(move || {
+            started.send(()).unwrap();
+            let result =
+                OrdinaryPublicServiceCrashFence::begin(waiting_node, deadline, &waiting_stop)
+                    .and_then(|mut fence| fence.complete(true));
+            completed.send(()).unwrap();
+            result
+        });
+        starting.recv().unwrap();
+        if !expired {
+            stop.store(true, Ordering::Release);
+        }
+        let stopped_without_owner = completion.recv_timeout(Duration::from_secs(2));
+        drop(held);
+        let result = worker.join().unwrap();
+        assert!(
+            stopped_without_owner.is_ok(),
+            "cancelled/expired startup blocked on native owner (expired={expired})"
+        );
+        assert_eq!(result.unwrap_err().to_string(), "PUBLIC_STARTUP_DEADLINE");
+        // No epoch may have been written by the refused startup. The same
+        // owner can still start and settle its one original durable epoch.
+        let mut owner = node.lock().unwrap();
+        assert!(owner.begin_ordinary_public_service_epoch().unwrap());
+        owner.finish_ordinary_public_service_epoch(true).unwrap();
+        assert_eq!(domain.observe().unwrap().in_flight, 0);
+    }
 }
 
 #[test]

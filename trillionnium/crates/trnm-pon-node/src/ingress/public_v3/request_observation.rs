@@ -311,10 +311,23 @@ impl RequestWaitObservation {
 }
 
 #[derive(Clone, Debug, Serialize)]
+pub struct PublicRequestLifecycleObservation {
+    pub schema: &'static str,
+    pub accepted_ns: Option<u64>,
+    pub connection_closed_ns: Option<u64>,
+    pub task_closed_ns: Option<u64>,
+    pub clock_is_observer_local: bool,
+    pub has_control_authority: bool,
+}
+
+#[derive(Clone, Debug, Serialize)]
 pub struct PublicRequestObservation {
     pub connection_id: Option<u64>,
     pub operation: Option<u8>,
     pub body_digest: Option<Hash>,
+    /// Successful socket accept through the actual connection/task owners.
+    /// This is a local diagnostic clock, not a remote confirmation or authority.
+    pub lifecycle: PublicRequestLifecycleObservation,
     pub frames: [ApplicationFrameBytes; 6],
     pub application_bytes_read: Option<u64>,
     pub application_bytes_written: Option<u64>,
@@ -350,11 +363,19 @@ pub struct PublicRequestObservation {
 }
 
 impl PublicRequestObservation {
-    fn new() -> Self {
+    fn new(accepted_ns: Option<u64>) -> Self {
         Self {
             connection_id: None,
             operation: None,
             body_digest: None,
+            lifecycle: PublicRequestLifecycleObservation {
+                schema: "public-v3-request-lifecycle-v1",
+                accepted_ns,
+                connection_closed_ns: None,
+                task_closed_ns: None,
+                clock_is_observer_local: true,
+                has_control_authority: false,
+            },
             frames: [
                 ApplicationFramePhase::Hello,
                 ApplicationFramePhase::Challenge,
@@ -422,8 +443,10 @@ struct Cell {
     phases: PhaseRecorder,
     failed: AtomicBool,
     connection_closed: AtomicBool,
+    connection_closed_ns: OnceLock<Option<u64>>,
     task_created: AtomicBool,
     task_closed: AtomicBool,
+    task_closed_ns: OnceLock<Option<u64>>,
 }
 
 struct Inner {
@@ -437,6 +460,12 @@ struct Inner {
 }
 
 impl Inner {
+    fn timestamp_ns(&self, instant: Instant) -> Option<u64> {
+        instant
+            .checked_duration_since(self.epoch)
+            .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok())
+    }
+
     fn count(&self, counter: &AtomicU64) {
         if counter
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
@@ -508,6 +537,14 @@ impl PublicRequestObserver {
         })))
     }
 
+    /// Convert a same-process monotonic instant to this observer's clock.
+    /// A caller must retain the clock binding and request identity; this does
+    /// not synchronize another process or host, validate a result, or grant time.
+    /// Instants before this observer and unrepresentable durations stay unknown.
+    pub fn timestamp_ns(&self, instant: Instant) -> Option<u64> {
+        self.0.timestamp_ns(instant)
+    }
+
     /// Prefer after actual service/worker joins. A live snapshot is explicitly incomplete.
     pub fn snapshot(&self) -> PublicRequestObservationSnapshot {
         let mut records = Vec::new();
@@ -540,6 +577,9 @@ impl PublicRequestObserver {
                 value.connection_closed = cell.connection_closed.load(Ordering::Acquire);
                 value.task_created = cell.task_created.load(Ordering::Acquire);
                 value.task_closed = cell.task_closed.load(Ordering::Acquire);
+                value.lifecycle.connection_closed_ns =
+                    cell.connection_closed_ns.get().copied().flatten();
+                value.lifecycle.task_closed_ns = cell.task_closed_ns.get().copied().flatten();
                 value.observation_failed =
                     cell.failed.load(Ordering::Acquire) || phase_failures != 0;
                 value.complete = value.connection_closed
@@ -589,7 +629,12 @@ impl PublicRequestObserver {
         }
     }
 
+    #[cfg(test)]
     pub(super) fn connection(&self) -> Option<ConnectionObservation> {
+        self.connection_at(Instant::now())
+    }
+
+    pub(super) fn connection_at(&self, accepted: Instant) -> Option<ConnectionObservation> {
         // The checked counter reserves a unique slot before publication. It
         // never wraps, reuses a record or waits for a concurrent snapshot.
         let slot = match self
@@ -607,14 +652,20 @@ impl PublicRequestObserver {
             }
         };
         if let Some(slot) = slot {
+            let accepted_ns = self.timestamp_ns(accepted);
+            if accepted_ns.is_none() {
+                self.0.count(&self.0.failures);
+            }
             let cell = Arc::new(Cell {
-                row: Mutex::new(PublicRequestObservation::new()),
+                row: Mutex::new(PublicRequestObservation::new(accepted_ns)),
                 task: Mutex::new(TaskProgress::default()),
                 phases: PhaseRecorder::new(self.0.epoch),
-                failed: AtomicBool::new(false),
+                failed: AtomicBool::new(accepted_ns.is_none()),
                 connection_closed: AtomicBool::new(false),
+                connection_closed_ns: OnceLock::new(),
                 task_created: AtomicBool::new(false),
                 task_closed: AtomicBool::new(false),
+                task_closed_ns: OnceLock::new(),
             });
             if slot.set(cell.clone()).is_ok() {
                 return Some(ConnectionObservation {
@@ -774,6 +825,13 @@ impl Drop for ConnectionObservation {
                 r.response_write.finish(self.inner.epoch, None);
                 true
             });
+        }
+        let closed = self.inner.timestamp_ns(Instant::now());
+        // A live snapshot cannot block closure or lose its timestamp by holding
+        // the diagnostic row mutex. Each real owner publishes exactly once.
+        if self.cell.connection_closed_ns.set(closed).is_err() || closed.is_none() {
+            self.cell.failed.store(true, Ordering::Release);
+            self.inner.count(&self.inner.failures);
         }
         self.cell.connection_closed.store(true, Ordering::Release);
     }
@@ -1001,6 +1059,11 @@ impl Drop for TaskObservation {
     fn drop(&mut self) {
         if let Some(network) = &self.network {
             network.update_task(|r| r.paid_task_queue_wait.finish(network.inner.epoch, None));
+            let closed = network.inner.timestamp_ns(Instant::now());
+            if network.cell.task_closed_ns.set(closed).is_err() || closed.is_none() {
+                network.cell.failed.store(true, Ordering::Release);
+                network.inner.count(&network.inner.failures);
+            }
             network.cell.task_closed.store(true, Ordering::Release);
         }
     }
@@ -1057,6 +1120,89 @@ fn thread_cpu_ns() -> Option<u64> {
 mod tests {
     use super::*;
     use std::sync::Barrier;
+
+    #[test]
+    fn lifecycle_retains_disconnect_until_actual_task_owner_exits() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let accepted = Instant::now();
+        let connection = observer.connection_at(accepted).unwrap();
+        let task = connection.task();
+        let initial = observer.snapshot();
+        assert_eq!(
+            initial.records[0].lifecycle.accepted_ns,
+            observer.timestamp_ns(accepted)
+        );
+        assert!(initial.records[0].lifecycle.connection_closed_ns.is_none());
+        assert!(initial.records[0].lifecycle.task_closed_ns.is_none());
+        drop(connection);
+        let disconnected = observer.snapshot();
+        let row = &disconnected.records[0];
+        assert!(row.connection_closed && !row.task_closed && !row.complete);
+        assert!(row.lifecycle.connection_closed_ns >= row.lifecycle.accepted_ns);
+        assert!(row.lifecycle.task_closed_ns.is_none());
+        drop(task);
+        let closed = observer.snapshot();
+        assert!(closed.coverage_complete());
+        let lifecycle = &closed.records[0].lifecycle;
+        assert!(lifecycle.task_closed_ns >= lifecycle.connection_closed_ns);
+        assert_eq!(lifecycle.schema, "public-v3-request-lifecycle-v1");
+        assert!(lifecycle.clock_is_observer_local && !lifecycle.has_control_authority);
+
+        let refused = observer.connection().unwrap();
+        drop(refused);
+        let closed = observer.snapshot();
+        assert!(closed.coverage_complete());
+        assert!(!closed.records[1].task_created);
+        assert!(closed.records[1].lifecycle.connection_closed_ns.is_some());
+        assert!(closed.records[1].lifecycle.task_closed_ns.is_none());
+    }
+
+    #[test]
+    fn lifecycle_keeps_task_and_connection_closure_order_independent() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        drop(connection.task());
+        let live = observer.snapshot();
+        assert!(live.records[0].task_closed && !live.records[0].connection_closed);
+        assert!(live.records[0].lifecycle.task_closed_ns.is_some());
+        assert!(live.records[0].lifecycle.connection_closed_ns.is_none());
+        assert!(!live.coverage_complete());
+        drop(connection);
+        let closed = observer.snapshot();
+        assert!(closed.coverage_complete());
+        assert!(
+            closed.records[0].lifecycle.connection_closed_ns
+                >= closed.records[0].lifecycle.task_closed_ns
+        );
+    }
+
+    #[test]
+    fn lifecycle_unknown_clock_is_not_zero_and_snapshot_cannot_block_closure() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let before = observer
+            .0
+            .epoch
+            .checked_sub(std::time::Duration::from_nanos(1))
+            .unwrap();
+        assert_eq!(observer.timestamp_ns(before), None);
+        let invalid = observer.connection_at(before).unwrap();
+        drop(invalid);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.records[0].lifecycle.accepted_ns, None);
+        assert!(snapshot.records[0].observation_failed && !snapshot.records[0].complete);
+        assert_eq!(snapshot.measurement_failures, 1);
+
+        let connection = observer.connection().unwrap();
+        let cell = connection.cell.clone();
+        // Socket-only closure publishes via a OnceLock, independent of the row
+        // lock a live snapshot may hold. No fake wait or deadline is introduced.
+        let held = cell.row.lock().unwrap();
+        drop(connection);
+        assert!(cell.connection_closed.load(Ordering::Acquire));
+        assert!(cell.connection_closed_ns.get().unwrap().is_some());
+        drop(held);
+        assert!(observer.snapshot().records[1].complete);
+    }
 
     #[test]
     fn error_diagnostics_preserve_typed_identity_origin_and_bounded_utf8() {
