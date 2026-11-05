@@ -1357,3 +1357,292 @@ fn history_preserves_old_parameters_and_protocol_without_current_upgrade_authori
     rejected(policy.select_current(old_id), ProfileError::ProfileMismatch);
     rejected(policy.select_historical(old_id, 20), ProfileError::Inactive);
 }
+
+#[test]
+fn trusted_retirement_preserves_open_descriptor_and_original_id() {
+    let old = legacy(10, None);
+    let old_id = old.id();
+    let original_bytes = old.canonical_configuration();
+    let before = CryptoProfilePolicy::from_trusted_state(old.clone(), 19, 7, vec![]).unwrap();
+    let selected_before = before.select_current(old_id).unwrap();
+    let current = legacy(30, None);
+    // The existing planned-retirement API still refuses an open history entry.
+    rejected(
+        CryptoProfilePolicy::from_trusted_state(current.clone(), 40, 8, vec![old.clone()]),
+        ProfileError::InvalidBinding,
+    );
+    let retired = RetiredCryptoProfile::from_trusted_state(old, 20).unwrap();
+    assert_eq!(retired.profile().id(), old_id);
+    assert_eq!(retired.profile().canonical_configuration(), original_bytes);
+    assert_eq!(retired.profile().binding().retirement_height, None);
+    assert_eq!(retired.effective_retirement_height(), 20);
+    let policy =
+        CryptoProfilePolicy::from_trusted_state_with_retirements(current, 40, 8, vec![retired])
+            .unwrap();
+    for height in [10, 19] {
+        let historical = policy.select_historical(old_id, height).unwrap();
+        assert_eq!(historical.selected().id(), old_id);
+        assert_eq!(
+            historical.selected().canonical_configuration(),
+            original_bytes
+        );
+    }
+    let rebound = legacy(10, Some(20));
+    assert_ne!(rebound.id(), old_id);
+    rejected(
+        policy.select_historical(rebound.id(), 19),
+        ProfileError::UnknownProfile,
+    );
+    rejected(policy.select_current(old_id), ProfileError::ProfileMismatch);
+    rejected(
+        policy.recheck_current(&selected_before),
+        ProfileError::StaleState,
+    );
+}
+
+#[test]
+fn trusted_retirement_must_narrow_a_nonempty_declared_interval() {
+    for end in [0, 9, 10] {
+        rejected(
+            RetiredCryptoProfile::from_trusted_state(legacy(10, None), end),
+            ProfileError::InvalidBinding,
+        );
+    }
+    let declared = legacy(10, Some(100));
+    let declared_id = declared.id();
+    rejected(
+        RetiredCryptoProfile::from_trusted_state(declared.clone(), 101),
+        ProfileError::InvalidBinding,
+    );
+    assert!(RetiredCryptoProfile::from_trusted_state(declared.clone(), 100).is_ok());
+    let shortened = RetiredCryptoProfile::from_trusted_state(declared, 80).unwrap();
+    assert_eq!(shortened.profile().id(), declared_id);
+    assert!(shortened.profile().active_at(80));
+    let policy = CryptoProfilePolicy::from_trusted_state_with_retirements(
+        legacy(80, None),
+        90,
+        2,
+        vec![shortened],
+    )
+    .unwrap();
+    assert!(policy.select_historical(declared_id, 79).is_ok());
+    rejected(
+        policy.select_historical(declared_id, 80),
+        ProfileError::Inactive,
+    );
+}
+
+#[test]
+fn trusted_retirement_history_keeps_exclusive_ends_and_gaps() {
+    let first = legacy(10, None);
+    let second = legacy(25, None);
+    let current = legacy(40, None);
+    let (first_id, second_id, current_id) = (first.id(), second.id(), current.id());
+    let policy = CryptoProfilePolicy::from_trusted_state_with_retirements(
+        current,
+        50,
+        3,
+        vec![
+            RetiredCryptoProfile::from_trusted_state(second, 30).unwrap(),
+            RetiredCryptoProfile::from_trusted_state(first, 20).unwrap(),
+        ],
+    )
+    .unwrap();
+    for (id, start, end) in [(first_id, 10, 20), (second_id, 25, 30)] {
+        for height in [start, end - 1] {
+            assert!(policy.select_historical(id, height).is_ok());
+        }
+        for height in [start - 1, end, 39] {
+            rejected(policy.select_historical(id, height), ProfileError::Inactive);
+        }
+    }
+    rejected(
+        policy.select_historical(current_id, 39),
+        ProfileError::Inactive,
+    );
+    assert!(policy.select_historical(current_id, 50).is_ok());
+    rejected(
+        policy.select_historical(current_id, 51),
+        ProfileError::Inactive,
+    );
+    // Adjacent intervals remain valid, even in reverse registration order.
+    assert!(CryptoProfilePolicy::from_trusted_state_with_retirements(
+        legacy(40, None),
+        50,
+        3,
+        vec![
+            RetiredCryptoProfile::from_trusted_state(legacy(20, None), 40).unwrap(),
+            RetiredCryptoProfile::from_trusted_state(legacy(10, None), 20).unwrap(),
+        ],
+    )
+    .is_ok());
+}
+
+#[test]
+fn trusted_retirement_policy_refuses_duplicate_overlap_and_late_end() {
+    let current = legacy(40, None);
+    let first = RetiredCryptoProfile::from_trusted_state(legacy(10, None), 20).unwrap();
+    let overlapping = RetiredCryptoProfile::from_trusted_state(legacy(19, None), 30).unwrap();
+    let cases = [
+        vec![first.clone(), first.clone()],
+        vec![first.clone(), overlapping.clone()],
+        vec![overlapping, first],
+        vec![RetiredCryptoProfile::from_trusted_state(legacy(10, None), 41).unwrap()],
+        vec![RetiredCryptoProfile::from_trusted_state(current.clone(), 41).unwrap()],
+    ];
+    for history in cases {
+        rejected(
+            CryptoProfilePolicy::from_trusted_state_with_retirements(
+                current.clone(),
+                50,
+                1,
+                history,
+            ),
+            ProfileError::InvalidBinding,
+        );
+    }
+}
+
+#[test]
+fn trusted_retirement_policy_preserves_foreign_candidate_and_capacity_refusals() {
+    let current = legacy(100, None);
+    let original = legacy(10, None);
+    for field in 0..3 {
+        let mut binding = *original.binding();
+        match field {
+            0 => binding.network[0] ^= 1,
+            1 => binding.genesis[0] ^= 1,
+            2 => {
+                binding.scope = ProfileScope::NativePeer;
+                binding.protocol_version = 2;
+            }
+            _ => unreachable!(),
+        }
+        let old = CryptoProfile::LegacyMlDsa65V1.bind(binding).unwrap();
+        let retired = RetiredCryptoProfile::from_trusted_state(old, 20).unwrap();
+        rejected(
+            CryptoProfilePolicy::from_trusted_state_with_retirements(
+                current.clone(),
+                100,
+                1,
+                vec![retired],
+            ),
+            ProfileError::InvalidBinding,
+        );
+    }
+    for kind in [
+        CryptoProfile::CandidateMlDsa65V1,
+        CryptoProfile::CandidateMlDsa87V1,
+    ] {
+        rejected(
+            RetiredCryptoProfile::from_trusted_state(candidate(kind), 20),
+            ProfileError::InvalidBinding,
+        );
+    }
+    let history: Vec<_> = (0..16)
+        .map(|i| RetiredCryptoProfile::from_trusted_state(legacy(2 * i, None), 2 * i + 1).unwrap())
+        .collect();
+    assert!(CryptoProfilePolicy::from_trusted_state_with_retirements(
+        current.clone(),
+        100,
+        1,
+        history.clone(),
+    )
+    .is_ok());
+    let mut excessive = history;
+    excessive.push(RetiredCryptoProfile::from_trusted_state(legacy(40, None), 41).unwrap());
+    rejected(
+        CryptoProfilePolicy::from_trusted_state_with_retirements(
+            current.clone(),
+            100,
+            1,
+            excessive,
+        ),
+        ProfileError::InvalidBinding,
+    );
+    rejected(
+        CryptoProfilePolicy::from_trusted_state_with_retirements(current, 100, 0, vec![]),
+        ProfileError::InvalidBinding,
+    );
+}
+
+#[test]
+fn trusted_retirement_preserves_original_parameters_and_protocol() {
+    let old = CryptoProfile::LegacyMlDsa65V1
+        .bind(ProfileBinding {
+            parameters: [9; 32],
+            retirement_height: None,
+            ..fixed_binding(ProfileScope::NativeAccounts, 2)
+        })
+        .unwrap();
+    let old_id = old.id();
+    let current = CryptoProfile::LegacyMlDsa65V1
+        .bind(ProfileBinding {
+            activation_height: 20,
+            retirement_height: None,
+            ..fixed_binding(ProfileScope::NativeAccounts, 6)
+        })
+        .unwrap();
+    let policy = CryptoProfilePolicy::from_trusted_state_with_retirements(
+        current,
+        30,
+        2,
+        vec![RetiredCryptoProfile::from_trusted_state(old, 20).unwrap()],
+    )
+    .unwrap();
+    let record = policy.select_historical(old_id, 19).unwrap();
+    assert_eq!(record.selected().id(), old_id);
+    assert_eq!(record.selected().binding().parameters, [9; 32]);
+    assert_eq!(record.selected().binding().protocol_version, 2);
+    rejected(policy.select_historical(old_id, 20), ProfileError::Inactive);
+    rejected(policy.select_current(old_id), ProfileError::ProfileMismatch);
+}
+
+#[test]
+fn trusted_retirement_policy_never_activates_current_candidates() {
+    for kind in [
+        CryptoProfile::CandidateMlDsa65V1,
+        CryptoProfile::CandidateMlDsa87V1,
+    ] {
+        let bound = candidate(kind);
+        let id = bound.id();
+        let policy =
+            CryptoProfilePolicy::from_trusted_state_with_retirements(bound, 20, 1, vec![]).unwrap();
+        rejected(policy.select_current(id), ProfileError::CandidateOnly);
+        rejected(
+            policy.select_historical(id, 20),
+            ProfileError::CandidateOnly,
+        );
+    }
+}
+
+#[test]
+fn trusted_retirement_policy_rechecks_current_generation_identity_and_height() {
+    let current = legacy(40, Some(100));
+    let id = current.id();
+    let before =
+        CryptoProfilePolicy::from_trusted_state_with_retirements(current.clone(), 50, 7, vec![])
+            .unwrap();
+    let selected = before.select_current(id).unwrap();
+    assert!(before.recheck_current(&selected).is_ok());
+    let changed_generation =
+        CryptoProfilePolicy::from_trusted_state_with_retirements(current.clone(), 50, 8, vec![])
+            .unwrap();
+    rejected(
+        changed_generation.recheck_current(&selected),
+        ProfileError::StaleState,
+    );
+    let expired =
+        CryptoProfilePolicy::from_trusted_state_with_retirements(current.clone(), 100, 7, vec![])
+            .unwrap();
+    rejected(expired.recheck_current(&selected), ProfileError::Inactive);
+    let mut binding = *current.binding();
+    binding.parameters[0] ^= 1;
+    let different = CryptoProfile::LegacyMlDsa65V1.bind(binding).unwrap();
+    let changed_id =
+        CryptoProfilePolicy::from_trusted_state_with_retirements(different, 50, 7, vec![]).unwrap();
+    rejected(
+        changed_id.recheck_current(&selected),
+        ProfileError::StaleState,
+    );
+}

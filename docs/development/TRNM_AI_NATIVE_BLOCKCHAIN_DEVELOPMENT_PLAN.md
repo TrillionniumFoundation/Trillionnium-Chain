@@ -6264,3 +6264,47 @@ verification budgets, historical/current type separation and the unactivated
 ML-DSA-87 candidate. The ML-DSA-65 release baseline and all 49 required native
 selectors remain. Keep every earlier component observation under its original
 source identity and validate the resulting composition separately.
+
+
+### 2026-11-04 immutable profile identity through trusted retirement
+
+Continue PR #698 from `cbdd98dc16398d6a21e02364c71f0856742b3a72`, preserving the
+`ac2402e4` recovery, live-journal, current Cell publication and actual SDK work,
+its separate results and its four still-failing checkpoint Unix/daemon tests.
+Register the added live-journal source in the generated inventory and update
+only that entry's exact corpus pin alongside this change's own three source pins.
+
+An initially open-ended CURRENT descriptor could not later enter the old
+planned-retirement history without rebinding its ID. Add a trusted effective
+retirement registration that retains the original descriptor and ID. Its
+exclusive end must narrow the original interval and end no later than the
+current configuration's activation. Preserve the old constructor for predeclared
+retirement, the bounded nonoverlapping history, original parameters and protocol
+versions, current/historical types and final-use generation/identity checks.
+Height checks do not prove a record was accepted; the actual owner authenticates
+and persists both the accepted history and the retirement schedule.
+
+Eight new controls cover original-ID continuity, refusal of a rebound ID,
+exclusive ends and gaps, duplicates/overlap, foreign bindings, candidate and
+capacity refusals, and stale current observations. Descriptor bytes, golden IDs,
+legacy wire, CPQ1 signature and byte/attempt budgets, native W1 challenge/ticket
+and work configuration remain unchanged. Both candidate parameter sets remain
+unavailable for current authorization; ML-DSA-87 is not activated.
+
+The [fixed 59f evidence](../../evidence/crypto-profile-20261104/continuation-59f75acd/README.md)
+retains 24 actual command receipts: 23 successes and the original missing-cache
+fuzz failure, followed by a successful complete 147-node graph retry. It includes
+143 crypto and 94 protocol passes, two existing ignored protocol observations,
+two compile-fail doctest passes and 106 Python tests. Its fresh release observer
+completed 32 cases, 288 measurements and 18,432 samples, independently recomputed.
+These are observations of `59f75acd`, before this retirement fix. M06, Node/49,
+strict workspace Clippy and independent candidate interoperability were not run
+in that phase. New-source acceptance must retain its own actual command/source
+records; the prior passes do not validate this new source. The unarchived 885
+logs remain lost and are not reconstructed.
+
+The unified registry is still not integrated into every real effect owner.
+M15 root identity/checkpoint remain SHA-256 and its fixed ML-DSA-65 release suite
+is separate; candidate SHA-512 commitments do not qualify those boundaries.
+Current/FinalUse, complete monotonic recovery, original-budget capacity/WAN and
+independent W1 security remain open. Preserve all six UNQUALIFIED gates and HOLD.

@@ -102,7 +102,9 @@ pub struct ProfileBinding {
     pub protocol_version: u32,
     pub scope: ProfileScope,
     pub activation_height: u64,
-    /// Exclusive end. None is encoded as a tag plus zero, not a sentinel height.
+    /// Declared exclusive end, committed into the immutable profile ID. None is
+    /// encoded as a tag plus zero, not a sentinel height. A later trusted
+    /// retirement uses RetiredCryptoProfile without rebinding this descriptor.
     pub retirement_height: Option<u64>,
 }
 
@@ -584,13 +586,54 @@ impl BoundCryptoProfile {
     }
 }
 
+/// A retirement interval supplied by the authenticated protocol state owner.
+/// The original descriptor and ID are immutable; this registration only narrows
+/// the historical interval. Construction validates bounds, not the authority or
+/// persistence of the caller's state, nor acceptance of any historical record.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RetiredCryptoProfile {
+    profile: BoundCryptoProfile,
+    effective_retirement_height: u64,
+}
+impl RetiredCryptoProfile {
+    pub fn from_trusted_state(
+        profile: BoundCryptoProfile,
+        effective_retirement_height: u64,
+    ) -> Result<Self, ProfileError> {
+        if profile.profile.is_candidate()
+            || effective_retirement_height <= profile.binding.activation_height
+            || profile
+                .binding
+                .retirement_height
+                .is_some_and(|declared_end| effective_retirement_height > declared_end)
+        {
+            return Err(ProfileError::InvalidBinding);
+        }
+        Ok(Self {
+            profile,
+            effective_retirement_height,
+        })
+    }
+    /// Returns the original descriptor; its active_at does not include this
+    /// effective cutoff. Historical eligibility uses the policy's select_historical.
+    pub fn profile(&self) -> &BoundCryptoProfile {
+        &self.profile
+    }
+    pub fn effective_retirement_height(&self) -> u64 {
+        self.effective_retirement_height
+    }
+    fn active_at(&self, height: u64) -> bool {
+        self.profile.active_at(height) && height < self.effective_retirement_height
+    }
+}
+
 /// A snapshot supplied by the trusted state owner. A fresh snapshot/generation
 /// must be checked at final use; a mathematical verification cache cannot do it.
 pub struct CryptoProfilePolicy {
     current: BoundCryptoProfile,
     height: u64,
     state_generation: u64,
-    history: Vec<BoundCryptoProfile>,
+    history: Vec<RetiredCryptoProfile>,
 }
 pub struct CurrentCryptoProfile<'a> {
     selected: &'a BoundCryptoProfile,
@@ -614,31 +657,60 @@ impl HistoricalCryptoProfile<'_> {
     }
 }
 impl CryptoProfilePolicy {
+    fn require_history_limits(
+        state_generation: u64,
+        history_len: usize,
+    ) -> Result<(), ProfileError> {
+        if state_generation == 0 || history_len > MAX_HISTORY_PROFILES {
+            return Err(ProfileError::InvalidBinding);
+        }
+        Ok(())
+    }
+    /// Compatibility path for retirement heights declared in the descriptor.
+    /// Open-ended historical descriptors still require an explicit trusted
+    /// registration through from_trusted_state_with_retirements.
     pub fn from_trusted_state(
         current: BoundCryptoProfile,
         height: u64,
         state_generation: u64,
         history: Vec<BoundCryptoProfile>,
     ) -> Result<Self, ProfileError> {
-        if state_generation == 0 || history.len() > MAX_HISTORY_PROFILES {
-            return Err(ProfileError::InvalidBinding);
-        }
-        for (i, old) in history.iter().enumerate() {
-            if old.profile.is_candidate()
-                || old.binding.network != current.binding.network
-                || old.binding.genesis != current.binding.genesis
-                || old.binding.scope != current.binding.scope
-                || old.id == current.id
-                || history[..i].iter().any(|previous| previous.id == old.id)
-                || old
+        Self::require_history_limits(state_generation, history.len())?;
+        let history = history
+            .into_iter()
+            .map(|profile| {
+                let end = profile
                     .binding
                     .retirement_height
-                    .is_none_or(|end| end > current.binding.activation_height)
+                    .ok_or(ProfileError::InvalidBinding)?;
+                RetiredCryptoProfile::from_trusted_state(profile, end)
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        Self::from_trusted_state_with_retirements(current, height, state_generation, history)
+    }
+    /// The owner independently authenticates the effective retirement schedule.
+    /// Neither a received profile ID nor historical message bytes may choose it.
+    pub fn from_trusted_state_with_retirements(
+        current: BoundCryptoProfile,
+        height: u64,
+        state_generation: u64,
+        history: Vec<RetiredCryptoProfile>,
+    ) -> Result<Self, ProfileError> {
+        Self::require_history_limits(state_generation, history.len())?;
+        for (i, old) in history.iter().enumerate() {
+            let profile = &old.profile;
+            if profile.binding.network != current.binding.network
+                || profile.binding.genesis != current.binding.genesis
+                || profile.binding.scope != current.binding.scope
+                || profile.id == current.id
+                || history[..i]
+                    .iter()
+                    .any(|previous| previous.profile.id == profile.id)
+                || old.effective_retirement_height > current.binding.activation_height
                 || history[..i].iter().any(|previous| {
-                    old.binding.activation_height
-                        < previous.binding.retirement_height.unwrap_or(u64::MAX)
-                        && previous.binding.activation_height
-                            < old.binding.retirement_height.unwrap_or(u64::MAX)
+                    profile.binding.activation_height < previous.effective_retirement_height
+                        && previous.profile.binding.activation_height
+                            < old.effective_retirement_height
                 })
             {
                 return Err(ProfileError::InvalidBinding);
@@ -667,23 +739,31 @@ impl CryptoProfilePolicy {
             state_generation: self.state_generation,
         })
     }
+    /// Checks the registered interval and supplied height only. The owner must
+    /// separately authenticate that this record was accepted at that height.
+    /// The result carries no current-effect authority.
     pub fn select_historical(
         &self,
         claim: CryptoProfileId,
         record_height: u64,
     ) -> Result<HistoricalCryptoProfile<'_>, ProfileError> {
-        // A caller cannot label future or unaccepted bytes as historical.
         if record_height > self.height {
             return Err(ProfileError::Inactive);
         }
-        let selected = std::iter::once(&self.current)
-            .chain(self.history.iter())
-            .find(|entry| entry.id == claim)
-            .ok_or(ProfileError::UnknownProfile)?;
+        let (selected, active) = if self.current.id == claim {
+            (&self.current, self.current.active_at(record_height))
+        } else {
+            let retired = self
+                .history
+                .iter()
+                .find(|entry| entry.profile.id == claim)
+                .ok_or(ProfileError::UnknownProfile)?;
+            (&retired.profile, retired.active_at(record_height))
+        };
         if selected.profile.is_candidate() {
             return Err(ProfileError::CandidateOnly);
         }
-        if !selected.active_at(record_height) {
+        if !active {
             return Err(ProfileError::Inactive);
         }
         Ok(HistoricalCryptoProfile {

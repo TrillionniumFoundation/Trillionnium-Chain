@@ -67,14 +67,28 @@ The committed configuration includes:
 `CryptoProfilePolicy::from_trusted_state` must receive authenticated state from
 the real owner; it does not authenticate its constructor arguments. Incoming
 IDs are compared with that selection. They cannot negotiate a different suite.
-The policy bounds the historical list, rejects duplicate or overlapping
-windows, and requires old intervals to end by the current activation height.
+This existing API uses retirement heights declared in the immutable descriptor
+and continues to refuse open-ended historical descriptors.
+
+For a later retirement of an originally open-ended current profile, the owner
+registers its unchanged descriptor with `RetiredCryptoProfile::from_trusted_state`
+and supplies that record to `from_trusted_state_with_retirements`. The trusted
+effective end is exclusive, strictly after activation, no later than any
+predeclared end and no later than the current profile's activation. It is owner
+state, not a new field in the descriptor or historical message. The original
+configuration bytes and ID remain unchanged; rebinding the old descriptor with
+a newly declared end would produce a different ID and is not substituted here.
+Both policy paths share the same bounded-history, duplicate, network/genesis,
+scope and nonoverlapping effective-window checks. Authentication, persistence
+and migration of the retirement schedule remain the real owner's obligations.
+
 `select_current` refuses an inactive selection and **both candidate profiles**.
-`select_historical` only permits the registered profile at an already accepted
-height inside its original interval. Its result is a different type and cannot
-be passed to `recheck_current`. The latter checks the latest configuration and
-state generation; application roles, nonce, funds and final-use checks remain
-mandatory at the effect owner.
+`select_historical` checks the registered interval and that the supplied record
+height is no later than the policy height. It does not authenticate that a record
+was accepted; the owner must establish that separately. Its result is a different
+type and cannot be passed to `recheck_current`. The latter checks the latest
+configuration and state generation; application roles, nonce, funds and final-use
+checks remain mandatory at the effect owner.
 
 There is no current-87 activation API. A future activation requires the actual
 governance/state transition, migration/recovery and capacity evidence. Editing

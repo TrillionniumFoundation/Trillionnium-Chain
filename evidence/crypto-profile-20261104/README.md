@@ -1,5 +1,7 @@
 # 密码配置与 ML-DSA 参数观测证据
 
+The [fixed 59f continuation](continuation-59f75acd/README.md) preserves its own raw records, source comparison and fresh parameter observations. The original ad081 observations below remain historical. The later effective-retirement fix requires separate validation at its own committed source.
+
 本目录保存[密码配置安全契约](../../docs/security/CRYPTO_PROFILE_V1_20261104.md)
 对应的实现观测、命令记录和独立重算工具。本轮确实完成了核心组件、M06、源码检查和
 ML-DSA-65/87 参数实测；在 `ad081` 源码上，Node 测试构建及 workspace Clippy 未完成验收。

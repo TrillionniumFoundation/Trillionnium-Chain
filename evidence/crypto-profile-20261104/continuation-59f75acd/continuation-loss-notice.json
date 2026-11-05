@@ -1,0 +1,11 @@
+{
+  "schema": "trnm-transient-validation-loss-observation-v1",
+  "published_code_commit": "885b6e82a1470f6a35b55fa8d3c95af44d2afea8",
+  "published_original_observation_commit": "ad081dac8d2c1bccdf463bad82b9db7bd92477d3",
+  "published_raw_evidence_directory": "evidence/crypto-profile-20261104",
+  "retained_remote_head": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+  "observation": "Upon continuation, the task scratch directory was empty and former exec sessions were unavailable. Unpublished composed-validation files and external interoperability preparation were not recoverable from this directory.",
+  "prior_885_results_used_as_reproducible_current_acceptance": false,
+  "pending_prior_885_benchmark_terminal_status": "unknown",
+  "recovery": "Restore exact current remote source and create fresh validation evidence; preserve the already-published ad081 archive as historical evidence only."
+}
