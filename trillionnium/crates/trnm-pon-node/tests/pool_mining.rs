@@ -671,3 +671,102 @@ fn failed_post_search_revalidation_retains_elapsed_without_admission() {
         assert_eq!(owner.lock().unwrap().active().unwrap(), before);
     }
 }
+
+#[test]
+fn wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut node, settings, mut config, _) = setup(dir.path());
+    let now = ingress::now().unwrap();
+    let (model, input, _, _) = settings.bootstrap_task_material().unwrap();
+    let future = now + 60;
+    let mut parent = settings.genesis();
+    // The immediate tip is in the future, while the actual parent-first median
+    // stays in the past. Every ancestor is full native work and is admitted
+    // under the same real observed clock; no synthetic time or target is used.
+    let genesis_time = settings.genesis_time();
+    for timestamp in [
+        genesis_time + 10,
+        genesis_time + 20,
+        genesis_time + 30,
+        future,
+    ] {
+        let packet = node
+            .make_with_registered_material(
+                parent,
+                vec![],
+                config.miner,
+                timestamp,
+                4096,
+                &model,
+                &input,
+            )
+            .unwrap();
+        parent = node.admit(&packet, ingress::now().unwrap()).unwrap();
+        node.activate(parent).unwrap();
+    }
+    let raw = transfer(&settings, 0, 1, 2, 5);
+    node.pool_submit(raw.clone()).unwrap();
+    config.max_blocks = 1;
+    let owner = Arc::new(Mutex::new(node));
+    let report = run_pool_mining(
+        owner.clone(),
+        config,
+        Arc::new(AtomicBool::new(false)),
+        |_| Ok(()),
+    )
+    .unwrap();
+    assert_eq!(report.activated_blocks, 1);
+    assert_eq!(report.included_transactions, 1);
+    assert_eq!(report.stop_reason, "block-limit");
+    let node = owner.lock().unwrap();
+    let child = node.packet(node.active().unwrap().0).unwrap();
+    assert_eq!(child.header.parent, parent);
+    assert!(child.header.timestamp >= now);
+    assert!(child.header.timestamp <= ingress::now().unwrap());
+    assert!(child.header.timestamp < future);
+    assert_eq!(child.transactions, vec![raw]);
+    assert_eq!(node.next_nonce(development_public(0).unwrap()).unwrap(), 2);
+}
+
+#[test]
+fn wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut node, settings, mut config, _) = setup(dir.path());
+    let now = ingress::now().unwrap();
+    let (model, input, _, _) = settings.bootstrap_task_material().unwrap();
+    let future = now + 60;
+    let packet = node
+        .make_with_registered_material(
+            settings.genesis(),
+            vec![],
+            config.miner,
+            future,
+            4096,
+            &model,
+            &input,
+        )
+        .unwrap();
+    let parent = node.admit(&packet, ingress::now().unwrap()).unwrap();
+    node.activate(parent).unwrap();
+    let raw = transfer(&settings, 0, 1, 2, 5);
+    node.pool_submit(raw).unwrap();
+    // With [future, genesis], the original upper median is future. The miner
+    // must keep its real clock and remain idle rather than synthesize future+1.
+    config.runtime = Duration::from_millis(150);
+    config.max_blocks = 1;
+    let owner = Arc::new(Mutex::new(node));
+    let report = run_pool_mining(
+        owner.clone(),
+        config,
+        Arc::new(AtomicBool::new(false)),
+        |_| panic!("native median must prevent proof search"),
+    )
+    .unwrap();
+    assert_eq!(report.activated_blocks, 0);
+    assert_eq!(report.attempted_searches, 0);
+    assert_eq!(report.stop_reason, "runtime");
+    let node = owner.lock().unwrap();
+    assert_eq!(node.active().unwrap().0, parent);
+    assert_eq!(node.next_nonce(development_public(0).unwrap()).unwrap(), 1);
+    assert_eq!(node.pool_status_snapshot().unwrap().retained_records, 1);
+}

@@ -9,6 +9,7 @@ use trnm_protocol::pon_wire::hash;
 
 mod header_timestamp;
 mod header_window;
+mod materialization_control;
 mod parallel_preparation;
 mod read_epoch;
 mod scale_observation;
@@ -150,7 +151,9 @@ fn native_growth_v2_cold_journal_streams_real_history_and_deep_reorg() {
         (49, 49)
     );
     assert_eq!(observation.peak_event_rows, 2);
-    eprintln!("growth_cold_journal_actual_rows old_vectors=(73,49) new={observation:?}; excludes SQLite pages/RSS/other cold audit collections");
+    eprintln!(
+        "growth_cold_journal_actual_rows old_vectors=(73,49) new={observation:?}; excludes SQLite pages/RSS/other cold audit collections"
+    );
     tx.rollback().unwrap();
     let faults = [
         "UPDATE events SET generation=0 WHERE generation=1",
