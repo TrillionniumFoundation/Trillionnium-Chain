@@ -358,3 +358,129 @@ fn extra_record_is_rejected_before_hash_replay() {
     assert_eq!(fs::read(log).unwrap(), doubled);
     assert_eq!(fs::read(anchor).unwrap(), before_anchor);
 }
+
+#[test]
+fn structural_reopen_cannot_bypass_recovery_through_direct_owner_methods() {
+    let directory = private_tempdir();
+    let log = directory.path().join("checkpoint.log");
+    let anchor = directory.path().join(".checkpoint.log.head-v2");
+    let first = checkpoint(0, [0; 32]);
+    let second = checkpoint(1, first.checkpoint_checksum());
+    let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+    authority.compare_and_advance_checked(None, first).unwrap();
+    let old_log = fs::read(&log).unwrap();
+    let old_anchor = fs::read(&anchor).unwrap();
+    authority
+        .compare_and_advance_checked(Some(first), second)
+        .unwrap();
+    let fresh_pin = authority.journal_checkpoint_v1().unwrap();
+    drop(authority);
+
+    fs::write(&log, &old_log).unwrap();
+    fs::write(&anchor, &old_anchor).unwrap();
+    assert!(
+        ExternalCheckpointAuthorityV2::reopen_with_external_checkpoint(&log, fresh_pin).is_err()
+    );
+
+    // A caller must not obtain the same runtime authority by choosing the
+    // compatibility constructor after the authenticated recovery rejects.
+    let mut structural = ExternalCheckpointAuthorityV2::open(&log).unwrap();
+    assert!(structural.load_checked([1; 32]).is_err());
+    assert!(structural
+        .compare_and_advance_checked(Some(first), second)
+        .is_err());
+    assert!(structural.journal_checkpoint_v1().is_err());
+    assert_eq!(fs::read(log).unwrap(), old_log);
+    assert_eq!(fs::read(anchor).unwrap(), old_anchor);
+}
+
+#[test]
+fn live_same_inode_rollback_cannot_export_or_extend_cached_history() {
+    use std::os::unix::fs::MetadataExt;
+
+    let directory = private_tempdir();
+    let log = directory.path().join("checkpoint.log");
+    let anchor = directory.path().join(".checkpoint.log.head-v2");
+    let first = checkpoint(0, [0; 32]);
+    let second = checkpoint(1, first.checkpoint_checksum());
+    let third = checkpoint(2, second.checkpoint_checksum());
+    let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+    authority.compare_and_advance_checked(None, first).unwrap();
+    let old_log = fs::read(&log).unwrap();
+    let old_anchor = fs::read(&anchor).unwrap();
+    authority
+        .compare_and_advance_checked(Some(first), second)
+        .unwrap();
+    let inode = fs::metadata(&log).unwrap().ino();
+
+    fs::write(&log, &old_log).unwrap();
+    fs::write(&anchor, &old_anchor).unwrap();
+    assert_eq!(fs::metadata(&log).unwrap().ino(), inode);
+    assert!(authority.journal_checkpoint_v1().is_err());
+    assert!(authority.load_checked([1; 32]).is_err());
+    assert!(authority
+        .compare_and_advance_checked(Some(second), third)
+        .is_err());
+    assert_eq!(fs::read(log).unwrap(), old_log);
+    assert_eq!(fs::read(anchor).unwrap(), old_anchor);
+}
+
+#[test]
+fn live_same_length_prefix_edit_cannot_export_a_cached_journal_pin() {
+    use std::os::unix::fs::MetadataExt;
+
+    let directory = private_tempdir();
+    let log = directory.path().join("checkpoint.log");
+    let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+    let first = checkpoint(0, [0; 32]);
+    let second = checkpoint(1, first.checkpoint_checksum());
+    authority.compare_and_advance_checked(None, first).unwrap();
+    authority
+        .compare_and_advance_checked(Some(first), second)
+        .unwrap();
+    let before = fs::metadata(&log).unwrap();
+    let mut corrupt = fs::read(&log).unwrap();
+    corrupt[100] ^= 1;
+    fs::write(&log, &corrupt).unwrap();
+    let after = fs::metadata(&log).unwrap();
+    assert_eq!((before.ino(), before.len()), (after.ino(), after.len()));
+    assert!(authority.journal_checkpoint_v1().is_err());
+    assert!(authority.load_checked([1; 32]).is_err());
+    assert_eq!(fs::read(log).unwrap(), corrupt);
+}
+
+#[test]
+fn live_same_inode_head_rollback_is_rejected_without_repair() {
+    use std::os::unix::fs::MetadataExt;
+
+    let directory = private_tempdir();
+    let log = directory.path().join("checkpoint.log");
+    let anchor = directory.path().join(".checkpoint.log.head-v2");
+    let first = checkpoint(0, [0; 32]);
+    let second = checkpoint(1, first.checkpoint_checksum());
+    let third = checkpoint(2, second.checkpoint_checksum());
+    let mut authority = ExternalCheckpointAuthorityV2::register_new(&log).unwrap();
+    authority.compare_and_advance_checked(None, first).unwrap();
+    let old_anchor = fs::read(&anchor).unwrap();
+    authority
+        .compare_and_advance_checked(Some(first), second)
+        .unwrap();
+    let durable_log = fs::read(&log).unwrap();
+    let before = fs::metadata(&anchor).unwrap();
+    fs::write(&anchor, &old_anchor).unwrap();
+    let after = fs::metadata(&anchor).unwrap();
+    assert_eq!((before.ino(), before.len()), (after.ino(), after.len()));
+
+    assert!(matches!(
+        authority.journal_checkpoint_v1(),
+        Err(ExternalCheckpointAuthorityErrorV2::InvalidLog(
+            "live head differs from retained checkpoint"
+        ))
+    ));
+    assert!(authority.load_checked([1; 32]).is_err());
+    assert!(authority
+        .compare_and_advance_checked(Some(second), third)
+        .is_err());
+    assert_eq!(fs::read(log).unwrap(), durable_log);
+    assert_eq!(fs::read(anchor).unwrap(), old_anchor);
+}

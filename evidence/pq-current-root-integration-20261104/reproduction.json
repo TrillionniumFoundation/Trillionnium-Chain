@@ -1,0 +1,3010 @@
+{
+  "archive": {
+    "bytes": 217814,
+    "members": [
+      {
+        "bytes": 893,
+        "path": "cancelled/final-quantum-source-contract.json",
+        "sha256": "1dd4b75bc3fd05082c7b02c3006169c60e35386015c6652a29167711689e1a6d"
+      },
+      {
+        "bytes": 8739,
+        "path": "cancelled/final-quantum-source-contract.log",
+        "sha256": "1d6d06e39c27183f4ea9f3a6795d9afd0a8f7601fd55ba7be484383f90cc25d6"
+      },
+      {
+        "bytes": 2354,
+        "path": "final/combined-cargo-graph.json",
+        "sha256": "b9e6887630141eec1f13defd9527b0d67c78cc2420764bd2bf7bff9bb5e83d21"
+      },
+      {
+        "bytes": 804633,
+        "path": "final/combined-cargo-graph.log",
+        "sha256": "2aaa3148e0790126e725d9562e22b2eae066b20624944d84eaf4af4067f4fe03"
+      },
+      {
+        "bytes": 2258,
+        "path": "final/combined-corpus.json",
+        "sha256": "57c0f3bbb87767cf470ad7ff2b347609f93bf3dd04bbc373a21e36b74e8b2bb2"
+      },
+      {
+        "bytes": 557,
+        "path": "final/combined-corpus.log",
+        "sha256": "8755be288cdeba7a0383c636e6722ea865a283af177aed55b0412d0e91012dc5"
+      },
+      {
+        "bytes": 2309,
+        "path": "final/combined-fmt.json",
+        "sha256": "543e09e1e28020a97be959633421bd015421f429bb4da001d30a76256297f054"
+      },
+      {
+        "bytes": 0,
+        "path": "final/combined-fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 2279,
+        "path": "final/combined-inventory.json",
+        "sha256": "dfeb234dcfcf488ac24b2c641e6e1e99384626c43fb8a89612dbd5d46853a5e5"
+      },
+      {
+        "bytes": 35,
+        "path": "final/combined-inventory.log",
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "bytes": 2578,
+        "path": "final/combined-native-clippy.json",
+        "sha256": "4ed2e1cdd9150561a5636c0a5d7f452aa37cb5b03120cd3d54b3b5470ce69dac"
+      },
+      {
+        "bytes": 1236,
+        "path": "final/combined-native-clippy.log",
+        "sha256": "61a1485836588d083b1a608e2408320be9630ea18b04926c79d83f393e4ed227"
+      },
+      {
+        "bytes": 2250,
+        "path": "final/combined-repository.json",
+        "sha256": "7cb76ecd8a3379f5716f4185ca9b59ca178bf31cf49010b7ec03a4446da389b9"
+      },
+      {
+        "bytes": 307,
+        "path": "final/combined-repository.log",
+        "sha256": "b8966a8bbe41719afd782ba776dea4187e6f542415884d0639523622f7feb7ba"
+      },
+      {
+        "bytes": 2416,
+        "path": "final/combined-source-controls.json",
+        "sha256": "cb85eb8e5b8228ddf028bd404854fe9fed34ef6c595ba92d111d3d0183861b98"
+      },
+      {
+        "bytes": 16401,
+        "path": "final/combined-source-controls.log",
+        "sha256": "9ed78701da1b673f2dafc55e3f3469a8601f17e4779b5600ff3a2f565f590d39"
+      },
+      {
+        "bytes": 2463,
+        "path": "final/diagnostic-pq-client-no-debug.json",
+        "sha256": "6a5c1a3ce624f942549f0733ba3cff23274e5293e45f3ad04b9647b700c64283"
+      },
+      {
+        "bytes": 843,
+        "path": "final/diagnostic-pq-client-no-debug.log",
+        "sha256": "3a7497fb47efebcccddaa31213963734a11d61fc76aebbd8fe77b027e3263393"
+      },
+      {
+        "bytes": 2424,
+        "path": "final/final-authority.json",
+        "sha256": "e083971f6e229293dbe682936f6179c480149025641b6eba2e33989853b982b3"
+      },
+      {
+        "bytes": 41509,
+        "path": "final/final-authority.log",
+        "sha256": "f02dad81717b62f3147aacbd1e337fafcea8e80061f7d2963cd6d1dbf27a9a12"
+      },
+      {
+        "bytes": 2108,
+        "path": "final/final-cargo-graph.json",
+        "sha256": "6dca77c3f655eb0a538755bde63ebcc72059f2af40f21da62b458803cb7f019b"
+      },
+      {
+        "bytes": 804737,
+        "path": "final/final-cargo-graph.log",
+        "sha256": "ae20bee6c17fb1ed90b1fc0ce9ddce9848a151de2b67007d1c0ff596364ceff8"
+      },
+      {
+        "bytes": 2198,
+        "path": "final/final-checkpoint-bin.json",
+        "sha256": "47bab88ba2136e20890b3767ecc5556748255a4228cca5fd3b2de48d7f0a2b96"
+      },
+      {
+        "bytes": 1933,
+        "path": "final/final-checkpoint-bin.log",
+        "sha256": "c4130ca22a2dae5fe778e6ca691ce4ec18ed95b878f7cb5130b815f0e6f6a663"
+      },
+      {
+        "bytes": 2191,
+        "path": "final/final-checkpoint-cli.json",
+        "sha256": "14fa041e9e59df400abc6fd117fb8290a66d603d2349a96c58ec356ef58412a9"
+      },
+      {
+        "bytes": 540,
+        "path": "final/final-checkpoint-cli.log",
+        "sha256": "3bcc3657f3ffa014adf45e3f3e3d3bcfa4a8f1e78677f7cd0a4c7a2ad56c25fa"
+      },
+      {
+        "bytes": 2181,
+        "path": "final/final-checkpoint-cold.json",
+        "sha256": "7cce13a44b5f541d5d20a47d5e4169eb7b233eb0c3986028bac826ab3994ae7b"
+      },
+      {
+        "bytes": 1365,
+        "path": "final/final-checkpoint-cold.log",
+        "sha256": "b3d2f783256bcf425eb442ebb40a5cb2c93b3caa2e2d0af458fc15b8f3f54ce9"
+      },
+      {
+        "bytes": 1944,
+        "path": "final/final-ci-contract.json",
+        "sha256": "02d7ff6f755cc0fb0c03a93017b1f23257f5d2b0557c481cb893adadc07096d8"
+      },
+      {
+        "bytes": 16318,
+        "path": "final/final-ci-contract.log",
+        "sha256": "a569be18663db9e9b2d91524f532341e69b9c8fa2c451d4d344bc9a3749e45c0"
+      },
+      {
+        "bytes": 2062,
+        "path": "final/final-fmt.json",
+        "sha256": "c8142b5d26a00f34c455042e2e305836566028447719348468e0935d1041c91b"
+      },
+      {
+        "bytes": 0,
+        "path": "final/final-fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 2544,
+        "path": "final/final-native-clippy.json",
+        "sha256": "9767a98ae4180c66633c0fe3ce291f7a0f232dfd4e2be902027f573b38911deb"
+      },
+      {
+        "bytes": 2171,
+        "path": "final/final-native-clippy.log",
+        "sha256": "fdebd8b449bf52f51482bef9ecaf8c43053c4ba0fd698254730a2e16c1a8cbfa"
+      },
+      {
+        "bytes": 1967,
+        "path": "final/final-pq-authority-negatives.json",
+        "sha256": "c38186eb41d1864a6dca48e46f99442372482f206ff48607c0a99f61832e30a5"
+      },
+      {
+        "bytes": 110,
+        "path": "final/final-pq-authority-negatives.log",
+        "sha256": "77b731ed6f28baf759064b35e534f41d177a9201b65ad0ac24641b4171db48e6"
+      },
+      {
+        "bytes": 1958,
+        "path": "final/final-pq-claim-negatives.json",
+        "sha256": "98fe5a04066911af40859e68854f305e7b12edbf22fd00749ed8d37fb7acd1bd"
+      },
+      {
+        "bytes": 121,
+        "path": "final/final-pq-claim-negatives.log",
+        "sha256": "e5e420745a5e887236e4d7018272781f25971329bbb5291067946464d23273c4"
+      },
+      {
+        "bytes": 2383,
+        "path": "final/final-pq-client.json",
+        "sha256": "f38bd3f963e4825eba2b0fb9524e749c10ba882da1c84c21942566b9543f3f7e"
+      },
+      {
+        "bytes": 4733,
+        "path": "final/final-pq-client.log",
+        "sha256": "ed821f1a396faffa4025ded61302614776c7c1b840c5ab5ab8230f431ab5547c"
+      },
+      {
+        "bytes": 1963,
+        "path": "final/final-pq-source-negatives.json",
+        "sha256": "298d9cab58bbb9603a73367585566cec2538f44e938f9ab07cb7c9890fd66249"
+      },
+      {
+        "bytes": 135,
+        "path": "final/final-pq-source-negatives.log",
+        "sha256": "87f4e083084d92a949d70d2654af91927e9ce6844ad3b202f6b1126218f166cf"
+      },
+      {
+        "bytes": 2036,
+        "path": "final/final-quantum.json",
+        "sha256": "63610fdfd2a744119c688ca3553f19eb335935d4d1ebc866938d140703eab7a6"
+      },
+      {
+        "bytes": 3308,
+        "path": "final/final-quantum.log",
+        "sha256": "fd0d112f3633dc155795f9cb61087149aa2bdb4010d8c1bd50a45cedb2c63a34"
+      },
+      {
+        "bytes": 1962,
+        "path": "final/final-recorder-negatives.json",
+        "sha256": "8c5cd15249a2afbaf655147f1ef9192c63daa73d28d59cffefd01e989af45e0e"
+      },
+      {
+        "bytes": 576,
+        "path": "final/final-recorder-negatives.log",
+        "sha256": "618b34986f9676a458e521498c444be940484295d596f9aacbb87b752fb69fcb"
+      },
+      {
+        "bytes": 2248,
+        "path": "final/final-repository.json",
+        "sha256": "7c000bde4c282bbba12500b1146e4129b0472ceea784a8ae1cf3cf00125e250c"
+      },
+      {
+        "bytes": 307,
+        "path": "final/final-repository.log",
+        "sha256": "f222bec068d89a23aea1e0c8498838cb8102cb73a00cb8381504249cc7f091b7"
+      },
+      {
+        "bytes": 1956,
+        "path": "final/final-source-integrity.json",
+        "sha256": "ad3bba4a556ede7a00d471f1b081ed18d5d7839279a59358d4266814f6cc5e31"
+      },
+      {
+        "bytes": 6899,
+        "path": "final/final-source-integrity.log",
+        "sha256": "73bd1dac079610847f30c98393bb18b6d3bd56ce3c4274e999f186a7477cf7a4"
+      },
+      {
+        "bytes": 16363,
+        "path": "prior-authority/authority-integration.patch",
+        "sha256": "c559528a3a03de1d647868117bb62f419a532229411a2953e0ce44967189ec82"
+      },
+      {
+        "bytes": 2,
+        "path": "prior-authority/clippy.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "bytes": 2206,
+        "path": "prior-authority/clippy.log",
+        "sha256": "26e7ba485646649c5144539019f7027adf6c3c79ce34e47030d7eff1d62777e0"
+      },
+      {
+        "bytes": 2,
+        "path": "prior-authority/format.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "bytes": 0,
+        "path": "prior-authority/format.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 2,
+        "path": "prior-authority/green-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "bytes": 41391,
+        "path": "prior-authority/green-full.log",
+        "sha256": "ea14a1135799e65bcae82ad6abb3c95b1fd42b46170b2eb94f868b6557f81e00"
+      },
+      {
+        "bytes": 3544,
+        "path": "prior-authority/m09-red-test.patch",
+        "sha256": "02eea1c203f8fb7d77e7ee09c92e61a4c05185af4ea4e4429b7df254cd1b0fdb"
+      },
+      {
+        "bytes": 4,
+        "path": "prior-authority/m09-red.exit",
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      {
+        "bytes": 3490,
+        "path": "prior-authority/m09-red.log",
+        "sha256": "a74f20b0555e17e19dd3da8b6928619be5242263601dbf6722d3257ec4156c97"
+      },
+      {
+        "bytes": 5490,
+        "path": "prior-authority/m15-red-test.patch",
+        "sha256": "7a70a57ddbd2237c8bc2b54533f3764656ec34d7a073977db36896901ce3ffc5"
+      },
+      {
+        "bytes": 4,
+        "path": "prior-authority/red.exit",
+        "sha256": "39b8dc3fc8b44765c8e6f1adee04c5b465e555ab791cc42d0d9e810d5b64297c"
+      },
+      {
+        "bytes": 4118,
+        "path": "prior-authority/red.log",
+        "sha256": "efae5438d3db4200524471313ac27476f69d8d9544b5f8e7f92ef3d4346fe4e5"
+      },
+      {
+        "bytes": 1764,
+        "path": "prior-authority/source-provenance.json",
+        "sha256": "e2a21d9d2e61446b72b02b12af7615d94ab571ffc8dfcc6955e4f605749b8970"
+      },
+      {
+        "bytes": 4538,
+        "path": "prior-authority/validation.json",
+        "sha256": "6780ccdfba7dda9ef708546e83bedcf9d37b171f6583deb8c686ef6f34e8b0bd"
+      },
+      {
+        "bytes": 1929,
+        "path": "prior-recovery/checkpoint-green.log",
+        "sha256": "4e7358f58e6dc88be42949f5b08868237072169a8b52e99d5e9d31f1d5f62d4c"
+      },
+      {
+        "bytes": 427,
+        "path": "prior-recovery/checkpoint-red-source.json",
+        "sha256": "df3e4562ce5874f881efce9c422d6d25997e534178ca5339db7c994e572be17c"
+      },
+      {
+        "bytes": 3908,
+        "path": "prior-recovery/checkpoint-red.log",
+        "sha256": "0f90bea34d553b98e92ba13c464fb7072f67b60baa9fa63d916df85611cfbbad"
+      },
+      {
+        "bytes": 86,
+        "path": "prior-recovery/pq-client-loopback-probe.json",
+        "sha256": "86f4ad31cf396046504fa739f440877ffee287bab38ad58bd4c3636c6416fba8"
+      },
+      {
+        "bytes": 12415,
+        "path": "quantum-red/before-quantum_daa_campaign.py",
+        "sha256": "8b47f4364cdbe763da137a1f451701e6489238a77aad95c98953609cfd051837"
+      },
+      {
+        "bytes": 3999,
+        "path": "quantum-red/quantum-replace-red-replay.json",
+        "sha256": "725efcf68e2d7752a3474660cbfd15c54c6bf33588e4dbe1b361160885a571ee"
+      },
+      {
+        "bytes": 3200,
+        "path": "quantum-red/quantum-replace-red-replay.log",
+        "sha256": "561829395846fe68d487a14489fecefd493b3ea21732403b6795f952030e1f26"
+      },
+      {
+        "bytes": 1165,
+        "path": "source-preservation/authority-object-recovery.json",
+        "sha256": "89154fddd6c33edc89f1e001d475c99858dd7aba862c1952e3fec2ab4fc9ed4d"
+      },
+      {
+        "bytes": 22738,
+        "path": "source-preservation/combined-preservation-audit.json",
+        "sha256": "bf3053eb6cd89c846e30968c12a4ef7302555c51cdffae2872d31919bad33148"
+      },
+      {
+        "bytes": 746,
+        "path": "source-preservation/combined-source-preparation.json",
+        "sha256": "b443b09efaf6a23eb2e376ae9cc5813dc128f2e674811b03bf99a57fe3039507"
+      },
+      {
+        "bytes": 905,
+        "path": "source-preservation/combined-source.json",
+        "sha256": "e3e90c1184beb70ca65c7ec575914b7c3365517600469aa98d9ba11ebb732aad"
+      },
+      {
+        "bytes": 57836,
+        "path": "source-preservation/incoming-04be-compare.json",
+        "sha256": "7f3cd866ad9aa77334cc253ce70eb9bddcfcbd9687b5ba4feb25518a4c8111cf"
+      },
+      {
+        "bytes": 6509,
+        "path": "source-preservation/incoming-04be-object-restoration.json",
+        "sha256": "d26cdfcfdd20ed547fb0ee2af225d6e0b1325356086559497fd97609d2d1eab8"
+      },
+      {
+        "bytes": 7542,
+        "path": "source-preservation/incoming-04be-old-blob-restoration.json",
+        "sha256": "6d9e40151c6c8b8a5972af8af53d72c1647a50081b7d97b629e87d0d0861fbcb"
+      },
+      {
+        "bytes": 32000,
+        "path": "source-preservation/incoming-2e7-object-restoration.json",
+        "sha256": "b47c35aeb24909518476b1b79fd20a82d00fdb73c05c28696425038c0178013d"
+      },
+      {
+        "bytes": 4369,
+        "path": "source-preservation/publication-combined-code.json",
+        "sha256": "cb1f3c06f1c62d55b7484037294badd7a640ab8f01bf3144c1b2ac025705640b"
+      },
+      {
+        "bytes": 6536,
+        "path": "source-preservation/publishing-source.json",
+        "sha256": "e136e1c4a36d1b012f6f8c799b1caa32a91a322213c12cf8526dc180934035fe"
+      },
+      {
+        "bytes": 3946,
+        "path": "source-preservation/recovered-commit-metadata.json",
+        "sha256": "7f21f8bc98c7efde54deeebb0b9f92cb3bea091515ae428ec8175e91f2b1948a"
+      },
+      {
+        "bytes": 208,
+        "path": "source-preservation/recovered-frozen-object-store.json",
+        "sha256": "45b3f55bfbe56f414ba7706fdf017672cbb115b21db46ab4d69ec039378ebc2f"
+      },
+      {
+        "bytes": 141,
+        "path": "source-preservation/recovered-merge-object-store.json",
+        "sha256": "1db5f26e686a3f63563aa56d288119a591c47ea5aadf05f06a044f229eb78be9"
+      }
+    ],
+    "path": "verification-records.tar.gz",
+    "sha256": "07bad156351ad39895ad0a05e027104976148c03bf7effc3fd977077fe68c039",
+    "uncompressed_tar_bytes": 2099200
+  },
+  "base_commit": "47b4a62463d8e1371a175c74196d52d99c5fccb8",
+  "cargo_lock_sha256": "00f3573879f3da7d5a702a8bc13245196bbfd53b86b0b6eb19c51f14887cef61",
+  "code_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+  "code_tree": "138f154b90666416ae4968009655b733209b9061",
+  "combined_source": {
+    "commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+    "native_e05_results_inherited_as_new_execution": false,
+    "non_evidence_difference_from_native_tested_e05": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+    ],
+    "parents": [
+      "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+      "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0"
+    ],
+    "tree": "138f154b90666416ae4968009655b733209b9061"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "label": "final-source-integrity",
+      "log_member": "final/final-source-integrity.log",
+      "log_sha256": "73bd1dac079610847f30c98393bb18b6d3bd56ce3c4274e999f186a7477cf7a4",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        43
+      ],
+      "receipt_member": "final/final-source-integrity.json",
+      "receipt_sha256": "ad3bba4a556ede7a00d471f1b081ed18d5d7839279a59358d4266814f6cc5e31",
+      "rust_summaries": [],
+      "scope": "source-integrity controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "label": "final-pq-source-negatives",
+      "log_member": "final/final-pq-source-negatives.log",
+      "log_sha256": "87f4e083084d92a949d70d2654af91927e9ce6844ad3b202f6b1126218f166cf",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        35
+      ],
+      "receipt_member": "final/final-pq-source-negatives.json",
+      "receipt_sha256": "298d9cab58bbb9603a73367585566cec2538f44e938f9ab07cb7c9890fd66249",
+      "rust_summaries": [],
+      "scope": "PQ source controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_record_pq_native_command.py"
+      ],
+      "exit_code": 0,
+      "label": "final-recorder-negatives",
+      "log_member": "final/final-recorder-negatives.log",
+      "log_sha256": "618b34986f9676a458e521498c444be940484295d596f9aacbb87b752fb69fcb",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        4
+      ],
+      "receipt_member": "final/final-recorder-negatives.json",
+      "receipt_sha256": "8c5cd15249a2afbaf655147f1ef9192c63daa73d28d59cffefd01e989af45e0e",
+      "rust_summaries": [],
+      "scope": "recorder negative controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "exit_code": 0,
+      "label": "final-pq-claim-negatives",
+      "log_member": "final/final-pq-claim-negatives.log",
+      "log_sha256": "e5e420745a5e887236e4d7018272781f25971329bbb5291067946464d23273c4",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        22
+      ],
+      "receipt_member": "final/final-pq-claim-negatives.json",
+      "receipt_sha256": "98fe5a04066911af40859e68854f305e7b12edbf22fd00749ed8d37fb7acd1bd",
+      "rust_summaries": [],
+      "scope": "whole-chain claim controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_authority_surface_scan.py"
+      ],
+      "exit_code": 0,
+      "label": "final-pq-authority-negatives",
+      "log_member": "final/final-pq-authority-negatives.log",
+      "log_sha256": "77b731ed6f28baf759064b35e534f41d177a9201b65ad0ac24641b4171db48e6",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        11
+      ],
+      "receipt_member": "final/final-pq-authority-negatives.json",
+      "receipt_sha256": "c38186eb41d1864a6dca48e46f99442372482f206ff48607c0a99f61832e30a5",
+      "rust_summaries": [],
+      "scope": "authority-inventory controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "label": "final-ci-contract",
+      "log_member": "final/final-ci-contract.log",
+      "log_sha256": "a569be18663db9e9b2d91524f532341e69b9c8fa2c451d4d344bc9a3749e45c0",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        98
+      ],
+      "receipt_member": "final/final-ci-contract.json",
+      "receipt_sha256": "02d7ff6f755cc0fb0c03a93017b1f23257f5d2b0557c481cb893adadc07096d8",
+      "rust_summaries": [],
+      "scope": "CI contract controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_quantum_daa_model.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "final-quantum",
+      "log_member": "final/final-quantum.log",
+      "log_sha256": "fd0d112f3633dc155795f9cb61087149aa2bdb4010d8c1bd50a45cedb2c63a34",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        19
+      ],
+      "receipt_member": "final/final-quantum.json",
+      "receipt_sha256": "63610fdfd2a744119c688ca3553f19eb335935d4d1ebc866938d140703eab7a6",
+      "rust_summaries": [],
+      "scope": "conditional DAA model and report-identity controls",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--test",
+        "cold_recovery",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "label": "final-checkpoint-cold",
+      "log_member": "final/final-checkpoint-cold.log",
+      "log_sha256": "b3d2f783256bcf425eb442ebb40a5cb2c93b3caa2e2d0af458fc15b8f3f54ce9",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-checkpoint-cold.json",
+      "receipt_sha256": "7cce13a44b5f541d5d20a47d5e4169eb7b233eb0c3986028bac826ab3994ae7b",
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 15,
+          "status": "ok"
+        }
+      ],
+      "scope": "cold recovery native controls",
+      "status": "command_succeeded",
+      "test_names": [
+        {
+          "name": "cold_recovery_rejects_self_consistent_old_complete_image",
+          "outcome": "ok"
+        },
+        {
+          "name": "export_is_exact_new_domain_and_cannot_overwrite_an_external_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "external_mismatch_is_rejected_before_stale_local_head_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "extra_record_is_rejected_before_hash_replay",
+          "outcome": "ok"
+        },
+        {
+          "name": "full_journal_pin_covers_removal_of_another_scope",
+          "outcome": "ok"
+        },
+        {
+          "name": "healthy_existing_journal_reopens_with_exact_external_checkpoint",
+          "outcome": "ok"
+        },
+        {
+          "name": "impossible_external_count_is_rejected_without_replay_or_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "live_same_inode_head_rollback_is_rejected_without_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "live_same_inode_rollback_cannot_export_or_extend_cached_history",
+          "outcome": "ok"
+        },
+        {
+          "name": "live_same_length_prefix_edit_cannot_export_a_cached_journal_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "pinned_reopen_never_reseeds_missing_existing_files",
+          "outcome": "ok"
+        },
+        {
+          "name": "register_new_rejects_existing_even_empty_namespaces",
+          "outcome": "ok"
+        },
+        {
+          "name": "same_count_different_root_is_not_a_fresh_recovery",
+          "outcome": "ok"
+        },
+        {
+          "name": "structural_open_cannot_serve_or_export_a_freshness_claim",
+          "outcome": "ok"
+        },
+        {
+          "name": "structural_reopen_cannot_bypass_recovery_through_direct_owner_methods",
+          "outcome": "ok"
+        }
+      ],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--bin",
+        "trnm-external-node-checkpoint-v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "label": "final-checkpoint-bin",
+      "log_member": "final/final-checkpoint-bin.log",
+      "log_sha256": "c4130ca22a2dae5fe778e6ca691ce4ec18ed95b878f7cb5130b815f0e6f6a663",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-checkpoint-bin.json",
+      "receipt_sha256": "47bab88ba2136e20890b3767ecc5556748255a4228cca5fd3b2de48d7f0a2b96",
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 15,
+          "status": "ok"
+        }
+      ],
+      "scope": "checkpoint binary module controls",
+      "status": "command_succeeded",
+      "test_names": [
+        {
+          "name": "node_commit_ledger_v1::tests::abandoned_partial_temp_converges_to_source",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::durable_successor_reopens_exactly",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::journal_ahead_of_head_recovers_to_exact_target",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::live_root_records_lock_and_anchor_replacements_fail_closed_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::missing_record_and_head_ahead_fail_before_repair_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::record_and_temp_links_are_rejected_without_deleting_targets_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::third_state_is_rejected",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1",
+          "outcome": "ok"
+        },
+        {
+          "name": "node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1",
+          "outcome": "ok"
+        }
+      ],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--test",
+        "cross_process",
+        "cli_",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "label": "final-checkpoint-cli",
+      "log_member": "final/final-checkpoint-cli.log",
+      "log_sha256": "3bcc3657f3ffa014adf45e3f3e3d3bcfa4a8f1e78677f7cd0a4c7a2ad56c25fa",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-checkpoint-cli.json",
+      "receipt_sha256": "14fa041e9e59df400abc6fd117fb8290a66d603d2349a96c58ec356ef58412a9",
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered": 3,
+          "ignored": 0,
+          "passed": 3,
+          "status": "ok"
+        }
+      ],
+      "scope": "CLI refusal controls; three positive socket cases filtered",
+      "status": "command_succeeded",
+      "test_names": [
+        {
+          "name": "cli_missing_expected_and_legacy_implicit_start_fail_without_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_rejects_complete_old_image_before_attempting_transport",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_second_process_cannot_open_while_the_owner_holds_its_lock",
+          "outcome": "ok"
+        }
+      ],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-release-bundle",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "label": "final-native-clippy",
+      "log_member": "final/final-native-clippy.log",
+      "log_sha256": "fdebd8b449bf52f51482bef9ecaf8c43053c4ba0fd698254730a2e16c1a8cbfa",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-native-clippy.json",
+      "receipt_sha256": "9767a98ae4180c66633c0fe3ce291f7a0f232dfd4e2be902027f573b38911deb",
+      "rust_summaries": [],
+      "scope": "four specified packages; all targets/features; warnings denied",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "final-fmt",
+      "log_member": "final/final-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-fmt.json",
+      "receipt_sha256": "c8142b5d26a00f34c455042e2e305836566028447719348468e0935d1041c91b",
+      "rust_summaries": [],
+      "scope": "full workspace formatting",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "/root/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "label": "final-cargo-graph",
+      "log_member": "final/final-cargo-graph.log",
+      "log_sha256": "ae20bee6c17fb1ed90b1fc0ce9ddce9848a151de2b67007d1c0ff596364ceff8",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-cargo-graph.json",
+      "receipt_sha256": "6dca77c3f655eb0a538755bde63ebcc72059f2af40f21da62b458803cb7f019b",
+      "rust_summaries": [],
+      "scope": "locked offline default Cargo graph",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "label": "final-repository",
+      "log_member": "final/final-repository.log",
+      "log_sha256": "f222bec068d89a23aea1e0c8498838cb8102cb73a00cb8381504249cc7f091b7",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-repository.json",
+      "receipt_sha256": "7c000bde4c282bbba12500b1146e4129b0472ceea784a8ae1cf3cf00125e250c",
+      "rust_summaries": [],
+      "scope": "repository, ownership and Markdown link checks after local object recovery",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "pq_client_"
+      ],
+      "exit_code": 101,
+      "label": "final-pq-client",
+      "log_member": "final/final-pq-client.log",
+      "log_sha256": "ed821f1a396faffa4025ded61302614776c7c1b840c5ab5ab8230f431ab5547c",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-pq-client.json",
+      "receipt_sha256": "f38bd3f963e4825eba2b0fb9524e749c10ba882da1c84c21942566b9543f3f7e",
+      "rust_summaries": [],
+      "scope": "canonical Node test build; no native test observed executing",
+      "status": "command_failed",
+      "test_names": [],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-data-availability",
+        "-p",
+        "trnm-release-bundle",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "label": "final-authority",
+      "log_member": "final/final-authority.log",
+      "log_sha256": "f02dad81717b62f3147aacbd1e337fafcea8e80061f7d2963cd6d1dbf27a9a12",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/final-authority.json",
+      "receipt_sha256": "e083971f6e229293dbe682936f6179c480149025641b6eba2e33989853b982b3",
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 307,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 5,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 5,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 5,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 3,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 2,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 6,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 2,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 18,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 9,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "passed": 0,
+          "status": "ok"
+        }
+      ],
+      "scope": "M09/M15 libraries, CLI suites and compile-fail documentation",
+      "status": "command_succeeded",
+      "test_names": [
+        {
+          "name": "cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::unknown_schema_or_missing_catalog_never_opens_as_empty_archive",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_checks_independent_owner_context_and_required_roles",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::diversity_tests::real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::pq::tests::real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::selection::tests::bootstrap_flood_cannot_take_all_slots_from_later_observed_sources",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::selection::tests::dedup_uses_latest_current_expiry_without_losing_actual_source_provenance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::selection::tests::ipv4_and_ipv6_prefixes_and_ips_precede_additional_ports_of_low_keys",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::selection::tests::one_network_fallbacks_survive_and_candidate_identity_is_not_peer_chosen",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::model_root_tests::actual_direct_parent_roots_require_complete_matching_family_and_older_generation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::model_root_tests::independent_python_model_root_vector_and_every_truncated_prefix",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::model_root_tests::router_omission_lineage_alias_and_changed_owner_context_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::absence_and_interrupted_io_do_not_quarantine_or_renew_the_original_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::malformed_inventory_padding_is_quarantined_and_oversize_page_never_dials",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::chunk_deadline_expiry_does_not_quarantine_peer_but_invalid_bytes_do",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_new_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_reused_frame",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::old_response_magic_is_rejected_without_namespace_fallback_or_redial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::temporary_response_reservation_after_connection_wait_is_not_exhaustion",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::pq::tests::cached_release_rechecks_current_retirement_rotation_scope_and_sequence",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::pq::tests::selecting_old_content_requires_a_new_owner_approved_sequence",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_tcp_mid_download_cancellation_is_observed_after_bounded_complete_fetch",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retention_process_child",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retention_process_child",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_contract_and_model_wire_reject_downgrades_suffixes_and_source_transplants",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_contract_rejects_shape_overflow_dimension_rank_and_noncanonical_rosters",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_contract_requires_all_base_and_adapter_files_but_not_tokenizer_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_correct_hash_garbage_and_oversized_or_invalid_header_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_exact_roster_dtype_and_shape_cannot_be_replaced_by_equal_sized_data",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_offsets_reject_overlap_holes_trailing_and_wrong_element_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_real_file_all_supported_dtypes_scalar_and_metadata_hash_are_verified",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tensor_tests::tensor_streams_whole_payload_in_bounded_chunks_and_expired_calls_read_nothing",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::foreign_database_is_not_repurposed",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::release_manifest_requires_complete_context_bound_closure",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback",
+          "outcome": "ok"
+        },
+        {
+          "name": "cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::admission_is_atomic_replay_safe_and_bounded",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::attestation_and_certificate_reject_foreign_committed_context",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::attestation_manifest_is_stable_across_certificate_retention_and_repair",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::durable_before_attest_survives_reopen_and_rejects_bad_signature",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::row_tamper_is_rejected_on_reopen",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::tamper_latches_unavailable_and_exact_repair_recovers",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::typed_namespace_and_batch_derivation_are_deterministic",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::under_quorum_and_signed_equivocation_are_distinct",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::weighted_certificate_retrieval_retention_and_gc_close",
+          "outcome": "ok"
+        },
+        {
+          "name": "two_actual_process_writers_share_the_cache_gate_and_replay_exactly_after_reader_release",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_bounds_input_descriptor_and_rejects_symlink_directory_and_wrong_wire",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_fetches_real_bytes_shares_budget_resumes_and_never_overwrites_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_model_root_bad_pin_and_symlink_refuse_before_cache_or_peer",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_model_root_composes_and_fetches_exact_closure_without_granting_use_or_changing_tcd1",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_rejects_owner_context_and_authentication_downgrade_before_cache_or_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_bootstrap_only_fetch_uses_real_signed_records_and_exact_shared_response_budget",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_private_key_length_permissions_and_symlink_fail_without_secret_output",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_rejects_record_pin_mismatch_and_mutated_records_before_bootstrap_dial",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_requires_explicit_profile_and_rejects_unknown_or_duplicate_arguments_before_init",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_wrong_cell_context_cannot_discover_provider_or_publish_payload",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_delivers_real_uncached_bytes_with_seconds_and_subtwo_second_milliseconds",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_manifest_reads_persisted_caps_and_cannot_create_a_missing_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_preserves_original_request_minimum_and_overall_must_cover_request",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_requires_each_persistent_quota_before_creating_a_writer_cache",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_requires_exactly_one_deadline_unit_and_a_positive_bounded_duration",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_downloads_real_manifest_and_multiple_chunks_through_one_explicit_v2_connection",
+          "outcome": "ok"
+        },
+        {
+          "name": "invalid_or_missing_request_bounds_and_unsupported_profile_combinations_fail_before_cache_creation",
+          "outcome": "ok"
+        },
+        {
+          "name": "persistent_cli_server_requires_bounded_workers_and_each_request_allowance",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_pins_release_and_shares_budgets_before_create_only_completion",
+          "outcome": "ok"
+        },
+        {
+          "name": "cli_release_preparation_rejects_incomplete_incompatible_and_over_budget_sets",
+          "outcome": "ok"
+        },
+        {
+          "name": "hash_correct_container_with_wrong_dtype_never_publishes_tensor_completion",
+          "outcome": "ok"
+        },
+        {
+          "name": "invalid_persistent_tensor_transport_combinations_refuse_before_cache_creation",
+          "outcome": "ok"
+        },
+        {
+          "name": "persistent_tensor_cli_keeps_verified_prefix_on_request_exhaustion_and_explicit_retry_resumes",
+          "outcome": "ok"
+        },
+        {
+          "name": "persistent_tensor_cli_shares_one_connection_and_four_requests_across_manifest_and_chunks",
+          "outcome": "ok"
+        },
+        {
+          "name": "real_tcp_tensor_model_publishes_exact_manifest_then_revalidates_without_origin",
+          "outcome": "ok"
+        },
+        {
+          "name": "wrong_tensor_manifest_pin_is_rejected_before_cache_creation",
+          "outcome": "ok"
+        },
+        {
+          "name": "discovery_cli_pq_key_and_fresh_directory_reject_classic_wire_and_seed_aliases",
+          "outcome": "ok"
+        },
+        {
+          "name": "original_release_cli_pq_fetch_checks_auth_before_cache_or_marker",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::activation_after_root_rotation_requires_current_manifest_quorum",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::activation_has_distinct_quorum_and_requires_current_published_manifest",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::activation_requires_live_current_generation_manifest",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::actual_mldsa_quorum_advances_only_verified_role",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::bootstrap_requires_out_of_band_pin_threshold_and_separate_keys",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::duplicates_corruption_and_cross_role_signatures_never_count_as_quorum",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::existing_release_bundle_path_uses_real_pq_quorum_and_provenance_checks",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::live_event_quota_bounds_recovery_and_failed_updates_do_not_spend_it",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::old_content_requires_new_signed_rollback_and_versions_never_decrease",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quorum",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::recovery_requires_complete_ordered_history_and_bound_observation_times",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::recovery_retains_key_retirement_and_expired_root_cannot_authorize_content",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::retired_keys_cannot_be_reintroduced_even_with_valid_root_signatures",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::root_rotation_preserves_content_versions_and_refuses_skipped_generation",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::root_rotation_requires_old_and_new_quorums_not_candidate_self_authority",
+          "outcome": "ok"
+        },
+        {
+          "name": "pq_release::tests::signed_message_binds_role_network_expiry_content_and_full_checkpoint",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::exact_bundle_and_sbom_are_verified",
+          "outcome": "ok"
+        },
+        {
+          "name": "tests::independent_build_comparison_uses_outputs_not_builder_identity",
+          "outcome": "ok"
+        }
+      ],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--config",
+        "profile.test.package.trnm-pon-node.debug=0",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--",
+        "pq_client_"
+      ],
+      "exit_code": 0,
+      "label": "diagnostic-pq-client-no-debug",
+      "log_member": "final/diagnostic-pq-client-no-debug.log",
+      "log_sha256": "3a7497fb47efebcccddaa31213963734a11d61fc76aebbd8fe77b027e3263393",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/diagnostic-pq-client-no-debug.json",
+      "receipt_sha256": "6a5c1a3ce624f942549f0733ba3cff23274e5293e45f3ad04b9647b700c64283",
+      "rust_summaries": [
+        {
+          "failed": 0,
+          "filtered": 1062,
+          "ignored": 0,
+          "passed": 3,
+          "status": "ok"
+        }
+      ],
+      "scope": "diagnostic Node build with only Node debug information disabled",
+      "status": "command_succeeded",
+      "test_names": [
+        {
+          "name": "ingress::pq_network::live_admission_tests::pq_client_completion_keeps_real_signature_and_response_context_checks",
+          "outcome": "ok"
+        },
+        {
+          "name": "ingress::pq_network::live_admission_tests::pq_client_late_verified_response_cannot_renew_original_deadline",
+          "outcome": "ok"
+        },
+        {
+          "name": "ingress::pq_network::live_admission_tests::pq_client_verified_response_rechecks_original_signed_expiry",
+          "outcome": "ok"
+        }
+      ],
+      "tested_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+      "tested_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+      "tracked_bytes": 954771487,
+      "tracked_entries": 9589
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-release-bundle",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "label": "combined-native-clippy",
+      "log_member": "final/combined-native-clippy.log",
+      "log_sha256": "61a1485836588d083b1a608e2408320be9630ea18b04926c79d83f393e4ed227",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-native-clippy.json",
+      "receipt_sha256": "4ed2e1cdd9150561a5636c0a5d7f452aa37cb5b03120cd3d54b3b5470ce69dac",
+      "rust_summaries": [],
+      "scope": "five specified packages including concurrent M06 changes; all targets/features; warnings denied",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "env",
+        "PYTHONPATH=scripts/ci:formal/pon-nakamoto-v1",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_ci_source_integrity",
+        "test_pq_research_integration",
+        "test_quantum_daa_model",
+        "-v"
+      ],
+      "exit_code": 0,
+      "label": "combined-source-controls",
+      "log_member": "final/combined-source-controls.log",
+      "log_sha256": "9ed78701da1b673f2dafc55e3f3469a8601f17e4779b5600ff3a2f565f590d39",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [
+        97
+      ],
+      "receipt_member": "final/combined-source-controls.json",
+      "receipt_sha256": "cb85eb8e5b8228ddf028bd404854fe9fed34ef6c595ba92d111d3d0183861b98",
+      "rust_summaries": [],
+      "scope": "43 source-integrity, 35 PQ source, and 19 conditional-model controls on the joint source",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "combined-fmt",
+      "log_member": "final/combined-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-fmt.json",
+      "receipt_sha256": "543e09e1e28020a97be959633421bd015421f429bb4da001d30a76256297f054",
+      "rust_summaries": [],
+      "scope": "joint-source full workspace formatting",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "label": "combined-repository",
+      "log_member": "final/combined-repository.log",
+      "log_sha256": "b8966a8bbe41719afd782ba776dea4187e6f542415884d0639523622f7feb7ba",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-repository.json",
+      "receipt_sha256": "7cb76ecd8a3379f5716f4185ca9b59ca178bf31cf49010b7ec03a4446da389b9",
+      "rust_summaries": [],
+      "scope": "joint-source repository, ownership and Markdown link checks",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "label": "combined-corpus",
+      "log_member": "final/combined-corpus.log",
+      "log_sha256": "8755be288cdeba7a0383c636e6722ea865a283af177aed55b0412d0e91012dc5",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-corpus.json",
+      "receipt_sha256": "57c0f3bbb87767cf470ad7ff2b347609f93bf3dd04bbc373a21e36b74e8b2bb2",
+      "rust_summaries": [],
+      "scope": "joint-source exact PQ source corpus; all acceptance flags false",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "combined-inventory",
+      "log_member": "final/combined-inventory.log",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-inventory.json",
+      "receipt_sha256": "dfeb234dcfcf488ac24b2c641e6e1e99384626c43fb8a89612dbd5d46853a5e5",
+      "rust_summaries": [],
+      "scope": "joint-source generated inventory consistency",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "label": "combined-cargo-graph",
+      "log_member": "final/combined-cargo-graph.log",
+      "log_sha256": "2aaa3148e0790126e725d9562e22b2eae066b20624944d84eaf4af4067f4fe03",
+      "pre_and_post_tracked_bytes_verified": true,
+      "python_counts": [],
+      "receipt_member": "final/combined-cargo-graph.json",
+      "receipt_sha256": "b9e6887630141eec1f13defd9527b0d67c78cc2420764bd2bf7bff9bb5e83d21",
+      "rust_summaries": [],
+      "scope": "joint-source locked offline default Cargo graph",
+      "status": "command_succeeded",
+      "test_names": [],
+      "tested_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+      "tested_tree": "138f154b90666416ae4968009655b733209b9061",
+      "tracked_bytes": 957029729,
+      "tracked_entries": 9671
+    }
+  ],
+  "cryptographic_acceptance": false,
+  "default_resolved_packages": 175,
+  "lockfile_packages_including_optional": 180,
+  "native_tested_code_commit": "e05b44ccd9782d0a3367ea4ca9913c0310d4a3f0",
+  "native_tested_code_tree": "da83f586e9f896544cf1e3cff9bfb76bcc8f682d",
+  "native_tested_source_identity_scope": {
+    "kind": "head",
+    "prospective_main_merge_executed": false,
+    "publication_merge_execution_inherited": false,
+    "tracked_bytes": 954771487,
+    "tracked_entries": 9589
+  },
+  "node_activated": false,
+  "not_run_or_not_qualified": [
+    "Canonical Node native unit execution after its compiler was killed.",
+    "Native Rust tests on the joint 78874ae source; e05 tests remain scoped to e05.",
+    "Entire 26-package all-feature/all-target native workspace test suite.",
+    "Positive AF_UNIX daemon cross-process recovery in this environment.",
+    "Original four-second confirmation under at least sixteen hostile W1 workers.",
+    "Original CPU, Host, depth-six confirmation, and 4105-block History acceptance.",
+    "Actual current-owner CURRENT/FinalUse/provider effects across a frozen Chain/runtime pair.",
+    "Independent administrative/fault-domain recovery and physical power-loss qualification.",
+    "Cheapest legal classical/quantum attack cost and compositional proof security.",
+    "Production PQ wire capacity, queueing, tail latency, memory and recovery cost.",
+    "Release, activation, main-branch merge or independent organization acceptance."
+  ],
+  "preserved_failed_or_incomplete_observations": [
+    {
+      "exit_code": 101,
+      "failed": 4,
+      "passed": 11,
+      "scope": "old M03 implementation plus new cold-recovery tests",
+      "source_member": "prior-recovery/checkpoint-red-source.json"
+    },
+    {
+      "exit_code": 101,
+      "log_member": "prior-recovery/checkpoint-green.log",
+      "observed_library_failed": 1,
+      "observed_library_passed": 10,
+      "reason": "AF_UNIX bind returned EPERM; full suite did not pass",
+      "scope": "post-fix M03 all-target attempt"
+    },
+    {
+      "cause_attributed": false,
+      "diagnostic_pass_cannot_replace_canonical_gate": true,
+      "exit_code": 101,
+      "observed_signal": "SIGKILL",
+      "scope": "new Node tests on canonical profile",
+      "tests_observed_executing": 0
+    },
+    {
+      "included_in_pass_counts": false,
+      "outer_exit_code": 130,
+      "raw_receipt_status": "running",
+      "scope": "duplicate 43+4 source-control command",
+      "status": "cancelled"
+    },
+    {
+      "expected_failures": 3,
+      "historical_original_log": false,
+      "scope": "fresh isolated replay of saved pre-fix Git replacement implementation",
+      "source_member": "quantum-red/quantum-replace-red-replay.json"
+    }
+  ],
+  "publishing_source_preservation": {
+    "checked_code_commit": "78874ae144fe7ca1adc6805a646fdc433d33028e",
+    "concurrent_parent": "2e7fbaeabc396d501d9d802adc63df963f1d288c",
+    "execution_receipts_reassigned": false,
+    "merge_base": "04be5f02c84cf5cb626a53f34bc03a5bd6ff5137",
+    "merged_tree_before_new_records": "30c8979e8c0116deb5b0a6687d03bef248d6b12b",
+    "runtime_configuration_or_build_paths_changed": [],
+    "schema": "trnm-pq-publishing-source-preservation-v1",
+    "source_difference_paths": [
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/README.md",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/analysis.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact-inventory.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/SCOPE.txt",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/predeclared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/predeclared-denominators.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/results.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stderr.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/execution/supplement.stdout.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/finalization/result.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/build.step.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/hardware.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/prepared/prepared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-after.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/source-before.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stderr.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/systemd-run.stdout.log",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-outcomes.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/artifact/workflow-predeclared.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/client-import-summary.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/extract_analysis.py",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/issue-639-observation.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/manifest.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-client-import-extracts.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/phase-performance-summary.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/source-trace.json",
+      "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/workflow-job-127038806677.log",
+      "evidence/pon-growth-persistence-control-20261105/b5bb-f0-backend-scope.json",
+      "evidence/pon-growth-persistence-control-20261105/b5bb-f0-growth-coverage.json",
+      "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-wait.json",
+      "evidence/pon-growth-persistence-control-20261105/checkpoint-resource-waiter-retry2.json",
+      "evidence/pon-growth-persistence-control-20261105/frozen-b5bb-component-binding.json",
+      "evidence/pon-growth-persistence-control-20261105/post-runtime-idle-process-observation.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2-outcome.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-waiter-retry2.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-after-ef1fa4d.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-followup.json",
+      "evidence/pon-growth-persistence-control-20261105/resource-window-latest.json",
+      "evidence/pon-growth-persistence-control-20261105/wait-canonical-red-retry2.py",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/cargo-graph-storage.json",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/run-strict-clippy.py",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/static/cargo-graph.log.gz",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/cargo.log",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/preflight.log",
+      "evidence/pq-workflow-continuation-20261105/additional-checkpoint/strict-clippy/result.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/README.md",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/fixed-pair.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/gate-ledger.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/late-integration.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/link-review.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/publication-inputs.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-state-scheduling.json",
+      "evidence/pq-workflow-continuation-20261105/frozen-b5bb-367e/review-work-proofs.json"
+    ],
+    "whole_chain_qualified": false
+  },
+  "required_meaningful_control_roster": 52,
+  "required_path_count": 391,
+  "roster_is_execution_evidence": false,
+  "schema": "trnm-pq-current-root-integration-reproduction-v1",
+  "source_delta": "source-delta.json",
+  "source_pin_count": 473,
+  "status": "HOLD_NO_GO",
+  "test_timestamps": "Original UTC timestamps are retained in each receipt.",
+  "toolchain": "1.95.0",
+  "user_date": "2026-11-04",
+  "user_timezone": "America/New_York",
+  "whole_chain_quantum_security_qualified": false,
+  "whole_native_authorization_migrated": false,
+  "workspace_members": 26
+}
