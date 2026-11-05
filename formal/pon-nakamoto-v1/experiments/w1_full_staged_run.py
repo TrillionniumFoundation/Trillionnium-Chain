@@ -23,6 +23,10 @@ HEADER_BYTES = 318
 MAX_RECEIPT_BYTES = 16 * 1024 * 1024
 SCHEMAS = {1: "TRNM-W1-STAGED-PROOF1", 2: "TRNM-W1-STAGED-PROOF2"}
 V2_PROFILE_ID = "trnm-w1-risc0-3.0.6-poseidon2-join-v2"
+# Fail before any segment proof if a rebuilt guest cannot satisfy the independent
+# verifier's fixed profile. This is only a preflight, never proof verification.
+V2_IMAGE_ID = (1958252411, 3287394615, 1805488136, 1516578702,
+               78549041, 790278610, 301018785, 4279049364)
 
 
 def require(condition, message):
@@ -78,7 +82,10 @@ def checked_manifest(checkpoint, version, runner_hash, r0vm_hash):
     require(manifest.get("schema") == SCHEMAS[version], "wrong statement-version manifest")
     require(manifest.get("runner_sha256") == runner_hash, "checkpoint runner identity differs")
     require(manifest.get("r0vm_sha256") == r0vm_hash, "checkpoint prover identity differs")
-    checked_image_id(manifest.get("image_id"))
+    image_id = checked_image_id(manifest.get("image_id"))
+    if version == 2:
+        require(tuple(image_id) == V2_IMAGE_ID,
+                "prepared image_id differs from the independent v2 verifier pin")
     for field, filename in (("input_sha256", "input.bin"), ("journal_sha256", "expected-journal.bin"),
                             ("guest_sha256", "guest.bin")):
         require(manifest.get(field) == sha(checkpoint / filename), f"checkpoint {field} differs")
