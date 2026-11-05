@@ -1,0 +1,15 @@
+{
+  "adoption": false,
+  "candidate_steps": 0,
+  "checkpoint": "73b0633135db96af55437d360831e1af0157a320193a33281469746b0bf76a38",
+  "claimed_matched": true,
+  "fixture_ledger_spent": 1,
+  "frozen_training_steps": 10,
+  "immutable_backbone_steps": 99,
+  "policy": "95eee38b99ed2364e9b92b1e875b195bbacfef1bbc3c061391448572547a73c8",
+  "real_model_attempt": false,
+  "reward": false,
+  "schema": "llm-training-admission-counterexample-v1",
+  "scope": "All receipts are declared fixtures; no model execution, real attempt or qualification",
+  "state": "complete-unqualified"
+}

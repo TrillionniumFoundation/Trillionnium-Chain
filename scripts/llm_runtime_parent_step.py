@@ -36,6 +36,7 @@ def sources():
     return {name: runtime.file_sha(path) for name, path in {
         'runtime': Path(runtime.__file__), 'parent_step': Path(__file__),
         'preflight': Path(parent.__file__),
+        'base_material': Path(runtime.__file__).with_name('llm_base_material.py'),
         'contract': Path(runtime.contract_module().__file__),
     }.items()}
 

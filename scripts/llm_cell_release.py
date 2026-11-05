@@ -19,6 +19,7 @@ SOURCE_PATHS = (
     "formal/pon-nakamoto-v1/llm_adapter_contract.py",
     "scripts/llm_inherited_runtime.py", "scripts/llm_neural_read_worker.py",
     "scripts/llm_parent_material.py", "scripts/llm_runtime_pilot.py",
+    "scripts/llm_base_material.py",
     "config/pon/model-family-smollm2-135m-v1.json",
 )
 ACTIONS = [dict(action_id="native-answer-no", completion="no"),

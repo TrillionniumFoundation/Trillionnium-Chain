@@ -116,7 +116,8 @@ class RuntimePilotTests(unittest.TestCase):
     def material_fixture(self, directory):
         config = dict(model_type='llama',num_hidden_layers=30,hidden_size=576,intermediate_size=1536,
             num_attention_heads=9,num_key_value_heads=3,vocab_size=49152,max_position_embeddings=8192,
-            tie_word_embeddings=True,attention_bias=False,mlp_bias=False,torch_dtype='bfloat16')
+            tie_word_embeddings=True,attention_bias=False,mlp_bias=False,torch_dtype='bfloat16',
+            rope_theta=100000,rms_norm_eps=1e-5,hidden_act='silu',attention_dropout=0.0,rope_scaling=None)
         blobs = {name:b'explicit non-model attack fixture' for name in runtime.PUBLIC_FILES}
         blobs['config.json']=json.dumps(config).encode()
         files={}
@@ -194,9 +195,13 @@ from test_llm_runtime_evidence_transport import EvidenceTransportTests
 from test_llm_runtime_decode import DecodeRoutingTests, ActualDecoderTensorTests
 from test_llm_runtime_artifact_loading import ArtifactChildTests, RecipeBindingTests
 from test_llm_runtime_artifact_loading_torch import ActualArtifactTensorTests
-from test_llm_runtime_assessment import CostAssessmentTests
+from test_llm_base_material import BaseMaterialTests
+from test_llm_base_material_torch import ActualBaseMaterialTests
+from test_llm_base_source_closure import BaseMaterialSourceClosureTests
+from test_llm_runtime_assessment import CostAssessmentTests, TrainingReceiptAssessmentTests
 from test_llm_runtime_trial_ledger import TrialLedgerTests, PilotRunAdmissionTests
 from test_llm_runtime_trial_review import TrialLedgerReviewTests
+from test_llm_runtime_trial_replay import TrialLedgerReplayTests
 
 
 if __name__=='__main__':unittest.main()
