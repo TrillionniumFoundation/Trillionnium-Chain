@@ -33,7 +33,15 @@ freshness.
 The existing V2 record and CAS wire encodings retain their identities. The new
 recovery checkpoint encoding has a distinct magic/version and rejects trailing or
 noncanonical bytes. The legacy structural `open` API remains explicitly limited;
-the daemon uses the strict registration/recovery paths.
+it cannot read or advance runtime checkpoints, serve, or export a trusted pin.
+The daemon uses the strict registration/recovery paths. Every live read, advance
+and pin export also verifies the existing journal bytes against the owner's
+retained count/root and the exact sibling head. Same-inode truncation, an equal-
+length prefix edit and an in-place old head cannot reuse cached authority. This
+is a complete O(journal records) integrity check with a fixed-size record buffer;
+it does not supply constant-time performance or independent checkpoint custody.
+Head reads retain at most one byte beyond the exact encoding so oversized or
+growing input is refused without reading the entire suffix into memory.
 
 ### Meaning of the checkpoint
 
@@ -100,7 +108,12 @@ role cannot promote its own output into a new trust root.
 Re-selecting previously published content requires explicit signed rollback
 approval while the release/activation version continues to increase. Cell
 activation additionally requires that the target is the currently approved Cell
-manifest. A successful role observation supplies release authenticity and version
+manifest under the current root generation and that its own publication lease
+has not expired. Current activation keys cannot extend a publisher's expired
+lease or carry old publisher authority across root rotation. The publisher must
+approve the same content again at a higher manifest version. Recovery rebuilds
+those publication generations and lifetimes from the original signed events.
+A successful role observation supplies release authenticity and version
 policy; it does not supply model-quality acceptance, FinalUse, account permissions
 or consensus activation.
 
@@ -130,7 +143,22 @@ context. It is not HashML-DSA. Complete TAP 21 support includes ML-DSA-44, -65 a
 -87; an ML-DSA-65 adapter alone is a restricted profile. These byte rules belong to
 the separate TAP 21 adapter rather than this project's binary-role namespace.
 
+### Cell acquisition observations require a current authority view
+
+`VerifiedCellPqReleaseV2::release_at` requires the host-supplied current network,
+parameters, key pin, generation, release sequence and time. It rechecks key
+retirement and the original signed lifetime on every use; passing only a time is
+no longer an available API. The CLI pins its acquisition policy for one command.
+The host still owns freshness and atomicity at a real runtime effect boundary;
+an old copied view does not establish either. This is not CURRENT or FinalUse.
+
 ## 3. Test the actual fixed transport provider
+
+The existing PNQ2 client's original absolute deadline covers response decoding,
+payload hashing and complete ML-DSA verification as well as TCP. The client checks
+the same deadline and original signed expiry again immediately before returning
+an authenticated response. A late reply is unconfirmed; refusal does not undo a
+remote effect, refund a consumed sequence or authorize a different retry.
 
 The TLS and mTLS probes use the declared `TRNM_PQ_OPENSSL` binary and the already
 validated `TRNM_PQ_OPENSSL_SHA256`, `TRNM_PQ_OPENSSL_VERSION` and `OPENSSL_DIR`.

@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ six-domain owner integration, 2026-11-04 America/New_York:** Continue
+the existing #688 candidate from `47b4a62463d8e1371a175c74196d52d99c5fccb8`.
+Precisely integrate the already authored #698 checkpoint and release/current-view
+repairs from `b525fbc6dc780343c78710c98a94616f7cff59e4`, preserving concurrent
+Cell deadlines and native state work. Structural checkpoint inspection cannot
+obtain runtime authority; live retained bytes are revalidated. A current activation
+quorum cannot extend an expired or previous-root publisher authorization. Cached
+Cell observations require the caller's current key, generation and sequence.
+PNQ2 client completion retains its original absolute deadline and signed expiry
+after full response verification. The original quantum/DAA reader checks actual
+commit objects and per-file commitment claims before replaying its observations.
+These source repairs retain the original six-domain acceptance obligations;
+ordinary CURRENT/FinalUse owner integration, independent recovery custody, full
+work/quantum security, original 4s/16 and 4,105-block acceptance, and independent
+activation remain open. Component tests and source identity do not promote them.
+
 **Cell runtime composition, 2026-11-04 America/New_York:** Continue the existing
 #688 candidate from `47b4a62463d8e1371a175c74196d52d99c5fccb8`. Connect complete
 TCA2 release obligations to the original Node/M12 funding and effect owners,

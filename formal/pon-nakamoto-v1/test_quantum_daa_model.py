@@ -2,9 +2,12 @@
 from dataclasses import replace
 from decimal import Decimal
 import json
+import os
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from quantum_daa_model import (
     ASSUMPTIONS, Header, POW_LIMIT, Scenario, U256, asert_target, common_history,
@@ -12,6 +15,7 @@ from quantum_daa_model import (
     standard_scenarios, trunc_div,
 )
 from reference import retarget
+from experiments import quantum_daa_campaign as campaign
 from experiments.quantum_daa_campaign import (
     canonical, check_row_arithmetic, digest, load_json, run_campaign, verify_campaign,
 )
@@ -211,6 +215,63 @@ class ConditionalScheduleTests(unittest.TestCase):
 
 
 class ReceiptIntegrityTests(unittest.TestCase):
+    def test_replacement_refs_cannot_change_fixed_source_identity(self):
+        # All replacement refs live in this throwaway repository. Remove Git
+        # directory/config overrides so none of these writes can reach the
+        # checkout containing the test or inherit a replacement-disabled run.
+        environment = {key: value for key, value in os.environ.items()
+                       if not key.startswith("GIT_")}
+        environment.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_SYSTEM=os.devnull,
+                           GIT_CONFIG_NOSYSTEM="1")
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, environment, clear=True):
+            repository = Path(directory)
+
+            def git(*args):
+                return subprocess.check_output(
+                    ["git", "-c", "user.name=Source binding test",
+                     "-c", "user.email=source-binding-test@users.noreply.github.com",
+                     "-c", "commit.gpgsign=false", *args], cwd=repository,
+                    stderr=subprocess.PIPE, text=True).strip()
+
+            git("init", "--quiet", "--object-format=sha1")
+            source = repository / "model.py"
+            source.write_text("original source\n")
+            git("add", "model.py")
+            git("commit", "--quiet", "-m", "original model")
+            original = git("rev-parse", "HEAD")
+            original_tree = git("rev-parse", "HEAD^{tree}")
+            source.write_text("replacement source\n")
+            git("add", "model.py")
+            git("commit", "--quiet", "-m", "different model")
+            replacement = git("rev-parse", "HEAD")
+            git("checkout", "--quiet", "--detach", original)
+            with patch.object(campaign, "ROOT", repository), patch.object(
+                    campaign, "SOURCE_FILES", ("model.py",)):
+                baseline = campaign.source_record()
+                self.assertTrue(baseline["all_model_source_files_committed_at_head"])
+                campaign.validate_source_record(baseline)
+                git("replace", original, replacement)
+                # A forced cross-type replacement also fools a plain cat-file
+                # type check, so a tree must never become a claimed commit.
+                git("replace", "--force", original_tree, replacement)
+                source.write_text("replacement source\n")
+                self.assertEqual(git("show", original + ":model.py"), "replacement source")
+                self.assertEqual(git("cat-file", "-t", original_tree), "commit")
+                record = campaign.source_record()
+                with self.subTest(boundary="writer"):
+                    self.assertEqual(record["git_head"], original)
+                    self.assertFalse(record["all_model_source_files_committed_at_head"])
+                    self.assertEqual(record["uncommitted_model_source_files"], ["model.py"])
+                    campaign.validate_source_record(record)
+                for head, error in ((original, "SOURCE_COMMITMENT_CLAIM"),
+                                    (original_tree, "SOURCE_HEAD")):
+                    with self.subTest(boundary="reader", forged_head=head):
+                        forged = dict(record, git_head=head,
+                                      all_model_source_files_committed_at_head=True,
+                                      uncommitted_model_source_files=[])
+                        with self.assertRaisesRegex(ValueError, error):
+                            campaign.validate_source_record(forged)
+
     def test_full_campaign_roundtrip_and_artifact_source_scope_mutations(self):
         with tempfile.TemporaryDirectory() as directory:
             out = Path(directory) / "fresh"
@@ -233,6 +294,31 @@ class ReceiptIntegrityTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "ASSUMPTION_SUBSTITUTION"):
                     verify_campaign(out)
                 report = json.loads(report_bytes)
+            # Re-hashing a report must not manufacture a source commit or
+            # promote uncommitted model bytes to evidence for that commit.
+            tree_head = subprocess.check_output(
+                ["git", "--no-replace-objects", "rev-parse", "HEAD^{tree}"],
+                cwd=HERE.parents[1], text=True).strip()
+            for patch, error in (
+                ({"git_head": "0" * 40}, "SOURCE_HEAD"),
+                ({"git_head": "HEAD"}, "SOURCE_HEAD"),
+                ({"git_head": tree_head}, "SOURCE_HEAD"),
+                ({"all_model_source_files_committed_at_head":
+                  not report["source"]["all_model_source_files_committed_at_head"]},
+                 "SOURCE_COMMITMENT_CLAIM"),
+                ({"uncommitted_model_source_files": ["invented-source.py"]},
+                 "SOURCE_COMMITMENT_CLAIM"),
+            ):
+                with self.subTest(source_mutation=patch):
+                    report = json.loads(report_bytes)
+                    report["source"].update(patch)
+                    (out / "report.json").write_bytes(canonical(report))
+                    manifest = json.loads(manifest_bytes)
+                    manifest["files_sha256"]["report.json"] = digest(out / "report.json")
+                    (out / "manifest.json").write_bytes(canonical(manifest))
+                    with self.assertRaisesRegex(ValueError, error):
+                        verify_campaign(out)
+                    report = json.loads(report_bytes)
             report["source"]["source_sha256"]["formal/pon-nakamoto-v1/reference.py"] = "0" * 64
             (out / "report.json").write_bytes(canonical(report))
             manifest["files_sha256"]["report.json"] = digest(out / "report.json")

@@ -695,3 +695,130 @@ fn old_software_bundle_can_be_reapproved_after_root_rotation_only_by_current_quo
     assert_eq!(receipt.version(), 3);
     assert_eq!(a.root_generation(), 2);
 }
+
+#[test]
+fn activation_requires_live_current_generation_manifest() {
+    let f = fixture(0);
+    let mut a = authority(&f);
+    let mut manifest = metadata(&a, PqReleaseRoleV1::CellManifest, 40);
+    manifest.expires_at = 30;
+    let manifest_signatures = sign_metadata(&f, &manifest);
+    a.accept(&manifest, &manifest_signatures, 20).unwrap();
+    let before = a.checkpoint();
+    let activation = metadata(&a, PqReleaseRoleV1::CellActivation, 40);
+    let activation_signatures = sign_metadata(&f, &activation);
+    // An activation quorum cannot extend the other role's publication lease.
+    assert_eq!(
+        a.accept(&activation, &activation_signatures, 30),
+        Err(PqReleaseErrorV1::UnpublishedActivation)
+    );
+    assert_eq!(a.checkpoint(), before);
+    assert_eq!(a.role_version(PqReleaseRoleV1::CellActivation), 0);
+    assert_eq!(a.time_floor, 20);
+    assert_eq!(a.event_count, 1);
+
+    // Reconstructing the journal preserves the publication expiry as well.
+    let events = [PqReleaseEventV1::Release {
+        metadata: manifest,
+        signatures: manifest_signatures,
+        observed_at: 20,
+    }];
+    let mut recovered = PqReleaseAuthorityV1::recover_pinned(
+        f.root.clone(),
+        f.root.digest().unwrap(),
+        10,
+        &events,
+        before,
+    )
+    .unwrap();
+    assert_eq!(
+        recovered.accept(&activation, &activation_signatures, 31),
+        Err(PqReleaseErrorV1::UnpublishedActivation)
+    );
+    assert_eq!(recovered.checkpoint(), before);
+    // The publisher can renew the same bytes at a higher role version.
+    let renewed = metadata(&recovered, PqReleaseRoleV1::CellManifest, 40);
+    recovered
+        .accept(&renewed, &sign_metadata(&f, &renewed), 31)
+        .unwrap();
+    let fresh_activation = metadata(&recovered, PqReleaseRoleV1::CellActivation, 40);
+    recovered
+        .accept(&fresh_activation, &sign_metadata(&f, &fresh_activation), 31)
+        .unwrap();
+    assert_eq!(recovered.role_version(PqReleaseRoleV1::CellManifest), 2);
+    assert_eq!(recovered.role_version(PqReleaseRoleV1::CellActivation), 1);
+}
+
+#[test]
+fn activation_after_root_rotation_requires_current_manifest_quorum() {
+    let f = fixture(0);
+    let mut a = authority(&f);
+    let manifest = metadata(&a, PqReleaseRoleV1::CellManifest, 40);
+    let manifest_signatures = sign_metadata(&f, &manifest);
+    a.accept(&manifest, &manifest_signatures, 20).unwrap();
+    let successor = fixture(20);
+    let mut next = successor.root.clone();
+    next.generation = 2;
+    next.previous_root_digest = a.root_digest();
+    let message = next.signing_message().unwrap();
+    let old_signatures = signatures(&f, &f.root.offline_root, &message);
+    let new_signatures = signatures(&successor, &next.offline_root, &message);
+    a.rotate_root(next.clone(), &old_signatures, &new_signatures, 21)
+        .unwrap();
+    let before = a.checkpoint();
+    let activation = metadata(&a, PqReleaseRoleV1::CellActivation, 40);
+    let activation_signatures = sign_metadata(&successor, &activation);
+    // Current activation keys cannot substitute for current publisher keys.
+    assert_eq!(
+        a.accept(&activation, &activation_signatures, 22),
+        Err(PqReleaseErrorV1::UnpublishedActivation)
+    );
+    assert_eq!(a.checkpoint(), before);
+    assert_eq!(a.role_version(PqReleaseRoleV1::CellActivation), 0);
+    assert_eq!(a.time_floor, 21);
+    assert_eq!(a.event_count, 2);
+    let events = [
+        PqReleaseEventV1::Release {
+            metadata: manifest,
+            signatures: manifest_signatures,
+            observed_at: 20,
+        },
+        PqReleaseEventV1::RootRotation {
+            root: next,
+            old_signatures,
+            new_signatures,
+            observed_at: 21,
+        },
+    ];
+    let mut recovered = PqReleaseAuthorityV1::recover_pinned(
+        f.root.clone(),
+        f.root.digest().unwrap(),
+        10,
+        &events,
+        before,
+    )
+    .unwrap();
+    assert_eq!(
+        recovered.accept(&activation, &activation_signatures, 22),
+        Err(PqReleaseErrorV1::UnpublishedActivation)
+    );
+    assert_eq!(recovered.checkpoint(), before);
+    let renewed = metadata(&recovered, PqReleaseRoleV1::CellManifest, 40);
+    assert_eq!(
+        recovered.accept(&renewed, &sign_metadata(&f, &renewed), 22),
+        Err(PqReleaseErrorV1::UnknownSigner)
+    );
+    recovered
+        .accept(&renewed, &sign_metadata(&successor, &renewed), 22)
+        .unwrap();
+    let fresh_activation = metadata(&recovered, PqReleaseRoleV1::CellActivation, 40);
+    recovered
+        .accept(
+            &fresh_activation,
+            &sign_metadata(&successor, &fresh_activation),
+            22,
+        )
+        .unwrap();
+    assert_eq!(recovered.role_version(PqReleaseRoleV1::CellManifest), 2);
+    assert_eq!(recovered.role_version(PqReleaseRoleV1::CellActivation), 1);
+}
