@@ -20,6 +20,94 @@ the original commit hash was checked; the original commit's timezone and message
 termination were preserved. The complete remote tree contains 9,669 blob entries.
 No execution result from a different tree is relabelled as this complete baseline.
 
+## Published source-review pair
+
+The single source-review candidate is Chain
+[`70df2c644ed8dd64afa1e7533743664cddacb9da`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/70df2c644ed8dd64afa1e7533743664cddacb9da)
+(tree `ef6eee36f4ac1cc823b29a2e499e2f2ef6b54855`) and runtime
+[`70115620a7f540c8618a9b0d32ead20f8bc508f0`](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/70115620a7f540c8618a9b0d32ead20f8bc508f0)
+(tree `ebd1437475d71252786788f67d2911f5a6e6108d`). Both were published to the
+existing #688/#4812 branches with expected-head checks and without force.
+`source-publication.json` retains the first S/R1 publication; the subsequent
+`runtime-R2-source-publication.json` records R2's exact tree/blob readback and
+identity. R2 preserves the intervening peer qualification evidence and fixes one
+existing product-fixture error conversion. Earlier R1 test outcomes retain R1's
+source identity.
+
+[`source-pair.json`](source-pair.json) and its
+[scope statement](source-pair-scope.md) pin selected lockfiles, configuration and
+real owner source bytes from those Git objects. They expressly retain
+`HOLD_NO_GO`, no activation, and an unmet P0-1 strict exit. Actual installed
+configuration and a qualified Node/Agentd binary pair are not supplied by this
+source manifest. Ordinary startup, recovery tools and acceptance are not claimed
+to share an independently exercised deployment combination.
+
+The actual ordinary Agentd native-test executable was built and started; its
+1,232,076,656 bytes and SHA-256
+`1fda3237fa995431be7a909e69f938aa0e92ef1f10b80cd425dd2544b5b23d2f`
+were independently read back at manifest finalization. It is retained as an
+unqualified test build, not an installed Node/Agentd release pair.
+
+Runtime evidence was published separately as
+[`7530e4bc7aa61a0c23a5933fef4a65d86a586cf8`](https://github.com/TrillionniumFoundation/hepta-private-ci/commit/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8):
+98 evidence files, with an index of the other 97 files. Its
+[complete record](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/README.md)
+and [machine-readable results](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7530e4bc7aa61a0c23a5933fef4a65d86a586cf8/evidence/pq-recovery-owner-20261105/R2-validation-summary.json)
+retain actual R2 execution identities. `runtime-evidence-publication.json`
+records the expected-head update and remote summary/index/README byte readback;
+no production source, CI or lockfile changed in that evidence commit.
+
+After S, peer commits `583077fdc543ae4dee012a2a8ac2aa419c79a788` and
+`2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47` added or updated five current-root
+evidence files. Their exact blobs, trees and raw commits were imported and
+verified before this evidence publication. They do not change code, configuration,
+the sole plan or the source corpus. `publication-peer-preservation.json` and
+`publication-peer-history.json` retain that readback. The frozen S/R2 source pair
+and all execution attribution remain unchanged.
+
+### The publication branch has advanced beyond the frozen candidate
+
+Before the final evidence update, the shared branch advanced to
+`2e3e1cc2df14f809dcbfb560b94bca2b37a48a35`
+(tree `a8785b53959dc3ae94fefb1eda91d4b3c2531018`). Since the earlier 2ef
+evidence parent it added seven commits and changed 86 paths, including six
+outside evidence: the branch-encoding workflow, source corpus, W1 staged runner
+and its tests, and two account-archive/native-store Rust files.
+
+This update preserves all of those concurrent changes. Its own overlay changes
+only this evidence directory. **The shared PR head is therefore a newer
+publication carrier, not the frozen Chain S verification candidate.**
+[`publication-carrier-scope.json`](publication-carrier-scope.json) records the
+complete path mapping and this distinction. Use the explicit S/R2 commits for
+the recorded review combination; the carrier must not inherit S's source checks,
+older native outcomes or a deployment qualification. No native or complete
+repository rerun on that newer carrier is claimed. P0-1 remains unmet.
+
+Those peer files include their own
+[late verification record](../pq-current-root-integration-20261104/LATE_INTEGRATION.md)
+and [publication scope](../pq-current-root-integration-20261104/PUBLICATION_SCOPE.json).
+Their native, canonical Node, Clippy and Python observations belong to
+`dba49c2f66d8a72d6845c70958c4a24d6c4e7e89`, before S's migration repair.
+They are preserved as separately sourced evidence; they are not reruns on S or
+additional independent-operator acceptance by this continuation.
+
+The published Chain source passed the exact-source corpus (487 pins across six
+upstream heads), distributed inventory and complete repository/link checks
+(26 packages, 1,146 Rust files, 2,970 links and 25 dependency edges). These ran
+while every tracked file was materialized, before the documented cache-space
+reclamation. The source-negative fixture suite's 35 passes belong to local
+`e218ec649509e328eee4c7ef6021d96c647514ef`; the published source differs only in
+four peer evidence documents, and the fixture run is not relabelled as execution
+on the published commit. No new Chain native, Clippy or formatting result is
+claimed for that later combined source.
+
+The [source-integration archive](source-integration/README.md) retains original
+receipts, raw commits, merge mapping, complete-check timing and subsequent
+working-copy state. Its original references to an outside-repository handoff or
+parent agent describe preparation time; the package is now retained byte-for-byte
+here, with its original SHA-256 index. The historical 14f native and research
+records above retain their earlier source and input ranges.
+
 ## Changes and validation
 
 ### Historical migration must not discard unhandled rights
@@ -62,6 +150,52 @@ proof of first initialization. Detailed runtime changes and their native outcome
 are retained in the runtime PR; they do not imply coverage of a directly launched
 non-Agentd app server.
 
+### Actual runtime results on the frozen R2 source
+
+The original-profile frontier command on exact runtime
+`70115620a7f540c8618a9b0d32ead20f8bc508f0` completed with **nine passed**,
+zero failed and 239 other library tests outside this selection. It exited 0 in
+31.491847 seconds; source and working tree were clean and unchanged. The log
+SHA-256 is `ee6e6876bbe4cccc5a6f6f661cec89e904350c687ac8cc2e156029f59780f44b`.
+
+The four real `kernel_evidence_product` tests then compiled and ran on the same
+R2 source: **two passed, two failed, zero skipped**, exit 100 in 62.546287 seconds.
+Both rollback rejection tests passed. Both positive startup tests failed when the
+real Agentd child attempted to bind its Unix control socket and received
+`Operation not permitted` (OS error 1). The original nextest local retry behavior
+is retained in the log. This is an executed but failed product gate, not four
+successful tests, not zero product execution, and not evidence of completed IPC
+composition. Its log SHA-256 is
+`778c0d4b447451fd6f648b39ea10e6971a1d633a18780614b7ee9311cddaa379`.
+
+The earlier R1 source `fc0c6f7430cc1cce9274d407536e7249f2290ccd` independently
+passed nine frontier tests, but its first product build failed with Rust E0277
+before executing a product test. R2 fixes only that fixture error conversion;
+the inputs, operation identity and assertions remain unchanged. Earlier missing
+tracked-input, ENOSPC and linker-SIGBUS attempts retain their original zero-test
+scope and classification in the runtime evidence.
+
+The new exact-R2 CI audit separately matched **154 source/synthetic-log fixture
+outcomes** and checked 37 mandatory names against 12 unchanged source inputs.
+That audit executed zero native tests. The workflow preserves its original 24
+controls and adds nine frontier plus four product controls; every selected test
+must pass exactly once. Local native receipts above are not the hosted CI lane,
+whose own build environment and test budgets remain separately recorded.
+
+The original inference-host library command stopped at linking after 107.717685
+seconds, exit 101, with **zero tests executed**. The linker reported signal 7
+(Bus error); its cause was not established. Required three-package `just fix`
+attempts both exited 101 with explicit ENOSPC diagnostics, after 368.188540 and
+337.497042 seconds respectively. They do not establish lint success. All original
+profiles, features and flags were retained, and neither attempt changed source.
+No further native commands remain running.
+
+The earlier Bazel lock update succeeded without a generated lockfile difference,
+but its command-boundary source state was not fully captured. Its separate scope
+receipt records the contemporaneous f040 HEAD observation and does not attribute
+that tooling result to R1, R2 or a complete binary pair. Terminal cache cleanup
+records retain both the observed resource failures and artifact retention state.
+
 ### Executed migration controls
 
 On the unchanged inspected production importer plus the new test patch, the real
@@ -98,7 +232,7 @@ checks also passed; the actual head and dirty documentation state are recorded
 in `source-checks.json`. Later upstream `2e7fbaeabc396d501d9d802adc63df963f1d288c`
 adds documentation and historical evidence only. It is preserved in publication
 without rewriting the native candidate or transferring its tests to another SHA.
-Publication is fixed to the later concurrent source head
+The next integration base was the later concurrent source head
 `dba49c2f66d8a72d6845c70958c4a24d6c4e7e89`
 (tree `25ae0d2035b763b916575292d04571e93a512dd1`; parents
 `fc86ed8e927a8eb4e048b160437126a6c0b96c0d` and
@@ -110,11 +244,13 @@ migration files; the shared corpus preserves its latest formatting and every
 peer field except the two corresponding migration pins. The shared plan receives
 only the original 1,234-byte additive owner-boundary note.
 
-Native tests, strict Clippy and Rust formatting on this latest combined source
-are **NOT_RUN**. The 246-test/Clippy receipt remains exclusively attributed to
+This continuation did not run native tests, strict Clippy or Rust formatting on
+the published S source. Its own 246-test/Clippy receipt remains exclusively attributed to
 `14fcbede`; the historical 230 research tests are not execution of the newer
 quantum DAA source. Their original receipts and input-equivalence scope remain
-unchanged. `source-checks.json` likewise records only the earlier `14fcbede`
+unchanged. The separately preserved peer late-verification records name dba as
+their actual executed source and likewise do not transfer those outcomes to S.
+`source-checks.json` records only the earlier `14fcbede`
 source and its then-dirty documentation. Any source-only checks on the final
 committed combination carry their own exact source identity and execution scope.
 

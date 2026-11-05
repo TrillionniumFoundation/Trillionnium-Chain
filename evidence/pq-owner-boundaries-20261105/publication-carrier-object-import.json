@@ -1,0 +1,94 @@
+{
+  "schema": "chain-final-publication-carrier-object-import-v1",
+  "source_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "publication_carrier_commit": "2e3e1cc2df14f809dcbfb560b94bca2b37a48a35",
+  "publication_carrier_tree": "a8785b53959dc3ae94fefb1eda91d4b3c2531018",
+  "actual_raw_commit_sha256": "43b9153a9fb4bb397e42e793a2d826d5313110ed9747bc8f8c2dcc05d893e8b0",
+  "actual_raw_commit_sha_verified": true,
+  "compare_commits": 7,
+  "incoming_paths": 86,
+  "unique_blobs": 85,
+  "downloaded_unique": 84,
+  "already_present_unique": 1,
+  "downloaded_bytes": 1048566,
+  "metadata_delta_matches_full_terminal_tree_comparison": true,
+  "all_carrier_distinct_leaf_blobs": 8710,
+  "missing_carrier_leaf_blobs": 0,
+  "immediate_parents": [
+    {
+      "sha": "70d071807028bb8dd6df706c12814b1753129639",
+      "materialized": false,
+      "type": null,
+      "scope": "No intermediate history import requested or attempted"
+    },
+    {
+      "sha": "a635200956843f0d2f335f929977d602b48b36ec",
+      "materialized": false,
+      "type": null,
+      "scope": "No intermediate history import requested or attempted"
+    }
+  ],
+  "historical_parent_closure": "NOT_MATERIALIZED; intentionally outside this bounded import",
+  "fixed_acceptance_candidate_chain": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "fixed_acceptance_candidate_runtime": "70115620a7f540c8618a9b0d32ead20f8bc508f0",
+  "publication_carrier_differs_from_acceptance_source": true,
+  "publication_carrier_has_new_code_configuration_and_workflow": true,
+  "old_native_or_source_results_inherited": false,
+  "native_tests_this_operation": "NOT_RUN",
+  "source_tests_this_operation": "NOT_RUN",
+  "operations": [
+    {
+      "operation": "tree-overlay",
+      "exit_code": 0,
+      "output_sha256": "9a87eb39a20a74f8cf73b9820d2766de23df811a86c1412a4073c566bf8a8e20"
+    },
+    {
+      "operation": "tree-materialization",
+      "exit_code": 0,
+      "output_sha256": "a35ce571c1e800242dcb51fdfcf5c5f0830d54a850dc8d23ef2e7dfb0f73d18b"
+    },
+    {
+      "operation": "exact-commit-import",
+      "exit_code": 0,
+      "output_sha256": "f85da74e2814999f4de7ab05a9de0e72c8e2d657d48c30205c643a010c441307"
+    }
+  ],
+  "source_state_before": {
+    "head": "60e763b1865c5f22c2b7447909b6045917fe39e7",
+    "index_sha256": "50428e57471622d2ea29514c48c1b5a60f253b092eab1e75e3f7462cc46ac821",
+    "status": "?? evidence/pq-owner-boundaries-20261105/publication-carrier-scope.json\n"
+  },
+  "source_state_after": {
+    "head": "60e763b1865c5f22c2b7447909b6045917fe39e7",
+    "index_sha256": "50428e57471622d2ea29514c48c1b5a60f253b092eab1e75e3f7462cc46ac821",
+    "status": "?? evidence/pq-owner-boundaries-20261105/publication-carrier-scope.json\n"
+  },
+  "head_index_worktree_writes_by_child": false,
+  "remote_writes": false,
+  "metadata_inputs": [
+    {
+      "path": "/dev/shm/pq-owner-chain-E-final-base-tree.json",
+      "bytes": 3580564,
+      "sha256": "b6d34efa1d7bafce6f8e6be1c46928a20e030fadbc490d35f9164fe03f67183a"
+    },
+    {
+      "path": "/dev/shm/pq-owner-chain-E-final-parent.json",
+      "bytes": 1940,
+      "sha256": "6301382f1df2010d654dc93e16b918dc8ee02bc204f896af4cebeb6cf8fa030c"
+    },
+    {
+      "path": "/dev/shm/pq-owner-chain-E-final-incoming.json",
+      "bytes": 30107,
+      "sha256": "201d57c3ceeab2424ecdaae2f0a72c8ab5d956a04828db190ca9401d304287c6"
+    },
+    {
+      "path": "/dev/shm/pq-owner-chain-E-final-compare.json",
+      "bytes": 15961,
+      "sha256": "21a217bbd93d934a48584335fcb365be725b54d6577bd5e0e5960e5d6c3d7cf3"
+    }
+  ],
+  "verified_blob_receipt_sha256": "2b67d4f7b9d5bb283dba36cb0aa612cad3e5c97c699a83a2fffc0513b8e5e460",
+  "completed_utc": "2026-11-05T07:07:23.379913+00:00",
+  "scope": "Transport, exact Git object identity and leaf availability only; no source audit, execution or qualification on the publication carrier."
+}

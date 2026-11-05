@@ -1,0 +1,64 @@
+{
+  "schema": "chain-E-peer-blob-import-v1",
+  "source_repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+  "source_tree": "e7e7583c70486c8b366b28e745b05744109fd963",
+  "incoming_list_sha256": "9bf897ea1c3c0ff9ec2e9ee792eb74d19b26997cd86b5ba5afab20ddfd58de8b",
+  "downloaded_unique": 5,
+  "downloaded_bytes": 428271,
+  "verified_objects": [
+    {
+      "path": "evidence/pq-current-root-integration-20261104/LATE_INTEGRATION.md",
+      "sha": "35be557813012a650e2c122a3a5ebc6bdb6be15b",
+      "bytes": 8701,
+      "sha256": "1e95abcf5c78de267e57a4a8bac6b96e65265a7c8467e672079c300cd2afc41f",
+      "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47/evidence/pq-current-root-integration-20261104/LATE_INTEGRATION.md",
+      "git_blob_sha_verified": true
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+      "sha": "83220ef556aa99b272b294fbc6a98077162f625b",
+      "bytes": 13414,
+      "sha256": "6820932e52f3aec4a5b14533549ef87cc0b1c5bb65f788b84356cba61067a952",
+      "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47/evidence/pq-current-root-integration-20261104/PUBLICATION_SCOPE.json",
+      "git_blob_sha_verified": true
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/README.md",
+      "sha": "07e686bd2d54c5259f40b7fe60508f2781d002ad",
+      "bytes": 13059,
+      "sha256": "9a38de631f379861a7596726e1a23e4620d3ff0d8b40b76d61e7edb441415c4b",
+      "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47/evidence/pq-current-root-integration-20261104/README.md",
+      "git_blob_sha_verified": true
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/late-integration.json",
+      "sha": "512621614f28a867a93a38c41771d49546e7c715",
+      "bytes": 203026,
+      "sha256": "4bd2ab5fc830e696c47928b506e8c40f50d86dab755b36bf0aa5404befcf7c38",
+      "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47/evidence/pq-current-root-integration-20261104/late-integration.json",
+      "git_blob_sha_verified": true
+    },
+    {
+      "path": "evidence/pq-current-root-integration-20261104/late-verification-records.tar.gz",
+      "sha": "6fc7670ebc7d2ebf55855b9cb1db0d667562ab9e",
+      "bytes": 190071,
+      "sha256": "4aada0ef7aac926cd5c9ff39fc3e0cb079395d2971a7e9704eb022101d08342c",
+      "source_commit": "2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47",
+      "display_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/2ef9e2fa1985881721a1bff4d546a1b2bdc5ae47/evidence/pq-current-root-integration-20261104/late-verification-records.tar.gz",
+      "git_blob_sha_verified": true
+    }
+  ],
+  "head_before": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "head_after": "70df2c644ed8dd64afa1e7533743664cddacb9da",
+  "head_changed_by_child": false,
+  "index_or_worktree_writes_by_child": false,
+  "remote_writes": false,
+  "rust_executed": false,
+  "completed_utc": "2026-11-05T06:22:21.895915+00:00",
+  "scope": "Exact peer evidence blob transport and content verification only."
+}
