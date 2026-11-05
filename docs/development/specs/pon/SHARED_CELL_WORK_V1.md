@@ -165,6 +165,11 @@ end-to-end proof cost remain separate. Correct model arithmetic, cheapest legal
 work, affordable hostile verification, public service, beneficial future updates
 and payment authorization are different acceptance decisions.
 
+The [2026-11-05 frozen observation](../../../../evidence/pon-shared-material-v1-20261105/README.md)
+records four complete-operator runs, two same-material attack runs and the actual
+model refusal. Its negative cost results and current v2 setup block remain part
+of the result; successful numerical execution does not erase them.
+
 ## Separate rectangular/grouped research profile
 
 `pon-routed-int257-grouped-research-v0` is a **design identifier only**, not an
