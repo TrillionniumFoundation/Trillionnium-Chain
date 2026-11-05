@@ -576,17 +576,17 @@ impl ReleaseAuthentication {
             let auth = CellPqReleaseAuthorizationV2::decode(&raw)?;
             let monotonic = Instant::now();
             let wall = SystemTime::now().duration_since(UNIX_EPOCH)?;
-            let checked = auth.verify_at(
-                release,
-                &CellPqReleaseExpectationV2 {
-                    network: *network,
-                    parameters: *parameters,
-                    key,
-                    sequence: *sequence,
-                    now: wall.as_secs(),
-                },
-            )?;
-            checked.release_at(wall.as_secs())?;
+            let expected = CellPqReleaseExpectationV2 {
+                network: *network,
+                parameters: *parameters,
+                key,
+                sequence: *sequence,
+                now: wall.as_secs(),
+            };
+            let checked = auth.verify_at(release, &expected)?;
+            // This CLI pins an immutable acquisition policy for this command.
+            // Runtime activation requires the actual owner's current view.
+            checked.release_at(&expected)?;
             let left = Duration::from_secs(checked.expires_at())
                 .checked_sub(wall)
                 .ok_or(CellErrorV1::Invalid("PQ release expired"))?;

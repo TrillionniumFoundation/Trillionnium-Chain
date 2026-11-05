@@ -1,8 +1,11 @@
 {
   "schema": "trnm-pq-system-required-tests-v1",
   "scope": "explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification",
-  "expected_meaningful_controls": 49,
+  "expected_meaningful_controls": 52,
   "tests": [
+    "ingress::pq_network::live_admission_tests::pq_client_completion_keeps_real_signature_and_response_context_checks",
+    "ingress::pq_network::live_admission_tests::pq_client_late_verified_response_cannot_renew_original_deadline",
+    "ingress::pq_network::live_admission_tests::pq_client_verified_response_rechecks_original_signed_expiry",
     "ingress::pq_network::live_admission_tests::elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only",
     "ingress::pq_network::live_admission_tests::deadline_cancels_signature_owner_wait_without_waiting_for_unlock",
     "ingress::pq_network::live_admission_tests::expiry_cancels_signature_owner_wait_and_preserves_unused_sequence",

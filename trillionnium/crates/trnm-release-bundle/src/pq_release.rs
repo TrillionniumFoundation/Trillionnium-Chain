@@ -233,6 +233,15 @@ impl VerifiedPqReleaseV1 {
     }
 }
 
+/// Facts from a role's latest accepted signed metadata. These are rebuilt from
+/// the event journal, not inferred from the content digest or activation role.
+#[derive(Clone, Copy)]
+struct CurrentPqReleaseV1 {
+    content: ReleaseDigestV1,
+    root_generation: u64,
+    expires_at: u64,
+}
+
 /// Single owner authorization state. Persist accepted signed events and their
 /// checkpoints atomically outside this kernel; bootstrapping is not recovery.
 /// At the retained-history/event limits it fails closed; it never evicts security
@@ -242,7 +251,7 @@ pub struct PqReleaseAuthorityV1 {
     root_digest: ReleaseDigestV1,
     checkpoint: ReleaseDigestV1,
     versions: BTreeMap<PqReleaseRoleV1, u64>,
-    current: BTreeMap<PqReleaseRoleV1, ReleaseDigestV1>,
+    current: BTreeMap<PqReleaseRoleV1, CurrentPqReleaseV1>,
     history: BTreeSet<(PqReleaseRoleV1, ReleaseDigestV1)>,
     retired: BTreeSet<ReleaseKeyIdV1>,
     time_floor: u64,
@@ -274,7 +283,8 @@ impl PqReleaseAuthorityV1 {
             event_count: 0,
         })
     }
-    /// Rebuild all role versions, content history, retired keys and time floor
+    /// Rebuild all role versions, publication lifetimes/generations, content
+    /// history, retired keys and time floor
     /// from the accepted event journal. Both pins must come from the trusted
     /// owner/recovery channel; never obtain `expected_checkpoint` from this same
     /// potentially rolled-back journal. Historical expiry is checked at each
@@ -336,7 +346,7 @@ impl PqReleaseAuthorityV1 {
         self.versions.get(&role).copied().unwrap_or(0)
     }
     pub fn current_content(&self, role: PqReleaseRoleV1) -> Option<ReleaseDigestV1> {
-        self.current.get(&role).copied()
+        self.current.get(&role).map(|release| release.content)
     }
 
     /// Both the previously trusted root quorum and the proposed root quorum sign
@@ -471,10 +481,20 @@ impl PqReleaseAuthorityV1 {
         if metadata.approved_content_rollback != revisited {
             return Err(PqReleaseErrorV1::RollbackApproval);
         }
-        if metadata.role == PqReleaseRoleV1::CellActivation
-            && self.current_content(PqReleaseRoleV1::CellManifest) != Some(metadata.content)
-        {
-            return Err(PqReleaseErrorV1::UnpublishedActivation);
+        if metadata.role == PqReleaseRoleV1::CellActivation {
+            // Activation keys cannot renew an expired publication or carry its
+            // authorization across a root rotation. The current publisher must
+            // approve even identical bytes again at a higher manifest version.
+            let manifest = self
+                .current
+                .get(&PqReleaseRoleV1::CellManifest)
+                .ok_or(PqReleaseErrorV1::UnpublishedActivation)?;
+            if manifest.content != metadata.content
+                || manifest.root_generation != self.root.generation
+                || manifest.expires_at <= now
+            {
+                return Err(PqReleaseErrorV1::UnpublishedActivation);
+            }
         }
         if !self.history.contains(&(metadata.role, metadata.content))
             && self.history.len() >= MAX_RETAINED_RELEASES_V1
@@ -492,7 +512,14 @@ impl PqReleaseAuthorityV1 {
         )?;
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.versions.insert(metadata.role, metadata.role_version);
-        self.current.insert(metadata.role, metadata.content);
+        self.current.insert(
+            metadata.role,
+            CurrentPqReleaseV1 {
+                content: metadata.content,
+                root_generation: metadata.root_generation,
+                expires_at: metadata.expires_at,
+            },
+        );
         self.history.insert((metadata.role, metadata.content));
         self.checkpoint = checkpoint;
         self.time_floor = now;
