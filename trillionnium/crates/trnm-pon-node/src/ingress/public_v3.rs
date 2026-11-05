@@ -786,7 +786,10 @@ impl PublicServer {
     /// the complete verifier; NEW bogus traces still consume one full replay.
     /// Future public rollout requires a separately reviewed resource profile.
     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
-        ensure(self.arithmetic_facts.is_none(), "PUBLIC_W1_CACHE_MODE")?;
+        ensure(
+            self.arithmetic_facts.is_none() && self.w1_rejection_cache.is_none(),
+            "PUBLIC_W1_CACHE_MODE",
+        )?;
         self.w1_rejection_cache = Some(
             trnm_crypto_primitives::pon_work::rejection_cache::RejectionCache::new(slots, ttl)
                 .ok_or("PUBLIC_W1_CACHE_LIMIT")?,

@@ -9,9 +9,53 @@ import os
 import re
 import stat
 import subprocess
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def _canonical_merge_tree(root: Path, base: str, candidate: str) -> str:
+    """Use reviewed objects with default Git merge semantics, never local drivers.
+
+    Merge configuration and info/attributes are not tracked source. A temporary
+    bare repository isolates them, templates, and global/environment injection.
+    Tracked attributes still belong to the selected input objects. This uses the
+    installed trusted Git; it does not certify Git itself or support custom
+    external merge drivers as part of a prospective-source identity.
+    """
+    environment = {key: value for key, value in os.environ.items()
+                   if not key.startswith('GIT_')}
+    environment.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_SYSTEM=os.devnull,
+                       GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM='1',
+                       GIT_NO_REPLACE_OBJECTS='1', GIT_TERMINAL_PROMPT='0')
+
+    def command(directory: Path, *args: str) -> list[str]:
+        return ['git', '--no-replace-objects', '-C', str(directory), *args]
+
+    ancestor = subprocess.run(command(root, 'merge-base', '--is-ancestor', base, candidate),
+                              env=environment, stdout=subprocess.DEVNULL,
+                              stderr=subprocess.PIPE, check=False)
+    if ancestor.returncode == 0:
+        return subprocess.check_output(command(root, 'rev-parse', candidate + '^{tree}'),
+                                       env=environment, text=True).strip()
+    if ancestor.returncode != 1:
+        raise ValueError('prospective merge cannot be reproduced from available history')
+    objects = subprocess.check_output(
+        command(root, 'rev-parse', '--path-format=absolute', '--git-path', 'objects'),
+        env=environment, text=True).rstrip('\n')
+    if not Path(objects).is_absolute() or '\n' in objects or '\r' in objects:
+        raise ValueError('noncanonical merge object directory')
+    with tempfile.TemporaryDirectory(prefix='trnm-canonical-merge-') as temporary:
+        isolated = Path(temporary) / 'objects-only.git'
+        subprocess.run(['git', 'init', '--bare', '--quiet', '--object-format=sha1',
+                        '--template=', str(isolated)], env=environment, check=True,
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (isolated / 'objects/info/alternates').write_text(objects + '\n')
+        return subprocess.check_output(
+            command(isolated, '-c', 'core.attributesFile=' + os.devnull,
+                    'merge-tree', '--write-tree', '--no-messages', base, candidate),
+            env=environment, text=True, stderr=subprocess.PIPE).strip()
 
 
 def _fingerprint(info: os.stat_result) -> tuple:
@@ -111,6 +155,18 @@ def verify(kind: str, expected_head: str, expected_base: str | None = None,
         raise ValueError('unknown source kind')
     clean()
     tree = git('rev-parse', actual + '^{tree}')
+    if kind == 'prospective-merge':
+        # Ordered parents do not bind a commit's tree: commit-tree can attach
+        # any source to those same parents. Reproduce the actual combination
+        # before allowing a command to borrow the candidate/base identities.
+        # A conflict needs a new reviewed candidate, not an unreviewed manual
+        # resolution hidden inside a prospective-merge receipt.
+        try:
+            combined_tree = _canonical_merge_tree(root, expected_base, expected_head)
+        except (OSError, subprocess.CalledProcessError) as error:
+            raise ValueError('prospective merge cannot be reproduced without conflicts') from error
+        if re.fullmatch(r'[0-9a-f]{40}', combined_tree) is None or tree != combined_tree:
+            raise ValueError('prospective merge tree differs from the event base and candidate')
     entries = git_bytes('ls-tree', '-r', '-l', '-z', '--full-tree', actual).split(b'\0')
     count = total = 0
     root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)

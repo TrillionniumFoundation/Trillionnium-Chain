@@ -37,7 +37,10 @@ impl PublicServer {
     /// Original constructors remain raw unless this method is explicitly called.
     pub fn with_arithmetic_facts(mut self) -> Result<Self> {
         ensure(
-            !self.identity.is_pq() && self.arithmetic_facts.is_none() && !self.native_growth,
+            !self.identity.is_pq()
+                && self.arithmetic_facts.is_none()
+                && self.w1_rejection_cache.is_none()
+                && !self.native_growth,
             "PUBLIC_ARITHMETIC_FACTS_ALREADY_ENABLED",
         )?;
         self.arithmetic_facts = Some(ArithmeticFactCache::new(MAX_ARITHMETIC_FACT_SLOTS)?);

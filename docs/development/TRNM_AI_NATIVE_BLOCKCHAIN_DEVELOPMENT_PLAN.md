@@ -23,6 +23,19 @@ contracts. There is no parallel PoCO completion roadmap or separate Hepta blockc
 Git history is the archive. The development directory retains one regular Markdown plan
 and small machine-readable companions, not historical symlinks or dated parallel plans.
 
+**PQ workflow continuation, 2026-11-04 America/New_York (2026-11-05 UTC):**
+The existing #688/#4812 candidates retain concurrent Cell, Growth, migration and
+W1 v2/QROM work. [The execution record](../../evidence/pq-workflow-continuation-20261104/README.md)
+binds source-composition isolation, exclusive public cache ownership, exact quantum
+candidate-check accounting and runtime clock/frontier path separation. The earlier
+38543c96 combination passed 47 source/record, 63 quantum, 57 PQ and four native
+cache controls. [The publication checkpoint](../../evidence/pq-workflow-continuation-20261104/PUBLICATION_SCOPE.md)
+preserves the newer 38cf4281 composition and requires validation against its fixed
+commit; no earlier native pass is inherited. Runtime 484ce165 has source/format
+checks but no host native test result. The P0 authority map is partial; original
+4s/16, full migration/recovery, work-cost/quantum assumptions, proof benefit and
+independent acceptance remain open. Activation and qualification do not change.
+
 The user's revised consensus decision supersedes the earlier keep-BFT proposal:
 PoCO-BFT is RETIRED AS DEVELOPMENT TARGET. PoN is a Nakamoto-style useful neural-work
 chain: permissionless work competition, target/difficulty, independent block validation,

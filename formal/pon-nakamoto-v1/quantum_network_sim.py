@@ -830,11 +830,22 @@ class Simulator:
                     / trial.iteration_seconds + 1e-9))))
             logical *= self.case.quantum_processors
             counts["logical_iterations_completed"] += logical
-            check_starts_after = (self.case.quantum_prepare_seconds + trial.domain_setup_seconds
-                                  + trial.iterations * trial.iteration_seconds
-                                  + self.case.quantum_measure_seconds)
-            checked_seconds = min(self.case.quantum_candidate_check_seconds,
-                                  max(0, elapsed - check_starts_after))
+            if self.case.quantum_clock_rounding == "upward":
+                # Use the same exact stage boundaries as the resource-derived
+                # search clock. Nearest-rounded sums can invent a candidate
+                # check before readout ends, or omit one already in progress.
+                exact_check_start = (exact_prepare
+                                     + trial.iterations * Fraction.from_float(trial.iteration_seconds)
+                                     + Fraction.from_float(float(self.case.quantum_measure_seconds)))
+                exact_checked = min(Fraction.from_float(float(self.case.quantum_candidate_check_seconds)),
+                                    max(Fraction(0), exact_elapsed - exact_check_start))
+                checked_seconds = float(exact_checked)
+            else:
+                check_starts_after = (self.case.quantum_prepare_seconds + trial.domain_setup_seconds
+                                      + trial.iterations * trial.iteration_seconds
+                                      + self.case.quantum_measure_seconds)
+                checked_seconds = min(self.case.quantum_candidate_check_seconds,
+                                      max(0, elapsed - check_starts_after))
             if checked_seconds > 0 or status in ("won", "failed"):
                 counts["candidate_checks_started"] += self.case.quantum_processors
                 if status in ("won", "failed"):

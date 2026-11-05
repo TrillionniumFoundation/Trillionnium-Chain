@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -45,6 +46,137 @@ class TrackedSourceTests(unittest.TestCase):
         self.assertEqual(result['tracked_entries'], 5)
         self.assertEqual(result['tested_commit'], self.head)
         self.assertFalse(result['tests_executed_by_identity_check'])
+
+    def _diverged_sources(self, *, conflict=False):
+        self.git('checkout', '-qb', 'base')
+        path = 'nested/source.rs' if conflict else 'base-only.rs'
+        (self.root / path).write_text('const BASE: bool = true;\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'base source')
+        base = self.git('rev-parse', 'HEAD')
+        self.git('checkout', '-q', 'candidate')
+        (self.root / 'nested/source.rs').write_text('const CANDIDATE: bool = true;\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'candidate source')
+        return base, self.git('rev-parse', 'HEAD')
+
+    def _checkout_merge(self, tree, base, candidate):
+        merged = self.git('commit-tree', tree, '-p', base, '-p', candidate,
+                          '-m', 'prospective source fixture')
+        self.git('checkout', '-q', '--detach', merged)
+        self.assertEqual(self.git('status', '--porcelain'), '')
+        self.assertEqual(self.git('show', '-s', '--format=%P', merged),
+                         base + ' ' + candidate)
+        return merged
+
+    def test_prospective_merge_accepts_exact_ancestor_candidate_tree(self):
+        base = self.head
+        (self.root / 'nested/source.rs').write_text('const CANDIDATE: bool = true;\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'candidate source')
+        candidate = self.git('rev-parse', 'HEAD')
+        tree = self.git('rev-parse', 'HEAD^{tree}')
+        merged = self._checkout_merge(tree, base, candidate)
+        result = verify('prospective-merge', candidate, base, merged, self.root)
+        self.assertEqual(result['tested_tree'], tree)
+        self.assertTrue(result['tracked_worktree_verified'])
+
+    def test_prospective_merge_accepts_exact_diverged_combination(self):
+        base, candidate = self._diverged_sources()
+        tree = self.git('merge-tree', '--write-tree', base, candidate)
+        self.assertNotEqual(tree, self.git('rev-parse', candidate + '^{tree}'))
+        merged = self._checkout_merge(tree, base, candidate)
+        result = verify('prospective-merge', candidate, base, merged, self.root)
+        self.assertEqual(result['tested_tree'], tree)
+        self.assertTrue((self.root / 'base-only.rs').is_file())
+
+    def test_prospective_merge_rejects_injected_committed_source(self):
+        base, candidate = self._diverged_sources()
+        tree = self.git('merge-tree', '--write-tree', base, candidate)
+        self._checkout_merge(tree, base, candidate)
+        (self.root / 'injected.rs').write_text('const UNREVIEWED: bool = true;\n')
+        self.git('add', '.')
+        injected_tree = self.git('write-tree')
+        merged = self._checkout_merge(injected_tree, base, candidate)
+        with self.assertRaisesRegex(ValueError, 'merge tree differs'):
+            verify('prospective-merge', candidate, base, merged, self.root)
+
+    def test_prospective_merge_rejects_omitted_base_change(self):
+        base, candidate = self._diverged_sources()
+        tree = self.git('rev-parse', candidate + '^{tree}')
+        merged = self._checkout_merge(tree, base, candidate)
+        with self.assertRaisesRegex(ValueError, 'merge tree differs'):
+            verify('prospective-merge', candidate, base, merged, self.root)
+
+    def test_prospective_merge_rejects_unreviewed_conflict_resolution(self):
+        base, candidate = self._diverged_sources(conflict=True)
+        tree = self.git('rev-parse', candidate + '^{tree}')
+        merged = self._checkout_merge(tree, base, candidate)
+        with self.assertRaisesRegex(ValueError, 'merge cannot be reproduced'):
+            verify('prospective-merge', candidate, base, merged, self.root)
+
+    def test_prospective_merge_never_executes_local_merge_driver(self):
+        base, candidate = self._diverged_sources(conflict=True)
+        merged = self._checkout_merge(self.git('rev-parse', candidate + '^{tree}'),
+                                      base, candidate)
+        marker = self.root / '.git/driver-marker'
+        self.git('config', 'merge.default', 'take_candidate')
+        self.git('config', 'merge.take_candidate.driver',
+                 'printf touched > ' + shlex.quote(str(marker)) + '; cp %B %A')
+        try:
+            with self.assertRaisesRegex(ValueError, 'merge cannot be reproduced'):
+                verify('prospective-merge', candidate, base, merged, self.root)
+        finally:
+            self.assertFalse(marker.exists(), 'source verification executed an external merge driver')
+
+    def test_prospective_merge_ignores_environment_merge_driver(self):
+        base, candidate = self._diverged_sources(conflict=True)
+        merged = self._checkout_merge(self.git('rev-parse', candidate + '^{tree}'),
+                                      base, candidate)
+        marker = self.root / '.git/environment-driver-marker'
+        injected = {
+            'GIT_CONFIG_COUNT': '2',
+            'GIT_CONFIG_KEY_0': 'merge.default',
+            'GIT_CONFIG_VALUE_0': 'take_candidate',
+            'GIT_CONFIG_KEY_1': 'merge.take_candidate.driver',
+            'GIT_CONFIG_VALUE_1': 'printf touched > ' + shlex.quote(str(marker)) + '; cp %B %A',
+        }
+        try:
+            with patch.dict(os.environ, injected):
+                with self.assertRaisesRegex(ValueError, 'merge cannot be reproduced'):
+                    verify('prospective-merge', candidate, base, merged, self.root)
+        finally:
+            self.assertFalse(marker.exists(), 'environment selected an external merge driver')
+
+    def test_prospective_merge_ignores_local_union_attributes(self):
+        base, candidate = self._diverged_sources(conflict=True)
+        (self.root / '.git/info/attributes').write_text('nested/source.rs merge=union\n')
+        unreviewed_tree = self.git('merge-tree', '--write-tree', base, candidate)
+        merged = self._checkout_merge(unreviewed_tree, base, candidate)
+        with self.assertRaisesRegex(ValueError, 'merge cannot be reproduced'):
+            verify('prospective-merge', candidate, base, merged, self.root)
+
+    def test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree(self):
+        source = self.root / 'nested/source.rs'
+        common = ['first\n', *['context\n'] * 8, 'last\n']
+        source.write_text(''.join(common))
+        self.git('add', '.')
+        self.git('commit', '-qm', 'common text')
+        self.git('checkout', '-qb', 'base')
+        source.write_text('BASE\n' + ''.join(common[1:]))
+        self.git('add', '.')
+        self.git('commit', '-qm', 'base first line')
+        base = self.git('rev-parse', 'HEAD')
+        self.git('checkout', '-q', 'candidate')
+        source.write_text(''.join(common[:-1]) + 'CANDIDATE\n')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'candidate last line')
+        candidate = self.git('rev-parse', 'HEAD')
+        tree = self.git('merge-tree', '--write-tree', base, candidate)
+        merged = self._checkout_merge(tree, base, candidate)
+        (self.root / '.git/info/attributes').write_text('nested/source.rs merge=binary\n')
+        result = verify('prospective-merge', candidate, base, merged, self.root)
+        self.assertEqual(result['tested_tree'], tree)
 
     def test_assume_unchanged_cannot_hide_modified_source(self):
         self.git('update-index', '--assume-unchanged', 'nested/source.rs')

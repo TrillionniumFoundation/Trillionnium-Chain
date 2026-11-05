@@ -1,0 +1,8 @@
+{
+  "base_local_head": "4cf25c59ca97cdc2d24a35953a47cb8ec2cf4a2c",
+  "remote_pr688_head": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+  "original_sha256": "c9a94eb87a54dfd2bae641a79d72e55a6b12010a7a9dc82c2ecd1c286780d38a",
+  "patched_sha256": "a9a0980f25dda02960d0b5dae0269e1de1190287df66144b32965ab80d46dad7",
+  "scope": "candidate check phase accounting in upward-clock research mode; no consensus or activation change"
+}
