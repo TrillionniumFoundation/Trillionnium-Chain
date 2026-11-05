@@ -96,8 +96,9 @@ pre-fix failures, subset exclusions, zero marked domains and explicit refusals.
 
 #### Metered Growth preparation and complete settlement observations
 
-Continue the existing #688 integration candidate after `38543c96`, preserving
-concurrent PQ migration, literal W1/quantum research and Cell storage work.
+Continue the existing #688 integration candidate through code composition
+`23a56123`, preserving concurrent PQ migration, literal W1/quantum research,
+cache-mode initialization guards and Cell storage work.
 The public worker observes its original CPU
 settlement and continuous journal tail through the existing `cpu_settle` phase.
 Unknown clocks, reservation-return failure and journal failure remain distinct
@@ -124,6 +125,13 @@ resource-isolation guarantee.
 retain the original #639 four-second/16-producer and 4,105-block History gates.
 Only actual source-bound runs in the reproduction record count as observations;
 implementation, test recipes and worker counts grant no performance qualification.
+The integrated M09 library has 302 passing tests and M06 has 126, with its original
+seven ignored tests retained; both strict Clippy checks passed. The import-fixed
+Node source passed strict Clippy, but three unit builds and one production-library
+build failed on ENOSPC or SIGKILL before any runtime test or cost sample. Preserve
+those exact source/build scopes and all failures. The complete Node, registered
+ABBA/A-H observations and original acceptance gates remain HOLD; no speedup is
+inferred from implementation or component correctness.
 
 #### Constructive W1 predicate and adversarial DAA closure checks — 2026-11-04
 
