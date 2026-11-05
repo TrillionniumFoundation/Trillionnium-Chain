@@ -172,9 +172,11 @@ of the result; successful numerical execution does not erase them.
 
 ## Separate rectangular/grouped research profile
 
-`pon-routed-int257-grouped-research-v0` is a **design identifier only**, not an
-implemented or activated work relation. Its initial business fixture is the
-existing 64-request integer routing batch. The router shape is `3 x 257` by
+`pon-routed-int257-grouped-research-v0` now has a separately implemented
+[exact algebraic operator and independent verifier](GROUPED_CELL_OPERATOR_V0.md).
+It is not a registered PoW lottery or an activated work relation and does not
+inherit W1 qualification. Its initial business fixture remains the existing
+64-request integer routing batch. The router shape is `3 x 257` by
 `257 x 64`; after deterministic routing, each selected expert uses a cached
 `base + delta` matrix of shape `3 x 257` and its `257 x b_e` request group,
 where the three group sizes sum to 64. Empty groups require no multiplication.

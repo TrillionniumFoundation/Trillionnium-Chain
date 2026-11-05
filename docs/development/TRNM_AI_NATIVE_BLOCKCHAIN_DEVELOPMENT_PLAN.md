@@ -17,6 +17,19 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Grouped operator continuation, 2026-11-05 America/New_York:** Continue PR #688
+with the [routed integer algebraic relation](specs/pon/GROUPED_CELL_OPERATOR_V0.md).
+Execute only the router and selected experts, retain original integer/bias/tie
+semantics, bind the ordered request/context/route/output statement, and measure
+against cached ordinary inference. Use real supplied request identities and
+original deadlines in a bounded planner; retrospective corpus fixtures do not
+establish demand or latency utility. Preserve cheaper factored/merged execution
+strategies and charge verification, batching and transport separately. This
+research implementation does not introduce a PoW lottery or replace W1. Work
+security, real deadlines, ordinary Hepta consumption, future model benefit and
+funded effects retain their independent open gates.
+
+
 **Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
 Continue the existing #688 candidate from
 `6ee529046d295e3175f09112492abee373f1f54c`, preserving the concurrent schema,

@@ -498,6 +498,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -565,6 +572,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs"
         )),
     ),
     (

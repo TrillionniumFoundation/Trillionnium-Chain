@@ -147,3 +147,15 @@ target 下的完整证明流。源码中的优化结构不声明实测优势、�
 - `formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_zero_only_operations_refuse_complete_canonical_nonzero_material`.
 - `formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_all_operations_check_complete_extent_canonical_fields_and_arguments`.
 - `formal/pon-nakamoto-v1/test_zero_work.py::ZeroWorkOracleTests.test_missing_and_unknown_operations_are_errors_with_empty_stdout`.
+
+
+## Routed grouped integer research relation
+
+The [separately versioned grouped operator](../development/specs/pon/GROUPED_CELL_OPERATOR_V0.md)
+computes the exact router and selected expert contractions without square
+padding. Its independent scalar verifier receives expected request/context
+identities externally and constructs a typed `VerifiedProduct` only after
+complete equality, group and commitment checks. This is an algebraic research
+API in M01; it is not `M01.VerifyWork`, a PoW certificate, demand authentication,
+current authority, ordinary Hepta installation or reward permission. Existing
+W1 byte semantics, hostile-service gates and activation flags are unchanged.

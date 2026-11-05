@@ -271,6 +271,7 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     TRNM_CONTINUITY_TRANSITIONS_BINARY="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/continuity_transition_vectors")" python3 formal/pon-nakamoto-v1/test_continuity_transitions.py -v
     TRNM_PAIRED_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_paired_io")" TRNM_PAIRED_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/paired-work" python3 formal/pon-nakamoto-v1/test_paired_work.py -v
     TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
+    TRNM_GROUPED_NATIVE="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped")" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
