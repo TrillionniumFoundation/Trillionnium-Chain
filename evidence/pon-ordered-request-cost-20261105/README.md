@@ -68,6 +68,17 @@ bind commands, source checks, logs and binaries.
 | Original Host readiness | Refused: `HOSTED_CI_ONLY_NO_LOCAL_PROVISION` |
 | Original release F0 native runner | Five named invocations passed; **business acceptance failed** |
 
+After preserving the later concurrent production changes, committed evidence
+candidate `61acfab2427277416f120072091c39b1f18cdcee` separately passed strict
+workspace/all-targets/all-features Clippy, all 43 source-integrity negatives,
+the locked graph, formatting, inventory, CI contract and repository checks
+(3,174 local links). [Delivery check receipts and raw logs](delivery-checks.json)
+retain that exact commit/tree. Static merge review confirms all 11 final epoch
+entry functions, the guard, checked multiproof, timestamp constructor and
+canonical test remain intact. Surrounding production code has changed since
+`657bf2a`; these checks do not execute or qualify its combined native behavior.
+The successor that adds this readback changes evidence only.
+
 The original-profile Node build at `59546d6` failed with SIGKILL and remains
 retained. The successful functional Node build uses only a Node test debuginfo
 override (`debug=0`), with opt-level 3, debug assertions, overflow checks and
