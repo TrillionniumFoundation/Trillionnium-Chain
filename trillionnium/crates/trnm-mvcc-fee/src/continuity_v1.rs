@@ -1,7 +1,7 @@
 //! Explicit revision12 continuity: reserve mandatory state liabilities and bind
 //! an immutable, genesis-defined maintenance task. No work hardness, useful demand,
 //! production authority or legacy/task substitution follows from availability.
-use crate::pon_executor::{canonical, Config, Result, State};
+use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use trnm_crypto_primitives::pon_work;
@@ -208,11 +208,33 @@ fn capacity_with_sources(
     monetary: Option<&State>,
 ) -> Result<Capacity> {
     let mut progress = || Ok::<(), std::convert::Infallible>(());
-    match scan_capacity_with_sources(state, height, cfg, account_access, monetary, &mut progress) {
+    match scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (
+            liability_rows(monetary.unwrap_or(state)),
+            prefix_rows(state, "contribution:").map(|(key, _)| key),
+        ),
+        &mut progress,
+    ) {
         Ok(capacity) => Ok(capacity),
         Err(CapacityScanError::State(error)) => Err(error),
         Err(CapacityScanError::Cancelled(impossible)) => match impossible {},
     }
+}
+
+/// The capacity relation reads only these disjoint namespaces. Their lexical
+/// order matches the original complete-State walk, including malformed suffixes
+/// and the first failing liability. Every relevant row is still inspected;
+/// accounts are looked up only when a liability may create one. State length,
+/// imported rewards, account access gates and all reserve checks stay separate.
+fn liability_rows(state: &State) -> impl Iterator<Item = (&String, &Value)> {
+    ["contribution:", "quota:", "release:", "reward:", "task:"]
+        .into_iter()
+        .flat_map(move |prefix| prefix_rows(state, prefix))
 }
 
 fn scan_capacity_with_sources<E>(
@@ -221,6 +243,33 @@ fn scan_capacity_with_sources<E>(
     cfg: &Config,
     account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
     monetary: Option<&State>,
+    progress: &mut dyn FnMut() -> std::result::Result<(), E>,
+) -> std::result::Result<Capacity, CapacityScanError<E>> {
+    // Public observations retain their original complete-row callback schedule.
+    // Skipping unrelated rows here could change cancellation/error precedence.
+    // Native validation above has no cancellable callback and can seek directly
+    // to the exact liability namespaces without changing its returned result.
+    scan_capacity_rows(
+        state,
+        height,
+        cfg,
+        account_access,
+        monetary,
+        (monetary.unwrap_or(state).iter(), state.keys()),
+        progress,
+    )
+}
+
+fn scan_capacity_rows<'a, E>(
+    state: &State,
+    height: u64,
+    cfg: &Config,
+    account_access: Option<&crate::pon_executor::AccountPointAccess<'_>>,
+    monetary: Option<&State>,
+    rows: (
+        impl Iterator<Item = (&'a String, &'a Value)>,
+        impl Iterator<Item = &'a String>,
+    ),
     progress: &mut dyn FnMut() -> std::result::Result<(), E>,
 ) -> std::result::Result<Capacity, CapacityScanError<E>> {
     if !enabled(cfg) {
@@ -238,7 +287,7 @@ fn scan_capacity_with_sources<E>(
     let mut recipients = BTreeSet::new();
     let mut reward_heights = BTreeSet::new();
     let mut archives = 0usize;
-    for (index, (key, value)) in monetary.unwrap_or(state).iter().enumerate() {
+    for (index, (key, value)) in rows.0.enumerate() {
         if index % CAPACITY_PROGRESS_INTERVAL == 0 {
             progress().map_err(CapacityScanError::Cancelled)?;
         }
@@ -271,7 +320,7 @@ fn scan_capacity_with_sources<E>(
     if monetary.is_some() && evaluation_enabled {
         // Monetary certificates do not authenticate this separate cleanup /
         // future-archive relation. Its complete State reference remains explicit.
-        for (index, key) in state.keys().enumerate() {
+        for (index, key) in rows.1.enumerate() {
             if index % CAPACITY_PROGRESS_INTERVAL == 0 {
                 progress().map_err(CapacityScanError::Cancelled)?;
             }
@@ -370,3 +419,7 @@ pub(crate) fn check_state_with_account_access_and_monetary(
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "continuity_v1/capacity_range_tests.rs"]
+mod capacity_range_tests;

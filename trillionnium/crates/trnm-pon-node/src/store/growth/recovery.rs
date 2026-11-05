@@ -378,11 +378,17 @@ impl Node {
         target: Hash,
         progress: &impl Fn(GrowthProgress) -> Result<()>,
     ) -> Result<Hash> {
+        // Even an already-active or lower-work target belongs to this caller's
+        // operation. Observe cancellation before any owner/SQLite lookup.
+        progress(GrowthProgress::BeforeContext)?;
         self.growth_guard()?;
         let tx = rusqlite::Transaction::new_unchecked(
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
+        // A foreign writer may commit between the first epoch check and BEGIN
+        // IMMEDIATE. Rebind after the write lock, including the no-op return.
+        self.growth_guard()?;
         let (old, generation) = self.active()?;
         if self.record(target)?.work <= self.record(old)?.work {
             tx.rollback()?;

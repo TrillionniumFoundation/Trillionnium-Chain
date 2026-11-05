@@ -2462,7 +2462,16 @@ fn apply_authenticated_application(
 
 fn funds(state: &State) -> Result<u64> {
     let mut total = 0_u64;
-    for (k, v) in state {
+    // These are every monetary row consumed by the original full-State sum,
+    // in the same global lexical order. Model/artifact and unrelated values
+    // contributed only zero; seeking past them preserves the first field or
+    // overflow error without weakening the complete supply relation.
+    let rows = prefix_rows(state, "account:").chain(
+        MONETARY_OBLIGATION_PREFIXES
+            .into_iter()
+            .flat_map(|prefix| prefix_rows(state, prefix)),
+    );
+    for (k, v) in rows {
         let amount = if k.starts_with("account:") {
             field(v, "balance")?
         } else if k.starts_with("task:") || k.starts_with("quota:") || k.starts_with("release:") {
