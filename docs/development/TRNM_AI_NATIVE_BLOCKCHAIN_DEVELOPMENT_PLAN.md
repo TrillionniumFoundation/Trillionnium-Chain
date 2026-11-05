@@ -17,6 +17,25 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Cheapest legal work and Mode-A chronology, 2026-11-05:** Continue the
+existing #688 candidate, preserving concurrent architecture, Growth and public
+request work. The [work-cost research contract](specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md)
+compares fourteen existing legal implementations on structured and exact trained
+source-routing materials, retaining preparation, every attempt and loser,
+actual cache epochs and held-out fixed-budget observations. The honest reference
+may use every legal optimization. Freeze the complete task, route, batch,
+numeric/output contract and bounded search schedule before new local entropy;
+require full native and scalar proof replay and an externally retained checkpoint
+for journal restore. Keep per-parent work and distinct complete application
+outputs separate. Repair the optional negative cache's full-proof hash before
+cheap malformed-input checks, and measure cold, changed-material, changed-challenge,
+expiry and eviction paths without discarding failed searches or normal-path cost.
+These are finite component experiments: authenticated challenge ownership,
+Sybil/bulk-precommit economics, adaptive Mode B, the unimplemented grouped
+relation, whole-service resource fairness and a global accepted-work cost bound
+remain open. No mathematical lower bound, original fixed-Host acceptance or
+production qualification follows from these tests.
+
 **Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
 Continue the existing #688 candidate from
 `6ee529046d295e3175f09112492abee373f1f54c`, preserving the concurrent schema,
