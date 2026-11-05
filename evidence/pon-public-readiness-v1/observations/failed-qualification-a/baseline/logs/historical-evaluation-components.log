@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/scripts/ci/check_evaluation_bundle_evidence.py", line 172, in <module>
+    result=validate_historical_cli(__file__,args.root,folder)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/scripts/ci/historical_evidence.py", line 57, in validate_historical_cli
+    result = subprocess.run([sys.executable, str(Path(script).resolve()), '--root', str(source),
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alex/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/runtime-env/bin/python3', '/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/scripts/ci/check_evaluation_bundle_evidence.py', '--root', '/tmp/pon-historical-source-77to06yw/source', '--evidence', '/home/alex/Documents/Codex/2026-09-30/github-trillionnium-chain-https-github-com/work/Trillionnium-Chain/evidence/pon-evaluation-bundle-v1']' returned non-zero exit status 1.

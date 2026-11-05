@@ -42,7 +42,11 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024, stderr_l
                 stream=key.fileobj;name=key.data
                 if name=='stdin':
                     try:position+=os.write(stream.fileno(),memoryview(data)[position:position+65536])
-                    except BrokenPipeError:position=len(data)
+                    except BrokenPipeError:
+                        # A closed pipe is not proof that the unsent suffix arrived.
+                        # Continue draining diagnostics so an ordinary nonzero
+                        # rejection keeps its original exit code and stderr.
+                        selector.unregister(stream);stream.close();continue
                     except BlockingIOError:continue
                     if position==len(data):selector.unregister(stream);stream.close()
                 else:
@@ -57,6 +61,8 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024, stderr_l
         if remaining<=0:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')
         try:returncode=child.wait(timeout=remaining)
         except subprocess.TimeoutExpired as error:raise ValueError('NATIVE_EXECUTOR_TIMEOUT')from error
+        if returncode==0 and position!=len(data):
+            raise ValueError('NATIVE_STDIN_INCOMPLETE')
         completed=True
         return Result(returncode,bytes(buffers['stdout']),bytes(buffers['stderr']))
     finally:
