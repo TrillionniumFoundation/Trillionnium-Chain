@@ -5,14 +5,24 @@
 //! A losing ticket need not allocate its otherwise fixed PNW1 proof bytes.
 //! Caching AB and delaying serialization do not change the relation or lottery.
 use super::{
-    evaluate_transcript_kernel_with_progress, hash, relation_only, Hash, PreparedTask,
-    VerificationError, VerificationProgress, WorkError,
+    evaluate_transcript_kernel_with_progress, field_bytes, hash, producer_reduce, relation_only,
+    validate, Hash, PreparedTask, VerificationError, VerificationProgress, WorkError, CELLS, N,
+    PROOF_BYTES,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Arithmetic {
     Transposed,
     FullLimb,
+}
+
+/// Explicit fixed-product preparation, independent of challenge arithmetic.
+/// Sparse skips only products with a zero operand after validating every word.
+/// Neither choice skips any challenge-bound transcript tile or grants authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Preparation {
+    Dense,
+    Sparse,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -50,8 +60,24 @@ impl Task {
     /// Both arithmetic choices pay the same original AB/prefix preparation.
     /// Only the challenge-dependent transcript kernel differs in this experiment.
     pub fn new(a: &[u32], b: &[u32], arithmetic: Arithmetic) -> Result<Self, WorkError> {
+        Self::with_preparation(a, b, arithmetic, Preparation::Dense)
+    }
+
+    /// The separately selected sparse arm pays its actual input scan, sparse
+    /// index, complete fixed product and proof-prefix construction once. It
+    /// supports all canonical fields, not just small integers or the model
+    /// fixture. The original constructor and native producer remain dense.
+    pub fn with_preparation(
+        a: &[u32],
+        b: &[u32],
+        arithmetic: Arithmetic,
+        preparation: Preparation,
+    ) -> Result<Self, WorkError> {
         Ok(Self {
-            prepared: PreparedTask::new(a, b)?,
+            prepared: match preparation {
+                Preparation::Dense => PreparedTask::new(a, b)?,
+                Preparation::Sparse => sparse_preparation(a, b)?,
+            },
             arithmetic,
         })
     }
@@ -133,6 +159,50 @@ impl Task {
             proof,
         })
     }
+}
+
+fn sparse_preparation(a: &[u32], b: &[u32]) -> Result<PreparedTask, WorkError> {
+    // A malformed word is an error even in a row/column whose product would be
+    // zero. No modular canonicalization or implicit model-range trust is used.
+    validate(a)?;
+    validate(b)?;
+    let right_rows: Vec<Vec<(usize, u32)>> = b
+        .chunks_exact(N)
+        .map(|row| {
+            row.iter()
+                .copied()
+                .enumerate()
+                .filter(|(_, value)| *value != 0)
+                .collect()
+        })
+        .collect();
+    let mut product = vec![0; CELLS];
+    for (left, output) in a.chunks_exact(N).zip(product.chunks_exact_mut(N)) {
+        let mut sums = [0_u128; N];
+        for (k, &value) in left.iter().enumerate() {
+            if value == 0 {
+                continue;
+            }
+            for &(column, right) in &right_rows[k] {
+                sums[column] += u128::from(value) * u128::from(right);
+            }
+        }
+        // Each sum has at most 64 canonical products: 64*(q-1)^2 < 2^70,
+        // within the original exact reducer's bound even for dense extremes.
+        for (value, sum) in output.iter_mut().zip(sums) {
+            *value = producer_reduce(sum);
+        }
+    }
+    let mut prefix = Vec::with_capacity(PROOF_BYTES);
+    prefix.extend_from_slice(b"PNW1");
+    for matrix in [a, b, product.as_slice()] {
+        prefix.extend_from_slice(&field_bytes(matrix));
+    }
+    Ok(PreparedTask {
+        a: a.to_vec(),
+        b: b.to_vec(),
+        prefix,
+    })
 }
 
 #[cfg(test)]
@@ -350,6 +420,168 @@ mod tests {
                 Task::new(&zero, &vec![Q as u32; CELLS], arithmetic),
                 Err(WorkError::Field)
             ));
+        }
+    }
+
+    #[test]
+    fn sparse_preparation_matches_dense_and_independent_full_field_proofs() {
+        let zero = vec![0; CELLS];
+        let high = vec![Q as u32 - 1; CELLS];
+        let sparse_left: Vec<_> = (0..CELLS)
+            .map(|i| match i % 11 {
+                0 => Q as u32 - 1,
+                1 => (i as u32 * 219_613) % Q as u32,
+                _ => 0,
+            })
+            .collect();
+        let sparse_right: Vec<_> = (0..CELLS)
+            .map(|i| match i % 13 {
+                0 => Q as u32 - 7,
+                1 => 8,
+                _ => 0,
+            })
+            .collect();
+        let padded: Vec<_> = (0..CELLS)
+            .map(|i| if i / N < 15 && i % N == 0 { 237 } else { 0 })
+            .collect();
+        let bias: Vec<_> = (0..CELLS).map(|i| u32::from(i / N == 0)).collect();
+        for (a, b) in [
+            (&zero, &zero),
+            (&zero, &high),
+            (&high, &zero),
+            (&high, &high),
+            (&sparse_left, &sparse_right),
+            (&padded, &bias),
+        ] {
+            let task_id = pon_work::task_id(a, b).unwrap();
+            for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+                let dense = Task::new(a, b, arithmetic).unwrap();
+                let sparse = Task::with_preparation(a, b, arithmetic, Preparation::Sparse).unwrap();
+                assert_eq!(dense.proof_prefix(), sparse.proof_prefix());
+                for challenge in [[0; 32], [255; 32]] {
+                    let expected = pon_work::prove(challenge, a, b).unwrap();
+                    let attempt = sparse
+                        .attempt(challenge, [255; 32], Materialization::TargetHit)
+                        .unwrap();
+                    assert_eq!(attempt.proof.as_ref().unwrap(), &expected);
+                    assert_eq!(
+                        attempt,
+                        dense
+                            .attempt(challenge, [255; 32], Materialization::TargetHit)
+                            .unwrap()
+                    );
+                    let native =
+                        pon_work::verify(challenge, task_id, [255; 32], &expected).unwrap();
+                    let reference =
+                        pon_work::verify_reference(challenge, task_id, [255; 32], &expected)
+                            .unwrap();
+                    assert_eq!(native.product(), reference.product());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths() {
+        let zero = vec![0; CELLS];
+        let mut malformed = zero.clone();
+        // The invalid value is deliberately outside the active model rows and
+        // has a zero multiplication partner. It must still be rejected.
+        malformed[CELLS - 1] = Q as u32;
+        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+            for (a, b) in [(&zero, &malformed), (&malformed, &zero)] {
+                assert!(matches!(
+                    Task::with_preparation(a, b, arithmetic, Preparation::Sparse),
+                    Err(WorkError::Field)
+                ));
+            }
+            for length in [0, CELLS - 1, CELLS + 1] {
+                let bad_length = vec![0; length];
+                for (a, b) in [(&zero, &bad_length), (&bad_length, &zero)] {
+                    assert!(matches!(
+                        Task::with_preparation(a, b, arithmetic, Preparation::Sparse),
+                        Err(WorkError::Length)
+                    ));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry() {
+        let zero = vec![0; CELLS];
+        let mut target = [0; 32];
+        target[31] = 1;
+        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+            let dense = Task::new(&zero, &zero, arithmetic).unwrap();
+            let sparse =
+                Task::with_preparation(&zero, &zero, arithmetic, Preparation::Sparse).unwrap();
+            for materialization in [Materialization::TargetHit, Materialization::EveryAttempt] {
+                let mut expected_points = Vec::new();
+                let expected = dense
+                    .attempt_with_progress([3; 32], target, materialization, |point| {
+                        expected_points.push(point);
+                        Ok::<_, ()>(())
+                    })
+                    .unwrap();
+                let mut points = Vec::new();
+                let actual = sparse
+                    .attempt_with_progress([3; 32], target, materialization, |point| {
+                        points.push(point);
+                        Ok::<_, ()>(())
+                    })
+                    .unwrap();
+                assert!(!actual.target_hit);
+                assert_eq!(actual, expected);
+                assert_eq!(points, expected_points);
+                assert_eq!(
+                    points
+                        .iter()
+                        .filter(|p| matches!(
+                            p,
+                            Progress::Replay(VerificationProgress::TranscriptTile { .. })
+                        ))
+                        .count(),
+                    512
+                );
+                let first_tile = points
+                    .iter()
+                    .position(|p| {
+                        matches!(
+                            p,
+                            Progress::Replay(VerificationProgress::TranscriptTile { .. })
+                        )
+                    })
+                    .unwrap();
+                let last_tile = points
+                    .iter()
+                    .rposition(|p| {
+                        matches!(
+                            p,
+                            Progress::Replay(VerificationProgress::TranscriptTile { .. })
+                        )
+                    })
+                    .unwrap();
+                for cut in [0, first_tile, last_tile, points.len() - 1] {
+                    let mut observed = 0;
+                    let result =
+                        sparse.attempt_with_progress([3; 32], target, materialization, |_| {
+                            let index = observed;
+                            observed += 1;
+                            if index == cut {
+                                Err(cut)
+                            } else {
+                                Ok(())
+                            }
+                        });
+                    assert_eq!(result, Err(VerificationError::Cancelled(cut)));
+                    assert_eq!(observed, cut + 1);
+                    assert_eq!(
+                        sparse.attempt([3; 32], target, materialization).unwrap(),
+                        expected
+                    );
+                }
+            }
         }
     }
 }

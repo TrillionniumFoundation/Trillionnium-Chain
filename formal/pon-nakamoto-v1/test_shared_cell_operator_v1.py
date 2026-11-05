@@ -175,6 +175,12 @@ class SharedCellOperatorTests(unittest.TestCase):
             summary[field] = timing
         records = [dict(record, schema=cell.NATIVE_SCHEMA, record_build_timing=timing)
                    for record in (material, setup, search, candidate, verification, winner, summary)]
+        # Synthetic clock envelopes must be internally consistent. These are
+        # parser controls, never claimed as measured native performance.
+        records[2]['timing'] = dict(cpu_ns=len(attempts), wall_ns=len(attempts))
+        records[-1]['producer_subtotal'] = dict(cpu_ns=1 + len(attempts), wall_ns=1 + len(attempts))
+        records[-1]['record_build_subtotal'] = dict(cpu_ns=6, wall_ns=6)
+        records[-1]['run_through_before_summary'] = dict(cpu_ns=12 + len(attempts), wall_ns=12 + len(attempts))
         options = dict(seed=seed, target_index=0, max_attempts=64, arithmetic='full-limb')
         return tiles, records, options, product
 
@@ -247,6 +253,68 @@ class SharedCellOperatorTests(unittest.TestCase):
             self.assertFalse(report['proof_backend_executed'])
             self.assertFalse(report['claims']['complete_operator'])
             self.assertEqual(len(list(out.glob('tile-*/material.bin'))), 5)
+
+    def test_cost_subtotals_and_search_envelopes_cannot_erase_real_work(self):
+        tiles, records, options, _ = self.native_evidence()
+        for field in ('producer_subtotal', 'native_verifier_subtotal', 'reference_verifier_subtotal',
+                      'typed_copy_subtotal', 'record_build_subtotal'):
+            wrong = copy.deepcopy(records)
+            wrong[-1][field] = {'cpu_ns': 0, 'wall_ns': 0}
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'SUMMARY_TIMING'):
+                cell.native_products(self.evidence_bytes(wrong), tiles, 0, 1, **options)
+        wrong = copy.deepcopy(records)
+        wrong[2]['timing'] = {'cpu_ns': 0, 'wall_ns': 0}
+        with self.assertRaisesRegex(ValueError, 'SEARCH_TIMING_ENVELOPE'):
+            cell.native_products(self.evidence_bytes(wrong), tiles, 0, 1, **options)
+        wrong = copy.deepcopy(records)
+        wrong[-1]['run_through_before_summary'] = {'cpu_ns': 1, 'wall_ns': 1}
+        with self.assertRaisesRegex(ValueError, 'RUN_TIMING_ENVELOPE'):
+            cell.native_products(self.evidence_bytes(wrong), tiles, 0, 1, **options)
+
+    def test_v2_verifier_roster_is_complete_and_charged_exactly_once(self):
+        tiles, records, options, product = self.native_evidence()
+        for row in records:
+            row['schema'] = cell.NATIVE_SCHEMA_V2
+        for index in (0, 1, 2):
+            records[index]['preparation'] = 'sparse'
+        records[0]['verifiers'] = 3
+        for index in (0, 4, 6):
+            records[index]['native_verifier_scope'] = cell.VERIFIER_SCOPE
+        records[4]['native_verifiers'] = [
+            {'index': index, 'outcome': 'Accepted', 'timing': {'cpu_ns': 1, 'wall_ns': 1},
+             'product_sha256': cell.sha256(product)} for index in range(3)]
+        records[-1]['native_verifier_subtotal'] = {'cpu_ns': 3, 'wall_ns': 3}
+        records[-1]['native_verifier_calls'] = 3
+        records[-1].update(preparation='sparse', verifiers=3)
+        records[-1]['run_through_before_summary'] = {'cpu_ns': 1000, 'wall_ns': 1000}
+        options.update(preparation='sparse', verifiers=3)
+        decoded, _ = cell.native_products(self.evidence_bytes(records), tiles, 0, 1, **options)
+        self.assertEqual(decoded, [product])
+        for mutation, code in (
+                (lambda r: r[4]['native_verifiers'].pop(), 'VERIFIER_COVERAGE'),
+                (lambda r: r[4]['native_verifiers'][1].update(index=0), 'VERIFIER_BINDING'),
+                (lambda r: r[4]['native_verifiers'][2].update(product_sha256='00' * 32), 'VERIFIER_BINDING'),
+                (lambda r: r[4]['native_verifiers'][2].update(outcome='Rejected'), 'VERIFIER_BINDING'),
+                (lambda r: r[-1].update(native_verifier_calls=True), 'VERIFIER_CALLS'),
+                (lambda r: r[-1].update(native_verifier_subtotal={'cpu_ns': 4, 'wall_ns': 4}), 'SUMMARY_TIMING'),
+                (lambda r: r[4].update(native_verifier_scope='independent-network-nodes'), 'VERIFIER_SCOPE'),
+                (lambda r: r[1].update(preparation='dense'), 'PREPARATION_BINDING')):
+            wrong = copy.deepcopy(records)
+            mutation(wrong)
+            with self.subTest(code=code), self.assertRaisesRegex(ValueError, code):
+                cell.native_products(self.evidence_bytes(wrong), tiles, 0, 1, **options)
+
+    def test_v2_materials_keep_unknown_system_costs_unknown(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = cell.parser().parse_args(['--out', str(Path(directory) / 'run'), '--material-only',
+                                             '--preparation', 'sparse', '--verifiers', '3',
+                                             '--batch-size', '7', '--baseline-repetitions', '2'])
+            report = cell.run(args)
+            self.assertEqual(report['schema'], cell.SCHEMA_V2)
+            self.assertEqual(len(report['baseline']['cpu']['warm_samples_ns']), 2)
+            self.assertFalse(report['cost_coverage']['net_compute_benefit_qualified'])
+            for key in ('wan_transport', 'stale_blocks', 'network_validator_population', 'device_model_load'):
+                self.assertIsNone(report['cost_coverage'][key])
 
 
 if __name__ == '__main__':

@@ -1,0 +1,337 @@
+{
+  "baseline_repetitions": 100,
+  "bundle_hash": "0308341b06b152167da48dc706ee82b7e691aa9ebb2c4d2d7d5cd6a55d12acd5",
+  "cases": [
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t0-full-limb-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t0-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t0-transposed-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t0-transposed-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t1-full-limb-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t1-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t1-transposed-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r0-t1-transposed-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t1-transposed-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t1-transposed-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t1-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t1-full-limb-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t0-transposed-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t0-transposed-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t0-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r1-t0-full-limb-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t0-full-limb-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t0-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t0-transposed-dense",
+      "preparation": "dense",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t0-transposed-sparse",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t1-full-limb-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t1-full-limb-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t1-transposed-dense",
+      "preparation": "dense",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "transposed",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "paired-r2-t1-transposed-sparse",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "fanout-t0-v3",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 3
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "fanout-t0-v8",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 8
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 4,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "reuse-t0-cycles4",
+      "preparation": "sparse",
+      "target": 0,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "fanout-t1-v3",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 3
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "fanout-t1-v8",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 8
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 4,
+      "expected_exit": 0,
+      "max_attempts": 4096,
+      "name": "reuse-t1-cycles4",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    },
+    {
+      "arithmetic": "full-limb",
+      "cycles": 1,
+      "expected_exit": 2,
+      "max_attempts": 1,
+      "name": "bounded-search-exhaustion-control",
+      "preparation": "sparse",
+      "target": 1,
+      "verifiers": 1
+    }
+  ],
+  "consumer_timeout_seconds": 360,
+  "hardware_scope": "shared local host; no independent administrators or WAN",
+  "model_adoption": false,
+  "model_training": false,
+  "native_timeout_seconds_per_tile": 60,
+  "negative_control_scope": "one bounded-search exhaustion; not a relaxed service gate",
+  "original_4s_16_hostile_gate_qualified": false,
+  "production_activation": false,
+  "replay_source_each_case": true,
+  "schema": "pon-shared-material-campaign-v2",
+  "seed": "8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c",
+  "source": {
+    "commit": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+    "inputs_sha256": {
+      "consumer.json": "f93722be0d3b0baaf3cc3bf92a3a6d5dc5600e814c3aa2fa6d51c4cdfad57f10",
+      "evaluation-bundle.json": "ace2fbf9bdbbd4ca4c9b17bff338487687ef09ba5d97aee9853412953d602e3a",
+      "model.json": "755e512410cfa6a1f463c48f6bfe5da240908258483be150c7ac2f1fe1249afd"
+    },
+    "runner_sha256": "5e9ad2da5319b645dc6325d4466c4e822cf7ebc07ab116cdc04c18d3c14fcf7f",
+    "tree": "5487be5fe9075298429c0a8cad60e33cf330f8bf"
+  }
+}

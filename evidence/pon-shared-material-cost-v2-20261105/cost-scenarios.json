@@ -1,0 +1,6 @@
+[
+  {"name": "one-verifier-no-stale-assumption", "verifiers": 1, "stale_fraction_bps": 0},
+  {"name": "eight-verifiers-no-stale-assumption", "verifiers": 8, "stale_fraction_bps": 0},
+  {"name": "eight-verifiers-ten-percent-iid-stale-assumption", "verifiers": 8, "stale_fraction_bps": 1000},
+  {"name": "one-hundred-verifiers-ten-percent-iid-stale-assumption", "verifiers": 100, "stale_fraction_bps": 1000}
+]

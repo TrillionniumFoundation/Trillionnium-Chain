@@ -101,6 +101,10 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_work_utility.py
+    python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py
+    python3 scripts/ci/test_shared_material_cost_v2.py
+    python3 scripts/ci/test_shared_material_security_v1.py
+    python3 scripts/ci/test_shared_material_campaign_v2.py
     python3 formal/pon-nakamoto-v1/test_public_evaluation_lifecycle.py
     python3 formal/pon-nakamoto-v1/test_llm_adapter_contract.py
     python3 formal/pon-nakamoto-v1/test_model_acceptance.py

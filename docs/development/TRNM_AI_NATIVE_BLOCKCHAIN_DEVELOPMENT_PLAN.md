@@ -17,6 +17,26 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Shared-material total-cost continuation, 2026-11-05 America/New_York:**
+Continue #688 from `6ee529046d295e3175f09112492abee373f1f54c` under the
+[v2 measurement contract](specs/pon/SHARED_CELL_COST_V2.md). Compare explicit dense
+and sparse legal preparation with identical complete W1 challenge/proof streams;
+retain the cached selected-expert ordinary operator and the original model's
+non-adoption. Measure every requested local full verifier replay and charge each
+process/phase once. Recompute cost summaries from raw observations, retain failed
+searches and distinguish CPU from wall time, local pipes from WAN, and repeated
+outputs from new useful demand. All-miner/all-validator network coverage, stale
+blocks, device loading, independent future model benefit and actual full-system
+net savings remain unqualified. No work relation or original service budget changes.
+The [frozen continuation and raw-cost index](../../evidence/pon-shared-material-cost-v2-20261105/README.md)
+records 24 paired observations, six fanout/reuse observations and one actual search
+exhaustion on source `eeedfe33f9c7cd27a1855b865e7faa458047dcd1`. Sparse preparation
+reduces paired median setup CPU by 85.7--88.1%, while complete child/warm wall
+arm-median ratios remain 353--662x. All-miss costs, same-process full verifier
+counts, repeated-output non-credit and the original no-adoption are retained.
+The same-material hostile refusal/attacker CPU remains 9.35--13.74x; neither
+this finite observation nor the algebra audit proves global cheapest work.
+
 **Ordered Growth execution and request costs, 2026-11-05 America/New_York:**
 Continue the existing #688 candidate from
 `6ee529046d295e3175f09112492abee373f1f54c`, preserving the concurrent schema,
