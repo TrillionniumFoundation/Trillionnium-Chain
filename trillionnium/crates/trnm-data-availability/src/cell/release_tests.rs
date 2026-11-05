@@ -168,13 +168,30 @@ type PublicationHook = Box<dyn FnOnce(Instant)>;
 thread_local! {
     static PUBLICATION_HOOK: std::cell::RefCell<Option<PublicationHook>> = const { std::cell::RefCell::new(None) };
     static POST_LINK_ERROR: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    static POST_LINK_HOOK: std::cell::RefCell<Option<Box<dyn FnOnce()>>> = const { std::cell::RefCell::new(None) };
 }
 
 pub(super) fn after_marker_link() -> CellResultV1<()> {
+    let hook = POST_LINK_HOOK.with(|slot| slot.borrow_mut().take());
+    if let Some(hook) = hook {
+        hook();
+    }
     if POST_LINK_ERROR.replace(false) {
         return Err(std::io::Error::other("injected post-link acknowledgement failure").into());
     }
     Ok(())
+}
+
+fn with_post_link_hook<T>(hook: Box<dyn FnOnce()>, run: impl FnOnce() -> T) -> T {
+    struct Reset;
+    impl Drop for Reset {
+        fn drop(&mut self) {
+            let _ = POST_LINK_HOOK.with(|slot| slot.borrow_mut().take());
+        }
+    }
+    POST_LINK_HOOK.with(|slot| assert!(slot.borrow_mut().replace(hook).is_none()));
+    let _reset = Reset;
+    run()
 }
 
 fn with_post_link_error<T>(run: impl FnOnce() -> T) -> T {
@@ -304,6 +321,76 @@ fn post_link_failure_preserves_complete_marker_for_same_identity_readback() {
     assert!(matches!(
         fetch_release_to_file(
             &receiver,
+            &fixture.release,
+            fixture.release.id(),
+            &[],
+            limits(),
+            &output,
+        ),
+        Err(CellErrorV1::Invalid("release marker exists"))
+    ));
+    assert_eq!(fs::read(output).unwrap(), fixture.release.encode());
+}
+
+#[test]
+fn post_link_deadline_expiry_refuses_success_and_preserves_exact_marker() {
+    use std::{cell::Cell, rc::Rc, sync::mpsc};
+
+    let fixture = Fixture::new();
+    let output = fixture.path("late-complete.tcr");
+    let marker = output.clone();
+    let expected = fixture.release.encode();
+    let reached = Rc::new(Cell::new(false));
+    let observed = reached.clone();
+    let original = Instant::now() + Duration::from_secs(1);
+    let mut bounded = limits();
+    bounded.peer.max_response_bytes = 0;
+    bounded.release.deadline = original;
+    let result = with_post_link_hook(
+        Box::new(move || {
+            observed.set(true);
+            assert_eq!(fs::read(&marker).unwrap(), expected);
+            // The actual create-only link has succeeded. Hold the subsequent
+            // acknowledgement boundary beyond the same operation deadline.
+            let (_hold, elapsed) = mpsc::channel::<()>();
+            while let Some(left) = original.checked_duration_since(Instant::now()) {
+                assert!(matches!(
+                    elapsed.recv_timeout(left),
+                    Err(mpsc::RecvTimeoutError::Timeout)
+                ));
+            }
+            assert!(Instant::now() > original);
+        }),
+        || {
+            fetch_release_to_file(
+                &fixture.origin,
+                &fixture.release,
+                fixture.release.id(),
+                &[],
+                bounded,
+                &output,
+            )
+        },
+    );
+    assert!(reached.get(), "post-link boundary was not reached");
+    assert!(matches!(
+        result,
+        Err(CellErrorV1::Invalid("release fetch deadline"))
+    ));
+    assert_eq!(
+        read_pinned_release(&output, fixture.release.id()).unwrap(),
+        fixture.release
+    );
+    assert_no_partial_files(fixture.directory.path());
+    fixture
+        .origin
+        .verify_release_complete(&fixture.release, limits().release)
+        .unwrap();
+    // A late acknowledgement cannot remove or replace the already published
+    // root. Reconcile the exact identity; a second create still refuses.
+    assert!(matches!(
+        fetch_release_to_file(
+            &fixture.origin,
             &fixture.release,
             fixture.release.id(),
             &[],

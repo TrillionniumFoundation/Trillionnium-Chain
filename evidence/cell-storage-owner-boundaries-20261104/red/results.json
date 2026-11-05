@@ -1,0 +1,78 @@
+{
+  "base": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "kind": "working-tree-regression-before-production-fix",
+  "source_sha256": {
+    "network.rs": "bce2ff38dfece02d822fb6f9b6fecc1f805ca23bb0c17fa4adf5c6f0eaf5e324",
+    "discovery/transport.rs": "0d2931b9686a2d565dca8421138ef935521cac89a445f7def4f75de44aa1db53",
+    "discovery/pq/transport.rs": "7095743b3b0bafc48a7f65f034206d43ef4c22ada61d37a9ea31c801b42fb7e1",
+    "discovery/tests.rs": "07e143b27f1d212e500396822fd36c3e75dce0627555ec03cdb382fb818855ba",
+    "discovery/pq/tests.rs": "eba561ae6ccdb203bd26afe9b248d84cee2c2546c711776498d7b9431e76e48f",
+    "release.rs": "7b39518e0c8d74a7e6ef1ccdcfb85d55e925961b27e0d35b8227d6f1541766a1",
+    "release_tests.rs": "8ad326a34ebe6807cdf1ae6fd197238833841beccd3c28abf7505076a01673e1"
+  },
+  "results": [
+    {
+      "selector": "cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "elapsed_seconds": 0.23686379800000168,
+      "log": "1.log",
+      "log_sha256": "6e00f7ef63f7670d4f243a67432eed3016ff7b2b39361b2edd3bbe4ff0a9cf22"
+    },
+    {
+      "selector": "cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "elapsed_seconds": 0.18682241299995894,
+      "log": "2.log",
+      "log_sha256": "959a18f5001e74c72e84fc9314b0a62cff36b4a3b4296840c6612f661bce0e39"
+    },
+    {
+      "selector": "cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "-p",
+        "trnm-data-availability",
+        "--lib",
+        "cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "elapsed_seconds": 1.1836394740000173,
+      "log": "3.log",
+      "log_sha256": "9c3d3c7b823ff9d34d8a6ccfe47d3710774ce8114611c66a21da45105e4625cf"
+    }
+  ]
+}

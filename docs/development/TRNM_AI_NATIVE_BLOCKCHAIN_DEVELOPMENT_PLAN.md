@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Cell storage completion boundaries, 2026-11-04 America/New_York:** Continue
+the existing #688 candidate from `ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637`.
+Classic and PQ rendezvous admission must stop before a new connection when the
+original operation's actual response-byte allowance is exhausted. Preserve
+refundable in-flight reservations. After create-only release-marker publication,
+finish directory durability and owned cleanup, then refuse a late success under
+the unchanged original deadline while retaining the exact marker for readback.
+The [focused regression record](../../evidence/cell-storage-owner-boundaries-20261104/README.md)
+retains both discovery failures and the original late-success observation, with
+a reproducible native/source/Clippy entry point. No format, signature domain,
+retention terms or acceptance threshold changes. Eight-layer implementation
+coverage is distinct from ordinary funded TCA2 ownership, automatic funded
+renewal, independent custody/DHT qualification and real Hepta CURRENT/FinalUse
+integration; those gates remain open in the existing
+[storage contract](specs/pon/CELL_MODEL_STORAGE_V1.md).
+
 This is the one active engineering plan. It owns sequence, work boundaries and integration
 policy; the protocol suite owns domain rules and the module guides own implementation
 contracts. There is no parallel PoCO completion roadmap or separate Hepta blockchain.

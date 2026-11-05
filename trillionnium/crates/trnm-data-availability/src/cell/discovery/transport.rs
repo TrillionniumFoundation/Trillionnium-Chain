@@ -405,6 +405,10 @@ pub(super) fn exchange(
         observation.received_response_bytes < MAX_DISCOVERY_RESPONSE_BYTES,
         "discovery response budget",
     )?;
+    // Discovery shares the Cell operation's actual byte allowance. Once spent,
+    // refuse before reserving another connection or sending a query/announce.
+    // In-flight reservations can still refund bytes and do not exhaust it.
+    transport.responses.require_remaining()?;
     transport
         .requests_left
         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |left| {

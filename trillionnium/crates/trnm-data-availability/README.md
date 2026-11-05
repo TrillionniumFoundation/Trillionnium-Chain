@@ -36,6 +36,9 @@ there is no partial marker, automatic retry, discovery or refreshed member budge
 As with single-Cell materialization, a failure after the no-replace link may
 leave a complete marker. Reconcile its pinned identity and current cache with
 `verify-release`; an uncertain acknowledgement does not permit overwriting it.
+Release-marker publication finishes directory synchronization and owned cleanup,
+then checks the original deadline again. A late completion is an error with the
+exact marker retained; no timeout can erase an already completed publication.
 The marker is not a weights bundle, storage lease or model-use token; consumers
 must recheck cache integrity and their normal owners before use. `verify-release`
 performs that bounded local cache check without publication. Release roots are

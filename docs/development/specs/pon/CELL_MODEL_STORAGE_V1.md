@@ -131,6 +131,11 @@ publish the exact TMA1 bytes. Wrong pins, missing members and invalid tensors
 leave no completion marker. A later cache-only explicit retry still repeats
 the required verification. Post-link errors retain the existing exact-target
 reconciliation rules. Every result has no selection or use authority.
+After the no-replace link, directory synchronization and owned temporary-file
+cleanup finish before the original deadline is checked again. A late completion
+returns an error while preserving the exact published marker for reconciliation.
+This refuses a late success; it cannot preempt blocking filesystem operations or
+undo a completed publication.
 
 ## Transfer and discovery budgets
 
@@ -186,6 +191,19 @@ when no more diverse endpoint exists. A newer sequence does not inherit the
 old statement's observed sources. This limits one bootstrap's simple slot
 flooding; it does not prove distinct administrators, endpoint control, custody,
 Sybil resistance or a public DHT's security.
+Both classic and PQ rendezvous exchanges check the enclosing Cell operation's
+actual response-byte allowance before consuming another connection slot, dialing
+or sending a query/announcement. A zero allowance or a fully consumed response
+stops subsequent bootstrap attempts. In-flight byte reservations may refund
+unused capacity; they are not treated as actual exhaustion. This does not change
+the existing discovery record, TTL, signature or connection-count limits.
+
+Rarest-first and persistent connections are separate explicitly selected
+transport profiles; a combined inventory-over-persistent protocol is not
+implemented. Likewise, the legacy serial `serve_cells` API is not an aggregate
+egress-byte owner. CLI serving selects metered admission with explicit
+`--bounded-workers` and `--max-served-bytes`; the serial default must not be
+reported as having that egress contract.
 
 ## Complete-release retention and collection
 
@@ -257,6 +275,27 @@ authority and independent replica observations remain their original owners.
 The local replica declarations are not proof of the declared complete copies.
 No erasure-code threshold, automatic renewal service or infinite retention
 promise is implemented.
+
+## Ordinary owner integration still required
+
+The Node's current funded adapter in `store/storage_service.rs` accepts the
+per-object `CellRetentionStoreV1` and its original physical contract. It does not
+yet select the complete `CellReleaseRetentionStoreV2` catalog for an ordinary
+funded release lifecycle. The local catalog's complete-root protection is real,
+but it is not a claim that every external payment or release owner has admitted
+the complete graph. Existing task-escrow observations do not themselves lock
+coins against cancellation/reorganization or pay a provider after ACK.
+
+Similarly, `CellResidencyV1` supplies immutable TCD1 byte views and process-local
+selection hints. The ordinary Hepta owner must verify the independently required
+material roster and tensor/runtime compatibility on those same bytes, then
+enforce current generation/withdrawal, resource admission and FinalUse at actual
+use. Neither a TMA1 completion marker nor a local retained root grants this
+authority. Independent custody, funded renewals and actual loader integration
+retain their original qualification gates.
+
+The [completion-boundary regression record](../../../../evidence/cell-storage-owner-boundaries-20261104/README.md)
+keeps the original failed cases and exact-source reproduction entry point.
 
 ## Verification and remaining acceptance
 
