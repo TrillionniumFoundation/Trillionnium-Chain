@@ -1,0 +1,17 @@
+{
+  "bytes": 13019023,
+  "crc_and_every_payload_sha256_verified": true,
+  "excluded_from_payload": [
+    "archive.json",
+    "publication-validation.json"
+  ],
+  "filename": "pon-shared-material-cost-v2-20261105.zip",
+  "measured_source": "eeedfe33f9c7cd27a1855b865e7faa458047dcd1",
+  "payload_files": 1241,
+  "payload_manifest_sha256": "0cce497d8f1b51b291b4e0fd67e5023c9d4888d112191594ff367b8442b03ba8",
+  "qualification": false,
+  "schema": "pon-shared-material-archive-commitment-v2",
+  "sha256": "d8493fb0d03f536f3d80012d65a7a1ac33a36f8254e7ed8e9a0830a2b9236cdb",
+  "uncompressed_payload_bytes": 94721922,
+  "zip_entries": 1242
+}
