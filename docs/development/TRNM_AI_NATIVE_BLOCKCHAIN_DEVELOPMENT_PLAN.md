@@ -52,6 +52,22 @@ release requires their own real evidence, not completion of the retired PoCO roa
 
 ### Reconstruction and upgrade order
 
+#### Recovery consumption and current publication continuation
+
+Continue the existing PQ PR #698 from `59f75acd1d4261972b8aaa45e0c36259fcafd45c`
+and runtime PR #4729 from `5cb4ee7b63dc91e3c3023f0687f0ea7d2b0a8497`.
+M03's structural inspector must not grant direct runtime checkpoint reads or CAS;
+live recovery pins must match actual retained journal bytes, including earlier
+records and the sibling head. A content hash previously published by a Cell role
+does not carry that role's authorization past its expiry or a root rotation.
+Keep those facts when replaying release history. Add real pinned TUF SDK signing
+and verification to the existing primitive comparisons and retain all original
+controls. These component repairs do not qualify a complete updater, a deployed
+independent witness or whole-effect exactly-once semantics. All source combinations
+and failures require their own observations; historical results remain historical.
+The compact [component reproduction record](../../evidence/pq-recovery-release-sdk-v1/REPRODUCE.md)
+retains the reproduced defects, current results and still-open deployment gates.
+
 #### Joint source, native admission and reversible-artifact continuation — 2026-11-04
 
 Continue the existing PR #688 candidate from

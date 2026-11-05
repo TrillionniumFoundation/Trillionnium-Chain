@@ -23,10 +23,15 @@ import mldsa_native_differential as guard
 
 class NativeSourcePinTests(unittest.TestCase):
     upstream: Path
+    pinned_commit = guard.UPSTREAM_COMMIT
+    source_subtree = "mldsa"
+    source_file = "mldsa/mldsa_native.c"
+    extra_file = "mldsa/trnm-untracked-include.h"
+    check_source = staticmethod(guard.checked_source)
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.expected = guard.checked_source(cls.upstream)
+        cls.expected = cls.check_source(cls.upstream)
 
     def setUp(self) -> None:
         temporary = tempfile.TemporaryDirectory(prefix="trnm-mldsa-source-pin-")
@@ -42,8 +47,8 @@ class NativeSourcePinTests(unittest.TestCase):
              str(self.upstream), str(self.checkout)],
             env=self.environment, check=True, capture_output=True, timeout=30,
         )
-        self.git("sparse-checkout", "set", "--no-cone", "/mldsa/")
-        self.git("checkout", "--quiet", "--detach", guard.UPSTREAM_COMMIT)
+        self.git("sparse-checkout", "set", "--no-cone", "/" + self.source_subtree + "/")
+        self.git("checkout", "--quiet", "--detach", self.pinned_commit)
 
     def git(self, *arguments: str, input: bytes | None = None) -> bytes:
         # Ordinary Git deliberately honors replacement refs. The attack case
@@ -55,32 +60,32 @@ class NativeSourcePinTests(unittest.TestCase):
         ).stdout
 
     def test_pristine_pinned_source_is_accepted(self) -> None:
-        self.assertEqual(guard.checked_source(self.checkout), self.expected)
+        self.assertEqual(self.check_source(self.checkout), self.expected)
 
     def test_modified_tracked_source_is_rejected(self) -> None:
-        path = self.checkout / "mldsa/mldsa_native.c"
+        path = self.checkout / self.source_file
         path.write_bytes(path.read_bytes() + b"\n/* changed source */\n")
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_missing_tracked_source_is_rejected(self) -> None:
-        (self.checkout / "mldsa/mldsa_native.c").unlink()
+        (self.checkout / self.source_file).unlink()
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_untracked_include_is_rejected(self) -> None:
-        (self.checkout / "mldsa/trnm-untracked-include.h").write_bytes(
+        (self.checkout / self.extra_file).write_bytes(
             b"/* Untracked compile input must not belong to the pinned source. */\n"
         )
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_symlinked_source_is_rejected_even_when_bytes_match(self) -> None:
-        path = self.checkout / "mldsa/mldsa_native.c"
+        path = self.checkout / self.source_file
         path.unlink()
-        path.symlink_to(self.upstream / "mldsa/mldsa_native.c")
+        path.symlink_to(self.upstream / self.source_file)
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_different_commit_with_identical_source_is_rejected(self) -> None:
         tree = self.git("rev-parse", "HEAD^{tree}").decode().strip()
@@ -95,47 +100,47 @@ class NativeSourcePinTests(unittest.TestCase):
             "GIT_COMMITTER_DATE": "2000-01-01T00:00:00Z",
         })
         alternate = self.git(
-            "commit-tree", tree, "-p", guard.UPSTREAM_COMMIT,
+            "commit-tree", tree, "-p", self.pinned_commit,
             input=b"source pin regression fixture\n",
         ).decode().strip()
-        self.git("update-ref", "HEAD", alternate, guard.UPSTREAM_COMMIT)
+        self.git("update-ref", "HEAD", alternate, self.pinned_commit)
         self.assertEqual(self.git("rev-parse", "HEAD^{tree}").decode().strip(), tree)
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_replaced_tree_cannot_inherit_the_original_commit_identity(self) -> None:
         original_tree = self.git("rev-parse", "HEAD^{tree}").decode().strip()
         original_blob = self.git(
-            "rev-parse", "HEAD:mldsa/mldsa_native.c"
+            "rev-parse", "HEAD:" + self.source_file
         ).decode().strip()
-        path = self.checkout / "mldsa/mldsa_native.c"
+        path = self.checkout / self.source_file
         path.write_bytes(path.read_bytes() + b"\n/* replacement-tree attack */\n")
-        self.git("add", "--", "mldsa/mldsa_native.c")
+        self.git("add", "--", self.source_file)
         alternate_tree = self.git("write-tree").decode().strip()
         self.git("replace", original_tree, alternate_tree)
 
         # The exact failure mode: HEAD remains the trusted pin, but a normal
         # tree walk now names the attacker's changed source blob.
         self.assertEqual(
-            self.git("rev-parse", "HEAD").decode().strip(), guard.UPSTREAM_COMMIT
+            self.git("rev-parse", "HEAD").decode().strip(), self.pinned_commit
         )
-        replaced_entry = self.git("ls-tree", "HEAD", "--", "mldsa/mldsa_native.c")
+        replaced_entry = self.git("ls-tree", "HEAD", "--", self.source_file)
         self.assertNotEqual(replaced_entry.split()[2].decode(), original_blob)
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_grafted_history_is_rejected(self) -> None:
         path = Path(self.git("rev-parse", "--git-path", "info/grafts").decode().strip())
         if not path.is_absolute():
             path = self.checkout / path
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(guard.UPSTREAM_COMMIT + "\n", encoding="ascii")
+        path.write_text(self.pinned_commit + "\n", encoding="ascii")
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout)
+            self.check_source(self.checkout)
 
     def test_nested_source_root_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
-            guard.checked_source(self.checkout / "mldsa")
+            self.check_source(self.checkout / self.source_subtree)
 
 
 def main() -> int:

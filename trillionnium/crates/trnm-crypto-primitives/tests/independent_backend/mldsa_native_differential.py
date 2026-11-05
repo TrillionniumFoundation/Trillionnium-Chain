@@ -28,7 +28,8 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def checked_source(source: Path) -> dict:
+def checked_source(source: Path, *, commit: str = UPSTREAM_COMMIT,
+                   subtree: str = "mldsa") -> dict:
     def git(*args: str) -> bytes:
         return subprocess.check_output(
             ["git", "--no-replace-objects", "-C", str(source), *args], timeout=30)
@@ -41,9 +42,9 @@ def checked_source(source: Path) -> dict:
         grafts = source / grafts
     if grafts.exists() or grafts.is_symlink():
         raise ValueError("Git grafts are not upstream source")
-    if git("rev-parse", "HEAD").decode().strip() != UPSTREAM_COMMIT:
-        raise ValueError("mldsa-native must be the exact pinned v2.0.0 commit")
-    entries = git("ls-tree", "-rz", "--full-tree", "HEAD", "--", "mldsa").split(b"\0")
+    if git("rev-parse", "HEAD").decode().strip() != commit:
+        raise ValueError("independent source must be the exact pinned commit")
+    entries = git("ls-tree", "-rz", "--full-tree", "HEAD", "--", subtree).split(b"\0")
     identities = {}
     for entry in filter(None, entries):
         metadata, path_bytes = entry.split(b"\t", 1)
@@ -58,11 +59,11 @@ def checked_source(source: Path) -> dict:
         if actual != blob:
             raise ValueError("changed upstream source: " + path)
         identities[path] = digest(data)
-    actual_paths = {str(p.relative_to(source)) for p in (source / "mldsa").rglob("*")
+    actual_paths = {str(p.relative_to(source)) for p in (source / subtree).rglob("*")
                     if not p.is_dir() or p.is_symlink()}
     if not identities or actual_paths != set(identities):
         raise ValueError("extra or missing upstream source files")
-    return {"commit": UPSTREAM_COMMIT, "files": len(identities),
+    return {"commit": commit, "files": len(identities),
             "source_sha256": digest(json.dumps(identities, sort_keys=True).encode())}
 
 

@@ -71,6 +71,8 @@ jobs:
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --test tuf_tap21
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-authority --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell::pq
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-c --output "$out" -- \
             python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py \
             --source "$GITHUB_WORKSPACE/upstream-mldsa" \
@@ -83,6 +85,77 @@ jobs:
         with:
           name: mldsa-independent-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/mldsa-interoperability/
+          if-no-files-found: error
+          retention-days: 14
+  tuf-sdk-interoperability:
+    name: TAP21 actual SDK interoperability (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: chain
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: chain
+      - name: Read the exact supported SDK source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: secure-systems-lab/securesystemslib
+          ref: 15064ca640222edba024af9f13191fa5dbad3825
+          fetch-depth: 1
+          persist-credentials: false
+          path: upstream-sslib
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Compare real SDK and product adapter signatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/tuf-sdk-interoperability"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/tuf-sdk-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          bash scripts/project-preflight.sh --audit
+          python3 -m venv "$RUNNER_TEMP/tuf-sdk-env"
+          sdk_python="$RUNNER_TEMP/tuf-sdk-env/bin/python"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-dependencies --output "$out" -- \
+            "$sdk_python" -m pip install --disable-pip-version-check --only-binary=:all: --report "$out/dependencies.json" \
+            cryptography==50.0.2 cffi==2.1.1 pycparser==3.12
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-source-guard --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py \
+            --source "$GITHUB_WORKSPACE/upstream-sslib"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-oracle-build --output "$out" -- \
+            cargo +1.95.0 build --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_message_oracle
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-interop --output "$out" -- \
+            "$sdk_python" trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py \
+            --source "$GITHUB_WORKSPACE/upstream-sslib" \
+            --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" --report "$out/differential.json"
+      - name: Retain SDK interoperability including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tuf-sdk-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tuf-sdk-interoperability/
           if-no-files-found: error
           retention-days: 14
   native:
