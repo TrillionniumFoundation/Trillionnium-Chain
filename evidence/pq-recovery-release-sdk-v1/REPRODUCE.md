@@ -9,8 +9,38 @@ provider hashes, actual outcomes and local observation digests. It intentionally
 contains no binaries or raw-log archive. A log digest identifies a local
 observation; it does not make that observation durably downloadable. Commands
 below reproduce the checks, and the existing CI records fresh command outputs.
-These were local x86_64 working-tree component runs, not complete final-commit,
-ARM, prospective-merge or hosted-CI acceptance.
+Those initial observations were local x86_64 working-tree component runs. The
+later committed-source execution is recorded separately below. Neither run
+qualifies ARM, a prospective merge, hosted CI or deployed-effect behavior.
+
+## Committed-source verification
+
+The implementation was published as
+[`ac2402e4c8b99eee21c6db3e28f8984071478797`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ac2402e4c8b99eee21c6db3e28f8984071478797),
+tree `68c5fda28e64f689cabbee8cd8ae99cc7050dd74`, preserving the baseline as its
+parent. It was fetched back and matched the staged tree exactly. Its author and
+committer use the current account's noreply identity.
+
+The unchanged `record_pq_native_command.py` then executed 18 scoped commands on
+that clean commit. Before and after every command, the original source verifier
+checked all **8,914 tracked entries / 944,799,070 bytes** against their Git blobs.
+All before/after identities match. The
+[committed-source record](committed-source-checks.json) preserves commands,
+environment, exit status, source identity, counters and log digests.
+
+Seventeen commands succeeded. The complete checkpoint command returned **101**
+with the same **43 passed / 4 failed / 0 ignored** outcome. This is not a full
+passing suite. The successful commands include the 18-test release package,
+8-test original TAP21 suite, real SDK and C differential/source-attack suites,
+18 original TLS/mTLS tests, scoped strict Clippy and format checks, locked Cargo
+metadata, 466 source pins, 35 source-negative tests, CI contract, preflight and
+the repository/link gate. The repository gate found 2,618 valid local links.
+All five TLS provider inputs still match their original digests after execution.
+
+This later record and its explanation are an evidence-only addition. They do
+not rewrite the implementation commit, substitute its tested inputs, or turn
+the four failed process/transport tests into acceptance. Raw logs stay outside
+this compact source publication; the digests are not a raw-log archive.
 
 ## What changed
 
