@@ -10,6 +10,8 @@ from bounded_process import run_bounded
 from contract_wire import H
 Q=oracle.Q;N=oracle.N;CELLS=oracle.CELLS
 task_id=oracle.task_id
+# This never constructs a verified-work result or replaces the installed verifier.
+precheck=oracle.precheck
 
 def native(mode,data,limit):
     path=Path(os.environ['TRNM_NATIVE_WORK'])
