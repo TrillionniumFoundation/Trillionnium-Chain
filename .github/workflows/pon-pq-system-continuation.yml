@@ -51,8 +51,13 @@ jobs:
           if test "$SOURCE_KIND" = prospective-merge; then
             source_args+=(--base "$EXPECTED_BASE")
           fi
+          record_host() {
+            python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$1" --output "$out" -- \
+              python3 -c 'import json,os,pathlib,platform; root=pathlib.Path("/sys/fs/cgroup"); names=("cpu.max","memory.max","memory.current","memory.events"); print(json.dumps({"schema":"trnm-cpq1-host-context-v1","platform":platform.platform(),"machine":platform.machine(),"cpu_count":os.cpu_count(),"cpu_affinity":sorted(os.sched_getaffinity(0)),"load_average":os.getloadavg(),"cpu_model":next((line.split(":",1)[1].strip() for line in pathlib.Path("/proc/cpuinfo").read_text().splitlines() if line.startswith("model name")),None),"meminfo":pathlib.Path("/proc/meminfo").read_text(),"cgroup":{name:(root/name).read_text().strip() if (root/name).is_file() else None for name in names},"shared_host":True,"original_hardware_or_wan_qualification":False},sort_keys=True))'
+          }
           bash scripts/project-preflight.sh --audit
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label compiler --output "$out" -- rustc +1.95.0 -Vv
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cargo-version --output "$out" -- cargo +1.95.0 -V
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label locked-graph --output "$out" -- \
             cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label reader-negatives --output "$out" -- \
@@ -60,8 +65,10 @@ jobs:
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label build --output "$out" -- \
             cargo +1.95.0 build --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_profile_bench
           sha256sum "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" > "$out/binary.sha256"
+          record_host host-before
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cpq1 --output "$out" -- \
             "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" --samples 64
+          record_host host-after
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-readback --output "$out" -- \
             python3 scripts/ci/check_cpq1_parameter_observation.py "$out/cpq1.log"
       - name: Retain complete CPQ1 records including failures

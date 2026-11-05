@@ -6394,3 +6394,20 @@ profile, retirement schedule or monotonic frontier. Production 87 activation,
 CURRENT/FinalUse, complete migration/recovery, original-budget network acceptance
 and independent W1 security remain separate blockers. Keep every whole-chain PQ
 qualification and production activation false until its own evidence closes.
+
+Recorded completion for this continuation is now in the linked result index.
+The native implementation source is `13986046c9c0e0e3d0d1c76b399bea11878e0ab6`:
+32 complete CPQ1 cases / 352 measurements / 22,528 raw samples, independent
+readback, 245 component tests, 4 compile-fail documentation contracts, 238 Python
+controls and strict all-target/all-feature workspace Clippy completed. An
+independently hashed reproduction helper verified all 120 Rust fixture signatures
+with the reused OpenSSL 3.5.9 implementation and rejected 360 per-signature
+message/signature/context changes, with positive context controls. Its evidence
+is one-way mathematical interoperability, not owner authority or certification.
+
+The unchanged parent Node build was killed by SIGKILL under shared-host memory
+pressure; original 49 and expanded 94 owner controls remain unexecuted. Retain
+that terminal failure and the earlier interrupted receipt. Publication corrects
+three documentation links and records CI cargo/host context; it does not
+retroactively replace the measured implementation source, lower limits, activate
+87 or change the six UNQUALIFIED gates.

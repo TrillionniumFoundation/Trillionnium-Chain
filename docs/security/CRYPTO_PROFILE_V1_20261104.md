@@ -310,3 +310,13 @@ monotonic frontier to every effect-bearing state; complete original-hardware
 valid/invalid-input, multisignature, queue/RSS/WAL/WAN and business-confirmation
 acceptance; and independently qualify the unchanged or newly versioned W1
 proof/work assumptions. All six whole-chain gates remain **UNQUALIFIED**.
+
+The [complete CPQ1 continuation results](../../evidence/crypto-profile-20261104/cpq1-owner-continuation/REPRODUCE.md)
+record the exact native source, all 32 frame sizes and failure attribution. A
+separate reproduction helper has also verified the 120 public fixture signatures
+with OpenSSL 3.5.9, including 360 message/signature/context refusals and two
+positive nonempty-context controls. This is one-way mathematical interoperability;
+it does not alter the original observation reader's scope or establish runtime
+owner activation. The original Node build remains a recorded SIGKILL failure,
+so its 49 required controls and the expanded 94-owner union have no new execution
+credit from this continuation.
