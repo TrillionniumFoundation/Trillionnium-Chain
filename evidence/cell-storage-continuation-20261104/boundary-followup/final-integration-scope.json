@@ -11,7 +11,7 @@
     "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
     "dfbec36ca8126a8d388218c4fada512e1deabf71"
   ],
-  "containing_commit_identity": "Read the Git commit containing this record; its exact tested identity is recorded by the separate source recorder. This file cannot embed its own containing commit hash.",
+  "containing_commit_identity": "Read the exact candidate and tested commit from the corresponding source recorder; this record does not transfer any runtime result to a later evidence successor.",
   "historical_native_tree": "81fbd17e50c6c62de7834c9cb7872dc4e89f5444",
   "incoming_native_tree": "a706490dda20cb6093cc27ab3c59b1486aafb5b4",
   "native_identical_to_N": false,
@@ -67,5 +67,8 @@
     "execution_results": "Do not infer a result from this plan; use an actual exact-commit recorder receipt."
   },
   "production_activation": false,
-  "CURRENT_or_FinalUse_granted": false
+  "CURRENT_or_FinalUse_granted": false,
+  "integration_checkpoint_commit": "b72d44476a12ed1b0dbf0891556adf280eba661b",
+  "integration_checkpoint_tree": "6b2d72dd73957f521c4952d2ece9f53d485a7059",
+  "scope_note": "This source-composition record describes E. Subsequent evidence/documentation corrections retain those exact native/source subtrees; their own outcomes require separate exact-commit receipts."
 }

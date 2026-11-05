@@ -71,7 +71,7 @@ The [separate integration scope](final-integration-scope.json) combines D with
 `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35`, preserving its parent
 `81da33e609cb64b319e8cfcca7059e5c30d39044`. The latter changes 26 native
 paths, including Growth/W1/Node inputs and the Cell client's post-lock budget
-check. All earlier server transport tests remain; seven client tests are appended.
+check. All earlier server transport tests remain; seven transport tests are appended: four client tests and three server tests.
 The [storage scope audit](incoming-81da-storage-scope.json) distinguishes those
 new inputs from the C/N validation snapshot. No new native run is claimed here.
 
@@ -99,6 +99,33 @@ observations. They add formatting, inventory, 460-pin, CI-contract, 2,688-link
 repository and [Cargo-graph](delivery-checkpoint/cargo-metadata.json.gz) checks;
 that invocation ran no Python control tests or native tests. Combined native,
 all-feature, Node runtime and prospective-merge acceptance remain **HOLD**.
+
+## Exact integration check and retained repair observation
+
+The first exact-commit integration run on
+`b72d44476a12ed1b0dbf0891556adf280eba661b` completed **43 source-integrity
+tests**, formatting, generated inventory, **464 exact pins** and CI-contract
+checks. The [original receipt](integration-e/final-integration-source-checks.json),
+[raw log](integration-e/final-integration-source-checks.log) and
+[step results](integration-e/result.json) preserve the overall **exit 2**:
+the repository checker found the incoming W1 README's missing
+`lifecycle21-direct.log`. Cargo metadata was not reached after that failure.
+The `FAIL` lines produced by rejection fixtures are expected output inside the
+43 passing controls; they are not independent acceptance results.
+
+The earlier [wrapper invocation](integration-e/wrapper-invocation.json) stopped
+with exit 126 before entering the recorder. Running the byte-identical shell
+script through `bash` corrected its invocation without changing source, runtime
+profiles, permissions, selectors or acceptance conditions. These observations
+are retained separately; a repaired successor requires a fresh exact-source run.
+
+The [evidence recovery](w1-evidence-recovery.json) restores the linked lifecycle
+log and six additional original logs whose digests were already declared by
+committed W1 metadata. All seven files match those existing hashes; the original
+metadata and links remain unchanged. The interrupted build remains unsuccessful
+with an unknown exit code. The lifecycle metadata lacks an execution commit/tree,
+so neither its introduction commit nor this recovery is relabelled as a new
+exact-source execution. Unbound extra logs are not assigned acceptance results.
 
 ## Actual validation
 
