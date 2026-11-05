@@ -6,6 +6,133 @@ fn status(owner: &Mutex<Node>, policy: &PqNetworkPolicy) -> Value {
     owner.lock().unwrap().pq_network_status(policy).unwrap()
 }
 
+fn client_response_once(
+    client: &PqClient,
+    prepared: &PreparedPqRequest,
+    response: &[u8],
+    budget: Duration,
+) -> Result<PqResponse> {
+    // Exercise the public client's real framing and canonical ML-DSA verifier.
+    // The peer sends an already signed reply; this control makes no claim about
+    // Node execution, durable effects or the separate four-second business gate.
+    let listener = TcpListener::bind("127.0.0.1:0")?;
+    let address = listener.local_addr()?;
+    listener.set_nonblocking(true)?;
+    std::thread::scope(|scope| {
+        let peer = scope.spawn(move || -> Result<()> {
+            let deadline = Instant::now() + Duration::from_secs(10);
+            let mut stream = loop {
+                ensure(Instant::now() < deadline, "TEST_CLIENT_ACCEPT_DEADLINE")?;
+                match listener.accept() {
+                    Ok((stream, _)) => break stream,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::sleep(Duration::from_millis(2));
+                    }
+                    Err(error) => return Err(error.into()),
+                }
+            };
+            let observed = super::super::read_frame_deadline(&mut stream, deadline)?;
+            ensure(observed == prepared.wire(), "TEST_CLIENT_REQUEST_CHANGED")?;
+            super::super::write_frame_deadline(&mut stream, response, deadline)
+        });
+        let result = client.send(address, prepared, budget);
+        peer.join().unwrap().unwrap();
+        result
+    })
+}
+
+#[test]
+fn pq_client_completion_keeps_real_signature_and_response_context_checks() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |_| {
+        observed.store(true, Ordering::Release);
+    }));
+    let checked =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(5)).unwrap();
+    assert!(checked.ok);
+    assert_eq!(checked.operation, hex::encode(prepared.operation_id()));
+    assert_eq!(checked.value, json!({"completion_control": true}));
+    assert!(completion_entered.load(Ordering::Acquire));
+
+    completion_entered.store(false, Ordering::Release);
+    let mut invalid = response;
+    invalid[8 + TPQ1_SIGNED_BYTES - 1] ^= 1;
+    let error =
+        client_response_once(&client, &prepared, &invalid, Duration::from_secs(5)).unwrap_err();
+    assert!(error.to_string().contains("SignatureRejected"));
+    assert!(
+        !completion_entered.load(Ordering::Acquire),
+        "a bad signature must never reach the live completion fence"
+    );
+}
+
+#[test]
+fn pq_client_late_verified_response_cannot_renew_original_deadline() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let prepared = client
+        .prepare(1, super::super::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |deadline| {
+        observed.store(true, Ordering::Release);
+        // Simulate descheduling at the actual completion boundary, after the
+        // genuine signature and canonical response have already been checked.
+        // Keep the single original deadline; no guessed verifier timing.
+        while Instant::now() < deadline {
+            std::thread::sleep(deadline.saturating_duration_since(Instant::now()));
+        }
+    }));
+    let error =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(2)).unwrap_err();
+    assert!(completion_entered.load(Ordering::Acquire));
+    assert_eq!(error.to_string(), "PQ_NETWORK_DEADLINE");
+    assert!(error.is(ErrorCode::PqNetworkDeadline));
+}
+
+#[test]
+fn pq_client_verified_response_rechecks_original_signed_expiry() {
+    let (_, policy) = setup();
+    let mut client = PqClient::new(policy.clone(), key(72)).unwrap();
+    let expiry = super::super::now().unwrap() + 2;
+    let prepared = client.prepare(1, expiry, Request::Head).unwrap();
+    let server = PqServer::new(policy, key(71)).unwrap();
+    let response = server
+        .response(&prepared.verified, Ok(json!({"completion_control": true})))
+        .unwrap();
+    let completion_entered = Arc::new(AtomicBool::new(false));
+    let observed = completion_entered.clone();
+    client.before_response_completion = Some(Box::new(move |deadline| {
+        observed.store(true, Ordering::Release);
+        while super::super::now().unwrap() <= expiry {
+            assert!(
+                Instant::now() < deadline,
+                "test clock did not reach the signed expiry in the original interval"
+            );
+            std::thread::sleep(Duration::from_millis(5));
+        }
+    }));
+    let error =
+        client_response_once(&client, &prepared, &response, Duration::from_secs(10)).unwrap_err();
+    assert!(completion_entered.load(Ordering::Acquire));
+    assert_eq!(error.to_string(), "PQ_NETWORK_EXPIRED_UNCONFIRMED");
+}
+
 #[test]
 fn elapsed_deadline_refuses_before_charge_and_cached_replay_stays_live_only() {
     let (settings, policy) = setup();

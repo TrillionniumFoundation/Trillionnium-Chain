@@ -375,6 +375,8 @@ impl PreparedPqRequest {
 pub struct PqClient {
     policy: Arc<PqNetworkPolicy>,
     signer: PqNativeSigningKey,
+    #[cfg(test)]
+    before_response_completion: Option<Box<dyn Fn(Instant) + Send + Sync>>,
 }
 impl PqClient {
     pub fn new(policy: Arc<PqNetworkPolicy>, signer: PqNativeSigningKey) -> Result<Self> {
@@ -382,7 +384,12 @@ impl PqClient {
             policy.peers.contains_key(&signer.public_key_id()),
             "PQ_NETWORK_UNKNOWN_PEER",
         )?;
-        Ok(Self { policy, signer })
+        Ok(Self {
+            policy,
+            signer,
+            #[cfg(test)]
+            before_response_completion: None,
+        })
     }
     pub fn prepare(
         &self,
@@ -454,8 +461,23 @@ impl PqClient {
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
         let response = super::read_frame_deadline(&mut stream, end)?;
-        self.policy
-            .verify_response(&response, &prepared.verified, super::now()?)
+        let verified = self
+            .policy
+            .verify_response(&response, &prepared.verified, super::now()?)?;
+        #[cfg(test)]
+        if let Some(before_completion) = self.before_response_completion.as_ref() {
+            before_completion(end);
+        }
+        // Receiving the complete frame is not completion: canonical decoding,
+        // payload hashing and ML-DSA verification still spend the original
+        // interval. A late authenticated receipt cannot become a timely ACK.
+        // Refusal neither refunds the server's spent sequence nor retries it.
+        check_live_request(end, None)?;
+        ensure(
+            super::now()? <= prepared.verified.expiry,
+            "PQ_NETWORK_EXPIRED_UNCONFIRMED",
+        )?;
+        Ok(verified)
     }
 }
 
