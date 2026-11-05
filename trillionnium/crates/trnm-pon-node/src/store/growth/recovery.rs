@@ -13,6 +13,15 @@ pub enum GrowthProgress {
     Work(pon_work::VerificationProgress),
     Execution(pon_executor::ExecutionProgress),
     BeforePersistence,
+    /// Before each original admission-delta INSERT, in canonical delta order.
+    AdmissionDeltaWrite {
+        index: usize,
+    },
+    /// Existing final delta-row readback checkpoints: before reading, after
+    /// every 256 rows, and after the complete read. This is not a row counter.
+    AdmissionDeltaReadback {
+        checkpoint: usize,
+    },
     AccountNode,
     /// Existing original-parent multiproof verification boundaries.
     ParentProof(multiproof::MultiproofProgress),
@@ -304,7 +313,8 @@ impl Node {
             )? == 1,
             "STORAGE_WRITE",
         )?;
-        for (key, before, after) in &executed.deltas {
+        for (index, (key, before, after)) in executed.deltas.iter().enumerate() {
+            progress(GrowthProgress::AdmissionDeltaWrite { index })?;
             ensure(
                 tx.execute(
                     "INSERT INTO deltas VALUES(?,?,?,?)",
@@ -328,8 +338,17 @@ impl Node {
         executed.state.accounts = accounts;
         save(&tx, id, &executed.state)?;
         // Exact write-set and parent/root readback before the only durable commit.
+        // Preserve the original cursor's bounded checkpoints and the caller's
+        // control error; cancellation rolls back this same write transaction.
+        let mut readback_checkpoint = 0;
         ensure(
-            self.delta_rows_with_progress(id, &mut || Ok(()))? == executed.deltas
+            self.delta_rows_with_progress(id, &mut || {
+                progress(GrowthProgress::AdmissionDeltaReadback {
+                    checkpoint: readback_checkpoint,
+                })?;
+                readback_checkpoint += 1;
+                Ok(())
+            })? == executed.deltas
                 && self.growth_load_packet(id)?.encode()? == bytes
                 && self.growth_parent(h.parent)?.source.stored == parent.source.stored
                 && self.growth_parent(id)?.source.stored == executed.state

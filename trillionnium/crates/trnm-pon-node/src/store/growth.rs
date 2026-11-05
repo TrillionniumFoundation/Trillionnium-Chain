@@ -766,6 +766,11 @@ fn execute_observed_with_workers(
         native_growth::NativeGrowthFailure::Control(error) => error,
     })?;
     let deltas = difference(&view, &output.state)?;
+    let deltas_hash = delta_hash(&deltas)?;
+    // All fallible checks consumed the full executed state. Move its working
+    // partition into storage instead of cloning every retained key and value.
+    let mut working = output.state;
+    working.retain(|key, _| !key.starts_with("account:"));
     let state = StoredState {
         commitment: commitment.observation().clone(),
         accounts: native_store::Root {
@@ -774,9 +779,9 @@ fn execute_observed_with_workers(
             count: commitment.permanent_account_count,
             balance: commitment.permanent_account_balance,
         },
-        working: working(&output.state),
+        working,
         parent_commitment: Some(parent.verified.id),
-        deltas: delta_hash(&deltas)?,
+        deltas: deltas_hash,
     };
     Ok(Executed {
         state,

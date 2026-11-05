@@ -1,0 +1,943 @@
+{
+  "schema": "trnm-w1-remote-local-source-projection-v1",
+  "reconstructed_utc": "2026-11-05 03:34:10 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "evidence_origin": "Independent remote reconstruction after executor disconnection using GitHub Git commit/tree APIs at exact immutable commits.",
+  "original_tmpfs_manifest_recovered": false,
+  "original_tmpfs_manifest_path": "/dev/shm/work-proofs-ffb43113-822cc50e/retained-w1-source-projection.json",
+  "retained_runner_source_commit": "38543c96cabb0d63a4a99d149a30a270d0c2c107",
+  "comparison_source_commit": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "commit_tree_selections": {
+    "38543c96cabb0d63a4a99d149a30a270d0c2c107": {
+      "root_tree": "b02426da27aea65182e6e1240ed07b517780f025",
+      "paths": {
+        "trillionnium/Cargo.toml": {
+          "type": "blob",
+          "sha": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "mode": "100644"
+        },
+        "scripts/w1_v2_receipt_controls.py": {
+          "type": "blob",
+          "sha": "c7450b8ec4a734c75eb9d5d8df8938ae3b430cbf",
+          "mode": "100644"
+        },
+        "trillionnium/crates/trnm-crypto-primitives": {
+          "type": "tree",
+          "sha": "16d11ce003347979c7ee1dc82935fd9ad8aecb4a",
+          "mode": "040000"
+        },
+        "trillionnium/crates/trnm-protocol": {
+          "type": "tree",
+          "sha": "3102f403cdedc63ca30e67341af60d242400a005",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_hardened_verifier": {
+          "type": "tree",
+          "sha": "7134220349a1ef5e07c2f06348342cf1076a782c",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_v2_verifier": {
+          "type": "tree",
+          "sha": "1f1ff6f690f703d38a3e4c310189f7b35def95c9",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/host-v2": {
+          "type": "tree",
+          "sha": "3d14f741e0c916267f07559c800829f94d02f839",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2": {
+          "type": "tree",
+          "sha": "651b23420e9cc459c0ee10140d74eec1da11cdfd",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/relation": {
+          "type": "tree",
+          "sha": "e940c59b5cbda5bae632c48ecf675dc98f6dfe26",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml": {
+          "type": "blob",
+          "sha": "520ac7e39e98ab1f6ca1284aa0d09e4d2c7dd1af",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": {
+          "type": "blob",
+          "sha": "4a9045fac34603d8f96ac88c1ac42c395cff6436",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py": {
+          "type": "blob",
+          "sha": "854ca752f0ce37e8a961e151baaf08bcf0cdd320",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py": {
+          "type": "blob",
+          "sha": "53bd77b728230e969917eef269cbeb1fe3482193",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_local_payload.py": {
+          "type": "blob",
+          "sha": "c93682d321e51a66e2c323825ada3388094b5335",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src": {
+          "type": "tree",
+          "sha": "8a44ad055e6ab8be4bfe87487992a1fe4c3fb71a",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2": {
+          "type": "tree",
+          "sha": "74ec1740a779725bc01a3bdc35907e4b2cccab14",
+          "mode": "040000"
+        }
+      }
+    },
+    "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637": {
+      "root_tree": "acef282613e9f6d61ab4bfc5d27b3b1c55257018",
+      "paths": {
+        "trillionnium/Cargo.toml": {
+          "type": "blob",
+          "sha": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+          "mode": "100644"
+        },
+        "scripts/w1_v2_receipt_controls.py": {
+          "type": "blob",
+          "sha": "c7450b8ec4a734c75eb9d5d8df8938ae3b430cbf",
+          "mode": "100644"
+        },
+        "trillionnium/crates/trnm-crypto-primitives": {
+          "type": "tree",
+          "sha": "16d11ce003347979c7ee1dc82935fd9ad8aecb4a",
+          "mode": "040000"
+        },
+        "trillionnium/crates/trnm-protocol": {
+          "type": "tree",
+          "sha": "3102f403cdedc63ca30e67341af60d242400a005",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_hardened_verifier": {
+          "type": "tree",
+          "sha": "7134220349a1ef5e07c2f06348342cf1076a782c",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_v2_verifier": {
+          "type": "tree",
+          "sha": "1f1ff6f690f703d38a3e4c310189f7b35def95c9",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/host-v2": {
+          "type": "tree",
+          "sha": "3d14f741e0c916267f07559c800829f94d02f839",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/methods-v2": {
+          "type": "tree",
+          "sha": "651b23420e9cc459c0ee10140d74eec1da11cdfd",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/relation": {
+          "type": "tree",
+          "sha": "e940c59b5cbda5bae632c48ecf675dc98f6dfe26",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml": {
+          "type": "blob",
+          "sha": "520ac7e39e98ab1f6ca1284aa0d09e4d2c7dd1af",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": {
+          "type": "blob",
+          "sha": "4a9045fac34603d8f96ac88c1ac42c395cff6436",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py": {
+          "type": "blob",
+          "sha": "854ca752f0ce37e8a961e151baaf08bcf0cdd320",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py": {
+          "type": "blob",
+          "sha": "53bd77b728230e969917eef269cbeb1fe3482193",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/experiments/w1_local_payload.py": {
+          "type": "blob",
+          "sha": "c93682d321e51a66e2c323825ada3388094b5335",
+          "mode": "100644"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src": {
+          "type": "tree",
+          "sha": "8a44ad055e6ab8be4bfe87487992a1fe4c3fb71a",
+          "mode": "040000"
+        },
+        "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2": {
+          "type": "tree",
+          "sha": "74ec1740a779725bc01a3bdc35907e4b2cccab14",
+          "mode": "040000"
+        }
+      }
+    }
+  },
+  "local_package_paths": [
+    "formal/pon-nakamoto-v1/w1_hardened_verifier",
+    "formal/pon-nakamoto-v1/w1_v2_verifier",
+    "formal/pon-nakamoto-v1/w1_zkvm/host-v2",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods-v2",
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2",
+    "formal/pon-nakamoto-v1/w1_zkvm/relation",
+    "trillionnium/crates/trnm-crypto-primitives",
+    "trillionnium/crates/trnm-protocol"
+  ],
+  "additional_inputs": [
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src",
+    "trillionnium/Cargo.toml",
+    "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+    "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+    "formal/pon-nakamoto-v1/experiments/w1_local_payload.py",
+    "scripts/w1_v2_receipt_controls.py"
+  ],
+  "checked_tracked_inputs_per_commit": 120,
+  "checked_tracked_bytes_per_commit": 3060085,
+  "all_paths_blob_mode_type_and_size_equal": true,
+  "changed_paths": [],
+  "input_map_common_to_both_commits": {
+    "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py": {
+      "git_blob": "854ca752f0ce37e8a961e151baaf08bcf0cdd320",
+      "bytes": 24490,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/experiments/w1_local_payload.py": {
+      "git_blob": "c93682d321e51a66e2c323825ada3388094b5335",
+      "bytes": 8813,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/experiments/w1_stage_measure.py": {
+      "git_blob": "53bd77b728230e969917eef269cbeb1fe3482193",
+      "bytes": 20135,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": {
+      "git_blob": "1020d2fd06b76312c69972261be5b56ebeb66972",
+      "bytes": 38332,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml": {
+      "git_blob": "b0976468fc6d2f2bab29182e1154c235b794c0a5",
+      "bytes": 349,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md": {
+      "git_blob": "77916a99a1cbcd80005583751822a6f98c2b4b5a",
+      "bytes": 12086,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs": {
+      "git_blob": "3796deeff8479e9158d2c1302ad9d56ca5728958",
+      "bytes": 110,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs": {
+      "git_blob": "02fba7c0c8e0232eb3268bd5a48904836117058d",
+      "bytes": 25429,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs": {
+      "git_blob": "3ccedc567d6cd29c6156ade3f706b8c05470307b",
+      "bytes": 5246,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs": {
+      "git_blob": "f19c3dce9ef71a9261556b79451ac32d6e9259e5",
+      "bytes": 1282,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": {
+      "git_blob": "661994ef71dccb88a8b175621f5304a3450307cc",
+      "bytes": 46474,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml": {
+      "git_blob": "9cbb5a8387e17246fe5bb2404df8dea4dc78fe11",
+      "bytes": 498,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs": {
+      "git_blob": "88688018617bae938184329bc70d2851f76f656f",
+      "bytes": 284,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs": {
+      "git_blob": "05aca725f2b4ba863e375faea18170d144121e6d",
+      "bytes": 7395,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock": {
+      "git_blob": "4a9045fac34603d8f96ac88c1ac42c395cff6436",
+      "bytes": 74338,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml": {
+      "git_blob": "520ac7e39e98ab1f6ca1284aa0d09e4d2c7dd1af",
+      "bytes": 397,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/host-v2/Cargo.toml": {
+      "git_blob": "5a92d0f36c8a1f13d923cd799a3dba179bd8dbc1",
+      "bytes": 680,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-execute-control.rs": {
+      "git_blob": "736aa0c111b64f7f158f56924cd3ef9035946fcd",
+      "bytes": 3977,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-native-cost.rs": {
+      "git_blob": "e4a6a605fc49b4d65673643593f802091f3d75a2",
+      "bytes": 2465,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs": {
+      "git_blob": "0998189acc80a2f7d2ae8d61f0d90decd26d5541",
+      "bytes": 34404,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/host/src/main.rs": {
+      "git_blob": "e8f665e5f7451a5a315b22f06188aac2e2ad969f",
+      "bytes": 14332,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/.cargo/config.toml": {
+      "git_blob": "0075e142a45f16868b646cc9bdb881b401a84a73",
+      "bytes": 166,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/build.rs": {
+      "git_blob": "73130ccdec2a483e64c780b004b39928618034cf",
+      "bytes": 725,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/Cargo.toml": {
+      "git_blob": "b4bb341df1b1704195417d43a54c3cabbea215e6",
+      "bytes": 239,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods-v2/src/lib.rs": {
+      "git_blob": "1bdb3085fa164c7151a1128bcc4ea78dd3a96657",
+      "bytes": 51,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": {
+      "git_blob": "d2e384cdc16128fc6b23b971c5f7af9fa7538bc8",
+      "bytes": 45363,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml": {
+      "git_blob": "5d39bcb571af842326a73848983f5f2fab803cfe",
+      "bytes": 564,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs": {
+      "git_blob": "44dff7af4685bf3c8c103c79d6b4beeedd1438ea",
+      "bytes": 445,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml": {
+      "git_blob": "5e6a02e79718ac2b0d89b5700aa9a67911faf054",
+      "bytes": 290,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs": {
+      "git_blob": "3a322a70d676387d9bc2cb4b3d14f33b0bac2fa9",
+      "bytes": 14597,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs": {
+      "git_blob": "16d9dea62fe0b336366a2a4480ab422387ed9e03",
+      "bytes": 11159,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "scripts/w1_v2_receipt_controls.py": {
+      "git_blob": "c7450b8ec4a734c75eb9d5d8df8938ae3b430cbf",
+      "bytes": 21683,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/Cargo.toml": {
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "bytes": 2204,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": {
+      "git_blob": "58b98a2f697a32eb85669479f4083262b5783842",
+      "bytes": 836,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs": {
+      "git_blob": "7e991da932b2f1ff72e4cca70756e41bcbeeb676",
+      "bytes": 3488,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs": {
+      "git_blob": "dc4303d6eb0f6049d56078da311788f412dc4cf8",
+      "bytes": 1722,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs": {
+      "git_blob": "1de4fc3b3d204a74f6da9ea169d08f95e0b11fd8",
+      "bytes": 28108,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs": {
+      "git_blob": "8135694d8daf004c5f7c0502682d8bce88d759f1",
+      "bytes": 5963,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs": {
+      "git_blob": "b0ddb186722456500222c6de040b50f166e98eb3",
+      "bytes": 27944,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs": {
+      "git_blob": "f6a4376243c6245becac91fe3c349f3c0350a263",
+      "bytes": 2806,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs": {
+      "git_blob": "606bc4bbcacc43dd7ea182b53d59d44c818e4ba9",
+      "bytes": 3905,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs": {
+      "git_blob": "9030ed1dd3423735bb35011ce633d218c981a7e2",
+      "bytes": 17263,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs": {
+      "git_blob": "bc35d00c7dcce2559b3e937587124d331a1cd37e",
+      "bytes": 25992,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs": {
+      "git_blob": "4ffd434b460c58e8727c7849767c7d1553d0111b",
+      "bytes": 26739,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs": {
+      "git_blob": "efee5ad5d6f263c128ee74a2ec39473471c18e9d",
+      "bytes": 1527,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs": {
+      "git_blob": "99db2bb54d10f7fc36a4b3529211fba8ffa74cf1",
+      "bytes": 1495,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs": {
+      "git_blob": "27f7af353d61ec4cd6273a10c0034988eb3824a2",
+      "bytes": 2953,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs": {
+      "git_blob": "ed5c6814db9fa15dad986d09b2dfb462c4f9f000",
+      "bytes": 5395,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs": {
+      "git_blob": "786640bd8d4da6658a2c193229ef5a109eced54b",
+      "bytes": 26758,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": {
+      "git_blob": "a3d2be3d0269dc563a63d0e1c11f69a748d13a3d",
+      "bytes": 3236,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": {
+      "git_blob": "83ab348459f3e5cae409d4dcffba359ef90aaf64",
+      "bytes": 7114,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/README.md": {
+      "git_blob": "aaa06c617e80d412f44498f0586671f28defb237",
+      "bytes": 950,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": {
+      "git_blob": "adf1a1dc4b4a6c9f33a5e2f57f76cea28d9ce28a",
+      "bytes": 7955,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": {
+      "git_blob": "d8276ef060cc609e86ed768ed07fb360af140cf3",
+      "bytes": 2171,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": {
+      "git_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "bytes": 104121,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": {
+      "git_blob": "430e040256cfe5386011bcfa5ca46f7d23760625",
+      "bytes": 13186,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": {
+      "git_blob": "effe3147d6b1c65e23ec5617b0fe1b814c02b7f8",
+      "bytes": 5124,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": {
+      "git_blob": "b6167eaa94886e25310e614a61639c244ae897e1",
+      "bytes": 23186,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": {
+      "git_blob": "6866e991170daf5c618177411a319a5bf38dade3",
+      "bytes": 9812,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": {
+      "git_blob": "81c1c73fe5b0e113ff8e2e7010527ead723ae5fb",
+      "bytes": 4167,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs": {
+      "git_blob": "a01331d9403552e6e96dfd0d5bdbf34dae8c7083",
+      "bytes": 3747,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": {
+      "git_blob": "d95d20caba662c884241a51cb045cfa17fa03983",
+      "bytes": 16879,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": {
+      "git_blob": "ee09310b8600ab7dee99e5ec230b8421b68227ee",
+      "bytes": 22281,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": {
+      "git_blob": "0ae9356516dd4201b086fc4323296db57fbea219",
+      "bytes": 10436,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": {
+      "git_blob": "31dd5adf013f2d3f88698e2b91e592ef14fb94f4",
+      "bytes": 8795,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": {
+      "git_blob": "9438387c4c1f46807e6212b1c797343ee1969bc5",
+      "bytes": 21981,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": {
+      "git_blob": "ed132de30fb271c0cb56662cf2cbef053abfb69f",
+      "bytes": 5033,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": {
+      "git_blob": "89165df40fea479fc73a5b5ce8d2fc0262ccd1f6",
+      "bytes": 13531,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": {
+      "git_blob": "bbdcbe216eea36f0aa79d1bd7320ede197c66130",
+      "bytes": 20390,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": {
+      "git_blob": "e33309316b5eed3fc8e9ceb3b816f81cb7485d95",
+      "bytes": 12611,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": {
+      "git_blob": "69f2ffbc96d5fce17c262d0f1165812448cf18e4",
+      "bytes": 26429,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": {
+      "git_blob": "0b03945c58b0d90ad1b073487374351e3a9020e7",
+      "bytes": 15194,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": {
+      "git_blob": "4becc2bbe7dccefc04663d4aecfce166f197879c",
+      "bytes": 18234,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": {
+      "git_blob": "1358d5f5a2df7f593ecfde0382357961631b6a8f",
+      "bytes": 22800,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": {
+      "git_blob": "38412856c827d6c9f400ee9f9dd5519824235564",
+      "bytes": 12839,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": {
+      "git_blob": "d4593600a406f752c6c986369311cf47bf08a1f6",
+      "bytes": 8563,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": {
+      "git_blob": "f93c80070b75ca1219b174c66db50dbda3003da9",
+      "bytes": 8198,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": {
+      "git_blob": "28fae942a6791dc42fbd5f758f5d96b5fc6b8d1f",
+      "bytes": 4044,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": {
+      "git_blob": "d02452015c6842281a413da8eb85849f682585ef",
+      "bytes": 6831,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": {
+      "git_blob": "bb283ee560f5714bfa0dc41b0d0b16118be2b610",
+      "bytes": 8938,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/LICENSE": {
+      "git_blob": "7a4a3ea2424c09fbe48d455aed1eaa94d9124835",
+      "bytes": 11357,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json": {
+      "git_blob": "fa871a3c8c76b0cf871879243ad34fa2cbd79000",
+      "bytes": 1664284,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/PROVENANCE.md": {
+      "git_blob": "13a8053b0800ef03904f8f0ff3e90ab304720b66",
+      "bytes": 930,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py": {
+      "git_blob": "839d88878f4e1f2d6f74167b2d763515cbcf6827",
+      "bytes": 8483,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs": {
+      "git_blob": "b25837b85608c6ef452139c1fe918a0f0553d091",
+      "bytes": 7088,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs": {
+      "git_blob": "5d53dd28c8a08c4ac5c938c702b2f691588626e5",
+      "bytes": 7624,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs": {
+      "git_blob": "437090f75c7fbeea6c240682469e8f18de4cf343",
+      "bytes": 9762,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/Cargo.toml": {
+      "git_blob": "ed83f028c9b961cf356d7a8fb96c8c916fe768a5",
+      "bytes": 684,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/examples/pon_wire.rs": {
+      "git_blob": "227d3296e7271fc8e8108244caadbc6eab9dbf73",
+      "bytes": 1279,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/README.md": {
+      "git_blob": "26cc88f256eb3608ce3d5cf54a5cb67072833009",
+      "bytes": 915,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": {
+      "git_blob": "106de4bc5d466b9ec2d12a22b69747dd5c8ae5a4",
+      "bytes": 5249,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": {
+      "git_blob": "dc8c9ad84519c789c550f6afa90236a6e86702f8",
+      "bytes": 3284,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/lib.rs": {
+      "git_blob": "decb1202b55c77777954d2ef85a6f6887e39090e",
+      "bytes": 15663,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": {
+      "git_blob": "6b556163921abcea93513759125022c28e3689fc",
+      "bytes": 3760,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs": {
+      "git_blob": "3d5338b5597f294f9d36bbb98c28a9e025cb184f",
+      "bytes": 12129,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": {
+      "git_blob": "f75e258f55cb1cfe042b6fbe9dc10014c842017d",
+      "bytes": 19189,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": {
+      "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "bytes": 32354,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": {
+      "git_blob": "14b5cbf88ad07fcc76a15c109c6f58bf46b84465",
+      "bytes": 21244,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs": {
+      "git_blob": "321027f2a9677b9c20c09319e9a4c3b778718e79",
+      "bytes": 30536,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": {
+      "git_blob": "d67077da9799f7996838d853e9c3ef53796b9496",
+      "bytes": 13529,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": {
+      "git_blob": "c05ab30c5e531ad343bbf3ae51d420d4bee53ab7",
+      "bytes": 25573,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs": {
+      "git_blob": "48b97d23fcbe32c5c73de5b959f1a430fe3c53e3",
+      "bytes": 9944,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": {
+      "git_blob": "019cfc40eb58839fd5184e0731d58dd628d47259",
+      "bytes": 6151,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs": {
+      "git_blob": "178bd386421ec8245ce0031f625769b0fdad3063",
+      "bytes": 11950,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs": {
+      "git_blob": "5f835457eef4bcd560cdcc6973a0a57922309f6a",
+      "bytes": 10733,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs": {
+      "git_blob": "9e52815b3783f1017b606ed7280c728605fcbb2f",
+      "bytes": 1792,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs": {
+      "git_blob": "e7ca624311723723e48b507ba2fdf420cd75f480",
+      "bytes": 459,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs": {
+      "git_blob": "8d27dc28a1fc72750d12427d619e03028db304a4",
+      "bytes": 12866,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs": {
+      "git_blob": "e9bc1c18e2c56b917a1ceaeaf09d16b564552dd8",
+      "bytes": 13706,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs": {
+      "git_blob": "61f22aeb0a93ae5c2fe69869592efd67891bab71",
+      "bytes": 2844,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der": {
+      "git_blob": "b1e4beedb3e6f92178fb4adc955304a1008f9421",
+      "bytes": 1974,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs": {
+      "git_blob": "26a2f77bc786f8ee46c8a9c4f34d032b57121a1e",
+      "bytes": 3615,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs": {
+      "git_blob": "6342c52b92c9528e5f561a53eda5ff92dfcc592c",
+      "bytes": 7353,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs": {
+      "git_blob": "d7aea6c6eafcc76cbef36466a41e8e91ee3d8878",
+      "bytes": 5051,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs": {
+      "git_blob": "e69500824b86adb4722fb555429c441b0c2f1406",
+      "bytes": 4606,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs": {
+      "git_blob": "8e8120696d2e8aacbcd646cf9c38d246af21dea8",
+      "bytes": 2236,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs": {
+      "git_blob": "033621e5f4bf4fd635b8efd4a045db8e975672c6",
+      "bytes": 2531,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs": {
+      "git_blob": "21e511a9a11c69a6cbf78d345a4a9e6d67188516",
+      "bytes": 2496,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs": {
+      "git_blob": "200fadf15de140743414dd40d9dee0e5df5cf596",
+      "bytes": 7659,
+      "mode": "100644",
+      "kind": "blob"
+    },
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs": {
+      "git_blob": "1e3ac31a1b0155f6a184cb618b06fb95e89c1534",
+      "bytes": 6531,
+      "mode": "100644",
+      "kind": "blob"
+    }
+  },
+  "same_count_bytes_and_comparison_as_pre_disconnect_observation": true,
+  "method": "Resolve each selected path from the exact commit's root tree, enumerate each selected directory with Git Trees recursive=1, reject truncated responses and non-blob/non-tree entries, union selected blobs and compare path, blob SHA, byte size, mode and type. Tree hashes are retained for every selected path.",
+  "scope": [
+    "Eight recursively resolved local path-dependency packages previously identified before disconnection, plus external bin source, workspace manifests, tracked lockfiles and observer/control programs.",
+    "Git objects reconstruct the declared source projection; this is not a rerun of the local filesystem check.",
+    "External dependency versions and checksums are constrained by equal lockfiles, but installed crate sources, build toolchains and reproducible binary construction are not attested.",
+    "Retained runner source remains 38543c96, observer source remains ffb43113; this does not relabel the binary as freshly built at ffb43113.",
+    "No unavailable raw prover log or actual segment receipt bytes are reconstructed.",
+    "No complete proof, security qualification, QROM budget acceptance, native admission or production activation is established."
+  ],
+  "qualification": {
+    "complete_proof_observed": false,
+    "qrom_budget_qualified": false,
+    "production_activation": false
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "source_baseline": "ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637",
+  "stage": "GREEN_PATCHED_SOURCE_ALL_RESOURCE_CONTROLS",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_quantum_oracle_resources"
+  ],
+  "cwd": "/dev/shm/w1-decimal-boundary-822cc50e",
+  "exit_code": 0,
+  "wall_seconds": 0.18194644100003643,
+  "inputs": {
+    "quantum_oracle_resources.py": {
+      "bytes": 27502,
+      "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+      "git_blob": "e903407e792b77db97878e29e8c04b1d8994ae0e"
+    },
+    "test_quantum_oracle_resources.py": {
+      "bytes": 18007,
+      "sha256": "0c930e1f86fd4a3f8534a14fe418c83dfd5099b114272eb5de3e9866f95f54ef",
+      "git_blob": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802"
+    }
+  },
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "ca437260b76d24fc695ae218e3c63e61f174b7472c8009b487f8e731c045efa5"
+}

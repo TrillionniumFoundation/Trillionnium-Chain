@@ -329,23 +329,34 @@ def physical_estimate(counts: dict, qubits: int, instances: int,
         factory_cycles_unit = bounded(factory_rounds * model.factory_t_cycles_per_distance)
         ideal_cycle_unit = max(depth_cycles_unit, factory_cycles_unit)
         allocated_cycle_unit = bounded(depth_cycles_unit + t_count * model.factory_t_cycles_per_distance)
-        magic_failure = Decimal(bounded(t_count * instances)) * dec(model.magic_state_error, "MAGIC")
+        magic_state_count = bounded(t_count * instances)
+        magic_error = dec(model.magic_state_error, "MAGIC")
+        magic_failure = Decimal(magic_state_count) * magic_error
         budget = dec(model.total_failure_budget, "BUDGET")
+        # Decimal values retain the report's presentation. Budget decisions
+        # use the exact decimal inputs, including gaps below that precision.
+        magic_failure_exact = magic_state_count * Fraction(magic_error)
+        budget_exact = Fraction(budget)
         common = {"name": model.name, "assumptions": asdict(model),
                   "t_count_per_instance_conditional": t_count,
                   "t_depth_upper_bound_per_instance_conditional": t_depth_bound,
                   "whole_workload_magic_error_union_estimate": decimal_text(magic_failure),
                   "model_is_physical_calibration": False}
-        if magic_failure >= budget:
+        if magic_failure_exact >= budget_exact:
             return {**common, "status": "UNSATISFIED_MAGIC_STATE_ERROR_BUDGET", "estimate": None}
-        ratio = dec(model.physical_error, "P") / dec(model.threshold, "THRESHOLD")
+        physical_error = dec(model.physical_error, "P")
+        threshold = dec(model.threshold, "THRESHOLD")
+        ratio = physical_error / threshold
+        ratio_exact = Fraction(physical_error) / Fraction(threshold)
         prefactor = dec(model.logical_error_prefactor, "A")
         for distance in range(3, model.maximum_distance + 1, 2):
             cycles = bounded(allocated_cycle_unit * distance)
             patch_cycles = bounded(qubits * cycles * instances)
             logical_error = prefactor * ratio ** ((distance + 1) // 2)
             failure = Decimal(patch_cycles) * logical_error + magic_failure
-            if failure <= budget:
+            failure_exact = (patch_cycles * Fraction(prefactor)
+                             * ratio_exact ** ((distance + 1) // 2) + magic_failure_exact)
+            if failure_exact <= budget_exact:
                 data = bounded(model.data_physical_qubits_per_d2 * distance**2 * qubits)
                 factories = bounded(model.factory_physical_qubits_per_d2 * distance**2
                                     * model.factories_per_instance)
