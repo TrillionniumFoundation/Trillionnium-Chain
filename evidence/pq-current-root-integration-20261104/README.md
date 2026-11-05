@@ -1,5 +1,9 @@
 # Current PQ authority, recovery and response completion
 
+> **Later fixed-source verification:** [LATE_INTEGRATION.md](LATE_INTEGRATION.md) records the frozen combined code `dba49c2f`, including canonical Node execution, preserved failures and the explicit six-domain HOLD. The original e05/78874ae records below retain their original source scopes.
+
+> **Publication scope:** The later branch parent `70df2c64` adds M06 migration checks. [PUBLICATION_SCOPE.json](PUBLICATION_SCOPE.json) records those changes separately. This batch did not re-execute that later combination; native results remain bound to `dba49c2f`.
+
 User date: 2026-11-04, America/New_York. Original command timestamps use UTC.
 
 **Component fixes and exact-source checks; all six whole-chain qualification
