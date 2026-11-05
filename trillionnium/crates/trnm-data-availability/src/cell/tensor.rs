@@ -578,13 +578,46 @@ fn read_exact_until<R: Read>(
     check_deadline(deadline)
 }
 
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
 struct TensorEntry {
     dtype: String,
-    #[serde(deserialize_with = "bounded_shape")]
     shape: Vec<u64>,
     data_offsets: [u64; 2],
+}
+
+impl<'de> Deserialize<'de> for TensorEntry {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct EntryVisitor;
+        impl<'de> Visitor<'de> for EntryVisitor {
+            type Value = TensorEntry;
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+                formatter.write_str("a safetensors tensor metadata object")
+            }
+            fn visit_map<A: MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
+                #[derive(Deserialize)]
+                #[serde(deny_unknown_fields)]
+                struct Fields {
+                    dtype: String,
+                    #[serde(deserialize_with = "bounded_shape")]
+                    shape: Vec<u64>,
+                    data_offsets: [u64; 2],
+                }
+
+                let Fields {
+                    dtype,
+                    shape,
+                    data_offsets,
+                } = Fields::deserialize(de::value::MapAccessDeserializer::new(map))?;
+                Ok(TensorEntry {
+                    dtype,
+                    shape,
+                    data_offsets,
+                })
+            }
+        }
+        // A derived struct also accepts a positional JSON array. Require the
+        // named object first, then retain the derived field/type/duplicate checks.
+        deserializer.deserialize_map(EntryVisitor)
+    }
 }
 
 fn bounded_shape<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<u64>, D::Error> {

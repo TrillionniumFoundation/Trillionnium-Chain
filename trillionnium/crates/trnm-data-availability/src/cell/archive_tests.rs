@@ -447,15 +447,45 @@ fn collected_content_can_be_retained_under_new_funded_operations_without_rewindi
 #[test]
 fn partial_physical_reservation_keeps_complete_pending_root_across_restart() {
     let directory = tempfile::tempdir().unwrap();
-    let (_, duty) = fixture(directory.path());
+    let (source, duty) = fixture(directory.path());
     let path = directory.path().join("archive");
-    // Three short objects fit logically but need three 4-KiB physical slots.
-    let cfg = config(8192);
+    let cfg = config(12_288);
     let mut store = CellReleaseRetentionStoreV2::create(&path, cfg.clone()).unwrap();
-    assert!(store.reserve_release(duty.clone(), deadline()).is_err());
+    // A legal existing first member plus real physical-writer contention.
+    // The public release call must persist its complete intent, then fail its
+    // bounded physical reservation instead of manufacturing an ACK or retry.
+    store
+        .retention
+        .reserve_until(duty.objects[0].clone(), deadline())
+        .unwrap();
+    let foreign = Connection::open(path.join("objects/retention.sqlite")).unwrap();
+    foreign.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let started = Instant::now();
+    let result = store.reserve_release(duty.clone(), started + Duration::from_millis(100));
+    let elapsed = started.elapsed();
+    foreign.execute_batch("ROLLBACK").unwrap();
+    drop(foreign);
+    let error = result.unwrap_err();
+    assert!(
+        matches!(
+            &error,
+            CellErrorV1::Sql(error)
+                if matches!(
+                    error.sqlite_error_code(),
+                    Some(rusqlite::ErrorCode::DatabaseBusy | rusqlite::ErrorCode::DatabaseLocked)
+                )
+        ),
+        "{error:?}"
+    );
+    assert!(
+        elapsed < Duration::from_millis(600),
+        "{elapsed:?}: {error:?}"
+    );
     let row = required_row(&store.catalog, &cfg, duty.operation).unwrap();
     assert_eq!(row.status, 0);
     assert_eq!(row.contract.objects.len(), 3);
+    let first = physical_rows(&path);
+    assert_eq!(first.len(), 1);
     drop(store);
     let mut store = CellReleaseRetentionStoreV2::open(&path, cfg).unwrap();
     assert!(matches!(
@@ -469,6 +499,261 @@ fn partial_physical_reservation_keeps_complete_pending_root_across_restart() {
                 "archive object reachable from live duty"
             ))
         ));
+    }
+    assert_eq!(store.contract(duty.operation, deadline()).unwrap(), duty);
+    let resumed = store.reserve_release(duty.clone(), deadline()).unwrap();
+    assert!(!resumed.acknowledged);
+    assert_eq!(resumed.objects.len(), 3);
+    let rows = physical_rows(&path);
+    assert_eq!(rows.len(), 3);
+    assert!(rows.contains(&first[0]));
+    assert!(
+        store
+            .acknowledge_release(duty.operation, &source, deadline())
+            .unwrap()
+            .acknowledged
+    );
+    store
+        .retire_release(duty.operation, 10, deadline())
+        .unwrap();
+    for object in &duty.objects {
+        assert!(
+            store
+                .retire_object(object.operation, 30, None, deadline())
+                .unwrap()
+                .retired
+        );
+    }
+}
+
+#[test]
+fn impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation() {
+    for cause in ["alignment", "record-count"] {
+        let directory = tempfile::tempdir().unwrap();
+        let (_, duty) = fixture(directory.path());
+        let path = directory.path().join("archive");
+        // Preserve the original 8192-byte counterexample: three short members
+        // need 3 * 4096 physical bytes even though their raw total fits.
+        let mut cfg = config(if cause == "alignment" { 8192 } else { 12_288 });
+        if cause == "record-count" {
+            cfg.retention.maximum_obligations = 2;
+        }
+        duty.validate(&cfg).unwrap(); // Existing wire/history validity is unchanged.
+        let mut store = CellReleaseRetentionStoreV2::create(&path, cfg.clone()).unwrap();
+        let error = store.reserve_release(duty.clone(), deadline()).unwrap_err();
+        let expected = if cause == "alignment" {
+            "retention reservation set capacity"
+        } else {
+            "archive physical record capacity"
+        };
+        assert!(matches!(error, CellErrorV1::Invalid(message) if message == expected));
+        assert!(read_row(&store.catalog, &cfg, duty.operation)
+            .unwrap()
+            .is_none());
+        assert!(physical_rows(&path).is_empty());
+        drop(store);
+        let store = CellReleaseRetentionStoreV2::open(&path, cfg).unwrap();
+        assert!(store.contract(duty.operation, deadline()).is_err());
+        assert!(physical_rows(&path).is_empty());
+    }
+}
+
+#[test]
+fn old_impossible_pending_intent_remains_readable_and_protected_without_migration() {
+    let directory = tempfile::tempdir().unwrap();
+    let (_, duty) = fixture(directory.path());
+    let path = directory.path().join("archive");
+    let cfg = config(8192);
+    let mut store = CellReleaseRetentionStoreV2::create(&path, cfg.clone()).unwrap();
+    // Exact prior-version durable state: complete intent plus two allocated
+    // members, before the third reservation failed. Admission must not turn
+    // existing wire/history into an unknown namespace or discard its roots.
+    write_catalog_until(&mut store.catalog, deadline(), |tx| {
+        write_row(
+            tx,
+            &DutyRow {
+                contract: duty.clone(),
+                status: 0,
+            },
+            true,
+        )
+    })
+    .unwrap();
+    for object in &duty.objects[..2] {
+        store
+            .retention
+            .reserve_until(object.clone(), deadline())
+            .unwrap();
+    }
+    let before = physical_rows(&path);
+    drop(store);
+    let mut store = CellReleaseRetentionStoreV2::open(&path, cfg.clone()).unwrap();
+    assert_eq!(store.contract(duty.operation, deadline()).unwrap(), duty);
+    assert!(matches!(
+        store.reserve_release(duty.clone(), deadline()),
+        Err(CellErrorV1::Invalid("retention capacity exhausted"))
+    ));
+    assert_eq!(physical_rows(&path), before);
+    assert_eq!(
+        required_row(&store.catalog, &cfg, duty.operation)
+            .unwrap()
+            .status,
+        0
+    );
+    assert!(matches!(
+        store.retire_release(duty.operation, 1000, deadline()),
+        Err(CellErrorV1::Invalid("archive pending duty"))
+    ));
+    for object in &duty.objects {
+        assert!(matches!(
+            store.retire_object(object.operation, 1000, None, deadline()),
+            Err(CellErrorV1::Invalid(
+                "archive object reachable from live duty"
+            ))
+        ));
+    }
+}
+
+#[test]
+fn terminal_physical_history_cannot_create_an_unfulfillable_new_root() {
+    for cause in ["retired-operation", "funding-alias", "history-capacity"] {
+        let directory = tempfile::tempdir().unwrap();
+        let (source, first) = fixture(directory.path());
+        let path = directory.path().join("archive");
+        let mut cfg = config(12_288);
+        if cause == "history-capacity" {
+            cfg.retention.maximum_obligations = 5;
+        }
+        let mut store = CellReleaseRetentionStoreV2::create(&path, cfg.clone()).unwrap();
+        store.reserve_release(first.clone(), deadline()).unwrap();
+        store
+            .acknowledge_release(first.operation, &source, deadline())
+            .unwrap();
+        store
+            .retire_release(first.operation, 30, deadline())
+            .unwrap();
+        for object in &first.objects {
+            store
+                .retire_object(object.operation, 30, None, deadline())
+                .unwrap();
+        }
+        let before = physical_rows(&path);
+        let mut next = next_duty(&first);
+        if cause != "retired-operation" {
+            next.retain_from_height = 31;
+            next.retain_until_height = 40;
+            next.repair_deadline_height = 39;
+            for object in &mut next.objects {
+                object.operation[0] += 100;
+                if cause == "history-capacity" {
+                    object.funding_operation[0] += 100;
+                }
+                object.retain_from_height = 31;
+                object.retain_until_height = 40;
+            }
+        }
+        next.validate(&cfg).unwrap();
+        let expected = match cause {
+            "retired-operation" => "retention retired reservation",
+            "funding-alias" => "archive object funding alias",
+            "history-capacity" => "archive physical record capacity",
+            _ => unreachable!(),
+        };
+        assert!(matches!(
+            store.reserve_release(next.clone(), deadline()),
+            Err(CellErrorV1::Invalid(message)) if message == expected
+        ));
+        assert!(read_row(&store.catalog, &cfg, next.operation)
+            .unwrap()
+            .is_none());
+        assert_eq!(physical_rows(&path), before);
+        assert_eq!(store.contract(first.operation, deadline()).unwrap(), first);
+        drop(store);
+        let store = CellReleaseRetentionStoreV2::open(&path, cfg.clone()).unwrap();
+        assert!(read_row(&store.catalog, &cfg, next.operation)
+            .unwrap()
+            .is_none());
+        assert_eq!(physical_rows(&path), before);
+    }
+}
+
+#[test]
+fn unmaterialized_pending_members_keep_their_funding_and_future_history_capacity() {
+    for cause in ["funding-alias", "history-capacity"] {
+        let directory = tempfile::tempdir().unwrap();
+        let (_, first) = fixture(directory.path());
+        let path = directory.path().join("archive");
+        let mut cfg = config(12_288);
+        if cause == "history-capacity" {
+            cfg.retention.maximum_obligations = 5;
+        }
+        let mut store = CellReleaseRetentionStoreV2::create(&path, cfg.clone()).unwrap();
+        write_catalog_until(&mut store.catalog, deadline(), |tx| {
+            write_row(
+                tx,
+                &DutyRow {
+                    contract: first.clone(),
+                    status: 0,
+                },
+                true,
+            )
+        })
+        .unwrap();
+        assert!(physical_rows(&path).is_empty());
+        let mut next = next_duty(&first);
+        // Distinct manifests avoid the independent active-content alias gate;
+        // these objects compete only for immutable physical row/funding terms.
+        let context = next.root.closure().release().context().clone();
+        let mut files = next.root.closure().files().to_vec();
+        for (index, object) in next.objects.iter_mut().enumerate() {
+            let original = object.manifest.id();
+            let bytes = vec![100 + index as u8; object.manifest.size() as usize];
+            object.manifest = CellManifestV1::new(
+                context.clone(),
+                bytes.len() as u64,
+                Sha256::digest(&bytes).into(),
+                16_384,
+                vec![crate::cell::CellChunkV1 {
+                    size: bytes.len() as u32,
+                    sha256: Sha256::digest(&bytes).into(),
+                }],
+            )
+            .unwrap();
+            let file = files
+                .iter_mut()
+                .find(|file| file.manifest == original)
+                .unwrap();
+            file.manifest = object.manifest.id();
+            file.payload_sha256 = object.manifest.payload_sha256();
+            object.operation[0] += 100;
+            if cause == "history-capacity" {
+                object.funding_operation[0] += 100;
+            }
+        }
+        next.objects.sort_by_key(|object| object.manifest.id());
+        next.root = CellModelReleaseRootV1::new(
+            CellReleaseClosureV1::new(context, 2, [11; 32], vec![1], files).unwrap(),
+            vec![first.root.id()],
+        )
+        .unwrap();
+        next.validate(&cfg).unwrap();
+        let expected = if cause == "funding-alias" {
+            "archive object funding alias"
+        } else {
+            "archive physical record capacity"
+        };
+        assert!(matches!(
+            store.reserve_release(next.clone(), deadline()),
+            Err(CellErrorV1::Invalid(message)) if message == expected
+        ));
+        assert!(read_row(&store.catalog, &cfg, next.operation)
+            .unwrap()
+            .is_none());
+        assert!(physical_rows(&path).is_empty());
+        assert_eq!(store.contract(first.operation, deadline()).unwrap(), first);
+        // The previously promised root still completes under its exact identity.
+        store.reserve_release(first.clone(), deadline()).unwrap();
+        assert_eq!(physical_rows(&path).len(), 3);
     }
 }
 

@@ -97,6 +97,10 @@ roster. Only bounded unique string-to-string metadata and trailing ASCII-space
 header padding are allowed. Every dtype and shape must exactly match TMT1.
 Data offsets must cover the data area exactly, without overlap, holes, overflow
 or trailing bytes. A correct outer SHA256 does not excuse an invalid container.
+Each tensor entry must itself be a named JSON object. A positional array such
+as `["F32", [2], [0, 8]]` is rejected even when every value and the full payload
+hash match the pinned contract. Legal object-field reordering remains accepted;
+the required-field, duplicate-field and bounded-shape checks still apply.
 
 After metadata checks, `verify_reader` streams the entire payload with a 64 KiB
 buffer, verifies the complete TCD1 SHA256, checks the final size again and uses
@@ -167,6 +171,12 @@ an uncharged hidden retry. All frames consume the same response-byte budget.
 Server request-attempt reports include reserved idle/EOF/partial frame slots;
 completed-request reports count only complete responses. Bounds remain finite
 across workers, sessions, shutdown and failed writes.
+The persistent server stops new connection and frame admission when actual
+written response bytes exhaust the original allowance, including zero and
+partial-response allowances. A temporary allowance held by another worker is
+not exhaustion: an unused reservation may still be returned. Already admitted
+workers retain their original deadlines and accounting. Availability queries
+also pass that same request deadline through manifest readback and decoding.
 
 The rendezvous continues to verify its current signed records and TTL under
 the existing finite query. Selection first balances the configured bootstrap
@@ -202,12 +212,33 @@ can repopulate the disposable cache from the retained arena after the original
 cache/provider is gone. Recovering TMA1 metadata does not skip a new tensor
 verification, CURRENT check or FinalUse.
 
+Before recording a new root, a read-only admission pass rejects permanent
+contradictions with this fixed store: the complete aligned member set must fit
+the arena, immutable physical history must have enough record identities, and
+no retired operation or historical funding identity may be repurposed.
+Unmaterialized members of existing pending roots also reserve their original
+operation/funding identities and future history slots. This pass does not
+allocate bytes, grant funding, or promise that currently occupied or fragmented
+slots are immediately available. The physical writer still checks its live
+layout. Genuine contention or I/O failure after intent publication preserves
+the complete pending root. Previously stored impossible pending intents remain
+readable and protected; this admission change does not migrate or erase history.
+
 Catalog mutations use an IMMEDIATE writer transaction and one original
 absolute deadline through SQLite writer wait, precommit and postcommit
 readback. Physical reservation rechecks the available layout inside its
 writer transaction. Deadline exhaustion never manufactures an ACK or refunds
 consumed work. After an uncertain committed effect, reconcile the exact
 original operation; do not rename it to obtain a fresh allowance.
+
+The Node paid-storage adapter uses the same deadline-aware physical reservation
+entry point. An already expired request is rejected before opening a budget or
+creating a physical obligation. Checks between original owner calls and around
+completion preserve exact same-identity reconciliation after an uncertain
+commit; no late outcome grants a refund or a second physical dispatch. The M09
+physical writer wait spends the original deadline. M12's existing journal calls
+still contain their own cooperative SQLite intervals; these boundary checks do
+not make every M12 wait preemptible or replace its internal busy timeout.
 
 Every pending, acknowledged and expired-but-not-explicitly-retired release
 protects its complete member set. `retire_object` holds the catalog writer

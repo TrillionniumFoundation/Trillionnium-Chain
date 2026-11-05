@@ -6200,6 +6200,20 @@ independent PN5 WAN/failure campaign remain explicit gates. No activation,
 public-WAN, performance, model-efficacy or whole-chain-security claim advances
 from this source continuation alone.
 
+### 2026-11-04 storage admission and deadline boundary follow-up
+
+The subsequent [storage boundary follow-up](../../evidence/cell-storage-continuation-20261104/boundary-followup/README.md)
+continues the same eight-layer work on the preserved integration candidate.
+It closes positional-array tensor metadata acceptance, persistent-server intake
+after actual response-byte exhaustion, and permanently impossible new retained
+root admission. Existing pending and retired history remains readable and every
+unretired root continues protecting its complete closure. Node paid storage now
+uses the original deadline-aware M09 physical reservation entry point; M12
+journal internals retain their explicitly cooperative intervals. These source
+changes do not create funding, independent custody, CURRENT or FinalUse authority.
+Execution receipts, including unsuccessful attempts, retain their exact source
+identities in the follow-up record; no prior result is relabeled as a new pass.
+
 ### 2026-11-04 independently pinned recovery, PQ release roles and fixed hybrid TLS
 
 Continue the existing integration candidate with the

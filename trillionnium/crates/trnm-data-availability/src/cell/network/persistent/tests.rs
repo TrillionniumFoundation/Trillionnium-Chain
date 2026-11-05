@@ -476,6 +476,112 @@ fn server_frame_and_byte_budgets_apply_across_reused_requests() {
 }
 
 #[test]
+fn server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown() {
+    let (_dir, path, manifest, bytes) = fixture();
+    let wire = response(b"TCS2", &bytes[..16_384]);
+    for maximum in [0, 10, wire.len() as u64] {
+        let mut limits = server_limits();
+        limits.serving.max_response_bytes = maximum;
+        // Connection/request/timeout bounds deliberately have room left. The
+        // actual byte quota must stop this owner without a shutdown request.
+        let server = Server::start(&path, limits);
+        let mut received = Vec::new();
+        match TcpStream::connect_timeout(&server.address, Duration::from_secs(2)) {
+            Ok(mut stream) => {
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                stream
+                    .set_write_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                let _ = stream.write_all(&query(2, manifest.chunks()[0].sha256));
+                match stream.read_to_end(&mut received) {
+                    Ok(_) => (),
+                    Err(error)
+                        if matches!(
+                            error.kind(),
+                            io::ErrorKind::ConnectionReset | io::ErrorKind::ConnectionAborted
+                        ) => {}
+                    Err(error) => panic!("byte quota {maximum}: {error}"),
+                }
+            }
+            Err(error) if maximum == 0 && error.kind() == io::ErrorKind::ConnectionRefused => (),
+            Err(error) => panic!("byte quota {maximum}: {error}"),
+        }
+        let cutoff = Instant::now() + Duration::from_secs(2);
+        while !server.worker.as_ref().unwrap().is_finished() && Instant::now() < cutoff {
+            thread::sleep(Duration::from_millis(1));
+        }
+        let stopped_without_shutdown = server.worker.as_ref().unwrap().is_finished();
+        let report = server.finish();
+        assert!(stopped_without_shutdown, "byte quota {maximum}");
+        assert_eq!(received, wire[..maximum as usize]);
+        assert_eq!(report.serving.sent_response_bytes, maximum);
+        assert_eq!(report.serving.accepted_connections, u64::from(maximum != 0));
+        assert_eq!(report.request_attempts, u64::from(maximum != 0));
+        assert_eq!(
+            report.serving.completed_requests,
+            u64::from(maximum == wire.len() as u64)
+        );
+    }
+}
+
+#[test]
+fn server_temporary_egress_reservation_refunds_before_real_tcp_response() {
+    let (_dir, path, manifest, bytes) = fixture();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let maximum = 9 + 16_384;
+    let responses = ResponseBudget::new(maximum);
+    let requests_left = AtomicU64::new(1);
+    let shutdown = AtomicBool::new(false);
+    let deadline = Instant::now() + Duration::from_secs(3);
+    let reserved = responses.reserve(maximum as usize, deadline).unwrap();
+    assert_eq!(responses.received().unwrap(), 0);
+    thread::scope(|scope| {
+        let worker = scope.spawn(|| {
+            let mut stream = accept(&listener);
+            let store = CellStoreV1::open_read_only(&path).unwrap();
+            serve_connection(
+                &mut stream,
+                &store,
+                &shutdown,
+                deadline,
+                1,
+                &requests_left,
+                &responses,
+            )
+        });
+        let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(2)).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        stream
+            .set_write_timeout(Some(Duration::from_secs(2)))
+            .unwrap();
+        stream
+            .write_all(&query(2, manifest.chunks()[0].sha256))
+            .unwrap();
+        let cutoff = Instant::now() + Duration::from_secs(2);
+        while requests_left.load(Ordering::Relaxed) != 0
+            && !worker.is_finished()
+            && Instant::now() < cutoff
+        {
+            thread::sleep(Duration::from_millis(1));
+        }
+        let admitted_while_reserved = requests_left.load(Ordering::Relaxed) == 0;
+        // Return the outstanding allowance before asserting, so a failed test
+        // still joins its real worker under the same fixed deadline.
+        responses.complete(reserved, 0).unwrap();
+        assert!(admitted_while_reserved);
+        assert_eq!(read_body(&mut stream), bytes[..16_384]);
+        assert_eq!(worker.join().unwrap(), 1);
+    });
+    assert_eq!(responses.received().unwrap(), maximum);
+    assert_eq!(requests_left.load(Ordering::Relaxed), 0);
+}
+
+#[test]
 fn invalid_persistent_limits_never_open_transport_or_mutate_the_cache() {
     let (dir, _, manifest, _) = fixture();
     let cache = CellStoreV1::open(&dir.path().join("receiver.sqlite"), cache_config()).unwrap();
