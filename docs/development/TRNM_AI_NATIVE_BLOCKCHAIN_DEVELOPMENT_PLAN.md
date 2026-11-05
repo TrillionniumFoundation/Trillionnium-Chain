@@ -17,6 +17,18 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Shared-material total-cost continuation, 2026-11-05 America/New_York:**
+Continue #688 from `6ee529046d295e3175f09112492abee373f1f54c` under the
+[v2 measurement contract](specs/pon/SHARED_CELL_COST_V2.md). Compare explicit dense
+and sparse legal preparation with identical complete W1 challenge/proof streams;
+retain the cached selected-expert ordinary operator and the original model's
+non-adoption. Measure every requested local full verifier replay and charge each
+process/phase once. Recompute cost summaries from raw observations, retain failed
+searches and distinguish CPU from wall time, local pipes from WAN, and repeated
+outputs from new useful demand. All-miner/all-validator network coverage, stale
+blocks, device loading, independent future model benefit and actual full-system
+net savings remain unqualified. No work relation or original service budget changes.
+
 **PQ owner-boundary continuation, 2026-11-04 America/New_York:** Continue the
 existing #688/#4812 candidates from Chain `ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155`
 and hepta-private-ci runtime `3558ced0fd983603a3082a42359e8da63dfc8418`.
