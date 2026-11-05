@@ -2,7 +2,8 @@
 """One published, cooperating Git campaign; never a new trial authority.
 
 Register on a clean source commit S using an already-created empty SQLite
-authority. Publish one intent commit I whose sole parent is S and whose sole
+authority. Freeze S on the dedicated execution branch; the existing PR remains
+the integration path. Publish one intent commit I whose sole parent is S and whose sole
 change is that registration. Publication spends the opportunity even if setup
 or the runner fails. The job never initializes, repairs, refunds or resumes an
 authority. The original CPU/4-thread/10-step strict-v1 pilot owns all phases.
@@ -39,7 +40,7 @@ SCHEMA = 'trnm-smollm-hosted-intent-v1'
 SCOPE = 'one-cooperating-git-campaign-no-independent-custody'
 CAMPAIGN = 'model-owner-completion-20261104-once-v1'
 REPOSITORY = 'TrillionniumFoundation/Trillionnium-Chain'
-REF = 'refs/heads/fix/chain-six-axis-performance-20261103'
+REF = 'refs/heads/fix/chain-model-owner-hosted-once-20261105'
 WORKFLOW = '.github/workflows/pon-smollm-hosted-once.yml'
 INTENTS = 'config/pon/hosted-model-intents-v1'
 DRIVER = 'scripts/ci/llm_hosted_once.py'

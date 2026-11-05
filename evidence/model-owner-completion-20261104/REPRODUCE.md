@@ -123,8 +123,13 @@ strict-v1 plan, phase limits and one-attempt policy stay fixed.
 
 Freeze clean source S, then use the offline `register` command with the exact
 pre-created empty ledger bytes and original manifest. Commit only its one new
-intent as I, with sole parent S. A non-forced publication to the existing branch
-spends the campaign opportunity even if setup, model execution, collection or
+intent as I, with sole parent S. Create the dedicated execution branch
+`fix/chain-model-owner-hosted-once-20261105` at S without an intent, then publish I
+with a normal non-created, non-forced push. This freezes source while the
+original PR #688 continues to receive concurrent changes. Its fixes and actual
+observations still integrate through PR #688. The campaign, policy, trial ID,
+materials, metrics and budget remain unchanged; a branch is not another allowance.
+Publication spends the campaign opportunity even if setup, model execution, collection or
 platform delivery fails. No dispatch, rerun, replacement ledger or new campaign
 identity supplies another attempt. Runtime SQLite spending remains separately
 reported: publication can be spent while setup has not yet created or reserved
@@ -158,8 +163,11 @@ owned pidfd before injecting delayed reap observations, then checks the single
 native wait4 result and real usage. The original 100ms exit-drain cap, unproved
 50ms window, two-second fixture wall budget and RSS budget remain unchanged.
 All 53 targeted controls passed. The [hosted verification](hosted-once-verification.json)
-records the final 33 passing controls and exact frozen entry, test and workflow
-hashes, separately from its earlier 26-test development run.
+records 33 passing controls before the dedicated-branch binding, separately
+from its earlier 26-test development run. The [branch-binding verification](frozen-branch-verification.json)
+records the final 33 passing controls and exact source hashes; its
+[scope proof](frozen-branch-scope.json) confirms that driver behavior changed
+only in its fixed ref and docstring, and the workflow only in its push branch.
 
 ### Requirements that component controls do not establish
 

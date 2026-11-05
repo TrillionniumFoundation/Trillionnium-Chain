@@ -2,7 +2,7 @@ name: PoN SmolLM cooperating campaign once
 on:
   push:
     branches:
-      - fix/chain-six-axis-performance-20261103
+      - fix/chain-model-owner-hosted-once-20261105
     paths:
       - config/pon/hosted-model-intents-v1/*.json
 permissions:

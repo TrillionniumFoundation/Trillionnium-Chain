@@ -239,6 +239,14 @@ This does not establish global related-identity or independent antirollback
 custody, and no outer subprocess timeout may orphan the original supervisor's
 model child.
 
+Freeze this attempt on `fix/chain-model-owner-hosted-once-20261105` because the
+shared PR branch continues to receive concurrent changes. Create that branch
+at source S without an intent, then normally push the sole registration child I.
+Keep the original campaign, policy, trial ID, manifest, metrics and budget;
+the branch change does not supply another allowance. Integrate the same fixes
+and retained result into PR #688 without opening a replacement PR or activating
+a release. A source-bound trial result cannot qualify later composed sources.
+
 The [continuation evidence](../../evidence/model-owner-completion-20261104/REPRODUCE.md)
 retains original counterexamples, development failures, real tensor controls,
 official-tokenizer parity and exact-source verification. Its pretrained attempt

@@ -131,6 +131,7 @@ class HostedOnceTests(unittest.TestCase):
     def test_first_attempt_and_exact_workflow_event_only(self):
         for key, value in (('GITHUB_RUN_ATTEMPT', '2'), ('GITHUB_EVENT_NAME', 'workflow_dispatch'),
                            ('GITHUB_REPOSITORY', 'other/repo'), ('GITHUB_REF', 'refs/heads/main'),
+                           ('GITHUB_REF', 'refs/heads/fix/chain-six-axis-performance-20261103'),
                            ('GITHUB_WORKFLOW_SHA', self.source), ('GITHUB_SHA', self.source),
                            ('GITHUB_WORKFLOW_REF', 'other/workflow'), ('GITHUB_RUN_ID', '0')):
             with self.subTest(key=key), mock.patch.dict(self.env, {key: value}):
@@ -550,6 +551,8 @@ class HostedOnceTests(unittest.TestCase):
 
     def test_workflow_first_gate_pinned_actions_read_only_and_always_collect(self):
         raw = (SOURCE / hosted.WORKFLOW).read_text()
+        self.assertEqual(hosted.REF, 'refs/heads/fix/chain-model-owner-hosted-once-20261105')
+        self.assertIn('      - ' + hosted.REF.removeprefix('refs/heads/'), raw)
         self.assertNotIn('workflow_dispatch', raw)
         self.assertNotIn('pull_request:', raw)
         self.assertNotIn('secrets.', raw)

@@ -99,7 +99,11 @@ successful through that upgrade.
 
 The cooperating campaign `model-owner-completion-20261104-once-v1` uses the
 [hosted entry](ci/llm_hosted_once.py) to publish one immutable registration on the
-existing integration branch. Freeze a clean source commit S first. The offline
+dedicated execution branch `fix/chain-model-owner-hosted-once-20261105`.
+This freezes the experiment while PR #688 continues to accept concurrent work;
+its fixes and observations still integrate through that original Draft PR.
+Create the execution branch at clean source S without an intent, then publish
+its registration child I as a normal, non-created push. The offline
 `register` command reads an already-created empty one-attempt authority and the
 original material manifest; it embeds their exact bytes, complete policy,
 checkpoint, original CPU/four-thread/ten-step strict-v1 plan and source closure.
