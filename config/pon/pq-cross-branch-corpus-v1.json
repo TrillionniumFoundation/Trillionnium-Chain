@@ -140,7 +140,7 @@
   },
   "parent_profile": "pon-nakamoto-v1",
   "pinned_blobs": {
-    ".github/workflows/pon-branch-encoding-acceptance.yml": "2112fe60b9aa770f5cecc5ef21073202d52d9ca4",
+    ".github/workflows/pon-branch-encoding-acceptance.yml": "da9affc4e22086fd8a675fe063dc87328ecd5b23",
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "548bc418038b5d3e5ad6e732c858108930a794eb",
     ".github/workflows/pon-pq-system-continuation.yml": "be04494621f237358f4b87418b9b5c93273c02a7",
@@ -626,7 +626,9 @@
     "trillionnium/crates/trnm-sqlite-io-boundary/src/vfs.rs": "6cde50a98a7574ba9d4d3a9c3f94128779f224de",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_held_directory_v1.rs": "1d33eb39cf1c449ed981b1e1681c5aca5145e428",
     "trillionnium/crates/trnm-sqlite-io-boundary/tests/native_public_api_v2.rs": "67a07c7fa0cb9f24b59aa8ba22ca15c122e7d3db",
-    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba"
+    "trillionnium/crates/trnm-sqlite-io-boundary/unix_layout_witness.c": "47e46cef9b355e89382776f21e54b40aee4006ba",
+    "scripts/ci/check_native_constants_roster.py": "d283c5491ec52f4c47a5ea41cb3136eddd418b28",
+    "scripts/ci/test_native_constants_roster.py": "dcd3f0d757dbd77676c84a476045e05fdd4b0be7"
   },
   "pql11b_module_ancestry": {
     "exact_isolated_failures": 0,
@@ -1046,7 +1048,9 @@
     "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1/capacity_range_tests.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/prefix_scan_tests.rs",
-    "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs"
+    "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+    "scripts/ci/check_native_constants_roster.py",
+    "scripts/ci/test_native_constants_roster.py"
   ],
   "schema": "trnm-pq-cross-branch-corpus-v1",
   "source_composition": {
