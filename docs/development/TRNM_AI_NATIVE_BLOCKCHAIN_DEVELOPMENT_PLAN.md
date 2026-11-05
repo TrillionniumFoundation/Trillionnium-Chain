@@ -17,6 +17,21 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Shared work/usefulness experiment, 2026-11-04 America/New_York:** Continue
+the existing #688 candidate with the [shared complete-operator contract](specs/pon/SHARED_CELL_WORK_V1.md).
+Both cost and false-transcript observations consume exactly the same frozen
+public-source model materials. Cover all 257 feature coordinates and the existing
+router/base/expert computation; accept output only after full native and scalar
+W1 verification. Charge padding, unselected experts, actual preparation, every
+failed search, verification, copying and observed transport. Repeated challenges
+over one input create one distinct application result. Preserve the ordinary
+cached selected-expert control and valid rejection of a non-beneficial model.
+This source-routing model is retrospective, not a target LLM or an independently
+accepted Hepta release. A rectangular/grouped relation requires its own version,
+numeric contract and security evidence; no W1 consensus rule is replaced. Full v2
+proof generation, original hostile public-service budgets, independent future
+evaluation and funded effects retain their separate unclosed exits.
+
 **Cell runtime composition, 2026-11-04 America/New_York:** Continue the existing
 #688 candidate from `47b4a62463d8e1371a175c74196d52d99c5fccb8`. Connect complete
 TCA2 release obligations to the original Node/M12 funding and effect owners,
