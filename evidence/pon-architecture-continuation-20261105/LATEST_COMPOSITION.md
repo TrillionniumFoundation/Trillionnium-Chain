@@ -18,7 +18,7 @@ commit identities and are not relabeled as new executions.
 | Complete business execution owner | Exit 2, passed=false | Complete raw report retained |
 | Source identity before/after | PASS | Both `cb8ed844` and published `cf8c88ac`, separately recorded |
 | Published-source locked build freshness | PASS; byte-identical tested native ELF | `cf8c88ac` |
-| Exact source registry | 490 blobs match; HOLD_NO_GO | Source identity only, no cryptographic acceptance |
+| Exact source registry | 490 blobs at `cb8ed844`; 492 at `cf8c88ac`, all match; HOLD_NO_GO | The later input registers two runtime-release scripts; source identity only |
 
 The current ELF SHA-256 is
 `5b8981f22b5bc5fc9c30871164b924273f630fa14bce193e3ae5ee62339b0073`.

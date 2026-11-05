@@ -566,7 +566,10 @@
     "ci_contract_passed": 98,
     "pq_source_guard_passed": 35
   },
-  "strict_source_blobs": 490,
+  "strict_source_blobs": {
+    "tested_source": 490,
+    "published_source": 492
+  },
   "business": {
     "passed": false,
     "samples": 18,
@@ -583,7 +586,7 @@
   "ci_review": "ci/summary.json",
   "module_review": "review/loaded-python-modules.json",
   "archive": "latest-records.tar.gz",
-  "archive_sha256": "5793a86adfa0b8f4ca56a7c987902fb2562b4224aef5fa765b74b1d5536fc3f5",
+  "archive_sha256": "69e1cc345a541a2eb29ed98eec0b1a8bb2472144340b421ff2503ede26b53750",
   "record_count": 96,
   "original_ohie_and_ghostdag_evidence_retained": true,
   "original_4s_16_hostile_w1_acceptance": false,

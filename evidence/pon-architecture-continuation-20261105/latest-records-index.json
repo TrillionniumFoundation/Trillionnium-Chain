@@ -1,10 +1,10 @@
 {
-  "archive_sha256": "5793a86adfa0b8f4ca56a7c987902fb2562b4224aef5fa765b74b1d5536fc3f5",
-  "archive_bytes": 592333,
+  "archive_sha256": "69e1cc345a541a2eb29ed98eec0b1a8bb2472144340b421ff2503ede26b53750",
+  "archive_bytes": 592368,
   "records": {
     "capture-scripts/package_latest_architecture_evidence.py": {
-      "bytes": 10632,
-      "sha256": "9c7e5e77bb654881900e5f9bf8ff7d6a29e1bb3c348c4ad67c365784d0d9f01f"
+      "bytes": 10802,
+      "sha256": "3b6c5b790631fdeac202a5e71fd6704ca473b66364ac17f8e30acdedc3143893"
     },
     "capture-scripts/run_final_composition_checks.py": {
       "bytes": 4623,
