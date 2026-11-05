@@ -137,6 +137,7 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_attempt_journal_v1.py' -v
     python3 scripts/ci/test_fixed_host_service_readback_v1.py
+    python3 scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py

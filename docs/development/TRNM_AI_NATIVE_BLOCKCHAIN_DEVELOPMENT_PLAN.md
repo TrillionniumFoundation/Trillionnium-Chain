@@ -7356,3 +7356,33 @@ rho values remain attached to their original source/profile and finite tested
 arms, separate from invalid-input rejection costs. The complete local quality
 readback has negative marginal values on all three frozen partitions and zero
 model reward; it does not authorize a next-generation adoption.
+
+
+### 2026-11-05 experiment 6: explicit recovery handoff and remaining native work
+
+The current ordinary Hepta CLI at exact source
+`1556a4df6e279055fd8196f81a4ca2fe0f19384a` requires two recovery-file arguments
+that the existing Chain handoff omitted. The
+[new explicit handoff-v4 record](../../evidence/pon-six-experiments-20261105/handoff-recovery-v4/README.md)
+retains the protected installed-ELF owner and adds independently pinned external
+frontier/trust paths, their original 64-KiB/8-KiB bounds, and load/pre-exec checks.
+The original Rust owner retains PQ, lineage and generation authorization. Old
+v2/v3 semantics remain explicit; no fallback, copied recovery authority or new
+owner grant is introduced. Pre-exec hashing is not an atomic native reopen or
+physical independent custody claim.
+
+Eight installed-host Python controls pass with seven explicit skips; four
+existing handoff controls pass with ten native skips. The new recovery class is
+a subset, with five passes and two unavailable nonroot exec controls in this
+uid-zero, capability-empty environment. A real initial EPERM failure and an
+incomplete log remain retained. The exact recovery class is added once to the
+original protocol lane, and the 100-case CI command/negative suite passes again.
+These controls do not execute a model, CURRENT, FinalUse or the actual next task.
+
+The [F0 hotspot source diagnosis](../../evidence/pon-six-experiments-20261105/fixed-host-hotspots.md)
+records the actual Exclusive client path and the already-existing epoch/root/
+frontier reuse. Existing controls prohibit promoting partial graph traversals to
+whole-root receipts. Accurate failed/cancelled graph-work attribution requires
+native loop-boundary observations; no uncompiled multi-layer cache or observer
+change is substituted for the still-failing original baseline. All six complete
+system experiment gates remain HOLD.

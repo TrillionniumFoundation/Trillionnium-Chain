@@ -21,7 +21,7 @@ existing integration candidate, not an activation or release decision.
 | 3. Original-resource service liveness | Original F0 readback keeps 0/3 timely baseline confirmations and 0/3 ROOT confirmations; all 42 packet exposures remain. Real History owner source removes an adjacent Shared Host check and fences deadline expiry during Host observation. | **HOLD / original baseline FAIL:** the independent F0 client uses Exclusive ownership, so the Shared optimization is not a measured repair of its state-validation bottleneck. Fresh native original-resource execution is required. |
 | 4. Shared material / batching | Corrected v2 runner performs 48 arm observations (24 pairs) and 1,020 processing occurrences at equal exact output quality. Whole observed local delivery CPU shows no stable packed advantage. All eight one-millisecond negative cases are retained as late. | **HOLD:** no native CUDA/Grouped-GEMM, actual arrival queue, original Host budget, PoN proof cost, WAN or independent confirmation measurement. |
 | 5. Complete proof backend | Archived full W1 v2 receipt costs are read back with all prior failure costs and real local delivery retained. Its median receipt verification is 30.243831 times native W1 replay. | **HOLD:** this is full W1, not a proof of complete ordinary Hepta; no minimum-node or end-to-end benefit is established, and no new proof is generated this turn. |
-| 6. Automatic adoption / recovery | Real SQLite reconciliation binds the trial and plan to an externally retained checkpoint, validates the complete immutable history and reports durable identities after an uncertain result. | **HOLD:** ledger reconciliation does not prove CURRENT, FinalUse, real installation, actual next-task use, physical rollback resistance or the complete native crash/reorg/revoke campaign. |
+| 6. Automatic adoption / recovery | Real SQLite reconciliation binds the trial and plan to an externally retained checkpoint, validates the complete immutable history and reports durable identities after an uncertain result. Explicit handoff v4 supplies the two externally pinned recovery files required by the exact current Hepta CLI. | **HOLD:** neither component proves CURRENT, FinalUse, real installation, actual next-task use, physical rollback resistance or the complete native crash/reorg/revoke campaign. |
 
 ## Read the evidence within its actual scope
 
@@ -32,7 +32,9 @@ existing integration candidate, not an activation or release decision.
   those 92, not added again.
 - [Original F0 and the History repair](fixed-host-readback.md): frozen limits,
   all scheduled rounds, nested client/state/Host costs, 14 passing reader
-  controls and four added but locally unexecuted Rust tests.
+  controls and four added but locally unexecuted Rust tests. The
+  [follow-up hotspot diagnosis](fixed-host-hotspots.md) traces the actual
+  Exclusive client path and the existing graph-reuse boundaries.
 - [Shared-material delivery](grouped-delivery/README.md): corrected v2 source,
   all 48 normal and eight late observations, old v1 data kept unchanged,
   50 passing grouped controls and two explicitly skipped native controls.
@@ -44,6 +46,11 @@ existing integration candidate, not an activation or release decision.
   controls. Two initially accepted cross-lane duplicate commands are preserved
   as failed negative tests, then fixed and retested; rerun counts are not added
   to the earlier ledger/history counts.
+- [Explicit recovery handoff v4](handoff-recovery-v4/README.md): the actual CLI
+  compatibility defect, original external-file pins and strict new schema.
+  The installed-host suite records 8 passes and 7 skips; the existing handoff
+  suite records 4 passes and 10 skips. Missing native/nonroot execution is
+  explicit, and the real initial EPERM control failure remains retained.
 
 ## Legal-work economics and invalid-input service are different
 

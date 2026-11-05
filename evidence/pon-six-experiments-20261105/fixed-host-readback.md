@@ -46,6 +46,13 @@ compilation/execution; the local environment has no Rust toolchain. Their count
 is **not** added to passing tests. The original F0 workflow now watches these two
 source paths, without changing its resource limits, phase schedule or finalizer.
 
+The [follow-up source diagnosis](fixed-host-hotspots.md) confirms that the F0
+independent client uses Exclusive ownership. Shared deduplication therefore does
+not establish a repair of its dominant client-import/account-graph cost. Existing
+bounded graph reuse remains unchanged; an accurate native observation must
+separate real full/partial traversals and whole-root hits on success, failure and
+cancellation before proposing another cache boundary.
+
 The Python consistency reader has 14 passing mutation controls. They reject
 missing/duplicate rounds, denominator changes, a substituted backend, relaxed
 Host limits, elapsed-time resets, inconsistent ACK counts and incomplete or

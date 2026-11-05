@@ -160,6 +160,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
             'scripts/ci/test_fixed_host_service_readback_v1.py',
+            'scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v',
             'scripts/test_llm_runtime_trial_ledger.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',

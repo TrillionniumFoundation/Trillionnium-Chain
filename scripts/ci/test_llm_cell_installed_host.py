@@ -12,6 +12,10 @@ import json
 import os
 from pathlib import Path
 import shutil
+import select
+import signal
+import time
+from types import SimpleNamespace
 import subprocess
 import sys
 import tempfile
@@ -80,6 +84,238 @@ class InstalledPolicyTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 installed.prepare(source, expected)
             self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), expected)
+
+
+class RecoveryHandoffTests(unittest.TestCase):
+    """Actual protected-file reads and ELF argv transfer, never a Hepta receipt.
+
+    The opaque metadata below is intentionally unqualified. /usr/bin/echo observes
+    the held-image invocation only; it cannot authenticate recovery or use a model.
+    Root test runners drop privileges in the forked probe before admission.
+    """
+
+    @staticmethod
+    def fixture(root, schema=handoff.RECOVERY_SCHEMA):
+        root.chmod(0o755)
+        def put(name, raw):
+            path = root / name
+            pin = save(path, raw)
+            path.chmod(0o644)
+            return pin
+        for name in ('workspace', 'fleet', 'home', 'run'):
+            (root / name).mkdir(mode=0o755)
+        output = root / 'absent-transport-output'
+        snapshot = put('runtime-snapshot.json', b'{"scope":"argv-control-not-runtime"}')
+        descriptor = put('descriptor.json', b'{"scope":"not-a-qualified-bootstrap"}')
+        issuer = put('issuer.json', b'{"scope":"not-an-authority"}')
+        recovery = dict(profile=handoff.RECOVERY_PROFILE,
+            frontier=put('frontier.json', b'{"scope":"argv-control-not-signed-frontier"}'),
+            signer_trust=put('trust.json', b'{"scope":"argv-control-not-signer-trust"}'))
+        worker = dict(runtime_snapshot=snapshot, materials=str(output / 'consumer-materials'),
+            target_contract=dict(path=str(output / 'consumer-parent/target-contract.json'), sha256='44' * 32),
+            wrapped_adapter=dict(path=str(output / 'consumer-parent/wrapped-adapter.json'), sha256='55' * 32))
+        owner = dict(schema='hepta-smollm-cognitive-host-v2', worker=worker,
+                     descriptor=descriptor, final_use_authorizer_config=issuer['path'])
+        host = dict(schema=handoff.HOST_SCHEMA, owner=owner, operation_id='unqualified-argv-probe',
+            sidecar=dict(path=str(output / 'consumer-cell-sidecar.json'), sha256='66' * 32),
+            dependency_closure=dict(path=str(output / 'consumer-release.tcd1'), sha256='77' * 32),
+            dependency_closure_id='88' * 32)
+        host_pin = put('host.json', handoff.canonical(host))
+        image = Path(shutil.which('echo')).resolve(strict=True)
+        value = dict(schema=schema, execution_profile=installed.PROFILE,
+            host=host_pin, executable=dict(path=str(image), sha256=handoff.checksum(image.read_bytes())),
+            workspace=str(root / 'workspace'), generation=1, loader_profile='33' * 32,
+            context=dict(family='unqualified-argv-control', **{name: '11' * 32 for name in
+                         ('base', 'parent', 'tokenizer', 'layout', 'runtime')}),
+            authentication=dict(profile='content-cache-v1'))
+        if schema == handoff.RECOVERY_SCHEMA:
+            value['evidence_recovery'] = recovery
+        pin = put('handoff.json', handoff.canonical(value))
+        environment = dict(os.environ, HEPTA_FLEET_ROOT=str(root / 'fleet'),
+            HEPTA_AGENT_ID='00000000-0000-4000-8000-000000000219', HEPTA_AGENT_GENERATION='1',
+            HEPTA_AGENT_HOME=str(root / 'home'), HEPTA_AGENT_RUN_ROOT=str(root / 'run'),
+            CODEX_HOME=str(root / 'home'))
+        return SimpleNamespace(root=root, output=output, value=value, pin=pin,
+                               environment=environment, recovery=recovery)
+
+    def run_probe(self, fixture, after_load=None):
+        if not sys.platform.startswith('linux') or not hasattr(os, 'fork'):
+            self.skipTest('real protected ELF descriptor probe requires Linux fork')
+        if os.geteuid() == 0:
+            fields = dict(line.split(':', 1) for line in Path('/proc/thread-self/status').read_text().splitlines() if ':' in line)
+            required = (1 << 6) | (1 << 7)  # CAP_SETGID and CAP_SETUID for this control child only.
+            if int(fields.get('CapEff', '0'), 16) & required != required:
+                self.skipTest('root test runner lacks CAP_SETGID/CAP_SETUID; real nonroot exec was not run')
+        output_read, output_write = os.pipe()
+        ready_read, ready_write = os.pipe()
+        go_read, go_write = os.pipe()
+        pid = os.fork()
+        if pid == 0:
+            try:
+                os.close(output_read); os.close(ready_read); os.close(go_write)
+                os.dup2(output_write, 1); os.dup2(output_write, 2); os.close(output_write)
+                if os.geteuid() == 0:
+                    try:
+                        os.setgroups([])
+                        os.setresgid(65534, 65534, 65534)
+                        os.setresuid(65534, 65534, 65534)
+                    except PermissionError as error:
+                        os.write(2, ('CONTROL_SUBJECT_UNAVAILABLE: ' + str(error) + '\n').encode())
+                        os._exit(77)
+                os.environ.update(fixture.environment)
+                plan = handoff.load(Path(fixture.pin['path']), fixture.pin['sha256'],
+                                    fixture.output, fixture.environment)
+                try:
+                    os.write(ready_write, b'R'); os.close(ready_write)
+                    if os.read(go_read, 1) != b'G':
+                        raise RuntimeError('probe was not released')
+                    os.close(go_read)
+                    plan.exec_owner()
+                finally:
+                    plan.close()
+            except BaseException as error:
+                os.write(2, (type(error).__name__ + ': ' + str(error) + '\n').encode())
+                os._exit(65)
+            os._exit(123)
+        os.close(output_write); os.close(ready_write); os.close(go_read)
+        reaped = False
+        try:
+            readable, _, _ = select.select([ready_read], [], [], 10)
+            self.assertTrue(readable, 'probe did not reach admission in time')
+            ready = os.read(ready_read, 1)
+            if ready == b'R':
+                if after_load is not None:
+                    after_load()
+                os.write(go_write, b'G')
+            os.close(go_write); go_write = None
+            deadline, chunks = time.monotonic() + 10, []
+            while True:
+                remaining = deadline - time.monotonic()
+                self.assertGreater(remaining, 0, 'probe output deadline exceeded')
+                readable, _, _ = select.select([output_read], [], [], remaining)
+                self.assertTrue(readable, 'probe output deadline exceeded')
+                raw = os.read(output_read, 4096)
+                if not raw:
+                    break
+                chunks.append(raw)
+                self.assertLess(sum(map(len, chunks)), 65536)
+            while True:
+                found, status = os.waitpid(pid, os.WNOHANG)
+                if found:
+                    reaped = True
+                    code, observed = os.waitstatus_to_exitcode(status), b''.join(chunks).decode()
+                    if code == 77 and observed.startswith('CONTROL_SUBJECT_UNAVAILABLE:'):
+                        self.skipTest(observed.strip())
+                    return code, observed
+                self.assertLess(time.monotonic(), deadline, 'probe exit deadline exceeded')
+                time.sleep(.01)
+        finally:
+            for fd in (output_read, ready_read, go_write):
+                if fd is not None:
+                    os.close(fd)
+            if not reaped:
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
+
+    def test_v4_requires_two_pins_and_explicit_profile_without_legacy_fallback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            cases = []
+            for name in ('frontier', 'signer_trust', 'profile'):
+                value = copy.deepcopy(f.value)
+                del value['evidence_recovery'][name]
+                cases.append(value)
+            cases.extend((dict(copy.deepcopy(f.value), execution_profile='sealed-elf-v1'),
+                          dict(copy.deepcopy(f.value), schema=handoff.INSTALLED_SCHEMA),
+                          dict(copy.deepcopy(f.value), schema=handoff.SCHEMA)))
+            unknown = copy.deepcopy(f.value)
+            unknown['evidence_recovery']['profile'] = 'unknown'
+            cases.append(unknown)
+            absent = copy.deepcopy(f.value)
+            del absent['evidence_recovery']
+            cases.append(absent)
+            with mock.patch.object(handoff, 'sealed_executable', side_effect=AssertionError('no sealed fallback')), \
+                    mock.patch.object(installed, 'prepare', side_effect=AssertionError('no executable admission')):
+                for value in cases:
+                    pin = save(f.root / 'invalid.json', handoff.canonical(value))
+                    with self.subTest(value=value), self.assertRaises(ValueError):
+                        handoff.load(Path(pin['path']), pin['sha256'], f.output, f.environment)
+            self.assertFalse(f.output.exists())
+
+    def test_two_actual_pinned_files_produce_only_the_original_native_arguments(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            arguments = handoff.recovery_arguments(f.recovery, f.value['workspace'], f.environment)
+            self.assertEqual(arguments, ['--evidence-recovery-frontier-file', f.recovery['frontier']['path'],
+                '--evidence-recovery-frontier-trust-file', f.recovery['signer_trust']['path']])
+            self.assertFalse(f.output.exists())
+            self.assertEqual(set(f.recovery), {'profile', 'frontier', 'signer_trust'})
+
+    def test_rechecking_the_original_pin_refuses_an_actual_later_trust_file_change(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            handoff.recovery_arguments(f.recovery, f.value['workspace'], f.environment)
+            Path(f.recovery['signer_trust']['path']).write_bytes(b'changed after first owner read')
+            with self.assertRaisesRegex(ValueError, 'independent owner file digest mismatch'):
+                handoff.recovery_arguments(f.recovery, f.value['workspace'], f.environment)
+            self.assertFalse(f.output.exists())
+
+    def test_each_external_pin_and_native_byte_bound_are_enforced(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            for name, _, maximum in handoff.RECOVERY_INPUTS:
+                spec = copy.deepcopy(f.recovery)
+                spec[name]['sha256'] = 'ab' * 32
+                with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'digest mismatch'):
+                    handoff.recovery_arguments(spec, f.value['workspace'], f.environment)
+                large = save(f.root / (name + '-oversized.json'), b'x' * (maximum + 1))
+                with self.assertRaisesRegex(ValueError, 'bounded'):
+                    handoff.recovery_arguments(dict(f.recovery, **{name: large}), f.value['workspace'], f.environment)
+                path = Path(f.recovery[name]['path'])
+                path.chmod(0o666)
+                with self.assertRaisesRegex(ValueError, 'protected'):
+                    handoff.recovery_arguments(f.recovery, f.value['workspace'], f.environment)
+                path.chmod(0o644)
+                alias = f.root / (name + '-alias.json'); alias.symlink_to(path)
+                with self.assertRaisesRegex(ValueError, 'canonical'):
+                    handoff.recovery_arguments(dict(f.recovery, **{name: dict(path=str(alias), sha256=f.recovery[name]['sha256'])}),
+                                               f.value['workspace'], f.environment)
+            self.assertFalse(f.output.exists())
+
+    def test_recovery_inputs_cannot_share_the_agent_rollback_roots(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            roots = [f.value['workspace'], *(f.environment[name] for name in
+                     ('HEPTA_AGENT_HOME', 'HEPTA_AGENT_RUN_ROOT', 'HEPTA_FLEET_ROOT'))]
+            for root in roots:
+                pin = save(Path(root) / 'forbidden-frontier.json', b'owner-root control')
+                with self.subTest(root=root), self.assertRaisesRegex(ValueError, 'rollback domains'):
+                    handoff.recovery_arguments(dict(f.recovery, frontier=pin), f.value['workspace'], f.environment)
+            missing = dict(path=str(f.root / 'absent.json'), sha256='ab' * 32)
+            with self.assertRaises(FileNotFoundError):
+                handoff.recovery_arguments(dict(f.recovery, signer_trust=missing), f.value['workspace'], f.environment)
+            self.assertFalse(f.output.exists())
+
+    def test_actual_nonroot_held_elf_receives_v4_files_and_v3_keeps_its_argv(self):
+        for schema in (handoff.RECOVERY_SCHEMA, handoff.INSTALLED_SCHEMA):
+            with tempfile.TemporaryDirectory() as directory:
+                f = self.fixture(Path(directory), schema)
+                code, output = self.run_probe(f)
+                expected = ['--host-format', 'cell-v2', '--host-config', f.value['host']['path'],
+                            '--host-config-sha256', f.value['host']['sha256']]
+                if schema == handoff.RECOVERY_SCHEMA:
+                    expected += handoff.recovery_arguments(f.recovery, f.value['workspace'], f.environment)
+                self.assertEqual((code, output), (0, ' '.join(expected) + '\n'))
+                self.assertFalse(f.output.exists())
+
+    def test_changed_frontier_after_load_is_refused_before_actual_exec(self):
+        with tempfile.TemporaryDirectory() as directory:
+            f = self.fixture(Path(directory))
+            code, output = self.run_probe(f, lambda: Path(f.recovery['frontier']['path']).write_bytes(b'changed'))
+            self.assertEqual(code, 65, output)
+            self.assertIn('independent owner file digest mismatch', output)
+            self.assertNotIn('--host-format cell-v2', output)
+            self.assertFalse(f.output.exists())
 
 
 @unittest.skipUnless(FIXTURE and NATIVE, "requires independently installed protected ELF fixtures and exact TRNM_CELL_BIN")
