@@ -14,5 +14,5 @@
   "experimental_contracts": "config/pon/module-contracts-v1.json",
   "module_maturity": "config/pon/module-maturity-v1.json",
   "invariant_contract": "config/pon/invariants-v2.json",
-  "native_application_scope": "twelve-commands-ordered-speculation-not-complete-node"
+  "native_application_scope": "profile-gated-native-ledger-model-evidence-and-recovery-not-publicly-qualified"
 }
