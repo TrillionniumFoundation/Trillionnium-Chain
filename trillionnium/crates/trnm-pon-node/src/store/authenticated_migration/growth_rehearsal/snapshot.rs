@@ -133,6 +133,41 @@ pub(super) fn file_hash_with_progress(
     Ok(digest.finalize().into())
 }
 
+// Copy every byte from the held input without an input-size ceiling. The
+// descriptor length and final EOF/identity checks bound concurrent extension;
+// the original complete SHA-256 remains the authorization for this receipt.
+pub(super) fn copy_receipt_with_progress(
+    path: &Path,
+    destination: &Path,
+    expected: Hash,
+    progress: &mut impl FnMut(FileReadProgress) -> Result<()>,
+) -> Result<()> {
+    let mut input = Input::open_with_progress(path, progress)?;
+    let mut output = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .open(destination)?;
+    let length = input.observed.len();
+    let mut digest = Sha256::new();
+    input.consume_exact(length, |bytes| {
+        output.write_all(bytes)?;
+        digest.update(bytes);
+        progress(FileReadProgress::Consumed {
+            bytes: bytes.len() as u64,
+        })
+    })?;
+    let actual: Hash = digest.finalize().into();
+    ensure(actual == expected, "GROWTH_REHEARSAL_FILE_DIGEST")?;
+    ensure(
+        output.metadata()?.len() == length,
+        "GROWTH_REHEARSAL_SNAPSHOT_LENGTH",
+    )?;
+    output.sync_all()?;
+    Ok(())
+}
+
 pub(super) fn read_receipt_bytes_with_progress(
     path: &Path,
     progress: &mut impl FnMut(FileReadProgress) -> Result<()>,
@@ -332,4 +367,69 @@ pub(super) fn with_snapshot<T>(
     })();
     // The inspection's Node/SQLite handles have closed before private cleanup.
     scratch.finish(result)
+}
+
+#[cfg(test)]
+mod receipt_copy_tests {
+    use super::*;
+
+    #[test]
+    fn receipt_copy_retains_complete_bytes_without_a_new_size_limit() {
+        let directory = tempfile::tempdir().unwrap();
+        let input = directory.path().join("input");
+        for length in [0, 1, 65_537, 1_048_577] {
+            let bytes = vec![29u8; length];
+            fs::write(&input, &bytes).unwrap();
+            let output = directory.path().join(format!("output-{length}"));
+            let mut consumed = 0;
+            copy_receipt_with_progress(
+                &input,
+                &output,
+                Sha256::digest(&bytes).into(),
+                &mut |point| {
+                    if let FileReadProgress::Consumed { bytes } = point {
+                        assert!(bytes <= 65_536);
+                        consumed += bytes;
+                    }
+                    Ok(())
+                },
+            )
+            .unwrap();
+            assert_eq!(consumed, length as u64);
+            assert_eq!(fs::read(output).unwrap(), bytes);
+        }
+    }
+
+    #[test]
+    fn receipt_copy_rejects_digest_mismatch_and_concurrent_extension() {
+        let directory = tempfile::tempdir().unwrap();
+        let input = directory.path().join("input");
+        let bytes = vec![29u8; 65_537];
+        fs::write(&input, &bytes).unwrap();
+        assert!(copy_receipt_with_progress(
+            &input,
+            &directory.path().join("wrong"),
+            [0; 32],
+            &mut |_| Ok(())
+        )
+        .is_err());
+        let mut consumed = 0;
+        let result = copy_receipt_with_progress(
+            &input,
+            &directory.path().join("changed"),
+            Sha256::digest(&bytes).into(),
+            &mut |point| {
+                if let FileReadProgress::Consumed { bytes } = point {
+                    consumed += bytes;
+                    OpenOptions::new()
+                        .append(true)
+                        .open(&input)?
+                        .write_all(&[7])?;
+                }
+                Ok(())
+            },
+        );
+        assert!(result.is_err());
+        assert_eq!(consumed, bytes.len() as u64);
+    }
 }

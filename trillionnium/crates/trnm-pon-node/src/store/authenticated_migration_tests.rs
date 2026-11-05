@@ -1930,3 +1930,37 @@ fn migration_genesis_packet_copy_keeps_null_and_type_semantics() {
         check_genesis(&node).unwrap();
     }
 }
+
+#[test]
+fn migration_block_id_copy_preserves_complete_fixed_width_refusals() {
+    let db = Connection::open_in_memory().unwrap();
+    for bytes in [
+        vec![],
+        vec![9; 31],
+        vec![9; 32],
+        vec![9; 33],
+        vec![9; 1_048_577],
+    ] {
+        let original = db
+            .query_row("SELECT ? AS id", [&bytes], |row| row.get::<_, Vec<u8>>(0))
+            .unwrap();
+        let bounded = db
+            .query_row("SELECT ? AS id", [&bytes], |row| fixed_blob::<32>(row, 0))
+            .unwrap();
+        assert!(bounded.len() <= 33);
+        assert_eq!(
+            bytes32(original).map_err(|e| e.to_string()),
+            bytes32(bounded).map_err(|e| e.to_string())
+        );
+    }
+    for value in ["NULL", "17", "1.5", "'not a blob'"] {
+        let sql = format!("SELECT {value} AS id");
+        let original = db
+            .query_row(&sql, [], |row| row.get::<_, Vec<u8>>(0))
+            .unwrap_err();
+        let bounded = db
+            .query_row(&sql, [], |row| fixed_blob::<32>(row, 0))
+            .unwrap_err();
+        assert_eq!(original.to_string(), bounded.to_string());
+    }
+}

@@ -250,7 +250,7 @@ fn verify_source(
     let mut transactions = 0u64;
     let mut genesis = 0u64;
     while let Some(row) = rows.next()? {
-        let id = bytes32(row.get(0)?)?;
+        let id = bytes32(fixed_blob::<32>(row, 0)?)?;
         let height = node.record(id)?.height;
         progress(AuthenticatedMigrationProgress::BeforeBlock { height })?;
         if id == node.settings.genesis() {
@@ -757,10 +757,12 @@ impl Node {
         let archived = stage.join("source");
         fs::create_dir(&archived)?;
         create_synced(&archived.join("owner.lock"), &[])?;
-        if source_receipt.is_some() {
-            create_synced(
+        if let Some(expected) = source_receipt {
+            snapshot::copy_receipt_with_progress(
+                &self.directory.join("authenticated-migration.json"),
                 &archived.join("authenticated-migration.json"),
-                &fs::read(self.directory.join("authenticated-migration.json"))?,
+                expected,
+                &mut |_| Ok(()),
             )?;
         }
         create_synced(&archived.join("native.sqlite"), &[])?;
