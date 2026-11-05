@@ -1,0 +1,13 @@
+{
+  "time_utc": "2026-11-05T01:05:18.317316+00:00",
+  "reason": "recovered executor: discard only own regenerated build/download caches; retain validated binary and active build/toolchain",
+  "removed": [
+    "/workspace/scratch/79360d3567d1/target-verifier",
+    "/workspace/scratch/79360d3567d1/continuation-runtime/target-relation",
+    "/workspace/scratch/79360d3567d1/continuation-runtime/.risc0-rust-1.88.0.tar.gz.sGG4Xe",
+    "/workspace/scratch/79360d3567d1/continuation-runtime/.risc0-rust-1.88.0.tar.gz.sGG4Xe.Hre9lh",
+    "/workspace/scratch/79360d3567d1/risc0/bin/.r0vm.GW3YpY"
+  ],
+  "verified_retained_binary_sha256": "574f604838be7f9dd9b8edeb68e77349534917d256506b388d8b70959a880e9d",
+  "available_bytes_after": 1256804352
+}

@@ -1,0 +1,9 @@
+{
+  "expected_tests": 21,
+  "returncode": 0,
+  "elapsed_seconds": 3.131075616999624,
+  "tmpdir": "/dev/shm/trnm-w1-v2-79360d3567d1/tests",
+  "prior_17_passed_confirmed_by_parent": true,
+  "capture_scope": "direct child stdout/stderr",
+  "source_changes": "stage lifecycle observation, tests, explanatory document and CI count only; no proof acceptance or guest edits"
+}

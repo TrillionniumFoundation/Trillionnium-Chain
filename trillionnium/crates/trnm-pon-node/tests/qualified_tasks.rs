@@ -220,6 +220,26 @@ fn validator_rejects_signed_false_recipe_even_with_manually_constructed_valid_wo
             &packet.proof,
         )
         .unwrap();
+        // The versioned transparent candidate publishes these SAME native raw
+        // A/B commitments. A correct work proof still cannot supply the current
+        // parent's task authority or excuse a source-signed artifact mismatch.
+        let public_artifacts = pon_work::artifacts::commitments(&packet.proof).unwrap();
+        assert_eq!(
+            public_artifacts.model,
+            hash(b"artifact", &[&artifacts.model])
+        );
+        assert_eq!(
+            public_artifacts.input,
+            hash(b"qualified-task-input-v1", &[&artifacts.input])
+        );
+        assert_eq!(
+            public_artifacts.model == statement.manifest.model,
+            mismatch != "model"
+        );
+        assert_eq!(
+            public_artifacts.input == statement.manifest.input,
+            mismatch != "input"
+        );
         if mismatch == "control" {
             let id = activate(&mut node, &packet);
             assert_eq!(node.state_at(id).unwrap(), output.state);

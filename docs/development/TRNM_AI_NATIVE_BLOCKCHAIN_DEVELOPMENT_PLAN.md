@@ -6393,3 +6393,42 @@ All 57 Cargo manifests/lockfiles match the earlier successful 0647 inputs; this
 does not turn earlier results into new executions. The publication bundle and
 reviews preserve the source and limits. Original 4s/16, #639 and activation gates
 remain open.
+
+
+### 2026-11-05 W1 v2 material statement and concrete error-budget continuation
+
+The [statement-v2 evidence](../../evidence/pon-w1-statement-v2-20261105/README.md)
+adds the original raw A/B commitments to a separately versioned full-work journal.
+Native current-parent task qualification remains mandatory. The Node reuses the
+original material-hash expressions without admitting a research receipt or issuing
+a new work capability. The guest uses the complete current native W1 relation;
+its distinct image must receive a distinct actual proof. Historical v1 receipts
+remain controls and cannot be relabelled as v2. Proof randomization and encoding
+do not change the original header/trace work identity.
+
+Actual native validation retains 176 crypto test executions, four signed-task
+Node controls and ten v1/v2 relation controls, with strict native Clippy. The
+independent verifier shares the already hardened bounded decoder and construction
+checks while fixing its own image and requiring external expected artifacts.
+The original v1 profile retains its fixed image. The CI source pins follow the
+reviewed native material helper change; historical observations remain unchanged.
+
+The staged observer now measures preparation, complete execution, every segment,
+recursion, fresh independent verification, local serialization/transport and
+fixed-input native/proof replay within one deadline. Twenty-one actual lifecycle
+controls include image identity binding, PID-namespace mapping, unreadable process
+state, independent group probes, late exits, cancellation, orphan cleanup,
+output limits and duplicate prior-cost rejection. This local envelope is not a
+production Node message. Real propagation, post-find publication, confirmation,
+stale-block rate and aggregate process-tree peak RSS remain unmeasured.
+
+The [security-budget evidence](../../evidence/pon-w1-qrom-budget-20261105/README.md)
+verifies four locked archives and reproduces exact-rational component-error
+expressions from pinned source. Twenty-one controls prevent source drift and
+unearned qualification. Current fixed field/accumulator terms already exceed
+the explicit research 2^-128 error budget; query count alone cannot repair that
+formula. Ideal sampling bias is derived separately from the unproved adaptive
+sponge model. Component error estimates are neither quantum attack costs nor a
+complete recursive QROM theorem. Formal theorem conditions, concrete losses,
+whole accepted-program coverage and actual end-to-end benefit remain HOLD;
+this continuation does not activate the candidate or replace native W1.

@@ -3,6 +3,7 @@
 use sha2::{Digest, Sha256};
 
 pub mod arithmetic_facts;
+pub mod artifacts;
 pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;

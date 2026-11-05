@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
-members = ["relation", "methods", "host"]
-exclude = ["methods/guest"]
+members = ["relation", "methods", "host", "methods-v2", "host-v2"]
+exclude = ["methods/guest", "methods/guest-v2"]
 
 [workspace.package]
 edition = "2021"

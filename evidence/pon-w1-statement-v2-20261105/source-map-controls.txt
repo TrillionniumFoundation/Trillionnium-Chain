@@ -1,0 +1,15 @@
+$ python3 -m unittest discover -s scripts/ci -p test_w1_profile_source_map.py -v
+test_archive_and_selected_members_match_locked_checksum (test_w1_profile_source_map.SourceMapTests.test_archive_and_selected_members_match_locked_checksum) ... ok
+test_duplicate_and_missing_locked_packages_are_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_and_missing_locked_packages_are_refused) ... ok
+test_duplicate_archive_member_is_refused (test_w1_profile_source_map.SourceMapTests.test_duplicate_archive_member_is_refused) ... ok
+test_existing_output_is_never_overwritten (test_w1_profile_source_map.SourceMapTests.test_existing_output_is_never_overwritten) ... ok
+test_locked_archive_checksum_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_locked_archive_checksum_drift_is_refused) ... ok
+test_modified_extracted_source_is_refused (test_w1_profile_source_map.SourceMapTests.test_modified_extracted_source_is_refused) ... ok
+test_stark_value_or_declaration_drift_is_refused (test_w1_profile_source_map.SourceMapTests.test_stark_value_or_declaration_drift_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.030s
+
+OK
+
+exit_code=0

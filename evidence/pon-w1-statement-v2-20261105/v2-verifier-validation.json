@@ -1,0 +1,71 @@
+[
+  {
+    "label": "v2-format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "--all"
+    ],
+    "returncode": 0,
+    "wall_seconds": 57.09693609199985
+  },
+  {
+    "label": "v2-tests-locked",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml"
+    ],
+    "returncode": 0,
+    "wall_seconds": 10.200866644999678
+  },
+  {
+    "label": "v2-clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "returncode": 0,
+    "wall_seconds": 239.35634606199983
+  },
+  {
+    "label": "v2-build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml"
+    ],
+    "returncode": 0,
+    "wall_seconds": 15.29070158400009
+  },
+  {
+    "label": "v2-graph",
+    "command": [
+      "cargo",
+      "metadata",
+      "--locked",
+      "--manifest-path",
+      "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_seconds": 1.675674041000093
+  }
+]
