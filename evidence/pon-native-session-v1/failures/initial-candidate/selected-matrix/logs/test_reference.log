@@ -1,0 +1,33 @@
+test_fast_clamp_rounding (__main__.DifficultyExamples.test_fast_clamp_rounding) ... ok
+test_future_is_deferred_then_admitted (__main__.DifficultyExamples.test_future_is_deferred_then_admitted) ... ok
+test_interval_uses_n_minus_one (__main__.DifficultyExamples.test_interval_uses_n_minus_one) ... ok
+test_invalid_parameters (__main__.DifficultyExamples.test_invalid_parameters) ... ok
+test_median_equal_rejects (__main__.DifficultyExamples.test_median_equal_rejects) ... ok
+test_pow_limit_and_floor (__main__.DifficultyExamples.test_pow_limit_and_floor) ... ok
+test_slow_clamp (__main__.DifficultyExamples.test_slow_clamp) ... ok
+test_time_regression_uses_lower_clamp (__main__.DifficultyExamples.test_time_regression_uses_lower_clamp) ... ok
+test_bad_score (__main__.EconomicRecoveryExamples.test_bad_score) ... ok
+test_conservation (__main__.EconomicRecoveryExamples.test_conservation) ... ok
+test_dust_retained (__main__.EconomicRecoveryExamples.test_dust_retained) ... ok
+test_no_gain_no_payout (__main__.EconomicRecoveryExamples.test_no_gain_no_payout) ... ok
+test_recovery_is_idempotent (__main__.EconomicRecoveryExamples.test_recovery_is_idempotent) ... ok
+test_reorg_does_not_erase_real_effect_or_revoke (__main__.EconomicRecoveryExamples.test_reorg_does_not_erase_real_effect_or_revoke) ... ok
+test_reorg_staging_not_visible_until_publish (__main__.EconomicRecoveryExamples.test_reorg_staging_not_visible_until_publish) ... ok
+test_second_reorg_owner_rejected (__main__.EconomicRecoveryExamples.test_second_reorg_owner_rejected) ... ok
+test_split_root_cannot_claim_twice (__main__.EconomicRecoveryExamples.test_split_root_cannot_claim_twice) ... ok
+test_unfunded_claim_has_no_mutation (__main__.EconomicRecoveryExamples.test_unfunded_claim_has_no_mutation) ... ok
+test_zero_scores (__main__.EconomicRecoveryExamples.test_zero_scores) ... ok
+test_equal_work_keeps_current (__main__.WorkExamples.test_equal_work_keeps_current) ... ok
+test_exact_work_formula (__main__.WorkExamples.test_exact_work_formula) ... ok
+test_initial_tip_requires_valid_candidate (__main__.WorkExamples.test_initial_tip_requires_valid_candidate) ... ok
+test_invalid_heavy_does_not_win (__main__.WorkExamples.test_invalid_heavy_does_not_win) ... ok
+test_lucky_digest_not_an_input (__main__.WorkExamples.test_lucky_digest_not_an_input) ... ok
+test_no_quality_or_stake_input (__main__.WorkExamples.test_no_quality_or_stake_input) ... ok
+test_shorter_heavier_wins (__main__.WorkExamples.test_shorter_heavier_wins) ... ok
+test_target_bounds (__main__.WorkExamples.test_target_bounds) ... ok
+test_unavailable_heavy_is_not_applied (__main__.WorkExamples.test_unavailable_heavy_is_not_applied) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.002s
+
+OK
