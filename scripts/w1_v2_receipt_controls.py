@@ -3,7 +3,9 @@
 
 This program never creates a proof. A valid saved receipt must first pass the
 explicit independent verifier. Fixed-length journal mutations are located only
-after a unique exact domain match, canonical Vec length, and byte bounds. The
+using the fixed SDK 3.0.6 outer Receipt suffix, canonical Vec length, exact
+domain, and byte bounds. The independent positive control validates the entire
+wire encoding before any negative controls run. The
 critical paired-A/B and canonical-C controls require the verifier's stable
 W1_V2_CRYPTO_REJECT context, not merely a nonzero process exit. That context
 covers the construction profile and complete receipt verification; it does not
@@ -99,12 +101,19 @@ def locate_journal(receipt, header, artifacts):
     seal_words = int.from_bytes(receipt[4:12], "little")
     seal_end = 12 + 4 * seal_words
     require(0 < seal_words and seal_end <= len(receipt), "baseline seal vector is invalid")
-    require(receipt.count(DOMAIN) == 1, "v2 journal domain must occur exactly once")
-    start = receipt.index(DOMAIN)
-    end = start + JOURNAL_BYTES
+    # SDK 3.0.6 Receipt = inner, Journal { bytes: Vec<u8> }, metadata.
+    # ReceiptMetadata contains exactly one 32-byte Digest. The unpruned inner
+    # claim may itself contain the same journal, so searching for a unique
+    # domain is incorrect. Anchor the outer journal to this fixed wire suffix,
+    # never to a marker occurrence (including occurrences in the seal).
+    # This locator is not a decoder or verifier: the first mandatory control
+    # checks canonical decoding and the full proof before any mutation runs.
+    end = len(receipt) - 32
+    start = end - JOURNAL_BYTES
     require(start >= seal_end + 8 and end <= len(receipt), "journal overlaps seal or exceeds receipt bounds")
     require(receipt[start - 8:start] == JOURNAL_BYTES.to_bytes(8, "little"),
-            "unique domain is not preceded by the exact canonical journal Vec length")
+            "outer journal is not preceded by the exact canonical journal Vec length")
+    require(receipt[start:start + len(DOMAIN)] == DOMAIN, "outer journal domain mismatch")
     journal = receipt[start:end]
     require(journal[len(DOMAIN):TRACE] == header, "journal differs from independent header")
     require(journal[MODEL:PRODUCT] == artifacts, "journal differs from independent expected A/B")
