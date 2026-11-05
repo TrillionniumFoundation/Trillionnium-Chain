@@ -1,0 +1,40 @@
+    Checking serde_json v1.0.149
+    Checking linux-raw-sys v0.12.1
+    Checking trnm-types v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-types)
+    Checking rustix v1.1.4
+    Checking utf8parse v0.2.2
+    Checking anstyle-parse v1.0.0
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-mvcc-fee)
+    Checking tempfile v3.27.0
+    Checking trnm-peer-lease v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-peer-lease)
+    Checking anstyle-query v1.1.5
+    Checking anstyle v1.0.14
+    Checking is_terminal_polyfill v1.70.2
+    Checking colorchoice v1.0.5
+    Checking anstream v1.0.0
+    Checking clap_lex v1.1.0
+    Checking strsim v0.11.1
+    Checking clap_builder v4.6.0
+    Checking trnm-task-kernel v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-checkpoint-types v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-checkpoint-types)
+    Checking clap v4.6.0
+    Checking trnm-checkpoint-store v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-checkpoint-store)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-pon-node)
+    Checking trnm-executor v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-executor)
+    Checking wait-timeout v0.2.1
+    Checking shlex v1.3.0
+    Checking shell-escape v0.1.5
+    Checking trnm-research-protocol v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-research-protocol)
+    Checking trnm-verification-profiles v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-worker-agent v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-worker-agent)
+    Checking trnm-bench v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-bench)
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-transport v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-transport)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-data-availability)
+    Checking trnm-protocol v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-protocol)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-oracle v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-oracle)
+    Checking trnm-state-import v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-state-import)
+    Checking trnm-control-plane v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-control-plane)
+    Checking trnm-release-bundle v0.1.0 (/home/qian-qi/Documents/chain-pr204-continuation-20260929-w2v1wt_g/source/trillionnium/crates/trnm-release-bundle)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 32.79s
