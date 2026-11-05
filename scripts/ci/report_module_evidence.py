@@ -36,7 +36,7 @@ FIELDS = {
     'evidence_selectors', 'remaining',
 }
 _PARSE_CACHE_ENTRIES = 128
-_PARSE_CACHE_MAX_CHARS = 256 * 1024
+_PARSE_CACHE_MAX_CHARS = 512 * 1024
 
 
 def _cache_source_parse(parse):
