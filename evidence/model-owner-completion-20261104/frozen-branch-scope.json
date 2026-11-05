@@ -1,0 +1,15 @@
+{
+  "baseline": "018fa1ffc6dee2a4c000479463ad60034f04fecb",
+  "diff_check_exit_code": 0,
+  "driver_ast_unchanged_except_ref_and_docstring": true,
+  "model_executed": false,
+  "real_trial_registered": false,
+  "schema": "hosted-once-branch-binding-scope-v1",
+  "scope": "branch-binding-only",
+  "source_sha256": {
+    ".github/workflows/pon-smollm-hosted-once.yml": "f9bd0275cfae5cd0e644b3a2142ba60b049f8da4ade1432c13f39890bb8215ff",
+    "scripts/ci/llm_hosted_once.py": "3e1085487fd5c2387164a26cc85822fab857391f0caa373475ebb5205dc3120b",
+    "scripts/ci/test_llm_hosted_once.py": "8307d85afd7b13ed0973d97fa75ab4e77cc1eb742fbc61040dadf880fb776b8f"
+  },
+  "workflow_unchanged_except_push_branch": true
+}

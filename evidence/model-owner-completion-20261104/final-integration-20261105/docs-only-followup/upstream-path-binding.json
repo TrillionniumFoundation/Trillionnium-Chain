@@ -1,0 +1,47 @@
+{
+  "all_added_paths_under_evidence": true,
+  "base": "23a56123e3112de06d7c684ef2057578759176ff",
+  "build_or_test_execution": false,
+  "changed_compile_input_intersection": [],
+  "exact_changed_paths_match_github_compare": true,
+  "git_diff_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "git_diff_stdout_sha256": "69960f8042683a19fe97d6dd4c77fa2757a32b878cb6bcd88982d8b74169677d",
+  "git_no_lazy_fetch": true,
+  "github_compare_path_list_sha256": "e63d7958ac110aa72ffdcb60dfd35502f4bc8776f6afb7ac2e6658e0688b107b",
+  "head": "67097f5add069c49788fc5ba21c35d1db07167c4",
+  "local_transport_git_diff_exit_code": 0,
+  "modified_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/cell-storage-continuation-20261104/boundary-followup/README.md"
+  ],
+  "path_counts": {
+    "added": 114,
+    "modified": 2,
+    "total": 116
+  },
+  "persistent_git_config_changed": false,
+  "schema": "model-owner-docs-only-upstream-binding-v1",
+  "unchanged_subtrees": {
+    "config": {
+      "base": "b52717a82dfd0c8db1762b1c9bf627b46a0fca10",
+      "equal": true,
+      "head": "b52717a82dfd0c8db1762b1c9bf627b46a0fca10"
+    },
+    "formal": {
+      "base": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1",
+      "equal": true,
+      "head": "54e4ef07b86251f6e0bcff2b866c49f6fe47a8d1"
+    },
+    "scripts": {
+      "base": "492d6b6e07a898739257aa8903765a7f4d7705e1",
+      "equal": true,
+      "head": "492d6b6e07a898739257aa8903765a7f4d7705e1"
+    },
+    "trillionnium": {
+      "base": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff",
+      "equal": true,
+      "head": "72c1c7ab529ef6b4df3bec5b45bbc9a3009755ff"
+    }
+  },
+  "verified_source": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1"
+}

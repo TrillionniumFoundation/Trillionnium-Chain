@@ -29,6 +29,7 @@ def _require(ok, message):
 def _sources():
     return {p.name: runtime.file_sha(p) for p in
             (Path(__file__), Path(runtime.__file__), Path(parent_step.__file__),
+             Path(runtime.__file__).with_name('llm_base_material.py'),
              Path(parent_step.parent.__file__), Path(runtime.contract_module().__file__))}
 
 

@@ -1,0 +1,431 @@
+{
+  "aggregate_rerun": "root-owned; no further aggregate run by this subagent",
+  "caps_unchanged": {
+    "exit_worker_maximum_drain_ns": 100000000,
+    "rss_fixture_bytes": 134217728,
+    "rss_fixture_wall_seconds": 2,
+    "unproved_rss_exit_window_ns": 50000000
+  },
+  "causal_reproduction_after": {
+    "delayed_child": {
+      "body_delay_seconds": 1.0,
+      "original_wall_budget_seconds": 2,
+      "result": "PASS",
+      "supervisor": {
+        "budget": {
+          "rss_bytes": 134217728,
+          "wall_seconds": 2
+        },
+        "child_cpu_ns": 115440000,
+        "child_spawned": true,
+        "cleanup_method": "wait4",
+        "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+        "exit_code": 0,
+        "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+        "observed_wall_ns": 1755582956,
+        "observer_cpu_ns": 2577477,
+        "outcome": "success",
+        "owned_child_echild_observed": false,
+        "owned_child_exit_observed": true,
+        "owned_child_reap_resolved": true,
+        "rss_observation_gaps": [
+          {
+            "after": {
+              "error": "pidfd-coordinate-unavailable",
+              "owned_pid": 3,
+              "parent_nspid": [
+                343880,
+                2
+              ],
+              "pidfd_nspid": [
+                -1
+              ],
+              "pidfd_ready": true,
+              "pidfd_visible_pid": -1
+            },
+            "at_wall_ns": 1753891484,
+            "before": {
+              "child": {
+                "NSpid": "344521\t3",
+                "PPid": "343880",
+                "Pid": "344521",
+                "State": "Z (zombie)",
+                "Threads": "1",
+                "VmRSS": null,
+                "VmSize": null
+              },
+              "exit_cleanup_proof": {
+                "kernel_release": "6.18.57",
+                "observed_at_monotonic_ns": 3910783891508,
+                "owned_pid": 3,
+                "pidfd_nspid": [
+                  344521,
+                  3
+                ],
+                "pidfd_visible_pid": 344521,
+                "rss_sample_produced": false,
+                "schema": "linux-owned-thread-group-exit-cleanup-v1",
+                "threads": [
+                  {
+                    "flags": 4227340,
+                    "start_time_ticks": 390902,
+                    "state": "Z",
+                    "tid": 344521
+                  }
+                ]
+              },
+              "owned_pid": 3,
+              "owned_threads": [
+                {
+                  "NSpid": "344521\t3",
+                  "NStgid": "344521\t3",
+                  "PPid": "343880",
+                  "Pid": "344521",
+                  "State": "Z (zombie)",
+                  "Tgid": "344521",
+                  "VmRSS": null,
+                  "VmSize": null
+                }
+              ],
+              "parent_nspid": [
+                343880,
+                2
+              ],
+              "pidfd_identity_changed_during_read": false,
+              "pidfd_nspid": [
+                344521,
+                3
+              ],
+              "pidfd_ready": true,
+              "pidfd_visible_pid": 344521
+            },
+            "reconciliation": {
+              "absolute_wall_deadline_ns": 3911029111479,
+              "elapsed_ns": 580789,
+              "exit_cleanup_proof": {
+                "kernel_release": "6.18.57",
+                "observed_at_monotonic_ns": 3910784406139,
+                "owned_pid": 3,
+                "pidfd_nspid": [
+                  344521,
+                  3
+                ],
+                "pidfd_visible_pid": 344521,
+                "rss_sample_produced": false,
+                "schema": "linux-owned-thread-group-exit-cleanup-v1",
+                "threads": [
+                  {
+                    "flags": 4227340,
+                    "start_time_ticks": 390902,
+                    "state": "Z",
+                    "tid": 344521
+                  }
+                ]
+              },
+              "initial_reap": "live",
+              "mode": "kernel-exit-cleanup",
+              "pidfd_ready_after_wait": true,
+              "terminal_reap": "terminal",
+              "wait_deadline_ns": 3911029111479,
+              "wait_polls": 1
+            }
+          }
+        ],
+        "sample_interval_ms": 50,
+        "sampled_peak_rss_bytes": 0,
+        "stop_reason": null,
+        "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+        "waited_child_observation_error": null,
+        "waited_child_peak_rss_bytes": 26324992,
+        "waited_child_reaped": true
+      }
+    },
+    "schema": "llm-fixture-timing-corrected-reproductions-v1",
+    "scope": "Only fixture time ownership/order changed; real owned wait4 retained, no production cap relaxation",
+    "synthetic": {
+      "controlled_external_clock_jump_ns": 100000001,
+      "read_count": 1574,
+      "result": "PASS"
+    }
+  },
+  "causal_reproduction_before": {
+    "delayed_child": {
+      "body_delay_seconds": 1.0,
+      "expected_failure": "rss-observation-unavailable",
+      "observed_failures": 1,
+      "original_wall_budget_seconds": 2,
+      "result": {
+        "budget": {
+          "rss_bytes": 134217728,
+          "wall_seconds": 2
+        },
+        "child_cpu_ns": 16493000,
+        "child_spawned": true,
+        "cleanup_method": "wait4",
+        "cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+        "exit_code": -15,
+        "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+        "observed_wall_ns": 74787549,
+        "observer_cpu_ns": 5603062,
+        "outcome": "failed",
+        "owned_child_echild_observed": false,
+        "owned_child_exit_observed": true,
+        "owned_child_reap_resolved": true,
+        "rss_gap_diagnostic": {
+          "diagnostic_status": "observed",
+          "held_pidfd_identity_unchanged_after": true,
+          "held_pidfd_poll_events": [],
+          "identity_verified": true,
+          "leader_rss_fields": [
+            "6428",
+            "kB"
+          ],
+          "leader_state": "S",
+          "leader_state_after": "S",
+          "missing_sample_detail": {
+            "reason": "observer-returned-none-without-detail"
+          },
+          "monotonic_ns": 3590859211751,
+          "reported_threads": 1,
+          "reported_threads_after": 1,
+          "schema": "llm-owned-child-post-rss-gap-v1",
+          "scope": "post-gap diagnostic snapshot; not the missing sample or resource qualification",
+          "task_list_after": [
+            "334249"
+          ],
+          "task_list_before": [
+            "334249"
+          ],
+          "task_list_stable": true,
+          "task_list_truncated": false,
+          "task_samples": [
+            {
+              "identity": {
+                "NSpid": [
+                  "334249",
+                  "3"
+                ],
+                "NStgid": [
+                  "334249",
+                  "3"
+                ],
+                "PPid": [
+                  "334237"
+                ],
+                "Pid": [
+                  "334249"
+                ],
+                "Tgid": [
+                  "334249"
+                ]
+              },
+              "leader": true,
+              "rss_fields": [
+                "6428",
+                "kB"
+              ],
+              "stat": {
+                "flags": 4194560,
+                "pf_exiting": false,
+                "pf_kthread": false,
+                "pid": 334249,
+                "ppid": 334237,
+                "rss_pages": 1536,
+                "starttime_ticks": 359079,
+                "state": "S",
+                "vsize_bytes": 38277120
+              },
+              "state": "S"
+            }
+          ],
+          "task_samples_after": [
+            {
+              "identity": {
+                "NSpid": [
+                  "334249",
+                  "3"
+                ],
+                "NStgid": [
+                  "334249",
+                  "3"
+                ],
+                "PPid": [
+                  "334237"
+                ],
+                "Pid": [
+                  "334249"
+                ],
+                "Tgid": [
+                  "334249"
+                ]
+              },
+              "leader": true,
+              "rss_fields": [
+                "6428",
+                "kB"
+              ],
+              "stat": {
+                "flags": 4194560,
+                "pf_exiting": false,
+                "pf_kthread": false,
+                "pid": 334249,
+                "ppid": 334237,
+                "rss_pages": 1536,
+                "starttime_ticks": 359079,
+                "state": "S",
+                "vsize_bytes": 38277120
+              },
+              "state": "S"
+            }
+          ]
+        },
+        "rss_observation_gaps": [
+          {
+            "after": {
+              "child": {
+                "NSpid": "334249\t3",
+                "PPid": "334237",
+                "Pid": "334249",
+                "State": "S (sleeping)",
+                "Threads": "1",
+                "VmRSS": "6428 kB",
+                "VmSize": "37380 kB"
+              },
+              "exit_cleanup_proof": null,
+              "exit_cleanup_proof_error": "ValueError:leader-not-zombie-or-thread-count",
+              "owned_pid": 3,
+              "parent_nspid": [
+                334237,
+                2
+              ],
+              "pidfd_identity_changed_during_read": false,
+              "pidfd_nspid": [
+                334249,
+                3
+              ],
+              "pidfd_ready": false,
+              "pidfd_visible_pid": 334249
+            },
+            "at_wall_ns": 704900,
+            "before": {
+              "child": {
+                "NSpid": "334249\t3",
+                "PPid": "334237",
+                "Pid": "334249",
+                "State": "R (running)",
+                "Threads": "1",
+                "VmRSS": "84 kB",
+                "VmSize": "27604 kB"
+              },
+              "exit_cleanup_proof": null,
+              "exit_cleanup_proof_error": "ValueError:leader-not-zombie-or-thread-count",
+              "owned_pid": 3,
+              "parent_nspid": [
+                334237,
+                2
+              ],
+              "pidfd_identity_changed_during_read": false,
+              "pidfd_nspid": [
+                334249,
+                3
+              ],
+              "pidfd_ready": false,
+              "pidfd_visible_pid": 334249
+            },
+            "reconciliation": {
+              "absolute_wall_deadline_ns": 3592798846310,
+              "elapsed_ns": 50230703,
+              "exit_cleanup_proof": null,
+              "exit_cleanup_proof_error": "ValueError:leader-not-zombie-or-thread-count",
+              "initial_reap": "live",
+              "mode": "unproved-exit-race",
+              "pidfd_ready_after_wait": false,
+              "terminal_reap": "not-polled-pidfd-not-ready",
+              "wait_deadline_ns": 3590849986536,
+              "wait_polls": 1
+            }
+          }
+        ],
+        "sample_interval_ms": 50,
+        "sampled_peak_rss_bytes": 0,
+        "stop_reason": "rss-observation-unavailable",
+        "terminal_reconciliation_profile": "linux-held-pidfd-irreversible-exit-v1",
+        "waited_child_observation_error": null,
+        "waited_child_peak_rss_bytes": 24342528,
+        "waited_child_reaped": true
+      }
+    },
+    "schema": "llm-fixture-timing-causal-reproductions-v1",
+    "scope": "Synthetic clock / tiny owned Python child only; no model trial or production-cap changes",
+    "synthetic_constructor": {
+      "controlled_delay_ns": 100000001,
+      "expected_error": "exit-worker-deadline",
+      "observed_errors": 1,
+      "reads_before_deadline": 450
+    }
+  },
+  "causes": [
+    "Original synthetic maximum-worker test froze monotonic time only after constructor; initial complete-frontier and worker binding scan could exceed the real 100ms deadline.",
+    "Original actual-child positive test forced missing RSS and two nonterminal wait4 observations before knowing the child had exited; interpreter startup/scheduling exceeding the unproved 50ms window correctly caused failure."
+  ],
+  "changes": [
+    "Use a fixture clock for the entire synthetic-frontier class lifecycle; explicit deadline tests still advance and reject at the original deadline.",
+    "Synchronize the positive tiny-child fixture to real owned pidfd readiness inside the existing wall budget, without reaping; retain delayed observations and one exact real wait4 result, with pid/RSS/CPU assertions."
+  ],
+  "head_at_report": "f8d65e96ecf4c0fed8da74fc0c5fc338dc08996c",
+  "head_before": "7a88207db3c50d2789787ff3af6f3b8ff7620ac5",
+  "original_aggregate": {
+    "elapsed_seconds": 68.471,
+    "errors": 1,
+    "failed": 1,
+    "log_sha256": "6fdafabe889256c4be139366fb1264b6500555ebf0435c7f68e21e7311c42c36",
+    "passed": 279,
+    "skipped": 130,
+    "tests": 411
+  },
+  "production_after_sha256": {
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_exit_worker_observation.py": "aae68f92393e5e88c5aaa02095b5990200c121834bec05d8b3a11cd3f09ffc50",
+    "scripts/llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "scripts/llm_runtime_rss_diagnostics.py": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+  },
+  "production_before_sha256": {
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_exit_worker_observation.py": "aae68f92393e5e88c5aaa02095b5990200c121834bec05d8b3a11cd3f09ffc50",
+    "scripts/llm_runtime_pilot.py": "83c02578857447ff9a8366d3fe29cd00a57ce436ff6f94c37e5a21d42623301b",
+    "scripts/llm_runtime_rss_diagnostics.py": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+  },
+  "production_sources_unchanged": true,
+  "remaining_limits": [
+    "Actual missing RSS without an irreversible owned exit proof still fails after the existing one-sample 50ms window.",
+    "Real integration execution still has the original 2s fixture wall cap; extreme host delay may correctly exceed it.",
+    "Synthetic progress-bound checks and tiny-child observations do not qualify native/model performance or independent measurement."
+  ],
+  "schema": "llm-fixture-timing-diagnosis-v1",
+  "scope": "Controlled fixture timing diagnosis; no production cap change or model qualification",
+  "source_after_sha256": {
+    "scripts/test_llm_runtime_exit_worker_frontier.py": "40b2cc957177874535a5f8718e5f89f1cf32884678a269bb57677c46694b505f",
+    "scripts/test_llm_runtime_rss_owner.py": "af8980e604fda8d1796c5fcbe19fd5ebaec6175ca889b62a6cdbd2b7f1a8c173"
+  },
+  "source_before_sha256": {
+    "scripts/test_llm_runtime_exit_worker_frontier.py": "5bd0d03afc84f0fa413ea66677670795dd6b3240903e27e388dc326e533194b6",
+    "scripts/test_llm_runtime_rss_owner.py": "034d18dace4d871f8d2dbd462c5b7fee85cad6a583ffd3370170c662ff907c82"
+  },
+  "targeted_validation": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=scripts python3 -m unittest test_llm_runtime_exit_worker_frontier test_llm_runtime_rss_owner",
+    "diff_check": "PASS",
+    "elapsed_seconds": 12.17,
+    "result": "PASS",
+    "tests": 53
+  },
+  "test_method_counts": {
+    "scripts/test_llm_runtime_exit_worker_frontier.py": {
+      "after": 10,
+      "before": 10
+    },
+    "scripts/test_llm_runtime_rss_owner.py": {
+      "after": 43,
+      "before": 43
+    }
+  }
+}

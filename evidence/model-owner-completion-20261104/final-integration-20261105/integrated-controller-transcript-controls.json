@@ -1,0 +1,43 @@
+{
+  "controller_sha256": "7b73cb964432bd5bb281ee34fb22e06dea419de8328dc32deba48472f4efcf01",
+  "native_or_model_execution": false,
+  "negative_controls": [
+    {
+      "case": "previous_pass_becomes_ignored",
+      "reason": "previously passing target/test may not become ignored or fail",
+      "status": "REJECTED"
+    },
+    {
+      "case": "test_reassigned_to_other_target",
+      "reason": "complete retained target/test inventory is required",
+      "status": "REJECTED"
+    },
+    {
+      "case": "empty",
+      "reason": "empty or ambiguous Cargo test transcript",
+      "status": "REJECTED"
+    },
+    {
+      "case": "test_without_target",
+      "reason": "test without Cargo target",
+      "status": "REJECTED"
+    },
+    {
+      "case": "same_target_repeated",
+      "reason": "repeated Cargo target in transcript",
+      "status": "REJECTED"
+    },
+    {
+      "case": "same_test_repeated",
+      "reason": "empty or ambiguous Cargo test transcript",
+      "status": "REJECTED"
+    }
+  ],
+  "real_f388_transcript_positive": {
+    "passed": 236,
+    "status": "PASS",
+    "targets": 25,
+    "tests": 243
+  },
+  "schema": "model-owner-native-transcript-controller-controls-v1"
+}

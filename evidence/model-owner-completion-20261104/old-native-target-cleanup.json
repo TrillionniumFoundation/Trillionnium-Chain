@@ -1,0 +1,15 @@
+{
+  "schema": "model-owner-corrupt-reproducible-target-cleanup-v1",
+  "observed_at": "2026-11-05T02:13:33.841212+00:00",
+  "reason": "Two retained failed builds identified ENOSPC and incompatible cached crate metadata. Native verification now uses a fresh task-owned tmpfs target with the original source/toolchain/provider/profile. Reclaim only this task's unused old reproducible cache for Git integration.",
+  "path": "/workspace/scratch/f4976366a32a/native-target",
+  "live_consumers": [],
+  "files": 1959,
+  "bytes": 737442038,
+  "file_inventory_sha256": "4c3eaa42974a8271188f07d3cfeaf190e60868d2b3b5fee31a46baf14d96f74f",
+  "before_physical_free": 16777216,
+  "logs_and_diagnostics_preserved": true,
+  "new_target_untouched": "/dev/shm/trnm-model-owner-f4976366a32a-native-target",
+  "shared_cargo_home_and_provider_untouched": true,
+  "after_physical_free": 573116416
+}

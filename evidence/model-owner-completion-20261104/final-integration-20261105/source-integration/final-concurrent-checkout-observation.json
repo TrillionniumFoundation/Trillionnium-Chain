@@ -1,0 +1,831 @@
+{
+  "schema": "model-owner-partial-clone-checkout-observation-v1",
+  "utc": "2026-11-05T03:00:20.087500+00:00",
+  "failed_command": [
+    "git",
+    "--no-lazy-fetch",
+    "merge",
+    "--no-commit",
+    "--no-ff",
+    "67097f5add069c49788fc5ba21c35d1db07167c4"
+  ],
+  "failed_exit": 128,
+  "failed_stderr": "warning: lazy fetching disabled; some objects may not be available\nfatal: could not fetch fe0db36f1ddbbf3d4656ad1c2e63b1daffc5b7d6 from promisor remote\n",
+  "head_after_failure": "7d347fa80e2cd3fd19d0010c3465581143b8d2e1",
+  "status_after_failure": "",
+  "partial_clone_preserved": true,
+  "temporary_object_transport_imported": true,
+  "reserve_released_bytes": 16777216,
+  "changed_paths": [
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "700ab648cd16d15e231fded9ce988a22e9fbadef"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe0db36f1ddbbf3d4656ad1c2e63b1daffc5b7d6"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/artifact-manifest.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c808a31555af24720f35a610c05e6a581666b7e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/baseline-node-composition.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "335b686c5ee923a56c5ef3dc19e911f5226a5e87"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/baseline-node-composition.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8af7018588137aea79312e577e232bd418b01b60"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/initial-runtime-interruption.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6df967ba774218bd6380fe8ff6b5865d55ab3d75"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/initial-runtime-unqualified.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c97522a3d8d0249564ccc65877d79c6d6b3b6271"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/legacy_observation_opt_in_is_local_and_keeps_unentered_unknown.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b62d69c908db7bd0f07af20e430e4f51023dd82e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/baseline/runtime-correction.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a31beae6d813fefb026285bec41615f79806bded"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/changed-source-pins.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "759d7176740bb9354220e8ac24a6a7eb03ccba9c"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/completed-build-cache-cleanup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "16cb5a4c5be830444a9568c69854c30ccebd1cc5"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/completed-owned-target-cleanup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ede7df7d6730aee19bfd8891a8057d67aba4d6e3"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/completed-owned-target-cleanup.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2aedcf8ea05af347c86a6ccc6099ada9f4c78ea"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/completed-validation-checkout-removal-correction.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "afc04ee2becab246c35e81defee26d3acb6b19d1"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/completed-validation-worktree-cleanup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "606fba6c30f9fc4b3c69ed37c78be6322ee109c2"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/cargo-metadata.json.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1354ef4131578bb398ad6d2ef88207ecdbc9bd4"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-node-selected-qualified.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83d614337464cc06a354642e3715a74596c37f34"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-node-selected-qualified.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48c3eab9a471b9ea2efa8fd2f62c3d1a68fed910"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-node-selected.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec8dbd66edeaafa358de7d70746e9e627ff2ac82"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-node-selected.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "120db5881a7e6d5a41e2876006379bcbe51a70e1"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-source-controls.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "99abd0f81b0feab4fdae19acb9a211bf9472eb3a"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-source-controls.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51a1c854b8ed73172ca44a3c68309686fceb2c2e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-workspace-clippy.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "01c3158809614d258d464f76e9d97eab93536eb0"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/composed-workspace-clippy.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "608735ead16011c22c47336a49cd04d4defb4f44"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/node-qualified/cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48c3eab9a471b9ea2efa8fd2f62c3d1a68fed910"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composed-final/node/cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "120db5881a7e6d5a41e2876006379bcbe51a70e1"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composition-preservation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13be634bb49b119bf3a382c8b329ec6a83bb4920"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composition/composition-source-controls.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e17a4332d2bd3fcf8d0bb9fc069457d6255178f9"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/composition/composition-source-controls.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "32eefb6a02c007d6d14a7dc057bd049975331451"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/delivery-checkpoint/cargo-metadata.json.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b1354ef4131578bb398ad6d2ef88207ecdbc9bd4"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/delivery-checkpoint/delivery-source-checks.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35140dfc3f8af719199318dc98ea32c7ec6abec0"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/delivery-checkpoint/delivery-source-checks.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bf6e15d47d6bb38e22ac7bb672e6be5e1f7b4a7"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/delivery-results.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "51eb9637f7dfe3ccaf301b30a71f1415a3a8c77e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/delivery-source-projection.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8390855a75474a2ab5432e11ae6bcc0fa7cd4ba8"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/environment-interruption.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a87ddd381c0c9cd0de5e25582bc5c12b6a1b729f"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/failed-node-artifact-assessment.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe5cc5abd645c14816a0ba2c49ee3ed7a1ae9ca3"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/failed-node-object-cleanup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "48741e82ed10362bba7f9f714d9357f7a8bdc375"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final-delivery-input-projection.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "621100c3d020be7e6cfe99c86803778ef8d10828"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final-integration-preservation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8178748dde0b41cfdcfcefa3946529bedee59b07"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final-integration-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7bbd1acbaea4a84f792844c43b6b2d1d4e05005"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final-owned-historical-dedup.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82976ddcf30c9533b7329081ff07e929ec004ac7"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/cargo-metadata.json.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "adcd9b33a03a67f0a856723e6ea94588e49371ec"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/m09-doc.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30fc9fb19cea07f58cb7e120566f4010f3650683"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/m09-tests.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b3dce544f327701f63ced8e21b610f665c386ba"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/model-root-oracle.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1434b9ad7e789c8425e79fd68e919eefee575be"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/model-root-oracle.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1f4e1a961a6ba949f74aa8bd709e5c7029237b7"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/retained-test-coverage.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab0c87f6775d339d6d7fe566ce29699a772ccb93"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "85ff579e9f19a0c1d0898cfd0e7b2b31b8898da6"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-native.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bb6c84f79294efacbfd8ef24aecf7a0d08bf718"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-source-controls-corrected.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbc593d1ef190370068e01190fc80207700c41be"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-source-controls-corrected.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "867ff680857b5b5ff21c4b91afcd410cd459b08d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-source-controls.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2ce2a3f6a10138b8f731bf05ce6136f7dfafd7e0"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-source-controls.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8047ac6029054be7a9205607979cfbd22db4955"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-workspace-clippy.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0cdb456e1f324d372f0aee86ae93992f5cc11888"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/final/storage-workspace-clippy.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f151ab7eef67469bec9a8173027b1bc0f163be3"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/implementation-commit-metadata.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "67df61696da8b9ebf2b5bec4a7fb140d2279d1c5"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-81da-ownership.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c0283791b7b1577f7b3841a5445483bc1c613c2e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-81da-sourceguard-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c25abcb48e698d9e9d0f38297d39c332da150920"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-81da-storage-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d34f7dac6f10fec6da73de8803920bfef6543e74"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-c57-preservation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a79c1a596966e51041add143df5766b3e503136b"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-d995-inventory-scope.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6569e31c24a421f5c8b96adff434414ff3b1710f"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/incoming-source-materialization.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c8db0b69d10508da7c8448dda6364c251eb17d4"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-e/final-integration-source-checks.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c10f4b56bcfe4172a367121b73838224ce619a6"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-e/final-integration-source-checks.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97dcf8eff5d30ef14adc2178ff0e2faab6ac6812"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-e/result.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9d9d84de0b5c73330828438ef11cfec5e7a4984a"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-e/wrapper-invocation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "205977acbf6c6a7c129941e792ef4fd9c5bed91d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-f/cargo-metadata.json.gz",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "526d4c3e91479975dc62e84262973eeb7aa2806f"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-f/final-integration-repair-source-checks.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1805eb43f81a6b2578d0cfdfb65ba712fb48c661"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-f/final-integration-repair-source-checks.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a3e83aa7373d24793a659362f8d64e09844c7ea"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-f/result.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a615b942d8ad9f5303cfd9015f742b7619ab727"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/integration-precheck-observation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b83ea472c6a98db577ab5db647ec01d309157605"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/late-publication-integration.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "663b6d00b3f0ea667d3e96ad88b6bd1872a5b785"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/node-qualified-runner-projection.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f8367215175e98759685200415fcbd7bdef4e2e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/node-runner-projection.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "93aa67c5f8e6809e2835dd27c857d57d7378e22d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/node-selected-status.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a74e6cb1257dc17dbf88934d722afb7d80a8d0dd"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/node-unqualified-cache-interruption.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d53e4fe04b20a2e1aff0a94abb82f9a72b313cd"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/owned-worktree-space.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5c3f68834444ab1a7d6fe56bb80c94774fd63adb"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/published-N-readback.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dc15739455b9626015c5d5d1590a40bc5f5506d8"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/qualified-runtime.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9ea2bf40feb429cc34f2537e6530f20fa282f92"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/red-commit-metadata.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50ca20c6588b77bdebb1f574a4f08eb3bcd5f83d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/red/tensor-old-parser-red.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18c32232b09e20916987ca107118edeb92f1845b"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/red/tensor-old-parser-red.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "82d4ccd34f035d1ee336882f074fb5382500f933"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/research-composition-commit-metadata.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11f4b359d4140edf4bd63d9fc0d49e28ed26ecc5"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/research-composition-preservation.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea06397a62cd9e818a14c1097661cc1b8c4f8617"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/resource-observations.jsonl",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78194b6bbfacf1bdd81f8f6846e8a72c400cab64"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/retained-tests-input.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b81a1e5c264034d94035411e6f8208ef0a80771"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/run-node-selected-N.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f85e0e24d8d570fa060d4b23df30f569062f5806"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/run-node-selected-qualified-N.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2c86cc6013efc08eaa691a1ed62867b11664ca70"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/run-node-selected.sh",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "910f76742737af1168181c3b2bc04d5591e22882"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "18809010dead41f84c2c0f4705d4b5460ba22e98"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/bad6ead-output",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0827ed738125a38dacf2e25e1b37a035e131c44d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/bad6ead-run-fingerprint.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d6d80e5311842ae322114bd3a4a84920c9fbbc4f"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/bad6ead-run-fingerprint.raw",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2bad9a7fef77f34848b1cac5145bd8313f9f581d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/good27a8-output",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40d8f07f5210551367abbbe58dcb3b0991877f4d"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/good27a8-run-fingerprint.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d789745b256dd81c2e77a363200716eeb530b6a3"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/good27a8-run-fingerprint.raw",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "78f846d62be177fd27e9d86ff1d8eb2b05c0c0e4"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/node3edd-lib-fingerprint.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a62f4490c3622c2f874791c285cfea6697f1f1ae"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-diagnosis/node3edd-lib-fingerprint.raw",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b3455ee4d95b112eb7ff0ea130f3c70c5cc2d655"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "338977ceb7d150419b0faa7ae80a79b21fb60abb"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification/node3edd-lib-fingerprint.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e1e3955baa35ca129e0fac18551efe7024a8d153"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification/node3edd-lib-fingerprint.raw",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7eeef39108d05091edf413485a08ff0f7adbae5"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification/requalified6ead-output",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28a511ad8d1362b5c799a578ca0337c307834974"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification/requalified6ead-run-fingerprint.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "24a850269568b9a9af3f4c8862100c08c26cb879"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-cache-requalification/requalified6ead-run-fingerprint.raw",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f98934982f27651e80b28028c110752ebd93d4e"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-package-clean.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9850dfab8761fd6191dba7787b32930ba3d41fc6"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/runtime-package-clean.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "236f0eeea36cb192308f98e4f88fe07027684ae5"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/staging-resource-interruption.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a8507f37132cd092a0ce1240cf1f329166a1c89b"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/target-resource-assessment.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe823af9aea9ef77f535f6db81b8dcb89a5c6ee2"
+    },
+    {
+      "path": "evidence/cell-storage-continuation-20261104/boundary-followup/w1-evidence-recovery.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b14bf187fd57aadcf621c9263ea41d457fad36c0"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/build-v2-recovered.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6317d65e9e1a8b826d677d96c5f40dc8c8192276"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/clippy-v2-recovered.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0598523ee4c396e232f3908e981689095cd24d6e"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/fmt-v2-recovered.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f63dd0562f778da93dfa7366f35d078683155ace"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/interrupted-locked-build.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9304eebf2c6ccd31348f844f0e8923f17078e112"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/lifecycle21-direct.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9bad37729b369d430f21e1cbc4774f194e0fee82"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/preflight-v2-recovered.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59c53398b4473fa6ee035834ca615cd8732d4640"
+    },
+    {
+      "path": "evidence/pon-w1-statement-v2-20261105/test-v2-recovered.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3be62eced579b161234675fe03e5a405d70fc731"
+    }
+  ],
+  "missing_blob_shas": [
+    "fe0db36f1ddbbf3d4656ad1c2e63b1daffc5b7d6",
+    "1c808a31555af24720f35a610c05e6a581666b7e",
+    "335b686c5ee923a56c5ef3dc19e911f5226a5e87",
+    "8af7018588137aea79312e577e232bd418b01b60",
+    "6df967ba774218bd6380fe8ff6b5865d55ab3d75",
+    "c97522a3d8d0249564ccc65877d79c6d6b3b6271",
+    "b62d69c908db7bd0f07af20e430e4f51023dd82e",
+    "a31beae6d813fefb026285bec41615f79806bded",
+    "759d7176740bb9354220e8ac24a6a7eb03ccba9c",
+    "16cb5a4c5be830444a9568c69854c30ccebd1cc5",
+    "ede7df7d6730aee19bfd8891a8057d67aba4d6e3",
+    "e2aedcf8ea05af347c86a6ccc6099ada9f4c78ea",
+    "afc04ee2becab246c35e81defee26d3acb6b19d1",
+    "606fba6c30f9fc4b3c69ed37c78be6322ee109c2",
+    "b1354ef4131578bb398ad6d2ef88207ecdbc9bd4",
+    "83d614337464cc06a354642e3715a74596c37f34",
+    "48c3eab9a471b9ea2efa8fd2f62c3d1a68fed910",
+    "ec8dbd66edeaafa358de7d70746e9e627ff2ac82",
+    "120db5881a7e6d5a41e2876006379bcbe51a70e1",
+    "99abd0f81b0feab4fdae19acb9a211bf9472eb3a",
+    "51a1c854b8ed73172ca44a3c68309686fceb2c2e",
+    "01c3158809614d258d464f76e9d97eab93536eb0",
+    "608735ead16011c22c47336a49cd04d4defb4f44",
+    "13be634bb49b119bf3a382c8b329ec6a83bb4920",
+    "e17a4332d2bd3fcf8d0bb9fc069457d6255178f9",
+    "32eefb6a02c007d6d14a7dc057bd049975331451",
+    "35140dfc3f8af719199318dc98ea32c7ec6abec0",
+    "5bf6e15d47d6bb38e22ac7bb672e6be5e1f7b4a7",
+    "51eb9637f7dfe3ccaf301b30a71f1415a3a8c77e",
+    "8390855a75474a2ab5432e11ae6bcc0fa7cd4ba8",
+    "a87ddd381c0c9cd0de5e25582bc5c12b6a1b729f",
+    "fe5cc5abd645c14816a0ba2c49ee3ed7a1ae9ca3",
+    "48741e82ed10362bba7f9f714d9357f7a8bdc375",
+    "621100c3d020be7e6cfe99c86803778ef8d10828",
+    "8178748dde0b41cfdcfcefa3946529bedee59b07",
+    "a7bbd1acbaea4a84f792844c43b6b2d1d4e05005",
+    "82976ddcf30c9533b7329081ff07e929ec004ac7",
+    "adcd9b33a03a67f0a856723e6ea94588e49371ec",
+    "30fc9fb19cea07f58cb7e120566f4010f3650683",
+    "6b3dce544f327701f63ced8e21b610f665c386ba",
+    "c1434b9ad7e789c8425e79fd68e919eefee575be",
+    "a1f4e1a961a6ba949f74aa8bd709e5c7029237b7",
+    "ab0c87f6775d339d6d7fe566ce29699a772ccb93",
+    "85ff579e9f19a0c1d0898cfd0e7b2b31b8898da6",
+    "8bb6c84f79294efacbfd8ef24aecf7a0d08bf718",
+    "cbc593d1ef190370068e01190fc80207700c41be",
+    "867ff680857b5b5ff21c4b91afcd410cd459b08d",
+    "2ce2a3f6a10138b8f731bf05ce6136f7dfafd7e0",
+    "e8047ac6029054be7a9205607979cfbd22db4955",
+    "0cdb456e1f324d372f0aee86ae93992f5cc11888",
+    "1f151ab7eef67469bec9a8173027b1bc0f163be3",
+    "67df61696da8b9ebf2b5bec4a7fb140d2279d1c5",
+    "c0283791b7b1577f7b3841a5445483bc1c613c2e",
+    "c25abcb48e698d9e9d0f38297d39c332da150920",
+    "d34f7dac6f10fec6da73de8803920bfef6543e74",
+    "a79c1a596966e51041add143df5766b3e503136b",
+    "6569e31c24a421f5c8b96adff434414ff3b1710f",
+    "9c8db0b69d10508da7c8448dda6364c251eb17d4",
+    "9c10f4b56bcfe4172a367121b73838224ce619a6",
+    "97dcf8eff5d30ef14adc2178ff0e2faab6ac6812",
+    "9d9d84de0b5c73330828438ef11cfec5e7a4984a",
+    "205977acbf6c6a7c129941e792ef4fd9c5bed91d",
+    "526d4c3e91479975dc62e84262973eeb7aa2806f",
+    "1805eb43f81a6b2578d0cfdfb65ba712fb48c661",
+    "4a3e83aa7373d24793a659362f8d64e09844c7ea",
+    "7a615b942d8ad9f5303cfd9015f742b7619ab727",
+    "b83ea472c6a98db577ab5db647ec01d309157605",
+    "663b6d00b3f0ea667d3e96ad88b6bd1872a5b785",
+    "9f8367215175e98759685200415fcbd7bdef4e2e",
+    "93aa67c5f8e6809e2835dd27c857d57d7378e22d",
+    "a74e6cb1257dc17dbf88934d722afb7d80a8d0dd",
+    "2d53e4fe04b20a2e1aff0a94abb82f9a72b313cd",
+    "5c3f68834444ab1a7d6fe56bb80c94774fd63adb",
+    "dc15739455b9626015c5d5d1590a40bc5f5506d8",
+    "d9ea2bf40feb429cc34f2537e6530f20fa282f92",
+    "50ca20c6588b77bdebb1f574a4f08eb3bcd5f83d",
+    "18c32232b09e20916987ca107118edeb92f1845b",
+    "82d4ccd34f035d1ee336882f074fb5382500f933",
+    "11f4b359d4140edf4bd63d9fc0d49e28ed26ecc5",
+    "ea06397a62cd9e818a14c1097661cc1b8c4f8617",
+    "78194b6bbfacf1bdd81f8f6846e8a72c400cab64",
+    "2b81a1e5c264034d94035411e6f8208ef0a80771",
+    "f85e0e24d8d570fa060d4b23df30f569062f5806",
+    "2c86cc6013efc08eaa691a1ed62867b11664ca70",
+    "910f76742737af1168181c3b2bc04d5591e22882",
+    "18809010dead41f84c2c0f4705d4b5460ba22e98",
+    "0827ed738125a38dacf2e25e1b37a035e131c44d",
+    "d6d80e5311842ae322114bd3a4a84920c9fbbc4f",
+    "2bad9a7fef77f34848b1cac5145bd8313f9f581d",
+    "40d8f07f5210551367abbbe58dcb3b0991877f4d",
+    "d789745b256dd81c2e77a363200716eeb530b6a3",
+    "78f846d62be177fd27e9d86ff1d8eb2b05c0c0e4",
+    "a62f4490c3622c2f874791c285cfea6697f1f1ae",
+    "b3455ee4d95b112eb7ff0ea130f3c70c5cc2d655",
+    "338977ceb7d150419b0faa7ae80a79b21fb60abb",
+    "e1e3955baa35ca129e0fac18551efe7024a8d153",
+    "c7eeef39108d05091edf413485a08ff0f7adbae5",
+    "28a511ad8d1362b5c799a578ca0337c307834974",
+    "24a850269568b9a9af3f4c8862100c08c26cb879",
+    "5f98934982f27651e80b28028c110752ebd93d4e",
+    "9850dfab8761fd6191dba7787b32930ba3d41fc6",
+    "236f0eeea36cb192308f98e4f88fe07027684ae5",
+    "a8507f37132cd092a0ce1240cf1f329166a1c89b",
+    "fe823af9aea9ef77f535f6db81b8dcb89a5c6ee2",
+    "b14bf187fd57aadcf621c9263ea41d457fad36c0",
+    "6317d65e9e1a8b826d677d96c5f40dc8c8192276",
+    "0598523ee4c396e232f3908e981689095cd24d6e",
+    "f63dd0562f778da93dfa7366f35d078683155ace",
+    "9304eebf2c6ccd31348f844f0e8923f17078e112",
+    "9bad37729b369d430f21e1cbc4774f194e0fee82",
+    "59c53398b4473fa6ee035834ca615cd8732d4640",
+    "3be62eced579b161234675fe03e5a405d70fc731"
+  ]
+}
