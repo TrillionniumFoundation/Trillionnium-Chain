@@ -1,7 +1,12 @@
 # Permissionless architecture continuation — 2026-11-05
 
+**Latest integration:** see [LATEST_COMPOSITION.md](LATEST_COMPOSITION.md) and
+[latest-composition.json](latest-composition.json) for the subsequent Growth/request
+composition, fresh native execution and published-source byte equality. The
+records below retain their earlier source anchors.
+
 **Scoped engineering and finite ordering controls passed. The original native
-business comparison remains HOLD:** all 18 final integrated samples report
+business comparison remains HOLD:** all 18 recorded `d992451c` integration samples report
 `PUBLIC_HOST_KERNEL_PARENT`; none qualifies as a successful business trial.
 
 Continue the existing Draft PR #688 from
