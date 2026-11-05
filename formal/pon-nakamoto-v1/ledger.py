@@ -13,7 +13,8 @@ from contract_wire import *
 import work_backend as work
 ZERO=bytes(32)
 FAMILY=H('family',canonical(MODEL_FAMILY))
-PLAN=H('plan',b'public-source-file-disjoint-v1')
+PLAN=(H('plan',b'public-source-file-disjoint-v1',bytes.fromhex(PARAMS['evaluation_policy_hash']))
+      if 'evaluation_policy_hash' in PARAMS else H('plan',b'public-source-file-disjoint-v1'))
 
 def key(i):
     # Publicly known development seeds, never imported into a production signer.
@@ -147,8 +148,16 @@ def execute_reference(parent,transactions,height,miner,parent_id):
             require(obj['status']=='submitted' and obj['parent']==s['model:current'],'STATE');require(sender not in obj['votes'],'DUPLICATE')
             require(f['plan']==PLAN and f['evidence']!=ZERO and f['score']<=PARAMS['max_evidence_score'],'EVIDENCE')
             obj['votes'][sender]={'score':f['score'],'evidence':f['evidence'].hex()}
-            if len(obj['votes'])>=PARAMS['evaluation_threshold']:
-                obj['score']=min(v['score']for v in obj['votes'].values());obj['status']='evaluated'
+            if PARAMS['evaluation_profile'] == 'closed-round-all-eligible-min-v1':
+                from evaluation_round import complete_score
+                score = complete_score(EVALUATORS, obj['owner'], obj['votes'], PARAMS['max_evidence_score'])
+                if score is not None:
+                    obj['score']=score;obj['status']='evaluated'
+            elif PARAMS['evaluation_profile'] == 'explicit-attested-dev-profile-not-permissionless-utility':
+                if len(obj['votes'])>=PARAMS['evaluation_threshold']:
+                    obj['score']=min(v['score']for v in obj['votes'].values());obj['status']='evaluated'
+            else:
+                raise ValueError('EVALUATION_POLICY')
         elif tag==8:
             require(f['parent_release'].hex()==s['model:current'],'STATE')
             bundle=fetch('contribution:',f['bundle']);require(bundle['status']=='evaluated'and bundle['score']>=PARAMS['minimum_adoption_score'],'EVIDENCE')
@@ -248,7 +257,7 @@ class Ledger:
         require(not self.directory.is_symlink(),'NAMESPACE')
         lock=self.directory/'owner.lock';require(not lock.is_symlink(),'NAMESPACE')
         fd=os.open(lock,os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600)
-        self.owner=os.fdopen(fd,'a+b');self.db=None
+        self.owner=os.fdopen(fd,'a+b');self.db=None;self.native_session=None
         try:
             try:fcntl.flock(self.owner.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
             except BlockingIOError:raise ValueError('WRITER_BUSY')
@@ -309,7 +318,23 @@ class Ledger:
             self.owner.close();raise
 
     def close(self):
-        self.db.close();fcntl.flock(self.owner.fileno(),fcntl.LOCK_UN);self.owner.close()
+        try:
+            if self.native_session is not None:self.native_session.close()
+        finally:
+            self.db.close();fcntl.flock(self.owner.fileno(),fcntl.LOCK_UN);self.owner.close()
+
+    def execute_application(self, parent_state, transactions, height, miner, parent_id):
+        selected=os.environ.get('TRNM_NATIVE_SESSION')
+        require(not(selected and os.environ.get('TRNM_NATIVE_EXECUTOR')),'NATIVE_BACKEND_CONFLICT')
+        if self.native_session is not None and (not selected or self.native_session.binary!=Path(selected).resolve()):
+            self.native_session.close();self.native_session=None
+        if selected:
+            from native_session import NativeExecutionSession
+            if self.native_session is None:self.native_session=NativeExecutionSession(selected)
+            state,receipts,_=self.native_session.execute(parent_state,transactions,height,miner,parent_id,
+                int(os.environ.get('TRNM_EXECUTION_WORKERS','1')))
+            return state,receipts
+        return execute(parent_state,transactions,height,miner,parent_id)
 
     def ready(self):
         pending=self.db.execute('SELECT status FROM reorg WHERE singleton=1').fetchone()
@@ -375,7 +400,7 @@ class Ledger:
     def make(self,parent,txs,miner=None,timestamp=None,max_attempts=4096,work_inputs=None):
         self.ready();wa,wb=(A,B)if work_inputs is None else work_inputs
         miner=public(key(0))if miner is None else miner;row=self.block(parent);height=row[1]+1
-        state,receipts=execute(self.state_at(parent),txs,height,miner,parent)
+        state,receipts=self.execute_application(self.state_at(parent),txs,height,miner,parent)
         h=dict(network=NETWORK,parameters=PARAMETER_HASH,parent=parent,height=height,timestamp=timestamp if timestamp is not None else self.ancestor_headers(parent)[0]['timestamp']+10,target=self.target(parent),miner=miner,transactions=sequence_root('transactions',txs),state=state_root(state),receipts=sequence_root('receipts',receipts),work_task=work.task_id(wa,wb),nonce=0)
         for nonce in range(max_attempts):
             h['nonce']=nonce;hb=header_encode(h);challenge=H('challenge',hb);proof=work.prove(challenge,wa,wb)
@@ -402,10 +427,13 @@ class Ledger:
         ts=[x['timestamp']for x in reversed(self.ancestor_headers(h['parent'])[:PARAMS['median_time_width']])]
         timing=timestamp_state(h['timestamp'],ts,observed_now,PARAMS['future_skew_seconds'])
         require(timing!='deferred-future','TIME_DEFERRED');require(timing=='admissible','TIME')
-        prior=self.state_at(h['parent']);require(prior.get('work:'+h['work_task'].hex())is True,'TASK')
         require(h['transactions']==sequence_root('transactions',txs),'ROOT')
+        # Reject malformed certificates before potentially long branch-state reconstruction.
+        # A passed cheap filter is not verified work, not task admission, and not a block.
+        work.precheck(H('challenge',hb),h['work_task'],h['target'],proof)
+        prior=self.state_at(h['parent']);require(prior.get('work:'+h['work_task'].hex())is True,'TASK')
         work.verify(H('challenge',hb),h['work_task'],h['target'],proof)
-        state,receipts=execute(prior,txs,h['height'],h['miner'],h['parent'])
+        state,receipts=self.execute_application(prior,txs,h['height'],h['miner'],h['parent'])
         require(h['state']==state_root(state)and h['receipts']==sequence_root('receipts',receipts),'ROOT')
         bid=H('block',hb,proof[-32:]);cw=int.from_bytes(parent[2],'big')+work_score(int.from_bytes(h['target'],'big'));require(cw<(1<<512),'LIMIT')
         if self.db.execute('SELECT 1 FROM blocks WHERE id=?',(bid,)).fetchone():return bid
