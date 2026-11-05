@@ -3,10 +3,12 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -1211,6 +1213,97 @@ class ReaderTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'duplicate JSON observation key'):
                     reader.read_report(path, hashlib.sha256(raw).hexdigest())
                 self.assertEqual(path.read_bytes(), raw)
+
+    def test_report_descriptor_bounds_exact_limit_and_overflow(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(reader, 'MAX_REPORT_BYTES', 8):
+            path = Path(directory) / 'report.json'
+            for size in (0, 1, 7, 8):
+                path.write_bytes(b'x' * size)
+                self.assertEqual(reader.read_report_bytes(path), b'x' * size)
+            path.write_bytes(b'x' * 9)
+            with self.assertRaisesRegex(ValueError, 'finite reader byte limit'):
+                reader.read_report_bytes(path)
+
+    def test_report_short_reads_continue_to_eof(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(reader, 'MAX_REPORT_BYTES', 8):
+            path = Path(directory) / 'report.json'
+            path.write_bytes(b'12345678')
+            original = os.read
+            def short(descriptor, size):
+                return original(descriptor, min(size, 3))
+            with patch.object(reader.os, 'read', side_effect=short):
+                self.assertEqual(reader.read_report_bytes(path), b'12345678')
+
+    def test_report_growth_after_descriptor_stat_is_bounded(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(reader, 'MAX_REPORT_BYTES', 8):
+            path = Path(directory) / 'report.json'
+            path.write_bytes(b'x' * 8)
+            original = os.fstat
+            def grow(descriptor):
+                before = original(descriptor)
+                with path.open('ab') as stream:
+                    stream.write(b'y' * 65536)
+                return before
+            original_read = os.read
+            requests, descriptors, offsets = [], [], []
+            def observed_read(descriptor, size):
+                requests.append(size)
+                descriptors.append(descriptor)
+                self.assertLessEqual(size, 9)
+                chunk = original_read(descriptor, size)
+                offsets.append(os.lseek(descriptor, 0, os.SEEK_CUR))
+                return chunk
+            with patch.object(reader.os, 'fstat', side_effect=grow), \
+                    patch.object(reader.os, 'read', side_effect=observed_read):
+                with self.assertRaisesRegex(ValueError, 'finite reader byte limit'):
+                    reader.read_report_bytes(path)
+            self.assertEqual(requests, [9])
+            self.assertEqual(offsets, [9])
+            for descriptor in descriptors:
+                with self.assertRaises(OSError):
+                    original(descriptor)
+
+    def test_report_path_replacement_does_not_switch_open_input(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_bytes(b'original')
+            replacement = Path(directory) / 'replacement'
+            replacement.write_bytes(b'changed')
+            original = os.fstat
+            def replace(descriptor):
+                before = original(descriptor)
+                replacement.replace(path)
+                return before
+            with patch.object(reader.os, 'fstat', side_effect=replace):
+                self.assertEqual(reader.read_report_bytes(path), b'original')
+            self.assertEqual(path.read_bytes(), b'changed')
+
+    def test_report_symlink_directory_and_fifo_are_refused_without_blocking(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / 'target'
+            target.write_bytes(b'{}')
+            link = root / 'link'
+            link.symlink_to(target)
+            fifo = root / 'fifo'
+            os.mkfifo(fifo)
+            original = os.open
+            opened = []
+            def checked_open(path, flags):
+                # Fail before opening if a mutant removes nonblocking/no-follow.
+                self.assertTrue(flags & os.O_NONBLOCK)
+                self.assertTrue(flags & os.O_NOFOLLOW)
+                descriptor = original(path, flags)
+                opened.append(descriptor)
+                return descriptor
+            with patch.object(reader.os, 'open', side_effect=checked_open):
+                for path in (link, root, fifo):
+                    with self.subTest(path=path), self.assertRaises((OSError, ValueError)):
+                        reader.read_report_bytes(path)
+            for descriptor in opened:
+                with self.assertRaises(OSError):
+                    os.fstat(descriptor)
+            self.assertEqual(target.read_bytes(), b'{}')
 
     def test_exact_hash_mismatch_rejects_before_parsing(self):
         with tempfile.TemporaryDirectory() as directory:

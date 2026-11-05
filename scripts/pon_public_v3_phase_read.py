@@ -15,6 +15,8 @@ import argparse
 from collections import Counter, defaultdict
 import hashlib
 import json
+import os
+import stat
 from pathlib import Path
 import re
 import sys
@@ -1087,13 +1089,33 @@ def analyze_for_retained_schema(report, schema):
     return value
 
 
+def read_report_bytes(path):
+    """Bind checks and bounded reads to one nonblocking regular-file descriptor.
+
+    A pathname size check cannot bound a later read: the file can grow or be
+    replaced between those operations. The digest still authenticates the exact
+    retained bytes; this helper only bounds input acquisition, not JSON expansion.
+    """
+    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(descriptor)
+        require(stat.S_ISREG(info.st_mode), 'regular report file required')
+        require(info.st_size <= MAX_REPORT_BYTES, 'report exceeds finite reader byte limit')
+        chunks, used = [], 0
+        while chunk := os.read(descriptor, min(65536, MAX_REPORT_BYTES - used + 1)):
+            used += len(chunk)
+            require(used <= MAX_REPORT_BYTES, 'report exceeds finite reader byte limit')
+            chunks.append(chunk)
+    finally:
+        os.close(descriptor)
+    return b''.join(chunks)
+
+
 def read_report(path, expected, expected_public_policy_id=None):
     require(re.fullmatch('[0-9a-f]{64}', expected), 'explicit report SHA256 required')
     path = Path(path)
-    require(path.is_file() and not path.is_symlink(), 'regular report file required')
-    require(path.stat().st_size <= MAX_REPORT_BYTES, 'report exceeds finite reader byte limit')
-    raw = path.read_bytes()
-    require(len(raw) <= MAX_REPORT_BYTES and hashlib.sha256(raw).hexdigest() == expected,
+    raw = read_report_bytes(path)
+    require(hashlib.sha256(raw).hexdigest() == expected,
             'retained report SHA256 mismatch')
     def unique_object(pairs):
         value = {}
