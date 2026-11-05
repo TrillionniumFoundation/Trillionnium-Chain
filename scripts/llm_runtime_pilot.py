@@ -23,6 +23,7 @@ import select
 import signal
 import subprocess
 import sys
+import threading
 import time
 
 MODEL = 'HuggingFaceTB/SmolLM2-135M-Instruct'
@@ -1597,7 +1598,7 @@ def owned_exit_cleanup_proof(process, diagnostic=None):
         return None
 
 
-def reconcile_unobserved_exit(process, absolute_wall_deadline_ns, diagnostic=None):
+def reconcile_unobserved_exit(process, absolute_wall_deadline_ns, diagnostic=None, *, stop_request=None):
     """Reconcile terminal observation, or proven irreversible kernel cleanup.
 
     Without a complete owned exit proof the existing one-sample (50 ms) limit
@@ -1626,6 +1627,10 @@ def reconcile_unobserved_exit(process, absolute_wall_deadline_ns, diagnostic=Non
     ready = []
     state = 'not-polled-pidfd-not-ready'
     while time.monotonic_ns() < deadline:
+        if stop_request is not None and stop_request.requested:
+            if diagnostic is not None:
+                diagnostic['stop_requested'] = True
+            break
         remaining = (deadline-time.monotonic_ns()) / 10**9
         if remaining <= 0:
             break
@@ -1670,7 +1675,8 @@ def _exit_recheck_refusal(error):
                 diagnostic_only=True)
 
 
-def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exit_observation=None):
+def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exit_observation=None,
+                        stop_request=None):
     """Retain the reservation while waiting for exact wait4, never report RSS=0."""
     from llm_runtime_exit_observation import ExitOnlyObservation, MAX_DRAIN_NS
     record = dict(outcome='failed', snapshots=[], missing_sample_ns=observation.sample_started_ns)
@@ -1685,6 +1691,9 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
                 'RUNTIME_EXIT_OBSERVER_OWNER')
         record['snapshots'].append(observation.record)
         while time.monotonic_ns() < deadline:
+            if stop_request is not None and stop_request.requested:
+                record.update(error='stop-requested', completed_ns=time.monotonic_ns())
+                return 'stop-requested', record
             state = process.reap()
             if state == 'terminal':
                 observed_ns = time.monotonic_ns()
@@ -1721,9 +1730,52 @@ def _drain_exit_cleanup(process, observation, owner_token, start, budget, *, exi
     return 'rss-exit-cleanup-observation-unavailable', record
 
 
+class SupervisorStopRequest:
+    """Sticky cancellation only; it never grants output or replaces an owner."""
+
+    __slots__ = ('_requested',)
+
+    def __init__(self):
+        self._requested = False
+
+    @property
+    def requested(self):
+        return self._requested
+
+    def request(self, _signum=None, _frame=None):
+        # A Python signal handler must not unwind Popen between fork and the
+        # caller's assignment. No locks, IO, cleanup or reset occur here.
+        self._requested = True
+
+
+@contextlib.contextmanager
+def cooperative_supervisor_stop():
+    """Defer INT/TERM to the original supervisor's owned cleanup boundary.
+
+    Call on the main thread and retain this scope through supervise's terminal
+    readback. Repeated signals remain sticky while finish keeps its original
+    TERM/KILL deadlines. Other exceptions are not converted into cancellation.
+    """
+    require(threading.current_thread() is threading.main_thread(), 'RUNTIME_STOP_MAIN_THREAD')
+    stop_request = SupervisorStopRequest()
+    previous = [(number, signal.getsignal(number))
+                for number in (signal.SIGINT, signal.SIGTERM)]
+    installed = []
+    try:
+        for number, handler in previous:
+            signal.signal(number, stop_request.request)
+            installed.append((number, handler))
+        yield stop_request
+    finally:
+        for number, handler in reversed(installed):
+            signal.signal(number, handler)
+
+
 def supervise(command, directory, budget, *, exit_observation=None, _controlled_operation=None,
-              _aggregate_operation=None, _evidence_pipe=None):
-    """Kill only this fresh child when its measured wall/RSS budget is exceeded."""
+              _aggregate_operation=None, _evidence_pipe=None, stop_request=None):
+    """Keep this fresh child's original owner through budget or requested stop."""
+    require(stop_request is None or type(stop_request) is SupervisorStopRequest,
+            'RUNTIME_STOP_INTERFACE')
     observation_type = exit_observation_class(exit_observation) if exit_observation is not None else None
     kernel_keyword = '_controlled_operation'
     if _aggregate_operation is not None:
@@ -1766,10 +1818,33 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
     owner_token = object()
     observer_cpu_start = time.process_time_ns()
     process = None
+
+    def no_child_result(stop_reason, observation_error=None):
+        result = dict(exit_code=None, stop_reason=stop_reason,
+                      observed_wall_ns=time.monotonic_ns()-start,
+                      sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
+                      waited_child_peak_rss_bytes=None, waited_child_reaped=False,
+                      owned_child_reap_resolved=False,
+                      owned_child_echild_observed=False,
+                      owned_child_exit_observed=False, child_spawned=False,
+                      cleanup_method='no-child-spawned',
+                      waited_child_observation_error=observation_error, child_cpu_ns=None,
+                      rss_observation_gaps=[],
+                      observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
+                      cpu_scope='No child spawned; no waited-child CPU observation',
+                      memory_scope='No child spawned; no RSS observation', outcome='failed')
+        if exit_observation is not None:
+            result['exit_observation_profile'] = exit_observation
+        if pipe_writer is None: save(directory/'supervisor.json', result)
+        else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=None,supervisor_pid=os.getpid()))
+        return result
+
     with (pipe_writer if pipe_writer is not None else
           (directory/'process.log').open('wb' if pipe_owner is not None else 'w')) as log:
         try:
             try:
+                if stop_request is not None and stop_request.requested:
+                    return no_child_result('stop-requested')
                 if pipe_owner is not None:
                     pipe_owner.configure(wall_deadline_ns, log)
                     command = command+['--evidence-deadline-ns',str(wall_deadline_ns)]
@@ -1784,25 +1859,11 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                 else:
                     process = _Wait4Child(command, stdout=log, stderr=subprocess.STDOUT)
             except _Wait4Unsupported as error:
-                result = dict(exit_code=None, stop_reason='rss-owner-unsupported',
-                              observed_wall_ns=time.monotonic_ns()-start,
-                              sampled_peak_rss_bytes=0, budget=budget, sample_interval_ms=50,
-                              waited_child_peak_rss_bytes=None, waited_child_reaped=False,
-                              owned_child_reap_resolved=False,
-                              owned_child_echild_observed=False,
-                              owned_child_exit_observed=False, child_spawned=False,
-                              cleanup_method='no-child-spawned',
-                              waited_child_observation_error=str(error), child_cpu_ns=None,
-                              rss_observation_gaps=[],
-                              observer_cpu_ns=time.process_time_ns()-observer_cpu_start,
-                              cpu_scope='No child spawned; no waited-child CPU observation',
-                              memory_scope='No child spawned; no RSS observation', outcome='failed')
-                if exit_observation is not None:
-                    result['exit_observation_profile'] = exit_observation
-                if pipe_writer is None: save(directory/'supervisor.json', result)
-                else: pipe_writer.emit('inner-supervisor',dict(result=result,owned_child_pid=None,supervisor_pid=os.getpid()))
-                return result
+                return no_child_result('rss-owner-unsupported', str(error))
             while process.observation_error is None and process.reap() == 'live':
+                if stop_request is not None and stop_request.requested:
+                    reason = 'stop-requested'
+                    break
                 if pipe_owner is not None:
                     try: pipe_owner.drain(process)
                     except BaseException as failure:
@@ -1839,7 +1900,7 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                                 # fall back to the ordinary exact-exit race branch.
                                 reason, exit_cleanup_observation = _drain_exit_cleanup(
                                     process, exit_sample, owner_token, start, budget,
-                                    exit_observation=exit_observation)
+                                    exit_observation=exit_observation, stop_request=stop_request)
                             elif exit_sample is not None and (
                                     observation_type is not ExitOnlyObservation or
                                     isinstance(exit_sample, ExitOnlyObservation)):
@@ -1854,8 +1915,10 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                             # budget. Unknown RSS is never converted to zero.
                             gap = dict(at_wall_ns=time.monotonic_ns()-start,
                                        before=owned_rss_diagnostic(process), reconciliation={})
-                            if not reconcile_unobserved_exit(process, wall_deadline_ns, gap['reconciliation']):
-                                reason = ('wall-budget-exceeded' if time.monotonic_ns() >= wall_deadline_ns
+                            if not reconcile_unobserved_exit(process, wall_deadline_ns, gap['reconciliation'],
+                                                             stop_request=stop_request):
+                                reason = ('stop-requested' if stop_request is not None and stop_request.requested else
+                                          'wall-budget-exceeded' if time.monotonic_ns() >= wall_deadline_ns
                                           else 'rss-observation-unavailable')
                             gap['after'] = owned_rss_diagnostic(process)
                             rss_gaps.append(gap)
@@ -1888,6 +1951,8 @@ def supervise(command, directory, budget, *, exit_observation=None, _controlled_
                         if process.observation_error is None:
                             process.observation_error = 'kernel-owner-cleanup-interrupted'
                         raise process._kernel_cleanup_required
+    if stop_request is not None and stop_request.requested:
+        reason = reason or 'stop-requested'
     if reason is None:
         if process.observation_error or not process.reaped or process.waited_peak_rss_bytes is None:
             reason = 'waited-child-observation-unavailable'

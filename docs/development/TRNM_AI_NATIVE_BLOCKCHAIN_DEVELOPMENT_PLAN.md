@@ -7202,3 +7202,157 @@ import, account-graph and Host costs remain independently visible, with nested
 intervals never summed. The next gate is BASELINE_MUST_PASS under the original
 AuthenticatedV1/RawR14, quarter-core, 2-GiB public Host. Continuous novel-input
 availability and cheapest-legal-work economics remain separate unclosed gates.
+
+
+### 2026-11-05 joint-candidate component repairs and eight open gates
+
+Source review used Chain #688 at
+`7ae0d1b227853fc75e02334b497f69dd52d50235`, followed by the
+evidence-only advance to `f9977c5d6d1b57880967ef36dcd1570010cbbe4f`.
+The reviewed Hepta #4812 publication was
+`1556a4df6e279055fd8196f81a4ca2fe0f19384a`. These upstream references
+remain separate from the identity of a completed, tested joint candidate.
+Full source materialization, the final commit/configuration/dependency/binary
+freeze and ordinary-entry execution must finish before joint qualification.
+
+Component observations retained for this continuation are:
+
+- The W1 rejection-v2 reader passed 92 Python controls in 20.937 seconds in an
+  explicitly partial component fixture. The 92 source selectors match the
+  real tests. Review caught and corrected an unrelated donor-branch regression
+  from 29 storage-oracle controls to 28; the current 29 remain required.
+- The cooperative-stop component passed 59 controls: 12 new stop controls,
+  43 retained RSS-owner controls and 4 retained neural-worker framing controls.
+  The original five-second TERM grace remains. This executes real child
+  cancellation boundaries, without executing a model or establishing cold
+  model adoption, learning quality or a public-service result.
+- The new stop suite is explicitly invoked in the original
+  `protocol-contract` lane after the RSS/exit controls. Four existing CI
+  wiring tests passed in 0.083 seconds, covering the complete lane and missing,
+  repeated, skipped, moved and incorrectly ordered commands. These checks do
+  not execute the complete lane or replace its head/merge results.
+- The independent effect-frontier review reproduced six SQL projection
+  corruptions that retained the original frontier. The prepared Hepta repair
+  reuses row decoders and joins observations to the actual intent inside one
+  SQLite snapshot. Projection, substituted-intent, orphan and repeated-sequence
+  controls remain subject to native execution. No second effect or PQ bypass
+  was established by the SQL reproduction.
+
+The 59 runtime, 92 reader and 4 CI results have their individual component
+boundaries. They are not a successful full-candidate command, a combined native
+test count or an independent deployment observation.
+
+#### W1 cost boundary and the remaining measurement interface
+
+The current [ordinary verifier](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs)
+selects FullLimb. The [rejection-v2 plan](../research/PON_WORK_REJECTION_COST_V2_PLAN.md)
+adds that actual default to retained-transposed, scalar-reference and
+limb-transcript, with FullLimb as the comparison denominator. Its fixed design
+has four material classes, two targets and twelve samples per group: 96 cohorts,
+1,152 timed verifier calls and 96 independent scalar winner replays if every
+acquisition completes. Missing or exhausted acquisitions remain recorded.
+
+This is a verifier comparison over a fixed producer. Its honest producer is
+`PreparedTask`: one actual AB/prefix preparation, followed by complete original
+transposed transcripts and proof serialization on every attempt, including
+misses. Setup, attempts, tickets and in-search audit overhead are charged;
+the separately captured native process also retains serialization and probes.
+The verifier timer is monotonic wall time, not CPU, energy, queue service,
+state loading or end-to-end deployment cost. Feasible producer cost samples
+do not establish a cheapest algorithm, and the largest sampled rejection time
+does not establish a worst-case bound.
+
+The independent [from-zero constructor](../../trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs)
+already forms canonical A/B bytes with zero C and a zero initial trace, then
+searches only a claimed trace and ticket. It acquires neither a valid proof nor
+an evaluated AB product. The retained false-trace reuse campaign charges one
+actual public-prefix setup and four distinct searches per cohort, across nine
+materials and eight samples. Its production arm calls the current verifier.
+Consequently, adding an honest acquisition to the v2 first-construction
+denominator is one declared scenario, not an attacker-cost floor. The
+[negative fact cache](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs)
+covers exact retransmissions; a fresh forged statement still incurs replay.
+
+The separate [legal-strategy v3 experiment](../../trillionnium/crates/trnm-pon-node/examples/pon_w1_legal_strategy_v3.rs)
+compares eager/lazy materialization and transposed/FullLimb arithmetic over five
+classes, two targets, reuse horizons 1/8/64 and eight samples. Shared search
+prefixes across horizons are correlated and must not be pooled as independent
+mining observations. Its [reader](../../scripts/pon_w1_legal_strategy_reader_v3.py)
+preserves setup, misses, exhaustion, observed winners and separate evidence
+costs; it does not independently replay W1 or authenticate clocks.
+[Legal-attempt source](../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs)
+also exposes exact sparse preparation. Dense eager production is therefore
+not a justified lower-bound assumption.
+
+Closing W1 still requires a preregistered comparison of the cheapest known
+legal strategies and from-zero invalid strategies under the current task
+eligibility and reuse lifetime, with real setup/marginal costs, all failed
+attempts and complete proof/ticket streams. Broader structural shortcuts,
+cross-challenge amortization, vectorized/parallel hardware, variable parsing
+and state costs, cache churn and concurrent receiver scheduling remain outside
+the v2 primitive measurement. Fresh measurements must use the final joint
+source and preserve all cost clocks and hardware identities. No old timing or
+ratio is relabelled current. The original public-service gate then executes
+under its original resources.
+
+#### Gate disposition
+
+| Gate | Status | Evidence still required |
+|---|---|---|
+| P0 fixed joint candidate | HOLD | Complete materialized source, configuration, locked graph and binary identity; actual ordinary-entry execution on the same candidate. |
+| P0 W1 cost and public-service liveness | HOLD | Current cheapest-known legal/from-zero invalid cost review and original-resource service acceptance; component accounting is insufficient. |
+| P0 PQ and effect authorization | HOLD | Every critical sink traced to the current PQ root with downgrade, revocation and old-generation refusal. |
+| P0 recovery and unknown effects | HOLD | Independent frontier custody, whole-store restore, lost ACK, physical crash windows and stable operation-ID joint execution. |
+| P1 complete model adoption | HOLD | Publisher and original caches unavailable; complete cold closure retrieval, installation, actual inference and readback. |
+| P1 learning quality | HOLD | Frozen strong controls, hidden/future tasks, negative-transfer checks and real costs; honest no-update remains allowed. |
+| P1 long-term storage and growth | HOLD | Paid custody, renewal, repair, GC, ledger and log growth within a jointly measured sustainable budget. |
+| Release independent long run | HOLD | Independently administered operators, real WAN and failure domains, with frozen workloads and acceptance criteria. |
+
+All eight gates remain open. Preserve the original four-second, 16-hostile,
+seven-honest-submission, quarter-CPU, 2-GiB, no-swap and 256-PID service contract;
+the original 30-second request deadline and 4,105-block/1,800-second history
+campaign; and the rejection collector's 30-second identity, 900-second build,
+180-second native and five-second cleanup limits. The retained independent
+campaign minimum of three administrators/failure domains and 72 hours is
+unchanged. No source-control, local component, model-quality, economic,
+public-service or activation claim is promoted by this entry.
+
+
+### 2026-11-05 six experiments: first-hit binding and corrected paired delivery
+
+The [six-experiment disposition](../../evidence/pon-six-experiments-20261105/README.md)
+keeps separate HOLD decisions. The bounded source-router reference actually
+processes 64 source rows using five complete W1 transcripts. Its durable diagnostic
+attempt stream retains 11 attempts, five hits and six misses; a deliberately
+exhausted search retains one miss and four unrun tiles. Fresh independent
+processes replay every attempt and verify the complete bounded relation. This is
+read-only integer state, not ordinary Hepta masks, mutable state or installation.
+
+Independent review reproduced a valid-witness substitution: replacing a
+journalled first hit with another genuinely valid nonce preserved W1 validity
+while corrupting the economic linkage. The repaired reader binds every delivered
+tile's nonce and proof bytes to its measured first hit. A retained fsync failure
+cannot become a nested successful batch; only the process-observed acknowledged
+prefix counts as durable diagnostic completion. Diagnostic source identities
+are captured before execution and checked for drift. Ninety-two functional
+controls pass, including the independent review subset, without a work-security
+or external rollback-resistance claim.
+
+The corrected grouped v2 observer binds committed model/requests to scalar
+arithmetic, enforces the original predeclared budget for both arms, requires
+successful identities, and retains zero-CPU/unavailable comparisons. A fresh
+48-case paired run preserves all 1,020 processing occurrences and the 64 distinct
+old inputs. Packed/direct median total observed CPU is approximately
+1.029/1.040/1.060/0.972 for sizes 1/4/16/64, with no stable speedup established.
+Eight separately declared one-millisecond controls all remain late. Sixteen
+loaded repository file observations match before/after; external runtime and
+full-source attestation remain unclaimed. Fifty grouped controls pass with two
+native controls skipped. All nine earlier raw v1 artifacts remain byte-identical.
+
+Original F0 client confirmation uses Exclusive ownership; Shared Host-read
+deduplication is not a measured repair of its dominant state cost. Baseline and
+continuous novel-input service remain unaccepted. Prior native legal-strategy
+rho values remain attached to their original source/profile and finite tested
+arms, separate from invalid-input rejection costs. The complete local quality
+readback has negative marginal values on all three frozen partitions and zero
+model reward; it does not authorize a next-generation adoption.

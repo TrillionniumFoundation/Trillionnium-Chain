@@ -1,0 +1,861 @@
+{
+  "new_executions": 0,
+  "observations": [
+    {
+      "directory": "initial-observation",
+      "original_budget_ns": 4000000000,
+      "original_inputs_sha256": {
+        "observations.jsonl": "3652c8b9abb2ae9dda47987b6f52e2e469c7abf11436f63f3f83033624cfd82c",
+        "plan.json": "fbc36348466d683dcd24861e853a7b76bcd945daebe5a1adeb48cf77dadafd18",
+        "report.json": "e6be039ea6364e1dd98570908339f178b752fe35b55e2a2da0fa652d296cdbf5"
+      },
+      "original_reported_statistics_match": true,
+      "original_schema": "pon-grouped-local-delivery-cost-v1",
+      "recomputed_summary": {
+        "by_batch_size": [
+          {
+            "aggregate_packed_over_direct_cpu": 0.6045644171666084,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 356931508,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 6,
+                "planned_cases": 6,
+                "planned_request_occurrences": 6,
+                "wall_ns_all_observed": 364095878,
+                "wall_ns_median_all_observed": 53095043.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 590394502,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 6,
+                "planned_cases": 6,
+                "planned_request_occurrences": 6,
+                "wall_ns_all_observed": 591492915,
+                "wall_ns_median_all_observed": 63592283.5
+              }
+            },
+            "batch_size": 1,
+            "packed_over_direct_total_cpu_median": 0.9288567351628432,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 0.962067036182111,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.0683019104909228,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.7109577073789751,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.2656142535742068,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9088213562884844,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.948892114037202,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.2656142535742068,
+              1.0683019104909228
+            ],
+            "paired_total_cpu_ratios": [
+              0.962067036182111,
+              1.0683019104909228,
+              0.7109577073789751,
+              0.2656142535742068,
+              0.9088213562884844,
+              0.948892114037202
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 1.3528852578776451,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 592791673,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 24,
+                "planned_cases": 6,
+                "planned_request_occurrences": 24,
+                "wall_ns_all_observed": 592891747,
+                "wall_ns_median_all_observed": 61288737.0
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 438168477,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 24,
+                "planned_cases": 6,
+                "planned_request_occurrences": 24,
+                "wall_ns_all_observed": 438212381,
+                "wall_ns_median_all_observed": 63006937.0
+              }
+            },
+            "batch_size": 4,
+            "packed_over_direct_total_cpu_median": 0.9636591976871223,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 0.9923528719496305,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9697051761027441,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.5868907902906227,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 4.898074638111405,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9576132192715004,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.7052201947543801,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.5868907902906227,
+              4.898074638111405
+            ],
+            "paired_total_cpu_ratios": [
+              0.9923528719496305,
+              0.9697051761027441,
+              0.5868907902906227,
+              4.898074638111405,
+              0.9576132192715004,
+              0.7052201947543801
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 1.0999886010282158,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 500752257,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 96,
+                "planned_cases": 6,
+                "planned_request_occurrences": 96,
+                "wall_ns_all_observed": 501129097,
+                "wall_ns_median_all_observed": 71187244.0
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 455234042,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 96,
+                "planned_cases": 6,
+                "planned_request_occurrences": 96,
+                "wall_ns_all_observed": 455277557,
+                "wall_ns_median_all_observed": 67687970.5
+              }
+            },
+            "batch_size": 16,
+            "packed_over_direct_total_cpu_median": 1.0569561708481088,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 1.372188058625462,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.1303659820307417,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.3188648440611361,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.983546359665476,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.765312633546721,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.900722682088914,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.765312633546721,
+              1.372188058625462
+            ],
+            "paired_total_cpu_ratios": [
+              1.372188058625462,
+              1.1303659820307417,
+              1.3188648440611361,
+              0.983546359665476,
+              0.765312633546721,
+              0.900722682088914
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 2.338953698527734,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 1389255574,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 384,
+                "planned_cases": 6,
+                "planned_request_occurrences": 384,
+                "wall_ns_all_observed": 1391433597,
+                "wall_ns_median_all_observed": 94369045.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 593964547,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 384,
+                "planned_cases": 6,
+                "planned_request_occurrences": 384,
+                "wall_ns_all_observed": 594345901,
+                "wall_ns_median_all_observed": 89285513.0
+              }
+            },
+            "batch_size": 64,
+            "packed_over_direct_total_cpu_median": 1.0652837916833822,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 1.1610937971831048,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.8057177752157328,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 9.764270821091563,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.1886257986408677,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9637805961567882,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9694737861836595,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.8057177752157328,
+              9.764270821091563
+            ],
+            "paired_total_cpu_ratios": [
+              1.1610937971831048,
+              0.8057177752157328,
+              9.764270821091563,
+              1.1886257986408677,
+              0.9637805961567882,
+              0.9694737861836595
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          }
+        ],
+        "distinct_retrospective_input_rows": 64,
+        "missing_indices": [],
+        "observed_cases": 48,
+        "planned_cases": 48,
+        "planned_request_occurrences": 1020,
+        "repeats_and_arm_copies_are_new_demand": false
+      },
+      "statistics_not_present_in_original_report": [
+        "paired_total_cpu_ratios",
+        "paired_total_cpu_ratio_range",
+        "aggregate_packed_over_direct_cpu"
+      ]
+    },
+    {
+      "directory": "paired-final",
+      "original_budget_ns": 4000000000,
+      "original_inputs_sha256": {
+        "observations.jsonl": "0c6c2ba69260f796c213682bd5b60a2cb66090e046f0317e45c39cd29c3fe9b1",
+        "plan.json": "9e1b754c31362abe0a070c831ba2ea2a1ab28adfc6b200204f0375528e9b48c0",
+        "report.json": "239ae120e72dcd56d1d83431552b622bd2cf8b03b2a5610792e0485d84d0d57e"
+      },
+      "original_reported_statistics_match": true,
+      "original_schema": "pon-grouped-local-delivery-cost-v1",
+      "recomputed_summary": {
+        "by_batch_size": [
+          {
+            "aggregate_packed_over_direct_cpu": 1.5434022924971187,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 1330348336,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 6,
+                "planned_cases": 6,
+                "planned_request_occurrences": 6,
+                "wall_ns_all_observed": 1363757576,
+                "wall_ns_median_all_observed": 138161393.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 861958248,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 6,
+                "planned_cases": 6,
+                "planned_request_occurrences": 6,
+                "wall_ns_all_observed": 867450544,
+                "wall_ns_median_all_observed": 130936789.5
+              }
+            },
+            "batch_size": 1,
+            "packed_over_direct_total_cpu_median": 1.1039139808411522,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 1.2085057736567189,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.0209941076602043,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.5001464242329667,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 6.6952032042037635,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.1868338540221,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.8119946790663854,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.5001464242329667,
+              6.6952032042037635
+            ],
+            "paired_total_cpu_ratios": [
+              1.2085057736567189,
+              1.0209941076602043,
+              0.5001464242329667,
+              6.6952032042037635,
+              1.1868338540221,
+              0.8119946790663854
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 0.40554109974146807,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 490025468,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 24,
+                "planned_cases": 6,
+                "planned_request_occurrences": 24,
+                "wall_ns_all_observed": 490781118,
+                "wall_ns_median_all_observed": 75566468.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 1208325046,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 24,
+                "planned_cases": 6,
+                "planned_request_occurrences": 24,
+                "wall_ns_all_observed": 1209364430,
+                "wall_ns_median_all_observed": 91282998.0
+              }
+            },
+            "batch_size": 4,
+            "packed_over_direct_total_cpu_median": 0.8622665106098584,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 1.2470574522587947,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.905293602375921,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.092134604407986,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.8192394188437956,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.7368631104026447,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.2510438118945608,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.092134604407986,
+              1.2510438118945608
+            ],
+            "paired_total_cpu_ratios": [
+              1.2470574522587947,
+              0.905293602375921,
+              0.092134604407986,
+              0.8192394188437956,
+              0.7368631104026447,
+              1.2510438118945608
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 1.0836513819390177,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 651698237,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 96,
+                "planned_cases": 6,
+                "planned_request_occurrences": 96,
+                "wall_ns_all_observed": 652538499,
+                "wall_ns_median_all_observed": 95866837.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 601391045,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 96,
+                "planned_cases": 6,
+                "planned_request_occurrences": 96,
+                "wall_ns_all_observed": 607786012,
+                "wall_ns_median_all_observed": 98054244.0
+              }
+            },
+            "batch_size": 16,
+            "packed_over_direct_total_cpu_median": 0.99817371655224,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 0.9080832112799633,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9306699669750671,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.488031875564373,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9808127259494627,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.1562602428267081,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.0155347071550174,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.9080832112799633,
+              1.488031875564373
+            ],
+            "paired_total_cpu_ratios": [
+              0.9080832112799633,
+              0.9306699669750671,
+              1.488031875564373,
+              0.9808127259494627,
+              1.1562602428267081,
+              1.0155347071550174
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": 1.8470939360220102,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 2261364863,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 384,
+                "planned_cases": 6,
+                "planned_request_occurrences": 384,
+                "wall_ns_all_observed": 2261894143,
+                "wall_ns_median_all_observed": 165315824.5
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 1224282544,
+                "missing_indices": [],
+                "observed_cases": 6,
+                "on_time_exact_cases": 6,
+                "on_time_exact_request_occurrences": 384,
+                "planned_cases": 6,
+                "planned_request_occurrences": 384,
+                "wall_ns_all_observed": 1236691084,
+                "wall_ns_median_all_observed": 162385433.5
+              }
+            },
+            "batch_size": 64,
+            "packed_over_direct_total_cpu_median": 1.2011406155738178,
+            "paired_complete_quality_and_local_deadline": true,
+            "paired_cpu_comparison_complete": true,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": 1.5647495602070722,
+                "repeat": 0,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 2.9658079514215823,
+                "repeat": 1,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.3419820281832733,
+                "repeat": 2,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.9920152475446753,
+                "repeat": 3,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 1.0602992029643623,
+                "repeat": 4,
+                "unavailable": null
+              },
+              {
+                "packed_over_direct_cpu": 0.7621043353115644,
+                "repeat": 5,
+                "unavailable": null
+              }
+            ],
+            "paired_total_cpu_ratio_range": [
+              0.7621043353115644,
+              2.9658079514215823
+            ],
+            "paired_total_cpu_ratios": [
+              1.5647495602070722,
+              2.9658079514215823,
+              1.3419820281832733,
+              0.9920152475446753,
+              1.0602992029643623,
+              0.7621043353115644
+            ],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          }
+        ],
+        "distinct_retrospective_input_rows": 64,
+        "missing_indices": [],
+        "observed_cases": 48,
+        "planned_cases": 48,
+        "planned_request_occurrences": 1020,
+        "repeats_and_arm_copies_are_new_demand": false
+      },
+      "statistics_not_present_in_original_report": []
+    },
+    {
+      "directory": "late-negative-control",
+      "original_budget_ns": 1000000,
+      "original_inputs_sha256": {
+        "observations.jsonl": "1f1583c3770c0bc11d56b8ab4af3b0531c91a825f15ac3ee3c9502881142093c",
+        "plan.json": "83d2397fb0332ec77c435aa6016ddd266fcd5e9f0a295eabbb161bf92893b206",
+        "report.json": "c6ae1ee3d83826c3d73f50e6c1da1a18252b54fa39074e7b0b9147be5574084b"
+      },
+      "original_reported_statistics_match": true,
+      "original_schema": "pon-grouped-local-delivery-cost-v1",
+      "recomputed_summary": {
+        "by_batch_size": [
+          {
+            "aggregate_packed_over_direct_cpu": null,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 74164388,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 1,
+                "wall_ns_all_observed": 74164763,
+                "wall_ns_median_all_observed": 74164763
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 68137761,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 1,
+                "wall_ns_all_observed": 68139228,
+                "wall_ns_median_all_observed": 68139228
+              }
+            },
+            "batch_size": 1,
+            "packed_over_direct_total_cpu_median": null,
+            "paired_complete_quality_and_local_deadline": false,
+            "paired_cpu_comparison_complete": false,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": null,
+                "repeat": 0,
+                "unavailable": "incomplete_or_late_delivery"
+              }
+            ],
+            "paired_total_cpu_ratio_range": null,
+            "paired_total_cpu_ratios": [],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": null,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 74039414,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 4,
+                "wall_ns_all_observed": 74043471,
+                "wall_ns_median_all_observed": 74043471
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 69509465,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 4,
+                "wall_ns_all_observed": 69506727,
+                "wall_ns_median_all_observed": 69506727
+              }
+            },
+            "batch_size": 4,
+            "packed_over_direct_total_cpu_median": null,
+            "paired_complete_quality_and_local_deadline": false,
+            "paired_cpu_comparison_complete": false,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": null,
+                "repeat": 0,
+                "unavailable": "incomplete_or_late_delivery"
+              }
+            ],
+            "paired_total_cpu_ratio_range": null,
+            "paired_total_cpu_ratios": [],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": null,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 93725777,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 16,
+                "wall_ns_all_observed": 93728024,
+                "wall_ns_median_all_observed": 93728024
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 104334843,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 16,
+                "wall_ns_all_observed": 104331123,
+                "wall_ns_median_all_observed": 104331123
+              }
+            },
+            "batch_size": 16,
+            "packed_over_direct_total_cpu_median": null,
+            "paired_complete_quality_and_local_deadline": false,
+            "paired_cpu_comparison_complete": false,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": null,
+                "repeat": 0,
+                "unavailable": "incomplete_or_late_delivery"
+              }
+            ],
+            "paired_total_cpu_ratio_range": null,
+            "paired_total_cpu_ratios": [],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          },
+          {
+            "aggregate_packed_over_direct_cpu": null,
+            "arms": {
+              "packed_grouped": {
+                "cpu_ns_all_observed": 128245391,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 64,
+                "wall_ns_all_observed": 128247866,
+                "wall_ns_median_all_observed": 128247866
+              },
+              "selected_direct": {
+                "cpu_ns_all_observed": 120530224,
+                "missing_indices": [],
+                "observed_cases": 1,
+                "on_time_exact_cases": 0,
+                "on_time_exact_request_occurrences": 0,
+                "planned_cases": 1,
+                "planned_request_occurrences": 64,
+                "wall_ns_all_observed": 120526570,
+                "wall_ns_median_all_observed": 120526570
+              }
+            },
+            "batch_size": 64,
+            "packed_over_direct_total_cpu_median": null,
+            "paired_complete_quality_and_local_deadline": false,
+            "paired_cpu_comparison_complete": false,
+            "paired_cpu_ratio_records": [
+              {
+                "packed_over_direct_cpu": null,
+                "repeat": 0,
+                "unavailable": "incomplete_or_late_delivery"
+              }
+            ],
+            "paired_total_cpu_ratio_range": null,
+            "paired_total_cpu_ratios": [],
+            "ratio_scope": "entire observed local replay, including every model load and full scalar verification",
+            "uncertainty": "finite local repetitions on a shared host; raw ratios and all costs retained; no statistical or general speedup claim"
+          }
+        ],
+        "distinct_retrospective_input_rows": 64,
+        "missing_indices": [],
+        "observed_cases": 8,
+        "planned_cases": 8,
+        "planned_request_occurrences": 170,
+        "repeats_and_arm_copies_are_new_demand": false
+      },
+      "statistics_not_present_in_original_report": []
+    }
+  ],
+  "reader_sha256": "293e3c78d535aa498bd8ee054885a4f00f65a7873ac6472f0a3e3f1437f2bcd4",
+  "schema": "pon-grouped-v1-evidence-readback-v2"
+}

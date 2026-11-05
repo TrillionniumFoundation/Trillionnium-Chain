@@ -92,10 +92,12 @@ case "${1:?required job}" in
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
+    python3 scripts/test_llm_runtime_trial_ledger.py
     python3 scripts/test_llm_parent_material.py
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
     python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_runtime_stop.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_python_runtime_contract.py
@@ -133,6 +135,8 @@ case "${1:?required job}" in
     # Complete source-router relation controls are research checks, not native/work-security qualification.
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_numeric_v1.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_attempt_journal_v1.py' -v
+    python3 scripts/ci/test_fixed_host_service_readback_v1.py
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py

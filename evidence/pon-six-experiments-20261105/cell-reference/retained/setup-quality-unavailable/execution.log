@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 320, in <module>
+    main()
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 315, in main
+    result = run(args)
+             ^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 148, in run
+    return run_admitted(args, output_dir, records, deadline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 246, in run_admitted
+    quality, quality_time = elapsed(lambda: quality_replay(model_dir, args.bundle_hash))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 42, in elapsed
+    value = call()
+            ^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 246, in <lambda>
+    quality, quality_time = elapsed(lambda: quality_replay(model_dir, args.bundle_hash))
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 51, in quality_replay
+    calibration = json.loads(read_bounded(model_dir / 'calibration.json', MAX_TASK_BYTES),
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/32ba45a9a98a/chain-work/formal/pon-nakamoto-v1/evaluation_bundle.py", line 270, in read_bounded
+    with open(path, 'rb') as source:
+         ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/32ba45a9a98a/chain-work/evidence/pon-native-node-v1/model-current/model/calibration.json'

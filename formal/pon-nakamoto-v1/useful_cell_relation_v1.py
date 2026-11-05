@@ -436,31 +436,98 @@ def _output(value, cid, observed):
     }
 
 
-def prove_reference(contract_raw, model, rows, before_state, *, max_attempts=64):
-    """Actually generate W1 witnesses in Python; this is not a native cost observation."""
+def reference_search_plan(contract_raw, before_state, tiles, batch_size, max_attempts):
+    """Describe the complete diagnostic denominator, without granting work authority.
+
+    The experiment retains this separately before starting the proof search. The
+    caller must have obtained tiles and state from the frozen relation; this
+    helper alone does not validate a model or a producer-supplied statement.
+    """
+    return {
+        'schema': 'useful-cell-reference-search-plan-v1',
+        'kind': 'plan', 'relation': RELATION_ID,
+        'contract_id': contract_id(contract_raw),
+        'before_state_sha256': digest(before_state),
+        'target': _contract(contract_raw)['proof']['target'],
+        'batch_size': batch_size, 'max_attempts_per_tile': max_attempts,
+        'tiles': [{'index': tile['index'], 'task': tile['task'],
+                   'material_sha256': sha256(tile['material'])} for tile in tiles],
+    }
+
+
+def prove_reference(contract_raw, model, rows, before_state, *, max_attempts=64,
+                    attempt_sink=None):
+    """Generate real W1 witnesses, optionally retaining every started attempt.
+
+    The sink is diagnostic, not an acceptance oracle. It sees the plan before
+    search and each nonce start before arithmetic. A failed sink aborts proving;
+    callers cannot obtain a successful witness after losing evidence. No source,
+    numeric, challenge, target, decision or state-transition rule is changed.
+    """
     require(type(max_attempts) is int and 1 <= max_attempts <= 4096, 'SEARCH_BUDGET')
+    require(attempt_sink is None or callable(attempt_sink), 'ATTEMPT_SINK')
     identity = current_identity()
     value = _bound_contract(contract_raw, model, rows, before_state, identity)
     tiles, _ = cell.build_tiles(model, rows)
+    sink_failed = False
+
+    def emit(event):
+        nonlocal sink_failed
+        if attempt_sink is not None:
+            try:
+                # A sink must not be able to rewrite the frozen plan or a result.
+                attempt_sink(copy.deepcopy(event))
+            except BaseException:
+                sink_failed = True
+                raise
+
+    emit(reference_search_plan(contract_raw, before_state, tiles, len(rows), max_attempts))
     entries, products = [], {}
     target = bytes.fromhex(value['proof']['target'])
-    for tile in tiles:
-        words = list(struct.unpack('<' + 'I' * (2 * work.CELLS), tile['material']))
-        for nonce in range(max_attempts):
-            challenge = _challenge(contract_raw, before_state, tile, nonce)
-            proof = work.prove(challenge, words[:work.CELLS], words[work.CELLS:])
-            if H('ticket', challenge, proof[-32:]) <= target:
-                break
-        else:
-            raise ValueError('SEARCH_EXHAUSTED')
-        entries.append({'index': tile['index'], 'nonce': nonce, 'proof_hex': proof.hex()})
-        products[tile['index']] = proof[4 + 2 * work.CELLS * 4:-32]
-    observed = cell.consume_products(tiles, products, len(rows))
-    witness = canonical({'schema': RELATION_ID + '/witness', 'model': model, 'rows': rows, 'tiles': entries})
-    require(len(witness) <= WITNESS_LIMIT, 'WITNESS_LIMIT')
-    require(current_identity() == identity, 'PROGRAM_CHANGED_DURING_PROVING')
-    return {'output': _output(value, contract_id(contract_raw), observed),
-            'after_state': copy.deepcopy(before_state), 'witness': witness}
+    try:
+        for tile in tiles:
+            words = list(struct.unpack('<' + 'I' * (2 * work.CELLS), tile['material']))
+            for nonce in range(max_attempts):
+                challenge = _challenge(contract_raw, before_state, tile, nonce)
+                context = {'tile': tile['index'], 'nonce': nonce,
+                           'challenge': challenge.hex()}
+                emit({'kind': 'attempt-start', **context})
+                wall, cpu = time.perf_counter_ns(), time.process_time_ns()
+                try:
+                    proof = work.prove(challenge, words[:work.CELLS], words[work.CELLS:])
+                    ticket = H('ticket', challenge, proof[-32:])
+                except BaseException as error:
+                    emit({'kind': 'attempt-error', **context,
+                          'wall_ns': time.perf_counter_ns() - wall,
+                          'process_cpu_ns': time.process_time_ns() - cpu,
+                          'error_type': type(error).__name__, 'error': str(error)[:1024]})
+                    raise
+                # These are actual attempt clocks, excluding journal I/O. The
+                # driver additionally measures the whole instrumented prove call.
+                elapsed_wall, elapsed_cpu = time.perf_counter_ns() - wall, time.process_time_ns() - cpu
+                hit = ticket <= target
+                emit({'kind': 'attempt-complete', **context, 'trace': proof[-32:].hex(),
+                      'proof_sha256': sha256(proof), 'ticket': ticket.hex(), 'hit': hit,
+                      'wall_ns': elapsed_wall, 'process_cpu_ns': elapsed_cpu})
+                if hit:
+                    break
+            else:
+                raise ValueError('SEARCH_EXHAUSTED')
+            entries.append({'index': tile['index'], 'nonce': nonce, 'proof_hex': proof.hex()})
+            products[tile['index']] = proof[4 + 2 * work.CELLS * 4:-32]
+        observed = cell.consume_products(tiles, products, len(rows))
+        witness = canonical({'schema': RELATION_ID + '/witness', 'model': model, 'rows': rows, 'tiles': entries})
+        require(len(witness) <= WITNESS_LIMIT, 'WITNESS_LIMIT')
+        require(current_identity() == identity, 'PROGRAM_CHANGED_DURING_PROVING')
+        output = _output(value, contract_id(contract_raw), observed)
+        emit({'kind': 'end', 'status': 'complete', 'witness_sha256': sha256(witness),
+              'output_sha256': digest(output), 'after_state_sha256': digest(before_state)})
+        return {'output': output, 'after_state': copy.deepcopy(before_state), 'witness': witness}
+    except BaseException as error:
+        if not sink_failed:
+            emit({'kind': 'end', 'status': 'failed',
+                  'error_type': type(error).__name__, 'error': str(error)[:1024]})
+        raise
 
 
 def _now(clock_ms):

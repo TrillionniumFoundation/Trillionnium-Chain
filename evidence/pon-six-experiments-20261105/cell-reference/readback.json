@@ -1,0 +1,184 @@
+{
+  "schema": "pon-six-experiments-cell-reference-readback-v1",
+  "executed_relation_program_sha256": "fcb23393e7cd0ced7f6c7d33f9e2e09f466506d6d4efd0972b3db9522ee83a2f",
+  "execution_base_commit": "346b15148bf9b0b1319b047e37c6df0d92ccfc93",
+  "exact_changed_source_sha256": {
+    "formal/pon-nakamoto-v1/useful_cell_relation_v1.py": "72aa7e2dae9a783919f973eb7d9a32c00e1b883e5b9b7469ecc899fbd13a8d48",
+    "formal/pon-nakamoto-v1/useful_cell_attempt_journal_v1.py": "ab2690602690aea851b95076c8dd1aee49b2b784b5992a6c60c84da8cc9de2fe",
+    "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py": "bae56f23b99177e3c9660cc535d185b3cac253ef17e03a646984cf102b525ce4",
+    "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py": "be5fd8d8979e18d04878a81d20d2b0e42a57ab7bdbacd1d9445a08be05c27281",
+    "formal/pon-nakamoto-v1/test_useful_cell_attempt_journal_v1.py": "584d709c192c68182a03a3f9c4167725c46e06780295395b0cce70edec180024"
+  },
+  "execution_source_scope": "working-tree source hashes above plus complete/program-identity.json; base commit alone is not the executed changed tree",
+  "experiment_1": {
+    "bounded_source_router_relation": "PASS",
+    "ordinary_hepta_complete_cell": "HOLD",
+    "planned_source_requests": 64,
+    "unique_source_rows": 64,
+    "complete_w1_transcripts": 5,
+    "proof_search": {
+      "completed_attempts": 11,
+      "failed_attempts": 0,
+      "hits": 5,
+      "misses": 6,
+      "recorded_process_cpu_ns": 2266370039,
+      "recorded_wall_ns": 2266554926,
+      "started_attempts": 11,
+      "unknown_attempts": 0
+    },
+    "first_hit_matches_delivered_witness": true,
+    "fresh_process_relation_verification": true,
+    "fresh_process_all_attempt_math_replay": true,
+    "read_only_state": true,
+    "ordinary_hepta_encoder": false,
+    "request_expert_masks": false,
+    "mutable_neuron_state": false,
+    "stop_enabled": false,
+    "owner_effect": false
+  },
+  "experiment_2": {
+    "status": "HOLD",
+    "new_measurement": "actual Python legal reference search only",
+    "new_native_strategy_census": "NOT_RUN",
+    "new_global_or_best_native_rho": null,
+    "invalid_input_rejection_cost_measured": false,
+    "prior_native_fifteen_arm_readback": "native-cost-readback.json",
+    "failed_search": {
+      "planned_source_requests": 64,
+      "planned_tiles": 5,
+      "completed_attempts": 1,
+      "misses": 1,
+      "not_run_tiles": 4,
+      "fully_completed_trial_outputs": 0,
+      "all_attempt_math_replay": true,
+      "recorded_process_cpu_ns": 149394459
+    }
+  },
+  "quality": {
+    "evaluation_scope": "original retrospective frozen partitions; no new train or future tasks",
+    "selected_reference": "mean_merge",
+    "model_reward": 0,
+    "all_three_candidate_marginal_values_negative": true,
+    "partitions": {
+      "consumer": {
+        "rows": 213,
+        "candidate_value": [
+          "157298971",
+          "198869580"
+        ],
+        "reference_value": [
+          "5010049",
+          "6313320"
+        ],
+        "marginal_value": [
+          "-207029",
+          "79547832"
+        ],
+        "marginal_value_decimal": -0.002602572500027405
+      },
+      "evaluation_a": {
+        "rows": 170,
+        "candidate_value": [
+          "62011",
+          "83875"
+        ],
+        "reference_value": [
+          "1243213",
+          "1677500"
+        ],
+        "marginal_value": [
+          "-2993",
+          "1677500"
+        ],
+        "marginal_value_decimal": -0.0017842026825633382
+      },
+      "evaluation_b": {
+        "rows": 184,
+        "candidate_value": [
+          "19663576",
+          "25478145"
+        ],
+        "reference_value": [
+          "211943",
+          "268191"
+        ],
+        "marginal_value": [
+          "-2039",
+          "110295"
+        ],
+        "marginal_value_decimal": -0.01848678543904982
+      }
+    }
+  },
+  "tests": {
+    "run": 92,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "successful": true
+  },
+  "independent_review_subset": {
+    "cases": 5,
+    "passed": 5,
+    "included_in_92_case_total": true,
+    "scope": "peer agent ran genuine nonce-substitution, final-fsync, ACK and source-drift functional controls; no performance claim"
+  },
+  "retained_observations": [
+    {
+      "path": "complete",
+      "source": "cell-reference-reviewed-complete",
+      "role": "current reviewed source",
+      "product_failure": null
+    },
+    {
+      "path": "exhaustion",
+      "source": "cell-reference-reviewed-exhaustion",
+      "role": "current reviewed source",
+      "product_failure": null
+    },
+    {
+      "path": "retained/setup-source-unavailable",
+      "source": "cell-reference-source-unavailable",
+      "role": "development/setup observation, retained without promotion",
+      "product_failure": false
+    },
+    {
+      "path": "retained/setup-quality-unavailable",
+      "source": "cell-reference-measured",
+      "role": "development/setup observation, retained without promotion",
+      "product_failure": false
+    },
+    {
+      "path": "retained/before-accounting-hardening-complete",
+      "source": "cell-reference-final",
+      "role": "development/setup observation, retained without promotion",
+      "product_failure": null
+    },
+    {
+      "path": "retained/before-accounting-hardening-exhaustion",
+      "source": "cell-reference-exhaustion",
+      "role": "development/setup observation, retained without promotion",
+      "product_failure": null
+    }
+  ],
+  "incomplete_test_log": {
+    "path": "verification/cell-reference-reviewed-tests.log.json",
+    "status": "UNCONFIRMED",
+    "reason": "tool returned exit0 but retained log lacks suite completion; not counted as passing; explicit final92-case completion receipt is separate",
+    "representation": "Lossless UTF-8 log in raw_utf8; original bytes/sha256 retained"
+  },
+  "resource_scope": {
+    "shared_host": true,
+    "concurrent_load_not_isolated": true,
+    "original_fixed_host_resources": false,
+    "original_four_second_service_gate": false,
+    "native_cargo_verification": false
+  },
+  "qualification": {
+    "ordinary_hepta": false,
+    "work_security": false,
+    "succinct_proof": false,
+    "real_model_adoption": false,
+    "production": false
+  }
+}
