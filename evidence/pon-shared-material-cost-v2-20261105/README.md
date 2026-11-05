@@ -176,3 +176,15 @@ blobs and remains `HOLD_NO_GO`; the frozen measurement gate above checked 487.
 The relocated archive passes every payload hash, all 31 strict readbacks and a
 byte-identical standalone summary. The archive retains the earlier evidence
 snapshot; later publication metadata does not change its measured costs.
+
+
+## Exact composed-source follow-up
+
+[The final composed-source checks](composed-source-32c3d63c/README.md) bind clean
+`32c3d63c`: 149 crypto library tests (all prior 138 retained), nine W1 example
+tests, strict Clippy, formatting, 98 CI-contract tests, 43 source-integrity
+negative tests, 37 PQ-integration tests, 3,076 local links, and a locked offline
+26-member / 175-package Cargo graph pass. The registry checks 505 source pins
+and remains `HOLD_NO_GO`. Later concurrent commits are preserved when publishing
+this evidence, but these receipts remain scoped to `32c3d63c`. The measured
+campaign and delivered raw archive remain unchanged and bound to `eeedfe33`.
