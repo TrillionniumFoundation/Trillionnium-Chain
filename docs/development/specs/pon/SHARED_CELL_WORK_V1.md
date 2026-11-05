@@ -205,3 +205,13 @@ design that removes useful sparsity or creates surplus expert work must debit
 that work. Initial correctness can be checked by the ordinary exact integer
 operator; moving to a full proof or a service dispute window requires separate
 proof-cost and trust assumptions. No new challenge domain is registered here.
+
+## Complete decision relation
+
+The separately versioned [useful-Cell relation](USEFUL_CELL_RELATION_V1.md)
+now wraps this exact packing with consumer-retained contract/state/use context,
+mandatory frozen-source feature replay, fixed numerical and decision semantics,
+and five complete reference W1 verifications. Its new challenge domain belongs
+to the enclosing research relation; this original native W1 profile is unchanged.
+The grouped relation above remains a design and acquires no qualification from
+that reference verifier.

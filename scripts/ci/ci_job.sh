@@ -129,6 +129,9 @@ case "${1:?required job}" in
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     python3 formal/pon-nakamoto-v1/test_model_contract.py
+    # Complete source-router relation controls are research checks, not native/work-security qualification.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_numeric_v1.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_useful_cell_relation_v1.py' -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
