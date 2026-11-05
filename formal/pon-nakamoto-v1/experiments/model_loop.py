@@ -112,7 +112,7 @@ def worker(args):
         marginal=[dict(value,score=value['exploratory_score'])for value in result['marginal']]
         value={'schema':'controlled-source-evaluation-v3','task_commitment':H('tasks',canonical(tasks)).hex(),
           'model_artifact':bundle['candidate_artifact'],'evaluation_bundle':args.bundle_hash,
-          'evaluation_partition':args.partition,'samples':len(y),'composed_correct':int(correct.sum()),
+          'evaluation_partition':args.partition,'value_claim':result['value_claim'],'samples':len(y),'composed_correct':int(correct.sum()),
           'base_correct':int((base==y).sum()),'whole_gain':whole,
           'weak_base_gain_for_comparison_only':gain(correct,base==y),'strong_reference':bundle['selected'],
           'strong_reference_artifact':result['reference_artifact'],

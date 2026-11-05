@@ -49,6 +49,19 @@ Require one of three named development evaluators, not author, unique sender, ex
 
 These exact functions contain executable assertions. The registry only checks binding; actual outcomes and source/input identities belong to the separate qualification report.
 
+## Bounded integer normal form reused by native admission
+
+[`exact_integer_linear_v1::verify_integer_linear_v1`](../../trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs)
+checks its frozen3×257 integer family, rank1..8, scale/range and full BA values.
+Its opaque result authenticates that arithmetic contract, not a caller's current
+model, State parent, source permission, functional behavior or reward. The explicit
+[M06 revision11 admission](../protocol/pon-nakamoto-v1/details/NATIVE_INTEGER_FACTOR_CANDIDATE_V2.md)
+separately loads the complete V2 model and restricts rank to1..2 before reusing this
+kernel. The two family domains are distinct. The
+[component contract](../protocol/pon-nakamoto-v1/details/INTEGER_LINEAR_NORMAL_FORM_COMPONENT_V1.md)
+records canonical identity and exact bounds; it is not FP32 LoRA equivalence,
+complementary-bundle attribution or an independent strongest-control quality test.
+
 ## Module-specific threat and residual work
 
 Weak baselines, correlated samples, adaptive holdout reuse, poisoned evaluators and first-two arrival manipulation.
@@ -64,11 +77,14 @@ No test binding or local campaign grants independent acceptance, ordinary Hepta 
 
 ## Executed evidence and scope
 
-The [current measured package](../../evidence/pon-v3/README.md) includes exact source,
-raw command exits and concrete invariant test results. Its verifier distinguishes
-runtime byte identity from documentation edits and cannot grant independent acceptance.
-Module-specific limitations above remain in force even when the referenced local test
-passes. The development plan, not this link or a count of procedures, selects next work.
+[Responsibility-level evidence navigation](README.md#responsibility-and-evidence) reads
+measured commits from immutable receipts. The module's entries in
+[module-maturity-v1.json](../../config/pon/module-maturity-v1.json) identify actual callable
+owners, controlled entrypoints, backends, persistence and exact observed test selectors.
+Run `python3 scripts/ci/report_module_evidence.py --module M11` from the repository
+root to see subject-byte and complete recorded-runtime matches separately, plus scenarios
+not observed in each package. A byte match is not a new test run or product acceptance.
+Historical v1/v3/v4 results are never repinned. The sole plan selects further work.
 
 ## Frozen evaluation and consent continuation
 
@@ -89,3 +105,75 @@ Calibration claims are recomputed, not accepted merely because a producer can ha
 
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_self_consistent_rehashed_calibration_score_still_requires_actual_replay`.
 - `formal/pon-nakamoto-v1/test_evaluation_bundle.py::FrozenEvaluationTests.test_changed_calibration_data_cannot_be_substituted`.
+
+## Native development continuation and remaining scope
+
+Statement classes and the difference between retrospective gain, prospective benefit and bounded optimality are explicit in MODEL_EVALUATION. No optimality verifier or independent future-window authority has been admitted. Revision3 first-two evaluation order remains an explicit successor-policy obligation.
+
+The current callable mappings remain in `config/pon/module-maturity-v1.json`.
+Exact native entry, storage and work behavior is specified by N3 in NETWORK_CLIENT,
+the native continuation in STATE_RECOVERY and the prepared-producer section in WORK_PROFILE.
+No historical receipt is relabelled as executing this source.
+
+The existing frozen evaluator and settlement producer also bind the versioned empirical
+accuracy/marginal-value/bound statement in MODEL_EVALUATION. Its canonical replay rejects
+false prospective/general-circuit authority and numeric aliases. A perfect empirical
+score proves only that fixed accuracy objective, not public reward eligibility or model
+safety. Revision3 first-two attestation arrival semantics remain unchanged and unqualified.
+
+## Explicit successor without rewriting revision3
+
+[M1 closed-round successor](../protocol/pon-nakamoto-v1/details/MODEL_EVALUATION.md#explicit-closed-round-successor-all-eligible-attestations-not-first-arrivals)
+adds a profile-bound all-eligible minimum rule in the existing M11/M06 owners.
+The default first-two rule and its economic counterexample remain historical/default
+facts, not silently repaired bytes. The selected successor requires a fresh network and
+store context. No attestation becomes objective ML truth, independent acceptance or work.
+
+Concrete selectors: `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_all_six_arrival_orders_close_to_the_same_state_with_all_workers`
+and `formal/pon-nakamoto-v1/test_evaluation_round.py::ClosedRoundTests.test_two_fast_high_scores_do_not_unlock_and_missing_vote_expires`.
+
+### M11.CompleteEvaluatorRound
+
+The explicit successor closes only the complete frozen eligible roster. Its exact
+counterexamples above compare all arrival orders and withheld/expired evidence. This
+invariant applies to a fresh revision4 context; the registry's genesis revision remains
+the unchanged installed revision3 default. No new authority is obtained by choosing a
+profile or by registering a test selector.
+
+## Native full evidence replay in the explicit model profile
+
+[Model evidence v3](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_EVIDENCE_V3.md) installs actual frozen tasks and four complete retained controls, recomputes candidate/parent/control scores in M06, and requires every signed reveal to match native score and digest. This finite statement is executable. Source attestations, hidden common control, general LLM behavior, prospective gain and public dispute adjudication remain distinct obligations.
+
+## Native composition evaluation in revision14
+
+[Model composition V4](../protocol/pon-nakamoto-v1/details/NATIVE_MODEL_COMPOSITION_V4.md)
+reuses the complete integer inference kernel,25 public historical tasks and four
+frozen controls. It evaluates each full component and every exact leave-one-out
+model against the actual current full parent; caller-supplied allocation weights
+must match those measured gains. The two-generation fixture adopts a24/25 parent
+before evaluating the next25/25 bundle, so the second parent is an actual release.
+
+A component with zero standalone gain may participate only in this fresh profile
+when its exact omission reduces the bundle score. Exact-zero subset rejection closes
+the known cancelling-pair example; it does not establish coalition fairness, causal
+training effort or protection against general component splitting. The fixed corpus
+saturates at25/25 and supplies no next untouched evaluation window. Independent
+prospective usefulness and public model rewards remain unaccepted.
+
+A separate Python integer implementation now compares all42 named native codec,
+composition, inference, tie, range and exactly cancelling subset observations, and the
+actual signed lifecycle's full empirical/composition records. It recomputes expected
+scores and digests from model bytes and frozen tasks; reported native score fields
+cannot supply the answer. This conformance layer leaves signatures, roster closure,
+ILF2 witness validity and future-task custody as separately scoped premises.
+
+## Bounded reported-window continuity
+
+The optional [model window history](../protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md#explicit-continuation-across-reported-evaluation-windows)
+requires externally fixed previous-history and new-window digests. Ordered rows
+rebuild prior task/probe prompts and contacted source groups; new evaluation must
+pass current V1 record validation and historical exclusions. Complete valid negative-gate
+records consume their window, and preregistration reserves enough bytes for the
+mandatory completed row. Candidate changes are allowed within a fixed owner and
+governance context. This pure sidecar does not authenticate historical execution,
+secret custody, real time or unreported exposure, and grants no native reward.

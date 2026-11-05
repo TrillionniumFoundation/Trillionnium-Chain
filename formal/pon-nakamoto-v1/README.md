@@ -30,7 +30,7 @@ The work relation, transaction/state bytes and parameter commitment are still ch
 
 The complete command set also covers bounded child I/O, strict signatures, model/receipt
 binding, clustered evaluation, malformed work and all workspace tests/Clippy/fmt. Actual
-commands and environment are in [the retained receipt](../../evidence/pon-v3/qualification/report.json).
+commands and environment belong to each [source-bound package](../../docs/modules/README.md#responsibility-and-evidence); v3 is historical, not the global current receipt.
 A test class name, new heading or passing document parser cannot stand in for those runs.
 Vectors are immutable test inputs; generating replacement vectors is an explicit protocol
 change and must never be part of a test's pass path.
@@ -72,7 +72,7 @@ withholding tests a controlled partition schedule; it does not simulate every WA
 Model copies, actual inference, finite sponsored quota and replay rejection are measured
 separately from adoption. Hosts controlled by one operator do not become independent actors.
 
-[The evidence package](../../evidence/pon-v3/README.md) binds raw outputs, code, inputs,
+[The historical v3 evidence package](../../evidence/pon-v3/README.md) binds raw outputs, code, inputs,
 clock overrides and remaining limits. Historical [v1 evidence](../../evidence/pon-v1/README.md)
 is not edited or promoted to current acceptance. Work hardness, fair public proof admission,
 ordinary Hepta integration, long-term DA, physical power loss and independent acceptance
@@ -89,3 +89,28 @@ output directories. `run_campaign.py` forwards the producer's returned digest.
 Run `python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py` for exact substitution,
 leakage, statistical-unit, worker and settlement counterexamples. Three-cycle learning
 uses the same sealed controls/parent, while keeping retrospective/no-public-update scope.
+
+
+The controlled `client_confirmation.py` CLI adds bounded full-history delivery and a
+receiver-computed transaction confirmation query. It is not a succinct proof or native
+network host. `test_client_confirmation.py` executes actual work and signed state replay,
+with the same tests additionally selecting native work/execution in protocol CI.
+
+## Explicit native session
+
+Build `pon_execute_session` with the existing M06 examples and select it using
+`TRNM_NATIVE_SESSION=/absolute/path/to/pon_execute_session`; `TRNM_NATIVE_WORK` may
+independently select the existing verifier. Do not also set `TRNM_NATIVE_EXECUTOR`.
+The session is a bounded disposable compute cache owned by the reference Ledger, not a
+native persistent node or new database. Run `test_native_session.py` and
+`test_work_precheck.py`; client single/batch confirmation retains complete-ancestry
+clock checks. Missing/changed binaries and ambiguous replies cannot silently fall back.
+
+## Model operations reported-acceptance sidecar
+
+Run `python3 formal/pon-nakamoto-v1/test_model_acceptance.py` for synthetic adversarial
+and package-ingestion regressions. The owner-pinned offline verifier and exact package
+contract are in [Model operations acceptance](../../docs/protocol/pon-nakamoto-v1/details/MODEL_OPERATIONS_ACCEPTANCE_V1.md).
+It replays existing target-decoder controls and adds prospective-record separation,
+poison/backdoor/forgetting probes, unique reported consumer uses and retention costs.
+A contract pass never establishes real model efficacy or independent acceptance.
