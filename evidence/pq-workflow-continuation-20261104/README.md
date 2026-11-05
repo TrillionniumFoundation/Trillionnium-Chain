@@ -1,5 +1,11 @@
 # PQ workflow continuation: fixes, receipts and open gates
 
+## Final fixed-pair result (2026-11-05 UTC)
+
+The selected code pair is **Chain `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35` + Hepta runtime `484ce165522026d915c4cf526cd7df2effab632c`**. [Final frozen-source receipts](frozen-d9954903/README.md) record 47 source/recorder, 63 quantum-clock, 57 PQ and 4 native cache tests passing on the corrected immutable Chain commit; complete tracked-source checks cover 9,197 entries / 948,887,514 bytes before and after execution. The exact 464-pin / 6-upstream contract passes with **HOLD_NO_GO**. Runtime source and format checks pass; host native tests remain **NOT_RUN**. This documentation/evidence follow-up does not change the tested code pair. Complete engineering, original 4s/16, research, proof-benefit and independent-acceptance gates remain open.
+
+The checkpoint-creation statements and earlier receipts below are historical to their explicitly named versions. The [inventory correction](inventory-correction/README.md) preserves the initial generated-file failure and its repair; the final results above were rerun on `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35`.
+
 Status: **HOLD — bounded engineering progress; no whole-chain acceptance or activation.**
 
 The publication code checkpoint uses Chain input `38cf428103f48879fcc6b7dc0fc523d5c58ff2e0` plus [publication-source-files.json](publication-source-files.json). Its immutable Git commit is the selected code identity. The earlier validated input `38543c96cabb0d63a4a99d149a30a270d0c2c107` and exact changed files are retained in [source-files.json](final-composition/source-files.json). See [PUBLICATION_SCOPE.md](PUBLICATION_SCOPE.md): validation of the newer Growth composition is pending at checkpoint creation. The paired runtime candidate is **`484ce165522026d915c4cf526cd7df2effab632c`** in [runtime Draft #4812](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4812). The pair is fixed for review; a complete ordinary deployment profile and a real task/multi-node run on this pair remain unqualified.

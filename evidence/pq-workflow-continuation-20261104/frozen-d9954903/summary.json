@@ -1,0 +1,120 @@
+{
+  "schema": "trnm-pq-workflow-frozen-evidence-v1",
+  "recorded_utc": "2026-11-05T02:06:45Z",
+  "status": "HOLD",
+  "source_pair": {
+    "chain": {
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "commit": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+      "tree": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+      "draft_pr": 688
+    },
+    "hepta_runtime": {
+      "repository": "TrillionniumFoundation/hepta-private-ci",
+      "commit": "484ce165522026d915c4cf526cd7df2effab632c",
+      "tree": "87608a9448e8cbb90c448bf82a495db1dfd32a45",
+      "draft_pr": 4812
+    }
+  },
+  "publication_semantics": "This evidence-only follow-up does not change the immutable tested code pair. Branch successors require their own validation.",
+  "tests": [
+    {
+      "group": "source-integrity-and-command-recorder",
+      "passed": 47,
+      "failed": 0,
+      "scope": "Synthetic source-composition controls plus command recorder; not a GitHub prospective-merge execution",
+      "receipt": "source-integrity.log"
+    },
+    {
+      "group": "quantum-candidate-network-resource-clock",
+      "passed": 63,
+      "failed": 0,
+      "scope": "Classical model implementation controls; not a physical quantum security threshold",
+      "receipt": "quantum-clock.log"
+    },
+    {
+      "group": "pq-source-and-claim-controls",
+      "passed": 57,
+      "failed": 0,
+      "scope": "Source coverage and claim controls; not complete ordinary PQ authorization acceptance",
+      "receipt": "pq-controls.log"
+    },
+    {
+      "group": "native-public-cache-modes",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "scope": "Actual PublicServer constructor integration tests, default features, debug/opt-level-0 node; not business performance qualification",
+      "receipt": "native-cache-modes/result.json"
+    }
+  ],
+  "total_scoped_passes": 171,
+  "raw_source": {
+    "kind": "head",
+    "before_and_after_tests": "PASS",
+    "tracked_entries": 9197,
+    "tracked_bytes": 948887514,
+    "receipt": "raw-source/head-source-identity-after-tests.json",
+    "tests_executed_by_identity_check": false
+  },
+  "cross_branch_source_contract": {
+    "result": "PASS",
+    "status": "HOLD_NO_GO",
+    "exact_source_blobs": 464,
+    "upstream_heads": 6,
+    "cryptographic_acceptance": false,
+    "whole_native_authorization_migrated": false,
+    "node_activated": false,
+    "receipt": "raw-source/pq-research-integration.json"
+  },
+  "additional_checks": {
+    "ci_structure": "PASS",
+    "distributed_source_inventory": "PASS",
+    "shell_syntax": "PASS",
+    "rust_workspace_format": "PASS"
+  },
+  "native_scope": {
+    "command_receipt": "native-cache-modes/result.json",
+    "head_tree_and_clean_worktree_unchanged": true,
+    "all_native_config_files": 1245,
+    "all_native_config_aggregate_sha256": "2f96825a93f5db926dd310f0412e455f9b5c684ef43773f882ef29debdefaf75",
+    "elapsed_seconds_including_compilation": 98.183603,
+    "sqlite_boundary_qualification": "UNQUALIFIED: RUSTC must be absolute",
+    "host_performance_qualified": false
+  },
+  "hepta_runtime_checks": {
+    "source_identity": "PASS",
+    "direct_format": "PASS",
+    "repository_just_fmt": "PASS",
+    "diff_check": "PASS",
+    "host_native": "NOT_RUN",
+    "endpoint_native_controls": "NOT_RUN",
+    "environment_observation": "AF_UNIX SOCK_STREAM refused with EPERM",
+    "evidence_url": "https://github.com/TrillionniumFoundation/hepta-private-ci/blob/484ce165522026d915c4cf526cd7df2effab632c/evidence/pq-final-use-endpoint-separation-20261104/README.md"
+  },
+  "correction": {
+    "original_checkpoint": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "corrected_code_commit": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+    "error": "API-side generated source-inventory insertion omitted the existing public_cli.rs entry opening; source generator and Rust workspace formatter rejected it",
+    "action": "Regenerated the source inventory and refreshed the affected corpus pin; failures retained; all final groups rerun on the corrected immutable commit",
+    "receipt": "../inventory-correction/README.md"
+  },
+  "unexecuted_or_open": [
+    "Hepta host native endpoint and ordinary-path tests",
+    "Actual GitHub prospective-merge execution",
+    "Full workspace native suite and strict workspace Clippy",
+    "Complete ordinary PQ task/payment/CURRENT/FinalUse acceptance",
+    "Full migration conservation, debt, nonce, tasks, key-generation, retirement and activation-reorg acceptance",
+    "Provider-effect/consume coordination and full-directory rollback, clone, crash, reorg campaign",
+    "No-attack real-business native GrowthV2 baseline and state-scaling campaign",
+    "Original 4-second / 16-hostile-producer gate and every existing subcondition",
+    "Fastest legal work solver, task selection/reuse and attacker-cost lower bounds",
+    "Deployment-specific quantum marked-domain, private-branch, DAA, chain-growth and reorg conclusions",
+    "Complete new W1 v2 proof, instantiated security composition and end-to-end benefit",
+    "Fixed-pair real Hepta task, multi-node run and independent acceptance"
+  ],
+  "production_activation": false,
+  "whole_chain_acceptance": false,
+  "remote_ci_waited": false
+}

@@ -1,6 +1,12 @@
 # P0 source review baseline
 
-Status: **partial source-baseline record; HOLD**. The reviewed source pair is the Chain commit containing this record and runtime `484ce165522026d915c4cf526cd7df2effab632c`. This does not declare a fully qualified deployment or close the complete authority-map requirement.
+## Final fixed-pair result (2026-11-05 UTC)
+
+The selected code pair is **Chain `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35` + Hepta runtime `484ce165522026d915c4cf526cd7df2effab632c`**. [Final frozen-source receipts](frozen-d9954903/README.md) record 47 source/recorder, 63 quantum-clock, 57 PQ and 4 native cache tests passing on the corrected immutable Chain commit; complete tracked-source checks cover 9,197 entries / 948,887,514 bytes before and after execution. The exact 464-pin / 6-upstream contract passes with **HOLD_NO_GO**. Runtime source and format checks pass; host native tests remain **NOT_RUN**. This documentation/evidence follow-up does not change the tested code pair. Complete engineering, original 4s/16, research, proof-benefit and independent-acceptance gates remain open.
+
+The checkpoint-creation statements and earlier receipts below are historical to their explicitly named versions. The [inventory correction](inventory-correction/README.md) preserves the initial generated-file failure and its repair; the final results above were rerun on `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35`.
+
+Status: **partial source-baseline record; HOLD**. The reviewed source pair is Chain `d9954903ef9239f71aa575ec3e6f4fdaa88f2d35` and runtime `484ce165522026d915c4cf526cd7df2effab632c`. This does not declare a fully qualified deployment or close the complete authority-map requirement.
 
 ## Inputs and immutable identities
 

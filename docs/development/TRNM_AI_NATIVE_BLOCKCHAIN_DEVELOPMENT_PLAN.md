@@ -25,16 +25,22 @@ and small machine-readable companions, not historical symlinks or dated parallel
 
 **PQ workflow continuation, 2026-11-04 America/New_York (2026-11-05 UTC):**
 The existing #688/#4812 candidates retain concurrent Cell, Growth, migration and
-W1 v2/QROM work. [The execution record](../../evidence/pq-workflow-continuation-20261104/README.md)
-binds source-composition isolation, exclusive public cache ownership, exact quantum
-candidate-check accounting and runtime clock/frontier path separation. The earlier
-38543c96 combination passed 47 source/record, 63 quantum, 57 PQ and four native
-cache controls. [The publication checkpoint](../../evidence/pq-workflow-continuation-20261104/PUBLICATION_SCOPE.md)
-preserves the newer 38cf4281 composition and requires validation against its fixed
-commit; no earlier native pass is inherited. Runtime 484ce165 has source/format
-checks but no host native test result. The P0 authority map is partial; original
-4s/16, full migration/recovery, work-cost/quantum assumptions, proof benefit and
-independent acceptance remain open. Activation and qualification do not change.
+W1 v2/QROM work. The fixed code pair is Chain
+`d9954903ef9239f71aa575ec3e6f4fdaa88f2d35` and Hepta runtime
+`484ce165522026d915c4cf526cd7df2effab632c`. [Final frozen-source receipts](../../evidence/pq-workflow-continuation-20261104/frozen-d9954903/README.md)
+record 47 source/recorder, 63 quantum-clock, 57 PQ and four native cache tests
+passing on the corrected Chain commit, plus complete source identity before and
+after execution (9,197 entries / 948,887,514 bytes). The 464-pin / 6-upstream
+contract passes with HOLD_NO_GO. [The execution record](../../evidence/pq-workflow-continuation-20261104/README.md)
+covers source-composition isolation, exclusive public cache ownership, exact
+candidate-check accounting and runtime clock/frontier path separation. The
+generated-inventory publication error and correction are retained; final checks
+were rerun after correction. Evidence-only successors do not replace the tested
+code pair. Runtime source/format checks pass; host native tests remain NOT_RUN.
+The P0 authority/deployment inventory is partial; ordinary PQ paths, original
+4s/16, full migration/recovery, work-cost/quantum assumptions, complete proof
+benefit and independent acceptance remain open. Activation and qualification
+do not change.
 
 The user's revised consensus decision supersedes the earlier keep-BFT proposal:
 PoCO-BFT is RETIRED AS DEVELOPMENT TARGET. PoN is a Nakamoto-style useful neural-work

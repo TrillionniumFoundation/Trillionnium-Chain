@@ -1,0 +1,10 @@
+{
+  "action": "use verified existing integration branch name at exact frozen commit",
+  "branch_before": "",
+  "branch_after": "fix/chain-six-axis-performance-20261103",
+  "actual_head": "d9954903ef9239f71aa575ec3e6f4fdaa88f2d35",
+  "actual_tree": "54442c70933c1ea37ebfe725628cbdd8685b746e",
+  "git_status": "",
+  "preserved_second_result_sha256": "f68556309e674adb222c30d54079690c7572cff295fdd4697206e4c7646f5044",
+  "remote_changes": false
+}
