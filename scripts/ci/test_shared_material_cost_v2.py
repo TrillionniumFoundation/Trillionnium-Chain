@@ -211,8 +211,9 @@ class CostControls(unittest.TestCase):
         baseline = baseline_fixture()
         cpu = baseline['cpu']
         cpu['warm_samples_ns'] = [value * 1000000 for value in cpu['warm_samples_ns']]
-        for field in ('warm_min_ns', 'warm_median_ns', 'warm_p95_ns'):
-            cpu[field] *= 1000000
+        ordered = sorted(cpu['warm_samples_ns'])
+        cpu.update(warm_min_ns=min(ordered), warm_median_ns=int(cost.statistics.median(ordered)),
+                   warm_p95_ns=ordered[min(len(ordered) - 1, (95 * len(ordered) + 99) // 100 - 1)])
         with self.assertRaisesRegex(ValueError, 'BASELINE_PHASE_ENVELOPE:cpu_ns'):
             cost.phase_measurements(phase_fixture(), cost.baseline_measurements(baseline), require_cpu=True)
 
@@ -535,8 +536,9 @@ class ActualObservationControls(unittest.TestCase):
         def mutation(copied, report):
             def inflate(baseline):
                 baseline['warm_samples_ns'] = [value * 1000000 for value in baseline['warm_samples_ns']]
-                for field in ('warm_min_ns', 'warm_median_ns', 'warm_p95_ns'):
-                    baseline[field] *= 1000000
+                ordered = sorted(baseline['warm_samples_ns'])
+                baseline.update(warm_min_ns=min(ordered), warm_median_ns=int(cost.statistics.median(ordered)),
+                                warm_p95_ns=ordered[min(len(ordered) - 1, (95 * len(ordered) + 99) // 100 - 1)])
             self.update_baseline(copied, report, inflate)
         self.reject_mutation(mutation, 'BASELINE_PHASE_ENVELOPE:wall_ns')
 
@@ -547,8 +549,9 @@ class ActualObservationControls(unittest.TestCase):
             def inflate(baseline):
                 source = baseline['cpu']
                 source['warm_samples_ns'] = [value * 1000000 for value in source['warm_samples_ns']]
-                for field in ('warm_min_ns', 'warm_median_ns', 'warm_p95_ns'):
-                    source[field] *= 1000000
+                ordered = sorted(source['warm_samples_ns'])
+                source.update(warm_min_ns=min(ordered), warm_median_ns=int(cost.statistics.median(ordered)),
+                              warm_p95_ns=ordered[min(len(ordered) - 1, (95 * len(ordered) + 99) // 100 - 1)])
             self.update_baseline(copied, report, inflate)
         self.reject_mutation(mutation, 'BASELINE_PHASE_ENVELOPE:cpu_ns')
 
