@@ -393,6 +393,24 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             with self.subTest(changed=changed), self.assertRaisesRegex(ValueError, 'lane dispatch'):
                 check_independent_conformance(changed, self.lanes)
 
+    def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
+        for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py'):
+            command = ("    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p '"
+                       + name + "' -v\n")
+            self.assertEqual(self.script.count(command), 1)
+            variants = {
+                'removed': self.script.replace(command, ''),
+                'stubbed': self.script.replace(command, '    true # omitted useful relation\n'),
+                'duplicated': self.script.replace(command, command * 2),
+                'skipped': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+                'swallowed': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'moved': self.script.replace(command, '').replace('  fuzz-smoke)\n',
+                                                                  '  fuzz-smoke)\n' + command),
+            }
+            for label, script in variants.items():
+                with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):
+                    check_independent_conformance(script, self.lanes)
+
     def test_original_campaign_reader_keeps_original_pins_and_lane(self):
         for replacement in ['', ORIGINAL_CAMPAIGN_READER * 2,
                             ORIGINAL_CAMPAIGN_READER.replace('python3', 'true # python3'),

@@ -1,0 +1,68 @@
+{
+  "absorbed_concurrent_head": "1d6a9f9b5e8abd9e86457f45199a4922f9376360",
+  "changed_non_reference_registration_files": [
+    {
+      "composed_git_blob": "70cf3248a28c6a1dc59eaa27f385ed4150916b68",
+      "composed_sha256": "139b4cebb98c470cd059f30fbd9cdbdb1b7c28fbd3815b966db8aefb7b85e909",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "tested_sha256": "6d84864aac8a7e397f253ac8856358bf7f9473f4de7db7f0647d5055bad95ee6"
+    },
+    {
+      "composed_git_blob": "8825d39dcff7ce663175c190a72e57778572bfb7",
+      "composed_sha256": "c919f21bf3cf97a1a79d3fb4b3dbd1693b5f24fc07c991aa8988232e75299ba4",
+      "path": "scripts/ci/ci_job.sh",
+      "tested_sha256": "c3d8358b44972b32ca9a35d4268c30e99116d554b7684b67da4ad7ed0bb9d27b"
+    }
+  ],
+  "composed_ci_controls": {
+    "elapsed_seconds": 10.482992593002564,
+    "returncode": 0,
+    "source_commit": "652294404098e624da20178b013d02d9b1175b38",
+    "stderr_sha256": "b3eb698aef937db06d3db7552c37b9a299c1a379c61c7233e280dd6a1efbf443",
+    "tail": [
+      "",
+      "----------------------------------------------------------------------",
+      "Ran 99 tests in 10.319s",
+      "",
+      "OK"
+    ]
+  },
+  "composed_source_commit": "652294404098e624da20178b013d02d9b1175b38",
+  "executed_reference_identity_unchanged": true,
+  "executed_reference_source_files": 18,
+  "merge_resolution": "Retain both exact CI command sets, preserve concurrent native/evidence updates, and pin the actual combined ci_job.sh blob. No force push.",
+  "native_qualification_from_this_record": false,
+  "other_tested_files_unchanged": [
+    "config/pon/devnet-v1.json",
+    "config/pon/evaluation-round-v1.json",
+    "config/pon/ledger-v1.json",
+    "config/pon/model-family-v1.json",
+    "config/pon/work-profile-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/specs/pon/SHARED_CELL_WORK_V1.md",
+    "docs/development/specs/pon/USEFUL_CELL_RELATION_V1.md",
+    "formal/pon-nakamoto-v1/bounded_process.py",
+    "formal/pon-nakamoto-v1/contract_wire.py",
+    "formal/pon-nakamoto-v1/evaluation.py",
+    "formal/pon-nakamoto-v1/evaluation_bundle.py",
+    "formal/pon-nakamoto-v1/experiments/model_loop.py",
+    "formal/pon-nakamoto-v1/experiments/shared_cell_operator_v1.py",
+    "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+    "formal/pon-nakamoto-v1/ledger.py",
+    "formal/pon-nakamoto-v1/model_contract.py",
+    "formal/pon-nakamoto-v1/strict_signature.py",
+    "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+    "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+    "formal/pon-nakamoto-v1/useful_cell_numeric_v1.py",
+    "formal/pon-nakamoto-v1/useful_cell_relation_v1.py",
+    "formal/pon-nakamoto-v1/work_backend.py",
+    "formal/pon-nakamoto-v1/work_oracle.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "parameters_sha256": "0a09e5575ac0c5ac7b461fd5659fb5619907e7654e6a521dcd7f64b42d708722",
+  "production_activation": false,
+  "program_sha256": "5cc3a91b8d85b0249d38cc479c13b76c6261224faaed5573e27c96149d7a6919",
+  "schema": "useful-cell-int257-v1/composition",
+  "tested_reference_source_commit": "6541befe89742ea09d928864d0e6581213182382"
+}
