@@ -17,6 +17,15 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Schema readback preparation, 2026-11-05:** Reuse only the SQLite program for
+same-transaction catalog SELECTs, retaining fresh result rows, both freshly
+prepared PRAGMAs, all original scope/State/graph/Host checks and schema-reset
+behavior. The [local controls and bounded cost observation](../../evidence/pon-schema-readback-20261105/README.md)
+retain unversioned catalog changes, temporary objects and attachment refusals.
+This reduces one local preparation cost; original fixed-Host four-second/16-worker
+confirmation, PQ, whole-workspace and independent acceptance remain separate.
+No deadline, safety check or qualification flag is relaxed.
+
 **PQ owner-boundary continuation, 2026-11-04 America/New_York:** Continue the
 existing #688/#4812 candidates from Chain `ef1fa4d48ab9894f3d7a4b1c797ca9e7e490b155`
 and hepta-private-ci runtime `3558ced0fd983603a3082a42359e8da63dfc8418`.

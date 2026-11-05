@@ -63,7 +63,11 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
     if temp_objects != 0 {
         return Ok(None);
     }
-    let mut statement = db.prepare(
+    // Cache only the SQL program, never catalog rows or a scope verdict.
+    // Keep both PRAGMAs freshly prepared: database_list may bind attachment
+    // observations at prepare time. Each SELECT still steps current catalog
+    // rows, and SQLite invalidates its VM after ordinary DDL or schema RESET.
+    let mut statement = db.prepare_cached(
         "SELECT 'main',type,name,tbl_name,rootpage,sql FROM main.sqlite_master UNION ALL SELECT 'temp',type,name,tbl_name,rootpage,sql FROM temp.sqlite_master ORDER BY 1,2,3",
     )?;
     let rows = statement.query_map([], |row| {

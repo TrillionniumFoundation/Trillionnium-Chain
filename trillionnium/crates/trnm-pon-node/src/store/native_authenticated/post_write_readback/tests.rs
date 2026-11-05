@@ -670,3 +670,61 @@ fn prepare_only_schema_reset_preserves_the_normalized_writer() {
     .unwrap();
     assert_eq!(scope.hits, 1);
 }
+
+#[test]
+fn cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows() {
+    let db = rusqlite::Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE original(key INTEGER PRIMARY KEY, value BLOB)")
+        .unwrap();
+    let first = readback_schema(&db).unwrap().unwrap();
+    assert_eq!(readback_schema(&db).unwrap().unwrap(), first);
+    db.execute_batch("ALTER TABLE original ADD COLUMN extra TEXT")
+        .unwrap();
+    let altered = readback_schema(&db).unwrap().unwrap();
+    assert_ne!(altered, first);
+    assert!(altered[0].5.as_ref().unwrap().contains("extra"));
+    let rootpage = altered[0].4;
+    // Catalog writes deliberately do not bump schema_version. A cached SQL
+    // program must still expose the changed row, never retain its old result.
+    db.execute_batch("PRAGMA writable_schema=ON").unwrap();
+    assert!(readback_schema(&db).unwrap().is_none());
+    db.execute(
+        "UPDATE sqlite_master SET rootpage=? WHERE name='original'",
+        [rootpage + 1],
+    )
+    .unwrap();
+    db.execute_batch("PRAGMA writable_schema=OFF").unwrap();
+    let changed = readback_schema(&db).unwrap().unwrap();
+    assert_eq!(changed[0].4, rootpage + 1);
+    db.execute_batch("PRAGMA writable_schema=ON").unwrap();
+    db.execute(
+        "UPDATE sqlite_master SET rootpage=? WHERE name='original'",
+        [rootpage],
+    )
+    .unwrap();
+    db.execute_batch("PRAGMA writable_schema=RESET").unwrap();
+    assert_eq!(readback_schema(&db).unwrap().unwrap(), altered);
+    db.execute_batch("DROP TABLE original; CREATE TABLE replacement(value TEXT)")
+        .unwrap();
+    let replaced = readback_schema(&db).unwrap().unwrap();
+    assert_eq!(replaced.len(), 1);
+    assert_eq!(replaced[0].2, "replacement");
+}
+
+#[test]
+fn warm_catalog_statement_never_hides_temp_objects_or_database_attachments() {
+    let db = rusqlite::Connection::open_in_memory().unwrap();
+    db.execute_batch("CREATE TABLE original(value TEXT)")
+        .unwrap();
+    let first = readback_schema(&db).unwrap().unwrap();
+    db.execute_batch("CREATE TEMP TABLE temporary(value TEXT)")
+        .unwrap();
+    assert!(readback_schema(&db).unwrap().is_none());
+    db.execute_batch("DROP TABLE temp.temporary").unwrap();
+    assert_eq!(readback_schema(&db).unwrap().unwrap(), first);
+    db.execute_batch("ATTACH DATABASE ':memory:' AS extra")
+        .unwrap();
+    assert!(readback_schema(&db).unwrap().is_none());
+    db.execute_batch("DETACH DATABASE extra").unwrap();
+    assert_eq!(readback_schema(&db).unwrap().unwrap(), first);
+}
