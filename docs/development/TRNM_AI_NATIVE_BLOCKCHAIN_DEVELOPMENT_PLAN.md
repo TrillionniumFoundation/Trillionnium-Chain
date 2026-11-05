@@ -48,6 +48,10 @@ accepted Hepta release. A rectangular/grouped relation requires its own version,
 numeric contract and security evidence; no W1 consensus rule is replaced. Full v2
 proof generation, original hostile public-service budgets, independent future
 evaluation and funded effects retain their separate unclosed exits.
+The [frozen observation](../../evidence/pon-shared-material-v1-20261105/README.md)
+records complete numerical agreement, an adverse 373--611x native-child/ordinary-warm
+cost ratio, 9.07--15.15x raw hostile-verification CPU amplification, and a correctly
+rejected candidate with zero model reward. None is promoted to production qualification.
 
 **Cell runtime composition, 2026-11-04 America/New_York:** Continue the existing
 #688 candidate from `47b4a62463d8e1371a175c74196d52d99c5fccb8`. Connect complete

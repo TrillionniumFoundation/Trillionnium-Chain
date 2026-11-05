@@ -1,0 +1,9 @@
+{
+  "filename": "pon-shared-material-v1-20261105.zip",
+  "bytes": 3290232,
+  "sha256": "263f6eb27d8a8d46796e6c5a95cd8ae73d6652a36a16a9668eff9e8a6a787ae0",
+  "entries": 341,
+  "uncompressed_payload_bytes": 38526221,
+  "executed_source_commit": "59321c326313b78640b2df11122e00b3c7cfd71f",
+  "large_raw_logs_committed_to_repository": false
+}
