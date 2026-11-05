@@ -28,6 +28,10 @@ from w1_stage_measure import Canceled, cancel_on_signals, measure, sha, write_ne
 
 SCHEMA = "TRNM-W1-V2-RECEIPT-CONTROLS1"
 PROFILE_ID = "trnm-w1-risc0-3.0.6-poseidon2-join-v2"
+# The independent verifier fixes this image in w1_v2_verifier/src/image.rs.
+# Neither a report nor a caller-selected profile may choose another guest.
+EXPECTED_IMAGE_ID = (1958252411, 3287394615, 1805488136, 1516578702,
+                     78549041, 790278610, 301018785, 4279049364)
 DOMAIN = b"TRNM-W1-ZK-JOURNAL2\0"
 HEADER_BYTES = 318
 JOURNAL_BYTES = 16882
@@ -213,6 +217,12 @@ def materialize(plan, baseline, location):
 def validate_positive(data, baseline, location):
     row = strict_json(data)
     require(type(row) is dict, "positive verifier report must be an object")
+    image_id = row.get("image_id")
+    require(type(image_id) is list and len(image_id) == 8
+            and all(type(word) is int and 0 <= word < 2**32 for word in image_id),
+            "positive report image_id must contain exactly eight canonical u32 words")
+    require(tuple(image_id) == EXPECTED_IMAGE_ID,
+            "positive report image_id differs from the fixed v2 verifier")
     expected = {"schema": "TRNM-W1-V2-FULL-VERIFY1", "profile_id": PROFILE_ID,
                 "sdk": "3.0.6", "iterations": 1, "independent_proof_trials": 1,
                 "work_id": location["work_id"], "header_sha256": digest(baseline["header"]),
