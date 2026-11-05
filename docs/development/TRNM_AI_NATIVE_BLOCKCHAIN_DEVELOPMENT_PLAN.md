@@ -7181,3 +7181,24 @@ twenty immutable-history and thirty-four proof-observer controls passed, includi
 actual SQLite/child-process and TCP loopback cases. CURRENT, FinalUse, actual
 installed-generation next-task use and native recovery remain unproved. Existing
 allowances, immutable history interpretation, owners and activation flags remain.
+
+
+### 2026-11-05 experiment 3: original baseline first, without a new success claim
+
+The existing shared History owner no longer repeats two adjacent full Host reads
+before its first lock attempt. Each acquisition attempt and busy retry still
+observes the Host outside the Node writer; exclusive actions still observe it on
+each call. A post-observation time fence refuses work when the full Host read
+crosses the original deadline. Four native regression controls accompany the
+repair but remain uncompiled and unexecuted in this toolchain-free environment.
+The original fixed-Host F0 workflow watches these source paths and retains its
+original source attestation, budgets, denominator and always-finalization path.
+
+The [separate experiment 3 record](../../evidence/pon-six-experiments-20261105/fixed-host-readback.md)
+keeps the old baseline at 0/3 and ROOT phase at 0/3 scheduled four-second
+confirmations, with all 42 business exposures. Fourteen readback mutation
+controls pass; they do not count as new native runs. The old no-attack client
+import, account-graph and Host costs remain independently visible, with nested
+intervals never summed. The next gate is BASELINE_MUST_PASS under the original
+AuthenticatedV1/RawR14, quarter-core, 2-GiB public Host. Continuous novel-input
+availability and cheapest-legal-work economics remain separate unclosed gates.

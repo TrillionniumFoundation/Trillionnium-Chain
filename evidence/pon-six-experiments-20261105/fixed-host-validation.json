@@ -1,0 +1,25 @@
+{
+  "artifacts": {
+    "fixed-host-readback.json": "a941b58bf876f4d5783884e26bada3c6c6b284d783b4bb89384fe7cf4d82ee70",
+    "fixed-host-tests.log": "b20647b24e473922ed8f4983562ecd71825a15550131647dd118461b21f43ca8"
+  },
+  "command": [
+    "python3",
+    "scripts/ci/test_fixed_host_service_readback_v1.py"
+  ],
+  "exit_code": 0,
+  "native_controls_added_not_executed": 4,
+  "native_toolchain_available": false,
+  "new_native_executions": 0,
+  "passed_python_controls": 14,
+  "schema": "pon-six-experiments-fixed-host-validation-v1",
+  "service_qualified": false,
+  "source_sha256": {
+    ".github/workflows/pon-fixed-host-root-f0.yml": "52fe041e9d38fae875d706b52a48451348b5b10257beeccd33442decc20a86b9",
+    "evidence/pon-fixed-host-root-f0-b5bb-readback-20261105/analysis.json": "391eeaa68b235d1c8d79dd450849ef596d07a7b4b98989eb22cb84f1e45df176",
+    "formal/pon-nakamoto-v1/experiments/fixed_host_service_readback_v1.py": "f77d24c5aa1c338fbf3b30ec4cfae17f2282aa3034f9872a49320da85f7a8fe5",
+    "scripts/ci/test_fixed_host_service_readback_v1.py": "87d05787b97f2c08c1cbeb78af07a9e945cc4fef44ae388862e63126bc6ca789",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "90fc3b9fcceb026d5490cd30655ae1ad1b4c9a85a54cb1de1f26858521fb209c",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "1beb03f77bfea7d22f69ddb98ac648dba6e38df370a04fd56e7ce5d83072596d"
+  }
+}

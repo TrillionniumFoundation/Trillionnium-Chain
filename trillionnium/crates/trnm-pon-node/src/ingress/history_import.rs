@@ -59,11 +59,20 @@ impl Owner<'_> {
         control: &Control<'_>,
         action: impl FnOnce(&mut Node) -> Result<T>,
     ) -> Result<T> {
-        control.check()?;
         match self {
-            Self::Exclusive(node) => action(node),
-            Self::Shared(node) => loop {
+            Self::Exclusive(node) => {
                 control.check()?;
+                control.alive()?;
+                action(node)
+            }
+            Self::Shared(node) => loop {
+                // One fresh Host observation precedes EVERY acquisition attempt,
+                // including retries. A second adjacent read before this loop
+                // duplicated the first observation without intervening work.
+                control.check()?;
+                // The Host observation itself can cross the original deadline.
+                // Recheck time without performing another full Host read.
+                control.alive()?;
                 match node.try_lock() {
                     Ok(mut guard) => return action(&mut guard),
                     Err(TryLockError::Poisoned(_)) => return Err("OWNER_POISONED".into()),
