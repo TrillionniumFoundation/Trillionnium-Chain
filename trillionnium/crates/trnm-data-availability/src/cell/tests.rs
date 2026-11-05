@@ -1211,6 +1211,7 @@ fn expired_manifest_fetch_refuses_local_hit_and_put_before_decode() {
     let requests = AtomicU64::new(7);
     let responses = ResponseBudget::new(0);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_millis(10),
         overall: expired,
         requests_left: &requests,

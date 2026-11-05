@@ -1,0 +1,9 @@
+{
+  "schema": "trnm-cell-git-object-recovery-v1",
+  "head": "7f766ae867ddb73653cc98d386c74e21bb4d3b48",
+  "tree": "094208d174a571aed90910aead625fa7bb7ccd4c",
+  "entries_verified_against_existing_index": 9682,
+  "source_bytes_changed": false,
+  "replacement_refs_or_grafts_created": false,
+  "reason": "previous shared alternate object directory no longer exists; own object database reconstructed from exact indexed working-tree bytes"
+}

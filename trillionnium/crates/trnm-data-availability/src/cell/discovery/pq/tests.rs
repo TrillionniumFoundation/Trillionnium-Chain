@@ -434,6 +434,7 @@ fn real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_bud
     let attempts = AtomicU64::new(2);
     let responses = ResponseBudget::new(8);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall: deadline(),
         requests_left: &attempts,
@@ -512,6 +513,7 @@ fn real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget() {
     let responses = ResponseBudget::new(bytes);
     let overall = Instant::now() + Duration::from_secs(10);
     let transport = RequestContext {
+        cancelled: None,
         timeout: Duration::from_secs(2),
         overall,
         requests_left: &requests_left,
@@ -546,6 +548,7 @@ fn pq_discovery_actual_response_exhaustion_stops_before_dial() {
         let attempts = AtomicU64::new(4);
         let responses = ResponseBudget::new(budget);
         let transport = RequestContext {
+            cancelled: None,
             timeout: Duration::from_secs(2),
             overall: deadline(),
             requests_left: &attempts,

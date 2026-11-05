@@ -7,7 +7,7 @@ use std::{
     io::{Read, Write},
     net::SocketAddr,
     path::Path,
-    sync::atomic::{AtomicU64, Ordering},
+    sync::atomic::{AtomicBool, AtomicU64, Ordering},
     time::Instant,
 };
 
@@ -123,6 +123,7 @@ struct ClosureMarker<'a> {
     closure: &'a CellReleaseClosureV1,
     wire: &'a [u8],
     tensor_model: Option<&'a CellTensorModelManifestV1>,
+    cancelled: Option<&'a AtomicBool>,
 }
 
 /// A complete declared byte set and strict dense tensor metadata observation.
@@ -180,6 +181,7 @@ pub fn fetch_tensor_model_with_options_to_file(
             closure,
             wire: &wire,
             tensor_model: Some(model),
+            cancelled: None,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -218,7 +220,7 @@ pub fn fetch_closure_with_options_to_file(
     options: CellReleaseFetchOptionsV2,
     output: &Path,
 ) -> CellResultV1<CellTransportFetchReportV2<CellClosureFetchReportV1>> {
-    fetch_closure_checked(store, closure, expected, peers, options, Some(output))
+    fetch_closure_checked(store, closure, expected, peers, options, Some(output), None)
 }
 
 /// Prefetch one owner-pinned closure into the disposable cache without creating
@@ -235,8 +237,32 @@ pub fn fetch_closure(
     peers: &[SocketAddr],
     limits: CellReleaseFetchLimitsV1,
 ) -> CellResultV1<CellClosureFetchReportV1> {
-    fetch_closure_checked(store, closure, expected, peers, limits.into(), None)
+    fetch_closure_checked(store, closure, expected, peers, limits.into(), None, None)
         .map(|result| result.report)
+}
+
+/// The original marker-free prefetch with cooperative caller cancellation.
+/// Once any worker observes the flag, this transport reservation remains
+/// cancelled even if the caller clears it. Verified disposable cache bytes
+/// may remain, but no successful closure or resident admission is returned.
+pub fn fetch_closure_cancellable(
+    store: &CellStoreV1,
+    closure: &CellReleaseClosureV1,
+    expected: &CellLoaderContextV1,
+    peers: &[SocketAddr],
+    limits: CellReleaseFetchLimitsV1,
+    cancelled: &AtomicBool,
+) -> CellResultV1<CellClosureFetchReportV1> {
+    fetch_closure_checked(
+        store,
+        closure,
+        expected,
+        peers,
+        limits.into(),
+        None,
+        Some(cancelled),
+    )
+    .map(|result| result.report)
 }
 
 fn fetch_closure_checked(
@@ -246,6 +272,7 @@ fn fetch_closure_checked(
     peers: &[SocketAddr],
     mut options: CellReleaseFetchOptionsV2,
     output: Option<&Path>,
+    cancelled: Option<&AtomicBool>,
 ) -> CellResultV1<CellTransportFetchReportV2<CellClosureFetchReportV1>> {
     options.start()?;
     let mut limits = options.limits;
@@ -267,6 +294,7 @@ fn fetch_closure_checked(
             closure,
             wire: &wire,
             tensor_model: None,
+            cancelled,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -323,6 +351,7 @@ pub fn fetch_model_release_with_options_to_file(
             closure,
             wire: &wire,
             tensor_model: None,
+            cancelled: None,
         }),
     )?;
     Ok(CellTransportFetchReportV2 {
@@ -434,7 +463,14 @@ fn fetch_release_checked(
     check_deadline(deadline)?;
     // This owner survives both metadata passes and every member. A persistent
     // connection, quarantine or exhausted quota is never reset at a file edge.
-    let session = NetworkFetchSession::new(peers, limits.peer, options.transport, deadline)?;
+    let session = NetworkFetchSession::new(
+        peers,
+        limits.peer,
+        options.transport,
+        deadline,
+        closure.as_ref().and_then(|marker| marker.cancelled),
+    )?;
+    session.check_cancelled()?;
     let mut report = CellReleaseFetchReportV1 {
         release_id: pinned,
         cells: release.cells().len(),
@@ -452,6 +488,7 @@ fn fetch_release_checked(
     // member's compatibility and aggregate payload/chunk limits are known.
     // Re-read by content address instead of retaining all decoded manifests.
     for digest in release.cells() {
+        session.check_cancelled()?;
         check_deadline(deadline)?;
         let (manifest, rejected) = session.manifest(store, *digest)?;
         require(
@@ -480,6 +517,7 @@ fn fetch_release_checked(
         )?;
     }
     for digest in release.cells() {
+        session.check_cancelled()?;
         check_deadline(deadline)?;
         let (_, member) = session.cell(store, *digest)?;
         report.cached_chunks += member.cached_chunks;
@@ -495,6 +533,7 @@ fn fetch_release_checked(
             ..limits.release
         },
     )?;
+    session.check_cancelled()?;
     report.connection_attempts = session.connection_attempts();
     report.received_response_bytes = session.received_response_bytes()?;
     if let Some(model) = closure.as_ref().and_then(|marker| marker.tensor_model) {
@@ -520,6 +559,7 @@ fn fetch_release_checked(
     // The no-marker path must retain the same last deadline checkpoint as the
     // publication path; a late cache verification is not a successful prefetch.
     check_deadline(deadline)?;
+    session.check_cancelled()?;
     if let Some(output) = output {
         let marker = closure.map_or_else(|| release.encode(), |marker| marker.wire.to_vec());
         publish_marker(&marker, output, deadline)?;

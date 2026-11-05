@@ -446,6 +446,7 @@ fn persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payl
                     &[server.address],
                     options,
                     None,
+                    None,
                 )
                 .map(|_| ()),
             };
@@ -502,5 +503,91 @@ fn explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_bud
     assert_eq!(
         served.sent_response_bytes,
         result.report.received_response_bytes
+    );
+}
+
+#[test]
+fn residency_prefetch_stops_payload_requests_when_original_owner_cancels() {
+    let fixture = Fixture::new();
+    let cache = fixture.cache("cancelled-prefetch.sqlite");
+    for manifest in &fixture.members {
+        cache
+            .put_manifest(manifest.id(), &manifest.encode())
+            .unwrap();
+    }
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let stop = Arc::new(AtomicBool::new(false));
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let address = listener.local_addr().unwrap();
+    let source_path = fixture.origin_path.clone();
+    let provider_cancel = Arc::clone(&cancelled);
+    let provider_stop = Arc::clone(&stop);
+    let provider = thread::spawn(move || {
+        let source = CellStoreV1::open_read_only(&source_path).unwrap();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let mut queries = Vec::new();
+        while !provider_stop.load(Ordering::Acquire) && Instant::now() < deadline {
+            let (mut stream, _) = match listener.accept() {
+                Ok(accepted) => accepted,
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                    thread::sleep(Duration::from_millis(1));
+                    continue;
+                }
+                Err(error) => panic!("provider accept: {error}"),
+            };
+            stream
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            stream
+                .set_write_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            let mut query = [0; 37];
+            if stream.read_exact(&mut query).is_err() {
+                continue;
+            }
+            assert_eq!(&query[..4], b"TCQ1");
+            assert_eq!(query[4], 2, "metadata was already pinned in the cache");
+            let digest = query[5..].try_into().unwrap();
+            let bytes = source.chunk(digest).unwrap().unwrap();
+            queries.push(digest);
+            // Cancellation is external to the downloader, after a real
+            // admitted payload request and before its response. Correct bytes
+            // from that request cannot authorize another release member.
+            provider_cancel.store(true, Ordering::Release);
+            let mut header = [0; 9];
+            header[..4].copy_from_slice(b"TCS1");
+            header[5..].copy_from_slice(&(bytes.len() as u32).to_be_bytes());
+            let _ = stream
+                .write_all(&header)
+                .and_then(|()| stream.write_all(&bytes));
+        }
+        queries
+    });
+    let mut manager = crate::cell::CellResidencyV1::new(crate::cell::CellResidencyConfigV1 {
+        max_resident_bytes: 1_048_576,
+        max_resident_closures: 4,
+        max_chunk_references: 16,
+    })
+    .unwrap();
+    let mut limits = options(4, fixture.response_bytes()).limits;
+    limits.peer.max_connections = 4;
+    let result = manager.prefetch(
+        &cache,
+        fixture.model.root().closure(),
+        &fixture.expected,
+        &[address],
+        limits,
+        &cancelled,
+    );
+    stop.store(true, Ordering::Release);
+    let queries = provider.join().unwrap();
+    assert!(result.is_err());
+    assert_eq!(manager.usage().resident_closures, 0);
+    assert_eq!(manager.selection(), None);
+    assert_eq!(
+        queries.len(),
+        1,
+        "cancelled prefetch acquired another member"
     );
 }

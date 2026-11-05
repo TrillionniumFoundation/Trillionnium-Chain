@@ -42,13 +42,15 @@ pub use model_root::{CellModelReleaseRootV1, MAX_MODEL_RELEASE_ROOT_BYTES_V1};
 pub use network::{
     fetch_cell, fetch_cell_persistent, fetch_cell_persistent_to_file, fetch_cell_rarest_first,
     fetch_cell_rarest_first_to_file, fetch_cell_to_file, serve_cells, serve_cells_bounded,
-    serve_cells_bounded_with_availability, serve_cells_persistent, CellFetchReportV1,
-    CellPeerLimitsV1, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
+    serve_cells_bounded_with_availability, serve_cells_bounded_with_availability_and_ready,
+    serve_cells_bounded_with_ready, serve_cells_persistent, serve_cells_persistent_with_ready,
+    CellFetchReportV1, CellPeerLimitsV1, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
     CellPersistentServeLimitsV2, CellPersistentServeReportV2, CellServeLimitsV1, CellServeReportV1,
 };
 pub use release::{
-    fetch_closure, fetch_closure_to_file, fetch_closure_with_options_to_file,
-    fetch_model_release_to_file, fetch_model_release_with_options_to_file, fetch_release_to_file,
+    fetch_closure, fetch_closure_cancellable, fetch_closure_to_file,
+    fetch_closure_with_options_to_file, fetch_model_release_to_file,
+    fetch_model_release_with_options_to_file, fetch_release_to_file,
     fetch_release_with_options_to_file, fetch_tensor_model_to_file,
     fetch_tensor_model_with_options_to_file, read_pinned_release, CellClosureFetchReportV1,
     CellFetchTransportV2, CellModelReleaseFetchReportV1, CellReleaseFetchLimitsV1,
@@ -57,7 +59,8 @@ pub use release::{
 };
 pub use residency::{
     CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
-    CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentViewV1,
+    CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
+    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1,
 };
 pub use retention::{
     CellRetentionConfigV1, CellRetentionContractV1, CellRetentionReadbackV1, CellRetentionStoreV1,

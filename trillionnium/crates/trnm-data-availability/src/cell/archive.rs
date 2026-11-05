@@ -331,6 +331,19 @@ pub struct CellReleaseRetentionStoreV2 {
 }
 
 impl CellReleaseRetentionStoreV2 {
+    pub fn store_id(&self) -> CellDigestV1 {
+        self.config.retention.store_id
+    }
+
+    /// Bind externally admitted funding to this actual catalog configuration.
+    /// This validates immutable terms but neither reserves nor acknowledges.
+    pub fn contract_commitment(
+        &self,
+        contract: &CellReleaseRetentionContractV2,
+    ) -> CellResultV1<CellDigestV1> {
+        contract.commitment(&self.config)
+    }
+
     pub fn create(directory: &Path, config: CellReleaseRetentionConfigV2) -> CellResultV1<Self> {
         validate_config(&config)?;
         fs::create_dir(directory)?;
@@ -532,6 +545,62 @@ impl CellReleaseRetentionStoreV2 {
         }
         let objects = self.verify_objects(&row, deadline)?;
         self.seal_ack(row, objects, deadline)
+    }
+
+    /// Admit one member's original initial copy through the complete root.
+    /// The funding owner must choose this only for its new member intent;
+    /// pending/done effects use reconcile_member, which has no source handle.
+    pub fn acknowledge_member(
+        &mut self,
+        operation: CellDigestV1,
+        object_operation: CellDigestV1,
+        cache: &CellStoreV1,
+        deadline: Instant,
+    ) -> CellResultV1<CellRetentionReadbackV1> {
+        self.check_member(operation, object_operation, deadline)?;
+        let result = self
+            .retention
+            .acknowledge(object_operation, cache, deadline)?;
+        check_deadline(deadline)?;
+        Ok(result)
+    }
+
+    /// Recover one original member from its retained target only. A complete
+    /// root intent cannot turn an unknown member effect into another copy.
+    pub fn reconcile_member(
+        &mut self,
+        operation: CellDigestV1,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<CellRetentionReadbackV1> {
+        self.check_member(operation, object_operation, deadline)?;
+        let result = self
+            .retention
+            .reconcile_acknowledgement(object_operation, deadline)?;
+        check_deadline(deadline)?;
+        Ok(result)
+    }
+
+    fn check_member(
+        &self,
+        operation: CellDigestV1,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        self.check(deadline)?;
+        let row = required_row(&self.catalog, &self.config, operation)?;
+        require(row.status != 2, "archive retired duty")?;
+        let object = row
+            .contract
+            .objects
+            .iter()
+            .find(|object| object.operation == object_operation)
+            .ok_or(CellErrorV1::Invalid("archive member dependency"))?;
+        require(
+            self.retention.contract(object_operation)? == *object,
+            "archive physical contract changed",
+        )?;
+        check_deadline(deadline)
     }
 
     /// Read the exact persisted terms for recovery without caller reconstruction

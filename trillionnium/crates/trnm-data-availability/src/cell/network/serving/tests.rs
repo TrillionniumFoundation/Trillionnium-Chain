@@ -2,6 +2,48 @@ use super::*;
 use crate::cell::{fetch_cell, CellContextV1};
 use std::{fs, sync::Arc, thread::JoinHandle};
 
+#[test]
+fn ready_callback_requires_capacity_and_cannot_renew_or_ignore_cancellation() {
+    use std::cell::Cell;
+    let calls = Cell::new(0);
+    let stop = AtomicBool::new(false);
+    let ready = || {
+        calls.set(calls.get() + 1);
+        Ok(())
+    };
+    assert!(announce_service_ready(Some(&ready), &stop, Instant::now(), 1).is_err());
+    assert!(announce_service_ready(
+        Some(&ready),
+        &stop,
+        Instant::now() + Duration::from_secs(1),
+        0
+    )
+    .is_err());
+    stop.store(true, Ordering::Release);
+    assert!(announce_service_ready(
+        Some(&ready),
+        &stop,
+        Instant::now() + Duration::from_secs(1),
+        1
+    )
+    .is_err());
+    assert_eq!(calls.get(), 0);
+    stop.store(false, Ordering::Release);
+    let cancel_during_observation = || {
+        calls.set(calls.get() + 1);
+        stop.store(true, Ordering::Release);
+        Ok(())
+    };
+    assert!(announce_service_ready(
+        Some(&cancel_during_observation),
+        &stop,
+        Instant::now() + Duration::from_secs(1),
+        1
+    )
+    .is_err());
+    assert_eq!(calls.get(), 1);
+}
+
 fn limits() -> CellServeLimitsV1 {
     CellServeLimitsV1 {
         request_timeout: Duration::from_secs(1),

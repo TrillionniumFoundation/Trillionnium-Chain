@@ -17,6 +17,20 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Cell runtime composition, 2026-11-04 America/New_York:** Continue the existing
+#688 candidate from `47b4a62463d8e1371a175c74196d52d99c5fccb8`. Connect complete
+TCA2 release obligations to the original Node/M12 funding and effect owners,
+preserving each physical member's independent task and readback-only recovery.
+Admit exact borrowed tensor ranges from resident immutable bytes, stop prefetch
+after observed cancellation, and observe provider Ready within the original
+service/35-second handoff deadlines without a probe. Measure finite fixed-base
+delta reuse including sparse, reordered, shifted and fully changed payloads.
+The [composition record](../../evidence/cell-storage-runtime-20261104/README.md)
+retains scope and reproduction. No local result establishes automatic paid
+renewal, native fund locking/provider payment, independent custody, a 72-hour
+WAN campaign, mature DHT/eclipsing resistance, actual GPU/device ownership or
+ordinary Hepta CURRENT/FinalUse model execution.
+
 **Cell storage completion boundaries, 2026-11-04 America/New_York:** Continue
 the existing #688 candidate from `ffb43113b2e0065e6a8053bdb25fc5a9d7cf0637`.
 Classic and PQ rendezvous admission must stop before a new connection when the
