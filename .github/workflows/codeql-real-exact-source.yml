@@ -15,9 +15,10 @@ permissions:
   contents: read
 jobs:
   codeql:
-    # Keep the conservative same-repository source boundary; no write token is granted.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    name: CodeQL local SARIF (${{ matrix.language }})
+    # Same-repository PRs are scanned independently at immutable head and prospective merge.
+    # Push events have only a branch head; no untrusted fork code is executed.
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name != 'push' || matrix.source == 'head')
+    name: CodeQL local SARIF (${{ matrix.language }}, ${{ matrix.source }})
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     permissions:
@@ -27,20 +28,24 @@ jobs:
       fail-fast: false
       matrix:
         language: [rust, python, actions]
+        source: [head, prospective-merge]
     steps:
       - name: Checkout exact event source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ matrix.source == 'head' && github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - name: Refuse any other source identity
         shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          SOURCE_KIND: ${{ matrix.source }}
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
           test -z "$(git status --porcelain)"
-          printf 'CODEQL_EVENT_SHA=%s CODEQL_EVENT_REF=%s CODEQL_LANGUAGE=%s\n' "$GITHUB_SHA" "$GITHUB_REF" '${{ matrix.language }}'
+          printf 'CODEQL_EVENT_SHA=%s CODEQL_SOURCE_SHA=%s CODEQL_SOURCE_KIND=%s CODEQL_LANGUAGE=%s\n' "$GITHUB_SHA" "$(git rev-parse HEAD)" "$SOURCE_KIND" '${{ matrix.language }}'
       - name: Initialize pinned official CodeQL
         uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         with:
@@ -50,8 +55,8 @@ jobs:
         id: codeql
         uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         with:
-          category: /language:${{ matrix.language }}
-          output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}
+          category: /language:${{ matrix.language }}/source:${{ matrix.source }}
+          output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
           upload: never
       - name: Verify generated SARIF is present and parseable
         shell: bash
@@ -74,7 +79,7 @@ jobs:
       - name: Retain real local SARIF for independent review
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: codeql-sarif-${{ matrix.language }}-${{ github.sha }}
+          name: codeql-sarif-${{ matrix.language }}-${{ matrix.source }}-${{ github.sha }}
           path: ${{ steps.codeql.outputs.sarif-output }}/
           if-no-files-found: error
           retention-days: 14
