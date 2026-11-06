@@ -19,11 +19,15 @@ use crate::{
 };
 use sha2::{Digest, Sha256, Sha512};
 use std::{
+    cell::Cell,
     collections::{BTreeMap, BTreeSet},
     error::Error,
     fmt,
 };
 use trnm_crypto_primitives::pq_auth::PqNativeVerifier;
+
+mod bundle_quorum;
+use bundle_quorum::VerifiedBundleQuorumV1;
 
 pub const RELEASE_PQ_PROFILE_V1: &[u8] = b"TRNM/Release/PQ/ML-DSA-65/v1\0";
 pub const MAX_RELEASE_KEYS_V1: usize = 16;
@@ -492,19 +496,13 @@ impl PqReleaseAuthorityV1 {
         {
             return Err(PqReleaseErrorV1::BundleBinding);
         }
-        let verifier = BoundPqBundleVerifierV1 {
-            role: self
-                .root
-                .roles
-                .get(&metadata.role)
-                .ok_or(PqReleaseErrorV1::MissingRole)?,
-            metadata,
-            signatures,
-            identity: self.bundle_signer_identity(metadata.role),
-        };
+        let verifier = BoundPqBundleVerifierV1::new(self, metadata, signatures)?;
         let verified_bundle = verify_release_bundle_v0(&verifier, bundle, required_packages)
             .map_err(|_| PqReleaseErrorV1::InvalidBundle)?;
-        let verified_release = self.accept(metadata, signatures, now)?;
+        // Consume only the actual V0 callback's same-call quorum observation.
+        // Owner time, current role and all state checks still run below.
+        let quorum = verifier.into_verified_quorum()?;
+        let verified_release = self.accept_with_quorum(metadata, signatures, now, Some(quorum))?;
         Ok((verified_bundle, verified_release))
     }
 
@@ -515,6 +513,16 @@ impl PqReleaseAuthorityV1 {
         metadata: &PqReleaseMetadataV1,
         signatures: &[PqReleaseSignatureV1],
         now: u64,
+    ) -> Result<VerifiedPqReleaseV1, PqReleaseErrorV1> {
+        self.accept_with_quorum(metadata, signatures, now, None)
+    }
+
+    fn accept_with_quorum(
+        &mut self,
+        metadata: &PqReleaseMetadataV1,
+        signatures: &[PqReleaseSignatureV1],
+        now: u64,
+        quorum: Option<VerifiedBundleQuorumV1<'_>>,
     ) -> Result<VerifiedPqReleaseV1, PqReleaseErrorV1> {
         if self.event_count >= MAX_RECOVERY_EVENTS_V1 {
             return Err(PqReleaseErrorV1::HistoryFull);
@@ -570,14 +578,17 @@ impl PqReleaseAuthorityV1 {
             return Err(PqReleaseErrorV1::HistoryFull);
         }
         let message = metadata.signing_message();
-        verify_quorum(
-            self.root
-                .roles
-                .get(&metadata.role)
-                .ok_or(PqReleaseErrorV1::MissingRole)?,
-            &message,
-            signatures,
-        )?;
+        let role = self
+            .root
+            .roles
+            .get(&metadata.role)
+            .ok_or(PqReleaseErrorV1::MissingRole)?;
+        match quorum {
+            Some(quorum) => {
+                quorum.consume(self.root_digest, metadata.role, &message, signatures)?
+            }
+            None => verify_quorum(role, &message, signatures)?,
+        }
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.versions.insert(metadata.role, metadata.role_version);
         self.current.insert(
@@ -627,15 +638,43 @@ pub fn pq_release_signature_digest_v1(
     }
     Ok(hash.finalize().into())
 }
-struct BoundPqBundleVerifierV1<'a> {
-    role: &'a PqReleaseRoleKeysV1,
-    metadata: &'a PqReleaseMetadataV1,
-    signatures: &'a [PqReleaseSignatureV1],
+struct BoundPqBundleVerifierV1<'root, 'input> {
+    authority: &'root PqReleaseAuthorityV1,
+    metadata: &'input PqReleaseMetadataV1,
+    signatures: &'input [PqReleaseSignatureV1],
     identity: ReleaseDigestV1,
+    verified_quorum: Cell<Option<VerifiedBundleQuorumV1<'input>>>,
 }
-impl ReleaseSignatureVerifierV0 for BoundPqBundleVerifierV1<'_> {
+impl<'root, 'input> BoundPqBundleVerifierV1<'root, 'input> {
+    fn new(
+        authority: &'root PqReleaseAuthorityV1,
+        metadata: &'input PqReleaseMetadataV1,
+        signatures: &'input [PqReleaseSignatureV1],
+    ) -> Result<Self, PqReleaseErrorV1> {
+        // Preserve the original missing-role check before V0 bundle validation.
+        authority
+            .root
+            .roles
+            .get(&metadata.role)
+            .ok_or(PqReleaseErrorV1::MissingRole)?;
+        Ok(Self {
+            authority,
+            metadata,
+            signatures,
+            identity: authority.bundle_signer_identity(metadata.role),
+            verified_quorum: Cell::new(None),
+        })
+    }
+    fn into_verified_quorum(self) -> Result<VerifiedBundleQuorumV1<'input>, PqReleaseErrorV1> {
+        self.verified_quorum
+            .into_inner()
+            .ok_or(PqReleaseErrorV1::InvalidBundle)
+    }
+}
+impl ReleaseSignatureVerifierV0 for BoundPqBundleVerifierV1<'_, '_> {
     type Error = PqReleaseErrorV1;
     fn verify_release_signature(&self, bundle: &ReleaseBundleV0) -> Result<(), Self::Error> {
+        self.verified_quorum.set(None);
         if bundle.bundle_digest.0 != self.metadata.content
             || bundle.signer_identity_digest != Digest32V0(self.identity)
             || bundle.signature_digest
@@ -643,7 +682,10 @@ impl ReleaseSignatureVerifierV0 for BoundPqBundleVerifierV1<'_> {
         {
             return Err(PqReleaseErrorV1::BundleBinding);
         }
-        verify_quorum(self.role, &self.metadata.signing_message(), self.signatures)
+        let quorum =
+            VerifiedBundleQuorumV1::verify(self.authority, self.metadata, self.signatures)?;
+        self.verified_quorum.set(Some(quorum));
+        Ok(())
     }
 }
 

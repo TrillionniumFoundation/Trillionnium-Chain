@@ -10,6 +10,9 @@ mod current_tests;
 #[path = "validated_root_tests.rs"]
 mod validated_root_tests;
 
+#[path = "bundle_quorum_tests.rs"]
+mod bundle_quorum_tests;
+
 struct Fixture {
     root: PqReleaseRootV1,
     keys: BTreeMap<ReleaseKeyIdV1, PqNativeSigningKey>,
