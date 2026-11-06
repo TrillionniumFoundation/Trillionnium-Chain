@@ -107,15 +107,7 @@ fn same_authenticated_caller_cannot_hold_a_third_paid_mutation_grant_across_list
         let caller = identity(80);
         let mut held = Vec::new();
         for (index, address) in addresses.iter().enumerate() {
-            held.push(
-                paid_grant(
-                    *address,
-                    hello(&caller, index as u8),
-                    &caller,
-                    policy,
-                )
-                .unwrap(),
-            );
+            held.push(paid_grant(*address, hello(&caller, index as u8), &caller, policy).unwrap());
         }
         assert_eq!(*intake.mutating_grants.lock().unwrap(), 2);
         let third = paid_grant(addresses[1], hello(&caller, 2), &caller, policy);
