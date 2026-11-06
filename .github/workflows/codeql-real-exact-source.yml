@@ -17,7 +17,7 @@ jobs:
   codeql:
     # Same-repository PRs are scanned independently at immutable head and prospective merge.
     # Push events have only a branch head; no untrusted fork code is executed.
-    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name != 'push' || matrix.source == 'head')
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: CodeQL local SARIF (${{ matrix.language }}, ${{ matrix.source }})
     runs-on: ubuntu-24.04
     timeout-minutes: 120
@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [rust, python, actions]
-        source: [head, prospective-merge]
+        source: ${{ github.event_name == 'pull_request' && fromJSON('["head","prospective-merge"]') || fromJSON('["head"]') }}
     steps:
       - name: Checkout exact event source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
