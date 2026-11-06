@@ -7627,3 +7627,31 @@ All six whole-chain domains remain UNQUALIFIED. Combined-source Rust execution,
 locked graphs, formatting, strict Clippy, original performance/business gates,
 independent custody/rollback/WAN evidence and quantum work/proof qualification
 require their own unchanged acceptance. There is no production activation.
+
+
+### 2026-11-06 fixed owner composition and TLS local certificate admission
+
+Continue the existing PQ integration candidate by composing its fixed
+`cad4c18fe146b7d742ac7fa8872044cd4136c22b` source with integration owner
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Preserve both histories, original
+failed observations, the owner branch's bounded reads and SQL trace controls,
+and the PQ branch's current-authority, TLS and runtime source protections.
+The shared source corpus is resolved from the actual combined bytes; prior
+native observations retain their original sources. No budget or claim flag is
+promoted by this composition.
+
+Complete local TLS certificate admission before Node creation/readiness, using
+only the pinned direct CA, the actual server/client purpose, validity interval
+and the server's configured SAN. Retain the original handshake, signer binding,
+replay, work, deadline and resource controls. Add the three library selectors
+and one six-case ordinary-binary selector to the existing mandatory TLS roster.
+The unchanged bad-certificate behavior must be observed before the repair and
+the same fixed native combination must execute its acceptance and refusal paths.
+
+The [actual authority map](../security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md)
+records the current caller boundaries. M15 has no Chain product install or
+activation consumer; M09 acquisition is not activation. The PNQ2 witness covers
+three tables and is not wired into the ordinary TLS CLI. Independent custody,
+whole-store recovery, all private listeners, WAN budgets and cheapest quantum
+work/fork-choice security remain separate open gates. Retain the sole plan and
+existing whole-chain HOLD while completing those real owners and observations.

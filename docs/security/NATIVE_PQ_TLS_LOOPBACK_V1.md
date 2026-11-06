@@ -57,6 +57,39 @@ the original bounded request reader, native verifier, replay ledger, work checks
 Node execution and durable signed receipt. The ordinary CLI integration test
 launches this binary and admits a real block, then reopens the actual Node store.
 
+## Local certificate admission before readiness
+
+The [TLS context constructor](../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs)
+now checks the local certificate profile after the existing CA/SPKI pins and
+before building the TLS context, opening the Node or binding its listener.
+Matching ML-DSA key/signature bytes alone do not establish certificate validity,
+purpose or the configured server name. A local certificate rejected at this
+boundary produces no `pq-tls-ready` event and creates no Node owner.
+
+The verifier uses an X509 store containing only the pinned CA, ordinary system
+time and depth zero. Server credentials require `SSL_SERVER` purpose and the
+configured SAN with both `NO_WILDCARDS` and `NEVER_CHECK_SUBJECT`. Client
+credentials require `SSL_CLIENT` purpose; the remote server name is not imposed
+on the local client certificate. Successful verification additionally requires
+exactly two certificates and the pinned CA DER digest at the chain end. No system
+root, fetched issuer, profile fallback or time-check bypass is introduced.
+
+The new selectors are source obligations until their own frozen native execution
+is recorded. The [library controls](../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs)
+and [ordinary binary control](../../trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs) cover:
+
+| Exact selector | Intended observation |
+| --- | --- |
+| `tls_local_server_certificate_constraints_refuse_before_serving` | Signed, pinned server identities with wrong SAN, CN-only identity, wildcard SAN, expired/future validity or client-only purpose refuse construction. |
+| `tls_local_client_certificate_time_purpose_and_root_leaf_refuse` | Expired/future or server-only client credentials and a trusted-root-as-client-leaf are refused. The root case does not isolate which X509/profile condition refuses first. |
+| `tls_local_role_specific_certificates_accept_without_client_hostname` | Correct server-only and client-only purposes construct successfully; the client requires no local DNS SAN. This is a constructor control, not a separate role-only handshake qualification. |
+| `ordinary_binary_local_certificate_constraints_refuse_before_owner_creation` | The six server cases reach the actual binary and must fail without readiness output or a Node directory. |
+
+The original peer certificate verification, handshake controls, native admission,
+deadline and resource limits remain required. This startup check does not supply
+online certificate renewal/revocation, a trusted clock deployment, independent
+CA custody, a witness-backed CLI or all-listener private-task confidentiality.
+
 ## Protocol and replay boundary
 
 The new policy is `native-pq-network-tls13-owner-v1`. It has new canonical owner
@@ -136,3 +169,13 @@ consumer, public-history TLS integration, WAN availability or QROM/quantum work
 security evidence. Public Head/History remains its existing explicitly public,
 signed, no-confidentiality profile. Production and consensus activation flags
 remain false.
+
+## Standards readback on 2026-11-06
+
+[RFC 10024](https://www.rfc-editor.org/rfc/rfc10024.html), published in August
+2026 on the Standards Track, specifies the configured X25519MLKEM768 hybrid
+key agreement. ML-DSA authentication has its own specification: the checked
+[ML-DSA TLS draft](https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/) is
+revision 06 in the RFC Editor queue, not a published authentication RFC. These
+are distinct protocol dependencies; neither standard supplies this deployment's
+key custody, observed negotiation, listener coverage or availability evidence.
