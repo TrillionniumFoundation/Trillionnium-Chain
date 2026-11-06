@@ -1,0 +1,91 @@
+{
+  "available_bytes_before_scan": 1131548672,
+  "collector_executed": false,
+  "copied_bytes_planned": 111534485,
+  "copied_files_planned": 5569,
+  "duplicates_resolved_only_when_same_bytes": [
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/direct-base-ref-github-response.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "0d2ddd33cbfe51a8a56aec925c301612b4def46d183f24e50f5804ba1b412739"
+    },
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/git-commit-513e92-github-response.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "3b1a76890bdb5985bc9f27573f29bc4590dffe10526a01524bf664151dbe303d"
+    },
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/target-delta.patch",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "bbf0bdcac0385681ac08544ed1faa46d2769a1877919d50c11635a8f272b05f6"
+    },
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/existing-ebd-python-delta.patch",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "8efbc5918f091395e0e54c974cf54fd406302aa388384b29b20eb9602f21a3f3"
+    },
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/review.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "051f685c1df7ed0d8563166e349125b0ed5650e4d1ae034da964200857877b12"
+    },
+    {
+      "also_selected_by": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "path": "integration-review/target-base-513e92-review-release/current-composition-static-review.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/advanced-base-static-additions-v5-candidate.json",
+      "sha256": "813c42a1bfc1920c4a333ef071d810a739cfbdd5cc988da762f13ab54e3061a6"
+    },
+    {
+      "also_selected_by": "integration-review/final-delivery-v2-three-file-manifest.json",
+      "path": "final-evidence-delivery-v2/README.md",
+      "prior_selected_by": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "sha256": "ab7e0f2fa2f549e6fdb9371d96d163f4915031b9cc00f5abcc8a1e317d51f326"
+    },
+    {
+      "also_selected_by": "integration-review/final-delivery-v2-three-file-manifest.json",
+      "path": "final-evidence-delivery-v2/qualification.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "sha256": "37c2ff8378620ec94dbec3e56e99fef5b22e39a7b17c3f583a7eba53fb070b26"
+    },
+    {
+      "also_selected_by": "integration-review/final-delivery-v2-three-file-manifest.json",
+      "path": "final-evidence-delivery-v2/source-publication-map.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "sha256": "f00df89335be2fbff65adba2fcdf622a87ecba9139fc92626dfaa39129a65944"
+    },
+    {
+      "also_selected_by": "root explicit frozen handoff",
+      "path": "integration-review/release-audit-late-handoff-manifest-v1.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "sha256": "c4e6e733ea40da351199426a7e88d6599a9c8e29f96dc6c3211a609a7797a19a"
+    },
+    {
+      "also_selected_by": "root explicit frozen handoff",
+      "path": "integration-review/final-delivery-v2-three-file-manifest.json",
+      "prior_selected_by": "terminal-evidence-preparation-v1/root-late-terminal-frozen-handoff-v1.json",
+      "sha256": "1c4a5906cab044c794cfdeb5b6ae7f58d1ef0fecb94ea11d1ad7872ec3a428f6"
+    }
+  ],
+  "explicit_original_byte_binding_checks": 392,
+  "method": {
+    "bytes": 9397,
+    "path": "integration-review/prepare_terminal_final_selection_v5.py",
+    "sha256": "e7d5a81f228bcf7f72ff0b526a7f4197554961076ecb13b93e9874e7bd669943"
+  },
+  "native_tests_executed": 0,
+  "plan": {
+    "bytes": 3308604,
+    "path": "terminal-evidence-preparation-v1/frozen-selection-ready-v5.json",
+    "sha256": "a13a654264d6409f40d642c8f04976fb6ed1f146403b45ed42f4217778b047fa"
+  },
+  "repository_or_frozen_input_bytes_changed": false,
+  "result": "FROZEN_READY_INPUTS_BYTE_IDENTITIES_VERIFIED",
+  "scanner_executed": false,
+  "schema": "trnm-terminal-final-selection-v5-preparation-receipt",
+  "sources_rehashed_before_and_after": true
+}

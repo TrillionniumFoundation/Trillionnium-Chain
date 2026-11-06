@@ -3,6 +3,7 @@ import base64
 import copy
 import csv
 import hashlib
+import inspect
 import io
 import json
 import os
@@ -345,7 +346,7 @@ class RuntimeMaterialTests(unittest.TestCase):
     def test_old_packaging_refuses_even_when_the_wheel_has_no_markers(self):
         # A marker-free wheel must not turn an unsupported verifier into a
         # successful declaration that would fail only on a later dependency.
-        for version in ("24.2", "25.0rc1"):
+        for version in ("24.0", "24.2", "25.0rc1"):
             with self.subTest(version=version), mock.patch("packaging.__version__", version):
                 with self.assertRaisesRegex(ValueError, "RUNTIME_PACKAGING_VERSION_REQUIRES_25"):
                     self.declare()
@@ -359,17 +360,46 @@ class RuntimeMaterialTests(unittest.TestCase):
         spec = self.repack_metadata('Provides-Extra: audit\n'
             'Requires-Dist: pon-closure-probe; python_version >= "3.12" and extra == "audit"\n')
         spec["wheels"][0]["extras"] = ["audit"]
+        # Bind the real supported API defaults, not only the call's keyword spelling.
+        signature = inspect.signature(Marker.evaluate)
+        self.assertEqual(signature.parameters["context"].default, "metadata")
         with mock.patch.object(Marker, "evaluate", autospec=True,
                                side_effect=Marker.evaluate) as evaluate:
             result = json.loads(self.declare(spec))
         self.assertEqual(result["python_dependencies"][0]["dependencies"], ["pon-closure-probe"])
-        self.assertEqual([call.kwargs for call in evaluate.call_args_list], [
+        observed = []
+        for call in evaluate.call_args_list:
+            bound = signature.bind(*call.args, **call.kwargs)
+            bound.apply_defaults()
+            observed.append({key: bound.arguments[key] for key in ("environment", "context")})
+        self.assertEqual(observed, [
             dict(environment=dict(spec["marker_environment"], extra=extra), context="metadata")
             for extra in ("", "audit")])
+        # With no supplied extra, metadata supplies the empty extra. Requirement
+        # context does not; lock-file context instead supplies the plural sets.
+        self.assertTrue(Marker('extra == ""').evaluate(environment=dict(spec["marker_environment"])))
         # Lock-file-only sets are not silently supplied by a different context.
         for marker in ('"audit" in extras', '"audit" in dependency_groups'):
             with self.subTest(marker=marker), self.assertRaises(KeyError):
                 self.declare(self.repack_metadata('Requires-Dist: absent-runtime; ' + marker + '\n'))
+
+    def test_metadata_markers_keep_pre25_evaluate_signature(self):
+        # This wrapper exercises call shape on the supported library. It does
+        # not authorize an actual pre-25 verifier; the version guard still refuses it.
+        from packaging.markers import Marker
+        original = Marker.evaluate
+        observed = []
+
+        def legacy_evaluate(marker, environment=None):
+            observed.append(environment.copy())
+            return original(marker, environment=environment)
+
+        with mock.patch.object(Marker, "evaluate", legacy_evaluate):
+            self.test_real_metadata_dependency_markers_extras_and_python_version()
+        self.assertTrue(observed)
+        self.assertTrue(all(set(env) == release.MARKER_FIELDS | {"extra"} for env in observed))
+        self.assertIn("audit", {env["extra"] for env in observed})
+        self.assertIn("", {env["extra"] for env in observed})
 
     def test_metadata_markers_use_pinned_environment_and_propagate_errors(self):
         from packaging.markers import Marker
@@ -378,34 +408,12 @@ class RuntimeMaterialTests(unittest.TestCase):
         with mock.patch("packaging.markers.default_environment", return_value=ambient), \
                 self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
             self.declare(spec)
-        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")), \
+        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")) as evaluate, \
                 self.assertRaisesRegex(TypeError, "marker-internal-failure"):
             self.declare(spec)
+        evaluate.assert_called_once_with(environment=dict(spec["marker_environment"], extra=""))
         with self.assertRaises(ValueError):
             self.declare(self.repack_metadata('Requires-Dist: absent-runtime; unknown_marker == "x"\n'))
-
-    def test_metadata_marker_legacy_api_refuses_without_retry(self):
-        # The archived packaging-24 positive belongs to its earlier source.
-        # This verifier requires >=25 and an explicit metadata context, even
-        # when a broken host package reports a new version with the old API.
-        spec = self.repack_metadata(
-            'Requires-Dist: pon-closure-probe; python_version >= "3.12"\n')
-        observed = []
-        original = Marker.evaluate
-
-        def legacy_evaluate(marker, environment=None):
-            return original(marker, environment=environment)
-
-        def observed_evaluate(marker, *args, **kwargs):
-            observed.append((args, kwargs))
-            return legacy_evaluate(marker, *args, **kwargs)
-
-        with mock.patch.object(Marker, "evaluate", observed_evaluate):
-            with self.assertRaisesRegex(TypeError, "context"):
-                self.declare(spec)
-        self.assertEqual(observed, [
-            ((), dict(environment=dict(spec["marker_environment"], extra=""),
-                      context="metadata"))])
 
     def test_symlink_hardlink_fifo_and_import_side_effect_files_refuse(self):
         path = self.root / "project/untrusted"
