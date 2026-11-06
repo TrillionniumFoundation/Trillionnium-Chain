@@ -106,6 +106,95 @@ def action_profile(value):
     return value
 
 
+# This is an explicit material-provenance bridge, not an inference permission.
+# The caller must independently admit the complete current source/snapshot tuple.
+MATERIAL_BRIDGE_PROFILE_V1 = 'smollm2-public-v2-material-runtime-bridge-v1'
+_MATERIAL_PLAN_SHA256 = '01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165'
+_MATERIAL_CONTRACT_SHA256 = 'ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852'
+_MATERIAL_CONTRACT_ID = 'c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f'
+_MATERIAL_RUNTIME_SHA256 = '65ccc6454befd96fa5ce1f5bdde2c56cb6cbb741cf495b8d24a758039f99f755'
+_EXECUTION_RUNTIME_SHA256 = 'd2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7'
+
+
+def _bridge_canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(',', ':'),
+                      ensure_ascii=True, allow_nan=False).encode()
+
+
+def _bridge_identity(value):
+    return hashlib.sha256(_bridge_canonical(value)).hexdigest()
+
+
+def _bridge_behavior(source):
+    return _bridge_identity(dict(source=source, special_token_decode='skip',
+                                 cleanup=False, chat_template='apply-once-no-extra-bos'))
+
+
+def _bridge_operator(source, backend):
+    return _bridge_identity(dict(source=source, backend=backend,
+                                 matmul='highest-no-TF32-eager-attention'))
+
+
+class _MaterialRuntimeBridgeV1:
+    """One exact old material/current runtime pair, with no load authority.
+
+    Both original raw material inputs are fixed independently. The current plan
+    must be the complete original plan with exactly its execution-source field
+    changed. This never relabels current execution as historical source.
+    """
+    __slots__ = ('_expected_contract', '_record')
+
+    def __init__(self, profile, material_plan_raw, current_plan,
+                 material_contract_raw, material_contract_id):
+        require(profile == MATERIAL_BRIDGE_PROFILE_V1, 'NEURAL_BRIDGE_PROFILE')
+        require(type(material_plan_raw) is bytes and
+                0 < len(material_plan_raw) <= 64 * 1024 and
+                hashlib.sha256(material_plan_raw).hexdigest() == _MATERIAL_PLAN_SHA256,
+                'NEURAL_BRIDGE_MATERIAL_PLAN')
+        require(type(material_contract_raw) is bytes and
+                0 < len(material_contract_raw) <= 1024 * 1024 and
+                hashlib.sha256(material_contract_raw).hexdigest() == _MATERIAL_CONTRACT_SHA256 and
+                material_contract_id == _MATERIAL_CONTRACT_ID, 'NEURAL_BRIDGE_MATERIAL_CONTRACT')
+        historical_plan = json.loads(material_plan_raw, object_pairs_hook=unique)
+        historical_contract = json.loads(material_contract_raw, object_pairs_hook=unique)
+        require(_bridge_canonical(historical_plan) + b'\n' == material_plan_raw and
+                _bridge_canonical(historical_contract) == material_contract_raw and
+                historical_plan['runtime_source'] == _MATERIAL_RUNTIME_SHA256,
+                'NEURAL_BRIDGE_CANONICAL_MATERIAL')
+        expected_plan = dict(historical_plan, runtime_source=_EXECUTION_RUNTIME_SHA256)
+        require(type(current_plan) is dict and
+                _bridge_canonical(current_plan) == _bridge_canonical(expected_plan),
+                'NEURAL_BRIDGE_CURRENT_PLAN')
+        require(historical_contract['tokenizer']['behavior_contract'] ==
+                _bridge_behavior(_MATERIAL_RUNTIME_SHA256) and
+                historical_contract['numeric']['operator_contract'] ==
+                _bridge_operator(_MATERIAL_RUNTIME_SHA256, historical_plan['backend']) and
+                historical_contract['registration']['target_admission'] ==
+                _bridge_identity(historical_plan), 'NEURAL_BRIDGE_MATERIAL_PROVENANCE')
+        # These are derived identities, not omitted comparison fields. Every
+        # remaining byte of the canonical actual loaded contract must agree.
+        projected = json.loads(material_contract_raw, object_pairs_hook=unique)
+        projected['tokenizer']['behavior_contract'] = _bridge_behavior(_EXECUTION_RUNTIME_SHA256)
+        projected['numeric']['operator_contract'] = _bridge_operator(
+            _EXECUTION_RUNTIME_SHA256, current_plan['backend'])
+        projected['registration']['target_admission'] = _bridge_identity(current_plan)
+        self._expected_contract = _bridge_canonical(projected)
+        self._record = _bridge_canonical(dict(
+            schema='hepta-smollm-material-runtime-bridge-v1', profile=profile,
+            historical_plan_sha256=_MATERIAL_PLAN_SHA256,
+            historical_contract_sha256=_MATERIAL_CONTRACT_SHA256,
+            historical_contract=_MATERIAL_CONTRACT_ID,
+            historical_runtime_source=_MATERIAL_RUNTIME_SHA256,
+            execution_runtime_source=_EXECUTION_RUNTIME_SHA256,
+            execution_plan_sha256=_bridge_identity(current_plan),
+            execution_contract_sha256=hashlib.sha256(self._expected_contract).hexdigest()))
+
+    def verify_loaded_contract(self, actual):
+        require(type(actual) is dict and _bridge_canonical(actual) == self._expected_contract,
+                'NEURAL_BRIDGE_LOADED_CONTRACT')
+        return json.loads(self._record, object_pairs_hook=unique)
+
+
 def worker(args):
     python_runtime.verify_files(args.runtime_contract)
     plan = inherited.checked_json(args.plan, args.plan_sha256, 512 * 1024)
