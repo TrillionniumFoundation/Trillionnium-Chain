@@ -43,6 +43,8 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
 
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
+#[cfg(feature = "pq-native-openssl")]
+pub mod tls;
 
 #[derive(Clone, Copy)]
 #[repr(u8)]
