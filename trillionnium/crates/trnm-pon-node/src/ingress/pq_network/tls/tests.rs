@@ -7,6 +7,10 @@ use std::{
 mod fixtures;
 use fixtures::Fixture;
 
+#[cfg(target_os = "linux")]
+#[path = "shared_tests.rs"]
+mod shared_tests;
+
 fn start(
     node: Node,
     fixture: &Fixture,
