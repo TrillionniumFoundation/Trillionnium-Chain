@@ -7627,3 +7627,35 @@ All six whole-chain domains remain UNQUALIFIED. Combined-source Rust execution,
 locked graphs, formatting, strict Clippy, original performance/business gates,
 independent custody/rollback/WAN evidence and quantum work/proof qualification
 require their own unchanged acceptance. There is no production activation.
+
+### 2026-11-06 throughput continuation on composed performance and PQ sources
+
+Continue the fixed #688 performance source
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0` with the fixed #723 PQ source
+`cad4c18fe146b7d742ac7fa8872044cd4136c22b`, retaining both histories.
+The [throughput continuation record](../../evidence/pon-throughput-20261106/README.md)
+distinguishes original failures, candidate safety controls, finite component
+measurements and new exact-source CI acceptance. No production TPS is established.
+
+Correct the original Workspace selector's stale 23 count to its actual 25
+controls and retain the composed 52-control PQ roster. Add actual workflow-builder
+negative controls, twelve separate history-reuse controls and eight Host
+directory/limit controls. Route production runtime/configuration/toolchain edits
+through the original F0 diagnostic without changing its six scheduled slots,
+42 packet exposures, fixed resource parent, budgets or cleanup requirements.
+
+Reduce repeated completed-history work only after the original writer's last
+write and inside its live zero-new-write transaction, binding the exact immutable
+Settings and starting Record. Retain full verification before sealing, fresh
+starting-row validation, cancellation, mutation/ABA fences and all cold paths.
+Keep only the original Host parent directory FD, freshly open/read/close all five
+limits at every existing checkpoint, and bind those reads with absolute directory
+identity/permission checks. This is no cached resource verdict or relaxed Host
+budget. Validate each change before treating it as a retained improvement.
+
+Use the pinned toolchain/provider and qualified SQLite witness. Retain failed
+build-environment attempts as unqualified, run real registered controls and the
+predeclared finite component comparisons, and preserve original campaign/F0
+business denominators. Whole-state scans, recovery, PQ cost, malicious-load
+fairness, data-plane isolation and useful-work economics remain separate work;
+no component result qualifies public throughput or production activation.

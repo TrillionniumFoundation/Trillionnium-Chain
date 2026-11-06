@@ -60,6 +60,7 @@ mod kernel_parent {
     use super::KernelResourceSample;
     use std::{
         borrow::Cow,
+        ffi::CStr,
         fs,
         io::{self, Read},
         net::SocketAddr,
@@ -154,6 +155,7 @@ mod kernel_parent {
         }
     }
 
+    #[cfg(test)]
     fn read_limit<'a>(path: &Path, bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1]) -> Result<&'a str> {
         // Reopen the actual path on EVERY observation. No descriptor, file
         // contents or prior resource decision survives this read. The bounded
@@ -163,6 +165,7 @@ mod kernel_parent {
         read_limit_text(&mut file, bytes)
     }
 
+    #[cfg(test)]
     fn limit_paths(parent: &Path) -> [PathBuf; 5] {
         [
             "cpu.max",
@@ -174,6 +177,7 @@ mod kernel_parent {
         .map(|name| parent.join(name))
     }
 
+    #[cfg(test)]
     fn read_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
         // Preserve the original read order and parse only AFTER all five
@@ -185,6 +189,104 @@ mod kernel_parent {
             read_limit(&paths[3], swap)?,
             read_limit(&paths[4], pids)?,
         )
+    }
+
+    /// The original directory object only; no resource file, observed text or
+    /// successful limit decision is retained. The public opener has already
+    /// required this identity to be root-owned. Test directories exercise only
+    /// relative reads and cannot qualify as the fixed public Host parent.
+    struct ParentDirectory {
+        file: fs::File,
+        identity: (u64, u64, u32),
+    }
+
+    impl ParentDirectory {
+        fn open(parent: &Path, expected: &fs::Metadata) -> Result<Self> {
+            use rustix::fs::{open, Mode, OFlags};
+            let fd = loop {
+                match open(
+                    parent,
+                    OFlags::PATH | OFlags::DIRECTORY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+                    Mode::empty(),
+                ) {
+                    Err(error) if error == rustix::io::Errno::INTR => continue,
+                    result => break result,
+                }
+            }
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            let file = fs::File::from(fd);
+            let held = file
+                .metadata()
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            let identity = (expected.dev(), expected.ino(), expected.uid());
+            if !Self::matches(&held, identity) {
+                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+            }
+            Ok(Self { file, identity })
+        }
+
+        fn matches(metadata: &fs::Metadata, identity: (u64, u64, u32)) -> bool {
+            metadata.file_type().is_dir()
+                && metadata.mode() & 0o022 == 0
+                && (metadata.dev(), metadata.ino(), metadata.uid()) == identity
+        }
+
+        fn verify_path(&self, parent: &Path) -> Result<()> {
+            let current = fs::symlink_metadata(parent)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            if !Self::matches(&current, self.identity) {
+                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+            }
+            Ok(())
+        }
+
+        fn read_limit<'a>(
+            &self,
+            name: &CStr,
+            bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+        ) -> Result<&'a str> {
+            use rustix::fs::{openat, Mode, OFlags};
+            // Each call opens the CURRENT child of the original directory.
+            // O_PATH keeps only that directory, without requiring permission
+            // to list it. Every limit descriptor is read through actual EOF
+            // and closed before the next file/checkpoint; none is reused.
+            let fd = loop {
+                match openat(
+                    &self.file,
+                    name,
+                    OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+                    Mode::empty(),
+                ) {
+                    Err(error) if error == rustix::io::Errno::INTR => continue,
+                    result => break result,
+                }
+            }
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+            read_limit_text(&mut fs::File::from(fd), bytes)
+        }
+
+        fn read_limits(&self) -> Result<Limits> {
+            let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
+            // Same five fresh reads and original I/O-before-parse error order.
+            validate_limits(
+                self.read_limit(c"cpu.max", cpu)?,
+                self.read_limit(c"cpu.max.burst", burst)?,
+                self.read_limit(c"memory.max", memory)?,
+                self.read_limit(c"memory.swap.max", swap)?,
+                self.read_limit(c"pids.max", pids)?,
+            )
+        }
+
+        fn verify_limits(&self, parent: &Path, expected: Limits) -> Result<()> {
+            let observed = self.read_limits()?;
+            if observed != expected {
+                return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
+            }
+            // A directory renamed/unlinked after the first check cannot lend
+            // its still-readable FD to an accepted replacement at this name.
+            // Existing read/parse/limit failures retain their earlier priority.
+            self.verify_path(parent)
+        }
     }
 
     // This is a common-case stack size, NOT a new limit on boot or membership
@@ -324,11 +426,11 @@ mod kernel_parent {
 
     pub struct KernelBudget {
         parent: PathBuf,
-        // Immutable names only. Every check still opens all five actual paths
-        // afresh; no descriptor, contents or resource verdict is retained.
-        limit_paths: [PathBuf; 5],
+        // The owned FD stays bound to the original root-owned inode. Every
+        // successful check fences its absolute name before and after fresh
+        // relative limit reads; boot and actual-thread membership stay fresh.
+        directory: ParentDirectory,
         parent_relative: String,
-        identity: (u64, u64),
         boot_id: String,
         limits: Limits,
     }
@@ -342,23 +444,11 @@ mod kernel_parent {
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
-            let meta = fs::symlink_metadata(&self.parent)
-                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
-            if !meta.file_type().is_dir()
-                || meta.uid() != 0
-                || meta.mode() & 0o022 != 0
-                || (meta.dev(), meta.ino()) != self.identity
-            {
-                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
-            }
+            self.directory.verify_path(&self.parent)?;
             if !in_parent_cgroup(&self.parent_relative)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let observed = read_limits(&self.limit_paths)?;
-            if observed != self.limits {
-                return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
-            }
-            Ok(())
+            self.directory.verify_limits(&self.parent, self.limits)
         }
         fn open(path: &str) -> Result<Self> {
             let user_path = Path::new(path);
@@ -392,9 +482,8 @@ mod kernel_parent {
                 .trim_start_matches('/')
                 .to_owned();
             let budget = Self {
-                identity: (meta.dev(), meta.ino()),
+                directory: ParentDirectory::open(&parent, &meta)?,
                 boot_id: boot.trim().to_owned(),
-                limit_paths: limit_paths(&parent),
                 parent_relative,
                 parent,
                 limits: Limits {
@@ -448,6 +537,11 @@ mod kernel_parent {
             None if !address.ip().is_loopback() => Err("PUBLIC_HOST_KERNEL_REQUIRED".into()),
             None => Ok(None), // Retained loopback-only development tools.
         }
+    }
+
+    #[cfg(test)]
+    mod relative_tests {
+        include!("host_kernel_parent_relative_tests.rs");
     }
 
     #[cfg(test)]
