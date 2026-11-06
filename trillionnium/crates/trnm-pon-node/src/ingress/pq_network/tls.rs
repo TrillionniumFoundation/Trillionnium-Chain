@@ -130,3 +130,5 @@ pub fn serve_pq_tls13(
     Ok(metrics)
 }
 
+#[cfg(test)]
+mod tests;
