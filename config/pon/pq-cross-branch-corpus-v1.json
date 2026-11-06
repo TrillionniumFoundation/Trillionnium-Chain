@@ -140,7 +140,7 @@
   },
   "parent_profile": "pon-nakamoto-v1",
   "pinned_blobs": {
-    ".github/workflows/pon-branch-encoding-acceptance.yml": "ef548bd61a94d33162436731975fb71493362af6",
+    ".github/workflows/pon-branch-encoding-acceptance.yml": "b459945f8b071c70f83cc5fce0fa895225d5c8d0",
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "548bc418038b5d3e5ad6e732c858108930a794eb",
     ".github/workflows/pon-pq-system-continuation.yml": "be04494621f237358f4b87418b9b5c93273c02a7",
