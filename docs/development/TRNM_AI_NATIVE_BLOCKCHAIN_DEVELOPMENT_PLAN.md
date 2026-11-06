@@ -8157,3 +8157,24 @@ cold check is not an ordinary per-admission fetch. Its current material,
 identity, authorization and resource checks cannot be discarded on an earlier
 constructor's success. Cell transfer quotas do not yet prove CPU, disk or
 network isolation under simultaneous public consensus load.
+
+### 2026-11-06 retain the full-runtime r14 fixture failure
+
+The independent full workspace retry on `0bca28ebf59058b6aba9db5eb956c4479556e9ee`
+passes the former temporary-directory ancestry boundary but still fails. Its
+Node library records **1,214 passed / one failed / 32 ignored**: the retained
+`paid_envelope_resource_profile_has_fresh_exact_signed_commitment` control
+still expects revision 14 even though the runtime and independent current
+profile vectors are revision 15. Preserve that original Cargo exit 101 and
+the complete failed denominator. It is not another environment failure.
+
+Independently recompute all eighteen r10-through-r15 policy vectors from the
+length-framed SHA-256 preimages. For development bits 16 / lifetime 2,000 ms,
+the r15 commitment is `465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c`;
+the retired r14 value remains an explicit negative assertion. Correct only
+the stale test comment and current expected value, adding that negative
+assertion without changing the signed runtime domain, policy numbers or any
+prior rejection. The 118 selected / 118 authenticated / 21 history counts
+are unchanged. Exact `516382d87bbfdba85fbf34b6aa7b62edbc5759bb` already passes
+its own 389 Python controls and all 17 source/reader commands; the new fixture
+correction requires its own exact-source native and source qualification.
