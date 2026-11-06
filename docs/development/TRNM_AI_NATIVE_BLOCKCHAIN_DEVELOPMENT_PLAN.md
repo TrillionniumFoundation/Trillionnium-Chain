@@ -8019,3 +8019,15 @@ packaging observations retain their historical source, while the combined
 candidate retains the PQ branch's explicit minimum-version refusal boundary.
 The interrupted local compiler/Clippy attempts and environment restart are
 failed or incomplete development observations, not source-bound acceptance.
+
+Exact source `c4693ef2c748e96cec22dd819f6ca2e6e03c6f80` passes the complete
+workspace formatting and strict all-target/all-feature Clippy checks on an
+isolated Linux checkout, with unchanged before/after source receipts. Its CI
+contract and applicability controls expose stale inline source pins, a roster
+fixture missing the new controls, an ambiguous PQ heredoc selector, and a
+generated profile table still naming the old current revision. Correct those
+owners while retaining all original controls and exact rejection requirements.
+Preserve the initial disk-full runtime-material attempt (zero tests) and its
+separate 25-test successful rerun under the same original source. These
+development and source checks do not replace the new source's native execution
+or the original fixed-Host business acceptance.

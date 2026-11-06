@@ -145,7 +145,10 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
         cls.workspace_script = textwrap.dedent(workflow.split("<<'PYREGISTRY'\n", 1)[1]
                                                .split('\n        PYREGISTRY', 1)[0])
         workflow = (ROOT / '.github/workflows/pon-pq-system-continuation.yml').read_text()
-        cls.pq_script = textwrap.dedent(workflow.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
+        pq_owner = 'python3 - "$PQ_OUT/required-tests.tsv" <<\'PY\'\n'
+        if workflow.count(pq_owner) != 1:
+            raise AssertionError('expected one current PQ system manifest selector owner')
+        cls.pq_script = textwrap.dedent(workflow.split(pq_owner, 1)[1].split('\n          PY', 1)[0])
         cls.manifest = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
         cls.registries = {'m06': [], 'node': []}
         cls.ignored_names = set()
@@ -167,6 +170,9 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
                 ('store/native_authenticated/post_write_readback/tests.rs', 'store::native_authenticated::post_write_readback::tests'),
                 ('store/native_authenticated/post_write_readback/history_tests.rs', 'store::native_authenticated::post_write_readback::history_tests'),
                 ('host_kernel_parent_relative_tests.rs', 'host_kernel_parent::kernel_parent::relative_tests'),
+                ('store/observed_history/tests.rs', 'store::observed_history::tests'),
+                ('ingress/public_v3/intake/shared_readiness_tests.rs', 'ingress::public_v3::intake::shared_readiness_tests'),
+                ('host_kernel_parent_resource_tests.rs', 'host_kernel_parent::kernel_parent::resource_tests'),
             )),
         }
 
@@ -183,6 +189,14 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
         for crate, (package, paths) in modules.items():
             for relative, module in paths:
                 cls.registries[crate].extend(source_names(ROOT / 'trillionnium/crates' / package / 'src' / relative, module))
+        live_module = 'ingress::public_v3::intake_domain_tests'
+        live_name = live_module + '::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'
+        live_controls = source_names(
+            ROOT / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake_domain_tests.rs',
+            live_module)
+        if live_controls.count(live_name) != 1 or live_name in cls.ignored_names:
+            raise AssertionError('missing or ignored actual shared-readiness listener control')
+        cls.registries['node'].append(live_name)
         # This one control lives in an inline module instead of a standalone
         # test file. Require its actual declaration before adding the fixture.
         name = 'canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges'
@@ -213,6 +227,10 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
             ('postwrite-readback', 'store::native_authenticated::post_write_readback::tests::'),
             ('postwrite-history', 'store::native_authenticated::post_write_readback::history_tests::'),
             ('host-parent-relative', 'host_kernel_parent::kernel_parent::relative_tests::'),
+            ('header-material', 'store::observed_history::tests::'),
+            ('shared-ready', 'ingress::public_v3::intake::shared_readiness_tests::'),
+            ('host-resource', 'host_kernel_parent::kernel_parent::resource_tests::'),
+            ('shared-ready-live', 'ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'),
         ):
             expected = sorted(name for name in self.registries['node']
                               if name.startswith(prefix) and name not in self.ignored_names)
@@ -229,13 +247,21 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
         host_prefix = 'host_kernel_parent::kernel_parent::relative_tests::'
         host = next(name for name in self.registries['node']
                     if name.startswith(host_prefix) and name not in self.ignored_names)
-        for label in ('missing-exact', 'missing-prefix', 'missing-history', 'missing-host',
-                      'duplicate', 'extra-prefix', 'ignored-host-only', 'empty'):
+        required = {'missing-exact': exact, 'missing-prefix': postwrite,
+                    'missing-history': history, 'missing-host': host,
+                    'missing-shared-ready-live': 'ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'}
+        for group, prefix in (
+            ('header-material', 'store::observed_history::tests::'),
+            ('shared-ready', 'ingress::public_v3::intake::shared_readiness_tests::'),
+            ('host-resource', 'host_kernel_parent::kernel_parent::resource_tests::'),
+        ):
+            required['missing-' + group] = next(name for name in self.registries['node']
+                                               if name.startswith(prefix))
+        for label in (*required, 'duplicate', 'extra-prefix', 'ignored-host-only', 'empty'):
             with self.subTest(case=label):
                 registries = {crate: names.copy() for crate, names in self.registries.items()}
-                if label.startswith('missing'):
-                    registries['node'].remove({'missing-exact': exact, 'missing-prefix': postwrite,
-                                               'missing-history': history, 'missing-host': host}[label])
+                if label in required:
+                    registries['node'].remove(required[label])
                 elif label == 'duplicate':
                     registries['node'].append(postwrite)
                 elif label == 'extra-prefix':
