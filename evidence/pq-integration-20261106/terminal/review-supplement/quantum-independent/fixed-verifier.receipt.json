@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/verify_curated_evidence.py",
+    "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/archive-index.json"
+  ],
+  "cwd": "/workspace/scratch/8a6ecb667c1e",
+  "desktop_accessed": false,
+  "exit_code": 0,
+  "finished_unix_ns": 1793965547140784760,
+  "index_sha256": "91ef1453209eb3b72eb0f90066ca05e4e5a93e8d1b1b00f5c87855ddcfe1e8ed",
+  "native_tests_executed": 0,
+  "schema": "trnm-independent-fixed-archive-verifier-execution-v1",
+  "started_unix_ns": 1793965541602615424,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "5870c0ac23e9bc0e383ae30cc52efd3b19f072fb6c6492d9fde3c6ca6d6bfddf",
+  "verifier_sha256": "ad84ee5ccec29a339a54a20a863e964ced941821321c87f10e188de9979174c4"
+}

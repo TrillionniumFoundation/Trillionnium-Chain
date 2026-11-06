@@ -1,0 +1,9 @@
+{
+  "plan": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-selection-v1/frozen-selection.json",
+  "sha256": "2357bb2951cd794e2e84ceeb3a7b2b285e72ecbbd022aac1ab45d4f7ba200850",
+  "files": 966,
+  "bytes": 20785236,
+  "binding_checks": 9,
+  "formatter_refs": 60,
+  "native_or_project_executions": 0
+}
