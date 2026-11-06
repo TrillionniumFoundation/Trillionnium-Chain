@@ -7676,6 +7676,89 @@ business denominators. Whole-state scans, recovery, PQ cost, malicious-load
 fairness, data-plane isolation and useful-work economics remain separate work;
 no component result qualifies public throughput or production activation.
 
+
+### 2026-11-06 fixed owner composition and TLS local certificate admission
+
+Continue the existing PQ integration candidate by composing its fixed
+`cad4c18fe146b7d742ac7fa8872044cd4136c22b` source with integration owner
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Preserve both histories, original
+failed observations, the owner branch's bounded reads and SQL trace controls,
+and the PQ branch's current-authority, TLS and runtime source protections.
+The shared source corpus is resolved from the actual combined bytes; prior
+native observations retain their original sources. No budget or claim flag is
+promoted by this composition.
+
+Complete local TLS certificate admission before Node creation/readiness, using
+only the pinned direct CA, the actual server/client purpose, validity interval
+and the server's configured SAN. Retain the original handshake, signer binding,
+replay, work, deadline and resource controls. Add the three library selectors
+and one six-case ordinary-binary selector to the existing mandatory TLS roster.
+The unchanged bad-certificate behavior must be observed before the repair and
+the same fixed native combination must execute its acceptance and refusal paths.
+
+The [actual authority map](../security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md)
+records the current caller boundaries. M15 has no Chain product install or
+activation consumer; M09 acquisition is not activation. The PNQ2 witness covers
+three tables and is not wired into the ordinary TLS CLI. Independent custody,
+whole-store recovery, all private listeners, WAN budgets and cheapest quantum
+work/fork-choice security remain separate open gates. Retain the sole plan and
+existing whole-chain HOLD while completing those real owners and observations.
+
+
+### 2026-11-06 independent work-graph locks and retained service refusal
+
+The `0eac6017` CI observation refused two independent work crates at
+`cargo metadata --locked`: their zeroize 1.8.2 locks disagreed with the
+shared crypto crate's exact 1.9.1 requirement. Follow each actual relation
+path and repair all five affected native, v2, zkVM host and guest locks with
+Cargo 1.95. Preserve existing unrelated package versions, checksums and Git
+revisions. Newly missing guest dependencies use the already fixed main
+workspace versions where compatible; main and fuzz locks are unchanged.
+The resulting locked graphs are resolution evidence, not a native proof or
+a guest-image rebuild. Historical image/proof records retain their old inputs.
+
+The original four-second, six-depth W1 service gate also refused the
+`0eac6017` prospective-merge tree under its original quarter-CPU Host quota.
+Both arms admitted seven honest packets during pressure, but independent
+History replay exhausted the original confirmation window. Retain the raw
+failures, cold CPU account, Host checks, sixteen workers and all original
+budgets. Matching direct-source blobs and zero PQ-authentication attempts
+do not establish a same-host baseline comparison or rule out all binary
+differences. This service-performance qualification remains open; lock
+resolution and TLS startup admission cannot promote it to accepted.
+
+
+### 2026-11-06 verifier dependency and actual semantic registry closure
+
+The fixed-source `0eac6017` repository-truth lane exposed an unsupported
+`packaging.Marker.evaluate(context=...)` API. Preserve explicit metadata
+semantics and bind both truth lanes to an isolated verifier environment using
+the already reviewed packaging 26.3 wheel and hash. The shared material verifier
+refuses missing or pre-25.0 packaging before accepting even a marker-free wheel.
+Keep declared material, wheel bytes, dependency closure, offline policy and
+model-runtime dependencies unchanged. Add the actual verifier requirement to the
+mandatory source corpus, including the negative removal-of-file-and-pin control.
+
+The original complete-workspace native registry contained 25 post-write controls
+while its selector reader still required 23. Select all 25 and the original other
+nine groups, totaling 60 unique controls; retain the full workspace build, exact
+ELF binding, per-selector nonempty execution, 180-minute job and two-build-job
+budgets. Preserve the raw failed registry and replay its actual reader, including
+empty, missing, duplicate, extra and wrong-group refusals. Historical native logs
+remain historical; reader replay cannot manufacture a current native execution.
+
+The independently built `7957a144` tests-only source reproduced the TLS startup
+regressions with the original Rust 1.95.0 profiles: the library ran one positive
+and two failing controls; the ordinary CLI ran its one failing control. Both
+Cargo exits were 101, the expected wrong-SAN/expired markers were present, and
+full source readbacks matched before and after. Preserve those failures and the
+actual Cargo-advertised ELF hashes, then run the repaired candidate on its final
+fixed source. The original four-second service confirmation and the separate
+three-attempt thirty-second native campaign remain unaccepted business gates.
+No deadline, worker, Host quota, cold account, activation or whole-chain PQ
+qualification is relaxed by these source and CI-contract repairs.
+
+
 ### 2026-11-06 six requested workpackages: real execution and preserved vetoes
 
 This continuation starts from integration candidate #688 at
@@ -7864,3 +7947,21 @@ consensus control; measure honest completion under hostile/cold/recovery load;
 and report confirmation TPS, useful-work rate, Cell bandwidth, model-load
 latency and quality per actual cost separately. Component success does not
 close the original service, full-Cell, economic, task-supply or adoption gates.
+
+### 2026-11-06 preserve the advancing integration target
+
+The actual integration target advanced from `b173c1f5` to `56897f12` while
+PQ candidate `2e9deaf1` was being validated. A Git remote-ref read and the
+actual six-commit ancestry confirm the change; stale PR base/merge metadata
+cannot qualify the later target. Compose both real parent histories, keeping
+the new Cell persistent transport/window preparation, storage/replay owners,
+proof-disposition controls and all added CI gates together with the PQ profile,
+TLS startup, current-release and dependency/registry corrections.
+
+The first `2e9deaf1` independent green batch was explicitly interrupted before
+any Rust test or compilation began. Preserve its completed source/Python
+observations, cancellation receipt and unchanged source under that exact
+commit. Preserve the two earlier launcher preparation failures separately;
+neither executed native tests. The new combined source requires its own fixed
+source, actual binaries and the newly added target controls. No prior target,
+PQ, reader replay, Cell or ordinary-model result transfers to this composition.

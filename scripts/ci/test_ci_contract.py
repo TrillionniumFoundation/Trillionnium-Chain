@@ -17,6 +17,8 @@ from pathlib import Path
 
 from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
+                               RUNTIME_RELEASE_PYTHON, MERGE_RUNTIME_RELEASE_PYTHON,
+                               RUNTIME_RELEASE_COMMAND,
                                ZERO_RUN_STEP, ZERO_COMPARE_STEP, ONE_ZERO_RUN_STEP,
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
@@ -1170,6 +1172,31 @@ class CiContractTests(unittest.TestCase):
         self.rejected(workflow,
                       "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract' || matrix.lane == 'rust-baseline'",
                       "if: matrix.lane == 'protocol-contract' || matrix.lane == 'external-evidence-contract'")
+
+    def test_runtime_verifier_dependencies_are_pinned_in_both_truth_lanes(self):
+        workflow = '.github/workflows/trnm-required-baseline.yml'
+        for step in (RUNTIME_RELEASE_PYTHON, MERGE_RUNTIME_RELEASE_PYTHON):
+            for replacement in ('', step * 2, step.replace('--require-hashes ', ''),
+                                step.replace('--only-binary=:all: ', ''),
+                                step.replace('--isolated ', ''),
+                                step.replace('"$GITHUB_ENV"', '"$GITHUB_PATH"'),
+                                step.replace('runtime-release-dependencies.json', 'unretained.json')):
+                with self.subTest(step=step, replacement=replacement):
+                    self.rejected(workflow, step, replacement)
+
+    def test_runtime_verifier_dependency_cannot_be_unpinned_or_expand_the_install(self):
+        path = 'scripts/ci/runtime-release-requirements.txt'
+        for before, after in (('packaging==26.3', 'packaging>=25.0'),
+                ('d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c', '0' * 64),
+                ('packaging==26.3', 'torch==2.9.1\npackaging==26.3')):
+            with self.subTest(before=before, after=after):
+                self.rejected(path, before, after)
+
+    def test_runtime_verifier_controls_keep_the_configured_interpreter(self):
+        for replacement in ('', RUNTIME_RELEASE_COMMAND * 2,
+                            '    python3 scripts/test_llm_runtime_release.py\n'):
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', RUNTIME_RELEASE_COMMAND, replacement)
 
     def test_obligation_export_and_both_reader_controls_are_mandatory_and_fresh(self):
         path = 'scripts/ci/ci_job.sh'

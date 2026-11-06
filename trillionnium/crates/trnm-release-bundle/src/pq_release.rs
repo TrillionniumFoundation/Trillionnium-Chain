@@ -23,11 +23,15 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     error::Error,
     fmt,
+    sync::Arc,
 };
 use trnm_crypto_primitives::pq_auth::PqNativeVerifier;
 
 mod bundle_quorum;
 use bundle_quorum::VerifiedBundleQuorumV1;
+
+mod initial_root_material;
+pub use initial_root_material::PqInitialRootKeyMaterialV1;
 
 pub const RELEASE_PQ_PROFILE_V1: &[u8] = b"TRNM/Release/PQ/ML-DSA-65/v1\0";
 pub const MAX_RELEASE_KEYS_V1: usize = 16;
@@ -108,10 +112,14 @@ struct ValidatedPqReleaseRootV1<'a> {
 }
 
 impl PqReleaseRootV1 {
-    fn validate(&self, now: u64) -> Result<ValidatedPqReleaseRootV1<'_>, PqReleaseErrorV1> {
+    fn validate_header(&self, now: u64) -> Result<(), PqReleaseErrorV1> {
         if self.network_id == [0; 32] || self.generation == 0 || self.expires_at <= now {
             return Err(PqReleaseErrorV1::InvalidRoot);
         }
+        Ok(())
+    }
+    fn validate(&self, now: u64) -> Result<ValidatedPqReleaseRootV1<'_>, PqReleaseErrorV1> {
+        self.validate_header(now)?;
         let mut verifiers = self.offline_root.validate()?;
         if self.roles.len() != ROLES.len() || ROLES.iter().any(|r| !self.roles.contains_key(r)) {
             return Err(PqReleaseErrorV1::MissingRole);
@@ -153,29 +161,32 @@ impl PqReleaseRootV1 {
 
 impl ValidatedPqReleaseRootV1<'_> {
     fn signing_message(&self) -> Vec<u8> {
-        let root = self.root;
-        let mut bytes = Vec::new();
-        bytes.extend(RELEASE_PQ_PROFILE_V1);
-        bytes.push(0); // offline root domain, distinct from all content roles
-        bytes.extend(root.network_id);
-        bytes.extend(root.generation.to_be_bytes());
-        bytes.extend(root.expires_at.to_be_bytes());
-        bytes.extend(root.previous_root_digest);
-        root.offline_root.encode(&mut bytes);
-        for (role, keys) in &root.roles {
-            bytes.push(*role as u8);
-            keys.encode(&mut bytes);
-        }
-        let digest: [u8; 64] = Sha512::digest(&bytes).into();
-        let mut message = RELEASE_PQ_PROFILE_V1.to_vec();
-        message.push(0);
-        message.extend(digest);
-        message
+        encode_root_message(self.root)
     }
 
     fn into_verifiers(self) -> ReleaseVerifiersV1 {
         self.verifiers
     }
+}
+
+fn encode_root_message(root: &PqReleaseRootV1) -> Vec<u8> {
+    let mut bytes = Vec::new();
+    bytes.extend(RELEASE_PQ_PROFILE_V1);
+    bytes.push(0); // offline root domain, distinct from all content roles
+    bytes.extend(root.network_id);
+    bytes.extend(root.generation.to_be_bytes());
+    bytes.extend(root.expires_at.to_be_bytes());
+    bytes.extend(root.previous_root_digest);
+    root.offline_root.encode(&mut bytes);
+    for (role, keys) in &root.roles {
+        bytes.push(*role as u8);
+        keys.encode(&mut bytes);
+    }
+    let digest: [u8; 64] = Sha512::digest(&bytes).into();
+    let mut message = RELEASE_PQ_PROFILE_V1.to_vec();
+    message.push(0);
+    message.extend(digest);
+    message
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -280,9 +291,10 @@ struct CurrentPqReleaseV1 {
 /// history. A future migration must preserve the trusted checkpoint and records.
 pub struct PqReleaseAuthorityV1 {
     root: PqReleaseRootV1,
-    // Created by this authority's complete root validation and replaced together
-    // with a successfully rotated root. Never shared with another reconstruction.
-    verifiers: ReleaseVerifiersV1,
+    // Immutable public-key material only. The explicit prepared-initial-root API
+    // may share this map across fresh reconstructions of the exact pinned root.
+    // No signature/current result is shared; rotation fully validates a new map.
+    verifiers: Arc<ReleaseVerifiersV1>,
     root_digest: ReleaseDigestV1,
     checkpoint: ReleaseDigestV1,
     versions: BTreeMap<PqReleaseRoleV1, u64>,
@@ -300,26 +312,10 @@ impl PqReleaseAuthorityV1 {
         expected_root: ReleaseDigestV1,
         now: u64,
     ) -> Result<Self, PqReleaseErrorV1> {
-        let validated = root.validate(now)?;
-        let message = validated.signing_message();
-        let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
-        if expected_root != digest || root.generation != 1 || root.previous_root_digest != [0; 32] {
-            return Err(PqReleaseErrorV1::RootPin);
-        }
-        let verifiers = validated.into_verifiers();
-        let checkpoint = next_checkpoint([0; 32], &message, now);
-        Ok(Self {
-            root,
-            verifiers,
-            root_digest: digest,
-            checkpoint,
-            versions: BTreeMap::new(),
-            current: BTreeMap::new(),
-            history: BTreeSet::new(),
-            retired: BTreeSet::new(),
-            time_floor: now,
-            event_count: 0,
-        })
+        let (validated, message, digest) =
+            initial_root_material::validate_initial(&root, expected_root, now)?;
+        let verifiers = Arc::new(validated.into_verifiers());
+        Ok(Self::fresh_initial(root, verifiers, digest, &message, now))
     }
     /// Rebuild all role versions, publication lifetimes/generations, content
     /// history, retired keys and time floor
@@ -490,7 +486,7 @@ impl PqReleaseAuthorityV1 {
             &message,
             new_signatures,
         )?;
-        let verifiers = validated.into_verifiers();
+        let verifiers = Arc::new(validated.into_verifiers());
         let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.retired.extend(removed);

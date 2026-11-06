@@ -26,6 +26,9 @@ use trnm_pon_node::{
 };
 use zeroize::Zeroizing;
 
+#[path = "pq_tls_cli_witness.rs"]
+mod witness;
+
 fn ensure(value: bool, error: &'static str) -> Result<()> {
     if value {
         Ok(())
@@ -47,6 +50,8 @@ struct Configuration {
     peer_spkis: Vec<String>,
     ca_certificate_sha256: String,
     server_name: String,
+    #[serde(default, deserialize_with = "witness::present_configuration")]
+    witness: Option<witness::Configuration>,
 }
 
 // Fixed upper bounds and one inspected descriptor. Configuration is additionally
@@ -94,6 +99,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         "--tls-cert",
         "--tls-key",
         "--tls-ca",
+        "--witness-writer-key",
     ];
     ensure(
         args.keys().all(|key| ALLOWED.contains(&key.as_str())),
@@ -116,10 +122,18 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     let actual: [u8; 32] = Sha256::digest(bytes.as_slice()).into();
     ensure(actual == expected, "PQ_TLS_CONFIG_PIN")?;
     let config: Configuration = serde_json::from_slice(&bytes)?;
-    ensure(
-        config.schema == "native-pq-tls-loopback-config-v1",
-        "PQ_TLS_CONFIG_SCHEMA",
-    )?;
+    let witness_key = match config.schema.as_str() {
+        "native-pq-tls-loopback-config-v1"
+            if config.witness.is_none() && !args.contains_key("--witness-writer-key") =>
+        {
+            None
+        }
+        "native-pq-tls-loopback-config-v2" => {
+            ensure(config.witness.is_some(), "PQ_TLS_WITNESS_CONFIG_REQUIRED")?;
+            Some(need(args, "--witness-writer-key")?)
+        }
+        _ => return Err("PQ_TLS_CONFIG_SCHEMA".into()),
+    };
     let settings = Settings::development(Some(config.genesis_time))?;
     ensure(
         digest(&config.network)? == settings.network()
@@ -152,12 +166,18 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     let server = PqTlsServer::new(policy.clone(), signer, identity)?;
     // Validate all input and cryptographic configuration before creating/opening
     // the actual owner or binding the listener. No other backend is selected.
-    let node = Node::open_with_pq_network(
-        Path::new(need(args, "--store")?),
-        settings,
-        workers,
-        &policy,
-    )?;
+    let witness_selected = config.witness.is_some();
+    let store = Path::new(need(args, "--store")?);
+    let node = match config.witness {
+        Some(config) => config.open_node(
+            store,
+            settings,
+            workers,
+            &policy,
+            witness_key.ok_or("PQ_TLS_WITNESS_CONFIG_REQUIRED")?,
+        )?,
+        None => Node::open_with_pq_network(store, settings, workers, &policy)?,
+    };
     let listener = TcpListener::bind(address)?;
     println!(
         "{}",
@@ -165,6 +185,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         "profile":TLS_PROFILE,"policy":hex::encode(policy.id()),
         "configured_group":"X25519MLKEM768","group_evidence":"single-configured-group-inference",
         "public_history_tls":false,"private_task_qualification":false,
+        "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false,
         "production_activation":false,"consensus_authority":false})
     );
     std::io::stdout().flush()?;
@@ -177,6 +198,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     )?;
     Ok(
         json!({"profile":TLS_PROFILE,"metrics":metrics,"production_activation":false,
-        "consensus_authority":false,"public_history_tls":false}),
+        "consensus_authority":false,"public_history_tls":false,
+        "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false}),
     )
 }

@@ -2,6 +2,9 @@
 """Replay the actual workflow guards; not a new native execution."""
 from pathlib import Path
 import gzip
+import hashlib
+import json
+import os
 import re
 import subprocess
 import sys
@@ -14,6 +17,13 @@ WORKFLOW = ROOT / '.github/workflows/pon-recent-batch-acceptance.yml'
 EVIDENCE = ROOT / 'evidence/authenticated-suite-count-20261106'
 JOBS = (127701926958, 127701927002, 127701927160, 127701927200)
 PREFIX = 'store::native_authenticated::'
+WORKSPACE_WORKFLOW = ROOT / '.github/workflows/pon-original-workspace-large-state-cpu.yml'
+REGISTRY_EVIDENCE = ROOT / 'evidence/workspace-semantic-registry-20261106'
+REGISTRY_SHA256 = {
+    'm06': '2dde5653eb7086c89fbaea7a14855faa0d8891589354fdc0d34f48c2043a238b',
+    'node': '357025f7f34769299392d01f26e33047f4b81d8e25594ef5158a474f47175865',
+}
+POSTWRITE_PREFIX = PREFIX + 'post_write_readback::tests::'
 
 
 def workflow_guards():
@@ -40,6 +50,34 @@ def check(log, old=False):
 
 def fixture(job):
     return gzip.decompress((EVIDENCE / f'{job}.txt.gz').read_bytes()).decode()
+
+
+def registry_fixtures():
+    result = {}
+    for crate, expected in REGISTRY_SHA256.items():
+        raw = gzip.decompress((REGISTRY_EVIDENCE / f'{crate}-registry.log.gz').read_bytes())
+        assert hashlib.sha256(raw).hexdigest() == expected, crate + ' native registry fixture changed'
+        result[crate] = raw.decode()
+    return result
+
+
+def workspace_registry_check(registries, old=False):
+    workflow = WORKSPACE_WORKFLOW.read_text()
+    code = textwrap.dedent(workflow.split("<<'PYREGISTRY'\n", 1)[1].split('        PYREGISTRY\n', 1)[0])
+    if old:
+        corrected = f'prefix("node", "postwrite-readback", "{POSTWRITE_PREFIX}", 25)'
+        assert corrected in code
+        code = code.replace(corrected, corrected.replace(', 25)', ', 23)'))
+    with tempfile.TemporaryDirectory(prefix='workspace-registry-guard-') as directory:
+        controls = Path(directory) / 'semantic-controls'
+        controls.mkdir()
+        for crate, text in registries.items():
+            (controls / f'{crate}-registry.log').write_text(text)
+        result = subprocess.run([sys.executable, '-B', '-c', code],
+                                env=dict(os.environ, TRNM_CI_RECEIPT_DIR=directory),
+                                capture_output=True, text=True)
+        selected = controls / 'selected-tests.tsv'
+        return result, selected.read_text() if selected.exists() else None
 
 
 class AuthenticatedSuiteCount(unittest.TestCase):
@@ -91,6 +129,83 @@ class AuthenticatedSuiteCount(unittest.TestCase):
                          '-- "${options[@]}" --show-output --test-threads=1',
                          '--test continuity_authenticated --test authenticated_storage_cli',
                          '--all-targets --all-features -- -D warnings'):
+            self.assertIn(required, text)
+        self.assertNotIn('continue-on-error: true', text)
+
+
+class WorkspaceSemanticRegistry(unittest.TestCase):
+    def test_actual_native_registry_passes_current_guard_and_rejects_stale_count(self):
+        registries = registry_fixtures()
+        result, selected = workspace_registry_check(registries)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report['selected_count'], 60)
+        self.assertEqual(len(selected.splitlines()), 60)
+        self.assertEqual(len(set(selected.splitlines())), 60)
+        self.assertEqual({group['group']: group['expected_count'] for group in report['groups']}, {
+            'full-root-arithmetic': 5, 'unchanged-canonical-map': 6, 'account-root-digest': 3,
+            'growth-return-observations': 2, 'canonical-ascii': 7, 'reorg-tail': 6,
+            'direct-append-readback': 2, 'current-sql-root': 1,
+            'prepared-current-history': 3, 'postwrite-readback': 25,
+        })
+        old, omitted = workspace_registry_check(registries, old=True)
+        self.assertNotEqual(old.returncode, 0)
+        self.assertIn('postwrite-readback: expected 23 actual registered controls, got 25', old.stderr)
+        self.assertIsNone(omitted)
+
+    def test_selected_postwrite_roster_matches_source_and_four_executed_native_logs(self):
+        result, selected = workspace_registry_check(registry_fixtures())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        observed = [line.split('\t')[2] for line in selected.splitlines()
+                    if line.split('\t')[1] == 'postwrite-readback']
+        source = ROOT / 'trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs'
+        expected = [POSTWRITE_PREFIX + name for name in re.findall(r'#\[test\]\s*fn (\w+)\(', source.read_text())]
+        for path, module in re.findall(r'#\[path = "([^"]+)"\]\s*mod (\w+);', source.read_text()):
+            expected += [POSTWRITE_PREFIX + module + '::' + name for name in
+                         re.findall(r'#\[test\]\s*fn (\w+)\(', (source.parent / path).read_text())]
+        self.assertEqual(len(expected), 25)
+        self.assertCountEqual(observed, expected)
+        for job in JOBS:
+            executed = re.findall(r'^test (' + re.escape(POSTWRITE_PREFIX) + r'[\w:]+) \.\.\. ok$', fixture(job), re.M)
+            self.assertCountEqual(observed, executed)
+
+    def test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected(self):
+        registries = registry_fixtures()
+        line = next(line + '\n' for line in registries['node'].splitlines()
+                    if line.startswith(POSTWRITE_PREFIX))
+        for label, node in (
+                ('empty', ''), ('missing', registries['node'].replace(line, '', 1)),
+                ('duplicate', registries['node'] + line),
+                ('extra', registries['node'] + POSTWRITE_PREFIX + 'unexpected_control: test\n'),
+                ('wrong-group', registries['node'].replace(line, line.replace(POSTWRITE_PREFIX, 'other::'), 1))):
+            with self.subTest(label=label):
+                result, selected = workspace_registry_check(dict(registries, node=node))
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(selected)
+
+    def test_missing_exact_control_in_each_crate_rejected(self):
+        registries = registry_fixtures()
+        for crate, name in (
+                ('m06', 'pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match'),
+                ('node', 'store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen')):
+            with self.subTest(crate=crate):
+                changed = dict(registries)
+                changed[crate] = changed[crate].replace(name + ': test\n', '', 1)
+                result, selected = workspace_registry_check(changed)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('missing exact control:', result.stderr)
+                self.assertIsNone(selected)
+
+    def test_original_build_and_execution_contract_remains_required(self):
+        text = WORKSPACE_WORKFLOW.read_text()
+        for required in ('python3 scripts/ci/test_authenticated_suite_count.py',
+                         '--workspace", "--all-targets", "--all-features",',
+                         '--no-run", "--message-format=json"',
+                         '"$binary" --list --format terse',
+                         '"$binary" "$selector" --exact --nocapture --test-threads=1',
+                         'check_required_native_test.py" "$log" --test "$selector"',
+                         'if [ "$index" -eq 0 ] || [ "$index" -ne "$expected_count" ]; then status=1; fi',
+                         'timeout-minutes: 180', "CARGO_BUILD_JOBS: '2'"):
             self.assertIn(required, text)
         self.assertNotIn('continue-on-error: true', text)
 
