@@ -271,18 +271,26 @@ fn distinct_listener_handles_share_start_order_and_original_live_capacity() {
             assert!(measured.is_some());
         });
         wait_count(&domain, 1);
-        let second_worker = scope.spawn(|| {
+        let second_server = &second;
+        let second_metrics = &metrics;
+        let second_stop = &stop;
+        let second_cancelled = &cancelled;
+        let second_worker = scope.spawn(move || {
             let permit = PaidMutationCpuPermit::acquire_before(
-                &second,
-                &metrics,
+                second_server,
+                second_metrics,
                 Instant::now() + Duration::from_secs(5),
-                &stop,
-                &cancelled,
+                second_stop,
+                second_cancelled,
             )
             .unwrap();
             started_tx.send(2).unwrap();
             assert!(permit
-                .finish(&MutationCpuMeasurement::default(), &second, &metrics)
+                .finish(
+                    &MutationCpuMeasurement::default(),
+                    second_server,
+                    second_metrics,
+                )
                 .is_some());
         });
         wait_count(&domain, 2);
