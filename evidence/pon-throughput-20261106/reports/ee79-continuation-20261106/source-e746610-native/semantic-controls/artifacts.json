@@ -1,0 +1,329 @@
+{
+  "build_log": {
+    "bytes": 522515,
+    "fingerprint": [
+      66306,
+      48125069,
+      33152,
+      522515,
+      1793985453274085006,
+      1793985453274085006
+    ],
+    "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/build.log",
+    "sha256": "9afb7f6878bf5ff23afcea8e83c6272c0d42815b2716d007fef485dbdc249842"
+  },
+  "selected": {
+    "m06": {
+      "artifact": {
+        "executable": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_mvcc_fee-67a22f1e84480f19",
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_mvcc_fee-67a22f1e84480f19"
+        ],
+        "fresh": false,
+        "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+        "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "1",
+          "overflow_checks": true,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_mvcc_fee",
+          "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+          "test": true
+        }
+      },
+      "binary": {
+        "bytes": 83948496,
+        "fingerprint": [
+          66306,
+          48125082,
+          33216,
+          83948496,
+          1793985041271015261,
+          1793985041277015044
+        ],
+        "path": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_mvcc_fee-67a22f1e84480f19",
+        "sha256": "bfa564bffad80f9efbf6f20b06f29fd9528a8a6ab7f4648e9768cb56fb8e530d"
+      },
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee",
+      "dependency": {
+        "artifact": {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_mvcc_fee-e666dc170d0d82a3.rlib",
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_mvcc_fee-e666dc170d0d82a3.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        "file": {
+          "bytes": 70012426,
+          "fingerprint": [
+            66306,
+            48125096,
+            33152,
+            70012426,
+            1793985027126527756,
+            1793985027127527720
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_mvcc_fee-e666dc170d0d82a3.rlib",
+          "sha256": "846385110de67234454af399c6527f36f644afbd631d758f9c0779913d8b2936"
+        }
+      },
+      "profile_evidence": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_mvcc_fee-e666dc170d0d82a3.rlib",
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_mvcc_fee-e666dc170d0d82a3.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_mvcc_fee-67a22f1e84480f19",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_mvcc_fee-67a22f1e84480f19"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+          "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "1",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_mvcc_fee",
+            "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
+            "test": true
+          }
+        }
+      ]
+    },
+    "node": {
+      "artifact": {
+        "executable": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582",
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "filenames": [
+          "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582"
+        ],
+        "fresh": false,
+        "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/Cargo.toml",
+        "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "reason": "compiler-artifact",
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "test": true
+        }
+      },
+      "binary": {
+        "bytes": 458828736,
+        "fingerprint": [
+          66306,
+          48125610,
+          33216,
+          458828736,
+          1793985445102381164,
+          1793985445125380331
+        ],
+        "path": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582",
+        "sha256": "693c5d58161cfcdef42371e5df15012e10ff0da0fb18e495f7bbbda752c39638"
+      },
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node",
+      "profile_evidence": [
+        {
+          "executable": null,
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_pon_node-ea84caf3391ec27e.rlib",
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/libtrnm_pon_node-ea84caf3391ec27e.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "executable": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582",
+          "features": [
+            "default",
+            "pq-native-openssl"
+          ],
+          "filenames": [
+            "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582"
+          ],
+          "fresh": false,
+          "manifest_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/Cargo.toml",
+          "package_id": "path+file:///home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node#0.1.0",
+          "profile": {
+            "debug_assertions": true,
+            "debuginfo": 2,
+            "opt_level": "3",
+            "overflow_checks": true,
+            "test": true
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_pon_node",
+            "src_path": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node/src/lib.rs",
+            "test": true
+          }
+        }
+      ]
+    }
+  },
+  "source": {
+    "base": null,
+    "candidate": "e7466106a2a647c8032556273101440384d88b70",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+    "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1045782996,
+    "tracked_entries": 10905,
+    "tracked_worktree_verified": true
+  }
+}

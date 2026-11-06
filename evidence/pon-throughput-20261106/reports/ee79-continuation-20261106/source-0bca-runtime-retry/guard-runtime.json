@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590-runtime2/run_runtime_attempt.py"
+  ],
+  "child_exit_code": 1,
+  "child_pid_and_process_group": 730782,
+  "cwd": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590-runtime2/repo",
+  "disk_guard_triggered": false,
+  "enforcement": "sampled external stop, not a filesystem reservation or hard quota",
+  "expected_head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "final_available_bytes": 421252403200,
+  "finished_unix_ns": 1793983785977232428,
+  "floor_available_bytes": 8589934592,
+  "guard_sha256": "9e050c1a0170b100662759b3d4161f79b490888ef2b53d88e410e417b893e322",
+  "initial_available_bytes": 431676403712,
+  "last_available_bytes": 421256466432,
+  "log_bytes": 286,
+  "log_sha256": "1977af635ee4276f4b4dc2af098c4151f3e45f29fd6c1d950096a5030f563468",
+  "minimum_available_bytes": 421256466432,
+  "poll_seconds": 0.25,
+  "runner_success": false,
+  "schema": "trnm-external-disk-guard-v1",
+  "started_unix_ns": 1793982750430337671,
+  "status": "failed"
+}

@@ -1,0 +1,38 @@
+{
+  "files": [
+    {
+      "bytes": 23761,
+      "git_blob": "c5c42e923b5ac9b9189e1b70ffd665c6f71a87c9",
+      "repo_path": "scripts/ci/throughput_cost_coverage.py",
+      "sha256": "14cb0e6b78c3a6b71b3bd35955e7f49a74f91494603117ebd42f5a5cb58b7c50"
+    },
+    {
+      "bytes": 69332,
+      "git_blob": "d29b3d1a7b63a6c3ae3014e8debfd50152d44377",
+      "repo_path": "scripts/pon_public_v3_phase_read.py",
+      "sha256": "37a2559193761bdf5c55082430723ed194c972d7d3c4abc81b664adef518ed96"
+    },
+    {
+      "bytes": 7350,
+      "git_blob": "7c72b7307aa9b0c91ee2c0d84f49da8c4791939a",
+      "repo_path": "scripts/pon_public_v3_policy_read.py",
+      "sha256": "dee1aa712998ec24c65b39e5359a4b4cd622f8f80d0044c2425570d2c26a5527"
+    },
+    {
+      "bytes": 9219,
+      "git_blob": "eb60b89a8e4f6bd29a6bc2405e538b3d610add75",
+      "repo_path": "scripts/ci/read_native_cache_observation.py",
+      "sha256": "66da3ae13ded590fbef939233a158a9ca9ad38567f70a89d9796f01bbdab1e3b"
+    },
+    {
+      "bytes": 28457,
+      "git_blob": "791a4c24972b509bae1fa50bf9847e1b82942797",
+      "repo_path": "config/pon/public-resource-profile-vectors-v1.json",
+      "sha256": "41c5f557fc9b7064f9c9262365112039f1ad4641d8ba6052ee239d61039ac238"
+    }
+  ],
+  "reader_commit": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "reader_tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812",
+  "schema": "historical-cost-reader-source-blobs-v1",
+  "scope": "Exact committed reader and dependencies only; original native execution remains bound to9eda."
+}

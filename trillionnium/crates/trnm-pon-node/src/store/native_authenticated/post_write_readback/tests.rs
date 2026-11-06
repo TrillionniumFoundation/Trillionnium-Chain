@@ -11,12 +11,12 @@ mod fences;
 #[path = "frontier_tests.rs"]
 mod frontier;
 
-struct Fixture {
-    node: Node,
-    directory: tempfile::TempDir,
+pub(super) struct Fixture {
+    pub(super) node: Node,
+    pub(super) directory: tempfile::TempDir,
 }
 
-fn fixture() -> Fixture {
+pub(super) fn fixture() -> Fixture {
     let directory = tempfile::tempdir().unwrap();
     let settings = Settings::development_with_profiles(
         Some(1),
@@ -28,7 +28,7 @@ fn fixture() -> Fixture {
     Fixture { node, directory }
 }
 
-fn capture(node: &Node, child: Hash) -> PostWriteReadback<'_> {
+pub(super) fn capture(node: &Node, child: Hash) -> PostWriteReadback<'_> {
     let owner = TransactionScope::capture(&node.db).unwrap();
     PostWriteReadback::new(
         &node.db,
@@ -41,7 +41,7 @@ fn capture(node: &Node, child: Hash) -> PostWriteReadback<'_> {
     .unwrap()
 }
 
-fn verify(
+pub(super) fn verify(
     node: &Node,
     block: Hash,
     state: &State,

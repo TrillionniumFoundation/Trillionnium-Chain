@@ -1,0 +1,263 @@
+{
+  "commands": [
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "command_exit_code": 0,
+      "command_status": "command_succeeded",
+      "label": "locked-graph-0",
+      "manifest": "trillionnium/Cargo.toml",
+      "packages": 175,
+      "passed": true,
+      "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-0.json",
+      "recorder": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--tested",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--label",
+          "locked-graph-0",
+          "--output",
+          "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "elapsed_ns": 1443273432,
+        "exit_code": 0,
+        "finished_utc": "2026-11-06T16:12:17.999741+00:00",
+        "log": {
+          "bytes": 162,
+          "fingerprint": [
+            66306,
+            48142262,
+            33152,
+            162,
+            1793981537992876732,
+            1793981537992876732
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-0-recorder.log",
+          "sha256": "2b091e318462c2156a91951f58a8a57fb786da2e0181230a11281492d561c668"
+        },
+        "log_file": "locked-graph-0-recorder.log",
+        "schema": "trnm-native-runner-child-command-v1",
+        "started_utc": "2026-11-06T16:12:16.556410+00:00",
+        "status": "command_succeeded"
+      },
+      "resolved_nodes": 175,
+      "source": {
+        "base": null,
+        "candidate": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "tested_tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1045745109,
+        "tracked_entries": 10903,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "command_exit_code": 0,
+      "command_status": "command_succeeded",
+      "label": "locked-graph-1",
+      "manifest": "tests/fuzz/Cargo.toml",
+      "packages": 147,
+      "passed": true,
+      "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-1.json",
+      "recorder": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--tested",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--label",
+          "locked-graph-1",
+          "--output",
+          "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "tests/fuzz/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "elapsed_ns": 1325208287,
+        "exit_code": 0,
+        "finished_utc": "2026-11-06T16:12:19.329900+00:00",
+        "log": {
+          "bytes": 162,
+          "fingerprint": [
+            66306,
+            48142266,
+            33152,
+            162,
+            1793981539323035944,
+            1793981539323035944
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-1-recorder.log",
+          "sha256": "4c424bb520a6ca1da60f6ea11195ebbc0d578a45be0e05208886e8218c8a2101"
+        },
+        "log_file": "locked-graph-1-recorder.log",
+        "schema": "trnm-native-runner-child-command-v1",
+        "started_utc": "2026-11-06T16:12:18.004618+00:00",
+        "status": "command_succeeded"
+      },
+      "resolved_nodes": 147,
+      "source": {
+        "base": null,
+        "candidate": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "tested_tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1045745109,
+        "tracked_entries": 10903,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "command_exit_code": 0,
+      "command_status": "command_succeeded",
+      "label": "locked-graph-2",
+      "manifest": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+      "packages": 69,
+      "passed": true,
+      "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-2.json",
+      "recorder": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--tested",
+          "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+          "--label",
+          "locked-graph-2",
+          "--output",
+          "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "metadata",
+          "--locked",
+          "--manifest-path",
+          "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+          "--format-version",
+          "1"
+        ],
+        "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "elapsed_ns": 1326955125,
+        "exit_code": 0,
+        "finished_utc": "2026-11-06T16:12:20.662283+00:00",
+        "log": {
+          "bytes": 162,
+          "fingerprint": [
+            66306,
+            48142270,
+            33152,
+            162,
+            1793981540654151603,
+            1793981540654151603
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/locked-graph-2-recorder.log",
+          "sha256": "242aad063245fd048367ba38887734379513bd2ad148b9395e67897396a9da16"
+        },
+        "log_file": "locked-graph-2-recorder.log",
+        "schema": "trnm-native-runner-child-command-v1",
+        "started_utc": "2026-11-06T16:12:19.335264+00:00",
+        "status": "command_succeeded"
+      },
+      "resolved_nodes": 69,
+      "source": {
+        "base": null,
+        "candidate": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "tested_tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1045745109,
+        "tracked_entries": 10903,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "expected_graphs": 3,
+  "manifest_and_lock_sha256_after": {
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "b88ad1d11b966101d46f1797a3b7ab9f5e4806d8a0fdd9f90b6091163d5c30a0",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "3bb0f3dbc88bcf0fe16fcc76f12044dc63e964697c15a49fa273fdd6ff738aff",
+    "tests/fuzz/Cargo.lock": "b1e7d77c9935cd566288a90a78e39225248331c389772cf3b3c9406cf10fc13b",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "trillionnium/Cargo.lock": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "manifest_and_lock_sha256_before": {
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "b88ad1d11b966101d46f1797a3b7ab9f5e4806d8a0fdd9f90b6091163d5c30a0",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "3bb0f3dbc88bcf0fe16fcc76f12044dc63e964697c15a49fa273fdd6ff738aff",
+    "tests/fuzz/Cargo.lock": "b1e7d77c9935cd566288a90a78e39225248331c389772cf3b3c9406cf10fc13b",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "trillionnium/Cargo.lock": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "schema": "trnm-three-locked-graph-observation-v1",
+  "scope": "original locked Cargo metadata graphs; no cargo-deny advisory or license-policy qualification",
+  "source_head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "source_tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812",
+  "status": "passed"
+}

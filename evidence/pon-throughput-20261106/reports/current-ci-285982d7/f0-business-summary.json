@@ -1,0 +1,713 @@
+{
+  "schema": "trnm-original-fixed-host-f0-business-summary-v1",
+  "source_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "run_id": 42185197083,
+  "job_id": 127783768164,
+  "artifact_id": 13488663813,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/job/127783768164",
+  "artifact_zip_sha256": "ccd1854235902ba01a993bf3d08af81357644d4ec4bbd9698eae3f9f44c2af1b",
+  "artifact_zip_bytes": 16586590,
+  "github_conclusion": "failure",
+  "failure": "NATIVE_F0_FAILED",
+  "report_validation_failure": "BASELINE_MUST_PASS",
+  "report_zip_entry": "execution/raw/report.json",
+  "report_sha256": "3f82423e151a474ea76f12a7e5f8fe90079ddc17cbcec2303ea6dc28410c1247",
+  "four_second_slo_successes": 0,
+  "planned_confirmations": 6,
+  "inputs": {
+    "actor_call_cap": 480,
+    "attackers": 24,
+    "business_blocks": 21,
+    "confirmation_depth": 6,
+    "controller_resource_boundary_samples": 6,
+    "controller_resource_schema": "fixed-host-root-controller-resources-v1",
+    "cpu_burst_ns": 2000000000,
+    "cpu_refill_ns_per_second": 250000000,
+    "f1_implemented": false,
+    "four_second_slo_ns": 4000000000,
+    "legacy_four_second_from_zero_epoch_changed": false,
+    "m06_workers": 1,
+    "phase_profile": "fixed-public-root-phase-external-actors-v1",
+    "phase_seconds": 30,
+    "planned_business_packets": 42,
+    "planned_complete_runs": 1,
+    "planned_confirmations": 6,
+    "planned_phases": [
+      "baseline",
+      "valid-work-root"
+    ],
+    "round_start_seconds": [
+      1,
+      5,
+      9
+    ],
+    "seed_blocks": 4,
+    "seed_transfers": 1024,
+    "slo_starts_at_scheduled_offset": true,
+    "start_reserve_ns": 100000000
+  },
+  "source_records": [
+    {
+      "zip_entry": "execution/source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "execution/source-before.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "source-before.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "controller_resource_summary": {
+    "complete": true,
+    "observed_boundary_samples": 6,
+    "per_actor_rss_qualified": false,
+    "phases": [
+      {
+        "cpu_usage_delta_usec": 2483005,
+        "expected_phase_actors": 0,
+        "observations": [
+          {
+            "cpu_usage_usec": 4007364,
+            "ended_monotonic_ns": 300917614636,
+            "live_actors": 0,
+            "memory_current_bytes": 49467392,
+            "memory_peak_lifetime_bytes": 57155584,
+            "stage": "before_launch",
+            "started_monotonic_ns": 300917363074
+          },
+          {
+            "cpu_usage_usec": 4501917,
+            "ended_monotonic_ns": 306138632688,
+            "live_actors": 0,
+            "memory_current_bytes": 73879552,
+            "memory_peak_lifetime_bytes": 75399168,
+            "stage": "actors_ready",
+            "started_monotonic_ns": 306138414089
+          },
+          {
+            "cpu_usage_usec": 6490369,
+            "ended_monotonic_ns": 336674619828,
+            "live_actors": 0,
+            "memory_current_bytes": 57495552,
+            "memory_peak_lifetime_bytes": 77942784,
+            "stage": "after_reap",
+            "started_monotonic_ns": 336674377254
+          }
+        ],
+        "phase": "baseline"
+      },
+      {
+        "cpu_usage_delta_usec": 4191823,
+        "expected_phase_actors": 24,
+        "observations": [
+          {
+            "cpu_usage_usec": 6498355,
+            "ended_monotonic_ns": 336684150713,
+            "live_actors": 0,
+            "memory_current_bytes": 60080128,
+            "memory_peak_lifetime_bytes": 77942784,
+            "stage": "before_launch",
+            "started_monotonic_ns": 336683888101
+          },
+          {
+            "cpu_usage_usec": 7055722,
+            "ended_monotonic_ns": 341763145623,
+            "live_actors": 24,
+            "memory_current_bytes": 113078272,
+            "memory_peak_lifetime_bytes": 113147904,
+            "stage": "actors_ready",
+            "started_monotonic_ns": 341754212028
+          },
+          {
+            "cpu_usage_usec": 10690178,
+            "ended_monotonic_ns": 373728589583,
+            "live_actors": 0,
+            "memory_current_bytes": 96694272,
+            "memory_peak_lifetime_bytes": 125333504,
+            "stage": "after_reap",
+            "started_monotonic_ns": 373728320048
+          }
+        ],
+        "phase": "valid-work-root"
+      }
+    ],
+    "planned_boundary_samples": 6,
+    "planned_phases": 2,
+    "schema": "fixed-host-root-controller-resources-v1",
+    "scope": "whole original controller cgroup and all descendants; includes controller, broker, launcher and external producer processes; excludes separately systemd-owned public phase; not per-actor RSS"
+  },
+  "controller_resources_complete": true,
+  "all_services_known_empty": true,
+  "finalization_complete_success": false,
+  "all_planned_rounds": [
+    {
+      "actual_ended_ns": 25901798841,
+      "actual_started_ns": 1000487224,
+      "confirmed_inside_original_window": true,
+      "elapsed_from_scheduled_ns": 24901798841,
+      "end_lateness_from_four_second_deadline_ns": 20901798841,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 487224
+    },
+    {
+      "actual_ended_ns": 30001284393,
+      "actual_started_ns": 25901809921,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 25001284393,
+      "end_lateness_from_four_second_deadline_ns": 21001284393,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "baseline",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": 20901809921
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "baseline",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": 30058394383,
+      "actual_started_ns": 1056616745,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": 29058394383,
+      "end_lateness_from_four_second_deadline_ns": 25058394383,
+      "four_second_slo_met": false,
+      "observed_exactly_once": true,
+      "phase": "valid-work-root",
+      "round": 0,
+      "scheduled_offset_ns": 1000000000,
+      "start_lateness_from_schedule_ns": 56616745
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 1,
+      "scheduled_offset_ns": 5000000000,
+      "start_lateness_from_schedule_ns": null
+    },
+    {
+      "actual_ended_ns": null,
+      "actual_started_ns": null,
+      "confirmed_inside_original_window": false,
+      "elapsed_from_scheduled_ns": null,
+      "end_lateness_from_four_second_deadline_ns": null,
+      "four_second_slo_met": false,
+      "observed_exactly_once": false,
+      "phase": "valid-work-root",
+      "round": 2,
+      "scheduled_offset_ns": 9000000000,
+      "start_lateness_from_schedule_ns": null
+    }
+  ],
+  "phases": [
+    {
+      "phase": "baseline",
+      "recorded_rounds": 2,
+      "planned_rounds": 3,
+      "confirmed_rounds": 1,
+      "confirmed_round_elapsed_from_actual_start_ns": [
+        24901311617
+      ],
+      "confirmed_round_elapsed_from_schedule_ns": [
+        24901798841
+      ],
+      "host_checkpoint_cost": {
+        "phase": "baseline",
+        "client_import_rows": 8,
+        "succeeded_import_rows": 7,
+        "failed_import_rows": 1,
+        "caller_thread_cpu_ns_known_sum": 5454671059,
+        "caller_cpu_unknown_rows": 0,
+        "host_checkpoint_calls_started": 90604,
+        "host_checkpoint_thread_cpu_ns_known_sum": 4611268166,
+        "host_checkpoint_cpu_unknown_rows": 0,
+        "all_host_thread_cpu_ns_known_sum": 4613467830,
+        "host_checkpoint_fraction_of_caller_cpu": 0.8453796967997883
+      },
+      "service_outcome": {
+        "Ok": {
+          "abandoned_tasks": 0,
+          "accepted_connections": 22,
+          "body_bytes_received": 1388718,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 952,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 8,
+          "completed_submit": 14,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 22,
+          "disconnected_await_requests": 0,
+          "disconnected_before_enqueue": 0,
+          "enqueued_after_backpressure": 0,
+          "executor_refusals": 0,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 22,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 3654704,
+          "mutation_cpu_charged_ns": 956491411,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1989916686,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 14,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 936272599,
+          "mutation_full_work_cpu_ns": 20218812,
+          "mutation_response_cpu_ns": 738471,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 1,
+          "peak_mutating_grants": 1,
+          "peak_output_reserved_bytes": 8404992,
+          "peak_paid_body_bytes": 298335,
+          "peak_pending_challenge": 1,
+          "peak_pending_enqueue": 1,
+          "peak_pending_grant": 1,
+          "peak_read_grants": 1,
+          "peak_spent": 7,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 22,
+          "pending_challenge_granted": 22,
+          "pending_challenge_wait_ns": 24655718,
+          "pending_grant_closed": 0,
+          "pending_grant_entered": 22,
+          "pending_grant_granted": 22,
+          "pending_grant_wait_ns": 23779484,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 0,
+          "queue_refusals": 0,
+          "queue_wait_ns": 23604466,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 816574,
+          "response_write_failures": 0,
+          "retained_phase_errors": {},
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 22,
+          "tasks_dequeued": 22,
+          "tasks_enqueued": 22,
+          "tasks_skipped_before_dispatch": 0,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 0,
+          "work_finished": 14,
+          "work_ns": 20220671,
+          "work_started": 14
+        }
+      }
+    },
+    {
+      "phase": "valid-work-root",
+      "recorded_rounds": 1,
+      "planned_rounds": 3,
+      "confirmed_rounds": 0,
+      "confirmed_round_elapsed_from_actual_start_ns": [],
+      "confirmed_round_elapsed_from_schedule_ns": [],
+      "host_checkpoint_cost": {
+        "phase": "valid-work-root",
+        "client_import_rows": 0,
+        "succeeded_import_rows": 0,
+        "failed_import_rows": 0,
+        "caller_thread_cpu_ns_known_sum": 0,
+        "caller_cpu_unknown_rows": 0,
+        "host_checkpoint_calls_started": 0,
+        "host_checkpoint_thread_cpu_ns_known_sum": 0,
+        "host_checkpoint_cpu_unknown_rows": 0,
+        "all_host_thread_cpu_ns_known_sum": 0,
+        "host_checkpoint_fraction_of_caller_cpu": null
+      },
+      "service_outcome": {
+        "Ok": {
+          "abandoned_tasks": 93,
+          "accepted_connections": 404,
+          "body_bytes_received": 38480793,
+          "capacity_refusals": 0,
+          "challenge_budget_refusals": 0,
+          "cleanup_scans": 607,
+          "completed_pool_status": 0,
+          "completed_pool_submit": 0,
+          "completed_read": 0,
+          "completed_submit": 5,
+          "connections_closed_on_shutdown": 0,
+          "delivered_response_frames": 290,
+          "disconnected_await_requests": 97,
+          "disconnected_before_enqueue": 4,
+          "enqueued_after_backpressure": 380,
+          "executor_refusals": 375,
+          "expired_connections": 0,
+          "expired_phase_counts": {},
+          "issued_challenges": 404,
+          "lane_capacity_refusals": 0,
+          "mutating_grants_after_shutdown": 0,
+          "mutation_body_decode_cpu_ns": 98707362,
+          "mutation_cpu_charged_ns": 6474208007,
+          "mutation_cpu_clock_failures": 0,
+          "mutation_cpu_credit_ns_after_shutdown": 1996299239,
+          "mutation_cpu_debt_ns_after_shutdown": 0,
+          "mutation_cpu_in_flight_after_shutdown": 0,
+          "mutation_cpu_refusals": 0,
+          "mutation_cpu_reservations": 379,
+          "mutation_cpu_unavailable_after_shutdown": false,
+          "mutation_dispatch_excluding_work_cpu_ns": 5871628640,
+          "mutation_full_work_cpu_ns": 602579367,
+          "mutation_response_cpu_ns": 15479026,
+          "output_reserved_bytes_after_shutdown": 0,
+          "output_serialization_failures": 0,
+          "paid_body_capacity_refusals": 0,
+          "paid_body_reserved_bytes_after_shutdown": 0,
+          "parse_refusals": 0,
+          "peak_connections": 28,
+          "peak_mutating_grants": 8,
+          "peak_output_reserved_bytes": 196608,
+          "peak_paid_body_bytes": 2386680,
+          "peak_pending_challenge": 13,
+          "peak_pending_enqueue": 4,
+          "peak_pending_grant": 18,
+          "peak_read_grants": 0,
+          "peak_spent": 46,
+          "pending_challenge_closed": 0,
+          "pending_challenge_entered": 404,
+          "pending_challenge_granted": 404,
+          "pending_challenge_wait_ns": 2041357214,
+          "pending_grant_closed": 17,
+          "pending_grant_entered": 404,
+          "pending_grant_granted": 387,
+          "pending_grant_wait_ns": 503759736115,
+          "pool_submit_failed": 0,
+          "pool_submit_finished": 0,
+          "pool_submit_ns": 0,
+          "pool_submit_started": 0,
+          "pq_authentication_attempts": 0,
+          "pq_authentication_bytes": 0,
+          "pq_authentication_thread_cpu_ns": 0,
+          "pq_authentication_unavailable": false,
+          "preface_refusals": 0,
+          "queue_backpressure_events": 31357,
+          "queue_refusals": 0,
+          "queue_wait_ns": 113908246831,
+          "read_grants_after_shutdown": 0,
+          "replay_refusals": 0,
+          "response_bytes_written": 226505,
+          "response_write_failures": 0,
+          "retained_phase_errors": {
+            "queue": 4,
+            "solution": 17,
+            "work": 93
+          },
+          "signature_refusals": 0,
+          "spent_capacity_refusals": 0,
+          "spent_reservations": 404,
+          "tasks_dequeued": 383,
+          "tasks_enqueued": 383,
+          "tasks_skipped_before_dispatch": 3,
+          "ticket_refusals": 0,
+          "unknown_caller_durable_rows": 0,
+          "unpaid_pressure_cancel_requests": 0,
+          "unpaid_pressure_connections_closed": 0,
+          "work_failed": 4,
+          "work_finished": 369,
+          "work_ns": 5136882584,
+          "work_started": 369
+        }
+      }
+    }
+  ],
+  "interpretation": {
+    "nested_intervals_not_additive": true,
+    "unknown_cpu_is_not_zero": true,
+    "source_is_original_artifact_no_rerun": true,
+    "production_tps_qualified": false
+  },
+  "native_test_summaries": [
+    {
+      "zip_entry": "execution/raw/baseline-fixed-root-host-control/host/native.stdout.txt",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 34.70s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-00/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.14s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-01/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.13s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-02/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.13s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-03/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.14s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-04/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.12s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-05/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.12s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-06/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.13s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-07/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.13s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-08/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.11s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-09/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.10s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-10/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.10s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-11/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.11s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-12/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.08s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-13/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.10s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-14/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.08s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-15/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.09s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-16/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.07s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-17/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.06s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-18/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.07s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-19/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.06s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-20/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.05s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-21/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.04s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-22/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.05s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root/attacker-23/actor.log",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 30.05s"
+      ]
+    },
+    {
+      "zip_entry": "execution/raw/valid-work-root-fixed-root-host-control/host/native.stdout.txt",
+      "test_summaries": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 36.29s"
+      ]
+    },
+    {
+      "zip_entry": "execution/supplement.stdout.log",
+      "test_summaries": [
+        "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 75.47s"
+      ]
+    }
+  ],
+  "raw_resource_entries": [
+    "execution/raw/baseline-fixed-root-host-control/controller-resource-after-reap.json",
+    "execution/raw/baseline-fixed-root-host-control/controller-resource-before-launch.json",
+    "execution/raw/baseline-fixed-root-host-control/host/child-result.json",
+    "execution/raw/baseline-fixed-root-host-control/host/controller-result.json",
+    "execution/raw/baseline-fixed-root-host-control/host/inside-after.json",
+    "execution/raw/baseline-fixed-root-host-control/host/inside-before.json",
+    "execution/raw/baseline-fixed-root-host-control/host/outside-after.json",
+    "execution/raw/baseline-fixed-root-host-control/host/outside-before.json",
+    "execution/raw/baseline-fixed-root-host-control/host/owned-service-live.json",
+    "execution/raw/baseline-fixed-root-host-control/host/owned-service.json",
+    "execution/raw/baseline-fixed-root-host-control/host/unprovisioned-parent.json",
+    "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+    "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+    "execution/raw/baseline-fixed-root-host-control/host/verified-cleanup/result.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/controller-resource-after-reap.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/controller-resource-before-launch.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/child-result.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/controller-result.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/inside-after.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/inside-before.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/outside-after.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/outside-before.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/owned-service-live.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/owned-service.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-after.step.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/manager-before.step.json",
+    "execution/raw/valid-work-root-fixed-root-host-control/host/verified-cleanup/result.json",
+    "execution/resource-before.json",
+    "execution/resource-after.json",
+    "prepared/resource-at-preparation.json"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "trnm-throughput-final-tree-readback-v1",
+  "tree": "/workspace/scratch/1eed767ad985/validation/throughput-final-evidence-tree",
+  "regular_files": 37,
+  "total_bytes": 11043860,
+  "manifest_sha256": "4f4bc0411b5d572558675dfcfb32c92574b2a49cd0aa18778b643a75ea1e8f5d",
+  "sha256sums_sha256": "6d13de67bb76d4568c9643ff327cdbd2a3e01529e0d0ddd57cdb523329f96ce1",
+  "all_manifest_file_bytes_and_hashes_match": true,
+  "sha256sums_entries": 36,
+  "all_sha256sums_match": true,
+  "no_unlisted_files": true,
+  "no_native_tests_build_or_api": true,
+  "packaging_script_sha256": "2a1592b2fd0cd9db57f25a1c8d3f988646a42da1a3215b60e3ff1f89b2ad2131"
+}

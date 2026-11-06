@@ -1,0 +1,509 @@
+{
+  "schema": "trnm.recovery-release-sdk.committed-source-checks.v1",
+  "status": "COMPONENT_CHECKS_WITH_RETAINED_TRANSPORT_FAILURES",
+  "source": {
+    "base": null,
+    "candidate": "ac2402e4c8b99eee21c6db3e28f8984071478797",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "ac2402e4c8b99eee21c6db3e28f8984071478797",
+    "tested_tree": "68c5fda28e64f689cabbee8cd8ae99cc7050dd74",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 944799070,
+    "tracked_entries": 8914,
+    "tracked_worktree_verified": true
+  },
+  "host": "local x86_64 Linux",
+  "recorder": "scripts/ci/record_pq_native_command.py",
+  "recording_contract": "All 18 commands use the unchanged recorder and raw tracked-byte verifier before and after execution; not a final evidence-commit or hosted-CI qualification.",
+  "commands": {
+    "c-source-guard": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py",
+        "--source",
+        "/workspace/scratch/fae095a59687/upstream-mldsa"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 85.953972,
+      "local_receipt_sha256": "5d4b31ea5ed4eb3e052e4dd4550c8bfbf57c31fdeeb000b95ecdb736371b29de",
+      "log_sha256": "643f37bdee175e44bd4fa693281eac06fbb6eaa8f01e2cfa864663ca0380a34e",
+      "log_bytes": 1667
+    },
+    "checkpoint-all-targets": {
+      "status": "command_failed",
+      "exit_code": 101,
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--all-targets",
+        "--no-fail-fast",
+        "--",
+        "--test-threads=1"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-checkpoint",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 48.540189,
+      "local_receipt_sha256": "c058334a8d13a1a9d3db7b6d8109d4fe359bd32b393e54c90e542fe76bf5d4d4",
+      "log_sha256": "e107d8a29a19f8faf231005631f8d49cf5fbb959e547ab68d944f4854e43436f",
+      "log_bytes": 6950
+    },
+    "checkpoint-clippy": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-checkpoint",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 27.138301,
+      "local_receipt_sha256": "d308567dd0d3f3f0a4811f3d40de281fa149544a9c3acd8f360c4fc21c87387c",
+      "log_sha256": "a6584175eeb75bec4426453aee15d0942b6559ed4d02947089dba03fcb4d8b20",
+      "log_bytes": 176
+    },
+    "ci-contract": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 27.263659,
+      "local_receipt_sha256": "afd307971a177084338f96ba01b5675525ce6cfc47151e4cd0a067b9014cfd03",
+      "log_sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975",
+      "log_bytes": 180
+    },
+    "format": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-release-bundle",
+        "-p",
+        "trnm-crypto-primitives",
+        "--",
+        "--check"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 27.164158,
+      "local_receipt_sha256": "a1e790090546b3c9e7a404d92026a5010eef04804e01d6987d632d642a399c17",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0
+    },
+    "independent-c": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py",
+        "--source",
+        "/workspace/scratch/fae095a59687/upstream-mldsa",
+        "--chain-oracle",
+        "/workspace/scratch/fae095a59687/target-interop/debug/examples/pq_message_oracle",
+        "--wycheproof",
+        "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+        "--build-dir",
+        "/workspace/scratch/fae095a59687/postcommit/c-build",
+        "--report",
+        "/workspace/scratch/fae095a59687/postcommit/c-differential-report.json"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 138.02306,
+      "local_receipt_sha256": "51583ec00b9ec8b479de6dc9cd9a82b7d9d7931ab38412f61a238900c5017a13",
+      "log_sha256": "09001698ec7879069772418f7f3b2b58018d71f37e52af8b39b4ab831ad2b086",
+      "log_bytes": 2170
+    },
+    "locked-metadata": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--no-deps",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 29.39291,
+      "local_receipt_sha256": "d833e7927f9738ccf0d0d3464dd4282d9ffac6e38fbf618ab36aa625144a7c15",
+      "log_sha256": "1bf83b5cc67842298cf7f2c3b9a0223334252e8abc6245172c37dc184b0baacf",
+      "log_bytes": 162113
+    },
+    "oracle-clippy": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--example",
+        "pq_message_oracle",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-interop",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 171.808015,
+      "local_receipt_sha256": "863cc8ed09e68da129c5eb23cd28ad13044917b1e9016eb4fd0de76439ddfeb6",
+      "log_sha256": "0a75ca3769ded3987acacb616d1e208e093678b2a5df25605e6bc17aed1f12be",
+      "log_bytes": 313
+    },
+    "original-tuf-tests": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--test",
+        "tuf_tap21"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-interop",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 229.578345,
+      "local_receipt_sha256": "4f27ca564e9360f8d97ee59ed8f7d2086991ca8179a9af6413791b6efed03243",
+      "log_sha256": "64e2a0604c01ff8a6cfa12fd130ee473edbbba65126b9a1ba714d0bfdb51437f",
+      "log_bytes": 1291
+    },
+    "preflight": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 48.498035,
+      "local_receipt_sha256": "4652d1a825887897dee1dc6949e09a3f6197e5dd408db2bf4195e947245a7740",
+      "log_sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269",
+      "log_bytes": 171
+    },
+    "release-clippy": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-release",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 27.273697,
+      "local_receipt_sha256": "d312f41da4c3a1bc186f1a9b6d7884ac1afb14d31139c689de073f3864731196",
+      "log_sha256": "6e64fa55183f011a3401ab6621e24eb55d293cbc73d8409bf295b107208b127a",
+      "log_bytes": 176
+    },
+    "release-package": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--all-targets"
+      ],
+      "environment": {
+        "CARGO_BUILD_JOBS": "1",
+        "CARGO_TARGET_DIR": "/workspace/scratch/fae095a59687/target-release",
+        "RUSTC": "/root/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 46.45653,
+      "local_receipt_sha256": "bd8a22357cab51a776d4156004e185a2a9d48cc1221936d6042e525507f515ce",
+      "log_sha256": "781ac5f5ae56784ded831cd5b14b4291b1c9df363b7832f81099dbf6bdd0ac01",
+      "log_bytes": 2036
+    },
+    "repository": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 308.706346,
+      "local_receipt_sha256": "38cb59b911d9603dbc639cca051235e4f323574829302312b69849ae381c1e43",
+      "log_sha256": "06fb1c5f5d8fb2991725aab453b1eaa410375699f7957a58cbb29ce3c303154e",
+      "log_bytes": 307
+    },
+    "sdk-interop": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py",
+        "--source",
+        "/workspace/scratch/fae095a59687/upstream-sslib",
+        "--chain-oracle",
+        "/workspace/scratch/fae095a59687/target-interop/debug/examples/pq_message_oracle",
+        "--report",
+        "/workspace/scratch/fae095a59687/postcommit/sdk-differential-report.json"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 85.798867,
+      "local_receipt_sha256": "51d6ce25bc83278c4fad27f16f7c976430e90684316d7be05ec20b2fbfe43b8d",
+      "log_sha256": "4328428370bef55ffc54bb051a813fe44a12e2ee7af2353f5819a2d4c615a540",
+      "log_bytes": 1141
+    },
+    "sdk-source-guard": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+        "--source",
+        "/workspace/scratch/fae095a59687/upstream-sslib"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 85.936906,
+      "local_receipt_sha256": "250f7f0b82e0140f3a911f98bedd9be07cad3a416cde9775a1558ecdc8271614",
+      "log_sha256": "8184127efdfac786cab9d689884fccb2d99127284a416394e2bb390bc6e1b743",
+      "log_bytes": 1910
+    },
+    "source-negatives": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 159.019235,
+      "local_receipt_sha256": "a52a878d322c99097d30d6b0d898971ab433239732de908864c4d6dd3a742136",
+      "log_sha256": "9c12506eda8243f9efc478dab196b4f8e9c5f731a9ea3be856256e722595979b",
+      "log_bytes": 5707
+    },
+    "source-pins": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "environment": {},
+      "source_before_equals_after": true,
+      "elapsed_seconds": 27.244706,
+      "local_receipt_sha256": "8a6b42823c524554b95854cad1ca86263c802f79eecdd20127d126b97dcd1b45",
+      "log_sha256": "ede96fb4793c31852a8170c1df9213a8d0490c9e3a69593cef2734f4b051082e",
+      "log_bytes": 557
+    },
+    "tls-mtls": {
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "argv": [
+        "env",
+        "PYTHONPATH=/workspace/scratch/fae095a59687/chain-pq/formal/pon-nakamoto-v1",
+        "python3",
+        "-m",
+        "unittest",
+        "test_pq_tls",
+        "test_pq_mtls_probe",
+        "-v"
+      ],
+      "environment": {
+        "OPENSSL_DIR": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/e537ad232c79/native-runtime-acceptance/provider/trnm-pq-provider-3.5.9.P6cfOXrY/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "08e4988f44357113a30082b8b37b368c722dc6be82d07a8e3c3585b75e301955",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "source_before_equals_after": true,
+      "elapsed_seconds": 145.973475,
+      "local_receipt_sha256": "e77ef5ec123e2e414ac6ba861eb7d7fe46f15f40beb452ed515a807ba66050ba",
+      "log_sha256": "35fb8848549606688cfafbc74af910094e1553125d8c6b22c378c72826cd4174",
+      "log_bytes": 3214
+    }
+  },
+  "counts": {
+    "checkpoint": {
+      "passed": 43,
+      "failed": 4,
+      "ignored": 0,
+      "cold_recovery_passed": 15,
+      "node_commit_ledger_passed": 15
+    },
+    "release_passed": 18,
+    "original_tap21_passed": 8,
+    "sdk_source_guard_passed": 13,
+    "c_source_guard_passed": 9,
+    "source_negative_passed": 35,
+    "tls_mtls_passed": 18
+  },
+  "sdk": {
+    "upstream": {
+      "commit": "15064ca640222edba024af9f13191fa5dbad3825",
+      "files": 46,
+      "source_sha256": "fa7343ae1f4cea3a34817e556e7d93d577e6a5eb97e9359896b0dd3b5970241b"
+    },
+    "backend": {
+      "cryptography": "50.0.2",
+      "extension_sha256": "1e5d23fa66915204b9b67202a46993844d81cda56f6ad52cead2def37617ee29",
+      "openssl": "OpenSSL 4.0.3 29 Sep 2026",
+      "sdk": "1.5.1"
+    },
+    "positive_metadata_pairs": 18,
+    "sdk_verifications": 66,
+    "rust_verifications": 66,
+    "sdk_generic_key_dispatch": "ML-DSA not registered by default in pinned 1.5.1",
+    "full_tuf_updater_qualified": false,
+    "oracle_sha256": "e1f7b62df7ba43aa9b5c9f0cb6df96e937afcc1666b6b7d9fe5707af2881d518",
+    "runner_sha256": "6d721cacaabe5fbbdc4608293247c6660fbcc573b1d307ffb77636b3c3cbf0ba"
+  },
+  "independent_c": {
+    "upstream": {
+      "commit": "834a90d5e846ffa1e1611bd24e160bb2e9b86d35",
+      "files": 112,
+      "source_sha256": "a540cabc7c7160e5792be229bc1c47948d2cb2d8627d7121598478aa97675418"
+    },
+    "fixed_seed_signatures": 20,
+    "native_verification_cases": 391,
+    "rust_verification_cases": 396,
+    "wycheproof": {
+      "total": 210,
+      "valid": 79,
+      "invalid": 131
+    },
+    "adapter_sha256": "2c8639b02cebb49e9eea8a079080b33913b808c10176784d07fbc75afb7233a6",
+    "runner_sha256": "222395c704bc8b63ef47e196c1fc9e99b8735b51532307504777a92fb3217218",
+    "binaries": [
+      {
+        "path": "/workspace/scratch/fae095a59687/target-interop/debug/examples/pq_message_oracle",
+        "sha256": "e1f7b62df7ba43aa9b5c9f0cb6df96e937afcc1666b6b7d9fe5707af2881d518"
+      },
+      {
+        "path": "/workspace/scratch/fae095a59687/postcommit/c-build/mldsa-native-oracle",
+        "sha256": "d80feed44fc9d74f571921daf55ac773271515220a807273a5578d7bb20e5518"
+      }
+    ]
+  },
+  "provider_after_matches_all_five_original_inputs": true,
+  "full_reports_sha256": {
+    "sdk": "3aeb8a55f7c828313036d0e10626a9fda22e294e4ac3128deb6b3eb697cacf21",
+    "independent_c": "2b75b4e81e1e493141379b99845af5690ef2a656ebda0d596282d0d32617d2b0"
+  },
+  "failure": "Checkpoint unit explicitly reports bind checkpoint socket EPERM; three daemon process tests fail at startup. All remain enabled and failed.",
+  "repository_result": {
+    "activation": false,
+    "head": "ac2402e4c8b99eee21c6db3e28f8984071478797",
+    "local_links": 2618,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1132,
+    "source_state": "committed-clean",
+    "tree": "68c5fda28e64f689cabbee8cd8ae99cc7050dd74",
+    "workspace_packages": 26
+  },
+  "publication_scope": "A subsequent evidence-only commit may add this record and README explanation; no code, lock, workflow, pin, provider or test input changes are required.",
+  "raw_logs_published": false,
+  "qualifications": {
+    "whole_chain_quantum_security": false,
+    "production_activation": false,
+    "independent_operator_acceptance": false,
+    "all_copy_rollback_resistance": false,
+    "full_tuf_updater": false,
+    "arm64": false,
+    "prospective_merge": false
+  }
+}

@@ -41,7 +41,7 @@ class FixedRootPhaseHostControls(unittest.TestCase):
             },
             "binary_sha256": host.digest(self.binary),
             "state_backend": "authenticated-v1",
-            "work_profile": "raw-r14",
+            "work_profile": "raw-r15",
             "mode": None,
             "method": 0,
             "seed": ["00"] * 4,

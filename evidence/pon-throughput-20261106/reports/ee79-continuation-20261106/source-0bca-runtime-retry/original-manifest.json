@@ -1,0 +1,141 @@
+{
+  "ancestry_audit_job_id": "1a1b1b19a48-fc05-7a4c",
+  "archive_scope": "Original runtime2 attempt, unchanged source receipts/logs/guard/helper files plus exact durable process response text and original stdout, including failed runtime. Earlier 0bca primary evidence is separate.",
+  "files": [
+    {
+      "bytes": 6457,
+      "path": "disk_guard.py",
+      "sha256": "9e050c1a0170b100662759b3d4161f79b490888ef2b53d88e410e417b893e322"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/.hepta-lock-f14686839b9fb3ac81f84532",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 698,
+      "path": "raw/attempt-launch.json",
+      "sha256": "23794969ce13a2f8af1ad8566d6c1d0ee24137852cf36dd333e45a401b45f38a"
+    },
+    {
+      "bytes": 5636,
+      "path": "raw/durable-original/ancestry-output.json",
+      "sha256": "4cdd5da0a129566e96cded2809710f67452e88e8f45df54600ed75457d4881ec"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/durable-original/ancestry-output.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1708,
+      "path": "raw/durable-original/ancestry-output.stdout",
+      "sha256": "8dd63a7ab23483e23bea426e43aac0c32a67e9dac7c36c836fc88b0072c59329"
+    },
+    {
+      "bytes": 731,
+      "path": "raw/durable-original/ancestry-status.json",
+      "sha256": "29ba047106d00d54fcc9c08d920d50d918ca8ab02749199d1edcc2372d77e3c2"
+    },
+    {
+      "bytes": 4173,
+      "path": "raw/durable-original/runtime2-output.json",
+      "sha256": "13bf44b2e64d26270555b9a2e48be70eefb40c66eb3d4229346a7d2c05537094"
+    },
+    {
+      "bytes": 0,
+      "path": "raw/durable-original/runtime2-output.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1258,
+      "path": "raw/durable-original/runtime2-output.stdout",
+      "sha256": "09c9c43d01c9c9e92c2d8ffc487041845f2ad37432c029465f439535bb8a13b0"
+    },
+    {
+      "bytes": 728,
+      "path": "raw/durable-original/runtime2-status.json",
+      "sha256": "e5f7cf7b6ef8fdbc4bf105a3e69c1d29bcde84891a1a6d478d4bcf1f4f19bba8"
+    },
+    {
+      "bytes": 16015,
+      "path": "raw/durable-process-original-carrier.json",
+      "sha256": "090b3144a13ba79649901191b1deef3f336eb823aad7395d00fbe7cfdab8f775"
+    },
+    {
+      "bytes": 1104,
+      "path": "raw/guard-runtime.json",
+      "sha256": "59500a54d5cc8a38c2d99686966ee852be2df72eb8740c50b4ef7dc98e63b369"
+    },
+    {
+      "bytes": 286,
+      "path": "raw/guard-runtime.log",
+      "sha256": "1977af635ee4276f4b4dc2af098c4151f3e45f29fd6c1d950096a5030f563468"
+    },
+    {
+      "bytes": 6969,
+      "path": "raw/runtime-attempt.json",
+      "sha256": "5b8a589a74b65bd8d080b94e2e1d96748144d4b46b913607f77d6f5f83032401"
+    },
+    {
+      "bytes": 1252,
+      "path": "raw/runtime-preflight-recorder.json",
+      "sha256": "97386bb201262caf6cc1d214ab2d048c52ea48aa67bfb34457381fdc40b3ac49"
+    },
+    {
+      "bytes": 174,
+      "path": "raw/runtime-preflight-recorder.log",
+      "sha256": "f8b17cbd52145966c8a74293d4ec1f3092519db0685f92bd75e0b3d718fb2e5a"
+    },
+    {
+      "bytes": 2283,
+      "path": "raw/runtime-preflight.json",
+      "sha256": "21073bc31a4059c42c4d445c3f74d7ce57bbb766e1619f6a81b6407a7929623d"
+    },
+    {
+      "bytes": 175,
+      "path": "raw/runtime-preflight.log",
+      "sha256": "35d435f5a0f8b7a0356c6167f927c4e5adb2a1a7e067166a5b4a4195d59ab4e5"
+    },
+    {
+      "bytes": 1351,
+      "path": "raw/runtime-tests-recorder.json",
+      "sha256": "48a0d1c6a1583d864c944db39a82311227478391df9b95f0d61c7352854e85b9"
+    },
+    {
+      "bytes": 169,
+      "path": "raw/runtime-tests-recorder.log",
+      "sha256": "3cf39ee44b79ac2ce0afa7f2b3f12e006d6ddfe2bee036ad3fbf9d908274cc80"
+    },
+    {
+      "bytes": 2393,
+      "path": "raw/runtime-tests.json",
+      "sha256": "955c64480b3778a859c7fc4ec84fd465221b6c5b560fe2c22da736d09ef8e82f"
+    },
+    {
+      "bytes": 416268,
+      "path": "raw/runtime-tests.log",
+      "sha256": "388ec552bfaac9cd537530f0a1b127d2492fccca39ff142121d14c15e2d76c4d"
+    },
+    {
+      "bytes": 3749,
+      "path": "raw/temp-ancestry-before-after.json",
+      "sha256": "9463371ecc09e7f34746fdd2152fae7d4a3cd6c164c66698ee4868f418e4f3e8"
+    },
+    {
+      "bytes": 26709,
+      "path": "run_native_qualification.py",
+      "sha256": "2944189be70e53103debc4a9ae0a95866cde53ddbf3271a314b716614458074d"
+    },
+    {
+      "bytes": 2107,
+      "path": "run_runtime_attempt.py",
+      "sha256": "ba556bd04e9dd348e0833ecee21a3e948cb5d49b5ee163366f847d217cc1799f"
+    }
+  ],
+  "head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "host": "ai395",
+  "run_job_id": "1a1b1b4536d-fc05-7a5d",
+  "schema": "trnm-native-original-file-manifest-v1",
+  "tree": "06e394f20b8f491c4ea1f91a357e2b6e8a4c0812"
+}

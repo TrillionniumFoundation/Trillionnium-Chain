@@ -433,7 +433,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r14/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r15/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/shared-cpu-domain-ready-fifo-challenge-and-grant-split-read-mutation/validated-input-only-global-monotone-order-per-phase/no-accept-order-or-caller-key-entitlement/atomic-head-and-original-budget-reservation/other-listener-expiry-stop-cancel-retirement-no-slot-refund/no-order-renewal-or-overflow-reset/pending64-original-connection-leases-four-indexed-heads-no-extra-task-queue-or-worker/stable-nonhead-poll-no-full-scan-head-advance-bounded64/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -1190,21 +1190,13 @@ fn join_public_workers(
     outcome
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct PendingOrder {
     sequence: u64,
     entered_at: Instant,
+    deadline: Instant,
 }
-impl PendingOrder {
-    fn next(sequence: &mut u64) -> Result<Self> {
-        *sequence = sequence.checked_add(1).ok_or("PUBLIC_PENDING_ORDER")?;
-        Ok(Self {
-            sequence: *sequence,
-            entered_at: Instant::now(),
-        })
-    }
-}
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum PendingKind {
     Challenge,
     Grant,
@@ -1266,45 +1258,6 @@ impl Stage {
             Self::WaitGrant { pending, .. } => Some((PendingKind::Grant, *pending)),
             _ => None,
         }
-    }
-}
-// Four logical FIFO heads refer only to the existing bounded Connection map.
-// A partial prefix or unsolved cookie has no order and cannot block a ready item.
-#[derive(Default)]
-struct PendingHeads {
-    challenge: [Option<(u64, u64)>; 2],
-    grant: [Option<(u64, u64)>; 2],
-}
-impl PendingHeads {
-    fn collect(connections: &BTreeMap<u64, Connection>, now: Instant) -> Self {
-        let mut heads = Self::default();
-        for (id, conn) in connections {
-            if now >= conn.deadline {
-                continue;
-            }
-            let (slots, op, order) = match &conn.stage {
-                Stage::WaitChallenge { hello, pending } => {
-                    (&mut heads.challenge, hello.op, pending.sequence)
-                }
-                Stage::WaitGrant { cookie, pending } => {
-                    (&mut heads.grant, cookie.op, pending.sequence)
-                }
-                _ => continue,
-            };
-            let slot = &mut slots[usize::from(mutating_operation(op))];
-            let candidate = (order, *id);
-            if slot.is_none_or(|head| candidate < head) {
-                *slot = Some(candidate);
-            }
-        }
-        heads
-    }
-    fn is_head(&self, kind: PendingKind, op: u8, id: u64) -> bool {
-        let slots = match kind {
-            PendingKind::Challenge => &self.challenge,
-            PendingKind::Grant => &self.grant,
-        };
-        slots[usize::from(mutating_operation(op))].is_some_and(|(_, head)| head == id)
     }
 }
 fn close_pending(metrics: &mut PublicMetrics, pending: Option<(PendingKind, PendingOrder)>) {
@@ -2163,7 +2116,6 @@ fn serve_public_protected_v3_inner(
     // cannot reset CPU debt by opening a new PublicServer/process.
     let mut epoch_fence =
         OrdinaryPublicServiceCrashFence::begin(node.clone(), startup_deadline, &stop)?;
-    let mut next_pending_order = 0u64;
     let mut last_cleanup = Instant::now();
     let mut last_kernel_check = Instant::now();
     thread::scope(|scope| -> Result<()> {
@@ -2542,7 +2494,6 @@ fn serve_public_protected_v3_inner(
                         Err(TryRecvError::Disconnected) => return Err("PUBLIC_WORKERS_GONE".into()),
                     }
                 }
-                let heads = PendingHeads::collect(&connections, Instant::now());
                 let mut remove = Vec::new();
                 for (id, conn) in &mut connections {
                     if conn
@@ -2603,7 +2554,13 @@ fn serve_public_protected_v3_inner(
                                 if let Some(record) = &conn.observation {
                                     record.request(hello.op, hello.digest);
                                 }
-                                let pending = PendingOrder::next(&mut next_pending_order)?;
+                                let pending = lease.register_ready(
+                                    PendingKind::Challenge,
+                                    hello.op,
+                                    conn.deadline.min(conn.total_deadline).min(end),
+                                    &stop,
+                                    Instant::now(),
+                                )?;
                                 if let Some(record) = &conn.observation {
                                     record.pending_started(false, pending.entered_at);
                                 }
@@ -2615,9 +2572,16 @@ fn serve_public_protected_v3_inner(
                             }
                             Stage::WaitChallenge { hello, pending } => {
                                 pending_alive(conn, &stop)?;
-                                if !heads.is_head(PendingKind::Challenge, hello.op, *id)
-                                    || !intake.try_challenge(hello.op, Instant::now())?
-                                {
+                                let lease = conn
+                                    .intake_lease
+                                    .as_ref()
+                                    .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                if !intake.try_ready_challenge(
+                                    lease,
+                                    pending,
+                                    hello.op,
+                                    Instant::now(),
+                                )? {
                                     return Ok(Stage::WaitChallenge { hello, pending });
                                 }
                                 let cookie = server.cookie(&settings, hello, conn.peer)?;
@@ -2747,7 +2711,13 @@ fn serve_public_protected_v3_inner(
                                     m.peak_spent = m.peak_spent.max(spent.rows.len());
                                     m.spent_reservations += 1;
                                 }
-                                let pending = PendingOrder::next(&mut next_pending_order)?;
+                                let pending = lease.register_ready(
+                                    PendingKind::Grant,
+                                    cookie.op,
+                                    conn.deadline.min(conn.total_deadline).min(end),
+                                    &stop,
+                                    Instant::now(),
+                                )?;
                                 if let Some(record) = &conn.observation {
                                     record.pending_started(true, pending.entered_at);
                                 }
@@ -2759,9 +2729,6 @@ fn serve_public_protected_v3_inner(
                             }
                             Stage::WaitGrant { cookie, pending } => {
                                 pending_alive(conn, &stop)?;
-                                if !heads.is_head(PendingKind::Grant, cookie.op, *id) {
-                                    return Ok(Stage::WaitGrant { cookie, pending });
-                                }
                                 // This private stage already validated the immutable cookie,
                                 // target, signature and spent id once. Only the original
                                 // absolute expiry is checked again; polling does no crypto.
@@ -2769,11 +2736,15 @@ fn serve_public_protected_v3_inner(
                                     server.tick()? < cookie.expires_tick_ms,
                                     "PUBLIC_COOKIE_EXPIRED",
                                 )?;
-                                let Some((lane, permit)) = try_paid_permits(
+                                let lease = conn
+                                    .intake_lease
+                                    .as_ref()
+                                    .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+                                let Some((lane, permit)) = intake.try_ready_paid_permits(
+                                    lease,
+                                    pending,
                                     &cookie,
-                                    &mutating_grants,
-                                    &read_grants,
-                                    &body_pool,
+                                    Instant::now(),
                                 )?
                                 else {
                                     return Ok(Stage::WaitGrant { cookie, pending });
@@ -5365,9 +5336,13 @@ mod tests {
 
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent r14 SHA-256/length-framing vector for development
+        // Fixed independent r15 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c"
+        );
+        assert_ne!(
             hex::encode(PublicPolicy::development().id()),
             "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8"
         );
@@ -6692,7 +6667,56 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r14_historical_vectors_remain_exact_and_distinct() {
+        let vectors: Value = serde_json::from_str(include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/public-resource-profile-vectors-v1.json"
+        )))
+        .unwrap();
+        let contract = vectors["revisions"]["r14"]["resource_contract"]
+            .as_str()
+            .unwrap();
+        assert!(contract.starts_with("resource-revision-r14/"));
+        assert!(contract.contains("connection-local-ready-fifo"));
+        for (bits, expected) in [
+            (
+                8u8,
+                "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+            ),
+            (
+                12,
+                "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+            ),
+            (
+                16,
+                "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+            ),
+        ] {
+            let prior = hash(
+                b"public-protected-profile-v3",
+                &[
+                    PROFILE.as_bytes(),
+                    contract.as_bytes(),
+                    &[bits],
+                    &2000u64.to_le_bytes(),
+                    &MUTATION_CPU_BURST_NS.to_le_bytes(),
+                    &MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),
+                    &MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),
+                    &(MUTATION_CPU_WORKERS as u32).to_le_bytes(),
+                ],
+            );
+            assert_eq!(hex::encode(prior), expected);
+            assert_ne!(
+                prior,
+                PublicPolicy::new(bits, Duration::from_secs(2))
+                    .unwrap()
+                    .id()
+            );
+        }
+    }
+
+    #[test]
+    fn resource_revision_r15_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -6700,14 +6724,15 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10, r11, r12 AND r13 as validly signed predecessor inputs;
-        // r14 must reject them even with a correct current server MAC/signature.
+        // Preserve exact r10, r11, r12, r13 AND r14 as validly signed predecessor inputs;
+        // r15 must reject them even with a correct current server MAC/signature.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, predecessor_profiles) in [
             (
                 8,
-                "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+                "7407c22c85e06aecf4a80b36e0448fed09d36f1c3709b30d31602c399ac5ff73",
                 [
+                    "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
                     "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
                     "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
                     "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
@@ -6716,8 +6741,9 @@ mod tests {
             ),
             (
                 16,
-                "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+                "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c",
                 [
+                    "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
                     "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
                     "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
                     "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
@@ -6726,8 +6752,9 @@ mod tests {
             ),
             (
                 12,
-                "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+                "b2ee3da40ceb26af516e3b7f2a913abba5ca7311a5930c9d3fcd8f312aac8c3f",
                 [
+                    "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
                     "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
                     "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
                     "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
@@ -6959,87 +6986,60 @@ mod tests {
     }
     #[test]
     fn r4_pending_heads_use_validated_readiness_and_original_expiry_boundaries() {
-        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-        let address = listener.local_addr().unwrap();
-        let settings = Settings::development(Some(1)).unwrap();
-        let server = server();
+        // Retain the original readiness/expiry assertions against the actual
+        // shared intake owner, rather than a separate local-head model.
+        let intake = ListenerIntake::new();
         let epoch = Instant::now();
         let expiry = epoch + Duration::from_millis(2000);
-        let mut connections = BTreeMap::new();
-        let mut peers = Vec::new();
-        for id in 0..8u64 {
-            peers.push(TcpStream::connect(address).unwrap());
-            let (socket, peer) = listener.accept().unwrap();
-            socket.set_nonblocking(true).unwrap();
-            let op = if id % 2 == 0 { 1 } else { 2 };
-            let order = PendingOrder {
-                sequence: 8 - id,
-                entered_at: epoch,
-            };
-            let stage = match id {
-                0 => Stage::Solution {
-                    cookie: server.cookie(&settings, hello(op, 1), peer).unwrap(),
-                    bytes: vec![],
-                },
-                1 => Stage::Hello(vec![]),
-                2..=5 => Stage::WaitChallenge {
-                    hello: hello(op, 1),
-                    pending: order,
-                },
-                _ => Stage::WaitGrant {
-                    cookie: server.cookie(&settings, hello(op, 1), peer).unwrap(),
-                    pending: order,
-                },
-            };
-            connections.insert(
-                id,
-                Connection {
-                    _connection_permit: None, // Pure FIFO-order fixture, no served socket.
-                    intake_lease: None,
-                    observation: None,
-                    id,
-                    socket,
-                    peer,
-                    deadline: expiry,
-                    stage,
-                    total_deadline: epoch + Duration::from_secs(30),
-                    permit: None,
-                    lane_permit: None,
-                    cancelled: Arc::new(AtomicBool::new(false)),
-                },
+        let stop = Arc::new(AtomicBool::new(false));
+        let mut leases = Vec::new();
+        for _ in 0..4 {
+            let slot =
+                BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap();
+            let lease = intake
+                .connection_lease(&slot, Arc::new(AtomicBool::new(false)), epoch)
+                .unwrap();
+            leases.push((lease, slot));
+        }
+        // The earliest accepted partial Hello has no readiness order.
+        let mut orders = Vec::new();
+        for index in [2, 1, 3] {
+            leases[index].0.protect().unwrap();
+            orders.push(
+                leases[index]
+                    .0
+                    .register_ready(PendingKind::Challenge, 1, expiry, &stop, epoch)
+                    .unwrap(),
             );
         }
-        let heads = PendingHeads::collect(&connections, expiry - Duration::from_nanos(1));
-        assert!(heads.is_head(PendingKind::Challenge, 1, 4));
-        assert!(heads.is_head(PendingKind::Challenge, 2, 5));
-        assert!(heads.is_head(PendingKind::Grant, 1, 6));
-        assert!(heads.is_head(PendingKind::Grant, 2, 7));
-        assert!(
-            !heads.is_head(PendingKind::Challenge, 1, 0),
-            "older unsolved accept is not a ready head"
-        );
-        for now in [expiry, expiry + Duration::from_nanos(1)] {
-            let expired = PendingHeads::collect(&connections, now);
-            assert!(expired
-                .challenge
-                .iter()
-                .chain(&expired.grant)
-                .all(Option::is_none));
-        }
         for _ in 0..64 {
-            let _ = PendingHeads::collect(&connections, epoch);
+            assert!(!intake
+                .try_ready_challenge(&leases[1].0, orders[1], 1, epoch)
+                .unwrap());
         }
-        assert!(connections.values().all(|c| c.deadline == expiry
-            && c.total_deadline == epoch + Duration::from_secs(30)
-            && c.permit.is_none()
-            && c.lane_permit.is_none()));
-        let mut order = u64::MAX;
-        assert_eq!(
-            PendingOrder::next(&mut order).err().unwrap().to_string(),
-            "PUBLIC_PENDING_ORDER"
-        );
-        assert_eq!(order, u64::MAX);
-        drop((connections, peers));
+        assert!(intake
+            .try_ready_challenge(&leases[2].0, orders[0], 1, expiry - Duration::from_nanos(1))
+            .unwrap());
+        assert!(intake
+            .try_ready_challenge(&leases[1].0, orders[1], 1, expiry - Duration::from_nanos(1))
+            .unwrap());
+        for now in [expiry, expiry + Duration::from_nanos(1)] {
+            assert_eq!(
+                intake
+                    .try_ready_challenge(&leases[3].0, orders[2], 1, now)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_REQUEST_DEADLINE"
+            );
+        }
+        assert!(orders
+            .iter()
+            .all(|order| order.deadline == expiry && order.entered_at == epoch));
+        assert_eq!(*intake.connections.lock().unwrap(), 4);
+        assert_eq!(*intake.body_pool.lock().unwrap(), 0);
+        assert_eq!(*intake.mutating_grants.lock().unwrap(), 0);
+        drop(leases);
+        assert_eq!(*intake.connections.lock().unwrap(), 0);
     }
     #[test]
     fn r4_correctly_signed_old_and_new_challenges_are_incompatible_both_directions() {

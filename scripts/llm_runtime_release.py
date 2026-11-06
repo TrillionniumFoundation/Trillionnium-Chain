@@ -8,6 +8,11 @@ runtime still needs reviewed installer/vendored distribution metadata, .data/.pt
 policy and execution namespace binding; the tiny cold interpreter control does not establish those.
 It does not create a namespace capability, install a runtime, invoke a model, or
 qualify I10. In particular, a digest is not protection against later mutation.
+
+The verifier requires packaging >= 25.0 and metadata marker semantics. Its
+documented default metadata context is used with a fully pinned environment.
+The reviewed host dependency is pinned in scripts/ci/runtime-release-requirements.txt;
+install it in the verifier environment, never into the declared material root.
 """
 import base64
 import csv
@@ -348,10 +353,16 @@ def wheel_closure(root_fd, members, spec, maximum_bytes):
     environment, never the verifier's ambient platform defaults or an import from
     the declared root.
     """
-    from packaging.requirements import Requirement
-    from packaging.specifiers import SpecifierSet
-    from packaging.utils import canonicalize_name
-    from packaging.version import Version
+    try:
+        from packaging import __version__ as packaging_version
+        from packaging.requirements import Requirement
+        from packaging.specifiers import SpecifierSet
+        from packaging.utils import canonicalize_name
+        from packaging.version import Version
+    except ImportError as error:
+        raise ValueError("RUNTIME_PACKAGING_REQUIRED:install scripts/ci/runtime-release-requirements.txt") from error
+    require(Version(packaging_version) >= Version("25.0"),
+            "RUNTIME_PACKAGING_VERSION_REQUIRES_25:install scripts/ci/runtime-release-requirements.txt")
     owned, packages = set(), {}
     for wheel in spec["wheels"]:
         archive, record = wheel["archive"], wheel["installed_record"]
@@ -427,8 +438,9 @@ def wheel_closure(root_fd, members, spec, maximum_bytes):
         needed = set()
         for raw in package["requirements"]:
             requirement = Requirement(raw)
-            # Core metadata is the default in both pre-25 and current packaging.
-            # Supply every pinned field and extra; do not retry or hide evaluation errors.
+            # Core metadata is the documented default; keep the environment-only API.
+            # The >=25 host policy still applies. Supply every pinned field and extra;
+            # do not retry or hide evaluation errors.
             if requirement.marker is not None and not any(requirement.marker.evaluate(
                     environment=dict(spec["marker_environment"], extra=extra))
                     for extra in ["", *package["wheel"]["extras"]]):

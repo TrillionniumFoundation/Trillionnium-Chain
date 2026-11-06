@@ -1,0 +1,34 @@
+{
+  "schema": "trnm-readonly-feasibility-download-v1",
+  "job_id": "1a1b1ce8237-fc05-7ae5",
+  "head": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "files": [
+    {
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-release516-feasibility/job-status.json",
+      "bytes": 731,
+      "sha256": "bf73224b7d1fc8c772ffa14e778142cff43215898c70f3ab17d29956115c5a62"
+    },
+    {
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-release516-feasibility/job-launch.json",
+      "bytes": 8912,
+      "sha256": "17c6355be8c6f7df8fab0986869a75d8d02c1711634b45c78a8fccc9f2303adf"
+    },
+    {
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-release516-feasibility/probe-helper.py",
+      "bytes": 6132,
+      "sha256": "6dcd3959a34942eb2f07e5d9de1efdc8ee70d102fd0a029df66f577db3ab272e"
+    },
+    {
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-release516-feasibility/probe.stdout",
+      "bytes": 6444,
+      "sha256": "410d578de51c094bad149be56186a234040b986dc9d40aea67dea6281fc3f4c1"
+    },
+    {
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-release516-feasibility/probe.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "release_started": false,
+  "release_paused_by_parent_after_full_runtime_failure": true
+}

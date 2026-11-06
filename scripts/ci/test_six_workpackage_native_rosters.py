@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Execute the actual workflow selectors against retained native registries.
+"""Exercise actual selectors with historical and explicit source fixtures.
 
 These are registration regressions, not fresh native or service acceptance.
 The retained ZIP is the unchanged b173 head artifact, including its failure.
+The newer history/Host/PQ names are synthetic fixtures from current Rust test
+declarations; they are not a current ELF registry or evidence of execution.
 """
 from __future__ import annotations
 
@@ -42,6 +44,56 @@ def pq_script() -> str:
     return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" <<\'PY\'\n', '          PY\n')
 
 
+def source_fixture_extensions(crate='node'):
+    """Current declarations for synthetic reader inputs, never native evidence."""
+    extensions = {}
+    package = {'node': 'trnm-pon-node', 'm06': 'trnm-mvcc-fee'}[crate]
+    source_root = ROOT / 'trillionnium/crates' / package / 'src'
+    specifications = (
+        ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
+         'store::native_authenticated::post_write_readback::history_tests', 21),
+        ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
+         'host_kernel_parent::kernel_parent::relative_tests', 8),
+        ('header-material', 'store/observed_history/tests.rs',
+         'store::observed_history::tests', 8),
+        ('shared-ready', 'ingress/public_v3/intake/shared_readiness_tests.rs',
+         'ingress::public_v3::intake::shared_readiness_tests', 9),
+        ('host-resource', 'host_kernel_parent_resource_tests.rs',
+         'host_kernel_parent::kernel_parent::resource_tests', 7),
+        ('pq-parallel-admission', 'ingress/pq_network/parallel_execution_tests.rs',
+         'ingress::pq_network::parallel_execution_tests', 1),
+    ) if crate == 'node' else (
+        ('pq-parallel-preparation', 'pon_executor/pq_accounts_v2/parallel_preparation_tests.rs',
+         'pon_executor::pq_accounts_v2::parallel_preparation_tests', 3),
+    )
+    for group, relative, module, count in specifications:
+        def declarations(path, owner):
+            source = path.read_text()
+            tests = re.findall(
+                r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
+                source, re.M)
+            names = [owner + '::' + name for attributes, name in tests
+                     if not re.search(r'^#\[ignore\b', attributes, re.M)]
+            for filename, child in re.findall(
+                    r'^#\[path = "([^"]+)"\]\nmod ([A-Za-z_][A-Za-z0-9_]*);', source, re.M):
+                names.extend(declarations(path.parent / filename, owner + '::' + child))
+            return names
+
+        names = declarations(source_root / relative, module)
+        if len(names) != count or len(set(names)) != count:
+            raise ValueError('unexpected current source fixture declarations: ' + group)
+        extensions[group] = names
+    if crate != 'node':
+        return extensions
+    live_name = 'shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'
+    live_source = (source_root / 'ingress/public_v3/intake_domain_tests.rs').read_text()
+    if len(re.findall(r'^fn ' + live_name + r'\(', live_source, re.M)) != 1:
+        raise ValueError('expected one actual shared-readiness listener control declaration')
+    extensions['shared-ready-live'] = [
+        'ingress::public_v3::intake_domain_tests::' + live_name]
+    return extensions
+
+
 class NativeRosterTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -53,6 +105,23 @@ class NativeRosterTests(unittest.TestCase):
                               for name in ('m06', 'node')}
             cls.original_failure = source.read('semantic-controls/registry-check.stderr').decode()
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
+        cls.source_fixture_extensions = {}
+        cls.source_fixture_registries = dict(cls.registries)
+        for crate, expected in (('node', 55), ('m06', 3)):
+            extensions = source_fixture_extensions(crate)
+            if cls.source_fixture_extensions.keys() & extensions.keys():
+                raise ValueError('source fixture group has more than one crate owner')
+            cls.source_fixture_extensions.update(extensions)
+            original_names = {line[:-6] for line in cls.registries[crate].splitlines()
+                              if line.endswith(': test')}
+            additions = [name for names in extensions.values() for name in names]
+            if len(additions) != expected or len(set(additions)) != expected or original_names.intersection(additions):
+                raise ValueError('source fixture additions must be separate from the retained registry')
+            cls.source_fixture_registries[crate] += ''.join(name + ': test\n' for name in additions)
+        # Preserve the original registry string; this separate input is explicitly
+        # synthetic and exercises the complete current builder without skipping groups.
+        cls.source_fixture_node = cls.source_fixture_registries['node']
+        cls.source_fixture_m06 = cls.source_fixture_registries['m06']
 
     def run_workspace(self, *, script=None, node=None, m06=None):
         with tempfile.TemporaryDirectory() as directory:
@@ -90,9 +159,26 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIsNone(selected)
 
     def test_all_original_workspace_groups_execute_selection(self):
+        # Historical libtest evidence cannot claim registration of newer controls.
         result, selected = self.run_workspace()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('postwrite-history: expected 21 actual registered controls, got 0', result.stderr)
+        self.assertIsNone(selected)
+        result, selected = self.run_workspace(node=self.source_fixture_node, m06=self.source_fixture_m06)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
+        original_groups = [row for row in report['groups']
+                           if row['group'] not in self.source_fixture_extensions]
+        self.assertEqual(sum(row['expected_count'] for row in original_groups), 60)
+        for row in original_groups:
+            retained = {line[:-6] for line in self.registries[row['crate']].splitlines()
+                        if line.endswith(': test')}
+            self.assertTrue(set(row['tests']).issubset(retained))
+        for name, tests in self.source_fixture_extensions.items():
+            extension = next(row for row in report['groups'] if row['group'] == name)
+            self.assertCountEqual(extension['tests'], tests)
+            self.assertEqual(extension['expected_count'], len(tests))
+        self.assertEqual(report['selected_count'], 118)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()
@@ -106,12 +192,21 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIn('prepared-current-history', selected)
 
     def test_missing_extra_and_duplicate_native_registration_refused(self):
-        node = self.registries['node']
+        node = self.source_fixture_node
         one = next(line for line in node.splitlines(True) if line.startswith(PREFIX))
         for value in (node.replace(one, '', 1), node + one,
                       node + PREFIX + 'unreviewed_additional_control: test\n', ''):
             with self.subTest(value=value[-100:]):
-                result, selected = self.run_workspace(node=value)
+                result, selected = self.run_workspace(node=value, m06=self.source_fixture_m06)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(selected)
+        m06 = self.source_fixture_m06
+        pq_prefix = 'pon_executor::pq_accounts_v2::parallel_preparation_tests::'
+        one = next(line for line in m06.splitlines(True) if line.startswith(pq_prefix))
+        for value in (m06.replace(one, '', 1), m06 + one,
+                      m06 + pq_prefix + 'unreviewed_additional_control: test\n', ''):
+            with self.subTest(crate='m06', value=value[-100:]):
+                result, selected = self.run_workspace(node=node, m06=value)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIsNone(selected)
 

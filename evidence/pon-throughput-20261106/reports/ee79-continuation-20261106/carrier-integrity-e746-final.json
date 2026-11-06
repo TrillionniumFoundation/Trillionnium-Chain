@@ -1,0 +1,55 @@
+{
+  "archive": {
+    "bytes": 527821,
+    "original_path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/native-e746-original-qualification-failure.tar.gz",
+    "sha256": "7d5fafcbaee54cc4b38fe8f1c939e6a5622ededf3c7db2637c0d6425be2bc670",
+    "staged_path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/evidence-staging/source-e746610-native/original.tar.gz"
+  },
+  "archive_regular_members": 612,
+  "attached_manifest_members_excluded": [
+    "e746-original-manifest.json"
+  ],
+  "checks": {
+    "all_declared_member_sha256_and_bytes_match": true,
+    "all_selected_inputs_unchanged_during_check": true,
+    "gzip_crc_complete": true,
+    "no_casefold_alias_or_file_ancestor_conflict": true,
+    "no_duplicate_or_noncanonical_paths": true,
+    "no_links_special_or_sparse_members": true,
+    "no_unaccounted_archive_or_staged_files": true,
+    "no_unparsed_nonzero_tar_tail": true
+  },
+  "diagnostic_scope_sha256": "d1731ee4067e2ace6a6eef5e6ac593e863ae8745ee5470c34a6755d37783a437",
+  "expanded_original_files_byte_identical": 611,
+  "finished_utc": "2026-11-06T17:50:48.610641+00:00",
+  "manifest": {
+    "bytes": 106975,
+    "original_path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/ai395-e746-original/e746-original-manifest.json",
+    "sha256": "abf9945846a054bc0fa2dbf613b99a77275871683e5a2680216b4ca84c3a97f7",
+    "staged_path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/evidence-staging/source-e746610-native/original-manifest.json"
+  },
+  "merge_receipt_sha256": "d8d2d9ee92ec1e023598d3c5f2394396d119810cfa50c0be2f4cebedb2931d4b",
+  "native_execution": false,
+  "original_members_verified": 611,
+  "originals_modified": false,
+  "prior_checkpoint_manifest_byte_identical": true,
+  "prior_checkpoint_original_files_byte_identical": 17,
+  "production_qualified": false,
+  "retained_outcomes": {
+    "complete_architecture_sample_report_in_archive": false,
+    "complete_workspace_runtime_exit": 101,
+    "documentation_exit": 0,
+    "documentation_log_bytes": 6525,
+    "documentation_log_sha256": "14ed7765fd2ee3cf0b807462540a285af9242be8020e1ed69bdb3e1b078c82f6",
+    "runtime_log_bytes": 429686,
+    "runtime_log_sha256": "bcea08c4d6ca6547098917d8ce603cb0ddf2c8dca9fad7b51d0ac34e5efa3664"
+  },
+  "schema": "trnm-incremental-e746-final-carrier-integrity-v1",
+  "scope": "Incremental integrity check of the newly completed e746 original carrier only; the prior 15-carrier receipt is not overwritten or re-executed. Full runtime remains failed. Bounded architecture diagnostics and actual missing-file readbacks do not substitute for the absent complete sample report. No unknown exited-process environment is reconstructed.",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tests_executed": false,
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+  "staged_files_accounted": 54,
+  "started_utc": "2026-11-06T17:50:48.549268+00:00",
+  "status": "passed"
+}

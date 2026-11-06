@@ -1,0 +1,201 @@
+{
+  "original_criteria_met": false,
+  "phases": [
+    {
+      "cold_recovery_cpu_ns": null,
+      "complete_pipeline_cpu_ns": null,
+      "history_scope": "live History import, not full cold recovery; native/Host spans overlap the outer import; Host CPU sums invoking threads, not all worker CPU; each snapshot has its own epoch; no offsets are joined across snapshots",
+      "host_check_counts": [
+        {
+          "calls_started": 10,
+          "phase": "resolve"
+        },
+        {
+          "calls_started": 10,
+          "phase": "initial"
+        },
+        {
+          "calls_started": 109200,
+          "phase": "checkpoint"
+        },
+        {
+          "calls_started": 10,
+          "phase": "final"
+        }
+      ],
+      "mode": "baseline",
+      "original_outcome": {
+        "confirmation_rounds": [
+          {
+            "confirmed_inside_pressure_window": true,
+            "ended_ns": 22205928315,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 0,
+            "started_ns": 1000169195
+          },
+          {
+            "confirmed_inside_pressure_window": false,
+            "ended_ns": 30001628447,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": false,
+            "round": 1,
+            "started_ns": 22205976827
+          }
+        ],
+        "confirmed_rounds": 1,
+        "native_phase_criteria_met": false,
+        "observed_confirmation_rounds": 2,
+        "scheduled_confirmation_rounds": 3,
+        "startup_or_campaign_error": null,
+        "unobserved_scheduled_rounds": 1
+      },
+      "physical_network_bytes": null,
+      "pq_authentication": {
+        "missing_fields": [],
+        "pq_authentication_attempts": 0,
+        "pq_authentication_bytes": 0,
+        "pq_authentication_thread_cpu_ns": 0,
+        "pq_authentication_unavailable": false,
+        "scope": "listener intake epoch cumulative attempts/bytes/calling-thread CPU; not a per-request increment; zero attempts does not exercise PQ; never add to overlapping response/dispatch/process CPU"
+      },
+      "receiver_scope": "retained receiver records only; full work is inside dispatch; dispatch/phase CPU excludes separately scoped workers; stream counts are application bytes, not physical network bytes; missing or unentered work is not a zero-cost sample"
+    },
+    {
+      "cold_recovery_cpu_ns": null,
+      "complete_pipeline_cpu_ns": null,
+      "history_scope": "live History import, not full cold recovery; native/Host spans overlap the outer import; Host CPU sums invoking threads, not all worker CPU; each snapshot has its own epoch; no offsets are joined across snapshots",
+      "host_check_counts": [
+        {
+          "calls_started": 5,
+          "phase": "resolve"
+        },
+        {
+          "calls_started": 5,
+          "phase": "initial"
+        },
+        {
+          "calls_started": 39664,
+          "phase": "checkpoint"
+        },
+        {
+          "calls_started": 5,
+          "phase": "final"
+        }
+      ],
+      "mode": "from-zero",
+      "original_outcome": {
+        "confirmation_rounds": [
+          {
+            "confirmed_inside_pressure_window": false,
+            "ended_ns": 30064623151,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1001396935
+          }
+        ],
+        "confirmed_rounds": 0,
+        "native_phase_criteria_met": false,
+        "observed_confirmation_rounds": 1,
+        "scheduled_confirmation_rounds": 3,
+        "startup_or_campaign_error": null,
+        "unobserved_scheduled_rounds": 2
+      },
+      "physical_network_bytes": null,
+      "pq_authentication": {
+        "missing_fields": [],
+        "pq_authentication_attempts": 0,
+        "pq_authentication_bytes": 0,
+        "pq_authentication_thread_cpu_ns": 0,
+        "pq_authentication_unavailable": false,
+        "scope": "listener intake epoch cumulative attempts/bytes/calling-thread CPU; not a per-request increment; zero attempts does not exercise PQ; never add to overlapping response/dispatch/process CPU"
+      },
+      "receiver_scope": "retained receiver records only; full work is inside dispatch; dispatch/phase CPU excludes separately scoped workers; stream counts are application bytes, not physical network bytes; missing or unentered work is not a zero-cost sample"
+    },
+    {
+      "cold_recovery_cpu_ns": null,
+      "complete_pipeline_cpu_ns": null,
+      "history_scope": "live History import, not full cold recovery; native/Host spans overlap the outer import; Host CPU sums invoking threads, not all worker CPU; each snapshot has its own epoch; no offsets are joined across snapshots",
+      "host_check_counts": [
+        {
+          "calls_started": 5,
+          "phase": "resolve"
+        },
+        {
+          "calls_started": 5,
+          "phase": "initial"
+        },
+        {
+          "calls_started": 37623,
+          "phase": "checkpoint"
+        },
+        {
+          "calls_started": 5,
+          "phase": "final"
+        }
+      ],
+      "mode": "late-product",
+      "original_outcome": {
+        "confirmation_rounds": [
+          {
+            "confirmed_inside_pressure_window": false,
+            "ended_ns": 30080319598,
+            "paid_credit_depletion_observed_during_round": false,
+            "receiver_hostile_work_rejected_during_round": true,
+            "round": 0,
+            "started_ns": 1079203742
+          }
+        ],
+        "confirmed_rounds": 0,
+        "native_phase_criteria_met": false,
+        "observed_confirmation_rounds": 1,
+        "scheduled_confirmation_rounds": 3,
+        "startup_or_campaign_error": null,
+        "unobserved_scheduled_rounds": 2
+      },
+      "physical_network_bytes": null,
+      "pq_authentication": {
+        "missing_fields": [],
+        "pq_authentication_attempts": 0,
+        "pq_authentication_bytes": 0,
+        "pq_authentication_thread_cpu_ns": 0,
+        "pq_authentication_unavailable": false,
+        "scope": "listener intake epoch cumulative attempts/bytes/calling-thread CPU; not a per-request increment; zero attempts does not exercise PQ; never add to overlapping response/dispatch/process CPU"
+      },
+      "receiver_scope": "retained receiver records only; full work is inside dispatch; dispatch/phase CPU excludes separately scoped workers; stream counts are application bytes, not physical network bytes; missing or unentered work is not a zero-cost sample"
+    }
+  ],
+  "policy": {
+    "lifetime_ms": 2000,
+    "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "schema": "public-protected-resource-policy-observation-v1",
+    "ticket_bits": 8,
+    "transport_profile": "public-protected-development-v3"
+  },
+  "schema": "pon-throughput-cost-coverage-v1",
+  "scope": {
+    "business_tps_capacity": null,
+    "complete_pipeline_cost_measured": false,
+    "cross_epoch_timestamps_are_joined": false,
+    "overlapping_cpu_domains_are_added": false,
+    "physical_network_bytes_measured": false,
+    "production_qualification": false,
+    "reader_runs_native_work": false,
+    "source_binding": "caller-pinned report bytes and unchanged retained source receipts; not execution attestation or applicability to later source",
+    "unknown_values_are_zero": false
+  },
+  "source": {
+    "base": null,
+    "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 992948649,
+    "tracked_entries": 10535,
+    "tracked_worktree_verified": true
+  }
+}

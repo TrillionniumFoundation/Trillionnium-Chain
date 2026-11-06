@@ -1,0 +1,54 @@
+{
+  "scope": "verbatim native registry and original failure readback; replay is not new native execution",
+  "run_id": 42179526890,
+  "job_id": 127765650164,
+  "source_kind": "head",
+  "candidate": "0eac6017b1e4087a69bc9c40962b4e216b9c4ee2",
+  "tree": "8b25abdd3c09268d8c68752c56d49d50dafa12be",
+  "artifact_id": 13486249758,
+  "artifact_zip_sha256": "387def86c4690e85802219d13a52390691a3dcd1786f5b77039772139a471a63",
+  "files": {
+    "m06-registry.log.gz": {
+      "artifact_entry": "semantic-controls/m06-registry.log",
+      "raw_bytes": 16093,
+      "raw_sha256": "2dde5653eb7086c89fbaea7a14855faa0d8891589354fdc0d34f48c2043a238b",
+      "gzip_sha256": "8ca55d61362748528758821b6497c7fce44352506e3e1184ea1e2db95f18f936"
+    },
+    "node-registry.log.gz": {
+      "artifact_entry": "semantic-controls/node-registry.log",
+      "raw_bytes": 133250,
+      "raw_sha256": "357025f7f34769299392d01f26e33047f4b81d8e25594ef5158a474f47175865",
+      "gzip_sha256": "e948e444b5e298bbbb4168355175805eeb5df6671da4ea2a5f307cdc35b57375"
+    },
+    "source-before.json": {
+      "artifact_entry": "source-before.json",
+      "raw_bytes": 422,
+      "raw_sha256": "4558d992d59436e35d7905c0c8da9137c68d4ba41b2a22ec80876d50e37b580c"
+    },
+    "source-after.json": {
+      "artifact_entry": "source-after.json",
+      "raw_bytes": 422,
+      "raw_sha256": "4558d992d59436e35d7905c0c8da9137c68d4ba41b2a22ec80876d50e37b580c"
+    },
+    "registry-exits.tsv": {
+      "artifact_entry": "semantic-controls/registry-exits.tsv",
+      "raw_bytes": 44,
+      "raw_sha256": "45d4db180654c4911ad51bc907316ef72f17a758aafb293a72776bf91915c808"
+    },
+    "elf-before-exits.tsv": {
+      "artifact_entry": "semantic-controls/elf-before-exits.tsv",
+      "raw_bytes": 31,
+      "raw_sha256": "9deb9c76440b423e40f511e78ac52bea14ececa8c78761f56726fc41a11f1b19"
+    },
+    "registry-check.stderr": {
+      "artifact_entry": "semantic-controls/registry-check.stderr",
+      "raw_bytes": 194,
+      "raw_sha256": "7d034c86163a1104ac4dc61522b7cf800d48cc3abe7f9b8882d2d2767dedc698"
+    },
+    "registry-check.exit": {
+      "artifact_entry": "semantic-controls/registry-check.exit",
+      "raw_bytes": 2,
+      "raw_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    }
+  }
+}

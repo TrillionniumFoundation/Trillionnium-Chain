@@ -1,0 +1,16 @@
+{
+  "branch": "fix/chain-throughput-publish-20261106-1eed",
+  "force_push": false,
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "original_pre_push_hook_preserved": true,
+  "output": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1",
+  "push_exit_code": 0,
+  "remote_after_push": "e7466106a2a647c8032556273101440384d88b70",
+  "remote_before_local_update": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "remote_before_push": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "remote_policy_mutated": false,
+  "repo": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo",
+  "source_receipt_sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352",
+  "status": "published",
+  "tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

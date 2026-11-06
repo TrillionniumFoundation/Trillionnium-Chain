@@ -17,7 +17,7 @@ import tempfile
 import unittest
 from unittest import mock
 import zipfile
-from packaging.markers import default_environment
+from packaging.markers import Marker, default_environment
 
 import llm_runtime_release as release
 
@@ -341,6 +341,35 @@ class RuntimeMaterialTests(unittest.TestCase):
             self.declare(self.repack_metadata("Requires-Dist: pon-closure-probe>=2\n"))
         with self.assertRaisesRegex(ValueError, "WHEEL_PYTHON_VERSION"):
             self.declare(self.repack_metadata("Requires-Python: >=4\n"))
+
+    def test_old_packaging_refuses_even_when_the_wheel_has_no_markers(self):
+        # A marker-free wheel must not turn an unsupported verifier into a
+        # successful declaration that would fail only on a later dependency.
+        for version in ("24.2", "25.0rc1"):
+            with self.subTest(version=version), mock.patch("packaging.__version__", version):
+                with self.assertRaisesRegex(ValueError, "RUNTIME_PACKAGING_VERSION_REQUIRES_25"):
+                    self.declare()
+
+    def test_missing_packaging_refuses_with_the_explicit_host_dependency(self):
+        with mock.patch.dict(sys.modules, {"packaging": None}):
+            with self.assertRaisesRegex(ValueError, "RUNTIME_PACKAGING_REQUIRED"):
+                self.declare()
+
+    def test_marker_evaluation_retains_metadata_context_and_the_pinned_environment(self):
+        spec = self.repack_metadata('Provides-Extra: audit\n'
+            'Requires-Dist: pon-closure-probe; python_version >= "3.12" and extra == "audit"\n')
+        spec["wheels"][0]["extras"] = ["audit"]
+        with mock.patch.object(Marker, "evaluate", autospec=True,
+                               side_effect=Marker.evaluate) as evaluate:
+            result = json.loads(self.declare(spec))
+        self.assertEqual(result["python_dependencies"][0]["dependencies"], ["pon-closure-probe"])
+        self.assertEqual([call.kwargs["environment"] for call in evaluate.call_args_list], [
+            dict(spec["marker_environment"], extra=extra)
+            for extra in ("", "audit")])
+        # Lock-file-only sets are not silently supplied by a different context.
+        for marker in ('"audit" in extras', '"audit" in dependency_groups'):
+            with self.subTest(marker=marker), self.assertRaises(KeyError):
+                self.declare(self.repack_metadata('Requires-Dist: absent-runtime; ' + marker + '\n'))
 
     def test_metadata_markers_keep_pre25_evaluate_signature(self):
         from packaging.markers import Marker

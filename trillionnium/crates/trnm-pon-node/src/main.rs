@@ -1,6 +1,8 @@
 //! Ordinary native development entrypoint. Signed transactions remain external inputs.
 mod growth_cli;
 mod host_public_guard;
+#[cfg(all(unix, feature = "pq-native-openssl"))]
+mod pq_tls_cli;
 use serde_json::{json, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -1369,6 +1371,14 @@ fn run() -> Result<Value> {
         return Err(
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
+    }
+    if command == "pq-tls-serve" {
+        #[cfg(all(unix, feature = "pq-native-openssl"))]
+        return pq_tls_cli::run(&args);
+        #[cfg(all(not(unix), feature = "pq-native-openssl"))]
+        return Err("PQ_TLS_UNIX_CLI_REQUIRED".into());
+        #[cfg(not(feature = "pq-native-openssl"))]
+        return Err("PQ_TLS_NATIVE_OPENSSL_FEATURE_REQUIRED".into());
     }
     if command.starts_with("growth-") {
         return growth_cli::run(&command, &args);

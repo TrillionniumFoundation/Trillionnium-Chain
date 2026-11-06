@@ -1,0 +1,448 @@
+{
+  "ancestors": [
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 0,
+      "inode": 2,
+      "mode": "0o755",
+      "path": "/",
+      "regular": false,
+      "symlink": false,
+      "uid": 0
+    },
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 0,
+      "inode": 27000833,
+      "mode": "0o755",
+      "path": "/home",
+      "regular": false,
+      "symlink": false,
+      "uid": 0
+    },
+    {
+      "bytes": 61440,
+      "device": 66306,
+      "directory": true,
+      "gid": 1000,
+      "inode": 27000834,
+      "mode": "0o755",
+      "path": "/home/qian-qi",
+      "regular": false,
+      "symlink": false,
+      "uid": 1000
+    }
+  ],
+  "cargo": {
+    "bytes": 42185192,
+    "device": 66306,
+    "directory": false,
+    "gid": 1000,
+    "inode": 31203040,
+    "mode": "0o700",
+    "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "regular": true,
+    "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+    "symlink": false,
+    "uid": 1000
+  },
+  "cargo_cache": [
+    {
+      "entries": [
+        "index.crates.io-1949cf8c6b5b557f"
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/cargo/registry/cache"
+    },
+    {
+      "entries": [
+        "index.crates.io-1949cf8c6b5b557f"
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/cargo/registry/src"
+    },
+    {
+      "entries": [
+        "index.crates.io-1949cf8c6b5b557f"
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/cargo/registry/index"
+    }
+  ],
+  "cargo_configuration_files": [],
+  "cargo_home": {
+    "bytes": 4096,
+    "device": 66306,
+    "directory": true,
+    "gid": 1000,
+    "inode": 46960606,
+    "mode": "0o700",
+    "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/cargo",
+    "regular": false,
+    "symlink": false,
+    "uid": 1000
+  },
+  "cargo_version": {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\n"
+  },
+  "disk_available_before_bytes": 116618211328,
+  "disk_floor_bytes": 8589934592,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qian-qi/work/chain-throughput-20261106-ee79/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-ee79-release-e746-v1/target",
+    "CI": "true",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+    "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qian-qi/.cargo/bin:/home/qian-qi/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qian-qi/chain-ee79-release-e746-v1/tmp",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "TRNM_RETAINED_DELTA_COST_PATH": "/home/qian-qi/chain-ee79-release-e746-v1/raw/retained-delta-cost.jsonl"
+  },
+  "existing_permissions_mutated": false,
+  "expected_tests": 118,
+  "gid": 1000,
+  "guard_command": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-ee79-release-e746-v1/disk_guard.py",
+    "--root",
+    "/home/qian-qi/chain-ee79-release-e746-v1",
+    "--head",
+    "e7466106a2a647c8032556273101440384d88b70",
+    "--label",
+    "release",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-ee79-release-e746-v1/run_release_authenticated.py",
+    "--repo",
+    "/home/qian-qi/work/chain-throughput-20261106-ee79/repo",
+    "--out",
+    "/home/qian-qi/chain-ee79-release-e746-v1/raw",
+    "--head",
+    "e7466106a2a647c8032556273101440384d88b70"
+  ],
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "helper_files": [
+    {
+      "bytes": 3773,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 28071864,
+      "mode": "0o600",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/run_release_authenticated.py",
+      "regular": true,
+      "sha256": "9e04edbe9b2ffd1830bfe229f595b79f1b6ef0c3076cb153252d00a69298b592",
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 26709,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 28071866,
+      "mode": "0o600",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/run_native_qualification.py",
+      "regular": true,
+      "sha256": "da7dc56e80384b2d5b44ae84d11024a36fa28e94a6ba7c0cf7684937cc322fb2",
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 6457,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 28071869,
+      "mode": "0o600",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/disk_guard.py",
+      "regular": true,
+      "sha256": "9e050c1a0170b100662759b3d4161f79b490888ef2b53d88e410e417b893e322",
+      "symlink": false,
+      "uid": 1000
+    }
+  ],
+  "installed_or_upgraded": false,
+  "memory": {
+    "MemAvailable": "29309376 kB",
+    "MemTotal": "125038684 kB",
+    "SwapFree": "3128 kB",
+    "SwapTotal": "8388604 kB"
+  },
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-throughput-publish-20261106-1eed\", \"remote_policy_mutated\": false}\n"
+  },
+  "private_directories": [
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 1000,
+      "inode": 28071841,
+      "mode": "0o700",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1",
+      "regular": false,
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 1000,
+      "inode": 28071859,
+      "mode": "0o700",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw",
+      "regular": false,
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 1000,
+      "inode": 28071860,
+      "mode": "0o700",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/tmp",
+      "regular": false,
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 4096,
+      "device": 66306,
+      "directory": true,
+      "gid": 1000,
+      "inode": 28071861,
+      "mode": "0o700",
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/target",
+      "regular": false,
+      "symlink": false,
+      "uid": 1000
+    }
+  ],
+  "provider_executable": {
+    "bytes": 8985944,
+    "device": 66306,
+    "directory": false,
+    "gid": 1000,
+    "inode": 45613218,
+    "mode": "0o755",
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+    "regular": true,
+    "sha256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+    "symlink": false,
+    "uid": 1000
+  },
+  "provider_material": [
+    {
+      "bytes": 3449,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 45613150,
+      "mode": "0o644",
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/include/openssl/opensslv.h",
+      "regular": true,
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda",
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 12442344,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 45613204,
+      "mode": "0o644",
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/libcrypto.a",
+      "regular": true,
+      "sha256": "63139df50e84b3a0fdf78cd725c7b32cdd75e535a6a300c2f963b61552777a62",
+      "symlink": false,
+      "uid": 1000
+    },
+    {
+      "bytes": 2149026,
+      "device": 66306,
+      "directory": false,
+      "gid": 1000,
+      "inode": 45613205,
+      "mode": "0o644",
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/libssl.a",
+      "regular": true,
+      "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90",
+      "symlink": false,
+      "uid": 1000
+    }
+  ],
+  "provider_version": {
+    "argv": [
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+      "version"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)\n"
+  },
+  "python": {
+    "argv": [
+      "/usr/bin/python3",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "Python 3.14.4\n"
+  },
+  "repo": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo",
+  "repo_link": {
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/repo",
+    "target": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo"
+  },
+  "retained_delta_output": {
+    "absent_before_start": true,
+    "native_create_new": true,
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/retained-delta-cost.jsonl",
+    "scope": "in-memory ordered read/canonical/delta-root wall observations; not Node/history/TPS or physical I/O"
+  },
+  "root": "/home/qian-qi/chain-ee79-release-e746-v1",
+  "rust_version": {
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "rustc 1.95.0 (59807616e 2026-04-14)\n"
+  },
+  "rustc": {
+    "bytes": 644784,
+    "device": 66306,
+    "directory": false,
+    "gid": 1000,
+    "inode": 30545731,
+    "mode": "0o700",
+    "path": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "regular": true,
+    "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "symlink": false,
+    "uid": 1000
+  },
+  "schema": "trnm-rog-private-release118-setup-v1",
+  "scope": "original authenticated release gate with original ignored cost observation",
+  "setup_finished_unix_ns": 1793985321599934007,
+  "setup_script": {
+    "bytes": 60721,
+    "device": 66306,
+    "directory": false,
+    "gid": 1000,
+    "inode": 46960456,
+    "mode": "0o600",
+    "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/rog-release-e746-setup-v1.py",
+    "regular": true,
+    "sha256": "95e6e81fc81b323ff437aaaffc02b7f8c8aa98bf2928b33e8751fc79237a28f2",
+    "symlink": false,
+    "uid": 1000
+  },
+  "source_before": {
+    "branch": {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "refs/heads/fix/chain-throughput-publish-20261106-1eed\n"
+    },
+    "identity": {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "e7466106a2a647c8032556273101440384d88b70\n63e03dc848eeb92d747fe2c7926c2f758b277cef\n"
+    },
+    "status": {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  },
+  "source_mutated": false,
+  "source_recheck": {
+    "branch": {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "--quiet",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "refs/heads/fix/chain-throughput-publish-20261106-1eed\n"
+    },
+    "identity": {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "e7466106a2a647c8032556273101440384d88b70\n63e03dc848eeb92d747fe2c7926c2f758b277cef\n"
+    },
+    "status": {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  },
+  "started_unix_ns": 1793985321486281586,
+  "status": "ready",
+  "tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+  "uid": 1000
+}

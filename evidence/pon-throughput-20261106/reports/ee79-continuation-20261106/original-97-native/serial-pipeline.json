@@ -1,0 +1,105 @@
+{
+  "error": "original stage failed: controls",
+  "expected_head": "97aaf286ba01316a527ae07782120fd47724efc9",
+  "expected_tree": "a4ad6a6945eb597eead276aa44c4f98e8d9e0a36",
+  "finished_ns": 1793979547575241911,
+  "locked_graphs": {
+    "receipt": "/home/qq/work/chain-throughput-20261106-ee79/raw/locked-graphs.json",
+    "sha256": "bafef05e3ecf3d2b01f5c8683d2cbd0c02a2fb77ede0d88831d9237a55c7af03",
+    "status": "passed"
+  },
+  "pipeline_sha256": "11fa12708413774f856229da815b9b75ccf9cdcda9b2e1c051e6278c9ccfdfd9",
+  "schema": "trnm-ai395-serial-qualification-v1",
+  "stages": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/disk_guard.py",
+        "--root",
+        "/home/qq/work/chain-throughput-20261106-ee79",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--label",
+        "quality",
+        "--",
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/run_native_qualification.py",
+        "--repo",
+        "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "--out",
+        "/home/qq/work/chain-throughput-20261106-ee79/raw",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--stage",
+        "quality"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1793978896074829310,
+      "log_sha256": "94a4a43bd6bcd151d557fc0aa2342c1888e27bb270e69e25289b0d07e85b1c75",
+      "stage": "quality",
+      "started_ns": 1793978834261479314
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/disk_guard.py",
+        "--root",
+        "/home/qq/work/chain-throughput-20261106-ee79",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--label",
+        "build",
+        "--",
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/run_native_qualification.py",
+        "--repo",
+        "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "--out",
+        "/home/qq/work/chain-throughput-20261106-ee79/raw",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--stage",
+        "build"
+      ],
+      "exit_code": 0,
+      "finished_ns": 1793979530755757701,
+      "log_sha256": "670a51e380585946c9c9f81e9e42d7ff27867fb47afe18ca3334dec0372e29a6",
+      "stage": "build",
+      "started_ns": 1793978896075095461
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/disk_guard.py",
+        "--root",
+        "/home/qq/work/chain-throughput-20261106-ee79",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--label",
+        "controls",
+        "--",
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/run_native_qualification.py",
+        "--repo",
+        "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "--out",
+        "/home/qq/work/chain-throughput-20261106-ee79/raw",
+        "--head",
+        "97aaf286ba01316a527ae07782120fd47724efc9",
+        "--stage",
+        "controls"
+      ],
+      "exit_code": 1,
+      "finished_ns": 1793979547574936672,
+      "log_sha256": "96683fa4068a6a1f74d684f1221b560a9d6a9e39155be84a5be73a0048c785c0",
+      "stage": "controls",
+      "started_ns": 1793979530756169866
+    }
+  ],
+  "started_ns": 1793978683838097621,
+  "status": "failed",
+  "unexecuted_stages": [
+    "runtime"
+  ],
+  "whole_chain_or_service_qualification": false
+}

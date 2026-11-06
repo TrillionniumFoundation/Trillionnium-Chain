@@ -1,0 +1,37 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "python3 -B -c 'import json,subprocess\nfrom pathlib import Path\nrepo=Path('\\''/home/qian-qi/work/chain-throughput-20261106-ee79/repo'\\'')\npaths=['\\''trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs'\\'','\\''trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs'\\'','\\''trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs'\\'','\\''trillionnium/crates/trnm-pon-node/src/ingress.rs'\\'']\ncommands=[\n['\\''git'\\'','\\''rev-parse'\\'','\\''HEAD'\\'','\\''HEAD^{tree}'\\''],\n['\\''git'\\'','\\''status'\\'','\\''--porcelain=v1'\\'','\\''--untracked-files=all'\\''],\n['\\''git'\\'','\\''rev-parse'\\'','\\''54ea3ef3^{commit}'\\''],\n['\\''git'\\'','\\''log'\\'','\\''--format=%h %s'\\'','\\''54ea3ef3..e7466106a2a647c8032556273101440384d88b70'\\'','\\''--'\\'',*paths],\n['\\''git'\\'','\\''diff'\\'','\\''--stat'\\'','\\''54ea3ef3..e7466106a2a647c8032556273101440384d88b70'\\'','\\''--'\\'',*paths],\n['\\''git'\\'','\\''diff'\\'','\\''54ea3ef3..e7466106a2a647c8032556273101440384d88b70'\\'','\\''--'\\'',*paths[:2]],\n]\nfor argv in commands:\n p=subprocess.run(argv,cwd=repo,capture_output=True,text=True,timeout=30)\n print(json.dumps({'\\''argv'\\'':argv,'\\''exit_code'\\'':p.returncode,'\\''stdout'\\'':p.stdout,'\\''stderr'\\'':p.stderr}),flush=True)\n'"
+    ],
+    "created_unix_ms": 1793986920851,
+    "cwd": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo",
+    "env_keys": [
+      "GIT_OPTIONAL_LOCKS",
+      "PATH",
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/bin/bash",
+    "execution_mode": "operator",
+    "host": "rog",
+    "id": "1a1b1f40193-fc05-7bb5",
+    "idempotency_key": "chain-ee79-e746-architecture-host-history-readonly-v1",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b1f40193-fc05-7bb5",
+    "request_digest": "dbc9070b48b038c75cbbc609b9143e7f5a38907f099dfa3674c5a16a64680b67",
+    "request_fingerprint": 15837197309670602951,
+    "ssh_target": "rog-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b1f40193-fc05-7bb5"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b1f40193-fc05-7bb5"
+  },
+  "local_record_pending": false,
+  "reused": false
+}
