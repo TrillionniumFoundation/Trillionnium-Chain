@@ -17,6 +17,19 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Explicit durable PQ outbound prerequisites, 2026-11-06:** Continue the
+existing PQ integration from `5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` with
+the [bounded client-owner contract](../security/PQ_DURABLE_OUTBOUND_V1.md).
+Retain sealed, signature-verified replies and exact signed request bytes under
+one independently selected Linux loopback client journal. Persist sequence,
+request, attempt and cancellation ownership before dispatch; reopen retains the
+original boot-clock deadline and signed expiry. Only a terminal receipt from
+the existing admitted server owner can advance the cursor. Preserve the original
+native/provider budgets and failed local build observations. Full automatic
+parent recovery, PQHistory writes, complete account/state/liability migration,
+independent whole-store rollback resistance and production activation remain
+unimplemented by this component. This adds no second development plan.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

@@ -408,9 +408,10 @@ class RuntimeMaterialTests(unittest.TestCase):
         with mock.patch("packaging.markers.default_environment", return_value=ambient), \
                 self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
             self.declare(spec)
-        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")), \
+        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")) as evaluate, \
                 self.assertRaisesRegex(TypeError, "marker-internal-failure"):
             self.declare(spec)
+        evaluate.assert_called_once_with(environment=dict(spec["marker_environment"], extra=""))
         with self.assertRaises(ValueError):
             self.declare(self.repack_metadata('Requires-Dist: absent-runtime; unknown_marker == "x"\n'))
 
