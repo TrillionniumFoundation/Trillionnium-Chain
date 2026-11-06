@@ -1652,7 +1652,8 @@ fn repair_post_commit_refusal(case: RepairPostCommitCase) {
     // Exercise actual timeout restoration: this new fixture's deadline is
     // shorter than the unchanged owner setting, without a sleep or test clock.
     assert!(original_busy_ms > 1000);
-    let end = Instant::now() + Duration::from_secs(1);
+    let started = Instant::now();
+    let end = started + Duration::from_secs(1);
     let observer = Connection::open(path.join("retention.sqlite")).unwrap();
     assert!(store.repair_row(operation).unwrap().is_none());
     let mut observed_pending = false;
@@ -1687,7 +1688,10 @@ fn repair_post_commit_refusal(case: RepairPostCommitCase) {
     };
     assert!(
         observed_committed,
-        "{case:?}: no durable transition observed"
+        "{case:?}: no durable transition observed; result={result:?}; \
+         elapsed={:?}; observed_pending={observed_pending}; durable_row={:?}",
+        started.elapsed(),
+        store.repair_row(operation)
     );
     assert_eq!(observed_pending, amount != 0);
     assert!(matches!(
