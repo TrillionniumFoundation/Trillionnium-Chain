@@ -20,7 +20,7 @@ use std::{
     },
     time::Instant,
 };
-use trnm_protocol::pon_wire::{hash, Hash};
+use trnm_protocol::pon_wire::Hash;
 
 pub(crate) const DDL: &str = "
 CREATE TABLE pq_network_resource_v2(singleton INTEGER PRIMARY KEY CHECK(singleton=1),connections INTEGER NOT NULL CHECK(connections>=0 AND connections<=64),input_bytes INTEGER NOT NULL CHECK(input_bytes>=0 AND input_bytes<=33554432),inbound_verifications INTEGER NOT NULL CHECK(inbound_verifications>=0 AND inbound_verifications<=64));
@@ -182,22 +182,31 @@ impl Node {
         self.check_pq_network_policy(policy)?;
         let (records, reserved_bytes) = self.pq_network_usage()?;
         let ingress = self.pq_ingress_usage()?;
+        ensure(
+            ingress.0 <= policy.ingress_connection_limit(),
+            "PQ_NETWORK_RESOURCE_STATE",
+        )?;
         let revoked: u64 = self.db.query_row(
             "SELECT COUNT(*) FROM pq_network_peer_v2 WHERE revoked=1",
             [],
             |row| row.get(0),
         )?;
-        Ok(
-            serde_json::json!({"profile":crate::ingress::pq_network::PROFILE,
+        let mut status = serde_json::json!({"profile":policy.profile(),
             "policy":hex::encode(policy.id()),"records":records,"reserved_bytes":reserved_bytes,
             "revoked_peers":revoked,"record_limit":MAX_RECORDS,"byte_limit":MAX_LEDGER_BYTES,
             "ingress_connections":ingress.0,"ingress_bytes":ingress.1,"inbound_signature_attempts":ingress.2,
-            "ingress_connection_limit":MAX_INGRESS_CONNECTIONS,"ingress_byte_limit":MAX_INGRESS_BYTES,
-            "inbound_signature_attempt_limit":MAX_INBOUND_VERIFICATIONS,"transport_confidentiality":false,
+            "ingress_connection_limit":policy.ingress_connection_limit(),"ingress_byte_limit":MAX_INGRESS_BYTES,
+            "inbound_signature_attempt_limit":MAX_INBOUND_VERIFICATIONS,
+            "transport_confidentiality":policy.transport_requires_tls(),
             "account_migration":false,
             "imported_transfer_accounts":self.settings.app.is_pq_account_profile(),
-            "whole_native_authorization_migrated":false,"production_activation":false}),
-        )
+            "whole_native_authorization_migrated":false,"production_activation":false});
+        if policy.transport_requires_tls() {
+            status["tls_handshake_attempts"] = ingress.0.into();
+            status["tls_handshake_attempt_limit"] = policy.ingress_connection_limit().into();
+            status["tls_certificate_verification_cpu_qualified"] = false.into();
+        }
+        Ok(status)
     }
 
     fn pq_ingress_usage(&self) -> Result<(u64, u64, u64)> {
@@ -247,7 +256,7 @@ impl Node {
         check()?;
         let changed = tx.execute("UPDATE pq_network_resource_v2 SET connections=connections+?,input_bytes=input_bytes+?,inbound_verifications=inbound_verifications+? WHERE singleton=1 AND connections<=?-? AND input_bytes<=?-? AND inbound_verifications<=?-?",
             params![u64::from(connection), bytes, u64::from(verification),
-                MAX_INGRESS_CONNECTIONS,u64::from(connection),MAX_INGRESS_BYTES,bytes,
+                policy.ingress_connection_limit(),u64::from(connection),MAX_INGRESS_BYTES,bytes,
                 MAX_INBOUND_VERIFICATIONS,u64::from(verification)])?;
         ensure(changed == 1, "PQ_NETWORK_INGRESS_BUDGET")?;
         tx.commit_with_check(check)
@@ -263,7 +272,11 @@ impl Node {
                     row.get(0)
                 })?;
         ensure(resources == 1, "PQ_NETWORK_RESOURCE_STATE")?;
-        self.pq_ingress_usage()?;
+        let ingress = self.pq_ingress_usage()?;
+        ensure(
+            ingress.0 <= policy.ingress_connection_limit(),
+            "PQ_NETWORK_RESOURCE_STATE",
+        )?;
         let expected_peers = policy.peer_ids().collect::<Vec<_>>();
         let peer_count: u64 =
             self.db
@@ -331,19 +344,18 @@ impl Node {
                 )?;
                 let verified = policy.verify_retained_request(&wire)?;
                 ensure(
-                    verified.peer.as_slice() == peer
-                        && verified.sequence == sequence
-                        && verified.operation.as_slice() == operation,
+                    verified.peer().as_slice() == peer
+                        && verified.sequence() == sequence
+                        && verified.operation().as_slice() == operation,
                     "PQ_NETWORK_AUDIT_INTEGRITY",
                 )?;
                 match (response, response_digest, status) {
                     (Some(response), Some(digest), 1) if sequence <= highest => {
                         ensure(
-                            hash(b"native-pq-network-response-bytes-v2", &[&response]).as_slice()
-                                == digest,
+                            policy.response_digest(&response).as_slice() == digest,
                             "PQ_NETWORK_RESPONSE_INTEGRITY",
                         )?;
-                        policy.verify_response(&response, &verified, verified.expiry)?;
+                        policy.verify_retained_response(&response, &verified)?;
                     }
                     (None, None, 0) if sequence == highest + 1 => {}
                     (None, None, 2) if sequence <= highest => {}
@@ -378,54 +390,52 @@ impl Node {
         check()?;
         self.ready()?;
         self.check_pq_network_policy(policy)?;
-        ensure(request.policy == policy.id(), "PQ_NETWORK_CONTEXT")?;
-        let tx = self.pq_admission_transaction(policy, request.peer, deadline, check)?;
+        ensure(request.policy() == policy.id(), "PQ_NETWORK_CONTEXT")?;
+        let tx = self.pq_admission_transaction(policy, request.peer(), deadline, check)?;
         check()?;
         let (highest, revoked): (u64, bool) = tx.query_row(
             "SELECT highest_sequence,revoked FROM pq_network_peer_v2 WHERE peer=?",
-            [request.peer.as_slice()],
+            [request.peer().as_slice()],
             |row| Ok((row.get(0)?, row.get(1)?)),
         )?;
         ensure(!revoked, "PQ_NETWORK_REVOKED")?;
         ensure(
-            request.sequence <= highest.saturating_add(1),
+            request.sequence() <= highest.saturating_add(1),
             "PQ_NETWORK_SEQUENCE_GAP",
         )?;
         let existing: Option<ReplayRow> = tx.query_row(
             "SELECT operation,response,response_digest,status FROM pq_network_request_v2 WHERE peer=? AND sequence=?",
-            params![request.peer.as_slice(),request.sequence], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?))).optional()?;
+            params![request.peer().as_slice(),request.sequence()], |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?))).optional()?;
         if let Some((operation, response, digest, status)) = existing {
             ensure(
-                operation == request.operation,
+                operation == request.operation(),
                 "PQ_NETWORK_CONFLICTING_REPLAY",
             )?;
             match (response, digest, status) {
                 (Some(response), Some(digest), 1) => {
                     ensure(
-                        request.sequence <= highest
-                            && hash(b"native-pq-network-response-bytes-v2", &[&response])
-                                .as_slice()
-                                == digest,
+                        request.sequence() <= highest
+                            && policy.response_digest(&response).as_slice() == digest,
                         "PQ_NETWORK_RESPONSE_INTEGRITY",
                     )?;
-                    policy.verify_response(&response, request, request.expiry)?;
+                    policy.verify_response(&response, request, request.expiry())?;
                     check()?;
                     return Ok(PqReplay::Cached(response));
                 }
-                (None, None, 0) if request.sequence == highest + 1 => {}
+                (None, None, 0) if request.sequence() == highest + 1 => {}
                 (None, None, 2) => return Err("PQ_NETWORK_EXPIRED_UNCONFIRMED".into()),
                 _ => return Err(Error::from("PQ_NETWORK_AUDIT_INTEGRITY").local_integrity()),
             }
             check()?;
         } else {
             ensure(
-                request.sequence == highest + 1,
+                request.sequence() == highest + 1,
                 "PQ_NETWORK_SEQUENCE_INTEGRITY",
             )?;
             let (count, bytes): (u64, u64) = tx.query_row(
                 "SELECT COUNT(*),COALESCE(SUM(length(wire)+CASE WHEN status=0 THEN 2097152 ELSE COALESCE(length(response),0) END),0) FROM pq_network_request_v2",
                 [], |row| Ok((row.get(0)?, row.get(1)?)))?;
-            let reservation = (request.wire.len() + MAX_WIRE) as u64;
+            let reservation = (request.wire().len() + MAX_WIRE) as u64;
             ensure(
                 count < MAX_RECORDS
                     && bytes
@@ -437,10 +447,10 @@ impl Node {
             tx.execute(
                 "INSERT INTO pq_network_request_v2 VALUES(?,?,?,?,NULL,NULL,0)",
                 params![
-                    request.peer.as_slice(),
-                    request.sequence,
-                    request.operation.as_slice(),
-                    &request.wire
+                    request.peer().as_slice(),
+                    request.sequence(),
+                    request.operation().as_slice(),
+                    request.wire()
                 ],
             )?;
             tx.commit_with_check(check)?;
@@ -463,15 +473,15 @@ impl Node {
             self.pq_network_epoch.load(Ordering::Acquire) == expected_epoch,
             "PQ_NETWORK_REVOKED",
         )?;
-        policy.verify_response(response, request, request.expiry)?;
+        policy.verify_response(response, request, request.expiry())?;
         ensure(response.len() <= MAX_WIRE, "PQ_NETWORK_WIRE_LIMIT")?;
-        let digest = hash(b"native-pq-network-response-bytes-v2", &[response]);
+        let digest = policy.response_digest(response);
         let tx = Mutation::begin(self)?;
         let changed = tx.execute("UPDATE pq_network_request_v2 SET response=?,response_digest=?,status=1 WHERE peer=? AND sequence=? AND operation=? AND response IS NULL AND status=0",
-            params![response,digest.as_slice(),request.peer.as_slice(),request.sequence,request.operation.as_slice()])?;
+            params![response,digest.as_slice(),request.peer().as_slice(),request.sequence(),request.operation().as_slice()])?;
         ensure(changed == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
         let changed = tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=? AND revoked=0",
-            params![request.sequence,request.peer.as_slice(),request.sequence-1])?;
+            params![request.sequence(),request.peer().as_slice(),request.sequence()-1])?;
         ensure(changed == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
         tx.commit()?;
         Ok(())
@@ -509,11 +519,11 @@ impl Node {
         };
         let old = policy.verify_retained_request(&wire)?;
         ensure(
-            old.peer == peer && old.sequence == highest + 1,
+            old.peer() == peer && old.sequence() == highest + 1,
             "PQ_NETWORK_AUDIT_INTEGRITY",
         )?;
         check()?;
-        if crate::ingress::now()? <= old.expiry {
+        if crate::ingress::now()? <= old.expiry() {
             return Ok(tx);
         }
         let next_epoch = self
@@ -522,8 +532,8 @@ impl Node {
             .checked_add(1)
             .ok_or("PQ_NETWORK_EPOCH")?;
         check()?;
-        ensure(tx.execute("UPDATE pq_network_request_v2 SET status=2 WHERE peer=? AND sequence=? AND status=0", params![peer.as_slice(), old.sequence])? == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
-        ensure(tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=?", params![old.sequence, peer.as_slice(), highest])? == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
+        ensure(tx.execute("UPDATE pq_network_request_v2 SET status=2 WHERE peer=? AND sequence=? AND status=0", params![peer.as_slice(), old.sequence()])? == 1, "PQ_NETWORK_AUDIT_INTEGRITY")?;
+        ensure(tx.execute("UPDATE pq_network_peer_v2 SET highest_sequence=? WHERE peer=? AND highest_sequence=?", params![old.sequence(), peer.as_slice(), highest])? == 1, "PQ_NETWORK_SEQUENCE_INTEGRITY")?;
         let committed = tx.commit_with_check(check);
         // Conservatively invalidate old workers on either outcome. In
         // particular, a committed retirement followed by a late live error

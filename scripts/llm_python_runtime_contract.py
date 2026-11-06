@@ -6,6 +6,7 @@ snapshot includes the interpreter, venv, stdlib and observed native libraries;
 the kernel and a hostile writer racing check/use remain outside this contract.
 No package-reported version is accepted as evidence of executable byte identity.
 """
+import ast
 import hashlib
 import importlib.abc
 import importlib.machinery
@@ -152,23 +153,227 @@ def verify_files(value):
         require(total <= MAX_BYTES, "TOTAL_BYTE_BOUND")
         require(observed == expected, "BYTE_DRIFT: " + path)
 
+# This sole generated profile is derived from the three actual pinned PyTorch
+# sources. It does not authorize a directory, an arbitrary template or TorchScript.
+TORCH_GENERATED_NAME = "_remote_module_non_scriptable"
+TORCH_INSTANTIATOR = "torch.distributed.nn.jit.instantiator"
+TORCH_GENERATED_SOURCES = (
+    ("torch/distributed/nn/jit/instantiator.py",
+     "567d1314ee27ff0b3bd22e7c4d1157246469de25e7a3183d96debe167b193615"),
+    ("torch/distributed/nn/jit/templates/remote_module_template.py",
+     "0ff1856bbd031b5298d46c06c0502abc20bd804f42c1949ed4127e8c773660cc"),
+    ("torch/distributed/nn/api/remote_module.py",
+     "d51779fdbafb1ca1d99d002e6f32cf17bc1fef730a6251e3ef0278d8078bd112"),
+)
+TORCH_GENERATED_ARGS = dict(
+    assign_module_interface_cls="module_interface_cls = None",
+    args="*args", kwargs="**kwargs", arg_types="*args, **kwargs",
+    arrow_and_return_type="", arrow_and_future_return_type="", jit_script_decorator="")
+MAX_GENERATED_SOURCE = 65_536
+
+
+def _stable_regular_bytes(path, maximum):
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    flags |= getattr(os, "O_CLOEXEC", 0)
+    with os.fdopen(os.open(path, flags), "rb") as source:
+        before = os.fstat(source.fileno())
+        require(stat.S_ISREG(before.st_mode) and 0 < before.st_size <= maximum,
+                "GENERATED_FILE_BOUND")
+        raw = source.read(maximum + 1)
+        after = os.fstat(source.fileno())
+        named = os.stat(path, follow_symlinks=False)
+    def identity(item):
+        return (item.st_dev, item.st_ino, item.st_mode, item.st_uid, item.st_gid,
+                item.st_nlink, item.st_size, item.st_mtime_ns, item.st_ctime_ns)
+    require(len(raw) == before.st_size and
+            identity(before) == identity(after) == identity(named), "GENERATED_FILE_CHANGED")
+    return raw, identity(before)
+
+
+def _derive_torch_generated_source(instantiator_raw, template_raw, caller_raw):
+    """Parse literal data only. The caller must authenticate all three sources."""
+    def one(nodes):
+        require(len(nodes) == 1, "GENERATED_TEMPLATE_SHAPE")
+        return nodes[0]
+    def same(left, right):
+        return ast.dump(left, include_attributes=False) == ast.dump(right, include_attributes=False)
+    generator = ast.parse(instantiator_raw)
+    function = one([node for node in generator.body if isinstance(node, ast.FunctionDef) and
+                    node.name == "instantiate_non_scriptable_remote_module_template"])
+    require(len(function.body) == 3 and not function.args.args and not function.args.posonlyargs and
+            not function.args.kwonlyargs and function.args.vararg is None and function.args.kwarg is None and
+            not function.decorator_list, "GENERATED_TEMPLATE_SHAPE")
+    expected = ast.parse(
+        'def fixture():\n'
+        '    generated_module_name = f"{_FILE_PREFIX}non_scriptable"\n'
+        '    str_dict = dict()\n'
+        '    return _do_instantiate_remote_module_template(generated_module_name, str_dict, True)\n'
+    ).body[0].body
+    require(same(function.body[0], expected[0]) and same(function.body[2], expected[2]),
+            "GENERATED_TEMPLATE_SHAPE")
+    prefix = one([node for node in generator.body if isinstance(node, ast.Assign) and
+                  len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and
+                  node.targets[0].id == "_FILE_PREFIX"])
+    require(isinstance(prefix.value, ast.Constant) and prefix.value.value == "_remote_module_",
+            "GENERATED_TEMPLATE_SHAPE")
+    assignment = function.body[1]
+    require(isinstance(assignment, ast.Assign) and len(assignment.targets) == 1 and
+            isinstance(assignment.targets[0], ast.Name) and assignment.targets[0].id == "str_dict" and
+            isinstance(assignment.value, ast.Call) and
+            isinstance(assignment.value.func, ast.Name) and assignment.value.func.id == "dict" and
+            not assignment.value.args, "GENERATED_TEMPLATE_ARGUMENTS")
+    arguments = {}
+    for item in assignment.value.keywords:
+        require(item.arg is not None and item.arg not in arguments and
+                isinstance(item.value, ast.Constant) and type(item.value.value) is str,
+                "GENERATED_TEMPLATE_ARGUMENTS")
+        arguments[item.arg] = item.value.value
+    require(arguments == TORCH_GENERATED_ARGS, "GENERATED_TEMPLATE_ARGUMENTS")
+    template = ast.parse(template_raw)
+    names = ("_TEMPLATE_PREFIX", "_REMOTE_FORWARD_TEMPLATE_ENABLE_MOVING_CPU_TENSORS_TO_CUDA",
+             "_REMOTE_FORWARD_TEMPLATE")
+    values = {}
+    for name in names:
+        node = one([node for node in template.body if isinstance(node, ast.Assign) and
+                    len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and
+                    node.targets[0].id == name])
+        require(isinstance(node.value, ast.Constant) and type(node.value.value) is str,
+                "GENERATED_TEMPLATE_LITERAL")
+        values[name] = node.value.value
+    selector = one([node for node in template.body if isinstance(node, ast.FunctionDef) and
+                    node.name == "get_remote_module_template"])
+    expected_selector = ast.parse(
+        'def get_remote_module_template(enable_moving_cpu_tensors_to_cuda: bool):\n'
+        '    return _TEMPLATE_PREFIX + (_REMOTE_FORWARD_TEMPLATE_ENABLE_MOVING_CPU_TENSORS_TO_CUDA '
+        'if enable_moving_cpu_tensors_to_cuda else _REMOTE_FORWARD_TEMPLATE)\n').body[0]
+    require(same(selector, expected_selector), "GENERATED_TEMPLATE_SHAPE")
+    caller = ast.parse(caller_raw)
+    call = one([node for node in caller.body if isinstance(node, ast.Assign) and
+                len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and
+                node.targets[0].id == "_NON_SCRIPTABLE_REMOTE_MODULE_MODULE"])
+    expected_call = ast.parse(
+        "_NON_SCRIPTABLE_REMOTE_MODULE_MODULE = "
+        "instantiator.instantiate_non_scriptable_remote_module_template()\n").body[0]
+    require(same(call, expected_call), "GENERATED_TEMPLATE_CALLER")
+    return (values[names[0]] + values[names[1]]).format(**arguments).encode("utf-8")
+
+
+class _GeneratedSourceAdmission:
+    """One exact origin, only after this guard executed its pinned producer."""
+    def __init__(self, raw, instantiator_path):
+        self.raw = raw
+        self.instantiator_path = instantiator_path
+        self.producer = None
+        self.origin = None
+        self.file_identity = None
+        self.module = None
+
+    @staticmethod
+    def directory(module):
+        value = getattr(module, "INSTANTIATED_TEMPLATE_DIR_PATH", None)
+        require(type(value) is str and Path(value).is_absolute(), "GENERATED_DIRECTORY")
+        path = Path(value)
+        require(path.resolve(strict=True) == path, "GENERATED_DIRECTORY")
+        entry = path.stat()
+        require(stat.S_ISDIR(entry.st_mode) and entry.st_uid == os.geteuid() and
+                entry.st_mode & 0o077 == 0, "GENERATED_DIRECTORY")
+        return str(path), (entry.st_dev, entry.st_ino, entry.st_mode, entry.st_uid, entry.st_gid)
+
+    def producer_executed(self, module):
+        require(self.producer is None and module.__name__ == TORCH_INSTANTIATOR and
+                module.__file__ == self.instantiator_path, "GENERATED_PRODUCER")
+        self.producer = (module, self.directory(module))
+
+    def admit(self, fullname, origin):
+        require(fullname == TORCH_GENERATED_NAME, "GENERATED_MODULE_NAME")
+        require(self.producer is not None and
+                sys.modules.get(TORCH_INSTANTIATOR) is self.producer[0] and
+                self.producer[0].__file__ == self.instantiator_path and
+                self.directory(self.producer[0]) == self.producer[1], "GENERATED_PRODUCER")
+        expected_path = str(Path(self.producer[1][0]) / (TORCH_GENERATED_NAME + ".py"))
+        require(origin == expected_path, "GENERATED_ORIGIN")
+        require(self.origin is None, "GENERATED_ALREADY_ADMITTED")
+        raw, identity = _stable_regular_bytes(origin, MAX_GENERATED_SOURCE)
+        require(raw == self.raw, "GENERATED_BYTE_DRIFT")
+        self.origin, self.file_identity = origin, identity
+        return _PinnedGeneratedSource(self, raw, origin)
+
+    def loaded(self, module):
+        require(self.module is None and module.__name__ == TORCH_GENERATED_NAME and
+                module.__file__ == self.origin, "GENERATED_MODULE_IDENTITY")
+        self.module = module
+
+    def verify_loaded(self):
+        if self.origin is None:
+            return None
+        require(self.module is not None and sys.modules.get(TORCH_GENERATED_NAME) is self.module and
+                self.module.__name__ == TORCH_GENERATED_NAME and self.module.__file__ == self.origin and
+                self.producer is not None and sys.modules.get(TORCH_INSTANTIATOR) is self.producer[0] and
+                self.producer[0].__name__ == TORCH_INSTANTIATOR and
+                self.producer[0].__file__ == self.instantiator_path and
+                self.directory(self.producer[0]) == self.producer[1], "GENERATED_MODULE_IDENTITY")
+        raw, identity = _stable_regular_bytes(self.origin, MAX_GENERATED_SOURCE)
+        require(raw == self.raw and identity == self.file_identity, "GENERATED_FILE_CHANGED")
+        return self.origin
+
+
+class _PinnedGeneratedSource(importlib.abc.Loader):
+    """Compile the exact verified bytes; never reopen the path for execution."""
+    def __init__(self, admission, raw, path):
+        self.admission, self.raw, self.path = admission, raw, path
+
+    def create_module(self, spec):
+        return None
+
+    def exec_module(self, module):
+        exec(compile(self.raw, self.path, "exec"), module.__dict__)
+        self.admission.loaded(module)
+
+
+def _generated_source_profile(value):
+    prefix = value.get("prefix")
+    if type(prefix) is not str:
+        return None
+    site = Path(prefix) / "lib" / ("python%d.%d" % sys.version_info[:2]) / "site-packages"
+    paths = [(str(site / relative), expected) for relative, expected in TORCH_GENERATED_SOURCES]
+    if not any(path in value["files"] for path, _ in paths):
+        return None
+    require(all(value["files"].get(path) == expected for path, expected in paths),
+            "GENERATED_PROFILE_PIN")
+    sources = []
+    for path, expected in paths:
+        raw, _ = _stable_regular_bytes(path, MAX_GENERATED_SOURCE)
+        require(hashlib.sha256(raw).hexdigest() == expected, "GENERATED_SOURCE_DRIFT")
+        sources.append(raw)
+    raw = _derive_torch_generated_source(*sources)
+    require(len(raw) == 2355 and hashlib.sha256(raw).hexdigest() ==
+            "8205b16956fb264841ecd8644784a0d157f87df79b17c16825dc1163433ce5d8",
+            "GENERATED_PROFILE_OUTPUT")
+    return _GeneratedSourceAdmission(raw, paths[0][0])
+
 
 class PinnedPythonSource(importlib.machinery.SourceFileLoader):
     """Execute exactly the admitted source bytes, never an ambient .pyc."""
-    def __init__(self, fullname, path, expected):
+    def __init__(self, fullname, path, expected, on_executed=None):
         super().__init__(fullname, path)
         self.path, self.expected = path, expected
+        self.on_executed = on_executed
 
     def get_code(self, fullname):
         raw = read_regular(self.path, 16 * 1024 * 1024)
         require(hashlib.sha256(raw).hexdigest() == self.expected, "IMPORT_BYTE_DRIFT")
         return compile(raw, self.path, "exec")
 
+    def exec_module(self, module):
+        super().exec_module(module)
+        if self.on_executed is not None:
+            self.on_executed(module)
+
 
 class PinnedImports(importlib.abc.MetaPathFinder):
     """Admit a resolved module before its loader can run third-party code."""
-    def __init__(self, files):
-        self.files = files
+    def __init__(self, files, generated=None):
+        self.files, self.generated = files, generated
 
     def find_distributions(self, *args, **kwargs):
         # importlib.metadata discovers installed dist-info through this method.
@@ -180,9 +385,18 @@ class PinnedImports(importlib.abc.MetaPathFinder):
         if spec is None or spec.origin is None:
             return spec
         resolved = str(Path(spec.origin).resolve(strict=True))
-        require(resolved in self.files, "UNDECLARED_IMPORT: " + resolved)
+        if resolved not in self.files:
+            require(self.generated is not None and fullname == TORCH_GENERATED_NAME and
+                    isinstance(spec.loader, importlib.machinery.SourceFileLoader),
+                    "UNDECLARED_IMPORT: " + resolved)
+            spec.loader = self.generated.admit(fullname, spec.origin)
+            return spec
         if isinstance(spec.loader, importlib.machinery.SourceFileLoader):
-            spec.loader = PinnedPythonSource(fullname, resolved, self.files[resolved])
+            callback = None
+            if (self.generated is not None and fullname == TORCH_INSTANTIATOR and
+                    resolved == self.generated.instantiator_path):
+                callback = self.generated.producer_executed
+            spec.loader = PinnedPythonSource(fullname, resolved, self.files[resolved], callback)
         else:
             # Native loader check/use is still a path boundary; no held ELF
             # image is claimed. Before Ready, actual executable maps are checked.
@@ -205,10 +419,12 @@ def install_import_guard(value, sources):
     # Builtin/frozen modules stay with the interpreter. Replace the ordinary
     # filesystem finder so a later project-path insertion cannot bypass checks.
     index = sys.meta_path.index(importlib.machinery.PathFinder)
-    sys.meta_path[index] = PinnedImports(allowed)
+    guard = PinnedImports(allowed, _generated_source_profile(value))
+    sys.meta_path[index] = guard
+    return guard
 
 
-def verify_loaded(value, sources):
+def verify_loaded(value, sources, guard):
     """Reject imported/mapped origins outside the pinned runtime/project set.
 
     /proc maps is an independent observation of executable native mappings.
@@ -216,6 +432,9 @@ def verify_loaded(value, sources):
     """
     allowed = dict(value["files"])
     allowed.update({str(Path(path).resolve(strict=True)): digest for path, digest in sources.items()})
+    require(isinstance(guard, PinnedImports) and guard.files == allowed and guard in sys.meta_path,
+            "IMPORT_GUARD_IDENTITY")
+    generated_origin = guard.generated.verify_loaded() if guard.generated is not None else None
     origins = set()
     for module in tuple(sys.modules.values()):
         path = getattr(module, "__file__", None)
@@ -232,6 +451,8 @@ def verify_loaded(value, sources):
             origins.add(str(Path(parts[5]).resolve(strict=True)))
     require(len(origins) <= MAX_FILES, "LOADED_BOUND")
     for path in sorted(origins):
+        if path == generated_origin:
+            continue
         require(path in allowed, "UNDECLARED_LOADED_FILE: " + path)
         require(file_digest(path)[0] == allowed[path], "LOADED_BYTE_DRIFT: " + path)
 

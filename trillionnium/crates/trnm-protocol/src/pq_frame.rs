@@ -12,14 +12,20 @@ pub const ML_DSA_65_PUBLIC_KEY_BYTES: usize = 1_952;
 pub const ML_DSA_65_SPKI_BYTES: usize = 1_974;
 // Strict DER SPKI: SEQUENCE(1970), SEQUENCE(id-ml-dsa-65 OID), BIT STRING(1953).
 // This checks framing/algorithm identity only; it is NOT ML-DSA public-key validation.
-const ML_DSA_65_SPKI_PREFIX: [u8; 22] = [
+pub(crate) const ML_DSA_65_SPKI_PREFIX: [u8; 22] = [
     0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03,
     0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,
 ];
-const PUBLIC_KEY_ID_DOMAIN: &[u8] = b"TRNM/PoN/PQKey/v1\0";
+pub(crate) const PUBLIC_KEY_ID_DOMAIN: &[u8] = b"TRNM/PoN/PQKey/v1\0";
 pub const TPQ1_SIGNED_BYTES: usize = TPQ1_UNSIGNED_BYTES + 2 + ML_DSA_65_SIGNATURE_BYTES;
 pub const TPQ1_MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
-const DOMAIN: &[u8] = b"TRNM/PoN/PQAuth/ML-DSA-65/v1\0";
+pub(crate) const DOMAIN: &[u8] = b"TRNM/PoN/PQAuth/ML-DSA-65/v1\0";
+pub(crate) const PAYLOAD_TAG: &[u8] = b"payload\0";
+pub(crate) const TPQ1_MAGIC: &[u8; 4] = b"TPQ1";
+pub(crate) const TPQ1_VERSION: u8 = 1;
+pub(crate) const TPQ1_ALGORITHM: u8 = 0x65;
+pub(crate) const FIRST_PURPOSE: u8 = 1;
+pub(crate) const LAST_PURPOSE: u8 = 6;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PqFrameError {
@@ -83,7 +89,7 @@ pub fn payload_commitment(payload: &[u8]) -> Result<[u8; 48], PqFrameError> {
     }
     let mut h = Sha384::new();
     h.update(DOMAIN);
-    h.update(b"payload\0");
+    h.update(PAYLOAD_TAG);
     h.update((payload.len() as u64).to_be_bytes());
     h.update(payload);
     Ok(h.finalize().into())
@@ -116,10 +122,13 @@ pub fn preflight_unverified<'a>(
     if bytes.len() != TPQ1_SIGNED_BYTES {
         return Err(PqFrameError::FrameLength);
     }
-    if &bytes[..4] != b"TPQ1" || bytes[4] != 1 || bytes[5] != 0x65 {
+    if &bytes[..4] != TPQ1_MAGIC || bytes[4] != TPQ1_VERSION || bytes[5] != TPQ1_ALGORITHM {
         return Err(PqFrameError::HeaderVersionAlgorithm);
     }
-    if !(1..=6).contains(&bytes[6]) || bytes[6] != expected.purpose || bytes[7] != 0 {
+    if !(FIRST_PURPOSE..=LAST_PURPOSE).contains(&bytes[6])
+        || bytes[6] != expected.purpose
+        || bytes[7] != 0
+    {
         return Err(PqFrameError::PurposeOrReserved);
     }
     if &bytes[8..40] != expected.network.as_slice()
