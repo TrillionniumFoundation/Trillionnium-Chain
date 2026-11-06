@@ -285,3 +285,267 @@ fn tls_required_policy_refuses_plaintext_before_io_and_old_ledger_reopen() {
     .contains("PQ_TLS_REQUIRED"));
 }
 
+#[test]
+fn tls_peer_cannot_relay_another_rostered_signers_request_into_node() {
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let client = fixture.client();
+    let other = PqClient::new(fixture.policy.clone(), fixture.other.signer()).unwrap();
+    let prepared = other
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let (address, stop, handle) = start(node, &fixture);
+    assert!(client
+        .exchange(
+            address,
+            prepared.wire(),
+            Instant::now() + Duration::from_secs(5)
+        )
+        .is_err());
+    assert_eq!(finish(stop, handle).refused, 1);
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let status = node.pq_network_status(&fixture.policy).unwrap();
+    assert_eq!(status["records"], 0);
+    assert_eq!(status["inbound_signature_attempts"], 1);
+    assert_eq!(status["tls_handshake_attempts"], 1);
+    assert!(status["ingress_bytes"].as_u64().unwrap() > prepared.wire().len() as u64);
+}
+
+#[test]
+fn tls_ca_hostname_and_local_identity_pins_refuse() {
+    use openssl::pkey::PKey;
+    let fixture = Fixture::new();
+    let wrong_ca_key = fixtures::key(62);
+    let wrong_ca = fixtures::certificate(
+        &wrong_ca_key,
+        &wrong_ca_key,
+        "other CA",
+        "other CA",
+        true,
+        2,
+    );
+    assert!(PqTlsIdentity::new(
+        fixture.peer.certificate.clone(),
+        fixture.peer.key.clone(),
+        wrong_ca
+    )
+    .is_err());
+    assert!(PqTlsClient::new(
+        fixture.policy.clone(),
+        fixture.peer.signer(),
+        fixture.other.tls(&fixture.ca)
+    )
+    .is_err());
+    let classical = PKey::generate_ed25519().unwrap();
+    let root_key = fixtures::key(61);
+    let classical_cert = fixtures::certificate(
+        &classical,
+        &root_key,
+        "classical",
+        "TRNM TLS fixture CA",
+        false,
+        9,
+    );
+    assert!(PqTlsIdentity::new(classical_cert, classical, fixture.ca.clone()).is_err());
+
+    let wrong_hostname = Arc::new(
+        PqNetworkPolicy::new_tls13(
+            &fixture.settings,
+            &fixture.server.key.public_key_to_der().unwrap(),
+            1,
+            [fixture.peer.key.public_key_to_der().unwrap()],
+            PqTlsPins::new(
+                fixture.policy.tls_pins().unwrap().ca_certificate_sha256(),
+                "wrong.localhost".into(),
+            )
+            .unwrap(),
+        )
+        .unwrap(),
+    );
+    let client = PqTlsClient::new(
+        wrong_hostname,
+        fixture.peer.signer(),
+        fixture.peer.tls(&fixture.ca),
+    )
+    .unwrap();
+    let prepared = client
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let (address, stop, handle) = start(node, &fixture);
+    assert!(client
+        .send(address, &prepared, Duration::from_secs(5))
+        .is_err());
+    assert_eq!(finish(stop, handle).refused, 1);
+    assert_eq!(
+        Node::open_with_pq_network(
+            directory.path(),
+            fixture.settings.clone(),
+            1,
+            &fixture.policy
+        )
+        .unwrap()
+        .pq_network_status(&fixture.policy)
+        .unwrap()["records"],
+        0
+    );
+}
+
+fn raw_handshake(
+    address: SocketAddr,
+    fixture: &Fixture,
+    group: &str,
+    version: openssl::ssl::SslVersion,
+    certificate: bool,
+    wire: &[u8],
+) -> (bool, bool) {
+    use openssl::ssl::{Ssl, SslContext, SslMethod, SslStream, SslVerifyMode};
+    let mut context = SslContext::builder(SslMethod::tls()).unwrap();
+    context.set_min_proto_version(Some(version)).unwrap();
+    context.set_max_proto_version(Some(version)).unwrap();
+    context.set_groups_list(group).unwrap();
+    context.set_verify(SslVerifyMode::PEER);
+    context
+        .cert_store_mut()
+        .add_cert(fixture.ca.clone())
+        .unwrap();
+    context.set_alpn_protos(b"\x0etrnm-pq-node/1").unwrap();
+    if certificate {
+        context.set_certificate(&fixture.peer.certificate).unwrap();
+        context.set_private_key(&fixture.peer.key).unwrap();
+    }
+    let tcp = TcpStream::connect_timeout(&address, Duration::from_secs(5)).unwrap();
+    tcp.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+    tcp.set_write_timeout(Some(Duration::from_secs(5))).unwrap();
+    let mut ssl = Ssl::new(&context.build()).unwrap();
+    ssl.param_mut().set_host("localhost").unwrap();
+    let mut stream = SslStream::new(ssl, tcp).unwrap();
+    if stream.connect().is_err() {
+        return (false, false);
+    }
+    // TLS 1.3's server rejection of a missing client certificate can arrive
+    // after the client's handshake method returns. It must never accept data.
+    let _ = stream.write_all(&(wire.len() as u32).to_be_bytes());
+    let _ = stream.write_all(wire);
+    let mut byte = [0];
+    (true, stream.read(&mut byte).is_ok_and(|read| read != 0))
+}
+
+#[test]
+fn actual_tls_node_refuses_classical_group_tls12_missing_certificate_and_plaintext() {
+    use openssl::ssl::SslVersion;
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let (address, stop, handle) = start(node, &fixture);
+    let client = fixture.client();
+    let prepared = client
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    assert!(
+        !raw_handshake(
+            address,
+            &fixture,
+            "X25519",
+            SslVersion::TLS1_3,
+            true,
+            prepared.wire()
+        )
+        .0
+    );
+    assert!(
+        !raw_handshake(
+            address,
+            &fixture,
+            "X25519",
+            SslVersion::TLS1_2,
+            true,
+            prepared.wire()
+        )
+        .0
+    );
+    assert!(
+        !raw_handshake(
+            address,
+            &fixture,
+            "X25519MLKEM768",
+            SslVersion::TLS1_3,
+            false,
+            prepared.wire()
+        )
+        .1
+    );
+    let mut raw = TcpStream::connect(address).unwrap();
+    raw.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+    raw.write_all(&(prepared.wire().len() as u32).to_be_bytes())
+        .unwrap();
+    let _ = raw.write_all(prepared.wire());
+    let mut byte = [0];
+    // TLS may return an alert; it cannot return a signed native receipt.
+    let _ = raw.read(&mut byte);
+    drop(raw);
+    assert_eq!(finish(stop, handle).refused, 4);
+    let reopened = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let status = reopened.pq_network_status(&fixture.policy).unwrap();
+    assert_eq!(status["records"], 0);
+    assert_eq!(status["ingress_connections"], 4);
+    assert_eq!(status["inbound_signature_attempts"], 0);
+    assert_eq!(status["tls_handshake_attempts"], 4);
+}
+
+#[test]
+fn tls_handshake_does_not_reset_the_original_client_deadline() {
+    let fixture = Fixture::new();
+    let client = fixture.client();
+    let prepared = client
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let (release, wait) = std::sync::mpsc::channel();
+    let handle = thread::spawn(move || {
+        let (stream, _) = listener.accept().unwrap();
+        let _ = wait.recv_timeout(Duration::from_secs(2));
+        drop(stream);
+    });
+    let start = Instant::now();
+    let result = client.send(address, &prepared, Duration::from_millis(120));
+    let elapsed = start.elapsed();
+    release.send(()).unwrap();
+    handle.join().unwrap();
+    assert!(result.is_err());
+    assert!(elapsed < Duration::from_secs(1));
+}
+
