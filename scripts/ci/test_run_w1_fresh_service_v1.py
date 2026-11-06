@@ -420,7 +420,7 @@ class FreshFailureDiagnostics(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             log, report = root / 'test.log', root / 'report.json'
-            log.write_text('running 1 test\\ntest ' + fresh.FRESH + ' ... FAILED\\n')
+            log.write_text('running 1 test\ntest ' + fresh.FRESH + ' ... FAILED\n')
             observed = dict(process(), exit_code=101, process_exit_code=101)
             with self.assertRaisesRegex(ValueError, 'FRESH_NATIVE_TEST_FAILED'):
                 fresh.validate_execution(observed, log, fresh.FRESH, report)
