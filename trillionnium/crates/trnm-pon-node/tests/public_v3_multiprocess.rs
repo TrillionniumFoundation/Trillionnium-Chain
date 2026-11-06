@@ -1417,9 +1417,10 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     assert_eq!(serde_json::to_vec(&raw).unwrap(), original_bytes);
     assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR14));
     assert_eq!(RawR14.policy_observation(), support::policy_observation());
+    // Retain the historical selector name; observations bind the current r15 policy.
     assert_eq!(
         RawR14.policy_observation()["policy_id"],
-        "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f"
+        "b29e8b54d6ec6109ee8e32b8b13ab77665ae2915b3b9229a0a6b89bc84c7d26e"
     );
     let mut opt_in = original;
     ArithmeticFactsV1.bind_actor_job(&mut opt_in);
@@ -1429,7 +1430,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     );
     assert_eq!(
         opt_in["public_resource_policy"]["policy_id"],
-        "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825"
+        "23c4b02c6b44af81c046519fbf3ba098b176d7b333edf882968d77293df86045"
     );
     let mut malformed = Vec::new();
     for key in ["work_profile", "public_resource_policy"] {
