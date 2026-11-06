@@ -1,0 +1,19 @@
+{
+  "completion_receipt_present": false,
+  "label": "native-quorum",
+  "not_a_test_pass": true,
+  "observed_utc": "2026-11-06T14:10:11.124543+00:00",
+  "original_log": "native-quorum.log",
+  "original_log_bytes": 0,
+  "retry_receipt": "native-quorum-bounded.json",
+  "root_cause": "unestablished",
+  "schema": "trnm-incomplete-observation-v1",
+  "source_commit_claim": "no completion receipt; intended command was on 8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "status": "UNKNOWN_INCOMPLETE",
+  "toolchain_recovery_observation": {
+    "cargo_on_current_PATH": null,
+    "previous_cargo_bin_exists": false,
+    "previous_toolchain_directory_exists": false,
+    "rustc_on_current_PATH": null
+  }
+}

@@ -1,0 +1,6 @@
+tree a11d4b91519311c05b647e60a50b878b7ee9bafd
+parent 133bbd2999a33fd9bce60aeac68bd44e8f9667bd
+author Codex <codex@openai.com> 1793973446 +0800
+committer Codex <codex@openai.com> 1793973446 +0800
+
+docs(audit): retain original adversarial development failures

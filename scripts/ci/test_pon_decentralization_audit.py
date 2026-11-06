@@ -722,6 +722,130 @@ class FiveAxisReports(unittest.TestCase):
                 audited(value)
 
 
+class IdentityReuseDiagnostics(unittest.TestCase):
+    @staticmethod
+    def fixture():
+        value = audit_fixture()
+        # Every owner is unresolved. All identities start with distinct known
+        # fingerprints and each authority route has its own subject.
+        for row in value["registry"]["subjects"]:
+            row.update(controller=None, evidence_sha256=None,
+                       key_sha256=sha("unresolved identity:" + row["id"]))
+        bindings = {"root": "provider-a", "release": "provider-b", "upgrade": "provider-c",
+                    "recovery": "unknown", "witness": "author"}
+        for row in value["audit"]["authority"]["routes"]:
+            row.update(roster=[bindings[row["role"]]], total_key_slots=1, threshold=1)
+            seal_roster(row)
+        seal_fixture(value)
+        return value
+
+    def assert_uncredited(self, report):
+        self.assertEqual(report["status"], "HOLD")
+        authority = report["axes"]["authority"]
+        self.assertEqual(authority["cross_role_control_groups"], {})
+        self.assertEqual(authority["evaluation_authority_control_overlap"], [])
+        for row in [report["axes"]["evaluation"], *authority["routes"]]:
+            self.assertEqual(row["declared_group_key_weights"], {})
+            self.assertEqual(row["unresolved_control_key_slots"], row["total_key_slots"])
+            self.assertIsNone(row["minimum_approving_groups"])
+            self.assertIsNone(row["minimum_blocking_groups"])
+        for flag in ("evidence_references_authenticated", "independent_administration_verified",
+                     "permissionless_utility_accepted", "public_network_ready", "production_activation"):
+            self.assertIs(report[flag], False)
+
+    def test_unknown_owners_share_known_key_across_authority_and_evaluation_without_credit(self):
+        value = self.fixture()
+        baseline = audited(value)
+        subjects = {row["id"]: row for row in value["registry"]["subjects"]}
+        shared_key = subjects["eval-a"]["key_sha256"]
+        for subject in ("provider-a", "provider-b"):
+            subjects[subject]["key_sha256"] = shared_key
+        seal_fixture(value)
+        report = audited(value)
+        authority = report["axes"]["authority"]
+        self.assertEqual(authority["key_fingerprint_reuse"], [{
+            "key_sha256": shared_key, "authority_subjects": ["provider-a", "provider-b"],
+            "authority_roles": ["release", "root"], "authority_routes": ["release-route", "root-route"],
+            "evaluation_subjects": ["eval-a"]}])
+        self.assertEqual(authority["subject_identity_reuse"], [])
+        self.assert_uncredited(report)
+        before_axes, after_axes = copy.deepcopy(baseline["axes"]), copy.deepcopy(report["axes"])
+        for axes in (before_axes, after_axes):
+            for field in ("key_fingerprint_reuse", "subject_identity_reuse", "identity_reuse_scope"):
+                axes["authority"].pop(field)
+        self.assertEqual(after_axes, before_axes)
+        self.assertEqual(report["findings"], baseline["findings"])
+
+    def test_unrelated_unknown_fingerprints_do_not_invent_reuse(self):
+        report = audited(self.fixture())
+        self.assertEqual(report["axes"]["authority"]["key_fingerprint_reuse"], [])
+        self.assertEqual(report["axes"]["authority"]["subject_identity_reuse"], [])
+        self.assert_uncredited(report)
+
+    def test_unknown_owner_key_reuse_between_authority_roles_needs_no_evaluator_match(self):
+        value = self.fixture()
+        subjects = {row["id"]: row for row in value["registry"]["subjects"]}
+        shared_key = subjects["provider-a"]["key_sha256"]
+        subjects["provider-b"]["key_sha256"] = shared_key
+        seal_fixture(value)
+        report = audited(value)
+        self.assertEqual(report["axes"]["authority"]["key_fingerprint_reuse"], [{
+            "key_sha256": shared_key, "authority_subjects": ["provider-a", "provider-b"],
+            "authority_roles": ["release", "root"], "authority_routes": ["release-route", "root-route"],
+            "evaluation_subjects": []}])
+        self.assert_uncredited(report)
+
+    def test_repeated_identity_across_alternate_routes_of_one_role_is_visible(self):
+        value = self.fixture()
+        route = copy.deepcopy(next(row for row in value["audit"]["authority"]["routes"] if row["role"] == "root"))
+        route["id"] = "alternate-root"
+        value["audit"]["authority"]["routes"].append(route)
+        report = audited(value)
+        authority = report["axes"]["authority"]
+        self.assertEqual(len(authority["key_fingerprint_reuse"]), 1)
+        self.assertEqual(len(authority["subject_identity_reuse"]), 1)
+        for row in authority["key_fingerprint_reuse"] + authority["subject_identity_reuse"]:
+            self.assertEqual(row["authority_roles"], ["root"])
+            self.assertEqual(row["authority_routes"], ["alternate-root", "root-route"])
+            self.assertEqual(row["evaluation_subjects"], [])
+        self.assertEqual(authority["subject_identity_reuse"][0]["subject"], "provider-a")
+        self.assert_uncredited(report)
+
+    def test_same_subject_without_fingerprint_remains_visible_across_roles_and_evaluation(self):
+        value = self.fixture()
+        subjects = {row["id"]: row for row in value["registry"]["subjects"]}
+        subjects["provider-a"]["key_sha256"] = None
+        route = next(row for row in value["audit"]["authority"]["routes"] if row["role"] == "release")
+        route["roster"] = ["provider-a"]
+        seal_roster(route)
+        evaluation = value["audit"]["evaluation"]
+        evaluation.update(roster=["provider-a", "eval-b", "eval-c"], inventory_complete=False)
+        seal_roster(evaluation)
+        seal_fixture(value)
+        report = audited(value)
+        self.assertEqual(report["axes"]["authority"]["key_fingerprint_reuse"], [])
+        self.assertEqual(report["axes"]["authority"]["subject_identity_reuse"], [{
+            "subject": "provider-a", "key_sha256": None,
+            "authority_roles": ["release", "root"], "authority_routes": ["release-route", "root-route"],
+            "evaluation_subjects": ["provider-a"]}])
+        self.assertEqual(report["axes"]["evaluation"]["unidentified_key_slots"], 1)
+        self.assertEqual(report["axes"]["evaluation"]["key_threshold"], 2)
+        self.assert_uncredited(report)
+
+    def test_different_subjects_without_fingerprints_are_not_merged_into_one_key(self):
+        value = self.fixture()
+        subjects = {row["id"]: row for row in value["registry"]["subjects"]}
+        for subject in ("provider-a", "provider-b", "eval-a"):
+            subjects[subject]["key_sha256"] = None
+        value["audit"]["evaluation"]["inventory_complete"] = False
+        seal_fixture(value)
+        report = audited(value)
+        self.assertEqual(report["axes"]["authority"]["key_fingerprint_reuse"], [])
+        self.assertEqual(report["axes"]["authority"]["subject_identity_reuse"], [])
+        self.assertEqual(report["axes"]["evaluation"]["unidentified_key_slots"], 1)
+        self.assert_uncredited(report)
+
+
 class CommandLine(unittest.TestCase):
     def invoke(self, *args):
         return subprocess.run([sys.executable, str(Path(D.__file__).resolve()), *map(str, args)],

@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_pon_decentralization_audit.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:58:10.905255+00:00",
+  "independent_acceptance": false,
+  "label": "core-tests",
+  "log_bytes": 8821,
+  "log_file": "core-tests.log",
+  "log_sha256": "e6add3d88877a0cfafbc54219234310ff5ebce63d07eda4ebb7dbc4740adf6bd",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:08.529595+00:00",
+  "wall_seconds": 2.3756621389998145
+}

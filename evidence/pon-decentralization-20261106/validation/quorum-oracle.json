@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:58:52.359337+00:00",
+  "independent_acceptance": false,
+  "label": "quorum-oracle",
+  "log_bytes": 796,
+  "log_file": "quorum-oracle.log",
+  "log_sha256": "568d8c13ad9f739c7674cdf1867a4bc8b6dca9791ed9611c14fb064b88da98ca",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:52.031100+00:00",
+  "wall_seconds": 0.328237394000098
+}

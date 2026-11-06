@@ -1,0 +1,15 @@
+{
+  "cited_commit": "9eda0ada15be1702269e08e527917568c710f4d3",
+  "evaluation_profile": "explicit-attested-dev-profile-not-permissionless-utility",
+  "evaluation_signers": 3,
+  "evaluation_threshold": 2,
+  "evidence_scope": "GitHub readback of cited version agrees with exact baseline Git blob; no deployed custody claim",
+  "exact_profile_bytes_equal": true,
+  "github_cited_blob_sha": "a60f403b2f0e7343aed61170ca2aef875a787790",
+  "path": "config/pon/devnet-v1.json",
+  "production_activation": false,
+  "profile_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+  "reviewed_base_blob_sha": "a60f403b2f0e7343aed61170ca2aef875a787790",
+  "reviewed_base_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+  "schema": "trnm-cited-profile-crosscheck-v1"
+}

@@ -7,7 +7,9 @@
       "cross_role_control_groups": {},
       "declared_inventory_complete": false,
       "evaluation_authority_control_overlap": [],
+      "identity_reuse_scope": "declared key fingerprints or repeated subject IDs, including unknown ownership; no control-group or acceptance credit",
       "inventory_reference_current": false,
+      "key_fingerprint_reuse": [],
       "missing_roles": [
         "recovery",
         "release",
@@ -16,7 +18,8 @@
         "witness"
       ],
       "overlap_scope": "declared control including stale relations; diagnostic, not an automatic conflict verdict",
-      "routes": []
+      "routes": [],
+      "subject_identity_reuse": []
     },
     "data_distribution": {
       "accounting_inventory_current": false,

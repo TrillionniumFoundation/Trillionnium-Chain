@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/agent/.cargo/bin/rustc",
+    "--version",
+    "--verbose"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:58:52.166711+00:00",
+  "independent_acceptance": false,
+  "label": "rust-toolchain",
+  "log_bytes": 196,
+  "log_file": "rust-toolchain.log",
+  "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:51.971272+00:00",
+  "wall_seconds": 0.1954403849999835
+}

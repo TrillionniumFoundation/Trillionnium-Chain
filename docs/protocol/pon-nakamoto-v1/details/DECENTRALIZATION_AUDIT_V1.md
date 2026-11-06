@@ -258,6 +258,15 @@ evaluator/authority overlap, including retained stale relationships. These are
 relationship diagnostics; they do not automatically prove a conflict of interest
 or establish the authenticity of the claimed control.
 
+Known identity reuse remains visible even when every holder is unknown.
+`authority.key_fingerprint_reuse` groups shared key fingerprints across
+authority routes or evaluation and authority, retaining the actual subjects,
+roles and route IDs. `authority.subject_identity_reuse` separately records
+reuse of the exact subject, including subjects with no known fingerprint.
+These bounded grouped diagnostics do not create a controller group, resolve
+custody, change the quorum denominator or authenticate the supplied keys.
+Unrelated unknown fingerprints remain separate unresolved observations.
+
 Funding and hardware each use one declared unit, unit-definition reference,
 original `total_units`, explicit `unknown_units`, and distinct asset/receipt
 allocations. Known shares use the complete original denominator with integer
@@ -271,8 +280,8 @@ network market shares.
 python3 scripts/pon_decentralization_audit.py \
   --input evidence/pon-decentralization-20261106/current-input.json \
   --output /tmp/trnm-current-decentralization-assessment.json
-python3 -m unittest discover -s scripts/ci -p test_pon_decentralization_audit.py -v
-python3 -m unittest discover -s scripts/ci -p test_pon_wan_control_domains.py -v
+python3 scripts/ci/test_pon_decentralization_audit.py -v
+python3 scripts/ci/test_pon_wan_control_domains.py -v
 ```
 
 Exit 0 means the reader processed the supplied records; its report still says

@@ -1,0 +1,20 @@
+{
+  "acceptance": false,
+  "results": [
+    {
+      "log": "identity-reuse-core-tests.log",
+      "log_bytes": 9963,
+      "log_sha256": "4c23dd296a0ddc2b86ba5858018e5fc28d14fddc5c4a41370c382f74fc84abcc",
+      "observed_test_count": 61
+    },
+    {
+      "log": "identity-reuse-wan-tests.log",
+      "log_bytes": 142,
+      "log_sha256": "f30569a7048edb602e7ef7e41c6cc0972508248e589bcf00de7b66703907ea8e",
+      "observed_test_count": 43
+    }
+  ],
+  "review_scope": "internal collaborating-agent source review, not independently administered network evaluation",
+  "schema": "trnm-development-test-observation-v1",
+  "source_scope": "uncommitted identity-reuse diagnostic fix, before final clean-source run"
+}

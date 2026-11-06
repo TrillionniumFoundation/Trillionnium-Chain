@@ -414,6 +414,8 @@ def evaluate(audit, registry):
     exact(authority, INVENTORY | {"routes"}, "AUTHORITY_FIELDS")
     routes = indexed(authority["routes"], {"id", "role", "roster", "roster_sha256", "total_key_slots", "threshold", "evidence_sha256"}, "AUTHORITY_ROUTE")
     route_reports, role_groups = [], collections.defaultdict(lambda: {"roles": set(), "routes": set(), "subjects": set()})
+    key_uses = collections.defaultdict(lambda: {"subjects": set(), "roles": set(), "routes": set()})
+    subject_uses = collections.defaultdict(lambda: {"roles": set(), "routes": set()})
     for identity, row in sorted(routes.items()):
         require(row["role"] in AUTHORITY_ROLES, "AUTHORITY_ROLE")
         digest(row["roster_sha256"], "ROSTER_DIGEST")
@@ -422,6 +424,15 @@ def evaluate(audit, registry):
         q = controls.quorum(row["roster"], row["threshold"], total_key_slots=row["total_key_slots"])
         route_reports.append({"id": identity, "role": row["role"], "route_reference_current": current, **q})
         for subject in row["roster"]:
+            # Identity reuse is known even when no ownership group can be
+            # credited. Aggregate bounded roster entries, never subject pairs.
+            subject_uses[subject]["roles"].add(row["role"])
+            subject_uses[subject]["routes"].add(identity)
+            key = controls.subjects[subject]["key_sha256"]
+            if key is not None:
+                key_uses[key]["subjects"].add(subject)
+                key_uses[key]["roles"].add(row["role"])
+                key_uses[key]["routes"].add(identity)
             group = controls.declared_group_for(subject)
             if group is not None:
                 role_groups[group]["roles"].add(row["role"])
@@ -436,16 +447,32 @@ def evaluate(audit, registry):
         finding("authority", "MISSING_AUTHORITY_ROLE:" + role)
     role_groups = {group: {key: sorted(values) for key, values in row.items()}
                    for group, row in sorted(role_groups.items())}
-    evaluation_groups = collections.defaultdict(list)
+    evaluation_groups, evaluation_keys = collections.defaultdict(list), collections.defaultdict(list)
+    evaluation_subjects = set(evaluation["roster"])
     for subject in evaluation["roster"]:
+        key = controls.subjects[subject]["key_sha256"]
+        if key is not None:
+            evaluation_keys[key].append(subject)
         group = controls.declared_group_for(subject)
         if group is not None:
             evaluation_groups[group].append(subject)
     overlaps = [{"group": group, "evaluation_subjects": sorted(subjects),
                  "authority_roles": role_groups[group]["roles"], "authority_routes": role_groups[group]["routes"]}
                 for group, subjects in sorted(evaluation_groups.items()) if group in role_groups]
+    key_reuse = [{"key_sha256": key, "authority_subjects": sorted(row["subjects"]),
+                  "authority_roles": sorted(row["roles"]), "authority_routes": sorted(row["routes"]),
+                  "evaluation_subjects": sorted(evaluation_keys.get(key, []))}
+                 for key, row in sorted(key_uses.items())
+                 if len(row["routes"]) > 1 or key in evaluation_keys]
+    subject_reuse = [{"subject": subject, "key_sha256": controls.subjects[subject]["key_sha256"],
+                      "authority_roles": sorted(row["roles"]), "authority_routes": sorted(row["routes"]),
+                      "evaluation_subjects": [subject] if subject in evaluation_subjects else []}
+                     for subject, row in sorted(subject_uses.items())
+                     if len(row["routes"]) > 1 or subject in evaluation_subjects]
     finish("authority", {**inventory(authority, controls), "routes": route_reports, "missing_roles": missing_roles,
                           "cross_role_control_groups": role_groups, "evaluation_authority_control_overlap": overlaps,
+                          "key_fingerprint_reuse": key_reuse, "subject_identity_reuse": subject_reuse,
+                          "identity_reuse_scope": "declared key fingerprints or repeated subject IDs, including unknown ownership; no control-group or acceptance credit",
                           "overlap_scope": "declared control including stale relations; diagnostic, not an automatic conflict verdict",
                           "alternate_route_scope": "each route stands separately; one route never hides another"})
     exact(audit["resources"], {"funding", "hardware"}, "RESOURCES_FIELDS")

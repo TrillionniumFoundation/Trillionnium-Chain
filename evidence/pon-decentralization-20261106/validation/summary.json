@@ -1,0 +1,164 @@
+{
+  "full_workspace_unit_tests": "NOT_EXECUTED in this task",
+  "hosted_ci": "NOT_OBSERVED in this local record",
+  "independent_acceptance": false,
+  "measured_local_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "measured_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "native_quorum": "UNQUALIFIED: first retained empty log has no completion receipt; bounded retry exit 127 because previously recorded toolchain path was unavailable after execution recovery",
+  "native_release": "NOT_EXECUTED after toolchain unavailability",
+  "permissionless_utility_accepted": false,
+  "production_activation": false,
+  "publication_scope": "Git Data publication changes commit metadata/ancestry, not measured tree bytes; evidence-only child is separate",
+  "published_source_commit": "79ed9de1a43462bb53de5dd66ba030bf7a764858",
+  "published_source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "python_suite_counts": {
+    "boundary-tests": 16,
+    "ci-contract-tests": 104,
+    "core-tests": 55,
+    "evaluation-lineage": 17,
+    "quorum-oracle": 4,
+    "source-integrity-tests": 43,
+    "wan-legacy-tests": 25,
+    "wan-v3-tests": 18
+  },
+  "raw_source_before_after_equal": true,
+  "raw_source_tracked_bytes": 1026717644,
+  "raw_source_tracked_entries": 10677,
+  "receipts": [
+    {
+      "exit_code": 0,
+      "label": "boundary-tests",
+      "receipt": "boundary-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "cargo-graph",
+      "receipt": "cargo-graph.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "ci-contract-tests",
+      "receipt": "ci-contract-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "core-tests",
+      "receipt": "core-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "current-assessment",
+      "receipt": "current-assessment.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "evaluation-lineage",
+      "receipt": "evaluation-lineage.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 127,
+      "label": "native-quorum-bounded",
+      "receipt": "native-quorum-bounded.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "preflight",
+      "receipt": "preflight.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "quorum-oracle",
+      "receipt": "quorum-oracle.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "repository-contract",
+      "receipt": "repository-contract.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "rust-format",
+      "receipt": "rust-format.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "rust-toolchain",
+      "receipt": "rust-toolchain.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "source-after",
+      "receipt": "source-after.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "source-before",
+      "receipt": "source-before.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "source-integrity-tests",
+      "receipt": "source-integrity-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 101,
+      "label": "strict-clippy-j1",
+      "receipt": "strict-clippy-j1.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 101,
+      "label": "strict-clippy",
+      "receipt": "strict-clippy.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "wan-legacy-tests",
+      "receipt": "wan-legacy-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    },
+    {
+      "exit_code": 0,
+      "label": "wan-v3-tests",
+      "receipt": "wan-v3-tests.json",
+      "source_clean_before": true,
+      "source_unchanged_after": true
+    }
+  ],
+  "schema": "trnm-decentralization-validation-v1",
+  "strict_clippy": "INCOMPLETE: two exit-101 attempts; syn then trnm-pon-node compiler processes received SIGKILL, root cause unestablished"
+}

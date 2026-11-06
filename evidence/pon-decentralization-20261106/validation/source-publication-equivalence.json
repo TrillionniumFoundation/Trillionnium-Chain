@@ -1,0 +1,14 @@
+{
+  "commit_metadata_equal": false,
+  "exact_tree_equality": true,
+  "git_fetched_publication": true,
+  "independent_acceptance": false,
+  "measured_local_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "published_commit": "79ed9de1a43462bb53de5dd66ba030bf7a764858",
+  "receipt_identity_preserved": true,
+  "schema": "trnm-source-publication-equivalence-v1",
+  "source_trees": {
+    "79ed9de1a43462bb53de5dd66ba030bf7a764858": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+    "8ae7093fc6380cef063b061ed8d7fe79749acc17": "a11d4b91519311c05b647e60a50b878b7ee9bafd"
+  }
+}

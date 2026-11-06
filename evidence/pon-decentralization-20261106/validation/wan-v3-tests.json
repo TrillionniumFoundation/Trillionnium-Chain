@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_pon_wan_control_domains.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:58:09.524207+00:00",
+  "independent_acceptance": false,
+  "label": "wan-v3-tests",
+  "log_bytes": 2933,
+  "log_file": "wan-v3-tests.log",
+  "log_sha256": "19ef9499cda67812a6f3cbd9eadacf8b8cd8d5a81b7fb18c7cf6da3fbe2c2658",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:08.602677+00:00",
+  "wall_seconds": 0.9215315699998428
+}
