@@ -1,4 +1,4 @@
-use super::*;
+use super::{fixtures::Fixture, *};
 use crate::pq_rollback_witness::{
     initial_network_checkpoint, DurableWitness, WitnessBinding, WitnessClient, WitnessTransport,
 };
@@ -9,11 +9,6 @@ use std::{
     sync::atomic::AtomicUsize,
     thread,
 };
-
-#[path = "fixtures.rs"]
-#[allow(dead_code)] // Shared test helper also carries the original certificate-profile cases.
-mod fixtures;
-use fixtures::Fixture;
 
 fn endpoint(fixture: &Fixture, address: SocketAddr, ips: Vec<IpAddr>) -> Arc<PqNetworkPolicy> {
     Arc::new(

@@ -1,11 +1,8 @@
-use super::*;
+use super::{fixtures::Fixture, *};
 use std::{
     io::{Read, Write},
     thread,
 };
-#[path = "fixtures.rs"]
-mod fixtures;
-use fixtures::Fixture;
 
 fn start(
     node: Node,
