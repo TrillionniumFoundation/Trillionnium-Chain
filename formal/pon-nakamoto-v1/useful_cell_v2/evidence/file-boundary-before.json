@@ -1,0 +1,10 @@
+{
+  "timed_out": true,
+  "timeout_seconds": 2,
+  "child_killed_and_reaped": true,
+  "schema": "pon-useful-cell-v2-file-boundary-before-v1",
+  "scope": "old CLI writerless FIFO input, no arithmetic or proof work",
+  "main_source_sha256": "169c5f4e7c821ee2c5efdec1b9ddc122643a072f119fff00abd997825b51dd59",
+  "runner_sha256": "2eaa939c20eb078ad64e91490699b8410d85331a87cfefeb4f79f71fe833dc3c",
+  "elapsed_seconds": 2.0198937029999797
+}

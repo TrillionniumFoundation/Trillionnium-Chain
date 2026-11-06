@@ -1,0 +1,52 @@
+   Compiling trnm-useful-cell-v2-reference v0.1.0 (/workspace/scratch/39ce077f3480/chain-proof/formal/pon-nakamoto-v1/useful_cell_v2)
+    Finished `release` profile [optimized + debuginfo] target(s) in 2.14s
+     Running unittests src/lib.rs (/workspace/scratch/39ce077f3480/cell-v2-target/release/deps/trnm_useful_cell_v2_reference-4943192e1d44384f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/workspace/scratch/39ce077f3480/cell-v2-target/release/deps/trnm_useful_cell_v2_reference-28af5ec935468b33)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/file_boundary.rs (/workspace/scratch/39ce077f3480/cell-v2-target/release/deps/file_boundary-7bd2879cb6d97ef3)
+
+running 1 test
+test task_and_claim_reject_writerless_fifo_symlink_directory_and_oversize ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/relation.rs (/workspace/scratch/39ce077f3480/cell-v2-target/release/deps/relation-73ff862980397bca)
+
+running 19 tests
+test clamp_relu_ties_and_stop_are_explicit_semantic_changes ... ok
+test binds_window_and_original_model_even_with_equal_current_outputs ... ok
+test every_postprocessing_stage_rejects_rehashed_forgery ... ok
+test binds_every_external_context_state_provenance_use_and_policy_field ... ok
+test exact_numeric_extremes_and_unsupported_policies ... ok
+test byte_decoder_is_bounded_exact_and_rejects_noncanonical_boolean ... ok
+test linear_and_partition_forgery_still_reaches_original_full_verifier ... ok
+test every_single_byte_tamper_is_rejected_by_decode_or_full_verification ... ok
+test signed_division_is_toward_zero_and_exposes_exact_remainders ... ok
+test contract_refuses_unsupported_dimensions_duplicate_ids_and_deadlines ... ok
+test read_only_state_is_not_authorized_to_advance ... ok
+test verification_must_finish_before_both_deadlines_and_clock_cannot_regress ... ok
+test stop_threshold_checks_below_equality_above_and_disabled ... ok
+test reproducible_known_answer_fixture ... ok
+test direct_grouped_and_independent_verifier_match_all_shapes ... ok
+test oversized_materialized_claims_fail_before_encoding_or_relation_work ... ok
+test strict_json_task_matches_typed_contract_and_rejects_alternate_encodings ... ok
+test strict_json_task_rejects_unknown_semantics_and_malformed_model ... ok
+test binds_request_ids_scopes_time_and_every_feature ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+   Doc-tests trnm_useful_cell_v2_reference
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

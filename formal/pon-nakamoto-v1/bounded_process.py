@@ -11,10 +11,20 @@ import math,os,selectors,signal,subprocess,sys,time
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
+class Usage:
+    """wait4 for this child and descendants it reaped, not a cgroup total."""
+    pid: int
+    user_seconds: float
+    system_seconds: float
+    max_single_process_rss_bytes: int
+
+
+@dataclass(frozen=True)
 class Result:
     returncode: int
     stdout: bytes
     stderr: bytes
+    usage: Usage | None = None
 
 
 class ProcessFailure(ValueError):
@@ -24,7 +34,7 @@ class ProcessFailure(ValueError):
     NATIVE_STDIN_INCOMPLETE; callers must not treat returncode alone as success.
     """
     def __init__(self, code, *, returncode, stdout, stderr, stdin_written,
-                 stdout_truncated=False, stderr_truncated=False):
+                 stdout_truncated=False, stderr_truncated=False, usage=None):
         super().__init__(code)
         self.returncode=returncode
         self.stdout=stdout
@@ -32,6 +42,7 @@ class ProcessFailure(ValueError):
         self.stdin_written=stdin_written
         self.stdout_truncated=stdout_truncated
         self.stderr_truncated=stderr_truncated
+        self.usage=usage
 
 
 def _wait_without_reaping(child, deadline):
@@ -83,26 +94,45 @@ def _darwin_only_exited_leader(child):
 
 
 def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
-                stderr_limit=65536, cwd=None, env=None):
+                stderr_limit=65536, cwd=None, env=None, pass_fds=(), collect_usage=False,
+                absolute_deadline=None):
     if not argv or not isinstance(data,bytes) or type(timeout) not in (int,float):
         raise ValueError('NATIVE_PROCESS_ARGUMENT')
     try:timeout=float(timeout)
     except OverflowError as error:raise ValueError('NATIVE_PROCESS_ARGUMENT') from error
     if not math.isfinite(timeout) or timeout<=0:
         raise ValueError('NATIVE_PROCESS_ARGUMENT')
+    if absolute_deadline is not None:
+        if type(absolute_deadline)not in (int,float):raise ValueError('NATIVE_PROCESS_ARGUMENT')
+        try:absolute_deadline=float(absolute_deadline)
+        except OverflowError as error:raise ValueError('NATIVE_PROCESS_ARGUMENT') from error
+        if not math.isfinite(absolute_deadline):raise ValueError('NATIVE_PROCESS_ARGUMENT')
     if any(type(n)is not int or n<0 for n in [stdout_limit,stderr_limit]):
         raise ValueError('NATIVE_PROCESS_LIMIT')
+    if (type(collect_usage)is not bool or type(pass_fds)not in (tuple,list)
+            or any(type(fd)is not int or fd<0 for fd in pass_fds)
+            or len(set(pass_fds))!=len(pass_fds)):
+        raise ValueError('NATIVE_PROCESS_ARGUMENT')
     if not all(hasattr(os,name) for name in ('waitid','P_PID','WEXITED','WNOHANG','WNOWAIT','CLD_EXITED','CLD_KILLED','CLD_DUMPED','killpg')):
         raise ValueError('NATIVE_PROCESS_PLATFORM')
+    if collect_usage and not hasattr(os,'wait4'):
+        raise ValueError('NATIVE_PROCESS_PLATFORM')
     deadline=time.monotonic()+timeout
+    if absolute_deadline is not None:
+        # A scheduling pause before this call must not restart the caller's
+        # original budget. This distinct error proves no Popen was attempted.
+        deadline=min(deadline,absolute_deadline)
+        if time.monotonic()>=deadline:
+            raise ValueError('NATIVE_EXECUTOR_DEADLINE_BEFORE_SPAWN')
     try:
         child=subprocess.Popen(argv,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,start_new_session=True,cwd=cwd,env=env)
+                               stderr=subprocess.PIPE,start_new_session=True,cwd=cwd,env=env,
+                               pass_fds=pass_fds)
     except OSError as error:
         raise ValueError('NATIVE_EXECUTOR_UNAVAILABLE')from error
     buffers={'stdout':bytearray(),'stderr':bytearray()}
     limits={'stdout':stdout_limit,'stderr':stderr_limit}
-    position=0;failure=None
+    position=0;failure=None;usage=None;returncode=None
     selector=None
     streams=[child.stdin,child.stdout,child.stderr]
     try:
@@ -139,7 +169,6 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
         returncode=_wait_without_reaping(child,deadline)
         if returncode==0 and position!=len(data):
             raise ValueError('NATIVE_STDIN_INCOMPLETE')
-        return Result(returncode,bytes(buffers['stdout']),bytes(buffers['stderr']))
     except (ValueError,OSError) as error:
         failure=error
     finally:
@@ -158,13 +187,31 @@ def run_bounded(argv, data, *, timeout=30.0, stdout_limit=32*1024*1024,
                 try:
                     for stream in streams:
                         if not stream.closed:stream.close()
-                finally:child.wait()
+                finally:
+                    if collect_usage:
+                        # Keep the same signal-before-reap ownership. This is
+                        # opt-in so existing owners keep their old interface.
+                        # No getrusage(RUSAGE_CHILDREN) delta: concurrent owners
+                        # must not charge another worker's process time.
+                        while True:
+                            try:
+                                pid,status,found=os.wait4(child.pid,0)
+                                break
+                            except InterruptedError:
+                                continue
+                        child.returncode=os.waitstatus_to_exitcode(status)
+                        usage=Usage(pid,found.ru_utime,found.ru_stime,
+                            found.ru_maxrss*(1 if sys.platform=='darwin' else 1024))
+                    else:
+                        child.wait()
     # Observe cleanup's actual exit while preserving the primary exchange
     # failure. Spawn/kill/wait and filesystem operations are not hard real-time
     # guarantees; this owner retains its existing POSIX cleanup boundary.
+    if failure is None:
+        return Result(returncode,bytes(buffers['stdout']),bytes(buffers['stderr']),usage)
     code=str(failure) if isinstance(failure,ValueError) else 'NATIVE_EXECUTOR_IO'
     raise ProcessFailure(code,returncode=child.returncode,
         stdout=bytes(buffers['stdout'][:stdout_limit]),
         stderr=bytes(buffers['stderr'][:stderr_limit]),stdin_written=position,
         stdout_truncated=len(buffers['stdout'])>stdout_limit,
-        stderr_truncated=len(buffers['stderr'])>stderr_limit) from failure
+        stderr_truncated=len(buffers['stderr'])>stderr_limit,usage=usage) from failure

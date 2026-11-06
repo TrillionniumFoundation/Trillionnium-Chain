@@ -17,6 +17,30 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Separate proof relations and bounded research verification, 2026-11-06
+America/New_York:** Continue the fixed #688 lineage without replacing W1.
+The [specialized-proof backend contract](specs/pon/W1_SPECIALIZED_PROOF_BACKENDS_V1.md)
+now has an executable complete integer/carry and SHA compression reference:
+all original canonical materials, bounded noise, 32,768 prefix words, recovered
+product, header, ticket and WorkID remain connected. Its local witness checker
+does not implement a polynomial SHA circuit, PCS or Fiat-Shamir proof backend.
+The [useful Cell v2 reference](../../formal/pon-nakamoto-v1/useful_cell_v2/README.md)
+extends the existing routed rectangular operator with explicit signed division,
+clamping, activation and STOP output semantics, under a new research domain and
+independent expected task. It remains full native recomputation with read-only
+state, not a replacement work lottery or model-adoption claim.
+
+The [V2 research supervisor](../../scripts/w1_v2_supervisor.py) uses the existing
+bounded process owner for actual worker termination and wait4 settlement, finite
+shared reservations and exact-proof/context rejection caching. It preserves
+Busy, Deadline and operational failures separately from typed statement refusal.
+Its finite local owner is not the Node's original public/History/recovery CPU
+owner; it cannot grant admission or close the unchanged public-service campaign.
+Retain original failed resource observations and all fixed source identities.
+Complete dedicated proof generation, concrete soundness, native owner integration,
+adversarial availability and actual Cell consumption still require their own
+executed evidence before any production qualification.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

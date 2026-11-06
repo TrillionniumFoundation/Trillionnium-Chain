@@ -1,0 +1,23 @@
+[package]
+name = "trnm-useful-cell-v2-reference"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+# Isolate the research build without adding a Node/consensus dependency.
+[workspace]
+resolver = "2"
+
+[dependencies]
+trnm-crypto-primitives = { path = "../../../trillionnium/crates/trnm-crypto-primitives" }
+
+hex = "=0.4.3"
+serde_json = "=1.0.149"
+
+[target.'cfg(unix)'.dependencies]
+libc = "=0.2.184"
+
+[profile.release]
+debug = 1
+incremental = false
