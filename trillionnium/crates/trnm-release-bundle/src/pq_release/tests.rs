@@ -13,6 +13,9 @@ mod validated_root_tests;
 #[path = "bundle_quorum_tests.rs"]
 mod bundle_quorum_tests;
 
+#[path = "retained_verifier_tests.rs"]
+mod retained_verifier_tests;
+
 struct Fixture {
     root: PqReleaseRootV1,
     keys: BTreeMap<ReleaseKeyIdV1, PqNativeSigningKey>,

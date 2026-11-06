@@ -25,7 +25,7 @@ impl<'a> VerifiedBundleQuorumV1<'a> {
             .get(&metadata.role)
             .ok_or(PqReleaseErrorV1::MissingRole)?;
         let message = metadata.signing_message();
-        verify_quorum(keys, &message, signatures)?;
+        verify_quorum(keys, &authority.verifiers, &message, signatures)?;
         Ok(Self {
             root_digest: authority.root_digest,
             role: metadata.role,

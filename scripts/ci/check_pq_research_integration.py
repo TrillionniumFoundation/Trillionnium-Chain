@@ -430,6 +430,7 @@ RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs",
     "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
     "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
     "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
     "formal/pon-nakamoto-v1/pq_mtls_probe.c",
     "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",

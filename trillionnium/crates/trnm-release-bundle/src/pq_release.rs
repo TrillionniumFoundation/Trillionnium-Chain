@@ -59,7 +59,7 @@ pub struct PqReleaseRoleKeysV1 {
     pub keys: BTreeMap<ReleaseKeyIdV1, Vec<u8>>,
 }
 impl PqReleaseRoleKeysV1 {
-    fn validate(&self) -> Result<(), PqReleaseErrorV1> {
+    fn validate(&self) -> Result<ReleaseVerifiersV1, PqReleaseErrorV1> {
         if self.keys.is_empty()
             || self.keys.len() > MAX_RELEASE_KEYS_V1
             || self.threshold == 0
@@ -67,11 +67,13 @@ impl PqReleaseRoleKeysV1 {
         {
             return Err(PqReleaseErrorV1::InvalidThreshold);
         }
+        let mut verifiers = BTreeMap::new();
         for (id, spki) in &self.keys {
-            PqNativeVerifier::from_pinned_spki(spki, *id)
+            let verifier = PqNativeVerifier::from_pinned_spki(spki, *id)
                 .map_err(|_| PqReleaseErrorV1::InvalidKey)?;
+            verifiers.insert(*id, verifier);
         }
-        Ok(())
+        Ok(verifiers)
     }
     fn encode(&self, out: &mut Vec<u8>) {
         out.extend(self.threshold.to_be_bytes());
@@ -94,16 +96,23 @@ pub struct PqReleaseRootV1 {
     pub roles: BTreeMap<PqReleaseRoleV1, PqReleaseRoleKeysV1>,
 }
 
+// Prepared public keys only, never signature or current-authorization results.
+// Complete root validation bounds this map to five roles of at most sixteen keys.
+type ReleaseVerifiersV1 = BTreeMap<ReleaseKeyIdV1, PqNativeVerifier>;
+
 /// A complete validation of this immutable root, retained only for this borrow.
 /// With unsigned owner time, validity at `now` also implies validity at zero.
-struct ValidatedPqReleaseRootV1<'a>(&'a PqReleaseRootV1);
+struct ValidatedPqReleaseRootV1<'a> {
+    root: &'a PqReleaseRootV1,
+    verifiers: ReleaseVerifiersV1,
+}
 
 impl PqReleaseRootV1 {
     fn validate(&self, now: u64) -> Result<ValidatedPqReleaseRootV1<'_>, PqReleaseErrorV1> {
         if self.network_id == [0; 32] || self.generation == 0 || self.expires_at <= now {
             return Err(PqReleaseErrorV1::InvalidRoot);
         }
-        self.offline_root.validate()?;
+        let mut verifiers = self.offline_root.validate()?;
         if self.roles.len() != ROLES.len() || ROLES.iter().any(|r| !self.roles.contains_key(r)) {
             return Err(PqReleaseErrorV1::MissingRole);
         }
@@ -111,14 +120,18 @@ impl PqReleaseRootV1 {
         // impersonate another role merely because its key was reused there.
         let mut seen: BTreeSet<_> = self.offline_root.keys.keys().copied().collect();
         for role in self.roles.values() {
-            role.validate()?;
+            let role_verifiers = role.validate()?;
             for key in role.keys.keys() {
                 if !seen.insert(*key) {
                     return Err(PqReleaseErrorV1::CrossRoleKey);
                 }
             }
+            verifiers.extend(role_verifiers);
         }
-        Ok(ValidatedPqReleaseRootV1(self))
+        Ok(ValidatedPqReleaseRootV1 {
+            root: self,
+            verifiers,
+        })
     }
     /// Domain-separated digest of the bounded, uniquely encoded complete root.
     /// Metadata signing is pure ML-DSA over this project-specific message.
@@ -139,8 +152,8 @@ impl PqReleaseRootV1 {
 }
 
 impl ValidatedPqReleaseRootV1<'_> {
-    fn signing_message(self) -> Vec<u8> {
-        let root = self.0;
+    fn signing_message(&self) -> Vec<u8> {
+        let root = self.root;
         let mut bytes = Vec::new();
         bytes.extend(RELEASE_PQ_PROFILE_V1);
         bytes.push(0); // offline root domain, distinct from all content roles
@@ -158,6 +171,10 @@ impl ValidatedPqReleaseRootV1<'_> {
         message.push(0);
         message.extend(digest);
         message
+    }
+
+    fn into_verifiers(self) -> ReleaseVerifiersV1 {
+        self.verifiers
     }
 }
 
@@ -263,6 +280,9 @@ struct CurrentPqReleaseV1 {
 /// history. A future migration must preserve the trusted checkpoint and records.
 pub struct PqReleaseAuthorityV1 {
     root: PqReleaseRootV1,
+    // Created by this authority's complete root validation and replaced together
+    // with a successfully rotated root. Never shared with another reconstruction.
+    verifiers: ReleaseVerifiersV1,
     root_digest: ReleaseDigestV1,
     checkpoint: ReleaseDigestV1,
     versions: BTreeMap<PqReleaseRoleV1, u64>,
@@ -280,14 +300,17 @@ impl PqReleaseAuthorityV1 {
         expected_root: ReleaseDigestV1,
         now: u64,
     ) -> Result<Self, PqReleaseErrorV1> {
-        let message = root.validate(now)?.signing_message();
+        let validated = root.validate(now)?;
+        let message = validated.signing_message();
         let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         if expected_root != digest || root.generation != 1 || root.previous_root_digest != [0; 32] {
             return Err(PqReleaseErrorV1::RootPin);
         }
+        let verifiers = validated.into_verifiers();
         let checkpoint = next_checkpoint([0; 32], &message, now);
         Ok(Self {
             root,
+            verifiers,
             root_digest: digest,
             checkpoint,
             versions: BTreeMap::new(),
@@ -455,12 +478,24 @@ impl PqReleaseAuthorityV1 {
             return Err(PqReleaseErrorV1::HistoryFull);
         }
         let message = validated.signing_message();
-        verify_quorum(&self.root.offline_root, &message, old_signatures)?;
-        verify_quorum(&next.offline_root, &message, new_signatures)?;
+        verify_quorum(
+            &self.root.offline_root,
+            &self.verifiers,
+            &message,
+            old_signatures,
+        )?;
+        verify_quorum(
+            &next.offline_root,
+            &validated.verifiers,
+            &message,
+            new_signatures,
+        )?;
+        let verifiers = validated.into_verifiers();
         let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.retired.extend(removed);
         self.root = next;
+        self.verifiers = verifiers;
         self.root_digest = digest;
         self.checkpoint = checkpoint;
         self.time_floor = now;
@@ -587,7 +622,7 @@ impl PqReleaseAuthorityV1 {
             Some(quorum) => {
                 quorum.consume(self.root_digest, metadata.role, &message, signatures)?
             }
-            None => verify_quorum(role, &message, signatures)?,
+            None => verify_quorum(role, &self.verifiers, &message, signatures)?,
         }
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.versions.insert(metadata.role, metadata.role_version);
@@ -700,6 +735,7 @@ fn next_checkpoint(previous: ReleaseDigestV1, message: &[u8], observed_at: u64) 
 }
 fn verify_quorum(
     role: &PqReleaseRoleKeysV1,
+    verifiers: &ReleaseVerifiersV1,
     message: &[u8],
     signatures: &[PqReleaseSignatureV1],
 ) -> Result<(), PqReleaseErrorV1> {
@@ -715,8 +751,14 @@ fn verify_quorum(
             .keys
             .get(&signature.key_id)
             .ok_or(PqReleaseErrorV1::UnknownSigner)?;
-        let verifier = PqNativeVerifier::from_pinned_spki(key, signature.key_id)
-            .map_err(|_| PqReleaseErrorV1::InvalidKey)?;
+        let verifier = verifiers
+            .get(&signature.key_id)
+            .ok_or(PqReleaseErrorV1::InvalidKey)?;
+        if verifier.public_key_id() != signature.key_id
+            || verifier.public_spki().as_slice() != key.as_slice()
+        {
+            return Err(PqReleaseErrorV1::InvalidKey);
+        }
         verifier
             .verify_exact_message(message, &signature.signature)
             .map_err(|_| PqReleaseErrorV1::SignatureRejected)?;
