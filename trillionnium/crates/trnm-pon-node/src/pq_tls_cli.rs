@@ -27,6 +27,9 @@ use trnm_pon_node::{
 use zeroize::Zeroizing;
 
 #[cfg(target_os = "linux")]
+#[path = "pq_application_local.rs"]
+pub(super) mod local;
+#[cfg(target_os = "linux")]
 #[path = "pq_parent_cli.rs"]
 pub(super) mod parent;
 #[path = "pq_tls_cli_witness.rs"]

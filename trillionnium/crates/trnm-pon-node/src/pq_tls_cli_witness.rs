@@ -36,9 +36,33 @@ pub(super) fn present_configuration<'de, D: serde::Deserializer<'de>>(
 enum NodeMode {
     Create,
     OpenExisting,
+    // Only the new ordinary local entry selects this private stricter mode.
+    // It is not a new accepted spelling in the original v2 configuration.
+    #[serde(skip)]
+    OpenInitialized,
 }
 
 impl Configuration {
+    pub(super) fn require_existing_node(&self) -> Result<()> {
+        ensure(
+            matches!(self.node_mode, NodeMode::OpenExisting),
+            "PQ_APPLICATION_EXISTING_OWNER_REQUIRED",
+        )
+    }
+
+    pub(super) fn open_initialized_node(
+        mut self,
+        store: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        key_path: &str,
+    ) -> Result<Node> {
+        self.require_existing_node()?;
+        self.node_mode = NodeMode::OpenInitialized;
+        self.open_node(store, settings, workers, policy, key_path)
+    }
+
     pub(super) fn open_node(
         self,
         store: &Path,
@@ -50,6 +74,10 @@ impl Configuration {
         // Selection is part of the pinned configuration, never inferred from
         // missing files or a failed existing-state/witness observation.
         match self.node_mode {
+            NodeMode::OpenInitialized => ensure(
+                store.join("native.sqlite").is_file(),
+                "PQ_WITNESS_EXISTING_NODE_REQUIRED",
+            )?,
             NodeMode::Create => ensure(
                 !store.join("native.sqlite").exists(),
                 "PQ_WITNESS_NEW_NODE_REQUIRED",
@@ -101,6 +129,9 @@ impl Configuration {
         let transport = ConnectedWitnessTransport::new(UnixStream::from(descriptor));
         let client = WitnessClient::new(binding, writer, Box::new(transport))?;
         match self.node_mode {
+            NodeMode::OpenInitialized => {
+                Node::open_existing_with_pq_witness(store, settings, workers, policy, client)
+            }
             NodeMode::Create => {
                 Node::create_with_pq_witness(store, settings, workers, policy, client)
             }
