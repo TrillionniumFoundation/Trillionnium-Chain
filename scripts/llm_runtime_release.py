@@ -427,8 +427,10 @@ def wheel_closure(root_fd, members, spec, maximum_bytes):
         needed = set()
         for raw in package["requirements"]:
             requirement = Requirement(raw)
+            # Core metadata is the default in both pre-25 and current packaging.
+            # Supply every pinned field and extra; do not retry or hide evaluation errors.
             if requirement.marker is not None and not any(requirement.marker.evaluate(
-                    environment=dict(spec["marker_environment"], extra=extra), context="metadata")
+                    environment=dict(spec["marker_environment"], extra=extra))
                     for extra in ["", *package["wheel"]["extras"]]):
                 continue
             dependency = canonicalize_name(requirement.name)
