@@ -447,6 +447,20 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
     "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
 ))
+# Shared-domain scheduling, bounded live counter reads and adjacent ancestry
+# material reuse keep their owners and adversarial controls in this same source
+# contract. Cost readback is observational and never grants current authority.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+    "scripts/ci/throughput_cost_coverage.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake/shared_readiness_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake_domain_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/observed_history.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/observed_history/tests.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

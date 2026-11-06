@@ -130,6 +130,32 @@ mod kernel_parent {
     }
 
     const MAX_LIMIT_BYTES: usize = 128;
+    const MAX_CPU_COUNTER_BYTES: usize = 2048;
+    const MAX_SCALAR_COUNTER_BYTES: usize = 64;
+
+    fn read_counter_text<'a>(reader: &mut impl Read, bytes: &'a mut [u8]) -> Result<&'a str> {
+        // Reserve the last byte as an overflow probe. Read through actual EOF:
+        // a short read, including one at the original parser bound, is not EOF.
+        if bytes.is_empty() {
+            return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+        }
+        let mut used = 0;
+        loop {
+            let count = match reader.read(&mut bytes[used..]) {
+                Ok(count) => count,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+                Err(_) => return Err("PUBLIC_HOST_KERNEL_COUNTERS".into()),
+            };
+            if count == 0 {
+                return std::str::from_utf8(&bytes[..used])
+                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"));
+            }
+            used += count;
+            if used == bytes.len() {
+                return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+            }
+        }
+    }
 
     fn read_limit_text<'a>(
         reader: &mut impl Read,
@@ -287,6 +313,54 @@ mod kernel_parent {
             // Existing read/parse/limit failures retain their earlier priority.
             self.verify_path(parent)
         }
+
+        fn read_counter<'a>(&self, name: &CStr, bytes: &'a mut [u8]) -> Result<&'a str> {
+            use rustix::fs::{openat, Mode, OFlags};
+            // Fresh children of the held directory, not cached counter FDs or
+            // values. The parser's existing byte bounds also bound acquisition.
+            let fd = loop {
+                match openat(
+                    &self.file,
+                    name,
+                    OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
+                    Mode::empty(),
+                ) {
+                    Err(error) if error == rustix::io::Errno::INTR => continue,
+                    result => break result,
+                }
+            }
+            .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?;
+            let mut file = fs::File::from(fd);
+            // cgroup-v2 counters are regular files. A substituted FIFO must
+            // neither block at open nor turn its current lack of writers into
+            // an accepted EOF; refuse every nonregular opened object.
+            if !file
+                .metadata()
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))?
+                .file_type()
+                .is_file()
+            {
+                return Err("PUBLIC_HOST_KERNEL_COUNTERS".into());
+            }
+            read_counter_text(&mut file, bytes)
+        }
+
+        fn sample_counters(&self, check: impl Fn() -> Result<()>) -> Result<KernelResourceSample> {
+            // The caller supplies the unchanged full KernelBudget::check.
+            // Keep the original initial-check / read / parse / final-check
+            // order. A read or parse error must precede a later Host refusal.
+            check()?;
+            let mut cpu = [0; MAX_CPU_COUNTER_BYTES + 1];
+            let mut memory = [0; MAX_SCALAR_COUNTER_BYTES + 1];
+            let mut tasks = [0; MAX_SCALAR_COUNTER_BYTES + 1];
+            let sample = resource_sample(
+                self.read_counter(c"cpu.stat", &mut cpu)?,
+                self.read_counter(c"memory.current", &mut memory)?,
+                self.read_counter(c"pids.current", &mut tasks)?,
+            )?;
+            check()?;
+            Ok(sample)
+        }
     }
 
     // This is a common-case stack size, NOT a new limit on boot or membership
@@ -378,7 +452,10 @@ mod kernel_parent {
     /// The actual sysfs files are read only after the fixed parent was checked.
     fn resource_sample(cpu: &str, memory: &str, tasks: &str) -> Result<KernelResourceSample> {
         const INVALID: &str = "PUBLIC_HOST_KERNEL_COUNTERS";
-        if cpu.len() > 2048 || memory.len() > 64 || tasks.len() > 64 {
+        if cpu.len() > MAX_CPU_COUNTER_BYTES
+            || memory.len() > MAX_SCALAR_COUNTER_BYTES
+            || tasks.len() > MAX_SCALAR_COUNTER_BYTES
+        {
             return Err(INVALID.into());
         }
         let mut fields = std::collections::BTreeMap::<&str, u64>::new();
@@ -516,18 +593,7 @@ mod kernel_parent {
         /// boot/inode/quotas/membership both before and after sampling; if any
         /// counter is unavailable or malformed, never issue a qualified receipt.
         pub fn resource_sample(&self) -> Result<KernelResourceSample> {
-            self.check()?;
-            let read = |name| -> Result<String> {
-                fs::read_to_string(self.parent.join(name))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_COUNTERS"))
-            };
-            let sample = resource_sample(
-                &read("cpu.stat")?,
-                &read("memory.current")?,
-                &read("pids.current")?,
-            )?;
-            self.check()?;
-            Ok(sample)
+            self.directory.sample_counters(|| self.check())
         }
     }
 
@@ -542,6 +608,11 @@ mod kernel_parent {
     #[cfg(test)]
     mod relative_tests {
         include!("host_kernel_parent_relative_tests.rs");
+    }
+
+    #[cfg(test)]
+    mod resource_tests {
+        include!("host_kernel_parent_resource_tests.rs");
     }
 
     #[cfg(test)]

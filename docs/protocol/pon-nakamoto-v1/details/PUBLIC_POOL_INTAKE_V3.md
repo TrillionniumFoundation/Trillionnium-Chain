@@ -1,9 +1,9 @@
 # Public development intake V3 and the native local pool
 
-The current source selects signed resource revision **r13**, described in
-[Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
-The r10 contracts, vectors and earlier observations below remain historical;
-they do not qualify r11's wider paid interval, r12's completion scheduling or r13's bounded replay/recovery changes.
+The current source selects signed resource revision **r15**, described in
+[Shared readiness across listeners](#shared-readiness-across-listeners-r15).
+The r10 through r14 contracts, vectors and observations remain historical and
+retain their original scope. Their results do not qualify the r15 shared readiness change.
 
 This is a fresh, explicitly selected development profile. It connects paid guest
 transport requests to the Node's actual persistent pool. It does not certify public
@@ -25,6 +25,52 @@ An operator can select the bounded local
 actual worker-thread CPU intervals and application-frame byte progress. This
 optional API preserves the selected signed r10 policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
+
+## Shared readiness across listeners (r15)
+
+Readiness ordering now belongs to the existing `ListenerIntake` connection-lease
+registry shared by all listeners in one actual CPU domain. Four head indices
+refer to the original at-most-64 leases: Challenge/read, Challenge/mutation,
+Grant/read and Grant/mutation. They add no task queue, worker or resource budget.
+An accepted socket or partial input has no readiness order. Challenge readiness
+is registered only after a complete Hello passes the original format and operation
+profile checks. Grant readiness follows the original complete Solution checks:
+Cookie context and expiry, ticket work, strict caller signature and one spent
+reservation. The two phases receive distinct monotone orders.
+
+Each pending order binds its original lease, phase, operation, service stop signal
+and absolute phase/total/service deadline. A repeated registration or poll cannot
+renew its order, start time or deadline; sequence exhaustion refuses a new order
+without wrapping or renumbering existing orders. Under the same registry lock,
+only the current head can reserve the original challenge credit or the original
+lane and body permits. Cookie signing, socket IO, body allocation and native
+execution remain outside that lock. A later-ready request on another listener
+cannot acquire those shared resources ahead of an earlier live request in the
+same phase and lane merely because its reactor polls first.
+
+Any listener can retire an expired, cancelled or stopped head's scheduling
+metadata. The original owner still closes the actual socket and releases its
+permits; retiring an order never refunds a connection or grants capacity early.
+While the four heads remain unchanged and live, non-head polls do not rescan the
+registry. A head change or invalidation triggers a rebuild over at most 64 leases.
+The original 64-connection cap, eight mutation/eight read grants, two proof workers
+and one read worker, two-entry queues, read reserves and measured CPU account
+remain unchanged. No signature, current authorization, state transition or commit
+verdict is cached by this scheduler.
+
+The signed `PublicPolicy::id()` contract is now `resource-revision-r15`. At ticket
+bits 8 and lifetime 2000 ms, its raw V3 identifier is
+`7407c22c85e06aecf4a80b36e0448fed09d36f1c3709b30d31602c399ac5ff73`.
+The policy vectors and readers retain the exact r10 through r14 identities and
+historical arithmetic profiles; they do not relabel an old report as r15. Current
+signature controls reject correctly signed predecessor cookies. The ordinary
+multiprocess harness identifies its current raw profile as `raw-r15`.
+
+This is ordering among already-ready requests within one shared service domain.
+It does not establish fairness against arbitrary identity churn or distinct valid
+W1 floods, FIFO native completion, public throughput, or the original four-second
+six-confirmation service target. Historical failures and their denominators remain
+unchanged; native execution results must be bound to the source actually tested.
 
 ## Exact boundary
 

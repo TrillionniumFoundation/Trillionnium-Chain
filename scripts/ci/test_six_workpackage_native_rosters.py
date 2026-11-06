@@ -62,6 +62,12 @@ class NativeRosterTests(unittest.TestCase):
              'store::native_authenticated::post_write_readback::history_tests', 12),
             ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
              'host_kernel_parent::kernel_parent::relative_tests', 8),
+            ('header-material', 'store/observed_history/tests.rs',
+             'store::observed_history::tests', 8),
+            ('shared-ready', 'ingress/public_v3/intake/shared_readiness_tests.rs',
+             'ingress::public_v3::intake::shared_readiness_tests', 9),
+            ('host-resource', 'host_kernel_parent_resource_tests.rs',
+             'host_kernel_parent::kernel_parent::resource_tests', 7),
         ):
             declarations = re.findall(
                 r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
@@ -71,10 +77,16 @@ class NativeRosterTests(unittest.TestCase):
             if len(names) != count or len(set(names)) != count:
                 raise ValueError('unexpected current source fixture declarations: ' + group)
             cls.source_fixture_extensions[group] = names
+        live_name = 'shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'
+        live_source = (source_root / 'ingress/public_v3/intake_domain_tests.rs').read_text()
+        if len(re.findall(r'^fn ' + live_name + r'\(', live_source, re.M)) != 1:
+            raise ValueError('expected one actual shared-readiness listener control declaration')
+        cls.source_fixture_extensions['shared-ready-live'] = [
+            'ingress::public_v3::intake_domain_tests::' + live_name]
         original_names = {line[:-6] for line in cls.registries['node'].splitlines()
                           if line.endswith(': test')}
         additions = [name for names in cls.source_fixture_extensions.values() for name in names]
-        if len(set(additions)) != 20 or original_names.intersection(additions):
+        if len(set(additions)) != 45 or original_names.intersection(additions):
             raise ValueError('source fixture additions must be separate from the retained registry')
         # Preserve the original registry string; this separate input is explicitly
         # synthetic and exercises the complete current builder without skipping groups.
@@ -136,7 +148,7 @@ class NativeRosterTests(unittest.TestCase):
             extension = next(row for row in report['groups'] if row['group'] == name)
             self.assertCountEqual(extension['tests'], tests)
             self.assertEqual(extension['expected_count'], len(tests))
-        self.assertEqual(report['selected_count'], 80)
+        self.assertEqual(report['selected_count'], 105)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()

@@ -378,6 +378,12 @@ jobs:
             "host_kernel_parent::kernel_parent::relative_tests::held_parent_production_final_fence_observes_change_after_actual_fifth_open",
             "host_kernel_parent::kernel_parent::relative_tests::held_parent_final_fence_does_not_replace_an_earlier_limit_parse_error",
         ])
+        prefix("node", "header-material", "store::observed_history::tests::", 8)
+        prefix("node", "shared-ready", "ingress::public_v3::intake::shared_readiness_tests::", 9)
+        prefix("node", "host-resource", "host_kernel_parent::kernel_parent::resource_tests::", 7)
+        exact("node", "shared-ready-live", [
+            "ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants",
+        ])
         assert len({(crate, test) for crate, group, test in selected}) == len(selected)
         (root / "selected-tests.tsv").write_text("".join(f"{crate}\t{group}\t{test}\n" for crate, group, test in selected))
         print(json.dumps({"result": "PASS", "scope": "exact libtest registry selection only; no execution verdict and not the complete runtime suite",

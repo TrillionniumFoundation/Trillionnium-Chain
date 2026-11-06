@@ -7965,3 +7965,48 @@ commit. Preserve the two earlier launcher preparation failures separately;
 neither executed native tests. The new combined source requires its own fixed
 source, actual binaries and the newly added target controls. No prior target,
 PQ, reader replay, Cell or ordinary-model result transfers to this composition.
+
+### 2026-11-06 shared-domain throughput continuation
+
+Compose throughput source `9eda0ada15be1702269e08e527917568c710f4d3` and
+PQ source `5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` in the existing
+throughput candidate. The composition checkpoint is
+`e98c195396315c3eac247e3c7cba29d83e006f3b`; it preserves both parent histories,
+the original service failures, dynamic authority checks and the false production
+activation flags. Neither parent's earlier native results qualify this source.
+
+Continue the six requested priorities through the actual existing owners:
+
+1. Evaluate repeated parent projection work within one bounded SQLite statement.
+   The adjacent-row candidate initially appeared cheaper, but read a boundary
+   parent's packet outside the original scope. The corrected two-arm candidate
+   uses 5,012 versus the original 4,632 SQLite VM steps for the same 64-row
+   synthetic batch. Keep it test-only with differential and refusal controls;
+   retain the original runtime reader. No incremental-history performance gain
+   is established, and no cross-transaction validation cache is authorized.
+2. Retain the existing 1/2/4/8-worker stateless preparation and canonical ordered
+   application. Revalidate reverse completion, dependent transactions, worker
+   cancellation/panic, actual durable rows and cold reopening on the composition.
+3. Order complete challenge and grant readiness across all listeners of one
+   shared CPU domain. Use the existing bounded connection owner and independent
+   read/mutation lanes, preserve their current budgets, and retire expired or
+   cancelled heads without returning somebody else's live permit. A caller key
+   does not create a fairness entitlement or an additional quota.
+4. Acquire each current Host counter through the held directory with bounded
+   reads and unchanged full checks before and after sampling. Boot, membership,
+   current limits, authorization and revocation verdicts remain freshly checked.
+5. Retain the existing independent Cell transfer/closure owner and its current
+   transfer, cancellation and resource-bound controls. Component tests cannot
+   establish shared CPU, disk or network isolation from public consensus load.
+6. Read real successful and failed campaign observations with explicit source
+   and epoch bindings. Preserve unknown process/thread, physical-network, disk,
+   recovery and model costs; do not sum nested phases or distinct measurement
+   windows into an invented total.
+
+The acceptance record must bind the new exact committed source, original Cargo
+profiles and lockfiles, actual named tests, source-integrity negative controls,
+formatting and strict Clippy. Preserve all intermediate failures. The original
+four-second/six-confirmation target, quarter-CPU/2-GiB/no-swap/256-PID envelope,
+hostile-worker count, F0 slots and business denominators remain unchanged.
+Whole-chain PQ, public throughput, data-plane isolation and model adoption stay
+unqualified until their own original end-to-end gates pass.
