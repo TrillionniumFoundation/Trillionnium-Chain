@@ -203,6 +203,8 @@ class PhysicalModel:
     The union estimate charges every live logical patch at every allocated code
     cycle, plus every distilled T state's caller-supplied residual error. An odd
     code distance is selected against that union estimate for the whole workload.
+    toffoli_decomposition_depth covers the complete decomposition, including
+    its declared T layers; it cannot be smaller than t_depth_per_toffoli.
     These are hypothetical parameters, never measured W1 hardware results.
     """
     name: str
@@ -242,6 +244,12 @@ class PhysicalModel:
                     "factories_per_instance", "factory_physical_qubits_per_d2",
                     "factory_t_cycles_per_distance"):
             integer(getattr(self, key), key.upper(), 1, 10**9)
+        # This is the depth of the *complete* Toffoli decomposition, so it
+        # must cover its own declared T layers. Otherwise max(D*decomposition,
+        # Tdepth) can omit Clifford steps surrounding a Toffoli in a serial
+        # stage and emit an internally inconsistent resource clock.
+        if self.toffoli_decomposition_depth < self.t_depth_per_toffoli:
+            raise ValueError("TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH")
         integer(self.maximum_distance, "MAXIMUM_DISTANCE", 3, 1001)
         if self.maximum_distance % 2 != 1:
             raise ValueError("ODD_MAXIMUM_DISTANCE_REQUIRED")

@@ -5,6 +5,46 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## 2026-11-06: measurement tails, declared depth and actual fork selection
+
+Continue from integrated source `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`.
+The network and literal-domain measurement paths now draw an integer over the
+exact dyadic denominator of the computed binary64 probability. The former
+`random() < p` comparison gave its zero atom probability `2^-53`, inflating
+smaller positive probabilities. The corrected sampler needs at most 1074 bits,
+accepts true tail winners, and samples exactly the represented probability;
+it does not make the preceding trigonometric calculation exact. Source-bound
+network/adversarial campaigns and literal-domain measurements use fresh v2
+namespaces. Historical traces and failures keep their original identities.
+
+The event simulator also exposes `quantum_tip_policy="measure-at-next-iteration"`
+for its one honest-tip quantum miner, alongside the default `restart` policy.
+On an adopted competitor tip, a prepared old candidate completes the current
+whole Grover iteration and pays readout, candidate verification and any proof
+on its original parent/target. Repeated tips do not draw again or erase cost.
+Unfinished preparation, shocks and horizon truncation keep their explicit paid
+cancellation rules. Completion times round upward; the conditional whole-run
+resource envelope still covers all permitted starts and planned iterations.
+The paired campaign scenarios use identical declared budgets. This is a bounded
+strategy model, not a multi-quantum-miner correlation model or profitability proof.
+
+Physical models now reject a complete Toffoli decomposition depth below the
+same model's T-layer depth. This self-consistency condition applies before
+JSON request admission, logical/physical estimation or event-clock binding.
+Equality is permitted; no hardware calibration or minimum-cost result follows.
+
+The native DAA fixture now builds two full-work branches that separately reach
+the lower and upper timestamp clamps. A height-48 harder branch must displace
+a height-49 lower-work branch. A distinct equal-work sibling with smaller id
+must not displace the selected tip, including after authenticated reopen.
+All 67 packet records are retained under a separate fork-choice schema and
+independently recomputed by the Python full PNW1 verifier. The existing bounds
+fixture keeps its own namespace and all original negative/time controls.
+The original full-workspace CI command exports both scopes into fresh separate
+directories, then checks exact report digests and runs each reader's mutations.
+These are native correctness controls with logical timestamps, not a measured
+quantum attack or a same-resource economic comparison.
+
 ## Literal domains, a cheaper legal subset, and source-derived Fast DAA arithmetic
 
 This continuation starts from integration source

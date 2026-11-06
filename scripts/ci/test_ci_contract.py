@@ -464,6 +464,28 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
+    def test_native_daa_fork_choice_retains_fresh_proofs_and_independent_replay(self):
+        lines = [line + '\n' for line in self.script.splitlines()
+                 if 'TRNM_DAA_FORK_CHOICE_EVIDENCE_DIR' in line]
+        self.assertEqual(len(lines), 6)
+        for command in lines:
+            with self.subTest(command=command):
+                for replacement in ('', command * 2):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+        export = lines[0]
+        for injected in (self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + export),
+                         self.script.replace(export, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + export)):
+            with self.assertRaises(ValueError):
+                check_independent_conformance(injected, self.lanes)
+        for before, after in (
+            ('sha256sum "$TRNM_DAA_FORK_CHOICE_EVIDENCE_DIR/daa-fork-choice.json"', 'printf stale-report'),
+            ('--report-kind fork-choice', '--report-kind bounds'),
+            ('--raw-dir "$TRNM_DAA_FORK_CHOICE_EVIDENCE_DIR"', '--raw-dir /tmp/stale-other-run'),
+        ):
+            with self.subTest(before=before), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(before, after), self.lanes)
+
     def test_quorum_checks_cannot_be_removed_duplicated_skipped_or_rewrite_vectors(self):
         for command in EVALUATION_QUORUM_ORACLE.splitlines(keepends=True):
             for replacement in ['', '    true # omitted quorum reference\n', command * 2,

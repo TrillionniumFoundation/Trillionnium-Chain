@@ -87,6 +87,14 @@ class ResourceClockControls(unittest.TestCase):
         self.assertEqual(units["serial_cycles_per_distance"], 401)
         self.assertEqual(units["t_states"], 100)
 
+    def test_clock_refuses_inconsistent_decomposition_and_t_layer_depth(self):
+        case, request = premise()
+        model = replace(request.physical_models[0], toffoli_decomposition_depth=1,
+                        t_depth_per_toffoli=3)
+        request = replace(request, physical_models=(model,))
+        with self.assertRaisesRegex(ValueError, "TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH"):
+            bind(case, request)
+
     def test_full_compute_inverse_and_readout_all_paid(self):
         case, request = premise()
         result = bind(case, request)
