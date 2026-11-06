@@ -1,0 +1,50 @@
+{
+  "schema": "work-knowledge-cargo-graphs-v1",
+  "comparison_base": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+  "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+  "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "graphs": {
+    "workspace": {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "metadata_sha256": "85614373c8921e5b01c932f02c1a3cdfd14a091fd92442b0ade9c6dd2946c089",
+      "workspace_members": 26,
+      "packages": 180,
+      "resolved_nodes": 180,
+      "lock_path": "trillionnium/Cargo.lock",
+      "lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "lock_unchanged_from_integration_base_and_during_capture": true
+    },
+    "fuzz": {
+      "command": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml"
+      ],
+      "metadata_sha256": "4e95ed4ba07ffa419b0aa98e87b5cd1d3b633197057902cbf61d39cc3cdd7f0c",
+      "workspace_members": 1,
+      "packages": 147,
+      "resolved_nodes": 147,
+      "lock_path": "tests/fuzz/Cargo.lock",
+      "lock_sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+      "lock_unchanged_from_integration_base_and_during_capture": true
+    }
+  },
+  "result": "PASS"
+}

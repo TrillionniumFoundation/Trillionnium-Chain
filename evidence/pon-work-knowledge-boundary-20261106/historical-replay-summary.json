@@ -1,0 +1,127 @@
+{
+  "bundle": "68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937",
+  "chain_created": false,
+  "evaluation_observations": {
+    "evaluation_a": {
+      "candidate_value": [
+        "4443433",
+        "5871250"
+      ],
+      "empirical_gap": [
+        "1427817",
+        "5871250"
+      ],
+      "marginal_scores": [
+        0,
+        0,
+        0
+      ],
+      "old_marginal_scores": [
+        0,
+        0,
+        0
+      ],
+      "old_whole_score": 0,
+      "predictions_equal_original": true,
+      "reference_value": [
+        "2493071",
+        "3355000"
+      ],
+      "whole_score": 0
+    },
+    "evaluation_b": {
+      "candidate_value": [
+        "293807",
+        "357588"
+      ],
+      "empirical_gap": [
+        "63781",
+        "357588"
+      ],
+      "marginal_scores": [
+        0,
+        0,
+        0
+      ],
+      "old_marginal_scores": [
+        0,
+        0,
+        0
+      ],
+      "old_whole_score": 0,
+      "predictions_equal_original": true,
+      "reference_value": [
+        "928831",
+        "1072764"
+      ],
+      "whole_score": 0
+    }
+  },
+  "exact_pinned_source_before_and_after": true,
+  "execution_source": "873d33aefd33828842c1f1420382b77c15396d74",
+  "historical_corpus_source": "6cdbf9551aae1754e489773bac29bc0598e20a9b",
+  "original_inputs_unchanged": true,
+  "original_model": "f8caeae721b9dbaf893b4287fcd604299f055dd2f0036a626ace9c1066005ec5",
+  "original_model_work": {
+    "actual_verifier": "current Python scalar W1 plus signed integer bridge",
+    "bundle": "68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937",
+    "candidate": "f8caeae721b9dbaf893b4287fcd604299f055dd2f0036a626ace9c1066005ec5",
+    "challenge": "fa8a85841adb1299c4dc32f343c2ad5099cd88e04c4ebcf4a88a92943c0653ad",
+    "complete_committed_partition_counts": {
+      "calibration": 321,
+      "consumer": 213,
+      "evaluation_a": 170,
+      "evaluation_b": 184,
+      "train": 1005
+    },
+    "fresh_consensus_work": false,
+    "mapping": "first 64 feature coordinates of fixed expert zero on up to 64 real consumer tasks; not a whole-model training proof",
+    "matches_original_reported_challenge": true,
+    "matches_original_reported_task": true,
+    "model_efficacy_accepted": false,
+    "new_training": false,
+    "proof_bytes": 49188,
+    "proof_sha256": "b33bf08005b8ec504530fa5302da52802f3fd694f9e7fea58d8578508e7f1aeb",
+    "result": "PASS",
+    "schema": "historical-model-work-binding-replay-v1",
+    "scope": "Current Python code replays historical fixed bytes. No training, new data, new mining challenge, native Rust qualification, independent custody, prospective efficacy or production reward claim.",
+    "source": "873d33aefd33828842c1f1420382b77c15396d74",
+    "task": "7fc6286354b1c642ca318be967fa3f5d6d79941b45981caef82d38a2e08f7ed4"
+  },
+  "original_qualification_source": "50e158640d8278ca94dbecb6539dab96c6a9fb84",
+  "original_report_compatibility": "FAIL_RETAINED_ORIGINAL_REPORT",
+  "original_report_exit": 1,
+  "original_report_failure_preserved": true,
+  "original_report_sha256": "d1a00622588045bd7c86eeb9e33b3f5ab037345daaca85f0dbff8196fd5ae88c",
+  "replay_report_schema": "pon-historical-fixed-model-evaluation-replay-v1",
+  "replay_report_sha256": "c17f7fbf3ba32a10b169bf3f94b9c20d417c09b71890d1a15aa31b8594360d51",
+  "schema": "historical-model-replay-summary-v1",
+  "scope": "Current Python code replays historical fixed bytes. No training, new data, new mining challenge, native Rust qualification, independent custody, prospective efficacy or production reward claim.",
+  "settlement": {
+    "asset": "test-unit-no-market-value",
+    "chain_clock": "fixed logical timestamps; no live-clock acceptance",
+    "committed_partitions_rechecked": true,
+    "evaluation_bundle": "68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937",
+    "future_window_accepted": false,
+    "independent_evaluators": false,
+    "model_reward": 0,
+    "observed_evaluation_recomputed": true,
+    "ordinary_hepta_entry": false,
+    "outcome": "not_adopted",
+    "production_activation": false,
+    "reason": "preregistered statistical gate not met",
+    "schema": "pon-observed-artifact-settlement-v2",
+    "source_model": "f8caeae721b9dbaf893b4287fcd604299f055dd2f0036a626ace9c1066005ec5",
+    "verified_input_snapshot": "8424cd36caebd9bd5cade195d087e66d5bed0fbd675b1f6ed5afd6c2ce586361"
+  },
+  "step_exits": {
+    "build-current-replay-report": 0,
+    "copy-fixed-inputs": 0,
+    "current-settlement-no-update": 0,
+    "evaluation_a": 0,
+    "evaluation_b": 0,
+    "original-model-work-binding": 0,
+    "original-report-compatibility": 1,
+    "preflight": 0
+  }
+}

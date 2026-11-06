@@ -122,6 +122,7 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_evaluation_round.py
     python3 formal/pon-nakamoto-v1/test_evaluation.py
     python3 formal/pon-nakamoto-v1/test_evaluation_bundle.py
+    python3 formal/pon-nakamoto-v1/test_settlement_inputs.py
     python3 formal/pon-nakamoto-v1/test_artifacts.py
     python3 formal/pon-nakamoto-v1/test_inference_receipt.py
     python3 formal/pon-nakamoto-v1/test_bounded_process.py

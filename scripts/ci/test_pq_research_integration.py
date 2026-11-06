@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import subprocess
+import textwrap
 import tempfile
 import unittest
 
@@ -583,6 +585,68 @@ class CorpusGateTests(unittest.TestCase):
                 self.save()
                 with self.assertRaisesRegex(IntegrityError, "unaccepted capability"):
                     check(self.root)
+
+
+class RequiredNativeRosterTests(unittest.TestCase):
+    """Execute the actual workflow selector writer, without native experiments."""
+
+    def setUp(self):
+        root = Path(__file__).resolve().parents[2]
+        self.roster = json.loads((root / "config/pon/pq-system-required-tests-v1.json").read_text())
+        workflow = (root / ".github/workflows/pon-pq-system-continuation.yml").read_text()
+        marker = "          python3 - \"$PQ_OUT/required-tests.tsv\" <<'PY'\n"
+        self.assertEqual(workflow.count(marker), 1)
+        self.writer = textwrap.dedent(workflow.split(marker, 1)[1].split("          PY\n", 1)[0])
+
+    def run_writer(self, roster=None, writer=None):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "config/pon"
+            config.mkdir(parents=True)
+            (config / "pq-system-required-tests-v1.json").write_text(json.dumps(self.roster if roster is None else roster))
+            output = root / "selectors.tsv"
+            result = subprocess.run([sys.executable, "-", str(output)],
+                                    input=self.writer if writer is None else writer,
+                                    cwd=root, text=True, capture_output=True, timeout=10)
+            return result.returncode, output.read_text() if output.exists() else None
+
+    def test_complete_frozen_roster_is_emitted_in_original_order(self):
+        self.assertEqual(len(self.roster["tests"]), 52)
+        status, rows = self.run_writer()
+        self.assertEqual(status, 0)
+        self.assertEqual(rows, "".join(f"native-{i:02d}\t{name}\n" for i, name in enumerate(self.roster["tests"])))
+
+    def test_retained_stale_49_assertion_reproduces_pre_execution_failure(self):
+        self.assertIn("assert len(tests) == 52", self.writer)
+        status, rows = self.run_writer(writer=self.writer.replace("assert len(tests) == 52", "assert len(tests) == 49"))
+        self.assertNotEqual(status, 0)
+        self.assertIsNone(rows)
+
+    def test_truncated_roster_with_matching_declared_count_is_rejected(self):
+        self.roster["tests"].pop()
+        self.roster["expected_meaningful_controls"] -= 1
+        self.assert_rejected()
+
+    def test_duplicate_selector_is_rejected(self):
+        self.roster["tests"][-1] = self.roster["tests"][0]
+        self.assert_rejected()
+
+    def test_child_harness_is_not_a_meaningful_control(self):
+        self.roster["tests"][-1] = self.roster["child_process_harnesses_not_counted"][0]
+        self.assert_rejected()
+
+    def test_invalid_selector_is_rejected(self):
+        self.roster["tests"][-1] = "invalid selector"
+        self.assert_rejected()
+
+    def test_whole_chain_qualification_cannot_be_promoted(self):
+        self.roster["whole_chain_quantum_security_qualified"] = True
+        self.assert_rejected()
+
+    def assert_rejected(self):
+        status, rows = self.run_writer()
+        self.assertNotEqual(status, 0)
+        self.assertIsNone(rows)
 
 
 if __name__ == "__main__":

@@ -16,14 +16,47 @@ hash from its admitting caller. The former unbound `--reference` alone now fails
 FROZEN_BUNDLE_REQUIRED before any output score is written. A digest read from the same
 untrusted file is not an independently admitted expected digest.
 
-`settle_model.py --bundle-hash` verifies the caller's expected bundle, candidate bytes
-and task identities, then recomputes both named evaluation partitions. It compares
+`settle_model.py --bundle-hash` verifies the caller's expected bundle and candidate
+bytes, reloads every committed partition, and recomputes each partition manifest
+and the cross-partition task-ID, source-group and exact-content intersections.
+Missing train/consumer material, changed manifests and overlapping committed rows
+refuse before evaluation replay or a new ledger. A self-consistent bundle digest
+alone does not replace these checks. It then recomputes both named evaluation
+partitions and compares
 predictions, whole and marginal scores, and the selected reference with BOTH stored
 per-evaluator reports and the aggregate report before constructing any signed test
 transaction. Editing both report copies does not avoid this recomputation. No-gain or
 zero-marginal results produce not_adopted/zero reward without opening a new ledger.
 This does not turn the development attestors into independent operators or alter the
 chain's explicit attestation trust model.
+
+This settlement harness always starts a fresh local ledger. It therefore accepts
+only the zero parent release and evaluation-bundle round 1, refusing another
+parent or later evaluation round with `SETTLEMENT_CONTEXT` before replay or
+ledger creation. The positive evaluation round is distinct from the fresh
+ledger's height-derived contribution `submission_round=0`. General bundle
+construction, evaluation and multi-round learning experiments keep their own
+positive-round support; this harness cannot settle their later contexts as an
+initial release. This is a bounded local context check, not current-owner adoption.
+
+The consumer retains owned immutable copies of the verified model, bundle,
+partition, evaluation-report and aggregate-report bytes. The settlement path
+signs evidence and publishes model bytes from that same snapshot instead of
+reopening the producer's mutable directory. Its versioned
+`pon-settlement-verified-inputs-v1` manifest records each exact file digest;
+`pon-observed-artifact-settlement-v2` reports this local binding. No original
+input file is renamed or overwritten. Its controlled author-offline test now
+withdraws the frozen local author copy while inference reads a retained replica.
+
+Before a positive controlled settlement can open a ledger, `model-work.bin`
+must have the exact original model-loop A/B mapping and pass the complete W1
+verifier under the model-and-consumer-bound challenge. The independently checked
+signed product remains only the first 64 feature coordinates of expert zero on
+up to 64 consumer rows. An unrelated valid W1 proof cannot stand in for it.
+The complete consumer input, including rows or features outside that contraction,
+still participates in its challenge. Serving results are recomputed against the
+same frozen model/input before signing a consumer acknowledgement. This is not
+a whole-model training proof or a production activation.
 
 ## Fixed object and identity
 
@@ -46,6 +79,9 @@ artifact supplied by the caller, not the previous unaccepted candidate.
 Each partition binds row count, sorted unique source groups, full canonical task
 commitment, sorted task-ID root and normalized-content root. The producer rejects
 cross-partition task IDs, source groups and exact normalized source-content overlap.
+The settlement consumer independently repeats that separation check from all
+committed row files. The lower-level single-partition evaluator retains its
+narrower interface and does not claim to have inspected absent partitions.
 Identical features are not proof of identical source content; semantic near-duplicates
 and source-owner authenticity still require their own evaluation policy.
 
@@ -56,6 +92,9 @@ stronger calibration performance cannot substitute for this replay. Train or cal
 feature, group, content identity or candidate produces a different commitment and is
 rejected under the original expected hash. Hash verification authenticates equality
 with the caller's record, not the provenance, independence or future time of that record.
+Even the full partition replay cannot prove that a trainer used only the declared
+training rows, that content-hash labels describe the original source honestly,
+that the data is lawful, or that semantic near-duplicates are absent.
 
 ## Strongest deployable baseline, not strongest file size
 

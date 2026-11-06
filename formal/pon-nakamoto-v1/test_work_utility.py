@@ -15,11 +15,12 @@ class UsefulOutputTests(unittest.TestCase):
         self.branch = identity('branch')
         self.observer = UniqueUsefulOutputAccounting(context=identity('task-contract'), current_branch=self.branch)
 
-    def attempt(self, name='a', *, branch=None, task='same-task', output='same-output', partition='evaluation_a', costs=True, gain=Fraction(1,2), accepted=True):
+    def attempt(self, name='a', *, branch=None, task='same-task', output='same-output', partition='evaluation_a', costs=True, gain=Fraction(1,2), accepted=True, service_window=None, research_plan=None):
         attempt = identity(name)
         key = self.observer.begin_attempt(attempt=attempt, branch=self.branch if branch is None else branch,
             task_content=identity(task), output_content=identity(output), function_fingerprint=identity('adapter'+name),
-            source=identity('source'+name), partition=partition)
+            source=identity('source'+name), partition=partition,
+            service_window=service_window, research_plan=research_plan)
         if costs:
             for stage in STAGES:
                 self.observer.record_cost(attempt, stage, observer='controlled-process-clock',
@@ -30,6 +31,78 @@ class UsefulOutputTests(unittest.TestCase):
     def adopt(self, attempt, operation='consume', output='same-output'):
         return self.observer.adopt_output(attempt, consumer_operation=identity(operation),
             consumer=identity('ordinary-consumer'), observed_output=identity(output))
+
+    def service(self, attempt, operation='service', when=20, clock=None, output='same-output'):
+        return self.observer.record_service_use(attempt, consumer_operation=identity(operation),
+            consumer=identity('ordinary-consumer'), observed_output=identity(output),
+            clock=identity('clock') if clock is None else clock, used_at_ns=when)
+
+    def research(self, attempt, operation='research', plan=None, output='same-output'):
+        return self.observer.record_research_result(attempt, research_operation=identity(operation),
+            requester=identity('research-requester'), observed_output=identity(output),
+            plan=identity('research-plan') if plan is None else plan)
+
+    def test_no_gain_completed_research_and_on_time_service_have_separate_value(self):
+        for name, gain in [('zero', Fraction()), ('negative', Fraction(-1, 2))]:
+            attempt, _ = self.attempt(name, gain=gain,
+                service_window=(identity('clock'), 10, 20), research_plan=identity('research-plan'))
+            self.service(attempt, 'service-'+name)
+            self.research(attempt, 'research-'+name)
+            with self.assertRaisesRegex(ValueError, 'UTILITY_NOT_USEFUL'):
+                self.adopt(attempt, 'adoption-'+name)
+        result = self.observer.snapshot()
+        self.assertEqual(result['schema'], 'pon-unique-useful-output-observation-v2')
+        self.assertEqual(result['value_channels']['service'], {'events': 2, 'distinct_outputs': 1})
+        self.assertEqual(result['value_channels']['research'], {'events': 2, 'distinct_outputs': 1})
+        self.assertEqual(result['value_channels']['positive_gain_use']['events'], 0)
+        self.assertEqual(result['distinct_task_contents'], 1)
+        self.assertIsNone(result['independent_sample_count'])
+        for field in ('model_adoption_authority', 'public_reward_authority', 'chainwork_authority'):
+            self.assertFalse(result[field])
+
+    def test_service_deadline_clock_and_research_plan_cannot_be_chosen_after_result(self):
+        unbound, _ = self.attempt('unbound')
+        with self.assertRaisesRegex(ValueError, 'UTILITY_SERVICE_WINDOW'): self.service(unbound)
+        with self.assertRaisesRegex(ValueError, 'UTILITY_RESEARCH_PLAN'): self.research(unbound)
+        attempt, _ = self.attempt('bound', service_window=(identity('clock'), 10, 20),
+            research_plan=identity('research-plan'))
+        before = self.observer.snapshot()
+        for when in (9, 21, True, 19.5):
+            with self.assertRaisesRegex(ValueError, 'UTILITY_SERVICE_WINDOW'):
+                self.service(attempt, when=when)
+        with self.assertRaisesRegex(ValueError, 'UTILITY_SERVICE_WINDOW'):
+            self.service(attempt, clock=identity('changed-clock'))
+        with self.assertRaisesRegex(ValueError, 'UTILITY_RESEARCH_PLAN'):
+            self.research(attempt, plan=identity('changed-plan'))
+        self.assertEqual(self.observer.snapshot(), before)
+
+    def test_value_channel_replay_cannot_relabel_one_operation_or_change_output(self):
+        attempt, _ = self.attempt(service_window=(identity('clock'), 10, 20),
+            research_plan=identity('research-plan'))
+        for function in (self.service, self.research):
+            with self.assertRaisesRegex(ValueError, 'UTILITY_OUTPUT_BINDING'):
+                function(attempt, output='wrong-output')
+        self.service(attempt, operation='one-operation')
+        for function in (self.service, self.research, self.adopt):
+            with self.assertRaisesRegex(ValueError, 'UTILITY_CONSUMER_REPLAY'):
+                function(attempt, operation='one-operation')
+        before = self.observer.snapshot()
+        self.observer.reorganize(new_branch=identity('new'), active_branches=[identity('new')])
+        result = self.observer.snapshot()
+        self.assertEqual(result['value_channels'], before['value_channels'])
+        self.assertEqual(result['cost_totals'], before['cost_totals'])
+        with self.assertRaisesRegex(ValueError, 'UTILITY_STALE_BRANCH'):
+            self.research(attempt)
+
+    def test_invalid_or_incomplete_work_does_not_acquire_service_or_research_value(self):
+        for name, kwargs, code in [('invalid', {'accepted': False}, 'UTILITY_UNVERIFIED_RESULT'),
+                                   ('unmetered', {'costs': False}, 'UTILITY_INCOMPLETE_COSTS')]:
+            attempt, _ = self.attempt(name, service_window=(identity('clock'), 10, 20),
+                research_plan=identity('research-plan'), **kwargs)
+            before = self.observer.snapshot()
+            for function in (self.service, self.research):
+                with self.assertRaisesRegex(ValueError, code): function(attempt)
+            self.assertEqual(self.observer.snapshot(), before)
 
     def test_verification_alone_is_not_actual_downstream_adoption(self):
         self.attempt()

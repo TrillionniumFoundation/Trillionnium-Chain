@@ -2,6 +2,7 @@
 from __future__ import annotations
 import copy
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -122,6 +123,35 @@ class FrozenEvaluationTests(unittest.TestCase):
     def test_cross_partition_task_id_overlap_rejects(self):
         self.partitions['evaluation'][0]['id']=self.partitions['train'][0]['id']
         with self.assertRaisesRegex(ValueError,'PARTITION_OVERLAP'):self.freeze()
+
+    def test_complete_partition_verification_checks_the_frozen_rows_without_authority(self):
+        bundle=verify_bundle(self.raw,self.digest)
+        before=copy.deepcopy(self.partitions)
+        self.assertIsNone(verify_partition_set(bundle,self.partitions))
+        self.assertEqual(self.partitions,before)
+        self.assertFalse(bundle['policy']['public_reward_authority'])
+
+    def test_complete_partition_verification_requires_exact_partition_names(self):
+        bundle=verify_bundle(self.raw,self.digest)
+        for name in self.partitions:
+            supplied={k:v for k,v in self.partitions.items() if k!=name}
+            with self.subTest(missing=name),self.assertRaisesRegex(ValueError,'PARTITION_SET'):
+                verify_partition_set(bundle,supplied)
+        for name in ['consumer','uncommitted']:
+            supplied=dict(self.partitions,**{name:rows(name)})
+            with self.subTest(extra=name),self.assertRaisesRegex(ValueError,'PARTITION_SET'):
+                verify_partition_set(bundle,supplied)
+
+    def test_complete_partition_verification_recomputes_train_rows(self):
+        bundle=verify_bundle(self.raw,self.digest)
+        mutations=[lambda row:row.update(label=0),lambda row:row['x'].__setitem__(0,1),
+                   lambda row:row.update(id='aa'*32),
+                   lambda row:row.update(source_content_sha256='bb'*32),
+                   lambda row:row.update(file='changed-group')]
+        for mutate in mutations:
+            supplied=copy.deepcopy(self.partitions);mutate(supplied['train'][0])
+            with self.subTest(mutate=mutate),self.assertRaisesRegex(ValueError,'PARTITION_TASKS'):
+                verify_partition_set(bundle,supplied)
 
     def test_duplicate_task_and_content_within_partition_reject(self):
         for field,code in [('id','DUPLICATE_TASK'),('source_content_sha256','DUPLICATE_CONTENT')]:
@@ -255,14 +285,14 @@ class SettlementObservationTests(unittest.TestCase):
         import subprocess,sys
         cls.tmp=tempfile.TemporaryDirectory();cls.root=Path(cls.tmp.name)
         current=model(0);candidate=model(1)
-        partitions={name:rows(name)for name in ['train','calibration','evaluation_a','evaluation_b']}
+        partitions={name:rows(name)for name in ['train','calibration','evaluation_a','evaluation_b','consumer']}
         raw,cls.digest=freeze_bundle(source_commit='ab'*20,round_number=1,parent_release='00'*32,
             current=current,candidate=candidate,controls={name:copy.deepcopy(current)for name in CONTROL_ORDER},partitions=partitions)
         (cls.root/'evaluation-bundle.json').write_bytes(raw)
         (cls.root/'model.json').write_bytes(canonical(candidate));results={}
-        (cls.root/'calibration.json').write_bytes(canonical(partitions['calibration']))
+        for name,data in partitions.items():
+            (cls.root/(name+'.json')).write_bytes(canonical(data))
         for name in ['evaluation_a','evaluation_b']:
-            (cls.root/(name+'.json')).write_bytes(canonical(partitions[name]))
             run=subprocess.run([sys.executable,str(Path(__file__).parent/'experiments/model_loop.py'),
                 '--mode','evaluate','--tasks',str(cls.root/(name+'.json')),'--model',str(cls.root/'model.json'),
                 '--evaluation-bundle',str(cls.root/'evaluation-bundle.json'),'--bundle-hash',cls.digest,
@@ -274,10 +304,76 @@ class SettlementObservationTests(unittest.TestCase):
         (cls.root/'report.json').write_text(json.dumps(report,sort_keys=True)+'\n')
     @classmethod
     def tearDownClass(cls):cls.tmp.cleanup()
+    def copy_inputs(self):
+        folder=Path(self.enterContext(tempfile.TemporaryDirectory()))/'input'
+        shutil.copytree(self.root,folder)
+        return folder
+    def rehash_partition(self,folder,target,source,field):
+        """Bypass the producer, retaining a coherent committed row mutation."""
+        partition_path=folder/(target+'.json')
+        tasks=json.loads(partition_path.read_bytes())
+        other=json.loads((folder/(source+'.json')).read_bytes())
+        tasks[0][field]=other[0][field]
+        partition_path.write_bytes(canonical(tasks))
+        bundle=json.loads((folder/'evaluation-bundle.json').read_bytes())
+        bundle['partitions'][target]=partition_manifest(tasks)
+        raw=canonical(bundle);digest=H('evaluation-bundle-v3',raw).hex()
+        (folder/'evaluation-bundle.json').write_bytes(raw)
+        if field=='file':
+            # Group overlap was already visible in the manifest-only verifier.
+            return digest
+        import subprocess,sys
+        summary=json.loads((folder/'report.json').read_bytes())
+        summary['evaluation_bundle']=digest
+        for partition in ['evaluation_a','evaluation_b']:
+            output=folder/(partition+'-result.json')
+            result=subprocess.run([sys.executable,str(Path(__file__).parent/'experiments/model_loop.py'),
+                '--mode','evaluate','--tasks',str(folder/(partition+'.json')),
+                '--model',str(folder/'model.json'),'--evaluation-bundle',str(folder/'evaluation-bundle.json'),
+                '--bundle-hash',digest,'--partition',partition,'--calibration',str(folder/'calibration.json'),
+                '--out',str(output)],capture_output=True,text=True,timeout=30)
+            self.assertEqual(result.returncode,0,result.stderr)
+            summary['results'][partition]=json.loads(output.read_bytes())
+        (folder/'report.json').write_text(json.dumps(summary,sort_keys=True)+'\n')
+        return digest
     def test_observed_results_are_recomputed_before_signed_settlement(self):
         from experiments.settle_model import verify_observation
         report,candidate=verify_observation(self.root,self.digest)
         self.assertEqual(report['evaluation_bundle'],self.digest);self.assertEqual(candidate,model(1))
+    def test_missing_training_rows_reject_before_evaluation_replay(self):
+        from experiments.settle_model import verify_observation
+        folder=self.copy_inputs();(folder/'train.json').unlink()
+        with patch('experiments.settle_model.evaluate_bundle') as replay:
+            with self.assertRaises((ValueError,FileNotFoundError)):verify_observation(folder,self.digest)
+            replay.assert_not_called()
+    def test_missing_committed_consumer_rows_reject_before_evaluation_replay(self):
+        from experiments.settle_model import verify_observation
+        folder=self.copy_inputs();(folder/'consumer.json').unlink()
+        with patch('experiments.settle_model.evaluate_bundle') as replay:
+            with self.assertRaises((ValueError,FileNotFoundError)):verify_observation(folder,self.digest)
+            replay.assert_not_called()
+    def test_changed_train_or_consumer_rows_reject_before_evaluation_replay(self):
+        from experiments.settle_model import verify_observation
+        for name in ['train','consumer']:
+            folder=self.copy_inputs();path=folder/(name+'.json');tasks=json.loads(path.read_bytes())
+            tasks[0]['x'][0]=1;path.write_bytes(canonical(tasks))
+            with self.subTest(partition=name),patch('experiments.settle_model.evaluate_bundle') as replay:
+                with self.assertRaisesRegex(ValueError,'PARTITION_TASKS'):verify_observation(folder,self.digest)
+                replay.assert_not_called()
+    def test_rehashed_cross_partition_task_ids_reject_before_evaluation_replay(self):
+        self.assert_rehashed_overlap_rejects('id')
+    def test_rehashed_cross_partition_exact_content_rejects_before_evaluation_replay(self):
+        self.assert_rehashed_overlap_rejects('source_content_sha256')
+    def test_rehashed_cross_partition_source_groups_reject_before_evaluation_replay(self):
+        self.assert_rehashed_overlap_rejects('file')
+    def assert_rehashed_overlap_rejects(self,field):
+        from experiments.settle_model import verify_observation
+        for target,source in [('train','evaluation_a'),('train','calibration'),
+                              ('consumer','evaluation_b'),('evaluation_b','evaluation_a')]:
+            folder=self.copy_inputs();digest=self.rehash_partition(folder,target,source,field)
+            with self.subTest(field=field,target=target,source=source),patch('experiments.settle_model.evaluate_bundle') as replay:
+                with self.assertRaisesRegex(ValueError,'PARTITION_OVERLAP'):verify_observation(folder,digest)
+                replay.assert_not_called()
     def test_zero_marginal_candidate_creates_no_ledger_or_reward(self):
         from experiments.settle_model import run
         with tempfile.TemporaryDirectory()as parent:
