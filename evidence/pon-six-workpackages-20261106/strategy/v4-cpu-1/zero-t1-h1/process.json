@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+    "--preparation-strategy-v4",
+    "--class",
+    "zero",
+    "--target-index",
+    "1",
+    "--reuse-winners",
+    "1"
+  ],
+  "cleanup_extends_accepted_budget": false,
+  "cleanup_grace_seconds": 5,
+  "cpu_system_seconds": 0.0,
+  "cpu_user_seconds": 0.296715,
+  "elapsed_wall_seconds": 0.3048717220008257,
+  "observer_interrupted": false,
+  "peak_rss_bytes": 19177472,
+  "process_complete": true,
+  "resource_failure": null,
+  "resource_scope": "direct native process wait4; not whole-host or process-tree resource qualification",
+  "returncode": 0,
+  "started_unix_ns": 1793948841221013962,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "f452e84111cd3b5bacf4325b4e122a0ea2764945d8e12ded3c75950c632d1064",
+  "timed_out": false,
+  "timeout_seconds": 300
+}

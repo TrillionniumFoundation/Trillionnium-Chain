@@ -7675,3 +7675,121 @@ predeclared finite component comparisons, and preserve original campaign/F0
 business denominators. Whole-state scans, recovery, PQ cost, malicious-load
 fairness, data-plane isolation and useful-work economics remain separate work;
 no component result qualifies public throughput or production activation.
+
+### 2026-11-06 six requested workpackages: real execution and preserved vetoes
+
+This continuation starts from integration candidate #688 at
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0`, tree
+`6fcdb1aca01da0f2495fea1c74802af05119c77f`. The
+[six-workpackage execution record](../../evidence/pon-six-workpackages-20261106/README.md)
+retains source-specific raw results, unsuccessful attempts and explicit
+unmeasured fields. The separate Hepta V13 reference work starts at private
+#4930 source `dd1adf3defc5f1b1bcf3358419e23490e24b9a6a`; neither that
+branch nor the older Chain #718 experiment branch is silently substituted
+for a completed, tested joint candidate.
+
+1. **Real complete Cell.** Actual original V13 MiniLM inference recomputed
+   120 raw texts into their original 120-by-384 feature matrix. The unchanged
+   Adapter and finite pure task executors produced 120 outputs, with complete
+   frozen checkpoint state unchanged. The companion repair binds actual
+   masks/ONNX feeds and source order, uses bounded descriptor-based reads and
+   a supervised process, and has a separate zero-execution cold receipt
+   reader. This is a real reference path, not ordinary Cell admission,
+   recurrent state, independent quality or model adoption.
+2. **Cheapest legal strategy.** The new native V4 sampler holds FullLimb fixed
+   and crosses dense/sparse preparation with eager/lazy materialization. Its
+   36 cost shards retain 1,152 paid preparations, 28,032 searches and 464,320
+   complete attempts, including 436,288 misses. Twelve additional control
+   shards retain actual exhaustion and first-hit behavior. All 48 native
+   processes and strict readbacks completed, with the full grid and shared
+   prefix identities checked. The four strategies' producer CPU totals are
+   43.228, 42.292, 44.522 and 42.146 seconds across this mixed grid; this is
+   not an independent-sample ranking or a cheapest-algorithm lower bound.
+   Dedicated low-rank/batch producers, other hardware, energy and full-Cell
+   economics remain separate open requirements. The eight-CPU/8-GiB local
+   benchmark does not replace the original service host.
+3. **Dedicated complete proof.** The new pinned readback preserves the
+   existing complete W1 v2 proof, all 52 stages, its supplied public material
+   and the original failed/unknown attempts. The single complete generation
+   took 6,248.484106799 seconds. Same-receipt verification was about 30.24
+   times the median native replay, and the local proof envelope was about
+   5.19 times the native payload. Original four-second confirmation screening,
+   measured benefit and the complete encoder/router/state relation do not
+   pass. No new proof generation or all-attempt success rate is fabricated.
+4. **Original-resource adversarial validation.** The original source's
+   no-attack signed transaction confirmed in 2.802270278 seconds; the
+   16-worker pressure cohort confirmed 0/1. All 257 attack calls, seven
+   honest submits and 287 receiver records remain counted. Original History
+   returned 2,331 of 4,105 planned import calls before its 1,800-second
+   service lifetime expired. Missing global resource observations remain
+   unknown. These real failures are retained rather than rerun under relaxed
+   limits or converted from named-test success into acceptance.
+5. **Public tasks and settlement.** Four actual old-code controls reproduced
+   foreign-owner acceptance of Pending/Done single-Cell retain/repair
+   readback. The repair checks the existing native context/owner generation
+   before mutation and keeps original budget/deadline/CPU boundaries. The
+   full storage suite passed 20 tests: 15 retained plus five new controls,
+   including three native backends, real reorganization, cancellation/refund
+   and cold recovery with empty source cache. No funding is reacquired and
+   no already completed effect is dispatched again. The offline dependency
+   failure remains recorded. Development-ledger tests do not prove external
+   funds, permanent availability or task supply after all publishers leave.
+6. **Real adoption and next-task readback.** A source-bound original checkpoint
+   and cold receipt readback do not supply independent evaluation, original
+   runtime adoption or a new task reading the newly installed model. These
+   requirements and visible no-update behavior remain open.
+
+Two original CI failures were stale roster counts, not executed-test
+failures: 25 registered postwrite controls versus a required 23, and 52 PQ
+selectors versus a required 49. The corrected guards retain exact original
+native execution and rejection rules. New reader/roster controls execute once
+in the existing repository-truth lane. The source corpus and distributed
+inventory retain the new sampler, owner tests and reader dependencies.
+
+Local verification includes full-workspace/all-target/all-feature strict
+Clippy, formatting, the locked 26-member/180-package graph, 101 CI-contract,
+43 raw-source-integrity, 37 source-corpus, six roster, eleven proof-reader and
+24 strategy-reader controls. Each command's source and scope is recorded;
+these counts are not a combined system-acceptance denominator. The initial
+CI test-authoring error, native RED cases and failed dependency attempt are
+retained. Final source/publication checks are separate from these working
+candidate observations.
+
+**All six requested workpackages remain HOLD / NO-GO (0/6 closed).** Keep the
+original four-second, 16-hostile, seven-honest-submission, quarter-CPU, 2-GiB,
+no-swap, 256-PID service contract, original History budgets and independent
+operator requirements. The next acceptance evidence must use one fixed joint
+source/configuration/dependency/binary set, prove the entire real Cell
+relation, demonstrate actual cost benefit, satisfy original hostile service
+and recovery requirements, and close externally funded task/material and
+independent adoption/next-task paths. A candidate file, reader success,
+historical receipt or source hash does not substitute for any of those events.
+
+
+#### Concurrent Cell transport composition for the six workpackages
+
+The candidate advanced to `1f723bba961ec5f8d7e25e7b33db222dac7ef50c` during
+publication. Preserve its three transport/custody commits and compose the
+six-workpackage source `038c063e48bf2f42884a44f62c65f22ac626595e` as a second
+parent. [The composition record](../../evidence/pon-six-workpackages-20261106/composition/README.md)
+keeps the common production guard once, both new regression modules, the union
+of source pins and the full distributed inventory. The combined native storage
+selector contains 22 tests; it requires fresh execution. V4 timings retain their
+original 95-input/ELF boundary. Original M09 cold-cohort, four-second public
+service, History, proof-benefit and independent-adoption vetoes remain open.
+
+
+### 2026-11-06 final six-workpackage composition validation
+
+The existing integration candidate's concurrent `1f723bba961ec5f8d7e25e7b33db222dac7ef50c`
+continuation and the separately frozen `038c063e48bf2f42884a44f62c65f22ac626595e`
+candidate were combined without dropping either parent. Fresh checks on
+`361825dd1f924770562705d7a68c78170f0375c3` preserve 387 M09 native controls,
+10 M09 documentation controls, all 22 combined storage controls, 35 native
+budget controls and nine release sampler controls, with no failed or ignored
+tests in those exact commands. Their complete raw receipts and source gates
+are retained in [final validation](../../evidence/pon-six-workpackages-20261106/composition/README.md#final-source-specific-composition-validation).
+These are component checks, not all-workspace unit-test or original-resource
+acceptance. The separate Hepta V13 publication is
+`fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
+HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.

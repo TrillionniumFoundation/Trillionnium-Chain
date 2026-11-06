@@ -1,0 +1,27 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--all-features",
+    "--lib",
+    "store::storage_service::tests::",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "wall_ns": 127085318,
+  "environment": {
+    "RUSTC": "/workspace/scratch/00b1abdae74b/toolchains/rust-1.95.0/bin/rustc",
+    "CARGO_TARGET_DIR": "/workspace/scratch/62902f6722b7/target",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "scope": "Full native storage_service owner suite, including original release and cache/retention cases. No business-liveness or WAN gate promotion."
+}

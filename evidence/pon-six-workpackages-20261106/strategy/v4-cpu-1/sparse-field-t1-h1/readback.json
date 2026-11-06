@@ -1,0 +1,1775 @@
+{
+  "complete_fixed_grid": false,
+  "control_expected_outcome_observed": null,
+  "dense_eager_over_sparse_lazy_cpu": {
+    "denominator": 84151045,
+    "numerator": 81774152
+  },
+  "factorial_cpu_differences_ns": {
+    "interaction": 3892199,
+    "lazy_minus_eager_dense": 73691,
+    "lazy_minus_eager_sparse": 3965890,
+    "sparse_minus_dense_eager": -1588997,
+    "sparse_minus_dense_lazy": 2303202
+  },
+  "fastest_adversary_lower_bound": false,
+  "hardness_accepted": false,
+  "independent_challenge_samples_per_shard": 8,
+  "independent_hardware_qualified": false,
+  "input_bytes": 1276212,
+  "input_sha256": "457eeef9f132788cb484cfbcb94ea965a98ec9894a83e923626b1288e0cf2973",
+  "matched_full_search_streams": true,
+  "material_identity": {
+    "a_sha256": "020e662e39c384cddbafcc31ae2ddef3d98039339784d6d5ef2bbf6a9b35c298",
+    "b_sha256": "6da573e4bbee7d2dc142d9048030be31bb9916c39b831d5e7862afbab7d3e886",
+    "provenance_verified": false,
+    "source": "synthetic-fixture",
+    "task": "f595d711962e85c41647abb48df8ce0b2148768a7db5a50a0268e5bb677b927b"
+  },
+  "material_setup": {
+    "cpu_ns": 620181,
+    "wall_ns": 623779
+  },
+  "native_execution_authenticated": false,
+  "observation_coverage": "one-complete-shard-only",
+  "observed_complete_shards": 1,
+  "production_activation": false,
+  "public_network_ready": false,
+  "public_service_measured": false,
+  "qualification_status": "HOLD",
+  "rate_diagnostic_scope": {
+    "aggregation": "ratio-of-sums-including-every-setup-miss-exhaustion-and-materialization",
+    "common_material_setup": "reported-once-per-shard-separately-not-added-to-each-strategy",
+    "confidence_bound": null,
+    "cross_horizon_aggregation": "none-shared-search-prefixes-are-not-independent",
+    "denominator": "one-actual-setup-and-all-complete-transcripts-tickets-and-proof-materializations-including-misses-and-binary-trial-retention-excludes-evidence-digests-hex-json-verification-and-retained-buffer-destruction",
+    "native_chainwork_observed": false,
+    "network_work_share": null,
+    "observation": "finite-recorded-cohorts-at-one-fixed-strategy-class-target-and-reuse-horizon",
+    "work_equivalent": "recorded-relation-valid-target-hits-times-required-target-weight-not-ledger-chainwork"
+  },
+  "record_consistency": "PASS",
+  "record_counts": {
+    "campaign": 1,
+    "candidate": 8,
+    "cohort": 32,
+    "end": 1,
+    "material": 1,
+    "product_mutation": 32,
+    "search": 32,
+    "verifier": 128
+  },
+  "required_complete_shards": 36,
+  "required_target_weight": 32,
+  "resource_fairness_qualified": false,
+  "schema": "pon-w1-preparation-strategy-shard-readback-v4",
+  "search_fingerprints": [
+    {
+      "attempts": 23,
+      "sample": 0,
+      "search_index": 0,
+      "stream_sha256": "7082ebc997f950e58cad814ea6c9128b5ee89bc541a11e8bfc9c14c9395d580e",
+      "winner": {
+        "challenge": "3f59676124206242060595bee49b85caab069a4508aa55ef9488b16aef56b662",
+        "proof_sha256": "4d9e2d4230820e9f2e61a48c9f4dba3588760ffc1b671a7a20e34d214b9aa777"
+      }
+    },
+    {
+      "attempts": 35,
+      "sample": 1,
+      "search_index": 0,
+      "stream_sha256": "99f5b96d1e37da23523d82e87a726d5968d4db28071529e7de6fa96feb91bdc0",
+      "winner": {
+        "challenge": "1bb053ea6ddf6b6f89a248ebb25cc75fdd4571a1e1554aba06777d88e8d94e91",
+        "proof_sha256": "daaf1528882461705e00ec3929a7d0837011b1d4b83b345542cad83b2f37aeb1"
+      }
+    },
+    {
+      "attempts": 54,
+      "sample": 2,
+      "search_index": 0,
+      "stream_sha256": "02837cc28cfb177b452dfe34365d74dd858265970740ac5fa798e57590cfd870",
+      "winner": {
+        "challenge": "6d7f06058d3eefc33d675829a566b98963515c0c7e8988e414344cda8d46d187",
+        "proof_sha256": "6bd99d7797f346a297b839f4f61901f39305731800ac55f3dc560926f9f26964"
+      }
+    },
+    {
+      "attempts": 52,
+      "sample": 3,
+      "search_index": 0,
+      "stream_sha256": "7f4a692e9531be70fa35d5941d0201f842fb015bd96d315e5e02e85aa92c2dff",
+      "winner": {
+        "challenge": "ffdd5022fc8e0248a630504fa7d3fd674672d2566600793f266e3a6157623b0f",
+        "proof_sha256": "4576e7a314f9049c423ad1d62702b6b32ffbfa94a2412ebd5865aa47fea555c5"
+      }
+    },
+    {
+      "attempts": 22,
+      "sample": 4,
+      "search_index": 0,
+      "stream_sha256": "957ce136e6f84b1cd07583e8fc152c97d5add1eb0c077ec00fdef966374a6368",
+      "winner": {
+        "challenge": "f8365f285f92905e01c21945b0a5e5c119883253997cdd13f067a25d4a3011ab",
+        "proof_sha256": "7f969ab20464fc3876ca545ecf6d22769d6a72683694cfc8f265c2cadb525142"
+      }
+    },
+    {
+      "attempts": 1,
+      "sample": 5,
+      "search_index": 0,
+      "stream_sha256": "82e41ce5bcd922247a8bee9d44184bf66403a70463253e0fa5af8a8e2b2bf1f0",
+      "winner": {
+        "challenge": "bd84f8b467b83d457d64c2d04fbcf5f28ba868530d850d8e375d5845e3584d15",
+        "proof_sha256": "9bce31edbbcb984466a30adda85bd1c4ab89379c465df82a3da5eb730a05a19b"
+      }
+    },
+    {
+      "attempts": 5,
+      "sample": 6,
+      "search_index": 0,
+      "stream_sha256": "691f36b984a29b3a22c432c1c59d987ebc5ebd10a0f7c41354b3365546de9aa9",
+      "winner": {
+        "challenge": "2d3a4020d519291af4e21c940e9b38ee26977602a6d1dd1fdaba7307c01b8a8b",
+        "proof_sha256": "742af0631798275a0325402113fe142303eb3ce9fd1cf05eae4f3c652e7fcf7a"
+      }
+    },
+    {
+      "attempts": 29,
+      "sample": 7,
+      "search_index": 0,
+      "stream_sha256": "912b5702d7a64b3a3082cd52aaa72ccca0de6e4335e16b59195a3dce7052e3be",
+      "winner": {
+        "challenge": "227875794c979088b09d58c8014500d284651f69f643b58f7c7e3c3416867441",
+        "proof_sha256": "36d0dba182bff78b33b7fc33cc5f0c26466d137cea0518e5ac11a93986c93730"
+      }
+    }
+  ],
+  "selection": {
+    "class": "sparse-field",
+    "purpose": "search-cost",
+    "reuse_winners": 1,
+    "target_index": 1
+  },
+  "semantic_alerts": [],
+  "strategy_costs": [
+    {
+      "actual_searches": 8,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 221,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 8,
+        "numerator": 81774152
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 81774152,
+        "wall_ns": 81802147
+      },
+      "materialization": "every-attempt",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 16
+        },
+        "product-last": {
+          "Product": 16
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 9391212,
+          "sample": 0,
+          "wall_ns": 9391549
+        },
+        {
+          "cpu_ns": 14013064,
+          "sample": 1,
+          "wall_ns": 14013542
+        },
+        {
+          "cpu_ns": 16282513,
+          "sample": 2,
+          "wall_ns": 16282851
+        },
+        {
+          "cpu_ns": 16754584,
+          "sample": 3,
+          "wall_ns": 16780360
+        },
+        {
+          "cpu_ns": 9759298,
+          "sample": 4,
+          "wall_ns": 9759653
+        },
+        {
+          "cpu_ns": 718477,
+          "sample": 5,
+          "wall_ns": 718692
+        },
+        {
+          "cpu_ns": 2438440,
+          "sample": 6,
+          "wall_ns": 2438634
+        },
+        {
+          "cpu_ns": 12416564,
+          "sample": 7,
+          "wall_ns": 12416866
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 23,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9391212,
+            "wall_ns": 9391549
+          },
+          "proof_materializations": 23,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9391212,
+              "numerator": 23000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9391212,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9391212,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 1131324,
+          "setup": {
+            "cpu_ns": 285334,
+            "wall_ns": 285250
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 35,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 14013064,
+            "wall_ns": 14013542
+          },
+          "proof_materializations": 35,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 14013064,
+              "numerator": 35000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 14013064,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 14013064,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 1721580,
+          "setup": {
+            "cpu_ns": 282399,
+            "wall_ns": 282265
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 54,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 16282513,
+            "wall_ns": 16282851
+          },
+          "proof_materializations": 54,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 16282513,
+              "numerator": 54000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 16282513,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 16282513,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 2656152,
+          "setup": {
+            "cpu_ns": 204944,
+            "wall_ns": 204878
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 52,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 16754584,
+            "wall_ns": 16780360
+          },
+          "proof_materializations": 52,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 16754584,
+              "numerator": 52000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 16754584,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 16754584,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 2557776,
+          "setup": {
+            "cpu_ns": 544138,
+            "wall_ns": 543499
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 22,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9759298,
+            "wall_ns": 9759653
+          },
+          "proof_materializations": 22,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9759298,
+              "numerator": 22000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9759298,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9759298,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 1082136,
+          "setup": {
+            "cpu_ns": 330020,
+            "wall_ns": 329686
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 1,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 718477,
+            "wall_ns": 718692
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 718477,
+              "numerator": 1000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 718477,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 718477,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 302459,
+            "wall_ns": 301734
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 5,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 2438440,
+            "wall_ns": 2438634
+          },
+          "proof_materializations": 5,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 2438440,
+              "numerator": 5000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 2438440,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 2438440,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 245940,
+          "setup": {
+            "cpu_ns": 312163,
+            "wall_ns": 311729
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 29,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 12416564,
+            "wall_ns": 12416866
+          },
+          "proof_materializations": 29,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 12416564,
+              "numerator": 29000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 12416564,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 12416564,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 1426452,
+          "setup": {
+            "cpu_ns": 313295,
+            "wall_ns": 313091
+          },
+          "target_hits": 1
+        }
+      ],
+      "preparation": "dense",
+      "proof_materializations": 221,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 81774152,
+          "numerator": 221000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 81774152,
+          "numerator": 256000000000
+        },
+        "hypothetical_required_work_total": 256,
+        "recorded_relation_valid_hits": 8,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 81774152,
+          "numerator": 8000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 574602,
+        "wall_ns": 574717
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 95634,
+        "wall_ns": 96966
+      },
+      "serialized_proof_bytes": 10870548,
+      "setup_total": {
+        "cpu_ns": 2574752,
+        "wall_ns": 2572132
+      },
+      "strategy": "dense-eager-full-limb",
+      "target_hits": 8,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 4349548,
+            "wall_ns": 4346096
+          },
+          "reference": {
+            "cpu_ns": 6469454,
+            "wall_ns": 6463897
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 4243980,
+            "wall_ns": 4242162
+          },
+          "reference": {
+            "cpu_ns": 6290448,
+            "wall_ns": 6285489
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 8,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 221,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 8,
+        "numerator": 81847843
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 81847843,
+        "wall_ns": 82350522
+      },
+      "materialization": "target-hit",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 16
+        },
+        "product-last": {
+          "Product": 16
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 9171346,
+          "sample": 0,
+          "wall_ns": 9671771
+        },
+        {
+          "cpu_ns": 14118070,
+          "sample": 1,
+          "wall_ns": 14118480
+        },
+        {
+          "cpu_ns": 17279914,
+          "sample": 2,
+          "wall_ns": 17280333
+        },
+        {
+          "cpu_ns": 16050139,
+          "sample": 3,
+          "wall_ns": 16050530
+        },
+        {
+          "cpu_ns": 9445192,
+          "sample": 4,
+          "wall_ns": 9445650
+        },
+        {
+          "cpu_ns": 757675,
+          "sample": 5,
+          "wall_ns": 757781
+        },
+        {
+          "cpu_ns": 2503757,
+          "sample": 6,
+          "wall_ns": 2503892
+        },
+        {
+          "cpu_ns": 12521750,
+          "sample": 7,
+          "wall_ns": 12522085
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 23,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9171346,
+            "wall_ns": 9671771
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9171346,
+              "numerator": 23000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9171346,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9171346,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 204143,
+            "wall_ns": 204057
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 35,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 14118070,
+            "wall_ns": 14118480
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 14118070,
+              "numerator": 35000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 14118070,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 14118070,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 351262,
+            "wall_ns": 350858
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 54,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 17279914,
+            "wall_ns": 17280333
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 17279914,
+              "numerator": 54000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 17279914,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 17279914,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 232395,
+            "wall_ns": 232160
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 52,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 16050139,
+            "wall_ns": 16050530
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 16050139,
+              "numerator": 52000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 16050139,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 16050139,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 205715,
+            "wall_ns": 205619
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 22,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9445192,
+            "wall_ns": 9445650
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9445192,
+              "numerator": 22000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9445192,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9445192,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 323961,
+            "wall_ns": 323227
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 1,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 757675,
+            "wall_ns": 757781
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 757675,
+              "numerator": 1000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 757675,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 757675,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 311051,
+            "wall_ns": 310648
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 5,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 2503757,
+            "wall_ns": 2503892
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 2503757,
+              "numerator": 5000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 2503757,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 2503757,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 333906,
+            "wall_ns": 333462
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 29,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 12521750,
+            "wall_ns": 12522085
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 12521750,
+              "numerator": 29000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 12521750,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 12521750,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 313155,
+            "wall_ns": 312802
+          },
+          "target_hits": 1
+        }
+      ],
+      "preparation": "dense",
+      "proof_materializations": 8,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 81847843,
+          "numerator": 221000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 81847843,
+          "numerator": 256000000000
+        },
+        "hypothetical_required_work_total": 256,
+        "recorded_relation_valid_hits": 8,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 81847843,
+          "numerator": 8000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 558437,
+        "wall_ns": 558643
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 119047,
+        "wall_ns": 119601
+      },
+      "serialized_proof_bytes": 393504,
+      "setup_total": {
+        "cpu_ns": 2275588,
+        "wall_ns": 2272833
+      },
+      "strategy": "dense-lazy-full-limb",
+      "target_hits": 8,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 4613151,
+            "wall_ns": 4607965
+          },
+          "reference": {
+            "cpu_ns": 6364367,
+            "wall_ns": 6359232
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 4352041,
+            "wall_ns": 4349912
+          },
+          "reference": {
+            "cpu_ns": 6319231,
+            "wall_ns": 6314474
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 8,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 221,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 8,
+        "numerator": 80185155
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 80185155,
+        "wall_ns": 80398453
+      },
+      "materialization": "every-attempt",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 16
+        },
+        "product-last": {
+          "Product": 16
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 9029916,
+          "sample": 0,
+          "wall_ns": 9030124
+        },
+        {
+          "cpu_ns": 13859406,
+          "sample": 1,
+          "wall_ns": 13859800
+        },
+        {
+          "cpu_ns": 17415746,
+          "sample": 2,
+          "wall_ns": 17416158
+        },
+        {
+          "cpu_ns": 16000254,
+          "sample": 3,
+          "wall_ns": 16211363
+        },
+        {
+          "cpu_ns": 9219267,
+          "sample": 4,
+          "wall_ns": 9219650
+        },
+        {
+          "cpu_ns": 466413,
+          "sample": 5,
+          "wall_ns": 466653
+        },
+        {
+          "cpu_ns": 2164694,
+          "sample": 6,
+          "wall_ns": 2164942
+        },
+        {
+          "cpu_ns": 12029459,
+          "sample": 7,
+          "wall_ns": 12029763
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 23,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9029916,
+            "wall_ns": 9030124
+          },
+          "proof_materializations": 23,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9029916,
+              "numerator": 23000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9029916,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9029916,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 1131324,
+          "setup": {
+            "cpu_ns": 32078,
+            "wall_ns": 32038
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 35,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 13859406,
+            "wall_ns": 13859800
+          },
+          "proof_materializations": 35,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 13859406,
+              "numerator": 35000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 13859406,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 13859406,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 1721580,
+          "setup": {
+            "cpu_ns": 30686,
+            "wall_ns": 30626
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 54,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 17415746,
+            "wall_ns": 17416158
+          },
+          "proof_materializations": 54,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 17415746,
+              "numerator": 54000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 17415746,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 17415746,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 2656152,
+          "setup": {
+            "cpu_ns": 21912,
+            "wall_ns": 21863
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 52,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 16000254,
+            "wall_ns": 16211363
+          },
+          "proof_materializations": 52,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 16000254,
+              "numerator": 52000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 16000254,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 16000254,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 2557776,
+          "setup": {
+            "cpu_ns": 20961,
+            "wall_ns": 20911
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 22,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9219267,
+            "wall_ns": 9219650
+          },
+          "proof_materializations": 22,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9219267,
+              "numerator": 22000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9219267,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9219267,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 1082136,
+          "setup": {
+            "cpu_ns": 29994,
+            "wall_ns": 29925
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 1,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 466413,
+            "wall_ns": 466653
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 466413,
+              "numerator": 1000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 466413,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 466413,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 32879,
+            "wall_ns": 32689
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 5,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 2164694,
+            "wall_ns": 2164942
+          },
+          "proof_materializations": 5,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 2164694,
+              "numerator": 5000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 2164694,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 2164694,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 245940,
+          "setup": {
+            "cpu_ns": 28201,
+            "wall_ns": 28092
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 29,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 12029459,
+            "wall_ns": 12029763
+          },
+          "proof_materializations": 29,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 12029459,
+              "numerator": 29000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 12029459,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 12029459,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 1426452,
+          "setup": {
+            "cpu_ns": 31116,
+            "wall_ns": 31037
+          },
+          "target_hits": 1
+        }
+      ],
+      "preparation": "sparse",
+      "proof_materializations": 221,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 80185155,
+          "numerator": 221000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 80185155,
+          "numerator": 256000000000
+        },
+        "hypothetical_required_work_total": 256,
+        "recorded_relation_valid_hits": 8,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 80185155,
+          "numerator": 8000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 559351,
+        "wall_ns": 559233
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 140910,
+        "wall_ns": 142034
+      },
+      "serialized_proof_bytes": 10870548,
+      "setup_total": {
+        "cpu_ns": 227827,
+        "wall_ns": 227181
+      },
+      "strategy": "sparse-eager-full-limb",
+      "target_hits": 8,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 4377019,
+            "wall_ns": 4373829
+          },
+          "reference": {
+            "cpu_ns": 6695020,
+            "wall_ns": 6689908
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 4358354,
+            "wall_ns": 4354351
+          },
+          "reference": {
+            "cpu_ns": 6341154,
+            "wall_ns": 6335754
+          }
+        }
+      }
+    },
+    {
+      "actual_searches": 8,
+      "actual_setup_calls": 8,
+      "arithmetic": "full-limb",
+      "attempts": 221,
+      "cpu_per_observed_valid_winner": {
+        "denominator": 8,
+        "numerator": 84151045
+      },
+      "exhausted_searches": 0,
+      "inclusive_cohort_total": {
+        "cpu_ns": 84151045,
+        "wall_ns": 85066504
+      },
+      "materialization": "target-hit",
+      "native_outcome_counts": {
+        "legal": {
+          "Accepted": 16
+        },
+        "product-last": {
+          "Product": 16
+        }
+      },
+      "per_sample_cohort_totals": [
+        {
+          "cpu_ns": 8953813,
+          "sample": 0,
+          "wall_ns": 8954149
+        },
+        {
+          "cpu_ns": 13757245,
+          "sample": 1,
+          "wall_ns": 13757567
+        },
+        {
+          "cpu_ns": 17130362,
+          "sample": 2,
+          "wall_ns": 17130888
+        },
+        {
+          "cpu_ns": 20727934,
+          "sample": 3,
+          "wall_ns": 21641032
+        },
+        {
+          "cpu_ns": 9114812,
+          "sample": 4,
+          "wall_ns": 9115152
+        },
+        {
+          "cpu_ns": 399173,
+          "sample": 5,
+          "wall_ns": 399292
+        },
+        {
+          "cpu_ns": 2182080,
+          "sample": 6,
+          "wall_ns": 2182308
+        },
+        {
+          "cpu_ns": 11885626,
+          "sample": 7,
+          "wall_ns": 11886116
+        }
+      ],
+      "per_sample_denominators": [
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 23,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 8953813,
+            "wall_ns": 8954149
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 8953813,
+              "numerator": 23000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 8953813,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 8953813,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 0,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 28783,
+            "wall_ns": 28664
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 35,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 13757245,
+            "wall_ns": 13757567
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 13757245,
+              "numerator": 35000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 13757245,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 13757245,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 1,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 36294,
+            "wall_ns": 36195
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 54,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 17130362,
+            "wall_ns": 17130888
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 17130362,
+              "numerator": 54000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 17130362,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 17130362,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 2,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 29744,
+            "wall_ns": 29644
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 52,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 20727934,
+            "wall_ns": 21641032
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 20727934,
+              "numerator": 52000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 20727934,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 20727934,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 3,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 22614,
+            "wall_ns": 22574
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 22,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 9114812,
+            "wall_ns": 9115152
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 9114812,
+              "numerator": 22000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 9114812,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 9114812,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 4,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 30766,
+            "wall_ns": 30736
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 1,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 399173,
+            "wall_ns": 399292
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 399173,
+              "numerator": 1000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 399173,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 399173,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 5,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 49343,
+            "wall_ns": 49114
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 5,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 2182080,
+            "wall_ns": 2182308
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 2182080,
+              "numerator": 5000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 2182080,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 2182080,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 6,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 30095,
+            "wall_ns": 30055
+          },
+          "target_hits": 1
+        },
+        {
+          "actual_searches": 1,
+          "actual_setup_calls": 1,
+          "attempts": 29,
+          "exhausted_searches": 0,
+          "inclusive_cohort_total": {
+            "cpu_ns": 11885626,
+            "wall_ns": 11886116
+          },
+          "proof_materializations": 1,
+          "rate_diagnostic": {
+            "attempts_per_cpu_second": {
+              "denominator": 11885626,
+              "numerator": 29000000000
+            },
+            "hypothetical_required_work_per_cpu_second": {
+              "denominator": 11885626,
+              "numerator": 32000000000
+            },
+            "hypothetical_required_work_total": 32,
+            "recorded_relation_valid_hits": 1,
+            "recorded_relation_valid_hits_per_cpu_second": {
+              "denominator": 11885626,
+              "numerator": 1000000000
+            },
+            "valid_rates_suppressed_by_shard_alerts": false
+          },
+          "sample": 7,
+          "serialized_proof_bytes": 49188,
+          "setup": {
+            "cpu_ns": 30875,
+            "wall_ns": 30877
+          },
+          "target_hits": 1
+        }
+      ],
+      "preparation": "sparse",
+      "proof_materializations": 8,
+      "rate_diagnostic": {
+        "attempts_per_cpu_second": {
+          "denominator": 84151045,
+          "numerator": 221000000000
+        },
+        "hypothetical_required_work_per_cpu_second": {
+          "denominator": 84151045,
+          "numerator": 256000000000
+        },
+        "hypothetical_required_work_total": 256,
+        "recorded_relation_valid_hits": 8,
+        "recorded_relation_valid_hits_per_cpu_second": {
+          "denominator": 84151045,
+          "numerator": 8000000000
+        },
+        "valid_rates_suppressed_by_shard_alerts": false
+      },
+      "separate_attempt_evidence_total": {
+        "cpu_ns": 602063,
+        "wall_ns": 601315
+      },
+      "separate_product_mutation_total": {
+        "cpu_ns": 118125,
+        "wall_ns": 118739
+      },
+      "serialized_proof_bytes": 393504,
+      "setup_total": {
+        "cpu_ns": 258514,
+        "wall_ns": 257859
+      },
+      "strategy": "sparse-lazy-full-limb",
+      "target_hits": 8,
+      "verification": {
+        "legal": {
+          "production": {
+            "cpu_ns": 4665676,
+            "wall_ns": 4660843
+          },
+          "reference": {
+            "cpu_ns": 6817072,
+            "wall_ns": 6811743
+          }
+        },
+        "product-last": {
+          "production": {
+            "cpu_ns": 4515172,
+            "wall_ns": 4510414
+          },
+          "reference": {
+            "cpu_ns": 6524186,
+            "wall_ns": 6517950
+          }
+        }
+      }
+    }
+  ],
+  "w1_transcript_replayed": false,
+  "work_profile_qualified": false
+}

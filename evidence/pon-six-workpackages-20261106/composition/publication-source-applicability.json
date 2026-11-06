@@ -1,0 +1,33 @@
+{
+  "schema": "trnm-evidence-only-publication-scope-v1",
+  "tested_commit": "361825dd1f924770562705d7a68c78170f0375c3",
+  "tested_tree": "92f8fbdc5b722498ede9dd85040d4716aa6a182e",
+  "changed_paths": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "evidence/pon-six-workpackages-20261106/README.md",
+    "evidence/pon-six-workpackages-20261106/composition/README.md",
+    "evidence/pon-six-workpackages-20261106/composition/final-validation.json",
+    "evidence/pon-six-workpackages-20261106/composition/native-validation-index.json",
+    "evidence/pon-six-workpackages-20261106/composition/native-validation.tar.gz",
+    "evidence/pon-six-workpackages-20261106/composition/pr688-preserved-before-full-workpackages.txt",
+    "evidence/pon-six-workpackages-20261106/composition/publication-source-applicability.json",
+    "evidence/pon-six-workpackages-20261106/composition/source-validation-index.json",
+    "evidence/pon-six-workpackages-20261106/composition/source-validation.tar.gz"
+  ],
+  "changed_paths_only_evidence_and_sole_plan": true,
+  "unchanged_source_scope": [
+    "trillionnium/",
+    "scripts/",
+    "config/",
+    ".github/",
+    "PROJECT_BOUNDARY.json",
+    "PROJECT_ID",
+    "AGENTS.md"
+  ],
+  "unchanged_source_files": 1598,
+  "unchanged_source_manifest_sha256": "0ea5daba997c80cd06ded383d8377d7dd5ba060bca77f0244226137dd6c15002",
+  "all_selected_source_bytes_compared_to_tested_commit": true,
+  "not_a_reproducible_build_or_new_performance_measurement": true,
+  "six_workpackages_closed": 0,
+  "activation": false
+}
