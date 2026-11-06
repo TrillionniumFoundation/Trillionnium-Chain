@@ -476,6 +476,37 @@ RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
 ))
 NATIVE_REQUIRED_PATHS |= RECOVERY_RELEASE_REQUIRED_PATHS
+# Fixed source closure for the reviewed parent recovery and ordinary NPQ6 owner.
+# This extends source integrity only; it is not native or deployment qualification.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/recovery_request_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/proxy.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config/npq6.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/service.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/context_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery/delivery.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery/observations.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli/support.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli_feature_required.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli/fixture.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli/negative.rs",
+))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
