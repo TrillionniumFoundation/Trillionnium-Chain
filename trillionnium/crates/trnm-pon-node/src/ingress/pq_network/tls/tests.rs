@@ -411,6 +411,155 @@ fn tls_ca_hostname_and_local_identity_pins_refuse() {
     );
 }
 
+#[test]
+fn tls_local_server_certificate_constraints_refuse_before_serving() {
+    let fixture = Fixture::new();
+    let issuer = fixtures::key(61);
+    for (label, name, profile) in fixtures::local_server_refusal_cases() {
+        let certificate = fixtures::certificate_with_profile(
+            &fixture.server.key,
+            &issuer,
+            name,
+            "TRNM TLS fixture CA",
+            false,
+            91,
+            &profile,
+        );
+        // Signature and key checks succeed, isolating the missing local
+        // certificate constraints from a bad CA, wrong key or altered pin.
+        let identity =
+            PqTlsIdentity::new(certificate, fixture.server.key.clone(), fixture.ca.clone())
+                .unwrap();
+        let error = PqTlsServer::new(
+            fixture.policy_for_server_name(name),
+            fixture.server.signer(),
+            identity,
+        )
+        .err()
+        .unwrap_or_else(|| panic!("accepted {label}"));
+        assert_eq!(
+            error.to_string(),
+            "PQ_TLS_LOCAL_CERTIFICATE_PROFILE",
+            "{label}"
+        );
+    }
+}
+
+#[test]
+fn tls_local_client_certificate_time_purpose_and_root_leaf_refuse() {
+    use fixtures::CertificateProfile;
+    let fixture = Fixture::new();
+    let issuer = fixtures::key(61);
+    for (label, profile) in [
+        (
+            "expired",
+            CertificateProfile {
+                not_before: b"230101000000Z",
+                not_after: b"240101000000Z",
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "not yet valid",
+            CertificateProfile {
+                not_before: b"21200101000000Z",
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "server-only purpose",
+            CertificateProfile {
+                extended_key_usage: &[1],
+                ..CertificateProfile::default()
+            },
+        ),
+    ] {
+        let certificate = fixtures::certificate_with_profile(
+            &fixture.peer.key,
+            &issuer,
+            "peer",
+            "TRNM TLS fixture CA",
+            false,
+            92,
+            &profile,
+        );
+        let identity =
+            PqTlsIdentity::new(certificate, fixture.peer.key.clone(), fixture.ca.clone()).unwrap();
+        let error = PqTlsClient::new(fixture.policy.clone(), fixture.peer.signer(), identity)
+            .err()
+            .unwrap_or_else(|| panic!("accepted {label}"));
+        assert_eq!(
+            error.to_string(),
+            "PQ_TLS_LOCAL_CERTIFICATE_PROFILE",
+            "{label}"
+        );
+    }
+    // A trusted root is not a leaf: peer admission requires the same exact
+    // two-certificate chain even if its key was explicitly rostered.
+    let policy = Arc::new(
+        PqNetworkPolicy::new_tls13(
+            &fixture.settings,
+            &fixture.server.key.public_key_to_der().unwrap(),
+            1,
+            [issuer.public_key_to_der().unwrap()],
+            fixture.policy.tls_pins().unwrap().clone(),
+        )
+        .unwrap(),
+    );
+    let root = fixtures::Identity {
+        key: issuer,
+        certificate: fixture.ca.clone(),
+    };
+    let error = PqTlsClient::new(policy, root.signer(), root.tls(&fixture.ca))
+        .err()
+        .expect("root certificate cannot stand in for a client leaf");
+    assert_eq!(error.to_string(), "PQ_TLS_LOCAL_CERTIFICATE_PROFILE");
+}
+
+#[test]
+fn tls_local_role_specific_certificates_accept_without_client_hostname() {
+    use fixtures::CertificateProfile;
+    let fixture = Fixture::new();
+    let issuer = fixtures::key(61);
+    let server = fixtures::certificate_with_profile(
+        &fixture.server.key,
+        &issuer,
+        "server",
+        "TRNM TLS fixture CA",
+        false,
+        93,
+        &CertificateProfile {
+            extended_key_usage: &[1],
+            ..CertificateProfile::default()
+        },
+    );
+    assert!(PqTlsServer::new(
+        fixture.policy.clone(),
+        fixture.server.signer(),
+        PqTlsIdentity::new(server, fixture.server.key.clone(), fixture.ca.clone()).unwrap(),
+    )
+    .is_ok());
+    let client = fixtures::certificate_with_profile(
+        &fixture.peer.key,
+        &issuer,
+        "peer",
+        "TRNM TLS fixture CA",
+        false,
+        94,
+        &CertificateProfile {
+            dns_name: None,
+            extended_key_usage: &[2],
+            ..CertificateProfile::default()
+        },
+    );
+    assert!(PqTlsClient::new(
+        fixture.policy.clone(),
+        fixture.peer.signer(),
+        PqTlsIdentity::new(client, fixture.peer.key.clone(), fixture.ca.clone()).unwrap(),
+    )
+    .is_ok());
+}
+
 fn raw_handshake(
     address: SocketAddr,
     fixture: &Fixture,

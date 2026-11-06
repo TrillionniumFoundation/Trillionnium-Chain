@@ -99,6 +99,25 @@ impl Fixture {
         )
         .unwrap()
     }
+    pub fn policy_for_server_name(&self, name: &str) -> Arc<PqNetworkPolicy> {
+        Arc::new(
+            PqNetworkPolicy::new_tls13(
+                &self.settings,
+                &self.server.key.public_key_to_der().unwrap(),
+                1,
+                [
+                    self.peer.key.public_key_to_der().unwrap(),
+                    self.other.key.public_key_to_der().unwrap(),
+                ],
+                PqTlsPins::new(
+                    self.policy.tls_pins().unwrap().ca_certificate_sha256(),
+                    name.into(),
+                )
+                .unwrap(),
+            )
+            .unwrap(),
+        )
+    }
     #[allow(dead_code)] // Used by the lib fixture; shared ordinary-CLI tests launch the real binary.
     pub fn server(&self) -> PqTlsServer {
         PqTlsServer::new(
@@ -151,6 +170,102 @@ pub(super) fn certificate(
     ca: bool,
     serial: u8,
 ) -> X509 {
+    certificate_with_profile(
+        subject,
+        issuer,
+        subject_name,
+        issuer_name,
+        ca,
+        serial,
+        &CertificateProfile::default(),
+    )
+}
+
+#[derive(Clone, Copy)]
+pub(super) struct CertificateProfile {
+    pub dns_name: Option<&'static str>,
+    pub not_before: &'static [u8],
+    pub not_after: &'static [u8],
+    pub extended_key_usage: &'static [u8],
+}
+impl Default for CertificateProfile {
+    fn default() -> Self {
+        Self {
+            dns_name: Some("localhost"),
+            not_before: b"250101000000Z",
+            not_after: b"21250101000000Z",
+            extended_key_usage: &[1, 2],
+        }
+    }
+}
+
+// The library and actual binary must reject the same signed, correctly pinned
+// server certificates. The wildcard would match node.localhost if permitted;
+// CN-only certificates use the exact requested common name in both callers.
+pub(super) fn local_server_refusal_cases() -> [(&'static str, &'static str, CertificateProfile); 6]
+{
+    [
+        (
+            "wrong SAN",
+            "localhost",
+            CertificateProfile {
+                dns_name: Some("wrong.localhost"),
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "CN without SAN",
+            "localhost",
+            CertificateProfile {
+                dns_name: None,
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "wildcard SAN",
+            "node.localhost",
+            CertificateProfile {
+                dns_name: Some("*.localhost"),
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "expired",
+            "localhost",
+            CertificateProfile {
+                not_before: b"230101000000Z",
+                not_after: b"240101000000Z",
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "not yet valid",
+            "localhost",
+            CertificateProfile {
+                not_before: b"21200101000000Z",
+                ..CertificateProfile::default()
+            },
+        ),
+        (
+            "client-only purpose",
+            "localhost",
+            CertificateProfile {
+                extended_key_usage: &[2],
+                ..CertificateProfile::default()
+            },
+        ),
+    ]
+}
+
+pub(super) fn certificate_with_profile(
+    subject: &PKey<Private>,
+    issuer: &PKey<Private>,
+    subject_name: &str,
+    issuer_name: &str,
+    ca: bool,
+    serial: u8,
+    profile: &CertificateProfile,
+) -> X509 {
     // id-ml-dsa-65: 2.16.840.1.101.3.4.3.18, no algorithm parameters.
     let algorithm = sequence(&[der(6, &[0x60, 0x86, 0x48, 1, 0x65, 3, 4, 3, 0x12])]);
     let spki = subject.public_key_to_der().unwrap();
@@ -171,22 +286,32 @@ pub(super) fn certificate(
         extension(0x23, false, sequence(&[der(0x80, &aki[..20])])),
     ];
     if !ca {
-        extensions.push(extension(0x11, false, sequence(&[der(0x82, b"localhost")])));
+        if let Some(name) = profile.dns_name {
+            extensions.push(extension(
+                0x11,
+                false,
+                sequence(&[der(0x82, name.as_bytes())]),
+            ));
+        }
         extensions.push(extension(
             0x25,
             false,
-            sequence(&[
-                der(6, &[0x2b, 6, 1, 5, 5, 7, 3, 1]),
-                der(6, &[0x2b, 6, 1, 5, 5, 7, 3, 2]),
-            ]),
+            sequence(
+                &profile
+                    .extended_key_usage
+                    .iter()
+                    .map(|purpose| der(6, &[0x2b, 6, 1, 5, 5, 7, 3, *purpose]))
+                    .collect::<Vec<_>>(),
+            ),
         ));
     }
+    let time = |bytes: &[u8]| der(if bytes.len() == 13 { 0x17 } else { 0x18 }, bytes);
     let tbs = sequence(&[
         der(0xa0, &der(2, &[2])),
         der(2, &[serial]),
         algorithm.clone(),
         name(issuer_name),
-        sequence(&[der(0x17, b"250101000000Z"), der(0x18, b"21250101000000Z")]),
+        sequence(&[time(profile.not_before), time(profile.not_after)]),
         name(subject_name),
         spki,
         der(0xa3, &sequence(&extensions)),

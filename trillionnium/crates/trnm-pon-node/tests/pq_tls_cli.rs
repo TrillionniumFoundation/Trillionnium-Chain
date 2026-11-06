@@ -56,7 +56,7 @@ fn command(fixture: &Fixture, directory: &Path, listen: &str) -> Command {
         "peer_spkis":[hex::encode(fixture.peer.key.public_key_to_der().unwrap()),
             hex::encode(fixture.other.key.public_key_to_der().unwrap())],
         "ca_certificate_sha256":hex::encode(fixture.policy.tls_pins().unwrap().ca_certificate_sha256()),
-        "server_name":"localhost"})).unwrap();
+        "server_name":fixture.policy.tls_pins().unwrap().server_name()})).unwrap();
     put(&directory.join("config.json"), &config, false);
     put(
         &directory.join("server.pem"),
@@ -260,4 +260,41 @@ fn ordinary_binary_tls_nonloopback_refuses_before_config_and_owner() {
         .unwrap()
         .contains("PQ_NETWORK_LOOPBACK_ONLY"));
     assert!(!directory.path().join("node").exists());
+}
+
+#[test]
+fn ordinary_binary_local_certificate_constraints_refuse_before_owner_creation() {
+    let issuer = fixtures::key(61);
+    for (label, name, profile) in fixtures::local_server_refusal_cases() {
+        let mut fixture = Fixture::new();
+        fixture.policy = fixture.policy_for_server_name(name);
+        fixture.server.certificate = fixtures::certificate_with_profile(
+            &fixture.server.key,
+            &issuer,
+            name,
+            "TRNM TLS fixture CA",
+            false,
+            95,
+            &profile,
+        );
+        // This succeeds under the old signature/key-only constructor, so each
+        // negative reaches the actual binary's local certificate profile check.
+        fixture.server.tls(&fixture.ca);
+        let directory = tempfile::tempdir().unwrap();
+        let output = command(&fixture, directory.path(), "127.0.0.1:0")
+            .output()
+            .unwrap();
+        assert!(!output.status.success(), "accepted {label}");
+        assert!(
+            String::from_utf8(output.stderr)
+                .unwrap()
+                .contains("PQ_TLS_LOCAL_CERTIFICATE_PROFILE"),
+            "{label}"
+        );
+        assert!(output.stdout.is_empty(), "published readiness for {label}");
+        assert!(
+            !directory.path().join("node").exists(),
+            "created owner for {label}"
+        );
+    }
 }
