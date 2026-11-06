@@ -403,4 +403,227 @@ impl Files {
     pub fn recheck(&mut self) -> Result<()> {
         self.guarded(|s| s.recheck_inner())
     }
+    pub fn load(&mut self) -> Result<LoadedSnapshots> {
+        self.guarded(|s| {
+            let current = s.read(CURRENT, MAX_METADATA)?;
+            let prepared = s.read(PREPARED, MAX_METADATA)?;
+            s.current = current.as_ref().map(|v| v.1.clone());
+            s.prepared = prepared.as_ref().map(|v| v.1.clone());
+            s.prepared_file = if s.prepared.is_some() {
+                s.open(PREPARED)?
+            } else {
+                None
+            };
+            s.recheck_inner()?;
+            Ok((current.map(|v| v.0), prepared.map(|v| v.0)))
+        })
+    }
+    fn synchronized(&mut self, name: &str, file: File, expected: Observed) -> Result<Synced> {
+        ensure(
+            identity(&file.metadata()?) == expected.identity,
+            "PQ_RECOVERY_WRITE_CHANGED",
+        )?;
+        file.sync_all()?;
+        self.root.sync_all()?;
+        #[cfg(test)]
+        self.cut(Point::WriteSynced)?;
+        let held = file.metadata()?;
+        let named = self
+            .open(name)?
+            .ok_or("PQ_RECOVERY_WRITE_MISSING")?
+            .metadata()?;
+        regular(&held)?;
+        regular(&named)?;
+        ensure(
+            identity(&held) == expected.identity && identity(&named) == expected.identity,
+            "PQ_RECOVERY_WRITE_CHANGED",
+        )?;
+        self.check_owner()?;
+        Ok(Synced {
+            file,
+            observed: expected,
+        })
+    }
+    fn write_new(&mut self, name: &str, raw: &[u8]) -> Result<Synced> {
+        name_ok(name)?;
+        let fd = rfs::openat(
+            &self.root,
+            name,
+            OFlags::WRONLY
+                | OFlags::CREATE
+                | OFlags::EXCL
+                | OFlags::NOFOLLOW
+                | OFlags::NONBLOCK
+                | OFlags::CLOEXEC,
+            Mode::from_raw_mode(0o600),
+        )
+        .map_err(io)?;
+        let mut file = File::from(fd);
+        regular(&file.metadata()?)?;
+        file.write_all(raw)?;
+        let metadata = file.metadata()?;
+        ensure(
+            metadata.len() == raw.len() as u64,
+            "PQ_RECOVERY_WRITE_CHANGED",
+        )?;
+        self.synchronized(
+            name,
+            file,
+            Observed {
+                identity: identity(&metadata),
+                digest: digest(raw),
+            },
+        )
+    }
+    pub fn get(&mut self, blob: &Blob) -> Result<Vec<u8>> {
+        self.guarded(|s| {
+            ensure(blob.bytes as usize <= MAX_BLOB, "PQ_RECOVERY_BLOB_LIMIT")?;
+            let (raw, observed) = s
+                .read(&blob.name(), MAX_BLOB)?
+                .ok_or("PQ_RECOVERY_BLOB_MISSING")?;
+            ensure(Blob::of(&raw) == *blob, "PQ_RECOVERY_BLOB_DIGEST")?;
+            s.pin(blob.name(), observed)?;
+            Ok(raw)
+        })
+    }
+    pub fn put(&mut self, raw: &[u8]) -> Result<Blob> {
+        self.guarded(|s| {
+            ensure(raw.len() <= MAX_BLOB, "PQ_RECOVERY_BLOB_LIMIT")?;
+            s.recheck_inner()?;
+            let blob = Blob::of(raw);
+            let name = blob.name();
+            if let Some((existing, observed)) = s.read(&name, MAX_BLOB)? {
+                ensure(existing == raw, "PQ_RECOVERY_BLOB_DIGEST")?;
+                s.pin(name.clone(), observed)?;
+                s.pinned
+                    .get(&name)
+                    .ok_or("PQ_RECOVERY_BLOB_MISSING")?
+                    .0
+                    .sync_all()?;
+                s.root.sync_all()?;
+                s.recheck_inner()?;
+                return Ok(blob);
+            }
+            let candidate = format!("{}-pending", name);
+            let synced = if let Some((existing, observed)) = s.read(&candidate, MAX_BLOB)? {
+                ensure(existing == raw, "PQ_RECOVERY_BLOB_DIGEST")?;
+                let file = s.open(&candidate)?.ok_or("PQ_RECOVERY_BLOB_MISSING")?;
+                s.synchronized(&candidate, file, observed)?
+            } else {
+                s.write_new(&candidate, raw)?
+            };
+            let (prepared, readback) = s
+                .read(&candidate, MAX_BLOB)?
+                .ok_or("PQ_RECOVERY_BLOB_MISSING")?;
+            ensure(
+                prepared == raw
+                    && readback.identity == synced.observed.identity
+                    && readback.digest == synced.observed.digest,
+                "PQ_RECOVERY_BLOB_CHANGED",
+            )?;
+            s.recheck_inner()?;
+            rfs::renameat_with(
+                &s.root,
+                candidate.as_str(),
+                &s.root,
+                name.as_str(),
+                RenameFlags::NOREPLACE,
+            )
+            .map_err(io)?;
+            s.root.sync_all()?;
+            let (published, observed) =
+                s.read(&name, MAX_BLOB)?.ok_or("PQ_RECOVERY_BLOB_MISSING")?;
+            ensure(
+                published == raw
+                    && identity(&synced.file.metadata()?) == observed.identity
+                    && same_renamed_object(&synced.observed.identity, &observed.identity),
+                "PQ_RECOVERY_BLOB_CHANGED",
+            )?;
+            s.pin(name, observed)?;
+            s.recheck_inner()?;
+            #[cfg(test)]
+            s.cut(Point::BlobReady)?;
+            s.recheck_inner()?;
+            Ok(blob)
+        })
+    }
+    pub fn prepare(&mut self, raw: &[u8]) -> Result<()> {
+        self.guarded(|s| {
+            ensure(
+                raw.len() <= MAX_METADATA && s.prepared.is_none(),
+                "PQ_RECOVERY_PREPARED",
+            )?;
+            s.recheck_inner()?;
+            let synced = s.write_new(PREPARED, raw)?;
+            let (observed, readback) = s
+                .read(PREPARED, MAX_METADATA)?
+                .ok_or("PQ_RECOVERY_PREPARED")?;
+            ensure(
+                observed == raw
+                    && readback.identity == synced.observed.identity
+                    && readback.digest == synced.observed.digest,
+                "PQ_RECOVERY_PREPARED_CHANGED",
+            )?;
+            s.prepared_file = Some(synced.file);
+            s.prepared = Some(readback);
+            s.recheck_inner()?;
+            #[cfg(test)]
+            s.cut(Point::Prepared)?;
+            Ok(())
+        })
+    }
+    // The caller has fully audited every referenced blob and the exact bounded
+    // state transition. This publishes metadata only; it never sends a request.
+    pub fn publish(&mut self) -> Result<()> {
+        self.guarded(|s| {
+            let expected = s.prepared.clone().ok_or("PQ_RECOVERY_PREPARED")?;
+            s.recheck_inner()?;
+            s.prepared_file
+                .as_ref()
+                .ok_or("PQ_RECOVERY_PREPARED")?
+                .sync_all()?;
+            s.root.sync_all()?;
+            s.recheck_inner()?;
+            if s.current.is_none() {
+                rfs::renameat_with(&s.root, PREPARED, &s.root, CURRENT, RenameFlags::NOREPLACE)
+                    .map_err(io)?;
+            } else {
+                rfs::renameat(&s.root, PREPARED, &s.root, CURRENT).map_err(io)?;
+            }
+            s.root.sync_all()?;
+            #[cfg(test)]
+            s.cut(Point::Published)?;
+            let (_, current) = s
+                .read(CURRENT, MAX_METADATA)?
+                .ok_or("PQ_RECOVERY_SNAPSHOT_MISSING")?;
+            let held = s
+                .prepared_file
+                .as_ref()
+                .ok_or("PQ_RECOVERY_PREPARED")?
+                .metadata()?;
+            ensure(
+                identity(&held) == current.identity
+                    && same_renamed_object(&expected.identity, &current.identity)
+                    && current.digest == expected.digest
+                    && s.read(PREPARED, MAX_METADATA)?.is_none(),
+                "PQ_RECOVERY_PUBLISH_UNKNOWN",
+            )?;
+            s.check_owner()?;
+            s.current = Some(current);
+            s.prepared = None;
+            s.prepared_file = None;
+            s.recheck_inner()
+        })
+    }
+    #[cfg(test)]
+    fn cut(&mut self, point: Point) -> Result<()> {
+        if let Some(callback) = self.callback.as_mut() {
+            callback(point, &self.path)?;
+        }
+        if self.fail_at == Some(point) {
+            self.fail_at = None;
+            return Err(std::io::Error::other("injected post-fsync publication cut").into());
+        }
+        Ok(())
+    }
 }
