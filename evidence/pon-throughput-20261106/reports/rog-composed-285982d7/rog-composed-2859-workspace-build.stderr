@@ -1,0 +1,45 @@
+   Compiling shlex v1.3.0
+   Compiling serde_json v1.0.149
+   Compiling cc v1.2.59
+   Compiling sha2-asm v0.6.4
+   Compiling openssl-sys v0.9.117
+   Compiling sha2 v0.10.9
+   Compiling openssl v0.10.81
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-protocol)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-crypto-primitives)
+   Compiling libsqlite3-sys v0.37.0
+   Compiling rusqlite v0.39.0
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-pon-node)
+   Compiling trnm-types v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-types)
+   Compiling trnm-peer-lease v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-peer-lease)
+   Compiling utf8parse v0.2.2
+   Compiling anstyle-parse v1.0.0
+   Compiling anstyle v1.0.14
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling colorchoice v1.0.5
+   Compiling anstyle-query v1.1.5
+   Compiling anstream v1.0.0
+   Compiling strsim v0.11.1
+   Compiling heck v0.5.0
+   Compiling clap_lex v1.1.0
+   Compiling clap_builder v4.6.0
+   Compiling clap_derive v4.6.0
+   Compiling trnm-checkpoint-types v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-checkpoint-types)
+   Compiling clap v4.6.0
+   Compiling trnm-checkpoint-store v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-checkpoint-store)
+   Compiling wait-timeout v0.2.1
+   Compiling shell-escape v0.1.5
+   Compiling trnm-research-protocol v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-research-protocol)
+   Compiling trnm-audit-events v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-audit-events)
+   Compiling trnm-executor v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-executor)
+   Compiling trnm-bench v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-bench)
+   Compiling trnm-escrow-vault v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-escrow-vault)
+   Compiling trnm-governance-guard v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-governance-guard)
+   Compiling trnm-worker-agent v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-worker-agent)

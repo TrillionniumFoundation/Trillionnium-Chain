@@ -1,0 +1,391 @@
+{
+  "schema": "original-2859-campaign-business-summary-v1",
+  "source_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "run_id": 42185197057,
+  "job_id": 127783768291,
+  "artifact_id": 13487374156,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/job/127783768291",
+  "artifact_sha256": "311f2e16e8b35adda91727d6ed3a162054a9ec51bd291252827bc5019e357e9a",
+  "artifact_bytes": 65252256,
+  "github_conclusion": "failure",
+  "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "complete_success": false,
+  "finalization_failures": [],
+  "public_phase_placement": {
+    "attacker_processes_remain_in_original_controller_domain": true,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "original_3x3_workload_and_depletion_predicates_changed": false,
+    "profile": "fixed-public-phase-external-actors-v1",
+    "receiver_and_verifier_cpu_max": "25000 100000",
+    "receiver_and_verifier_memory_max": "2147483648"
+  },
+  "original_inputs": {
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "modes": [
+      "baseline",
+      "from-zero",
+      "late-product"
+    ],
+    "phase_seconds": 30,
+    "seed_blocks": 4,
+    "seed_transfers": 1024
+  },
+  "expected_resources": {
+    "cpu_max": "400000 100000",
+    "memory_max": "17179869184",
+    "nice": 10
+  },
+  "binary": {
+    "actual_compiler_artifact_profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-4d0d8e911d4e184a",
+    "build_separate_from_measured_campaign": true,
+    "bytes": 11752392,
+    "execution": "original cargo test command using the checked build artifact",
+    "retained": "public_v3_multiprocess.bin",
+    "sha256_after": "714dfb0217314a8c7941096acf765bf26a344d7c89085981af3fef3065734437",
+    "sha256_before": "714dfb0217314a8c7941096acf765bf26a344d7c89085981af3fef3065734437"
+  },
+  "source_records": [
+    {
+      "zip_entry": "run-1-source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "run-2-source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "run-3-source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "source-after.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "source-before-campaigns.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "zip_entry": "source-before.json",
+      "data": {
+        "base": null,
+        "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 992948649,
+        "tracked_entries": 10535,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "report_zip_entry": "run-1-raw/report.json",
+      "report_sha256": "3c3daa37eeb2584e82ea7551f3821c451bbb8463c697f722068c1632224a7d58",
+      "criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 2,
+          "confirmed_rounds": 1,
+          "unreached_planned_rounds": 1,
+          "first_confirmed_round_elapsed_ns": 21205759120,
+          "host_checkpoint_cost": {
+            "phase": "baseline",
+            "client_import_rows": 10,
+            "succeeded_import_rows": 9,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 5647974912,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 109200,
+            "host_checkpoint_thread_cpu_ns_known_sum": 4756666160,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 4759184898,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8421896757887015
+          }
+        },
+        {
+          "mode": "from-zero",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "from-zero",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2325900867,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 39664,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1963262044,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1964886804,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8440867243547917
+          }
+        },
+        {
+          "mode": "late-product",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "late-product",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2218572835,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 37623,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1871407024,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1873061847,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8435184071835983
+          }
+        }
+      ]
+    },
+    {
+      "report_zip_entry": "run-2-raw/report.json",
+      "report_sha256": "65ecc968b97a8a7f74e772789b6ebc870636d3c517dc2af96a8a0805ee67eb13",
+      "criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 2,
+          "confirmed_rounds": 1,
+          "unreached_planned_rounds": 1,
+          "first_confirmed_round_elapsed_ns": 21203138983,
+          "host_checkpoint_cost": {
+            "phase": "baseline",
+            "client_import_rows": 10,
+            "succeeded_import_rows": 9,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 5668332884,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 109354,
+            "host_checkpoint_thread_cpu_ns_known_sum": 4765493493,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 4768043379,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8407222353598103
+          }
+        },
+        {
+          "mode": "from-zero",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "from-zero",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2334412583,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 40373,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1971294297,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1972783074,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8444498249176889
+          }
+        },
+        {
+          "mode": "late-product",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "late-product",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2280010676,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 38870,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1918463006,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1919997814,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8414272030364827
+          }
+        }
+      ]
+    },
+    {
+      "report_zip_entry": "run-3-raw/report.json",
+      "report_sha256": "932e78ce291ab10613bb3e4b6fa9c5767a5087ad9bb1806cb15e01a498ec1b26",
+      "criteria_met": false,
+      "phases": [
+        {
+          "mode": "baseline",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 2,
+          "confirmed_rounds": 1,
+          "unreached_planned_rounds": 1,
+          "first_confirmed_round_elapsed_ns": 21305650019,
+          "host_checkpoint_cost": {
+            "phase": "baseline",
+            "client_import_rows": 10,
+            "succeeded_import_rows": 9,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 5646915408,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 108810,
+            "host_checkpoint_thread_cpu_ns_known_sum": 4747277110,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 4749953373,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8406850053525717
+          }
+        },
+        {
+          "mode": "from-zero",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "from-zero",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2273500360,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 38193,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1910833859,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1912364620,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8404810012873717
+          }
+        },
+        {
+          "mode": "late-product",
+          "criteria_met": false,
+          "planned_rounds": 3,
+          "recorded_rounds": 1,
+          "confirmed_rounds": 0,
+          "unreached_planned_rounds": 2,
+          "first_confirmed_round_elapsed_ns": null,
+          "host_checkpoint_cost": {
+            "phase": "late-product",
+            "client_import_rows": 5,
+            "succeeded_import_rows": 4,
+            "failed_import_rows": 1,
+            "caller_thread_cpu_ns_known_sum": 2287723503,
+            "caller_cpu_unknown_rows": 0,
+            "host_checkpoint_calls_started": 38961,
+            "host_checkpoint_thread_cpu_ns_known_sum": 1929386668,
+            "host_checkpoint_cpu_unknown_rows": 0,
+            "all_host_thread_cpu_ns_known_sum": 1930852249,
+            "host_checkpoint_fraction_of_caller_cpu": 0.8433653216701686
+          }
+        }
+      ]
+    }
+  ],
+  "hardware": {
+    "cpu_models": [
+      "AMD EPYC 9V74 80-Core Processor"
+    ],
+    "kernel": "7.0.0-1017-azure",
+    "logical_cpu_count": 4,
+    "machine": "x86_64",
+    "meminfo": "MemTotal:       16367520 kB\nMemFree:        11294780 kB\nMemAvailable:   14950132 kB\nBuffers:           71412 kB\nCached:          3824220 kB\nSwapCached:            0 kB\nActive:           728472 kB\nInactive:        3426256 kB\nActive(anon):     315212 kB\nInactive(anon):        0 kB\nActive(file):     413260 kB\nInactive(file):  3426256 kB\nUnevictable:       46728 kB\nMlocked:           43656 kB\nSwapTotal:       3145724 kB\nSwapFree:        3145724 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:            780872 kB\nWriteback:         12556 kB\nAnonPages:        305868 kB\nMapped:           330932 kB\nShmem:             47384 kB\nKReclaimable:     154736 kB\nSlab:             243420 kB\nSReclaimable:     154736 kB\nSUnreclaim:        88684 kB\nKernelStack:        4400 kB\nPageTables:         6428 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    11329484 kB\nCommitted_AS:    2094840 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:       42868 kB\nVmallocChunk:          0 kB\nPercpu:             2336 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    559104 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         1470464 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:             0 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      128128 kB\nDirectMap2M:     3012608 kB\nDirectMap1G:    15728640 kB\n",
+    "physical_resources_are_observations_not_reservations": true
+  },
+  "interpretation": "Original native attempt 1 only. Confirmations are finite development-depth observations, not public real-difficulty TPS; CPU nested intervals are not additive and cross-run/hardware timing is not isolated causal A/B."
+}

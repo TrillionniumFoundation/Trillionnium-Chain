@@ -1,0 +1,37 @@
+{
+  "schema": "trnm-lossless-gzip-to-xz-carriers-v1",
+  "created_utc": "2026-11-06T09:03:36.335726+00:00",
+  "prior_provenance_path": "reports/initial-assembly/archive-provenance.json",
+  "prior_provenance_sha256": "8ea703fb4f8e812ba8b91d12f5ac8d4107e3417123467c02347be3ab0c470f4d",
+  "compression_only_no_new_test_or_measurement": true,
+  "carriers": [
+    {
+      "path": "records/rog-default-evidence.tar.xz",
+      "size": 367708,
+      "sha256": "c3d175279630dfebd11f871eef01104767fa6de973935ab1e799ba5eeabd8567",
+      "original_gzip_path": "records/rog-default-evidence.tar.gz",
+      "original_gzip_size": 1408174,
+      "original_gzip_sha256": "3630f0830e1f3c13dde53b0d430b2a40ab0d0fe012b839c415f6c633bdbd61e4",
+      "uncompressed_tar_bytes": 11673600,
+      "uncompressed_tar_sha256": "c45c9f78919bd40af1169b6a36bf39d8ad38659cab9d8298621aa9c999c97a91",
+      "uncompressed_tar_byte_identical": true,
+      "regular_member_count": 1221,
+      "source_original_gzip_preserved": "/workspace/scratch/1eed767ad985/validation/rog-default-evidence.tar.gz",
+      "source_measurements_unchanged": true
+    },
+    {
+      "path": "records/rog-pq-and-counter-evidence.tar.xz",
+      "size": 520788,
+      "sha256": "86b7de54b4e33680e77433818dba346ab68defcf7921bac5be3fcc62e90057ad",
+      "original_gzip_path": "records/rog-pq-and-counter-evidence.tar.gz",
+      "original_gzip_size": 2470295,
+      "original_gzip_sha256": "65c648938556cc6ef8452e13e1c691ea0c380f27fa3fc147105e713fa3c7dbc2",
+      "uncompressed_tar_bytes": 25866240,
+      "uncompressed_tar_sha256": "c50ef62fc46986b15d359918941a391de91addf0669fa7c365481207b2d1ff47",
+      "uncompressed_tar_byte_identical": true,
+      "regular_member_count": 1973,
+      "source_original_gzip_preserved": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence.tar.gz",
+      "source_measurements_unchanged": true
+    }
+  ]
+}

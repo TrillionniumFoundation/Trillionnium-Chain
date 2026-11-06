@@ -1,0 +1,30 @@
+{
+  "schema": "trnm-evidence-finalization-attempt-v1",
+  "record_created_utc": "2026-11-06T10:07:27.879602+00:00",
+  "actual_process_exit": 1,
+  "observed_error": "AttributeError: 'str' object has no attribute 'open'",
+  "failing_statement": "with target.open('xb') as stream:",
+  "cause": "The local Markdown-link loop reused the receipt-path variable name target; the final receipt write failed after manifest/checksum generation.",
+  "manifest_and_checksums_written": true,
+  "terminal_receipt_written": false,
+  "original_script_and_generated_metadata": [
+    {
+      "retained_name": "script.py",
+      "bytes": 6787,
+      "sha256": "f22d50476fde0dca077c66c9f42d16a192fba310d0edf86fb700ffdd08fe492c"
+    },
+    {
+      "retained_name": "original-manifest.json",
+      "bytes": 40963,
+      "sha256": "761a1814465cde73730fff9849b1edcde0da8466f6d6c7201d4637ea33675ade"
+    },
+    {
+      "retained_name": "original-SHA256SUMS",
+      "bytes": 15251,
+      "sha256": "4e751aaf0d185568574d05434f13e8c7f7d70db03811a17a7a12b39eda916f4d"
+    }
+  ],
+  "frozen_payloads_reverified_unchanged": 125,
+  "native_execution_performed": false,
+  "scope": "Packaging collector failure only. Original native/source/CI/performance records and failures are unchanged."
+}

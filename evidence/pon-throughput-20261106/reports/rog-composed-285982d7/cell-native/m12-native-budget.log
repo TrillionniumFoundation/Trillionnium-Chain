@@ -1,0 +1,60 @@
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.184
+   Compiling zeroize v1.9.1
+   Compiling serde_core v1.0.228
+   Compiling rustix v1.1.4
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-task-kernel)
+   Compiling serde_json v1.0.149
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-service-settlement)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.28s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/trnm_service_settlement-b0d508d542df75ad)
+
+running 35 tests
+test native_budget::tests::all_six_lanes_bind_actual_row_shapes_and_payment_stays_an_owner_proof ... ok
+test native_budget::tests::an_in_window_anchor_cannot_override_its_cancelled_native_funding_row ... ok
+test native_budget::tests::closed_source_and_unknown_cost_cannot_be_reallocated_after_reorg ... ok
+test native_budget::tests::completed_effect_readback_rejects_stale_or_changed_owner_after_restart ... ok
+test native_budget::tests::completed_effect_readback_requires_exact_history_and_original_chain ... ok
+test native_budget::tests::composition_preflight_checks_late_funding_failure_without_changing_the_journal ... ok
+test native_budget::tests::composition_preflight_is_not_authority_and_exact_recovery_keeps_original_context ... ok
+test native_budget::tests::effect_window_refusal_does_not_consume_an_intent_or_change_its_exact_binding ... ok
+test native_budget::tests::effect_window_replay_survives_reorg_and_restart_only_for_reconciliation ... ok
+test native_budget::tests::expiry_charges_unknown_jobs_without_removing_pending_target_intents ... ok
+test native_budget::tests::global_operation_binding_cannot_be_reused_for_another_claim ... ok
+test native_budget::tests::journal_damage_foreign_store_and_policy_repin_are_fail_closed ... ok
+test native_budget::tests::journal_namespace_and_length_framing_have_an_exact_independent_vector ... ok
+test native_budget::tests::journal_replay_rechecks_the_recorded_window_against_its_own_anchor ... ok
+test native_budget::tests::journal_write_fence_committed_readback_requires_exact_prefix_and_allows_valid_append ... ok
+test native_budget::tests::journal_write_fence_does_not_hide_user_objects_behind_sql_like_underscore ... ok
+test native_budget::tests::journal_write_fence_rechecks_live_namespace_for_same_id_replay_and_report ... ok
+test native_budget::tests::journal_write_fence_refuses_successful_statements_that_rewind_the_intent ... ok
+test native_budget::tests::journal_write_fence_refuses_suppressed_intent_before_new_dispatch ... ok
+test native_budget::tests::journal_write_fence_same_id_replay_never_uses_an_old_memory_state ... ok
+test native_budget::tests::native_payment_readback_rechecks_exact_current_owner_and_never_changes_history ... ok
+test native_budget::tests::native_quota_payment_preserves_zero_credit_when_actual_fee_consumes_gross ... ok
+test native_budget::tests::native_reward_budget_and_claim_cannot_invent_fractional_maturation ... ok
+test native_budget::tests::native_reward_payment_requires_original_reward_identity_and_entire_amount ... ok
+test native_budget::tests::native_task_and_quota_cannot_reserve_an_impossible_zero_output ... ok
+test native_budget::tests::old_owner_generation_and_context_cannot_authorize_new_jobs ... ok
+test native_budget::tests::payment_requires_exact_source_beneficiary_operation_and_real_fee_split ... ok
+test native_budget::tests::release_claim_is_rechecked_before_the_first_external_intent ... ok
+test native_budget::tests::reorg_and_restart_preserve_pending_and_completed_effects_without_redispatch ... ok
+test native_budget::tests::reports_read_one_snapshot_while_another_handle_appends ... ok
+test native_budget::tests::reward_same_id_with_changed_sibling_fees_cannot_fund_new_physical_work ... ok
+test native_budget::tests::source_is_rechecked_before_each_new_effect_and_cannot_be_reassigned_across_lanes ... ok
+test native_budget::tests::task_existing_receipt_must_bind_subject_before_reservation_and_intent ... ok
+test native_budget::tests::two_store_handles_cannot_double_reserve_the_same_native_funds ... ok
+test native_budget::tests::unknown_cost_is_full_and_repair_dimensions_are_independently_bounded ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 2.11s
+

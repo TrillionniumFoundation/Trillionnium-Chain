@@ -1,0 +1,156 @@
+{
+  "schema": "trnm-history-sqlite-vm-counter-fix-v1",
+  "recorded_utc": "2026-11-06T07:44:33.885803+00:00",
+  "status": "TEST_ONLY_IMPLEMENTED_NOT_BUILT_OR_EXECUTED",
+  "parent_source": {
+    "head": "9e50ca8e1ce655ef2f4686bd0ab58120b30c4632",
+    "tree": "8d67d4812661393cfc9dba2474c279d8285d6dee"
+  },
+  "original_failure": {
+    "source_commit": "9e50ca8e1ce655ef2f4686bd0ab58120b30c4632",
+    "selected_control_index": 72,
+    "total_controls": 80,
+    "passed_controls": 79,
+    "native_exit": 101,
+    "reader_exit": 1,
+    "change": "reversed-ddl",
+    "actual_vm_runs": [
+      3,
+      3,
+      0,
+      3,
+      2
+    ],
+    "incorrect_old_expectation": [
+      2,
+      2,
+      0,
+      2,
+      1
+    ],
+    "raw_log_sha256": "387b580ce112895d615536f4ca2fd43dd3a25a08882d05b2558672db18e0f7cc",
+    "local_recovery_receipt": "/workspace/scratch/1eed767ad985/validation/history-counter-original-9e50/recovery-receipt.json",
+    "scope": "The failure was the first reversed-DDL VM count assertion. Later disable/hit assertions had not yet run in that iteration.",
+    "preservation": "Original logs and the original 79/80 result remain unchanged; future-source results cannot replace them."
+  },
+  "pinned_sqlite": {
+    "package": "libsqlite3-sys-0.37.0",
+    "version": "3.51.3",
+    "version_number": 3051003,
+    "source_id": "2026-03-13 10:38:09 737ae4a34738ffa0c3ff7f9bb18df914dd1cad163f28fd6b6e114a344fe6d618",
+    "amalgamation_bytes": 9390466,
+    "amalgamation_sha256": "9512509b1bccb7461f79bea8aad6280ae4699e925fa4804381b71f59e7efb0c5",
+    "path": "/workspace/scratch/1eed767ad985/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libsqlite3-sys-0.37.0/sqlite3/sqlite3.c",
+    "evidence": [
+      {
+        "claim": "pinned_version_and_source",
+        "first_line": 470,
+        "last_line": 472,
+        "text": "#define SQLITE_VERSION        \"3.51.3\"\n#define SQLITE_VERSION_NUMBER 3051003\n#define SQLITE_SOURCE_ID      \"2026-03-13 10:38:09 737ae4a34738ffa0c3ff7f9bb18df914dd1cad163f28fd6b6e114a344fe6d618\"\n"
+      },
+      {
+        "claim": "documented_counter_meaning",
+        "first_line": 9477,
+        "last_line": 9487,
+        "text": "** [[SQLITE_STMTSTATUS_REPREPARE]] <dt>SQLITE_STMTSTATUS_REPREPARE</dt>\n** <dd>^This is the number of times that the prepare statement has been\n** automatically regenerated due to schema changes or changes to\n** [bound parameters] that might affect the query plan.</dd>\n**\n** [[SQLITE_STMTSTATUS_RUN]] <dt>SQLITE_STMTSTATUS_RUN</dt>\n** <dd>^This is the number of times that the prepared statement has\n** been run.  A single \"run\" for the purposes of this counter is one\n** or more calls to [sqlite3_step()] followed by a call to [sqlite3_reset()].\n** The counter is incremented on the first [sqlite3_step()] call of each\n** cycle.</dd>\n"
+      },
+      {
+        "claim": "reprepare_preserves_counters_and_increments_reprepare",
+        "first_line": 86958,
+        "last_line": 86985,
+        "text": "** finalized.\n*/\nSQLITE_PRIVATE void sqlite3VdbeSwap(Vdbe *pA, Vdbe *pB){\n  Vdbe tmp, *pTmp, **ppTmp;\n  char *zTmp;\n  assert( pA->db==pB->db );\n  tmp = *pA;\n  *pA = *pB;\n  *pB = tmp;\n  pTmp = pA->pVNext;\n  pA->pVNext = pB->pVNext;\n  pB->pVNext = pTmp;\n  ppTmp = pA->ppVPrev;\n  pA->ppVPrev = pB->ppVPrev;\n  pB->ppVPrev = ppTmp;\n  zTmp = pA->zSql;\n  pA->zSql = pB->zSql;\n  pB->zSql = zTmp;\n#ifdef SQLITE_ENABLE_NORMALIZE\n  zTmp = pA->zNormSql;\n  pA->zNormSql = pB->zNormSql;\n  pB->zNormSql = zTmp;\n#endif\n  pB->expmask = pA->expmask;\n  pB->prepFlags = pA->prepFlags;\n  memcpy(pB->aCounter, pA->aCounter, sizeof(pB->aCounter));\n  pB->aCounter[SQLITE_STMTSTATUS_REPREPARE]++;\n}\n"
+      },
+      {
+        "claim": "already_expired_statement_can_refuse_before_op_init",
+        "first_line": 93173,
+        "last_line": 93195,
+        "text": "static int sqlite3Step(Vdbe *p){\n  sqlite3 *db;\n  int rc;\n\n  assert(p);\n  db = p->db;\n  if( p->eVdbeState!=VDBE_RUN_STATE ){\n    restart_step:\n    if( p->eVdbeState==VDBE_READY_STATE ){\n      if( p->expired ){\n        p->rc = SQLITE_SCHEMA;\n        rc = SQLITE_ERROR;\n        if( (p->prepFlags & SQLITE_PREPARE_SAVESQL)!=0 ){\n          /* If this statement was prepared using saved SQL and an\n          ** error has occurred, then return the error code in p->rc to the\n          ** caller. Set the error code in the database handle to the same\n          ** value.\n          */\n          rc = sqlite3VdbeTransferError(p);\n        }\n        goto end_of_step;\n      }\n\n"
+      },
+      {
+        "claim": "sqlite_step_reprepare_reset_retry_loop",
+        "first_line": 93325,
+        "last_line": 93359,
+        "text": "  sqlite3_mutex_enter(db->mutex);\n  while( (rc = sqlite3Step(v))==SQLITE_SCHEMA\n         && cnt++ < SQLITE_MAX_SCHEMA_RETRY ){\n    int savedPc = v->pc;\n    rc = sqlite3Reprepare(v);\n    if( rc!=SQLITE_OK ){\n      /* This case occurs after failing to recompile an sql statement.\n      ** The error message from the SQL compiler has already been loaded\n      ** into the database handle. This block copies the error message\n      ** from the database handle into the statement and sets the statement\n      ** program counter to 0 to ensure that when the statement is\n      ** finalized or reset the parser error message is available via\n      ** sqlite3_errmsg() and sqlite3_errcode().\n      */\n      const char *zErr = (const char *)sqlite3_value_text(db->pErr);\n      sqlite3DbFree(db, v->zErrMsg);\n      if( !db->mallocFailed ){\n        v->zErrMsg = sqlite3DbStrDup(db, zErr);\n        v->rc = rc = sqlite3ApiExit(db, rc);\n      } else {\n        v->zErrMsg = 0;\n        v->rc = rc = SQLITE_NOMEM_BKPT;\n      }\n      break;\n    }\n    sqlite3_reset(pStmt);\n    if( savedPc>=0 ){\n      /* Setting minWriteFileFormat to 254 is a signal to the OP_Init and\n      ** OP_Trace opcodes to *not* perform SQLITE_TRACE_STMT because it has\n      ** already been done once on a prior invocation that failed due to\n      ** SQLITE_SCHEMA.   tag-20220401a  */\n      v->minWriteFileFormat = 254;\n    }\n    assert( v->expired==0 );\n  }\n"
+      },
+      {
+        "claim": "op_transaction_detects_schema_change",
+        "first_line": 99471,
+        "last_line": 99506,
+        "text": "  if( rc==SQLITE_OK\n   && pOp->p5\n   && (iMeta!=pOp->p3 || pDb->pSchema->iGeneration!=pOp->p4.i)\n  ){\n    /*\n    ** IMPLEMENTATION-OF: R-03189-51135 As each SQL statement runs, the schema\n    ** version is checked to ensure that the schema has not changed since the\n    ** SQL statement was prepared.\n    */\n    sqlite3DbFree(db, p->zErrMsg);\n    p->zErrMsg = sqlite3DbStrDup(db, \"database schema has changed\");\n    /* If the schema-cookie from the database file matches the cookie\n    ** stored with the in-memory representation of the schema, do\n    ** not reload the schema from the database file.\n    **\n    ** If virtual-tables are in use, this is not just an optimization.\n    ** Often, v-tables store their data in other SQLite tables, which\n    ** are queried from within xNext() and other v-table methods using\n    ** prepared queries. If such a query is out-of-date, we do not want to\n    ** discard the database schema, as the user code implementing the\n    ** v-table would have to be ready for the sqlite3_vtab structure itself\n    ** to be invalidated whenever sqlite3_step() is called from within\n    ** a v-table method.\n    */\n    if( db->aDb[pOp->p1].pSchema->schema_cookie!=iMeta ){\n      sqlite3ResetOneSchema(db, pOp->p1);\n    }\n    p->expired = 1;\n    rc = SQLITE_SCHEMA;\n\n    /* Set changeCntOn to 0 to prevent the value returned by sqlite3_changes()\n    ** from being modified in sqlite3VdbeHalt(). If this statement is\n    ** reprepared, changeCntOn will be set again. */\n    p->changeCntOn = 0;\n  }\n  if( rc ) goto abort_due_to_error;\n"
+      },
+      {
+        "claim": "op_init_execution_increments_run",
+        "first_line": 104295,
+        "last_line": 104364,
+        "text": "case OP_Init: {          /* jump0 */\n  int i;\n#ifndef SQLITE_OMIT_TRACE\n  char *zTrace;\n#endif\n\n  /* If the P4 argument is not NULL, then it must be an SQL comment string.\n  ** The \"--\" string is broken up to prevent false-positives with srcck1.c.\n  **\n  ** This assert() provides evidence for:\n  ** EVIDENCE-OF: R-50676-09860 The callback can compute the same text that\n  ** would have been returned by the legacy sqlite3_trace() interface by\n  ** using the X argument when X begins with \"--\" and invoking\n  ** sqlite3_expanded_sql(P) otherwise.\n  */\n  assert( pOp->p4.z==0 || strncmp(pOp->p4.z, \"-\" \"- \", 3)==0 );\n\n  /* OP_Init is always instruction 0 */\n  assert( pOp==p->aOp || pOp->opcode==OP_Trace );\n\n#ifndef SQLITE_OMIT_TRACE\n  if( (db->mTrace & (SQLITE_TRACE_STMT|SQLITE_TRACE_LEGACY))!=0\n   && p->minWriteFileFormat!=254  /* tag-20220401a */\n   && (zTrace = (pOp->p4.z ? pOp->p4.z : p->zSql))!=0\n  ){\n#ifndef SQLITE_OMIT_DEPRECATED\n    if( db->mTrace & SQLITE_TRACE_LEGACY ){\n      char *z = sqlite3VdbeExpandSql(p, zTrace);\n      db->trace.xLegacy(db->pTraceArg, z);\n      sqlite3_free(z);\n    }else\n#endif\n    if( db->nVdbeExec>1 ){\n      char *z = sqlite3MPrintf(db, \"-- %s\", zTrace);\n      (void)db->trace.xV2(SQLITE_TRACE_STMT, db->pTraceArg, p, z);\n      sqlite3DbFree(db, z);\n    }else{\n      (void)db->trace.xV2(SQLITE_TRACE_STMT, db->pTraceArg, p, zTrace);\n    }\n  }\n#ifdef SQLITE_USE_FCNTL_TRACE\n  zTrace = (pOp->p4.z ? pOp->p4.z : p->zSql);\n  if( zTrace ){\n    int j;\n    for(j=0; j<db->nDb; j++){\n      if( DbMaskTest(p->btreeMask, j)==0 ) continue;\n      sqlite3_file_control(db, db->aDb[j].zDbSName, SQLITE_FCNTL_TRACE, zTrace);\n    }\n  }\n#endif /* SQLITE_USE_FCNTL_TRACE */\n#ifdef SQLITE_DEBUG\n  if( (db->flags & SQLITE_SqlTrace)!=0\n   && (zTrace = (pOp->p4.z ? pOp->p4.z : p->zSql))!=0\n  ){\n    sqlite3DebugPrintf(\"SQL-trace: %s\\n\", zTrace);\n  }\n#endif /* SQLITE_DEBUG */\n#endif /* SQLITE_OMIT_TRACE */\n  assert( pOp->p2>0 );\n  if( pOp->p1>=sqlite3GlobalConfig.iOnceResetThreshold ){\n    if( pOp->opcode==OP_Trace ) break;\n    for(i=1; i<p->nOp; i++){\n      if( p->aOp[i].opcode==OP_Once ) p->aOp[i].p1 = 0;\n    }\n    pOp->p1 = 0;\n  }\n  pOp->p1++;\n  p->aCounter[SQLITE_STMTSTATUS_RUN]++;\n  goto jump_to_p2;\n}\n"
+      },
+      {
+        "claim": "pragma_flag_changes_at_prepare_but_expire_is_an_opcode",
+        "first_line": 143744,
+        "last_line": 143785,
+        "text": "  case PragTyp_FLAG: {\n    if( zRight==0 ){\n      setPragmaResultColumnNames(v, pPragma);\n      returnSingleInt(v, (db->flags & pPragma->iArg)!=0 );\n    }else{\n      u64 mask = pPragma->iArg;    /* Mask of bits to set or clear. */\n      if( db->autoCommit==0 ){\n        /* Foreign key support may not be enabled or disabled while not\n        ** in auto-commit mode.  */\n        mask &= ~(SQLITE_ForeignKeys);\n      }\n\n      if( sqlite3GetBoolean(zRight, 0) ){\n        if( (mask & SQLITE_WriteSchema)==0\n         || (db->flags & SQLITE_Defensive)==0\n        ){\n          db->flags |= mask;\n        }\n      }else{\n        db->flags &= ~mask;\n        if( mask==SQLITE_DeferFKs ){\n          db->nDeferredImmCons = 0;\n          db->nDeferredCons = 0;\n        }\n        if( (mask & SQLITE_WriteSchema)!=0\n         && sqlite3_stricmp(zRight, \"reset\")==0\n        ){\n          /* IMP: R-60817-01178 If the argument is \"RESET\" then schema\n          ** writing is disabled (as with \"PRAGMA writable_schema=OFF\") and,\n          ** in addition, the schema is reloaded. */\n          sqlite3ResetAllSchemasOfConnection(db);\n        }\n      }\n\n      /* Many of the flag-pragmas modify the code generated by the SQL\n      ** compiler (eg. count_changes). So add an opcode to expire all\n      ** compiled SQL statements after modifying a pragma value.\n      */\n      sqlite3VdbeAddOp0(v, OP_Expire);\n      setAllPagerFlags(db);\n    }\n    break;\n"
+      }
+    ]
+  },
+  "diagnosis": [
+    "OP_Init increments SQLITE_STMTSTATUS_RUN for each VDBE execution attempt.",
+    "After CREATE/DROP, a retained VM can begin, then OP_Transaction detects a changed schema cookie/generation and returns SQLITE_SCHEMA.",
+    "sqlite3_step automatically reprepares, resets and retries the same statement. sqlite3VdbeSwap retains counters and increments SQLITE_STMTSTATUS_REPREPARE, so the first attempted VM run is not erased.",
+    "The original test incorrectly equated RUN with application query calls. The observed extra counts occur on the four used statements, while the unused native-parent statement remains zero.",
+    "A blanket RUN minus REPREPARE normalization would be wrong: sqlite3Step can detect an already expired statement before OP_Init, while still repreparing it. The fix preserves raw counters and exact case/pass expectations."
+  ],
+  "test_fix": {
+    "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_tests.rs",
+    "old_git_blob": "d77d7b8f822293080a9c782d7e47730cd22ca190",
+    "new_git_blob": "80b35db4e9b26256e5aebbd1ddc26c15360fa792",
+    "new_sha256": "8140b17233097d4eb78b9de0314307a829004af9fbf5e624ed4dc3317ebd36aa",
+    "patch_path": "/workspace/scratch/1eed767ad985/validation/history-sqlite-reprepare-counter-fix.patch",
+    "patch_sha256": "58ff0a7031d8d26462d003a19cad08d957181c5235c56b6a87ff926340193147",
+    "same_control_names_and_counts": true,
+    "runtime_changed": false,
+    "original_invalidation_assertions": "retained: history_hits == 0, histories empty, enabled == false; now before the VM count assertion",
+    "independent_full_fallback_checks": "Each pass matches progress callbacks of the original no-scope full verifier and increments actual account_graph stage calls by exactly one.",
+    "expected_cold_reversed_ddl_NOT_YET_EXECUTED": {
+      "runs": [
+        3,
+        3,
+        0,
+        3,
+        2
+      ],
+      "reprepares": [
+        1,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    "expected_second_pass_and_other_cases_NOT_YET_EXECUTED": {
+      "runs": [
+        2,
+        2,
+        0,
+        2,
+        1
+      ],
+      "reprepares": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "positive_cost_observation": "Original RUN assertions remain exact; REPREPARE is observed and separately checked. Output labels RUN as VM attempts, not logical-query/row-read counts or throughput."
+  },
+  "verification": {
+    "preflight": "PASS",
+    "rustfmt": "Rust1.95 file-only PASS",
+    "git_diff_check": "PASS",
+    "build": "NOT_RUN",
+    "native_execution": "NOT_RUN",
+    "commit": "NOT_CREATED",
+    "corpus_pins": "NOT_MODIFIED"
+  }
+}

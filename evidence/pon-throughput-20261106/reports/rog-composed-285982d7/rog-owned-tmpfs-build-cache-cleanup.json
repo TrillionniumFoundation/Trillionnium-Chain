@@ -1,0 +1,27 @@
+{
+  "path": "/tmp/chain-throughput-20261106-1eed-target-corrected-1986",
+  "kind": "owned temporary Cargo target only",
+  "reason": "release tmpfs pages after all users of this old target reached recorded terminal states; ongoing component build uses a separate ext4 target",
+  "preserved_sources_and_evidence": "all repositories, Cargo cache, provider, original build/test logs and evidence archives retained",
+  "known_terminal_consumers": [
+    "1a1afd9d19b-fc05-6c2e succeeded",
+    "1a1afde7c7b-fc05-6c56 succeeded",
+    "1a1afe5a464-fc05-6c8e cancelled",
+    "1a1aff0e037-fc05-6ced cancelled"
+  ],
+  "allocated_bytes_before": 17532547072,
+  "tmpfs_before": {
+    "total": 64019808256,
+    "used": 52247932928,
+    "free": 11771875328
+  },
+  "started_utc": "2026-11-06T08:33:10.374292+00:00",
+  "evidence_caveat": "temporary executable bytes are removed; measured identities, source-bound logs and reproduction commands remain. No rerun/performance sample is added.",
+  "removed": true,
+  "tmpfs_after": {
+    "total": 64019808256,
+    "used": 34715385856,
+    "free": 29304422400
+  },
+  "finished_utc": "2026-11-06T08:33:11.488358+00:00"
+}

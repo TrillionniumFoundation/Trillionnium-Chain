@@ -7793,3 +7793,74 @@ These are component checks, not all-workspace unit-test or original-resource
 acceptance. The separate Hepta V13 publication is
 `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
 HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.
+
+
+### 2026-11-06 throughput continuation: final source and unchanged service vetoes
+
+The throughput continuation in [draft PR #736](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/736)
+retains both concurrent integration histories. Its final implementation is
+`7586d3e209b38246402e34cf73a27aa9b907bc9c`, tree
+`fc0e51b1235470b972de41f2d677f6d5948f4868`, with ordered parents
+`285982d78a4f62a064841cb0f106d18c865e19c5` and
+`56897f125df27994efa1dda935f2c62eceb36de9`.
+The [source-specific execution record](../../evidence/pon-throughput-20261106/README.md)
+keeps the original b173 and 9e50 failures, the corrected 1986 test, completed
+285 CI/native observations and the separately executed 7586 source. A later
+evidence-only commit does not change those measured identities.
+
+The Workspace and PQ roster errors are repaired without dropping required
+controls. The Workspace selector retains the original 25 post-write controls,
+adds 12 history and eight Host controls, and executes 80 selected controls;
+PQ retains all 52 required controls. Actual workflow-builder fixtures reject
+stale, missing, duplicate, extra and empty registries. The old b173 registry
+remains unchanged; the current-builder compatibility fixture explicitly uses
+20 synthetic Rust declarations and grants no native-execution credit.
+
+AuthenticatedV1 now reuses only a fully completed history suffix for four
+nominated records inside the original no-new-write writer scope. Connection,
+schema, immutable settings and record identity remain bound; errors and
+cancellation seal no receipt, and writes disable reuse or refuse publication.
+Each new scope still pays its first full history walk, while ordinary queries,
+cold recovery and full-state/non-account work retain their existing costs.
+The Host change holds an identity-checked parent directory and freshly opens
+and reads all five limits on every check, with absolute identity/permission
+fences before and after. It caches neither limit bytes nor a successful verdict.
+
+Fresh checks on exact committed 7586 pass 334 Python controls across 11 suites,
+the 593-pin/512-path corpus and 1,271-entry inventory, formatting, Markdown and
+all three offline locked Cargo graphs. Native execution passes 80 selected
+controls, the complete Node library with **1,177 passed / 0 failed / 32 ignored**,
+52 required PQ controls, 387 original M09 all-target controls, ten M09 doc
+controls and 35 selected M12 budget controls (11 filtered), plus strict workspace,
+all-target, all-feature Clippy with `-D warnings`. The independent original
+release/default sampler passes all nine named controls; its SQLite selected
+release-unit binding remains **UNKNOWN**, and that run grants no SQLite
+boundary qualification. Counts from overlapping commands are not summed.
+
+The latest completed original CI is bound to 285: all four Workspace matrices
+execute 80/80 controls, all 16 PQ jobs pass, and all four large-state CPU
+matrices pass. The three original campaigns still fail: first no-attack
+confirmations take 21.205759120 / 21.203138983 / 21.305650019 seconds and neither
+attack phase confirms a transaction. Original F0 still completes **0/6 planned
+slots within four seconds**; its only baseline confirmation is late at
+24.901798841 seconds from the scheduled slot. The original quarter-CPU,
+2-GiB, no-swap and 256-PID public envelope and all failure denominators remain.
+
+The single declared release/default-feature A/B/B/A experiment compares restored
+baseline `a93f906d` (tree `51fd2b87`) with candidate `9e50ca8e`. It retains all
+four original observations, with two samples per arm. Mean legal-call CPU is
+2.578% higher and mean refusal
+CPU is 1.918% lower in the candidate; this demonstrates no end-to-end gain or
+stable causal regression. The temporary-file Host comparison's approximately
+1.015% CPU reduction does not qualify real cgroup kernfs or the original F0.
+Interrupted, cancelled, failed and unknown attempts are preserved with their
+original source, profile, command and storage observations.
+
+**Production TPS remains unestablished; performance and the six workpackages
+remain HOLD / NO-GO.** Continue carrying existing Growth/COW/witness work into
+ordinary entry, query, recovery and PQ configuration; prepare stateless work
+before deterministic state commit; isolate model payload resources from
+consensus control; measure honest completion under hostile/cold/recovery load;
+and report confirmation TPS, useful-work rate, Cell bandwidth, model-load
+latency and quality per actual cost separately. Component success does not
+close the original service, full-Cell, economic, task-supply or adoption gates.

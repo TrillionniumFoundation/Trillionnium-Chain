@@ -1,0 +1,9 @@
+{
+  "original_attempt": "rog-composed-2859-component-build.json",
+  "observed_exit_code": 101,
+  "diagnostic": "libsqlite3-sys C compilation: error writing to /tmp/ccEnXmLK.s: Disk quota exceeded",
+  "previous_target_filesystem": "ext4, but C compiler temporary assembly still used /tmp tmpfs",
+  "remediation": "explicit TMPDIR in owned ext4 workspace as well as CARGO_TARGET_DIR; no source, Cargo profile, compiler flags or resource quota changes",
+  "new_tmpdir": "/home/qian-qi/work/chain-throughput-20261106-1eed/compiler-temp-2859",
+  "recorded_utc": "2026-11-06T08:39:15.403228+00:00"
+}

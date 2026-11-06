@@ -1,0 +1,14 @@
+{
+  "schema": "compact-evidence-final-readback-v1",
+  "snapshot_utc": "2026-11-06 08:13:54 UTC",
+  "digest_manifest_file_count": 3255,
+  "all_digest_manifest_files_match": true,
+  "zip_crc_all_entries": true,
+  "no_raw_archives_or_ELF_in_bundle": true,
+  "artifact_metadata_count": 48,
+  "actual_downloaded_archives_verified": 35,
+  "all_original_five_runs_terminal": true,
+  "archive_path": "native-performance/final-evidence-20261106T081354Z.zip",
+  "archive_bytes": 5191414,
+  "archive_sha256": "a109fc9f1941f66e135eba717e61144a6e4ad0aa4cc888ee3d6d4f5e16c06a35"
+}

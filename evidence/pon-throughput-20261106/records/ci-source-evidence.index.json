@@ -1,0 +1,589 @@
+{
+  "archive": {
+    "absolute_members": false,
+    "bytes": 576072,
+    "gzip_mtime": 0,
+    "gzip_original_filename": null,
+    "original_regular_files": 301,
+    "path": "ci-source-evidence.tar.gz",
+    "regular_members": 304,
+    "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199",
+    "symlinks_or_hardlinks": false,
+    "tar_mtime_uid_gid": 0
+  },
+  "combined_unique_test_total": null,
+  "count_policy": "Counts belong to each recorded source/observation. They overlap across revisions and are not added as unique controls. Metadata-only retries add no test credit.",
+  "existing_manifest_verification": {
+    "archive_member": "validation/ci-source-evidence.existing-manifests.json",
+    "path": "ci-source-evidence.existing-manifests.json",
+    "result": "PASS",
+    "sha256": "198a26ce8fb73847dc291d25f3fce529d2b687a34a4527d059c1d7292c505f8e"
+  },
+  "extraction": "Extract using a tar reader that rejects absolute/traversal/link members; members preserve the original workspace-relative ci-validation/ and validation/ paths. The adjacent index refers to archive members, not the old absolute runtime paths inside retained raw receipts.",
+  "final_truth": {
+    "complete_repository_truth_lane_claimed": false,
+    "native_build_test_clippy_executed_by_these_records": false,
+    "production_or_slo_qualification_claimed": false,
+    "result": "PASS",
+    "source_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "summary_archive_member": "ci-validation/composed-source-285982d7/final-summary.json",
+    "summary_sha256": "5182a9be7478c96aee55a8f4114e730f70dd80bec11633ee6d5222637bc2abb9"
+  },
+  "manifest": {
+    "archive_member": "validation/ci-source-evidence.manifest.json",
+    "path": "ci-source-evidence.manifest.json",
+    "sha256": "3654e386dc5e34ca2218b8cf9ac3b7b76020f66cc6334e653437847b7dbcd35e"
+  },
+  "observations": [
+    {
+      "controls": {
+        "ci_contract": {
+          "errors": 3,
+          "exit": 1,
+          "run": 105,
+          "successful": 102
+        },
+        "source_integrity": {
+          "exit": 0,
+          "run": 43,
+          "terminal": "OK"
+        }
+      },
+      "evidence_directories": [
+        "ci-validation/final-source"
+      ],
+      "graph": {
+        "failed_attempt_records": [
+          {
+            "archive_member": "validation/candidate-cargo-metadata-attempt1.json",
+            "bytes": 498,
+            "sha256": "73e99342b439dfd838f533fd9d89c994b0fe374f10ca67d79bb1925a2acb2a01"
+          },
+          {
+            "archive_member": "validation/candidate-cargo-metadata-wrapper-failure.json",
+            "bytes": 349,
+            "sha256": "f8d8db790c22a66bc9e01873d8253a8e9c90872d01ba56bcb46a0cabfd18259b"
+          }
+        ],
+        "metadata": {
+          "archive_member": "validation/candidate-cargo-metadata.json",
+          "bytes": 849325,
+          "sha256": "9baebde795272ed0acb83678cf5dc746e34e0932c44f7abc231139dccfc4de74"
+        },
+        "packages": 180,
+        "receipt": {
+          "archive_member": "validation/candidate-cargo-graph.json",
+          "bytes": 757,
+          "sha256": "7d320cbbb0764326aeda9a4e2acff9b23011f18310edb108914c5334252cbc57"
+        },
+        "result": "metadata_exit_0_wrapper_recovered",
+        "scope": "retained exact source attribution in the old metadata receipt; not new execution during packaging",
+        "source_commit": "5eb05ee0d14e3d1a59975154c3800b94c05fd7e1",
+        "workspace_members": 26
+      },
+      "id": "initial-committed-source",
+      "jobs": {
+        "ci-contract": {
+          "exit": 1,
+          "log_bytes": 21606,
+          "log_sha256": "daed817948b6865993d80f35141f3c155015220dbe87d8bca9ae92d1e3ce25a4",
+          "raw_log_present": true,
+          "status": "completed"
+        },
+        "pq-provider-ci-controls": {
+          "exit": null,
+          "raw_log_present": false,
+          "status": "not-observed"
+        },
+        "project-boundary-negatives": {
+          "exit": null,
+          "raw_log_present": false,
+          "status": "not-observed"
+        },
+        "public-host-ci-controls": {
+          "exit": null,
+          "raw_log_present": false,
+          "status": "not-observed"
+        },
+        "repository-and-markdown-links": {
+          "exit": 2,
+          "log_bytes": 289,
+          "log_sha256": "3b273027ee6b4c0950b249917c8d7ef5548353531fb3c1dad6dc1365c3e83a67",
+          "raw_log_present": true,
+          "status": "completed"
+        },
+        "repository-negative-controls": {
+          "exit": null,
+          "log_bytes": 3580,
+          "log_sha256": "146dc0f016b8165b270283ff5393f0a9546713bb2c5bc69d7d22bfb45f3148f3",
+          "raw_log_present": true,
+          "status": "interrupted-outcome-unknown"
+        },
+        "source-integrity-negatives": {
+          "exit": 0,
+          "log_bytes": 6898,
+          "log_sha256": "25df05161a7c64673330718066304303666c7617388e04851671766d43d9c4de",
+          "raw_log_present": true,
+          "status": "completed"
+        },
+        "source-inventory": {
+          "exit": null,
+          "raw_log_present": false,
+          "status": "not-observed"
+        }
+      },
+      "raw_records": [
+        {
+          "archive_member": "ci-validation/final-source/recovered-status.json",
+          "bytes": 1613,
+          "sha256": "8ed8e1a4464db12bb21e63b23d8a81db1fceeaf80338c19314ebe9506800c7e9"
+        },
+        {
+          "archive_member": "ci-validation/final-source/ci-contract.log",
+          "bytes": 21606,
+          "sha256": "daed817948b6865993d80f35141f3c155015220dbe87d8bca9ae92d1e3ce25a4"
+        },
+        {
+          "archive_member": "ci-validation/final-source/source-integrity-negatives.log",
+          "bytes": 6898,
+          "sha256": "25df05161a7c64673330718066304303666c7617388e04851671766d43d9c4de"
+        },
+        {
+          "archive_member": "ci-validation/final-source/repository-and-markdown-links.log",
+          "bytes": 289,
+          "sha256": "3b273027ee6b4c0950b249917c8d7ef5548353531fb3c1dad6dc1365c3e83a67"
+        },
+        {
+          "archive_member": "ci-validation/final-source/repository-negative-controls.log",
+          "bytes": 3580,
+          "sha256": "146dc0f016b8165b270283ff5393f0a9546713bb2c5bc69d7d22bfb45f3148f3"
+        },
+        {
+          "archive_member": "ci-validation/final-source/source-before.json",
+          "bytes": 422,
+          "sha256": "c9c124a31710e4b32c22857e0cb729363677f1239cf12c8ed26b7fbdded7195d"
+        },
+        {
+          "archive_member": "ci-validation/final-source/source-after-recovered.json",
+          "bytes": 422,
+          "sha256": "c9c124a31710e4b32c22857e0cb729363677f1239cf12c8ed26b7fbdded7195d"
+        }
+      ],
+      "result": "FAILED_AND_INTERRUPTED",
+      "source_before_equals_recovered_after": true,
+      "source_commit": "5eb05ee0d14e3d1a59975154c3800b94c05fd7e1",
+      "source_identity_note": "The after receipt was captured after executor recovery. An interrupted job without a terminal exit remains unknown; no historical completion is invented.",
+      "source_kind": "committed",
+      "source_tree": "523345bbbf2e1fbfe85cf6949297a3774dd06d50"
+    },
+    {
+      "attribution_note": "The retained tree is the base commit tree, not a verified complete working-tree identity. This is not a separate committed-source qualification.",
+      "base_commit": "5eb05ee0d14e3d1a59975154c3800b94c05fd7e1",
+      "base_commit_tree": "523345bbbf2e1fbfe85cf6949297a3774dd06d50",
+      "controls": {
+        "focused": {
+          "exit": 0,
+          "run": 3,
+          "terminal": "OK"
+        }
+      },
+      "evidence_directories": [
+        "ci-validation/pin-fix-precommit"
+      ],
+      "id": "pin-fix-precommit",
+      "raw_records": [
+        {
+          "archive_member": "ci-validation/pin-fix-precommit/pin-only-delta.json",
+          "bytes": 1050,
+          "sha256": "117d846f1eea97e4077ab6dd8e997a0cdf08f37e80f65bd14c0fed951b995762"
+        },
+        {
+          "archive_member": "ci-validation/pin-fix-precommit/pin-only.patch",
+          "bytes": 2489,
+          "sha256": "d08632acca96d7fd1d9af932b2f820101c8888040be599e7368df60e0d2bd468"
+        },
+        {
+          "archive_member": "ci-validation/pin-fix-precommit/focused-three.log",
+          "bytes": 492,
+          "sha256": "ade04c45b968926eb9fda0beede9615aac9651a8b36872fbc94ab70d9ce10fd7"
+        },
+        {
+          "archive_member": "ci-validation/pin-fix-precommit/repository-and-markdown-links.log",
+          "bytes": 307,
+          "sha256": "b20cfce20cf46d4799e6039b3cd90d32a5731059479a62a2e91436c078775c1e"
+        }
+      ],
+      "repository": {
+        "exit": 0,
+        "local_links": 3426
+      },
+      "result": "FOCUSED_PRECOMMIT_PASS",
+      "source_commit": null,
+      "source_kind": "dirty-candidate",
+      "source_tree": null
+    },
+    {
+      "controls": {
+        "ci-contract": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/ci-contract.log",
+            "bytes": 17544,
+            "sha256": "9c01ac39e6fdbea06994e782a0851848b7a4b32382e29f0d1449b30436744e81"
+          },
+          "run": 105
+        },
+        "pq-provider-ci-controls": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/pq-provider-ci-controls.log",
+            "bytes": 1512,
+            "sha256": "26a38b089daa0fe5081c32ffd71c4712fc405e195bb9f0c7c5c1377c2a829446"
+          },
+          "run": 9
+        },
+        "project-boundary-negatives": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/project-boundary-negatives.log",
+            "bytes": 2425,
+            "sha256": "c7782afc9d79f087efca6b7b3458b6b3a639060984b17c3330d81dc138bdfb12"
+          },
+          "run": 16
+        },
+        "public-host-ci-controls": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/public-host-ci-controls.log",
+            "bytes": 177,
+            "sha256": "ac7b1e67b8f4dde17a10452f92d67649e424cc734a3ce7db610e7614a2d4cd64"
+          },
+          "run": 78
+        },
+        "repository-negative-controls": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/repository-negative-controls.log",
+            "bytes": 5345,
+            "sha256": "bd8b5e2a4d3a9c1beec7ef4fb76128a4334fbf1447e76fd3207f52119c2cf093"
+          },
+          "run": 50
+        },
+        "source-integrity-negatives": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/published-source/source-integrity-negatives.log",
+            "bytes": 6898,
+            "sha256": "0ae587e2b95385df41cc7aaca2a8c35352833d1f4cfb761da0db404eed2bb20e"
+          },
+          "run": 43
+        }
+      },
+      "evidence_directories": [
+        "ci-validation/published-source"
+      ],
+      "format": null,
+      "id": "published-pin-fix",
+      "python_cases_in_this_observation": 301,
+      "raw_source_receipts": [
+        {
+          "archive_member": "ci-validation/published-source/source-before.json",
+          "bytes": 422,
+          "sha256": "e05049d993c2011f340deba16a8bfafab59602ae7af57af4e3a4c6258fdb56fd"
+        },
+        {
+          "archive_member": "ci-validation/published-source/source-after.json",
+          "bytes": 422,
+          "sha256": "e05049d993c2011f340deba16a8bfafab59602ae7af57af4e3a4c6258fdb56fd"
+        }
+      ],
+      "result": "PASS_WITHIN_RECORDED_SCOPE",
+      "scope": "selected original source and CI-contract checks, including all repository mutants and local Markdown links; not the complete repository-truth lane, Rust execution, fixed Host confirmation acceptance, or production TPS",
+      "source_before_equals_after": true,
+      "source_commit": "9e50ca8e1ce655ef2f4686bd0ab58120b30c4632",
+      "source_kind": "committed",
+      "source_tree": "8d67d4812661393cfc9dba2474c279d8285d6dee",
+      "summary": {
+        "archive_member": "ci-validation/published-source/summary.json",
+        "bytes": 6609,
+        "sha256": "80d13f1dc8571214db250e7478551ce2880c7d696cd1d0385604ad634147c5a5"
+      }
+    },
+    {
+      "controls": {
+        "ci-contract": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/history-counter-fix-source-1986fa08/ci-contract.log",
+            "bytes": 17544,
+            "sha256": "017e6a6400bf3a5757d4f6427ae4af783e2b51dc3aaf73d5d9346f7bb704d171"
+          },
+          "run": 105
+        },
+        "source-integrity-negatives": {
+          "exit": 0,
+          "log": {
+            "archive_member": "ci-validation/history-counter-fix-source-1986fa08/source-integrity-negatives.log",
+            "bytes": 6898,
+            "sha256": "5ffff85e471cc80a644371363c3d28c23dcfccf610b13919b345539ffd41e76d"
+          },
+          "run": 43
+        }
+      },
+      "evidence_directories": [
+        "ci-validation/history-counter-fix-source-1986fa08"
+      ],
+      "format": {
+        "exit": 0,
+        "raw_log": {
+          "archive_member": "ci-validation/history-counter-fix-source-1986fa08/format.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "id": "history-counter-test-fix",
+      "python_cases_in_this_observation": 148,
+      "raw_source_receipts": [
+        {
+          "archive_member": "ci-validation/history-counter-fix-source-1986fa08/source-before.json",
+          "bytes": 422,
+          "sha256": "a87cd6671514998e6e00ae84dedcef464e2ccb909880fca3ac4aea136e5791ae"
+        },
+        {
+          "archive_member": "ci-validation/history-counter-fix-source-1986fa08/source-after.json",
+          "bytes": 422,
+          "sha256": "a87cd6671514998e6e00ae84dedcef464e2ccb909880fca3ac4aea136e5791ae"
+        }
+      ],
+      "result": "PASS_WITHIN_RECORDED_SCOPE",
+      "scope": "minimal fresh-head static/source gates after test-counter and single corpus-pin correction; no native test/build or Clippy executed by this run",
+      "source_before_equals_after": true,
+      "source_commit": "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+      "source_kind": "committed",
+      "source_tree": "d905995bebe371972d5efed5ad95ba7461d7f87d",
+      "summary": {
+        "archive_member": "ci-validation/history-counter-fix-source-1986fa08/summary.json",
+        "bytes": 7105,
+        "sha256": "4d0bcc462a97031a342677c96a1579ec0d3634d3fedd8c24aacfce87885620d7"
+      }
+    },
+    {
+      "controls": {
+        "ci-contract": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 105
+        },
+        "pq-authority-controls": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 15
+        },
+        "pq-claim-controls": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 22
+        },
+        "pq-corpus-controls": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 37
+        },
+        "pq-record-command-controls": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 4
+        },
+        "project-boundary-controls": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 16
+        },
+        "repository-mutants": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 50
+        },
+        "source-integrity-negatives": {
+          "capture_exit": 0,
+          "native_exit": 0,
+          "terminal_stderr_summary": "OK",
+          "tests": 43
+        }
+      },
+      "evidence_directories": [
+        "ci-validation/composed-source-285982d7",
+        "ci-validation/composed-fuzz-metadata-285982d7-attempt2"
+      ],
+      "final_summary": {
+        "archive_member": "ci-validation/composed-source-285982d7/final-summary.json",
+        "bytes": 7155,
+        "sha256": "5182a9be7478c96aee55a8f4114e730f70dd80bec11633ee6d5222637bc2abb9"
+      },
+      "format": {
+        "exit": 0,
+        "raw_log": {
+          "archive_member": "ci-validation/composed-source-285982d7/format.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "graphs": {
+        "all_features": {
+          "declared_workspace_targets": 388,
+          "packages": 180,
+          "raw_metadata": {
+            "archive_member": "ci-validation/composed-source-285982d7/cargo-metadata-all-features.stdout",
+            "bytes": 849325,
+            "sha256": "9baebde795272ed0acb83678cf5dc746e34e0932c44f7abc231139dccfc4de74"
+          },
+          "workspace_members": 26
+        },
+        "default": {
+          "declared_workspace_targets": 388,
+          "packages": 175,
+          "raw_metadata": {
+            "archive_member": "ci-validation/composed-source-285982d7/cargo-metadata-default.stdout",
+            "bytes": 834305,
+            "sha256": "8b6f0811ae781682154ecb240af87b251080c16cb0899308b0874fa8e49a9206"
+          },
+          "workspace_members": 26
+        },
+        "fuzz_all_features": {
+          "native_execution_qualified": false,
+          "packages": 147,
+          "preparation": "one bounded normal --locked metadata parse/download after the retained offline missing-cache failure; no build and unchanged lockfiles",
+          "raw_metadata": {
+            "archive_member": "ci-validation/composed-fuzz-metadata-285982d7-attempt2/fuzz-metadata-online.stdout",
+            "bytes": 717067,
+            "sha256": "549ba9cfd04f2f77e66a4db2359fafc63fb1692fc20546b0d1a85e8075d5c76a"
+          },
+          "receipt": {
+            "archive_member": "ci-validation/composed-fuzz-metadata-285982d7-attempt2/summary.json",
+            "bytes": 10232,
+            "sha256": "53743ef7ae9ada28a70e1596799ba5c94c477107e71d4396b95854ce24d4eb81"
+          },
+          "workspace_members": 1
+        }
+      },
+      "id": "composed-cell-pq-throughput-source",
+      "lockfiles": {
+        "tests/fuzz/Cargo.lock": {
+          "bytes": 33645,
+          "git_blob": "bd16198beb269fca436d74f54aa33e66ac5d517b",
+          "matches_committed_source": true,
+          "sha256": "b1e7d77c9935cd566288a90a78e39225248331c389772cf3b3c9406cf10fc13b"
+        },
+        "trillionnium/Cargo.lock": {
+          "bytes": 40044,
+          "git_blob": "7fe3d5ac2c79c4a73f5b3a8217ae7dc1af109d4b",
+          "matches_committed_source": true,
+          "sha256": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83"
+        }
+      },
+      "pq_source_integration": {
+        "canonical_default_provider_contract_checked": true,
+        "canonical_pnq2_contract_checked": true,
+        "continuous_npq6_combination_accepted": false,
+        "cryptographic_acceptance": false,
+        "exact_source_blobs": 582,
+        "legacy_qtx1_optional_adapter_contract_checked": true,
+        "native_transfer_account_contract_checked": true,
+        "native_transport_contract_checked": true,
+        "node_activated": false,
+        "production_confidentiality_accepted": false,
+        "schema": "trnm-pq-cross-branch-check-v1",
+        "status": "HOLD_NO_GO",
+        "upstream_heads": 6,
+        "whole_native_authorization_migrated": false
+      },
+      "python_cases_in_this_observation": 292,
+      "raw_source_receipts": [
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/source-before.json",
+          "bytes": 422,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/source-after.json",
+          "bytes": 422,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        {
+          "archive_member": "ci-validation/composed-fuzz-metadata-285982d7-attempt2/source-before.json",
+          "bytes": 422,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        {
+          "archive_member": "ci-validation/composed-fuzz-metadata-285982d7-attempt2/source-after.json",
+          "bytes": 422,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        }
+      ],
+      "repository_and_markdown": {
+        "activation": false,
+        "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "local_links": 3442,
+        "normal_dependency_edges": 25,
+        "result": "PASS",
+        "runtime_implemented": false,
+        "rust_files": 1188,
+        "source_state": "committed-clean",
+        "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "workspace_packages": 26
+      },
+      "result": "PASS_WITHIN_RECORDED_SCOPE",
+      "retained_failed_or_corrected_records": [
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/summary.json",
+          "bytes": 41970,
+          "sha256": "2c52c250eeebd45bd2bdb24c5e5530e0478a33a448a34cfbdf0fdbf24d66c87f"
+        },
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/summary-corrected.json",
+          "bytes": 43872,
+          "sha256": "2511809f7af0ba8b9340b7abfed186798dafd1a7910b2602b379a97a576f9b6d"
+        },
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/collector-reader-correction.json",
+          "bytes": 1756,
+          "sha256": "17f6f6f7b27396ce07b9b7ab3fe257659bcb7bd54822383ec3e348308f4d9263"
+        },
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/cargo-metadata-fuzz-all-features.stderr",
+          "bytes": 388,
+          "sha256": "08c9a736678f16b67409f327b98950eb025db82ff367d0250ce642fc09f08711"
+        },
+        {
+          "archive_member": "ci-validation/composed-source-285982d7/cargo-metadata-fuzz-all-features.result.json",
+          "bytes": 1619,
+          "sha256": "eef1c929ff3296ec093bfb1fae5aa643db82b91c4f6c6dab643696102f80cf7b"
+        }
+      ],
+      "scope": "292 actual Python source/claim/CI/repository negative controls, source/inventory/Markdown/format and exact locked Cargo metadata on one committed source; not the complete repository-truth lane and no native build/test/Clippy by this agent",
+      "source_before_after_equal_across_both_attempts": true,
+      "source_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "source_kind": "committed",
+      "source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04"
+    }
+  ],
+  "packaging_execution": {
+    "archive_written_once": true,
+    "index_recovered_without_archive_or_input_rewrite": true,
+    "prior_index_attempt": {
+      "path": "ci-source-evidence.package-attempt1.json",
+      "scope": "prior metadata-index parser failure; archive and original evidence unchanged",
+      "sha256": "d8e5d72969832bb26e349a7bff4fbe95ff409de40c23467dfa1eb849c4fd7c19"
+    }
+  },
+  "schema": "trnm-ci-source-evidence-index-v1",
+  "scope": "Retained static, source integrity, graph and format observations, indexed by original source. Packaging executes no test or build and changes no repository or input evidence."
+}

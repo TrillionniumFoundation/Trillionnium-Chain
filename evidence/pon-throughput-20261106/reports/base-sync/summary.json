@@ -1,0 +1,27 @@
+{
+  "schema": "trnm-isolated-base-sync-v1",
+  "worktree": "/workspace/scratch/1eed767ad985/chain-throughput-base-sync",
+  "branch": "fix/chain-throughput-base-sync-20261106-1eed",
+  "head": "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+  "merge_head": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+  "resolved_index_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "state": "uncommitted merge, all resolutions staged, source frozen for independent review",
+  "conflicts": [
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "manual_resolution": [
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "preserved_source_counts": {
+    "pins": 582,
+    "required_paths": 501,
+    "distributed_inventory": 1268
+  },
+  "source_check_status": "HOLD_NO_GO",
+  "runtime_manual_changes": false,
+  "native_build_or_test_executed": false,
+  "commit_or_push_performed": false,
+  "main_checkout_preserved": true,
+  "preflight_note": "detached-worktree initial preflight failed the existing branch rule; preserved log, then created a conforming development branch and obtained PASS before merge/edits",
+  "checks": "original source corpus checker, exact parent pin selection, exact distributed inventory union, all files present, git cached diff check, empty unmerged/unstaged sets, original checkout head/status unchanged"
+}
