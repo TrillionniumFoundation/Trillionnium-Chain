@@ -367,7 +367,7 @@ jobs:
             "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
         ])
         prefix("node", "postwrite-readback", "store::native_authenticated::post_write_readback::tests::", 25)
-        prefix("node", "postwrite-history", "store::native_authenticated::post_write_readback::history_tests::", 12)
+        prefix("node", "postwrite-history", "store::native_authenticated::post_write_readback::history_tests::", 21)
         exact("node", "host-parent-relative", [
             "host_kernel_parent::kernel_parent::relative_tests::relative_limits_read_replacement_bytes_and_every_current_file",
             "host_kernel_parent::kernel_parent::relative_tests::relative_limits_preserve_eof_size_utf8_and_late_io_error_precedence",

@@ -10,6 +10,9 @@ use super::*;
 use crate::Node;
 use rusqlite::StatementStatus;
 
+#[path = "history_record_tests.rs"]
+mod record_binding;
+
 const HISTORY_SQL: [&str; 5] = [
     "SELECT substr(data,1,?) FROM native_state_commitments WHERE block=?",
     NATIVE_BLOCK_SQL,
@@ -138,17 +141,18 @@ fn completed_parent_suffix_reduces_real_sql_reads_only_for_the_four_named_record
     .unwrap();
     let reused = take_sql_counts(&f.node.db);
     // SQL order: authenticated Record, native block, native parent, deltas,
-    // genesis snapshot. Both reads execute every check on the current start.
+    // genesis snapshot. The hit freshly loads the complete starting Record;
+    // its exact completed history and unchanged writer prove prior bindings.
     assert_eq!(original.runs, [12, 7, 5, 7, 1]);
-    assert_eq!(reused.runs, [2, 1, 1, 1, 0]);
+    assert_eq!(reused.runs, [1, 0, 0, 0, 0]);
     assert_eq!(original.reprepares, [0; 5]);
     assert_eq!(reused.reprepares, [0; 5]);
     for (full, reused) in original.steps.iter().zip(reused.steps) {
         assert!(*full > reused);
     }
-    // Entry, all three original current-delta boundaries and output remain.
-    // No synthetic callbacks impersonate the skipped immutable suffix work.
-    assert_eq!(callbacks, 5);
+    // Entry and output remain. The skipped delta traversal introduces no
+    // synthetic callbacks; all actual traversal boundaries remain on misses.
+    assert_eq!(callbacks, 2);
     assert_eq!(scope.history_hits, 1);
     assert!(scope.consumed);
     println!(
@@ -234,7 +238,7 @@ fn incomplete_history_preserves_full_walk_callbacks_and_mints_no_suffix() {
 fn every_remaining_history_hit_boundary_preserves_cancellation() {
     let f = fixture();
     let mut scope = mint_genesis_history(&f.node);
-    for cancel_at in 1..=5 {
+    for cancel_at in 1..=2 {
         let mut current = 0;
         let error = history(&f.node, f.node.settings.genesis(), &mut scope, &mut || {
             current += 1;
@@ -261,7 +265,7 @@ fn first_history_hit_final_write_repeats_the_original_full_verifier() {
     let mut current = 0;
     history(&f.node, f.node.settings.genesis(), &mut scope, &mut || {
         current += 1;
-        if current == 5 {
+        if current == 2 {
             f.node
                 .db
                 .execute("UPDATE native_state_commitments SET data=data WHERE 0", [])?;
@@ -269,8 +273,8 @@ fn first_history_hit_final_write_repeats_the_original_full_verifier() {
         Ok(())
     })
     .unwrap();
-    assert!(current > 5);
-    assert_eq!(take_sql_counts(&f.node.db).runs, [3, 3, 0, 3, 1]);
+    assert!(current > 2);
+    assert_eq!(take_sql_counts(&f.node.db).runs, [3, 2, 0, 2, 1]);
     assert_eq!(scope.history_hits, 0);
     assert!(!scope.consumed);
     assert!(!scope.enabled);
@@ -444,7 +448,7 @@ fn history_early_and_final_errors_cannot_hide_transaction_replacement() {
         "COMMIT; BEGIN IMMEDIATE",
         "SAVEPOINT history_probe; ROLLBACK TO history_probe; RELEASE history_probe",
     ] {
-        for cancel_at in [1, 5] {
+        for cancel_at in [1, 2] {
             let f = fixture();
             let mut scope = mint_genesis_history(&f.node);
             let mut current = 0;

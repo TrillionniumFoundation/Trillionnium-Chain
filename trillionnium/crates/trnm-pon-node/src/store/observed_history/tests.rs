@@ -219,6 +219,7 @@ fn adjacent_material_matches_original_on_forks_and_batch_boundaries() {
 #[test]
 fn adjacent_material_preserves_corruption_types_and_first_error_order() {
     let f = fixture(70);
+    let baseline = collect(&f.node, f.ids[70], HISTORY_HEADER_BATCH, false).unwrap();
     for height in [6, 7, 69, 70] {
         for (column, corrupt) in [
             ("height", SqlValue::Integer(-1)),
@@ -243,7 +244,26 @@ fn adjacent_material_preserves_corruption_types_and_first_error_order() {
                     params![corrupt, f.ids[height].as_slice()],
                 )
                 .unwrap();
-            refuses_like_reference(&f.node, f.ids[70]);
+            let candidate = collect(&f.node, f.ids[70], HISTORY_HEADER_BATCH, true);
+            let original = collect(&f.node, f.ids[70], HISTORY_HEADER_BATCH, false);
+            if height == 6 && column == "packet" {
+                // Headers 70..=7 comprise this complete 64-header batch. Its
+                // boundary parent at height 6 supplies metadata only; neither
+                // reader may inspect that parent's packet yet. Preserve the
+                // complete healthy result, then require refusal when a later
+                // batch actually enters the damaged header's own scope.
+                assert_eq!(candidate.unwrap(), baseline);
+                assert_eq!(original.unwrap(), baseline);
+                refuses_like_reference(&f.node, f.ids[6]);
+            } else {
+                assert!(
+                    candidate.is_err() && original.is_err(),
+                    "corruption at height {height}, column {column}: candidate_error={}, original_error={}",
+                    candidate.is_err(),
+                    original.is_err(),
+                );
+                same_error(candidate.unwrap_err(), original.unwrap_err());
+            }
             f.node
                 .db
                 .execute_batch("ROLLBACK TO material_corruption; RELEASE material_corruption")

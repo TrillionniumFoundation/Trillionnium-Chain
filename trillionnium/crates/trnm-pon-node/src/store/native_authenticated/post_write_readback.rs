@@ -88,7 +88,7 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 /// parent and the actual active tip nominated by the existing Node reader.
 /// Nomination is not proof.
 /// This is never retained by Node, serialized, cloned or used as commit/recovery
-/// authority. Every use still loads current SQL State/records/deltas and runs
+/// authority. Every state-graph use still loads current SQL State/records/deltas and runs
 /// the ORIGINAL complete(settings, current State) comparison before this graph
 /// result can match. Named records may share a successfully checked account
 /// graph only when its entire Root (node, digest, count and balance) matches in
@@ -97,8 +97,11 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 /// working state, Record binding or database read is supplied by the receipt.
 /// A completed tip-to-genesis history check may also retain the verified suffix
 /// of these same four named records. Only that history path may skip an already
-/// checked suffix, after freshly verifying its starting Record/block/deltas and
-/// checking the original immutable Settings borrow and no-write epoch again.
+/// checked starting Record binding and suffix, after freshly reading the exact
+/// complete Record and checking the original immutable Settings borrow and
+/// no-write epoch again. The completed history previously verified the actual
+/// block, parent and deltas in this same writer; no write may separate that
+/// material validation from reuse. Graph receipts alone grant no such access.
 /// Writes disable reuse for the remainder of this local scope.
 pub(in crate::store) struct PostWriteReadback<'db> {
     db: &'db Connection,

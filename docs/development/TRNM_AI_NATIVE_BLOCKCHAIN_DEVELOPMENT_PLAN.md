@@ -8045,3 +8045,65 @@ The ten original compatibility test methods remain; add a missing-group
 counterexample and bind this reader in the source corpus. The four separate
 recent-batch compatibility tests also pass on `97aaf`; none of these reader
 checks substitutes for the in-progress native execution or service gates.
+
+### 2026-11-06 completed-history start binding and preserved qualification failure
+
+The original `97aaf286ba01316a527ae07782120fd47724efc9` native qualification
+has now finished its build and selected controls. All three locked Cargo
+graphs, complete workspace formatting, strict all-target/all-feature Clippy
+and the original all-target/all-feature no-run build pass. The build retains
+all 26 workspace members and actual compiler artifacts for all 390 metadata
+targets. All 105 selected controls execute: **104 pass and one fails**.
+The full workspace runtime and documentation stages are not run on that
+failed candidate; their absence is not a passing observation.
+
+The failure is the test-only adjacent-history corruption oracle. In a
+64-header batch starting at height 70, height 6 is a boundary parent whose
+metadata is required but whose packet is outside the current batch. Both
+readers correctly accept damage limited to that boundary packet. Repair the
+oracle to compare both complete results with the healthy baseline, then
+require both readers to reject the same damage when a later batch starts at
+height 6. Keep all other corruption/type/error-order cases and the original
+runtime JOIN unchanged. Preserve the failed log; do not reclassify the old
+104/105 execution after correcting its assertion.
+
+The separate native cost control also confirms that this adjacent-row SQL
+candidate is not a runtime improvement: its 64-header fixture executes
+5,012 VM steps against the actual original reader's 4,629. The earlier
+4,632 reference was a Python prototype observation, not that native execution.
+Both statements run once; neither removes Host checkpoints or changes the
+linear complete-history cost. Keep this candidate test-only.
+
+Continue from published `af1441ef62e036eca60f4bd756b7a332b685f8c9` with a
+separate, history-only optimization. A successfully completed tip-to-genesis
+history receipt may prove the starting Record's already-verified block,
+parent and deltas only after a fresh complete Record load matches one of
+the same four nominations, the exact immutable Settings borrow and the
+original connection/writer/no-new-write/schema epoch. Account graph receipts
+cannot authorize this use. Preserve the final callback, second scope fence,
+full fallback after a write, consumed receipt and final transaction-replacement
+check. Defer an early probe error until after the original material and height
+checks, retaining its original source instead of losing it when the probe
+clears disabled receipts. State verification and cross-scope reuse are unchanged.
+
+Retain the twelve existing history controls and add nine named Record-binding
+controls. The current workflow must require all **21 history / 118 authenticated
+/ 114 selected workspace controls**; historical 97-test and 60-control logs
+remain historical, and synthetic roster fixtures grant no native credit.
+Measure both material statement execution and all SQLite progress ticks,
+including fresh schema/scope fences and finalization. Predicted SQL savings
+are not evidence until those controls execute on the new committed source.
+Ordinary admission can reuse an already-completed parent or genesis check;
+the final reorganization activation performs its first history check in a
+new scope and is not expected to gain from this change. No activation, Host
+checkpoint-count, confirmation-latency or production-throughput gain is claimed.
+
+An executor restart erased the local scratch workspace after `af1441` was
+published. Restore code from that exact remote commit and retain the original
+remote native/publication archives. The earlier local Python successes and
+failures are tool-observed historical results with a lost raw-log provenance
+gap; do not manufacture replacement receipts. The in-progress `af1441`
+applicability run is incomplete. Execute fresh source-bound checks on the
+new committed candidate and archive their actual outputs separately. The
+four-second/six-confirmation service target and every resource, authority,
+revocation, external-frontier and failure-denominator gate remain unchanged.

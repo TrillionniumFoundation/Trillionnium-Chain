@@ -830,7 +830,21 @@ pub(super) fn verify_history_with_readback(
         loop {
             progress()?;
             let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
-            verify_record(db, settings, &record, progress, cache)?;
+            // Only a completed history of this exact nominated starting Record
+            // can also prove its already-checked block/parent/delta binding in
+            // the original writer. Neither an account graph nor pending suffix
+            // candidates grant this access. No callback runs between this
+            // fresh Record read, the original epoch fence and the match below.
+            let history_probe = if current == block {
+                readback
+                    .as_deref_mut()
+                    .map(|scope| scope.history_matches(db, settings, &record))
+            } else {
+                None
+            };
+            if !matches!(history_probe.as_ref(), Some(Ok(true))) {
+                verify_record(db, settings, &record, progress, cache)?;
+            }
             local(ensure(
                 expected_height.is_none_or(|height| record.height == height),
                 "NATIVE_STATE_HISTORY",
@@ -839,7 +853,16 @@ pub(super) fn verify_history_with_readback(
                 // Only a nominated starting record may borrow its completed
                 // suffix. A fifth block still traverses its ENTIRE history,
                 // even if it reaches a nominated ancestor on that walk.
-                if current == block && scope.history_matches(db, settings, &record)? {
+                let completed = match history_probe {
+                    Some(Ok(true)) => true,
+                    // Preserve the original material/height error order. The
+                    // probe may have cleared histories while disabling reuse;
+                    // a second lookup cannot recover this original scope error.
+                    Some(Err(error)) => return Err(error),
+                    Some(Ok(false)) => scope.history_matches(db, settings, &record)?,
+                    None => false,
+                };
+                if completed {
                     progress()?;
                     if !scope.history_matches(db, settings, &record)? {
                         // A final callback wrote after the match. Reuse stays

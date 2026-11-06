@@ -461,6 +461,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake_domain_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/store/observed_history.rs",
     "trillionnium/crates/trnm-pon-node/src/store/observed_history/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_record_tests.rs",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((

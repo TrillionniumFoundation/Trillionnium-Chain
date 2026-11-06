@@ -50,7 +50,7 @@ def source_fixture_extensions():
     source_root = ROOT / 'trillionnium/crates/trnm-pon-node/src'
     for group, relative, module, count in (
         ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
-         'store::native_authenticated::post_write_readback::history_tests', 12),
+         'store::native_authenticated::post_write_readback::history_tests', 21),
         ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
          'host_kernel_parent::kernel_parent::relative_tests', 8),
         ('header-material', 'store/observed_history/tests.rs',
@@ -60,11 +60,19 @@ def source_fixture_extensions():
         ('host-resource', 'host_kernel_parent_resource_tests.rs',
          'host_kernel_parent::kernel_parent::resource_tests', 7),
     ):
-        declarations = re.findall(
-            r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
-            (source_root / relative).read_text(), re.M)
-        names = [module + '::' + name for attributes, name in declarations
-                 if not re.search(r'^#\[ignore\b', attributes, re.M)]
+        def declarations(path, owner):
+            source = path.read_text()
+            tests = re.findall(
+                r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
+                source, re.M)
+            names = [owner + '::' + name for attributes, name in tests
+                     if not re.search(r'^#\[ignore\b', attributes, re.M)]
+            for filename, child in re.findall(
+                    r'^#\[path = "([^"]+)"\]\nmod ([A-Za-z_][A-Za-z0-9_]*);', source, re.M):
+                names.extend(declarations(path.parent / filename, owner + '::' + child))
+            return names
+
+        names = declarations(source_root / relative, module)
         if len(names) != count or len(set(names)) != count:
             raise ValueError('unexpected current source fixture declarations: ' + group)
         extensions[group] = names
@@ -92,7 +100,7 @@ class NativeRosterTests(unittest.TestCase):
         original_names = {line[:-6] for line in cls.registries['node'].splitlines()
                           if line.endswith(': test')}
         additions = [name for names in cls.source_fixture_extensions.values() for name in names]
-        if len(set(additions)) != 45 or original_names.intersection(additions):
+        if len(set(additions)) != 54 or original_names.intersection(additions):
             raise ValueError('source fixture additions must be separate from the retained registry')
         # Preserve the original registry string; this separate input is explicitly
         # synthetic and exercises the complete current builder without skipping groups.
@@ -138,7 +146,7 @@ class NativeRosterTests(unittest.TestCase):
         # Historical libtest evidence cannot claim registration of newer controls.
         result, selected = self.run_workspace()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('postwrite-history: expected 12 actual registered controls, got 0', result.stderr)
+        self.assertIn('postwrite-history: expected 21 actual registered controls, got 0', result.stderr)
         self.assertIsNone(selected)
         result, selected = self.run_workspace(node=self.source_fixture_node)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -154,7 +162,7 @@ class NativeRosterTests(unittest.TestCase):
             extension = next(row for row in report['groups'] if row['group'] == name)
             self.assertCountEqual(extension['tests'], tests)
             self.assertEqual(extension['expected_count'], len(tests))
-        self.assertEqual(report['selected_count'], 105)
+        self.assertEqual(report['selected_count'], 114)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()

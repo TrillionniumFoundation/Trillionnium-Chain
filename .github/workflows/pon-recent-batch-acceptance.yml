@@ -78,7 +78,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 2e8c9d2de0e079e7259c261a82d9a15db17426b6
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = cae5ccefe2d7575df9e62de6e9f065fa67dc9ae5
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)" = 6f1e2cbcfae72643455c929e9c434da4625d8d91
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/task_observation.rs)" = eed2c350e3dfd17a66d7c4f4225ee2f02d3c0e60
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs)" = 5e3769d3186026a7bac012be534f0d6cad5e362a
           test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/authenticated_storage_cli.rs)" = 7301aeb3033913f080b23767bfca52a2bf76d45b
@@ -176,7 +176,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 109 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 118 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -206,13 +206,22 @@ jobs:
               'store::native_authenticated::post_write_readback::history_tests::damaged_ancestors_genesis_and_graph_keep_original_errors_after_a_receipt',
               'store::native_authenticated::post_write_readback::history_tests::a_different_actual_connection_cannot_use_completed_history',
               'store::native_authenticated::post_write_readback::history_tests::completed_history_never_survives_rollback_or_cold_open',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::exact_completed_record_reduces_material_and_whole_sql_work',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::graph_receipts_never_authorize_start_record_binding',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::unchanged_record_requires_actual_material_after_any_write',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::a_probe_error_survives_cleared_history_receipts',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::transaction_replacement_preserves_original_material_error_sources',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::final_callback_writes_revalidate_or_refuse_original_scope',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::final_callback_cancellation_keeps_ordinary_error_and_aba_source',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::exact_settings_and_record_membership_keep_fifth_records_on_full_walk',
+              'store::native_authenticated::post_write_readback::history_tests::record_binding::cancelled_full_walk_cannot_publish_a_start_record_proof',
           }
           observed_history = {name for name in names if name.startswith('store::native_authenticated::post_write_readback::history_tests::')}
-          if (len(names) != 109 or len(set(names)) != 109 or len(post_write) != 25
+          if (len(names) != 118 or len(set(names)) != 118 or len(post_write) != 25
                   or observed_current != current_accounts
                   or observed_history != history
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 109 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires all 97 retained and 12 history executions, including 25 post-write and five current-account controls, in one log')
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 118 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires all 97 retained and 21 history executions, including 25 post-write and five current-account controls, in one log')
           PYLOG
             fi
           done
