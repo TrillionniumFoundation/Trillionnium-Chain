@@ -1,7 +1,9 @@
 //! Explicit fresh PQ-only native network owner. This authenticates transport,
 //! never account spending, task signatures, PoN work or model-install authority.
-//! The loopback-only profile retains a bounded durable replay ledger. It has no
-//! confidentiality, public saturation, account migration or WAN qualification.
+//! Both explicitly selected loopback profiles retain bounded durable replay
+//! ownership. Original PNQ2 is signed plaintext. The distinct TLS-required owner
+//! uses a hybrid encrypted channel; neither profile qualifies public service,
+//! account migration, private tasks or WAN deployment.
 use super::{Request, WorkCheckedPacket};
 use crate::pq_rollback_witness::{observe_operation, observe_phase};
 use crate::{ensure, Error, ErrorCode, Node, Result, Settings};
@@ -39,6 +41,9 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
     MAX_RECORDS, MAX_WIRE,
 };
 
+mod tls_profile;
+pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
+
 #[derive(Clone, Copy)]
 #[repr(u8)]
 enum Direction {
@@ -62,6 +67,8 @@ struct PolicyRecord {
     ingress_byte_limit: u64,
     inbound_verification_limit: u64,
     transport_confidentiality: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    tls: Option<PqTlsPins>,
 }
 
 /// Operator-supplied pins. No key from an incoming frame can enter this roster.
@@ -136,6 +143,7 @@ impl PqNetworkPolicy {
             ingress_byte_limit: MAX_INGRESS_BYTES,
             inbound_verification_limit: MAX_INBOUND_VERIFICATIONS,
             transport_confidentiality: TRANSPORT_MODE.into(),
+            tls: None,
         };
         let bytes = serde_json::to_vec(&record)?;
         let id = hash(POLICY_DOMAIN, &[&bytes]);
@@ -186,7 +194,10 @@ impl PqNetworkPolicy {
             && self.record.genesis == hex::encode(settings.genesis())
     }
     fn context(&self, peer: Hash, direction: Direction) -> Hash {
-        hash(PEER_CONTEXT_DOMAIN, &[&self.id, &peer, &[direction as u8]])
+        hash(
+            self.context_domain(),
+            &[&self.id, &peer, &[direction as u8]],
+        )
     }
     fn expectation<'a>(
         &self,
@@ -241,7 +252,7 @@ impl PqNetworkPolicy {
         now: u64,
         before_verification: &mut impl FnMut() -> Result<()>,
     ) -> Result<AuthenticatedRequest> {
-        let (frame, payload) = decode_wire(wire, REQUEST_MAGIC)?;
+        let (frame, payload) = decode_wire(wire, self.request_magic())?;
         let peer: Hash = frame[72..104].try_into().map_err(|_| "PQ_NETWORK_KEY")?;
         let verifier = self.peers.get(&peer).ok_or("PQ_NETWORK_UNKNOWN_PEER")?;
         let sequence = u64_field(frame, 112);
@@ -266,7 +277,10 @@ impl PqNetworkPolicy {
             "PQ_NETWORK_LIFETIME",
         )?;
         let observed = verifier.verify(frame, &expected).map_err(crypto)?;
-        let operation = hash(OPERATION_DOMAIN, &[observed.authenticated_statement()]);
+        let operation = hash(
+            self.operation_domain(),
+            &[observed.authenticated_statement()],
+        );
         let request: Request = serde_json::from_slice(payload)?;
         ensure(
             serde_json::to_vec(&request)? == payload,
@@ -283,7 +297,7 @@ impl PqNetworkPolicy {
     pub(crate) fn verify_retained_request(&self, wire: &[u8]) -> Result<RetainedRequest> {
         // Historical validation checks a past signature at its own signed expiry.
         // It grants no live dispatch. Live ingress separately imposes current time.
-        let (frame, _) = decode_wire(wire, REQUEST_MAGIC)?;
+        let (frame, _) = decode_wire(wire, self.request_magic())?;
         let authenticated =
             self.authenticate_request(wire, u64_field(frame, 120), &mut || Ok(()))?;
         Ok(RetainedRequest {
@@ -335,7 +349,7 @@ impl PqNetworkPolicy {
         operation: Hash,
         now: u64,
     ) -> Result<PqResponse> {
-        let (frame, payload) = decode_wire(wire, RESPONSE_MAGIC)?;
+        let (frame, payload) = decode_wire(wire, self.response_magic())?;
         self.server
             .verify(
                 frame,
@@ -345,7 +359,7 @@ impl PqNetworkPolicy {
         let response: PqResponse = serde_json::from_slice(payload)?;
         ensure(
             serde_json::to_vec(&response)? == payload
-                && response.schema == RESPONSE_SCHEMA
+                && response.schema == self.response_schema()
                 && response.operation == hex::encode(operation),
             "PQ_NETWORK_RESPONSE_CONTEXT",
         )?;
@@ -356,9 +370,10 @@ impl PqNetworkPolicy {
 pub(crate) fn peer_ids_from_policy_record(bytes: &[u8]) -> Result<Vec<Hash>> {
     let record: PolicyRecord = serde_json::from_slice(bytes)?;
     ensure(
-        serde_json::to_vec(&record)? == bytes && record.schema == PROFILE,
+        serde_json::to_vec(&record)? == bytes,
         "PQ_NETWORK_POLICY_RECORD",
     )?;
+    record.validate_transport()?;
     record
         .peers
         .iter()
@@ -558,7 +573,7 @@ impl PqClient {
             .signer
             .sign_statement(&statement(&expected)?, &expected)
             .map_err(crypto)?;
-        let wire = encode_wire(REQUEST_MAGIC, &frame, &payload)?;
+        let wire = encode_wire(self.policy.request_magic(), &frame, &payload)?;
         Ok(PreparedPqRequest {
             verified: self.policy.verify_request(&wire, now)?,
         })
@@ -569,6 +584,22 @@ impl PqClient {
         prepared: &PreparedPqRequest,
         budget: Duration,
     ) -> Result<PqResponse> {
+        // A TLS-required policy cannot reach the original plaintext socket,
+        // even if the caller supplies an otherwise valid prepared request.
+        self.policy.require_plaintext()?;
+        self.check_send(address, prepared, budget)?;
+        let end = Instant::now() + budget;
+        let mut stream = TcpStream::connect_timeout(&address, budget)?;
+        super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
+        let response = super::read_frame_deadline(&mut stream, end)?;
+        self.finish_response(&response, prepared, end)
+    }
+    fn check_send(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<()> {
         ensure(
             prepared.verified.policy == self.policy.id
                 && prepared.verified.peer == self.signer.public_key_id(),
@@ -590,13 +621,17 @@ impl PqClient {
             super::now()? <= prepared.verified.expiry,
             "PQ_NETWORK_EXPIRED_UNCONFIRMED",
         )?;
-        let end = Instant::now() + budget;
-        let mut stream = TcpStream::connect_timeout(&address, budget)?;
-        super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
-        let response = super::read_frame_deadline(&mut stream, end)?;
+        Ok(())
+    }
+    fn finish_response(
+        &self,
+        response: &[u8],
+        prepared: &PreparedPqRequest,
+        end: Instant,
+    ) -> Result<PqResponse> {
         let verified = self
             .policy
-            .verify_response(&response, &prepared.verified, super::now()?)?;
+            .verify_response(response, &prepared.verified, super::now()?)?;
         #[cfg(test)]
         if let Some(before_completion) = self.before_response_completion.as_ref() {
             before_completion(end);
@@ -617,6 +652,34 @@ impl PqClient {
 pub struct PqServer {
     policy: Arc<PqNetworkPolicy>,
     signer: PqNativeSigningKey,
+}
+
+// Private transport evidence. A public caller cannot label a byte slice TLS.
+enum TransportAdmission {
+    Plaintext,
+    #[cfg(feature = "pq-native-openssl")]
+    Tls {
+        policy: Hash,
+        peer: Hash,
+    },
+}
+impl TransportAdmission {
+    fn require(&self, policy: &PqNetworkPolicy, _peer: Option<Hash>) -> Result<()> {
+        match self {
+            Self::Plaintext => policy.require_plaintext(),
+            #[cfg(feature = "pq-native-openssl")]
+            Self::Tls {
+                policy: admitted,
+                peer: tls_peer,
+            } => {
+                policy.tls_pins()?;
+                ensure(
+                    *admitted == policy.id && _peer.is_none_or(|id| id == *tls_peer),
+                    "PQ_TLS_SIGNER_CHANNEL_BINDING",
+                )
+            }
+        }
+    }
 }
 
 // Queueing for the native owner is part of the caller's original interval.
@@ -672,7 +735,7 @@ impl PqServer {
             (ok, value)
         };
         let response = PqResponse {
-            schema: RESPONSE_SCHEMA.into(),
+            schema: self.policy.response_schema().into(),
             operation: hex::encode(request.operation),
             ok,
             value,
@@ -695,7 +758,7 @@ impl PqServer {
             .signer
             .sign_statement(&statement(&expected)?, &expected)
             .map_err(crypto)?;
-        encode_wire(RESPONSE_MAGIC, &frame, &payload)
+        encode_wire(self.policy.response_magic(), &frame, &payload)
     }
     fn read_request(
         &self,
@@ -703,6 +766,12 @@ impl PqServer {
         stream: &mut TcpStream,
         deadline: Instant,
     ) -> Result<Vec<u8>> {
+        self.charge_connection(node, deadline)?;
+        self.read_request_body(node, deadline, &mut |bytes| {
+            super::read_exact_deadline(stream, bytes, deadline)
+        })
+    }
+    fn charge_connection(&self, node: &Mutex<Node>, deadline: Instant) -> Result<()> {
         // Charge the original durable owner before reading or allocating a body.
         lock_live_owner(node, deadline, None)?.charge_pq_ingress_with_check(
             &self.policy,
@@ -711,9 +780,16 @@ impl PqServer {
             false,
             deadline,
             &mut || check_live_request(deadline, None),
-        )?;
+        )
+    }
+    fn read_request_body(
+        &self,
+        node: &Mutex<Node>,
+        deadline: Instant,
+        read_exact: &mut impl FnMut(&mut [u8]) -> Result<()>,
+    ) -> Result<Vec<u8>> {
         let mut prefix = [0; 4];
-        super::read_exact_deadline(stream, &mut prefix, deadline)?;
+        read_exact(&mut prefix)?;
         let length = u32::from_be_bytes(prefix) as usize;
         ensure((1..=MAX_WIRE).contains(&length), "PQ_NETWORK_WIRE_LIMIT")?;
         lock_live_owner(node, deadline, None)?.charge_pq_ingress_with_check(
@@ -726,15 +802,25 @@ impl PqServer {
         )?;
         check_live_request(deadline, None)?;
         let mut wire = vec![0; length];
-        super::read_exact_deadline(stream, &mut wire, deadline)?;
+        read_exact(&mut wire)?;
         Ok(wire)
     }
     fn handle(&self, node: &Mutex<Node>, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
+        self.handle_admitted(node, wire, deadline, &TransportAdmission::Plaintext)
+    }
+    fn handle_admitted(
+        &self,
+        node: &Mutex<Node>,
+        wire: &[u8],
+        deadline: Instant,
+        transport: &TransportAdmission,
+    ) -> Result<Vec<u8>> {
+        transport.require(&self.policy, None)?;
         check_live_request(deadline, None)?;
         // Decode only the already-bounded frame here. This untrusted expiry
         // can cause refusal only; the canonical verifier still authenticates
         // it before begin, cached replay, execution or response production.
-        let (frame, _) = decode_wire(wire, REQUEST_MAGIC)?;
+        let (frame, _) = decode_wire(wire, self.policy.request_magic())?;
         let expiry = u64_field(frame, 120);
         let now = super::now()?;
         let verified = self.policy.verify_request_metered(wire, now, &mut || {
@@ -754,6 +840,7 @@ impl PqServer {
         // charge may have crossed the original interval. Keep the charge;
         // refuse a new operation or a cached response under stale authority.
         check_live_request(deadline, Some(verified.expiry))?;
+        transport.require(&self.policy, Some(verified.peer))?;
         ensure(
             verified.expiry - now <= MAX_LIFETIME_SECONDS,
             "PQ_NETWORK_LIFETIME",
@@ -824,6 +911,7 @@ pub fn serve_pq_authenticated(
     stop: Arc<AtomicBool>,
     server: PqServer,
 ) -> Result<PqNetworkMetrics> {
+    server.policy.require_plaintext()?;
     ensure(
         listener.local_addr()?.ip().is_loopback(),
         "PQ_NETWORK_LOOPBACK_ONLY",

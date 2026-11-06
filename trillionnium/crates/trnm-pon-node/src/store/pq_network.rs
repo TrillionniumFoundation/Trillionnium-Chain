@@ -20,8 +20,7 @@ use std::{
     },
     time::Instant,
 };
-use trnm_protocol::pon_wire::{hash, Hash};
-use trnm_protocol::pq_legacy_profile::RESPONSE_BYTES_DOMAIN;
+use trnm_protocol::pon_wire::Hash;
 
 pub(crate) const DDL: &str = "
 CREATE TABLE pq_network_resource_v2(singleton INTEGER PRIMARY KEY CHECK(singleton=1),connections INTEGER NOT NULL CHECK(connections>=0 AND connections<=64),input_bytes INTEGER NOT NULL CHECK(input_bytes>=0 AND input_bytes<=33554432),inbound_verifications INTEGER NOT NULL CHECK(inbound_verifications>=0 AND inbound_verifications<=64));
@@ -183,22 +182,31 @@ impl Node {
         self.check_pq_network_policy(policy)?;
         let (records, reserved_bytes) = self.pq_network_usage()?;
         let ingress = self.pq_ingress_usage()?;
+        ensure(
+            ingress.0 <= policy.ingress_connection_limit(),
+            "PQ_NETWORK_RESOURCE_STATE",
+        )?;
         let revoked: u64 = self.db.query_row(
             "SELECT COUNT(*) FROM pq_network_peer_v2 WHERE revoked=1",
             [],
             |row| row.get(0),
         )?;
-        Ok(
-            serde_json::json!({"profile":crate::ingress::pq_network::PROFILE,
+        let mut status = serde_json::json!({"profile":policy.profile(),
             "policy":hex::encode(policy.id()),"records":records,"reserved_bytes":reserved_bytes,
             "revoked_peers":revoked,"record_limit":MAX_RECORDS,"byte_limit":MAX_LEDGER_BYTES,
             "ingress_connections":ingress.0,"ingress_bytes":ingress.1,"inbound_signature_attempts":ingress.2,
-            "ingress_connection_limit":MAX_INGRESS_CONNECTIONS,"ingress_byte_limit":MAX_INGRESS_BYTES,
-            "inbound_signature_attempt_limit":MAX_INBOUND_VERIFICATIONS,"transport_confidentiality":false,
+            "ingress_connection_limit":policy.ingress_connection_limit(),"ingress_byte_limit":MAX_INGRESS_BYTES,
+            "inbound_signature_attempt_limit":MAX_INBOUND_VERIFICATIONS,
+            "transport_confidentiality":policy.transport_requires_tls(),
             "account_migration":false,
             "imported_transfer_accounts":self.settings.app.is_pq_account_profile(),
-            "whole_native_authorization_migrated":false,"production_activation":false}),
-        )
+            "whole_native_authorization_migrated":false,"production_activation":false});
+        if policy.transport_requires_tls() {
+            status["tls_handshake_attempts"] = ingress.0.into();
+            status["tls_handshake_attempt_limit"] = policy.ingress_connection_limit().into();
+            status["tls_certificate_verification_cpu_qualified"] = false.into();
+        }
+        Ok(status)
     }
 
     fn pq_ingress_usage(&self) -> Result<(u64, u64, u64)> {
@@ -248,7 +256,7 @@ impl Node {
         check()?;
         let changed = tx.execute("UPDATE pq_network_resource_v2 SET connections=connections+?,input_bytes=input_bytes+?,inbound_verifications=inbound_verifications+? WHERE singleton=1 AND connections<=?-? AND input_bytes<=?-? AND inbound_verifications<=?-?",
             params![u64::from(connection), bytes, u64::from(verification),
-                MAX_INGRESS_CONNECTIONS,u64::from(connection),MAX_INGRESS_BYTES,bytes,
+                policy.ingress_connection_limit(),u64::from(connection),MAX_INGRESS_BYTES,bytes,
                 MAX_INBOUND_VERIFICATIONS,u64::from(verification)])?;
         ensure(changed == 1, "PQ_NETWORK_INGRESS_BUDGET")?;
         tx.commit_with_check(check)
@@ -264,7 +272,11 @@ impl Node {
                     row.get(0)
                 })?;
         ensure(resources == 1, "PQ_NETWORK_RESOURCE_STATE")?;
-        self.pq_ingress_usage()?;
+        let ingress = self.pq_ingress_usage()?;
+        ensure(
+            ingress.0 <= policy.ingress_connection_limit(),
+            "PQ_NETWORK_RESOURCE_STATE",
+        )?;
         let expected_peers = policy.peer_ids().collect::<Vec<_>>();
         let peer_count: u64 =
             self.db
@@ -340,7 +352,7 @@ impl Node {
                 match (response, response_digest, status) {
                     (Some(response), Some(digest), 1) if sequence <= highest => {
                         ensure(
-                            hash(RESPONSE_BYTES_DOMAIN, &[&response]).as_slice() == digest,
+                            policy.response_digest(&response).as_slice() == digest,
                             "PQ_NETWORK_RESPONSE_INTEGRITY",
                         )?;
                         policy.verify_retained_response(&response, &verified)?;
@@ -403,7 +415,7 @@ impl Node {
                 (Some(response), Some(digest), 1) => {
                     ensure(
                         request.sequence() <= highest
-                            && hash(RESPONSE_BYTES_DOMAIN, &[&response]).as_slice() == digest,
+                            && policy.response_digest(&response).as_slice() == digest,
                         "PQ_NETWORK_RESPONSE_INTEGRITY",
                     )?;
                     policy.verify_response(&response, request, request.expiry())?;
@@ -463,7 +475,7 @@ impl Node {
         )?;
         policy.verify_response(response, request, request.expiry())?;
         ensure(response.len() <= MAX_WIRE, "PQ_NETWORK_WIRE_LIMIT")?;
-        let digest = hash(RESPONSE_BYTES_DOMAIN, &[response]);
+        let digest = policy.response_digest(response);
         let tx = Mutation::begin(self)?;
         let changed = tx.execute("UPDATE pq_network_request_v2 SET response=?,response_digest=?,status=1 WHERE peer=? AND sequence=? AND operation=? AND response IS NULL AND status=0",
             params![response,digest.as_slice(),request.peer().as_slice(),request.sequence(),request.operation().as_slice()])?;
