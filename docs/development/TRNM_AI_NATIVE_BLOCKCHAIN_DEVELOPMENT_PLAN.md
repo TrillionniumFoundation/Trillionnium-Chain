@@ -7898,3 +7898,39 @@ behavior-preserving helper-extraction red design is unexecuted and is not the
 original f85 source. No current native pass is implied by preparing the patch.
 Earlier f85 component and CI results retain their exact source identities.
 Original service confirmation and all whole-chain PQ/production gates stay HOLD.
+
+
+### 2026-11-06 reconcile the next material-verifier target without transferring native results
+
+<!-- chain-pq-late-target-513e92-20261106 -->
+
+Before publication, the direct target ref advanced from `56897f12` to
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f` while the PR endpoint still named
+the old base. Preserve the new parent and its six historical compatibility
+artifacts. Its Python marker call-shape change needs explicit composition with
+the existing supported-host policy; a textual union of contradictory kwargs
+assertions is not a validated merge.
+
+Keep the `packaging >=25.0` refusal, including marker-free material, and the
+isolated exact-version/hash packaging 26.3 installation. Use the pinned supported
+library's metadata default in the single evaluate call; do not catch/retry with
+an ambient or weaker evaluation mode. Preserve the complete declared environment,
+empty/selected extra, missing dependency refusal, invalid marker refusal and
+propagated internal errors. Retain all 25 test methods from both parents. Replace
+the old keyword-spelling assertion with the effective context bound against the
+real API defaults and actual metadata-only empty-extra behavior; retain rejection
+of lock-file-only sets. The old-signature wrapper is an API-shape control on the
+supported library, not permission to run a real 24.x verifier. Keep historical
+513e92 evidence under its own source and add actual 24.0 to the unsupported-version
+negative control. The fixed 25.0 and 26.3 implementations establish the reviewed
+default; no general future-version compatibility is inferred.
+
+Only Python verifier/tests, verifier-requirement commentary, their corpus pins,
+these observations and the new target's evidence change. Rust implementation,
+Cargo manifests/locks, workflow gates and native resource limits are unchanged.
+The corpus is embedded as native source provenance, so even this change must not
+claim identical compiled inputs/ELF or transfer ebd executions. The new composed
+source requires its own material-verifier and source gates. Existing f85 and ebd
+native passes, failures, timeouts and blocked readers remain bound to those
+commits. Whole-chain PQ, performance, public-WAN and production acceptance stays
+HOLD; no new native outcome is implied by preparing this composition.
