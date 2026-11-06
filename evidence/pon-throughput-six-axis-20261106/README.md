@@ -28,12 +28,18 @@ arithmetic r13/r14 policy vectors remain readable as historical identities;
 current native clients and Host harnesses select r15 and cannot relabel an old
 signed cookie as the new schedule. CPU refill/burst, start principal, live worker
 count and each workload's original absolute deadlines retain their values.
+Ordering applies after dequeue/registration. Continuously queued public work
+can keep immediate local miner/operator `begin()` calls refused; this is not
+general fairness across those classes or a four-second service guarantee.
 
 PQ client deadline precedence is explicit: if its caller-supplied outer deadline
 has already expired at entry, `PUBLIC_CLIENT_DEADLINE` is returned before public
 key expansion, even for an invalid pin. With a live or absent outer deadline,
 an invalid pin still returns `PUBLIC_CHALLENGE_SIGNATURE`. Both failures retain
 actual construction/total elapsed time and the Construction failure stage.
+The original implicit 30-second network interval still starts after construction
+when no outer deadline was supplied; the expanded elapsed sample does not change
+that contract into a 30-second whole-call bound.
 
 ## Fixed business gates
 

@@ -1,9 +1,10 @@
 # Public development intake V3 and the native local pool
 
-The current source selects signed resource revision **r13**, described in
-[Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
-The r10 contracts, vectors and earlier observations below remain historical;
-they do not qualify r11's wider paid interval, r12's completion scheduling or r13's bounded replay/recovery changes.
+The current source selects signed resource revision **r15**, described in
+[Shared-domain CPU start ordering](#shared-domain-cpu-start-ordering).
+The r10--r14 contracts, vectors and observations below retain their historical
+identities; they do not qualify the current scheduling combination. R15 retains
+the preceding paid interval, completion replay and reorganization boundaries.
 
 This is a fresh, explicitly selected development profile. It connects paid guest
 transport requests to the Node's actual persistent pool. It does not certify public
@@ -23,8 +24,43 @@ fixes still require review of both modules.
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r10 policy and native request rules; its nested
+optional API preserves the selected signed policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
+
+## Shared-domain CPU start ordering
+
+R15 retains the original 2,000,000,000 ns burst, 250,000,000 ns/s refill,
+100,000,000 ns start principal, two mutation workers, verified-W1 completion
+priority and all absolute request deadlines. A listener keeps its original
+dequeue mutex while an already-dequeued mutation registers at the shared CPU
+start gate. At most one such waiter per admitted listener exists; the four-slot
+registry contains monotonic IDs only, with no additional request bodies.
+
+Only the oldest registered live waiter may take an original start reservation.
+Claiming its position and booking that reservation occur under the same budget
+lock. Cancellation, stop, expiry, pre-start error and unwind release ordering
+metadata through RAII; they cannot refund CPU principal or release a different
+owner. Clock uncertainty and exhausted ordering identities fail closed. Work
+and state validation still run after admission under their original owners.
+
+This ordering begins at registration after dequeue, not network arrival. Direct
+local `ServiceMutationCpuDomain::begin()` cannot pass a registered public task;
+a continuously nonempty registry can therefore keep local miner/operator starts
+refused. General fairness across those classes, independent honest service
+under attack and timely business confirmation remain open acceptance gates.
+No extra local credit, recovery authority or production activation follows.
+
+The [resource vectors](../../../../config/pon/public-resource-profile-vectors-v1.json)
+retain exact raw r10--r14 and arithmetic r13/r14 identities alongside r15.
+Current native clients and fixed-Host harnesses bind r15 explicitly. Historical
+policy IDs are not relabelled and correctly signed predecessor cookies cannot
+authenticate the current schedule.
+
+PQ history client construction/total wall timing now begins before immutable
+server-pin preparation, including failures. An outer deadline already expired
+at entry is refused before that preparation. Without a caller-supplied outer
+deadline, the original built-in 30-second network interval still begins after
+construction; this change does not assert a new 30-second whole-call deadline.
 
 ## Exact boundary
 
@@ -1233,7 +1269,7 @@ unqualified. The required `trnmponpublic.slice` is still not deployed.
 
 ## Bounded completion replay and controlled existing recovery
 
-The current signed resource revision is **r13**. It retains r12's original
+This historical signed resource revision is **r13**. It retains r12's original
 2,000,000,000 ns burst, 250,000,000 ns/s refill, 100,000,000 ns start reservation,
 two mutation owners, existing queues and absolute request deadlines. It adds no
 CPU allocation, worker, author preference or consensus validity rule.
