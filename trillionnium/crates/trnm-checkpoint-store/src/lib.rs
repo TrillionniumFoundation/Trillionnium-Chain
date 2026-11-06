@@ -31,6 +31,7 @@ use trnm_checkpoint_types::{
 
 mod journal_checkpoint_v1;
 mod live_journal_v2;
+mod socket_owner_v1;
 pub use journal_checkpoint_v1::{
     read_external_journal_checkpoint_v1, write_new_external_journal_checkpoint_v1,
     ExternalJournalCheckpointV1, EXTERNAL_JOURNAL_CHECKPOINT_BYTES_V1,
@@ -830,6 +831,7 @@ impl ExternalCheckpointAuthorityV2 {
     fn handle_connection_v2(
         &mut self,
         mut stream: UnixStream,
+        socket_owner: &socket_owner_v1::SocketOwnerV1,
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         if self.poisoned {
             return Err(ExternalCheckpointAuthorityErrorV2::Unavailable);
@@ -848,6 +850,9 @@ impl ExternalCheckpointAuthorityV2 {
                 source,
             })?;
         let frame = read_frame_v2(&mut stream)?;
+        // Reading an admitted peer may block; fence listener replacement again
+        // before a complete request can read or advance the journal.
+        socket_owner.revalidate()?;
         if frame == journal_checkpoint_v1::REQUEST_V1 {
             let checkpoint = self.journal_checkpoint_v1()?;
             return write_frame_v2(
@@ -919,25 +924,12 @@ impl ExternalCheckpointAuthorityV2 {
         socket_path: impl AsRef<Path>,
     ) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
         self.require_recovery_admission_v1()?;
-        let socket_path = socket_path.as_ref();
-        remove_stale_socket_v2(socket_path)?;
-        let _parent = prepare_socket_parent_v2(socket_path)?;
-        let listener = UnixListener::bind(socket_path).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "bind checkpoint socket",
-                source,
-            }
-        })?;
-        fs::set_permissions(socket_path, fs::Permissions::from_mode(0o600)).map_err(|source| {
-            ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "protect checkpoint socket",
-                source,
-            }
-        })?;
-        for stream in listener.incoming() {
+        let owner = socket_owner_v1::SocketOwnerV1::bind(socket_path.as_ref())?;
+        for stream in owner.listener().incoming() {
+            owner.revalidate()?;
             match stream {
                 Ok(stream) => {
-                    if let Err(error) = self.handle_connection_v2(stream) {
+                    if let Err(error) = self.handle_connection_v2(stream, &owner) {
                         if matches!(error, ExternalCheckpointAuthorityErrorV2::InvalidLog(_)) {
                             return Err(error);
                         }
@@ -1658,33 +1650,14 @@ fn validate_existing_sidecar_v2(
     }
 }
 
-fn remove_stale_socket_v2(path: &Path) -> Result<(), ExternalCheckpointAuthorityErrorV2> {
-    if !path.is_absolute() || path.file_name().is_none() {
+fn prepare_socket_parent_v2(
+    socket_path: &Path,
+) -> Result<PathBuf, ExternalCheckpointAuthorityErrorV2> {
+    if !socket_path.is_absolute() || socket_path.file_name().is_none() {
         return Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
             "socket path must be absolute",
         ));
     }
-    match fs::symlink_metadata(path) {
-        Ok(metadata) if metadata.file_type().is_socket() => {
-            fs::remove_file(path).map_err(|source| ExternalCheckpointAuthorityErrorV2::Io {
-                stage: "remove stale checkpoint socket",
-                source,
-            })
-        }
-        Ok(_) => Err(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
-            "socket path is not a Unix socket",
-        )),
-        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(source) => Err(ExternalCheckpointAuthorityErrorV2::Io {
-            stage: "inspect checkpoint socket",
-            source,
-        }),
-    }
-}
-
-fn prepare_socket_parent_v2(
-    socket_path: &Path,
-) -> Result<PathBuf, ExternalCheckpointAuthorityErrorV2> {
     let parent = socket_path
         .parent()
         .ok_or(ExternalCheckpointAuthorityErrorV2::InvalidConfig(
