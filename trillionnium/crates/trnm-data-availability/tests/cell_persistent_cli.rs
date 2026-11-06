@@ -1,6 +1,9 @@
 //! Actual CLI opt-in to TCQ2/TCS2. Listening output is the only readiness signal;
 //! a probe socket would incorrectly spend the single allowed connection.
 
+#[path = "cell_persistent_cli/rarest.rs"]
+mod rarest;
+
 use std::{
     fs::{self, OpenOptions},
     net::SocketAddr,

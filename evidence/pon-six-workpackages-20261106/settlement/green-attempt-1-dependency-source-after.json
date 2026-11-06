@@ -1,0 +1,14 @@
+{
+  "base_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "scope": "uncommitted candidate owner suite with unchanged original Cargo profile and locked graph; not final committed integration qualification",
+  "sha256": {
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": "d84b85453d2fdadf0238d2ecc163a2bb5e58d0dc3fb90b22c907df002dfadb1f",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": "4ba6765f5d7468e156af78398d31aa2db103b60f1e9a2dca1fca8700d2fd8ed3",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "dd200bb218967dc4456ad48cf81a4e648202f0ed6593972717d7ee4a5eafe4db",
+    "trillionnium/crates/trnm-pon-node/src/store/funding.rs": "7cd7a6155e35d413ba1b31678a3e36c6d9f18bc2d6b49f3e9032a0146f34bc11",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention.rs": "7dd1731e34c57eaadaa1c323872f548d545cc6157de0fba8d852b606a60d1260",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  }
+}

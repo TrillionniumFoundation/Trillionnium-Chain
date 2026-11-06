@@ -160,3 +160,36 @@ The integrated source must retain these distinctions while exercising its real
 success, refusal and recovery paths. Whole-chain PQ, quantum work security,
 independent deployment, production activation and consensus authority remain
 unqualified; none is promoted by this map or the TLS startup repair.
+
+
+### 2026-11-06 advancing target: Cell V3 transport and storage effects
+
+The actual integration target `56897f125df27994efa1dda935f2c62eceb36de9`
+adds an explicit `PersistentRarestFirstV3` public-cache transport. The ordinary
+[`trnm-cell` CLI](../../trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs)
+selects it in `serve`, `fetch` and `fetch-release`; the
+[persistent owner](../../trillionnium/crates/trnm-data-availability/src/cell/network/persistent.rs)
+implements `fetch_cell_persistent_rarest_first`, its to-file variant and the
+corresponding serve/ready interfaces. They use ordinary TCP and TCQ3/TCS3,
+not the Node PQ TLS owner. V3 refuses old transport frames without an implicit
+fallback, and inventory/payload share the existing frame, byte, connection and
+deadline limits. This explicit transport separation and content verification do
+not establish authenticated confidential transport for private tasks. Add these
+real listeners to the still-open all-listener confidentiality boundary.
+
+The same target tightens the
+[storage-service owner](../../trillionnium/crates/trnm-pon-node/src/store/storage_service.rs):
+`retain_native_cell` and `repair_native_cell` invoke the original effect-context
+check before budget opening, reservation or physical hold. That check reobserves
+funding and its anchor, rejects foreign network/parameters/genesis or stale owner
+state, and binds the exact policy, claim, operation, effect and height window.
+Pending/completed operations retain their original reconciliation boundary.
+These are current owner/journal and custody-window checks, not new network
+credentials, a PQ governance root or an independent rollback witness.
+
+The target does not change the public-submit recovery guard, M15 current-use
+kernel or local TLS certificate implementation. Their missing PQ recovery,
+actual installer/activation consumer and ordinary-CLI witness connections remain
+open. The composed Cell, storage/replay and preparation controls need new native
+observations on the combined source; either parent's reports retain their own
+source, binary and resource limits.

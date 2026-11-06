@@ -370,6 +370,14 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
     "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
 ))
+# Explicit inventory-over-persistent composition and single-object height-window
+# admission keep their real refusal/recovery controls in the same source set.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+))
 # Exact consumer and business-path bytes for the request/working-state/data
 # continuation. Observation output is never execution authority, and these
 # finite resource checks do not establish host isolation or public acceptance.
@@ -417,6 +425,22 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_wait.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory_deadline_tests.rs",
+))
+# Six-workpackage observations retain their exact reader, sampler and recovery
+# owner bytes. Their inclusion does not promote a local measurement or an old
+# receipt to whole-Cell, independent-operation or production acceptance.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "config/pon/w1-retained-disposition-v1.json",
+    "scripts/read_w1_full_v2_disposition.py",
+    "scripts/pon_w1_preparation_strategy_reader_v4.py",
+    "scripts/ci/test_six_workpackage_native_rosters.py",
+    "scripts/ci/test_w1_full_v2_disposition.py",
+    "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs",
+    "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
+    "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
+    "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((

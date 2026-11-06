@@ -15,8 +15,8 @@ use trnm_data_availability::cell::{
 };
 use trnm_protocol::pon_wire::{hash, Hash};
 use trnm_service_settlement::native_budget::{
-    NativeBudgetClaimV1, NativeBudgetPolicyV1, NativeBudgetReplayV1, NativeBudgetResourcesV1,
-    NativeBudgetStoreV1, NativeFundingSourceV1,
+    NativeBudgetClaimV1, NativeBudgetEffectCheckV1, NativeBudgetPolicyV1, NativeBudgetReplayV1,
+    NativeBudgetResourcesV1, NativeBudgetStoreV1, NativeFundingSourceV1,
 };
 
 mod release;
@@ -205,6 +205,23 @@ impl Node {
             "NATIVE_CELL_STORAGE_BINDING",
         )?;
         storage_deadline(deadline)?;
+        // Bind every retry to this journal's native context and owner generation.
+        // New work must fit its funding and custody window before any holds.
+        // Exact pending/completed effects remain recoverable after the source
+        // closes or disappears, or the window ends, without reacquiring funding.
+        budgets
+            .check_effects(
+                self,
+                &[NativeBudgetEffectCheckV1 {
+                    policy: &policy,
+                    claim: &claim,
+                    operation: contract.operation,
+                    effect,
+                    window: Some((contract.retain_from_height, contract.retain_until_height)),
+                }],
+            )
+            .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         budgets
             .open_budget(self, policy.clone())
             .map_err(owner_error)?;
@@ -301,6 +318,23 @@ impl Node {
                     if download_bytes >= contract.manifest.size() && attempts >= 1),
             "NATIVE_CELL_REPAIR_BINDING",
         )?;
+        cpu.check().map_err(owner_error)?;
+        // A live repair task does not extend the original custody window.
+        // Check the native context and owner generation before any reservation.
+        // Exact Pending/Done repairs remain target-only reconciliation, including
+        // after the window ends, without reacquiring funding or redispatching.
+        budgets
+            .check_effects(
+                self,
+                &[NativeBudgetEffectCheckV1 {
+                    policy: &policy,
+                    claim: &claim,
+                    operation: repair_operation,
+                    effect,
+                    window: Some((contract.retain_from_height, contract.retain_until_height)),
+                }],
+            )
+            .map_err(owner_error)?;
         cpu.check().map_err(owner_error)?;
         budgets
             .open_budget(self, policy.clone())

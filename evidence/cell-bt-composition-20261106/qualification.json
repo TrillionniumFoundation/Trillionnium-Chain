@@ -1,0 +1,444 @@
+{
+  "schema": "trnm-cell-bt-composition-qualification-v1",
+  "recorded_at_utc": "2026-11-06T07:18:36.234974+00:00",
+  "status": "COMPONENT_TESTS_PASS_WHOLE_ACCEPTANCE_HOLD_NO_GO",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "integration_pr": 688,
+  "baseline_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "implementation_commit": "4fca468163dc1d24ef12355963eeb7c96cbcc37c",
+  "tested_commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+  "tested_tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a",
+  "delivery_scope": "Evidence-only descendant of H2; native/format/source-test implementations and lockfiles stay those of H2.",
+  "production_changes": [
+    "Explicit TCQ3/TCS3 persistent rarest-first profile across Cell/release/model/tensor/CLI boundaries.",
+    "Original-window single-object retention/repair preflight before new budget/resource/physical holds."
+  ],
+  "diagnostic_delta": "H2 adds old failure result/elapsed/durable-row visibility; original one-second budget, assertion, fixture and retry rules unchanged.",
+  "new_test_functions": {
+    "transport": 19,
+    "native_storage": 2,
+    "total": 21,
+    "native_storage_backends_per_test": 3
+  },
+  "final_native_scope": [
+    {
+      "scope": "M09 all targets and features",
+      "passed": 387,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "cargo_contexts": 15
+    },
+    {
+      "scope": "M09 docs, all features",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "scope": "Node complete storage-service selector, all features",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 1152
+    },
+    {
+      "scope": "M12 complete native-budget selector, all features",
+      "passed": 35,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 11
+    }
+  ],
+  "distinct_native_and_doc_passes": 449,
+  "repeat_executions_added_to_denominator": false,
+  "complete_node_or_workspace_native_suite_claim": false,
+  "negative_suite_counts": [
+    {
+      "exit_code": 0,
+      "label": "corpus-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/corpus-negative.stderr.log",
+      "raw_stderr_sha256": "000f85feb8484164a4daab9e9a549d6228b95a1fed9a2c567af03ff0ae57bc2c",
+      "unittest_reported_counts": [
+        37
+      ],
+      "unittest_reported_total": 37
+    },
+    {
+      "exit_code": 0,
+      "label": "repository-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/repository-negative.stderr.log",
+      "raw_stderr_sha256": "872d726bc0363d49441d4a75b1c5293172a97c51f3f0cac0dac03aff08ec03d8",
+      "unittest_reported_counts": [
+        50
+      ],
+      "unittest_reported_total": 50
+    },
+    {
+      "exit_code": 0,
+      "label": "project-boundary-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/project-boundary-negative.stderr.log",
+      "raw_stderr_sha256": "a7d58b0ea82af4a94c28e465f840d19af548e950ddff08991f9d7ad126af9b0c",
+      "unittest_reported_counts": [
+        16
+      ],
+      "unittest_reported_total": 16
+    },
+    {
+      "exit_code": 0,
+      "label": "ci-source-integrity-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/ci-source-integrity-negative.stderr.log",
+      "raw_stderr_sha256": "eb4173163cc86c0bfefba6368ceebea0a51e16dcb245addc562ca78d59b780ed",
+      "unittest_reported_counts": [
+        43
+      ],
+      "unittest_reported_total": 43
+    },
+    {
+      "exit_code": 0,
+      "label": "claim-guard-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/claim-guard-negative.stderr.log",
+      "raw_stderr_sha256": "70b45e20112135e53981e716d38cd0d8a31b843e34386bff92626685fa61054d",
+      "unittest_reported_counts": [
+        22
+      ],
+      "unittest_reported_total": 22
+    },
+    {
+      "exit_code": 0,
+      "label": "ci-contract-negative",
+      "raw_stderr_path": "evidence/recovery-source-gates/ci-contract-negative.stderr.log",
+      "raw_stderr_sha256": "f62838023020cb9462c3739cefc39bdb6f2560ca87627f2197dfc5c8ac7ae880",
+      "unittest_reported_counts": [
+        100
+      ],
+      "unittest_reported_total": 100
+    }
+  ],
+  "negative_suite_total": 268,
+  "strict_clippy": {
+    "exit_code": 0,
+    "packages": [
+      "trnm-data-availability",
+      "trnm-pon-node",
+      "trnm-service-settlement"
+    ],
+    "all_targets": true,
+    "all_features": true,
+    "deny_warnings": true
+  },
+  "format_exit_code": 0,
+  "inventory_exit_code": 0,
+  "cargo_graph": {
+    "workspace_members": 26,
+    "default_resolved_packages": 175,
+    "all_features_resolved_packages": 180,
+    "lockfile_changed": false,
+    "all_features_graph": "cargo-all-features-graph.json"
+  },
+  "source_gates": {
+    "pins": 531,
+    "required_paths": 450,
+    "h2_local_markdown_links": 3345,
+    "corpus_status": "HOLD_NO_GO"
+  },
+  "source_before_after_identical": true,
+  "toolchains": {
+    "rust": "1.95.0",
+    "build_jobs": 2,
+    "test_threads": 1,
+    "cargo_profiles_unchanged": true,
+    "openssl": "3.5.9",
+    "provider_hashes_rechecked_and_new_smoke_run": true,
+    "sqlite_optional_boundary_additional_qualification_claim": false
+  },
+  "remote_job_ids": {
+    "final_node_budget_clippy": "1a1afa1c877-fc05-6a46",
+    "full_m09_and_docs": "1a1afa8eca3-fc05-6a90",
+    "source_gates": "1a1afa907b7-fc05-6a93",
+    "archive": "1a1afb51aab-fc05-6afb"
+  },
+  "remote_validation_summaries": {
+    "green-final-combined": {
+      "canonical_rustc": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+      "provider_version": "3.5.9",
+      "result": "PASS",
+      "results": {
+        "native_budget": {
+          "binary_sha256": "bb887c8e1ff6c7080f9d250a533003bd6f8ed5a768916c4823059743ab9b51d8",
+          "build_exit_code": 0,
+          "failed": 0,
+          "passed": 35,
+          "test_exit_code": 0,
+          "test_started": true,
+          "test_summary_present": true
+        },
+        "node_storage": {
+          "binary_sha256": "a807fd58c292345455c8662687f2a61779c3b34d040268740f3895f4a4696c31",
+          "build_exit_code": 0,
+          "failed": 0,
+          "passed": 17,
+          "test_exit_code": 0,
+          "test_started": true,
+          "test_summary_present": true
+        },
+        "strict_clippy_exit_code": 0
+      },
+      "source_files_sha256": "371234f984d31f28ed2d32487786c2b4915b44cc71218d9ed75932ee0a1fb9d8",
+      "source_unchanged": true,
+      "stage": "green-final-combined",
+      "tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a"
+    },
+    "recovery-m09": {
+      "commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+      "mode": "m09",
+      "result": "PASS",
+      "results": [
+        {
+          "exit_code": 0,
+          "label": "m09-build"
+        },
+        {
+          "exit_code": 0,
+          "expected_inventory_matches": true,
+          "expected_passed": 387,
+          "failed": 0,
+          "ignored": 0,
+          "label": "m09-tests",
+          "passed": 387,
+          "summary_count": 15
+        },
+        {
+          "exit_code": 0,
+          "expected_inventory_matches": true,
+          "expected_passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "label": "m09-docs",
+          "passed": 10,
+          "summary_count": 1
+        }
+      ],
+      "source_files_sha256": "371234f984d31f28ed2d32487786c2b4915b44cc71218d9ed75932ee0a1fb9d8",
+      "source_unchanged": true,
+      "tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a"
+    },
+    "recovery-source-gates": {
+      "commit": "c16c7e0e93cf5eb14f6dac140358441a47d82c7e",
+      "mode": "source-gates",
+      "result": "PASS",
+      "results": [
+        {
+          "exit_code": 0,
+          "label": "corpus"
+        },
+        {
+          "exit_code": 0,
+          "label": "corpus-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "repository"
+        },
+        {
+          "exit_code": 0,
+          "label": "repository-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "project-boundary-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "ci-source-integrity-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "claim-guard"
+        },
+        {
+          "exit_code": 0,
+          "label": "claim-guard-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "ci-contract-negative"
+        },
+        {
+          "exit_code": 0,
+          "label": "inventory"
+        },
+        {
+          "exit_code": 0,
+          "label": "format"
+        },
+        {
+          "exit_code": 0,
+          "label": "locked-metadata",
+          "package_count": 175,
+          "workspace_member_count": 26
+        }
+      ],
+      "source_files_sha256": "371234f984d31f28ed2d32487786c2b4915b44cc71218d9ed75932ee0a1fb9d8",
+      "source_unchanged": true,
+      "tree": "4aa564ca3eb297f6afa03976f16eacb6ffd7554a"
+    },
+    "red-storage-only": {
+      "binary_sha256": "daa2a70148d691b0d686f4fd1b26bdee3a72e498cd53112c863e344405f1dd1d",
+      "build_exit_code": 0,
+      "expected_test_exit_code": 101,
+      "production_sha256": "78c02d204889625c7bc8d76a99f377d6f16f3bbecacedcb95c87ab97c01ed997",
+      "source_files_sha256": "0dd2ff96e370a8ea490eba4400891c05063926274b6be36265f41fe29fe6f206",
+      "source_unchanged": true,
+      "stage": "red-storage-only",
+      "test_exit_code": 101
+    },
+    "green-storage-only": {
+      "binary_sha256": "5c4b75998f17670691658410aa6147f9b21e69830cc5ad144e01d07921531aab",
+      "build_exit_code": 0,
+      "expected_test_exit_code": 0,
+      "production_sha256": "f6afb07b4549342cd150db6283c4f380cf6980d61dbd25d6c0dc2f8740bc4871",
+      "source_files_sha256": "12b54b83445c5a350d8c41849084a0ebff40ead6103ac60cea233fe4de7768a5",
+      "source_unchanged": true,
+      "stage": "green-storage-only",
+      "test_exit_code": 0
+    }
+  },
+  "failures_retained": [
+    {
+      "name": "original_storage_production_RED",
+      "build_exit_code": 0,
+      "test_exit_code": 101,
+      "failed_tests": 2,
+      "meaning": "Actual extra budget/claim holds after original-window rejection."
+    },
+    {
+      "name": "development_module_path",
+      "code": "E0583",
+      "meaning": "New integration test child-module path; corrected explicitly; raw failed log retained."
+    },
+    {
+      "name": "H1_full_M09",
+      "passed": 352,
+      "failed": 1,
+      "ignored": 0,
+      "remaining_integration_targets_executed": false,
+      "cause": "UNATTRIBUTED",
+      "raw_log_sha256": "ef773126b696d83709839ca2429bf70ae5acf979b71d9e7ad3c9881563dad4ef",
+      "raw_log_recovered": true
+    },
+    {
+      "name": "H1_remote_preflight",
+      "native_started": false,
+      "reason": "Local verification branch name violated unchanged project regex; H2 uses a compliant local branch."
+    },
+    {
+      "name": "local_source_gate_interruption",
+      "outer_terminal_receipt": null,
+      "known_completed": [
+        "preflight",
+        "corpus",
+        "corpus-negative",
+        "repository"
+      ],
+      "later_local_returns": "NOT_OBSERVED",
+      "complete_remote_repeat_separately_recorded": true
+    }
+  ],
+  "original_cold_cohort": {
+    "payload_bytes": 272189990,
+    "historical_status": "FAILED",
+    "this_continuation": "NOT_RUN",
+    "budget_seconds": 35,
+    "header_failure_seconds": 2.041,
+    "consumer_payload_bytes": 0,
+    "exact_materials_recovered": false,
+    "exact_call_recovered": false,
+    "status": "HOLD"
+  },
+  "distinct_historical_success_cohort_bytes": 272190131,
+  "synthetic_269_chunk_fixture_is_original_cohort": false,
+  "review_scope": "Separate-agent static review under the same operator; no independent administrator or security acceptance.",
+  "claims": {
+    "native_storage_payment_closed": false,
+    "cancellation_and_reorg_resistant_storage_escrow": false,
+    "independent_replica_fault_domains_qualified": false,
+    "public_wan_accepted": false,
+    "hepta_current_finaluse_integrated": false,
+    "original_cold_cohort_fixed": false,
+    "bep52_merkle_piece_proofs_implemented": false,
+    "multiplex_implemented": false,
+    "dht_implemented": false,
+    "production_activation": false
+  },
+  "archive_validation": {
+    "remote_original_files_verified": 332,
+    "local_original_files_verified": 39,
+    "private_host_scan_or_smoke_keys_published": false,
+    "large_remote_binary_and_source_bodies_not_duplicated_into_git": true
+  },
+  "artifacts_excluding_this_file_and_checksum_list": [
+    {
+      "path": "README.md",
+      "bytes": 13545,
+      "sha256": "ef42cd19d8aa797e212a6b4b1a195da2a06533739266664d45613f94cfd3b6d4"
+    },
+    {
+      "path": "cargo-all-features-graph.json",
+      "bytes": 248877,
+      "sha256": "1aeeb63064aeced842484445e3197b5d65da1031884dcdf9a2179fa05e847b23"
+    },
+    {
+      "path": "cold-cohort-status.json",
+      "bytes": 15357,
+      "sha256": "76cf6cf0eedd1ee59dfd73aa550c1cd496af46fbd337fcef4d22552714b2e40a"
+    },
+    {
+      "path": "economic-boundary.json",
+      "bytes": 19859,
+      "sha256": "6cf780761a374d39d30620a86c3eac740559838b0df260a674c7190c295bb606"
+    },
+    {
+      "path": "independent-review-binding.json",
+      "bytes": 18602,
+      "sha256": "95a76f06676de74e6a7ba82b60a105574a6387de39c8395beffaa445340f3b5f"
+    },
+    {
+      "path": "independent-review-h2-delta-binding.json",
+      "bytes": 24657,
+      "sha256": "84fc775458c3f2825873e73b5846bde7807672d0825f1cc445eada371babbf77"
+    },
+    {
+      "path": "independent-review.json",
+      "bytes": 23425,
+      "sha256": "465f0156ce8f03e88c8b7f67e482d4bce705b93a9083396ae50b6704b08e87b9"
+    },
+    {
+      "path": "local-executor-restoration.json",
+      "bytes": 1106,
+      "sha256": "f180c9a0aba175ce2ab094bb0a162d939aa6f29883e0daa9c3851f8e4b2598fc"
+    },
+    {
+      "path": "local-records-manifest.json",
+      "bytes": 7090,
+      "sha256": "078af20e8ca50574fd0b8f6fdc16dc5281adcddc796cd2f3dd2a9a963167828d"
+    },
+    {
+      "path": "local-records.tar.xz",
+      "bytes": 505684,
+      "sha256": "ba549e0818466e73e9628fb13020482d1d960bf16d92cb4ede21298c5325f8e5"
+    },
+    {
+      "path": "remote-records.manifest.json",
+      "bytes": 75860,
+      "sha256": "c390d57f26a657e0a8207bb812845d77c30dcc61f6ce6c7e7f4f562c00632ff3"
+    },
+    {
+      "path": "remote-records.tar.xz",
+      "bytes": 569060,
+      "sha256": "c48bfdc989f552c39195094a9fe86634262b27fa3c89e3b06a9e7e775b075fa5"
+    }
+  ]
+}

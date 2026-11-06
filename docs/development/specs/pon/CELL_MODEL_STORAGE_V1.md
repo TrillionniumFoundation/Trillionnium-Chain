@@ -16,7 +16,7 @@ a local retention readback cannot select CURRENT or issue FinalUse.
 | Objects | Canonical TCM1/TCR1/TCD1; TMR1 model root; TMT1 exact dense tensor roster; self-contained TMA1; fixed, versioned SHA256 domains. | Additional codecs, quantization, architecture and model quality require their own profiles. |
 | Deduplication | Raw SHA256 chunk CAS, canonical TCX1 chunk reuse, one request per distinct missing chunk, shared retained manifest duties. | Cross-context physical retention aliases and semantic adapter rebasing are not implemented. |
 | Dependencies | Complete declared TCD1 graph, exact file mappings, TMR1 router roster and bounded direct parents, independently pinned loader context. | The release owner must enumerate every real dependency; bytes cannot reveal an omitted external requirement. |
-| Transfer | Bounded sources, verified-prefix resume, explicit rarest-observed-first inventory, explicit TCQ2/TCS2 sequential connection reuse and aggregate budgets. | Public service fairness, transport confidentiality and WAN performance need separate deployment qualification. |
+| Transfer | Bounded sources, verified-prefix resume, explicit rarest-observed-first inventory, TCQ2/TCS2 ordered connection reuse, and explicit TCQ3/TCS3 inventory plus sequential reuse under aggregate budgets. | Public service fairness, transport confidentiality and WAN performance need separate deployment qualification. |
 | Discovery | Existing signed current hints, TTL and replay checks; balanced observed bootstrap contributions and IP-prefix diversity. | This is a rendezvous heuristic, not a DHT implementation or proof of eclipse resistance or operator independence. |
 | Retention | TCA2 complete-release catalog over the original physical arena; immutable terms, funding identities, replica declarations, repair owners and deadlines. | M12/payment admission, current chain height and independent replica evidence remain externally supplied. |
 | Collection | Every pending, acknowledged or expired-but-unretired root protects its members; physical retirement also refuses unsettled repairs. | A disposable cache eviction is not a paid-duty release or proof of freed filesystem blocks. |
@@ -167,6 +167,26 @@ fallback. It requires explicit `--max-requests` and
 greater than the total. Serving also requires bounded workers and a byte cap.
 Inventory/rarest scheduling is not combined with this profile.
 
+The separate `--transport persistent-rarest-v3 --scheduling rarest-first-v1`
+profile explicitly combines inventory and sequential reuse. It uses only
+`TCQ3/TCS3`, preserving TCM1 and chunk identities. Kinds 1 and 2 keep the
+37-byte object request shape; kind 3 is
+`TCQ3 | 3:u8 | TCM1_id:32 | start:u32be | count:u16be`, with count in
+`1..=256`. The response has the same bounded status/length layout under TCS3;
+inventory bytes are the existing canonical LSB-first bitfield with zero padding.
+Old magic and unsupported kinds are refused without protocol negotiation.
+V1 and V2 keep their original namespaces and defaults.
+
+Manifest, inventory and payload frames use the same peer connection pool and
+the same original connection, frame, response-byte and absolute-time budgets.
+Complete TCR1/TCD1/TMA1 acquisition keeps that one session across every member;
+inventory or a new member does not reset a counter or extend a connection's
+lifetime. Inventory remains an untrusted scheduling hint. Missing or stale
+hints cannot bypass chunk/full-payload verification or grant another allowance.
+Wrong framing, partial responses and corrupt payloads retain the original
+connection-discard and peer-quarantine rules. This is sequential reuse, not
+request multiplexing, a DHT or BEP 52 Merkle piece-proof support.
+
 The shared peer pool decrements the connection allowance only on actual dials.
 Frame attempts, including bounded pool-lock waits, consume the request
 allowance. Each connection receives one fixed deadline at dial/accept, capped
@@ -198,9 +218,9 @@ stops subsequent bootstrap attempts. In-flight byte reservations may refund
 unused capacity; they are not treated as actual exhaustion. This does not change
 the existing discovery record, TTL, signature or connection-count limits.
 
-Rarest-first and persistent connections are separate explicitly selected
-transport profiles; a combined inventory-over-persistent protocol is not
-implemented. Likewise, the legacy serial `serve_cells` API is not an aggregate
+Rarest-first V1 and ordered persistent V2 remain separately selected profiles;
+their explicit combination requires V3 on both client and server. Likewise,
+the legacy serial `serve_cells` API is not an aggregate
 egress-byte owner. CLI serving selects metered admission with explicit
 `--bounded-workers` and `--max-served-bytes`; the serial default must not be
 reported as having that egress contract.
@@ -257,6 +277,15 @@ commit; no late outcome grants a refund or a second physical dispatch. The M09
 physical writer wait spends the original deadline. M12's existing journal calls
 still contain their own cooperative SQLite intervals; these boundary checks do
 not make every M12 wait preemptible or replace its internal busy timeout.
+
+Single-object retention and repair also run the existing M12 effect preflight
+before opening a new budget or reserving resources. Current task funds alone
+cannot admit work outside the original service-height window. A first request
+rejected by this preflight leaves no new budget, claim or physical obligation.
+An already admitted pending/completed effect retains its exact original window,
+identity and charged resources and can still perform readback-only recovery
+after that window. The actual mutations repeat their original checks; this
+read-only preflight neither locks native funds nor makes the owners atomic.
 
 Every pending, acknowledged and expired-but-not-explicitly-retired release
 protects its complete member set. `retire_object` holds the catalog writer

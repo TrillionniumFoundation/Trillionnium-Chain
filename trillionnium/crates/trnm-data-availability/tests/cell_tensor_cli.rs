@@ -394,6 +394,94 @@ fn persistent_tensor_cli_shares_one_connection_and_four_requests_across_manifest
 }
 
 #[test]
+fn persistent_rarest_tensor_cli_verifies_complete_model_and_then_works_cache_only() {
+    let fixture = Fixture::new("F32");
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let origin = fixture.origin.clone();
+    let (ready_tx, ready_rx) = std::sync::mpsc::sync_channel(1);
+    let worker = thread::spawn(move || {
+        serve_cells_persistent_rarest_first_with_ready(
+            &listener,
+            &origin,
+            &AtomicBool::new(false),
+            CellPersistentServeLimitsV2 {
+                serving: CellServeLimitsV1 {
+                    request_timeout: Duration::from_secs(2),
+                    overall_timeout: Duration::from_secs(5),
+                    max_workers: 1,
+                    max_connections: 1,
+                    max_response_bytes: 40_000,
+                },
+                max_requests: 5,
+                max_requests_per_connection: 5,
+            },
+            &|| {
+                ready_tx
+                    .send(())
+                    .map_err(|_| CellErrorV1::Invalid("test ready receiver"))
+            },
+        )
+        .unwrap()
+    });
+    ready_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+    let mut args = fixture.persistent_args(&address.to_string(), "rarest.db", "rarest.tma1", 5);
+    set_arg(&mut args, "--transport", "persistent-rarest-v3");
+    args.extend(["--scheduling".into(), "rarest-first-v1".into()]);
+    let output = Command::new(env!("CARGO_BIN_EXE_trnm-cell"))
+        .args(args)
+        .output()
+        .unwrap();
+    let served = worker.join().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    assert_eq!(report["transport"], "persistent-rarest-v3");
+    assert_eq!(report["request_attempts"], 5);
+    assert_eq!(report["connection_attempts"], 1);
+    assert_eq!(report["downloaded_bytes"], fixture.payload.len() as u64);
+    assert_eq!(report["tensor_files"], 1);
+    assert_eq!(report["selection_authority"], false);
+    assert_eq!(report["use_authority"], false);
+    assert_eq!(
+        report["received_response_bytes"],
+        served.serving.sent_response_bytes
+    );
+    assert_eq!(served.request_attempts, 5);
+    assert_eq!(served.serving.completed_requests, 5);
+    assert_eq!(served.serving.accepted_connections, 1);
+    assert_eq!(
+        fs::read(fixture.path("rarest.tma1")).unwrap(),
+        fixture.model.encode()
+    );
+    let mut cached_args = fixture.persistent_args("", "rarest.db", "rarest-cached.tma1", 1);
+    set_arg(&mut cached_args, "--transport", "persistent-rarest-v3");
+    set_arg(&mut cached_args, "--max-response-bytes", "0");
+    cached_args.extend(["--scheduling".into(), "rarest-first-v1".into()]);
+    let cached = Command::new(env!("CARGO_BIN_EXE_trnm-cell"))
+        .args(cached_args)
+        .output()
+        .unwrap();
+    assert!(
+        cached.status.success(),
+        "{}",
+        String::from_utf8_lossy(&cached.stderr)
+    );
+    let report: serde_json::Value = serde_json::from_slice(&cached.stdout).unwrap();
+    assert_eq!(report["transport"], "persistent-rarest-v3");
+    assert_eq!(report["request_attempts"], 0);
+    assert_eq!(report["connection_attempts"], 0);
+    assert_eq!(report["received_response_bytes"], 0);
+    assert_eq!(
+        fs::read(fixture.path("rarest-cached.tma1")).unwrap(),
+        fixture.model.encode()
+    );
+}
+
+#[test]
 fn persistent_tensor_cli_keeps_verified_prefix_on_request_exhaustion_and_explicit_retry_resumes() {
     let fixture = Fixture::new("F32");
     let server = PersistentServer::start(&fixture, 2);
