@@ -6,6 +6,7 @@ on:
       - config/pon/pq-cross-branch-corpus-v1.json
       - config/pon/pq-system-required-tests-v1.json
       - config/pon/pq-native-tls-required-tests-v1.json
+      - config/pon/pq-native-tls-witness-required-tests-v1.json
       - scripts/ci/record_pq_native_command.py
       - scripts/ci/test_record_pq_native_command.py
       - scripts/ci/verify_ci_source.py
@@ -411,6 +412,52 @@ jobs:
               failed=1
             fi
           done < "$PQ_OUT/tls-required.tsv"
+          test "$failed" = 0
+      - name: Require the explicit TLS witness CLI controls from the actual binary
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=config/pon/pq-native-tls-witness-required-tests-v1.json
+          bash "$PQ_OUT/run-command.sh" tls-witness-cli-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_witness_cli --all-features -- --list
+          python3 - "$manifest" "$PQ_OUT" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          if (not isinstance(manifest, dict)
+                  or manifest.get('schema') != 'trnm-pq-native-tls-witness-required-tests-v1'
+                  or manifest.get('harness') != 'pq_tls_witness_cli'
+                  or not isinstance(manifest.get('expected_controls'), dict)
+                  or manifest['expected_controls'] != {'cli': 5}
+                  or type(manifest['expected_controls']['cli']) is not int
+                  or not isinstance(manifest.get('scopes'), dict)
+                  or set(manifest['scopes']) != {'cli'}
+                  or any(manifest.get(key) is not False for key in ('production_activation',
+                      'consensus_authority', 'public_wan_accepted', 'whole_chain_quantum_security_qualified',
+                      'whole_node_rollback_protection'))):
+              raise SystemExit('TLS witness required-control manifest invalid')
+          required = manifest['scopes']['cli']
+          if (not isinstance(required, list) or len(required) != 5
+                  or any(not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name) for name in required)
+                  or len(set(required)) != 5):
+              raise SystemExit('TLS witness required-control names invalid')
+          root = Path(sys.argv[2])
+          log = (root / 'tls-witness-cli-registry.log').read_text()
+          names = re.findall(r'^([A-Za-z0-9_:]+): test$', log, re.M)
+          if len(names) != 5 or len(set(names)) != 5 or set(names) != set(required):
+              raise SystemExit('TLS witness actual binary registry differs from the five required controls')
+          (root / 'tls-witness-required.tsv').write_text(''.join(
+              f'tls-witness-cli-{index:02d}\t{name}\n' for index, name in enumerate(required)))
+          print(json.dumps({'scope':'registry-presence-only','required_controls':5,'production_activation':False},sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_witness_cli --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/tls-witness-required.tsv"
           test "$failed" = 0
       - name: Require original transaction scope controls
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
