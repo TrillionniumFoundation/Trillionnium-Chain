@@ -29,6 +29,8 @@ impl<'a> DeadlineStream<'a> {
         // Darwin may inherit O_NONBLOCK from the listener. Read/write timeouts
         // need a blocking descriptor; each BIO call still uses the SAME end.
         stream.set_nonblocking(false)?;
+        // Disable Nagle without changing TLS bytes, deadlines or read accounting.
+        stream.set_nodelay(true)?;
         Ok(Self {
             stream,
             deadline,

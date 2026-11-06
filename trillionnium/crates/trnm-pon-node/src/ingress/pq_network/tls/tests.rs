@@ -28,6 +28,91 @@ fn finish(stop: Arc<AtomicBool>, handle: thread::JoinHandle<PqNetworkMetrics>) -
 }
 
 #[test]
+fn real_tls_frame_split_boundary_preserves_exact_bytes_in_both_directions() {
+    const LENGTHS: [usize; 3] = [16_379, 16_380, 16_381];
+    fn payload(length: usize, salt: u8) -> Vec<u8> {
+        (0..length)
+            .map(|offset| (offset as u8).wrapping_mul(37).wrapping_add(salt))
+            .collect()
+    }
+
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let owner = Mutex::new(node);
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let address = listener.local_addr().unwrap();
+    let server = fixture.server();
+    let client = fixture.client();
+    server.inner.policy.check_tls_listener(address).unwrap();
+    // One original deadline covers the handshake and every frame, without
+    // renewing the connection budget at the 16 KiB plaintext split.
+    let deadline = Instant::now() + Duration::from_secs(5);
+    thread::scope(|scope| {
+        let sending = scope.spawn(move || {
+            let remaining = deadline.checked_duration_since(Instant::now()).unwrap();
+            let tcp = TcpStream::connect_timeout(&address, remaining).unwrap();
+            let mut channel = io::Channel::connect(tcp, deadline, &client.context).unwrap();
+            for length in LENGTHS {
+                channel.write_frame(&payload(length, 0x35)).unwrap();
+                let response = channel.read_frame().unwrap();
+                assert_eq!(response.len(), length);
+                assert!(
+                    response == payload(length, 0xc7),
+                    "exact server-to-client bytes at length {length}"
+                );
+            }
+        });
+        let tcp = loop {
+            check_live_request(deadline, None).unwrap();
+            match listener.accept() {
+                Ok((tcp, _)) => break tcp,
+                Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                    thread::sleep(Duration::from_millis(2));
+                }
+                Err(error) => panic!("bounded TLS accept: {error}"),
+            }
+        };
+        server
+            .inner
+            .policy
+            .check_tls_client_ip(tcp.peer_addr().unwrap())
+            .unwrap();
+        server.inner.charge_connection(&owner, deadline).unwrap();
+        let mut channel =
+            io::Channel::accept(tcp, deadline, &server.context, &owner, &fixture.policy).unwrap();
+        for length in LENGTHS {
+            let request = channel.read_frame().unwrap();
+            assert_eq!(request.len(), length);
+            assert!(
+                request == payload(length, 0x35),
+                "exact client-to-server bytes at length {length}"
+            );
+            channel.write_frame(&payload(length, 0xc7)).unwrap();
+        }
+        sending.join().unwrap();
+    });
+    let status = owner
+        .lock()
+        .unwrap()
+        .pq_network_status(&fixture.policy)
+        .unwrap();
+    let framed_bytes: usize = LENGTHS.iter().map(|length| length + 4).sum();
+    assert!(status["ingress_bytes"].as_u64().unwrap() > framed_bytes as u64);
+    assert_eq!(status["tls_handshake_attempts"], 1);
+    // These are transport frames, not an admitted PNQ operation.
+    assert_eq!(status["inbound_signature_attempts"], 0);
+    assert_eq!(status["records"], 0);
+}
+
+#[test]
 fn real_tls_node_submit_lost_ack_exact_receipt_and_cold_reopen() {
     let fixture = Fixture::new();
     let directory = tempfile::tempdir().unwrap();
