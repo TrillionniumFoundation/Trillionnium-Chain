@@ -371,6 +371,42 @@ class RuntimeMaterialTests(unittest.TestCase):
             with self.subTest(marker=marker), self.assertRaises(KeyError):
                 self.declare(self.repack_metadata('Requires-Dist: absent-runtime; ' + marker + '\n'))
 
+    def test_metadata_markers_use_pinned_environment_and_propagate_errors(self):
+        from packaging.markers import Marker
+        spec = self.repack_metadata('Requires-Dist: absent-runtime; sys_platform == "linux"\n')
+        ambient = dict(default_environment(), sys_platform="win32", python_version="0.0")
+        with mock.patch("packaging.markers.default_environment", return_value=ambient), \
+                self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
+            self.declare(spec)
+        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")), \
+                self.assertRaisesRegex(TypeError, "marker-internal-failure"):
+            self.declare(spec)
+        with self.assertRaises(ValueError):
+            self.declare(self.repack_metadata('Requires-Dist: absent-runtime; unknown_marker == "x"\n'))
+
+    def test_metadata_marker_legacy_api_refuses_without_retry(self):
+        # The archived packaging-24 positive belongs to its earlier source.
+        # This verifier requires >=25 and an explicit metadata context, even
+        # when a broken host package reports a new version with the old API.
+        spec = self.repack_metadata(
+            'Requires-Dist: pon-closure-probe; python_version >= "3.12"\n')
+        observed = []
+        original = Marker.evaluate
+
+        def legacy_evaluate(marker, environment=None):
+            return original(marker, environment=environment)
+
+        def observed_evaluate(marker, *args, **kwargs):
+            observed.append((args, kwargs))
+            return legacy_evaluate(marker, *args, **kwargs)
+
+        with mock.patch.object(Marker, "evaluate", observed_evaluate):
+            with self.assertRaisesRegex(TypeError, "context"):
+                self.declare(spec)
+        self.assertEqual(observed, [
+            ((), dict(environment=dict(spec["marker_environment"], extra=""),
+                      context="metadata"))])
+
     def test_symlink_hardlink_fifo_and_import_side_effect_files_refuse(self):
         path = self.root / "project/untrusted"
         for create in (lambda: path.symlink_to(self.root / "project/check.py"),

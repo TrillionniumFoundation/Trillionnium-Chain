@@ -41,6 +41,7 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
     MAX_RECORDS, MAX_WIRE,
 };
 
+pub mod outbound;
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
 #[cfg(feature = "pq-native-openssl")]
@@ -510,6 +511,42 @@ pub struct PqResponse {
     pub value: Value,
 }
 
+/// A live, signature-checked reply from the explicitly pinned native owner.
+/// Its private fields and absent deserializer prevent caller-written response
+/// JSON from retiring a durable outbound operation. This is transport evidence,
+/// not block finality, successful execution or an account authorization.
+#[derive(Debug)]
+pub struct VerifiedPqReply {
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    operation: Hash,
+    request_wire_digest: Hash,
+    wire: Vec<u8>,
+    response: PqResponse,
+}
+impl VerifiedPqReply {
+    pub fn response(&self) -> &PqResponse {
+        &self.response
+    }
+    pub fn wire(&self) -> &[u8] {
+        &self.wire
+    }
+    pub fn operation_id(&self) -> Hash {
+        self.operation
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn into_response(self) -> PqResponse {
+        self.response
+    }
+}
+
+fn outbound_request_digest(wire: &[u8]) -> Hash {
+    hash(b"TRNM/PQNetwork/outbound-exact-request/v1\0", &[wire])
+}
+
 pub struct PreparedPqRequest {
     verified: VerifiedRequest,
 }
@@ -586,11 +623,48 @@ impl PqClient {
         prepared: &PreparedPqRequest,
         budget: Duration,
     ) -> Result<PqResponse> {
+        self.send_verified(address, prepared, budget)
+            .map(VerifiedPqReply::into_response)
+    }
+    /// Preserve the original signed response and its exact request binding for
+    /// the explicitly selected durable outbound owner.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
         // A TLS-required policy cannot reach the original plaintext socket,
         // even if the caller supplies an otherwise valid prepared request.
         self.policy.require_plaintext()?;
         self.check_send(address, prepared, budget)?;
         let end = Instant::now() + budget;
+        self.exchange_prepared(address, prepared, end)
+    }
+    fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        end: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        let budget = end
+            .checked_duration_since(Instant::now())
+            .filter(|value| !value.is_zero())
+            .ok_or("PQ_NETWORK_DEADLINE")?;
+        self.check_send(address, prepared, budget)?;
+        self.exchange_prepared(address, prepared, end)
+    }
+    fn exchange_prepared(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        end: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let budget = end
+            .checked_duration_since(Instant::now())
+            .filter(|value| !value.is_zero())
+            .ok_or("PQ_NETWORK_DEADLINE")?;
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
         let response = super::read_frame_deadline(&mut stream, end)?;
@@ -630,7 +704,7 @@ impl PqClient {
         response: &[u8],
         prepared: &PreparedPqRequest,
         end: Instant,
-    ) -> Result<PqResponse> {
+    ) -> Result<VerifiedPqReply> {
         let verified = self
             .policy
             .verify_response(response, &prepared.verified, super::now()?)?;
@@ -647,7 +721,19 @@ impl PqClient {
             super::now()? <= prepared.verified.expiry,
             "PQ_NETWORK_EXPIRED_UNCONFIRMED",
         )?;
-        Ok(verified)
+        let reply = VerifiedPqReply {
+            policy: self.policy.id(),
+            peer: prepared.verified.peer,
+            sequence: prepared.verified.sequence,
+            operation: prepared.verified.operation,
+            request_wire_digest: outbound_request_digest(prepared.wire()),
+            wire: response.to_vec(),
+            response: verified,
+        };
+        // The sealed receipt also retains/hash-binds bounded wire bytes. That
+        // work belongs to the same original completion interval.
+        check_live_request(end, Some(prepared.verified.expiry))?;
+        Ok(reply)
     }
 }
 
