@@ -4,8 +4,8 @@
 //! Contended or poisoned cache locks never delay the caller: lookup misses and
 //! publication is skipped while the original verifier retains its checkpoints.
 use super::{
-    hash, verify_with_progress, Hash, VerificationError, VerificationProgress, VerifiedWork,
-    WorkError, PROFILE, PROOF_BYTES,
+    hash, Hash, VerificationError, VerificationProgress, VerifiedWork, WorkError, PROFILE,
+    PROOF_BYTES,
 };
 use std::{
     sync::Mutex,
@@ -97,28 +97,31 @@ impl RejectionCache {
         proof: &[u8],
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
-        // Keep the native Length, Version, zero-Target, Field ordering before
-        // hashing all proof bytes for optional reuse. Delegate the first three
-        // failures to the original verifier; the shared encoding filter then
-        // checks every canonical field without allocating or hashing A/B.
-        // Task/ticket checks stay with the native verifier on a miss, so this
-        // filter does not add a second task hash to ordinary cold verification.
-        if proof.len() != PROOF_BYTES || &proof[..4] != b"PNW1" || target == [0; 32] {
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
-        }
-        super::precheck_proof_encoding(proof)?;
-        let Some(key) = Self::key(challenge, expected_task, target, proof) else {
-            // Preserve the native error ordering and cancellation semantics;
-            // malformed lengths never consult or populate the cache.
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
-        };
+        // Complete the original cheap-check order before hashing the whole
+        // proof for optional reuse. A wrong task or insufficient ticket must
+        // not pay for an additional full-proof digest or input allocation.
+        let checked = super::checked_proof_statement(challenge, expected_task, target, proof)?;
+        let key = Self::key(challenge, expected_task, target, proof).ok_or(WorkError::Length)?;
         if let Some(error) = self.hit(key) {
             // A cached error is only a performance hint. Callers must still be
             // able to cancel, and must have checked present branch authority.
             progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
             return Err(VerificationError::Relation(error));
         }
-        let result = verify_with_progress(challenge, expected_task, target, proof, progress);
+        // Reuse only this invocation's checked inputs on a miss; repeat no
+        // task hash or field scan, and decode no arithmetic inputs on a hit.
+        let inputs = super::CheckedProofInputs {
+            matrices: checked.decode_inputs(),
+            actual_task: checked.actual_task,
+            ticket: checked.ticket,
+        };
+        let result = super::verify_checked_with_kernel(
+            challenge,
+            proof,
+            progress,
+            super::VerificationKernel::FullLimb,
+            inputs,
+        );
         if let Err(VerificationError::Relation(error)) = &result {
             self.insert(key, *error);
         }
@@ -129,7 +132,7 @@ impl RejectionCache {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
+    use crate::pon_work::{prove, task_id, verify_with_progress, CELLS, PROOF_BYTES};
     use std::{sync::mpsc, thread};
 
     type WorkSummary = (Hash, Hash, Hash, Vec<u32>);
@@ -424,6 +427,55 @@ mod tests {
     }
 
     #[test]
+    fn cheap_task_and_ticket_refusals_never_hash_for_optional_reuse() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let challenge = [48; 32];
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let proof = prove(challenge, &zeros, &zeros).unwrap();
+        let mut wrong_task = task;
+        wrong_task[0] ^= 1;
+        let mut low_target = [0; 32];
+        low_target[31] = 1;
+        assert!(hash(b"ticket", &[&challenge, &proof[PROOF_BYTES - 32..]]) > low_target);
+        for (expected_task, target, expected_error) in [
+            (wrong_task, [255; 32], WorkError::Task),
+            (task, low_target, WorkError::Target),
+            (wrong_task, low_target, WorkError::Task),
+        ] {
+            let expected =
+                verify_with_progress(challenge, expected_task, target, &proof, &mut |_| {
+                    Err::<(), _>("cheap errors precede cancellation")
+                });
+            CACHE_KEY_PROOF_BYTES.with(|count| count.set(0));
+            super::super::ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+            let actual =
+                cache.verify_with_progress(challenge, expected_task, target, &proof, &mut |_| {
+                    Err::<(), _>("cheap errors precede cancellation")
+                });
+            assert_eq!(
+                expected.unwrap_err(),
+                VerificationError::Relation(expected_error)
+            );
+            assert_eq!(
+                actual.unwrap_err(),
+                VerificationError::Relation(expected_error)
+            );
+            assert_eq!(
+                CACHE_KEY_PROOF_BYTES.with(std::cell::Cell::get),
+                0,
+                "optional reuse must not hash the full proof after cheap statement refusal"
+            );
+            assert_eq!(
+                super::super::ARITHMETIC_INPUT_DECODES.with(std::cell::Cell::get),
+                0,
+                "a refused statement must not allocate/decode arithmetic inputs"
+            );
+            assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+        }
+    }
+
+    #[test]
     fn false_transcript_replay_is_skipped_but_real_proof_still_passes() {
         let cache = RejectionCache::new(8, Duration::from_secs(2)).unwrap();
         let a = vec![0; CELLS];
@@ -434,6 +486,7 @@ mod tests {
         let mut bad = valid.clone();
         bad[PROOF_BYTES - 1] ^= 1;
         for expected in [512, 0] {
+            super::super::ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
             let mut replays = 0;
             let r = cache.verify_with_progress(challenge, task, target, &bad, &mut |point| {
                 if matches!(point, VerificationProgress::TranscriptTile { .. }) {
@@ -446,6 +499,11 @@ mod tests {
                 Err(VerificationError::Relation(WorkError::Transcript))
             ));
             assert_eq!(replays, expected);
+            assert_eq!(
+                super::super::ARITHMETIC_INPUT_DECODES.with(std::cell::Cell::get),
+                usize::from(expected != 0),
+                "only a cold, fully checked statement decodes arithmetic inputs"
+            );
         }
         assert!(cache
             .verify_with_progress(challenge, task, target, &valid, &mut |_| Ok::<(), ()>(()))

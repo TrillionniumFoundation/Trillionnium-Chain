@@ -815,6 +815,53 @@ class ReaderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'completion-work observation'):
             reader.analyze(report)
 
+    def test_r15_policy_preserves_failures_and_cannot_relabel_r13_or_r14_phases(self):
+        report = arithmetic_report()
+        report['public_resource_policy'] = arithmetic_policy('r15')
+        with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
+            reader.analyze(report)
+        # The r15 top-level pin cannot relabel either historical phase profile.
+        for phase in report['phases']:
+            phase['public_resource_policy'] = arithmetic_policy('r14')
+        with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
+            reader.analyze(report)
+        for phase in report['phases']:
+            phase['public_resource_policy'] = arithmetic_policy('r15')
+        result = reader.analyze(report)
+        self.assertEqual(result['public_resource_policy']['resource_revision'],
+                         'r15-arithmetic-facts-v1')
+        self.assertEqual([p['confirmed_rounds'] for p in result['phases']], [0, 0, 0])
+        self.assertFalse(result['native_finite_experiment_criteria_met'])
+        self.assertFalse(result['scope']['original_r13_campaign_qualified'])
+        for phase in report['phases']:
+            phase['public_resource_policy'] = observation('r15')
+            del phase['work_profile']
+            del phase['work_arithmetic_owner']
+            for row in phase['receiver_observation']['records']:
+                row.pop('work_arithmetic', None)
+        report['schema'] = 'native-public-v3-separate-process-campaign-v2'
+        report['public_resource_policy'] = observation('r15')
+        del report['work_profile']
+        raw_result = reader.analyze(report)
+        self.assertEqual([p['public_resource_policy']['resource_revision']
+                          for p in raw_result['phases']], ['r15'] * 3)
+        self.assertEqual([p['confirmed_rounds'] for p in raw_result['phases']], [0, 0, 0])
+        self.assertFalse(raw_result['native_finite_experiment_criteria_met'])
+        downgraded = copy.deepcopy(report)
+        downgraded['phases'][0]['receiver_observation']['schema'] = (
+            'public-v3-local-request-resource-observation-v2')
+        with self.assertRaisesRegex(ValueError, 'CPU scope disagree'):
+            reader.analyze(downgraded)
+        for field in ('dispatch_cpu_includes_paid_body_decode',
+                      'dispatch_cpu_includes_response_signing'):
+            downgraded = copy.deepcopy(report)
+            downgraded['phases'][0]['receiver_observation'][field] = False
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'paid body/response CPU scope'):
+                reader.analyze(downgraded)
+        del report['phases'][0]['completion_work_observation']
+        with self.assertRaisesRegex(ValueError, 'completion-work observation'):
+            reader.analyze(report)
+
     def test_original_native_raw_report_remains_historical_and_cannot_claim_arithmetic(self):
         path = Path(__file__).resolve().parents[2] / 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json'
         original = 'c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233'

@@ -774,11 +774,24 @@ fn verify_with_kernel<E>(
     progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     kernel: VerificationKernel,
 ) -> Result<VerifiedWork, VerificationError<E>> {
+    let checked = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+    verify_checked_with_kernel(challenge, bytes, progress, kernel, checked)
+}
+
+// Private continuation of the native verifier. Only the current invocation's
+// checked statement/inputs may enter: callers cannot supply a cached verdict.
+fn verify_checked_with_kernel<E>(
+    challenge: Hash,
+    bytes: &[u8],
+    progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
+    kernel: VerificationKernel,
+    checked: CheckedProofInputs,
+) -> Result<VerifiedWork, VerificationError<E>> {
     let CheckedProofInputs {
         matrices,
         actual_task,
         ticket,
-    } = checked_proof_inputs(challenge, expected_task, target, bytes, kernel)?;
+    } = checked;
     let (a, tail) = matrices.split_at(CELLS);
     let (b, claimed) = tail.split_at(CELLS);
     let claimed_bytes = &bytes[4 + 2 * CELLS * 4..4 + 3 * CELLS * 4];
