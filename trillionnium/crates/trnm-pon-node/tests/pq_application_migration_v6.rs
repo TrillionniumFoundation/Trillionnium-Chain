@@ -47,7 +47,7 @@ fn npq6_anchored_claim_preserves_obligations_rotates_and_cold_reopens() {
     let claim_fee = f.cfg.params["native_pq_v2_base_fees"][wire::CLAIM.to_string()]
         .as_u64()
         .unwrap()
-        + claim.len() as u64 * f.cfg.limit("byte_fee_units").unwrap();
+        + claim.len() as u64 * f.cfg.params["byte_fee_units"].as_u64().unwrap();
     assert_eq!(
         claimed[&owner],
         json!({"balance":10_000_000 - claim_fee,"nonce":8})
@@ -89,7 +89,8 @@ fn npq6_anchored_claim_preserves_obligations_rotates_and_cold_reopens() {
     f.refuses(&node, f.command(&f.rotated, 2, 9, 3, &TASK), "NONCE");
 
     let cancel = f.command(&f.rotated, 2, 10, 3, &TASK);
-    let cancel_fee = f.cfg.fees[3] + cancel.len() as u64 * f.cfg.limit("byte_fee_units").unwrap();
+    let cancel_fee =
+        f.cfg.fees[3] + cancel.len() as u64 * f.cfg.params["byte_fee_units"].as_u64().unwrap();
     let cancelled = f.append(&mut node, vec![cancel]);
     assert_eq!(cancelled[&task]["status"], "cancelled");
     assert_eq!(cancelled[&task]["remaining"], 0);
