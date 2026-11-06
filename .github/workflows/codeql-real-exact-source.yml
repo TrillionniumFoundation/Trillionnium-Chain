@@ -1,5 +1,5 @@
-# Generate real CodeQL SARIF on the exact event source without changing repository Code Scanning ownership.
-# The repository default setup owns Code Scanning uploads; this workflow retains local SARIF only.
+# Generate exact-source CodeQL SARIF for head and merge. The default setup owns main-branch uploads;
+# non-default research-base PRs use isolated exact-source categories so the exporter can verify both SHAs.
 name: CodeQL exact-source SARIF artifact
 on:
   push:
@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -51,13 +52,15 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: none
-      - name: Generate real exact-source SARIF without Code Scanning upload
+      - name: Generate and upload exact-source SARIF for non-default-base PRs
         id: codeql
         uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         with:
           category: /language:${{ matrix.language }}/source:${{ matrix.source }}
           output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
-          upload: never
+          ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
+          sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          upload: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'main' && 'always' || 'never' }}
       - name: Verify generated SARIF is present and parseable
         shell: bash
         env:
