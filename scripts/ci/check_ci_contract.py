@@ -721,6 +721,13 @@ def validate(root: Path = ROOT) -> dict:
     require(rejection_negative in dict(lane_pairs)['repository-truth'] and
             script.count(rejection_negative) == 1,
             'actual rejection cost evidence negatives must execute once in repository-truth')
+    for reader in ('test_six_workpackage_native_rosters.py',
+                   'test_w1_full_v2_disposition.py',
+                   'test_pon_w1_preparation_strategy_reader_v4.py'):
+        command = '    python3 scripts/ci/' + reader + '\n'
+        require(command in dict(lane_pairs)['repository-truth'] and
+                script.count(command) == 1,
+                'six-workpackage reader must execute once in repository-truth: ' + reader)
     archive_negative = '    python3 scripts/ci/test_account_archive_conformance.py\n'
     require(archive_negative in dict(lane_pairs)['repository-truth'] and script.count(archive_negative) == 1,
             'archive native/oracle receipt negatives must execute once in repository-truth')

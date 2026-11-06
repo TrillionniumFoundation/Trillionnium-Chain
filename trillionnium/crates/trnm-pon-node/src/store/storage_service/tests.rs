@@ -6,6 +6,8 @@ mod cache_quota;
 mod height_window;
 #[path = "release_tests.rs"]
 mod release;
+#[path = "replay_owner_tests.rs"]
+mod replay_owner;
 use crate::development_public;
 use crate::store::StateBackend;
 use std::{

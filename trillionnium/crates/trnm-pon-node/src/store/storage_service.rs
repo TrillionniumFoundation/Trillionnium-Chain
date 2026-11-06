@@ -205,9 +205,10 @@ impl Node {
             "NATIVE_CELL_STORAGE_BINDING",
         )?;
         storage_deadline(deadline)?;
-        // Refuse known-inadmissible first work before creating monetary or
-        // physical holds. Exact pending/completed effects remain recoverable;
-        // the mutations below still recheck their own current funding owner.
+        // Bind every retry to this journal's native context and owner generation.
+        // New work must fit its funding and custody window before any holds.
+        // Exact pending/completed effects remain recoverable after the source
+        // closes or disappears, or the window ends, without reacquiring funding.
         budgets
             .check_effects(
                 self,
@@ -319,8 +320,9 @@ impl Node {
         )?;
         cpu.check().map_err(owner_error)?;
         // A live repair task does not extend the original custody window.
-        // Preflight before reserving this separate claim, while allowing exact
-        // target-only recovery of an already admitted repair after that window.
+        // Check the native context and owner generation before any reservation.
+        // Exact Pending/Done repairs remain target-only reconciliation, including
+        // after the window ends, without reacquiring funding or redispatching.
         budgets
             .check_effects(
                 self,

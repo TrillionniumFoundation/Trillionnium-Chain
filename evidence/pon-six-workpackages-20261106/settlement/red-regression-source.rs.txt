@@ -1,0 +1,331 @@
+//! Real Node owners, native task funding and durable target readback. The
+//! explicit pending boundary models an interrupted local handoff; it is not a
+//! physical power-loss experiment or an independently operated storage service.
+
+use super::*;
+
+const BACKENDS: [StateBackend; 3] = [
+    StateBackend::Legacy,
+    StateBackend::AuthenticatedV1,
+    StateBackend::PermanentAccountGrowthV2,
+];
+
+fn other_chain(path: &Path) -> Node {
+    Node::open(
+        path,
+        crate::Settings::development_with_profiles(
+            Some(2),
+            "native-public-evaluation-dev-v1",
+            continuity_v1::PROFILE,
+        )
+        .unwrap(),
+        1,
+    )
+    .unwrap()
+}
+
+fn same_charge(before: &serde_json::Value, after: &serde_json::Value) {
+    assert_eq!(before["source_count"], after["source_count"]);
+    assert_eq!(before["claim_count"], after["claim_count"]);
+    let before = before["budgets"].as_array().unwrap();
+    let after = after["budgets"].as_array().unwrap();
+    assert_eq!(before.len(), after.len());
+    for (before, after) in before.iter().zip(after) {
+        for field in [
+            "budget",
+            "source",
+            "lane",
+            "committed_units",
+            "resource_charge",
+            "historically_observed_native_gross_debit",
+            "historically_observed_beneficiary_credit",
+        ] {
+            assert_eq!(before[field], after[field], "changed {field}");
+        }
+    }
+}
+
+fn retain_replay_owner(done: bool) {
+    for backend in BACKENDS {
+        let directory = tempfile::tempdir().unwrap();
+        let node_path = directory.path().join("node");
+        let mut node = open_node(&node_path, backend);
+        let genesis = node.settings.genesis();
+        let source = fund(&mut node, 1000);
+        let (cache, manifest, _) = material(directory.path());
+        let request = request(source, &manifest);
+        let configuration = config(&node);
+        let journal = directory.path().join("budgets.sqlite");
+        let mut budgets = NativeBudgetStoreV1::open(&journal, configuration.clone()).unwrap();
+        let path = directory.path().join("retention");
+        let mut retained = CellRetentionStoreV1::create(&path, retention_config()).unwrap();
+        let target = if done {
+            node.retain_native_cell(
+                &mut budgets,
+                &mut retained,
+                &cache,
+                request.clone(),
+                deadline(),
+            )
+            .unwrap()
+            .target
+        } else {
+            budgets.open_budget(&mut node, request.policy.clone()).unwrap();
+            budgets.reserve(&mut node, request.claim.clone()).unwrap();
+            retained.reserve(request.contract.clone()).unwrap();
+            budgets
+                .begin_effect_in_window(
+                    &mut node,
+                    request.claim.claim,
+                    request.contract.operation,
+                    request.claim.subject,
+                    request.contract.retain_from_height,
+                    request.contract.retain_until_height,
+                )
+                .unwrap();
+            // Durable target success precedes M12 completion. Recovery may
+            // inspect these bytes, but may not dispatch the copy a second time.
+            retained
+                .acknowledge(request.contract.operation, &cache, deadline())
+                .unwrap()
+        };
+        let charged = budgets.report().unwrap();
+        assert_eq!(charged["budgets"][0]["pending_effects"], u64::from(!done));
+        let arena = fs::read(path.join("payload.arena")).unwrap();
+        drop(cache);
+        fs::remove_file(directory.path().join("source.cell")).unwrap();
+        let empty = CellStoreV1::open(&directory.path().join("empty.sqlite"), cache_config())
+            .unwrap();
+
+        let mut foreign = other_chain(&directory.path().join("foreign"));
+        assert_ne!(foreign.settings.genesis(), genesis);
+        let mut stale = open_node(&directory.path().join("stale"), backend);
+        assert_eq!(stale.settings.genesis(), genesis);
+        for (owner, expected) in [
+            (&mut foreign, "BUDGET_NATIVE_CONTEXT"),
+            (&mut stale, "BUDGET_STALE_OWNER_SNAPSHOT"),
+        ] {
+            let error = owner
+                .retain_native_cell(
+                    &mut budgets,
+                    &mut retained,
+                    &empty,
+                    request.clone(),
+                    deadline(),
+                )
+                .unwrap_err();
+            assert!(error.to_string().contains(expected), "{error}");
+            assert_eq!(budgets.report().unwrap(), charged);
+            assert_eq!(retained.verify(request.contract.operation, deadline()).unwrap(), target);
+            assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+        }
+
+        // A real native branch replacement removes the original funding row.
+        // Exact recovery still belongs to this owner and needs no new payment.
+        let fork = mine(&mut node, genesis, vec![]);
+        mine(&mut node, fork, vec![]);
+        assert!(node.native_funding_observation(source).unwrap().row.is_none());
+        drop(node);
+        drop(budgets);
+        drop(retained);
+        let mut node = open_node(&node_path, backend);
+        let mut budgets = NativeBudgetStoreV1::open(&journal, configuration).unwrap();
+        let mut retained = CellRetentionStoreV1::open(&path, retention_config()).unwrap();
+        let recovered = node
+            .retain_native_cell(
+                &mut budgets,
+                &mut retained,
+                &empty,
+                request.clone(),
+                deadline(),
+            )
+            .unwrap();
+        assert_eq!(
+            recovered.replay,
+            if done { NativeBudgetReplayV1::Done } else { NativeBudgetReplayV1::Pending }
+        );
+        assert_eq!(recovered.target, target);
+        assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+        let completed = budgets.report().unwrap();
+        same_charge(&charged, &completed);
+        assert_eq!(
+            completed["sequence"].as_u64().unwrap(),
+            charged["sequence"].as_u64().unwrap() + u64::from(!done)
+        );
+        assert_eq!(completed["budgets"][0]["pending_effects"], 0);
+        let again = node
+            .retain_native_cell(&mut budgets, &mut retained, &empty, request.clone(), deadline())
+            .unwrap();
+        assert_eq!(again.replay, NativeBudgetReplayV1::Done);
+        assert_eq!(again.target, target);
+        assert_eq!(budgets.report().unwrap(), completed);
+
+        // Old durable history grants no new work after its native source is gone.
+        let mut new_request = request;
+        new_request.policy.budget = [91; 32];
+        new_request.claim.budget = new_request.policy.budget;
+        new_request.claim.claim = [92; 32];
+        new_request.contract.operation = [93; 32];
+        new_request.contract.funding_operation = new_request.claim.claim;
+        new_request.claim.subject = new_request.contract.commitment(retention_config().store_id);
+        let error = node
+            .retain_native_cell(&mut budgets, &mut retained, &empty, new_request, deadline())
+            .unwrap_err();
+        assert!(error.to_string().contains("BUDGET_NATIVE_SOURCE_MISSING"), "{error}");
+        assert_eq!(budgets.report().unwrap(), completed);
+        assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+    }
+}
+
+fn repair_replay_owner(done: bool) {
+    for backend in BACKENDS {
+        let directory = tempfile::tempdir().unwrap();
+        let node_path = directory.path().join("node");
+        let mut node = open_node(&node_path, backend);
+        let genesis = node.settings.genesis();
+        let storage_source = fund(&mut node, 1000);
+        let repair_source = fund(&mut node, 200);
+        let (cache, manifest, _) = material(directory.path());
+        let storage = request(storage_source, &manifest);
+        let configuration = config(&node);
+        let journal = directory.path().join("budgets.sqlite");
+        let mut budgets = NativeBudgetStoreV1::open(&journal, configuration.clone()).unwrap();
+        let path = directory.path().join("retention");
+        let mut retained = CellRetentionStoreV1::create(&path, retention_config()).unwrap();
+        node.retain_native_cell(
+            &mut budgets, &mut retained, &cache, storage.clone(), deadline(),
+        ).unwrap();
+        damage(&path);
+        assert!(retained.verify(storage.contract.operation, deadline()).is_err());
+        let resources = NativeBudgetResourcesV1::Repair {
+            cpu_ns: 1_000_000_000,
+            download_bytes: manifest.size(),
+            upload_bytes: 0,
+            attempts: 1,
+        };
+        let repair = NativeCellRepairRequestV1 {
+            policy: NativeBudgetPolicyV1 {
+                budget: [81; 32], source: repair_source, monetary_cap: 200, deadline: 40,
+                resource_cap: resources.clone(), max_inflight: 1,
+            },
+            claim: NativeBudgetClaimV1 {
+                claim: [82; 32], budget: [81; 32],
+                subject: native_cell_repair_subject_v1(
+                    &retained, &storage.contract, [83; 32], [82; 32],
+                ),
+                beneficiary: public(1), monetary_reservation: 200,
+                resource_reservation: resources,
+            },
+            obligation: storage.contract.operation, repair_operation: [83; 32],
+        };
+        let target = if done {
+            node.repair_native_cell(
+                &mut budgets, &mut retained, &cache, repair.clone(), deadline(),
+            ).unwrap().target
+        } else {
+            budgets.open_budget(&mut node, repair.policy.clone()).unwrap();
+            budgets.reserve(&mut node, repair.claim.clone()).unwrap();
+            budgets.begin_effect_in_window(
+                &mut node, repair.claim.claim, repair.repair_operation, repair.claim.subject,
+                storage.contract.retain_from_height, storage.contract.retain_until_height,
+            ).unwrap();
+            // Known interrupted boundary: M09 physically repaired the bytes,
+            // while M12 still has a durable pending intent and the full charge.
+            retained.repair(
+                repair.obligation, repair.repair_operation, &cache, deadline(),
+            ).unwrap()
+        };
+        assert_eq!(target.repair_bytes_committed, manifest.size());
+        let charged = budgets.report().unwrap();
+        assert_eq!(charged["budgets"][1]["pending_effects"], u64::from(!done));
+        let arena = fs::read(path.join("payload.arena")).unwrap();
+        drop(cache);
+        fs::remove_file(directory.path().join("source.cell")).unwrap();
+        let empty = CellStoreV1::open(&directory.path().join("empty.sqlite"), cache_config())
+            .unwrap();
+        let mut foreign = other_chain(&directory.path().join("foreign"));
+        let mut stale = open_node(&directory.path().join("stale"), backend);
+        for (owner, expected) in [
+            (&mut foreign, "BUDGET_NATIVE_CONTEXT"),
+            (&mut stale, "BUDGET_STALE_OWNER_SNAPSHOT"),
+        ] {
+            let error = owner.repair_native_cell(
+                &mut budgets, &mut retained, &empty, repair.clone(), deadline(),
+            ).unwrap_err();
+            assert!(error.to_string().contains(expected), "{error}");
+            assert_eq!(budgets.report().unwrap(), charged);
+            assert_eq!(retained.verify(repair.obligation, deadline()).unwrap(), target);
+            assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+        }
+
+        let mut fork = genesis;
+        for _ in 0..3 { fork = mine(&mut node, fork, vec![]); }
+        for source in [storage_source, repair_source] {
+            assert!(node.native_funding_observation(source).unwrap().row.is_none());
+        }
+        drop(node);
+        drop(budgets);
+        drop(retained);
+        let mut node = open_node(&node_path, backend);
+        let mut budgets = NativeBudgetStoreV1::open(&journal, configuration).unwrap();
+        let mut retained = CellRetentionStoreV1::open(&path, retention_config()).unwrap();
+        let recovered = node.repair_native_cell(
+            &mut budgets, &mut retained, &empty, repair.clone(), deadline(),
+        ).unwrap();
+        assert_eq!(
+            recovered.replay,
+            if done { NativeBudgetReplayV1::Done } else { NativeBudgetReplayV1::Pending }
+        );
+        assert_eq!(recovered.target, target);
+        assert!(!recovered.repair_cpu_observation.unwrap().original_attempt);
+        let completed = budgets.report().unwrap();
+        same_charge(&charged, &completed);
+        assert_eq!(
+            completed["sequence"].as_u64().unwrap(),
+            charged["sequence"].as_u64().unwrap() + u64::from(!done)
+        );
+        assert_eq!(completed["budgets"][1]["pending_effects"], 0);
+        let again = node.repair_native_cell(
+            &mut budgets, &mut retained, &empty, repair.clone(), deadline(),
+        ).unwrap();
+        assert_eq!(again.replay, NativeBudgetReplayV1::Done);
+        assert_eq!(again.target, target);
+        assert_eq!(budgets.report().unwrap(), completed);
+        assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+
+        let mut new_request = repair;
+        new_request.policy.budget = [91; 32];
+        new_request.claim.budget = new_request.policy.budget;
+        new_request.claim.claim = [92; 32];
+        new_request.repair_operation = [93; 32];
+        new_request.claim.subject = native_cell_repair_subject_v1(
+            &retained, &storage.contract, new_request.repair_operation, new_request.claim.claim,
+        );
+        let error = node.repair_native_cell(
+            &mut budgets, &mut retained, &empty, new_request, deadline(),
+        ).unwrap_err();
+        assert!(error.to_string().contains("BUDGET_NATIVE_SOURCE_MISSING"), "{error}");
+        assert_eq!(budgets.report().unwrap(), completed);
+        assert_eq!(fs::read(path.join("payload.arena")).unwrap(), arena);
+    }
+}
+
+#[test]
+fn native_cell_pending_retain_refuses_foreign_owner_and_recovers_orphaned_effect() {
+    retain_replay_owner(false);
+}
+
+#[test]
+fn native_cell_completed_retain_refuses_foreign_owner_and_recovers_orphaned_effect() {
+    retain_replay_owner(true);
+}
+
+#[test]
+fn native_cell_pending_repair_refuses_foreign_owner_and_recovers_orphaned_effect() {
+    repair_replay_owner(false);
+}
+
+#[test]
+fn native_cell_completed_repair_refuses_foreign_owner_and_recovers_orphaned_effect() {
+    repair_replay_owner(true);
+}
