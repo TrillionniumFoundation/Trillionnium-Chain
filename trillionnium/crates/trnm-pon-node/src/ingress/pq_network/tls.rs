@@ -1,6 +1,6 @@
-//! Explicit hybrid-TLS transport for the actual native PQ owner. This loopback
-//! integration neither enables the public-history reactor nor declares private
-//! task/WAN/PKI/custody/production qualification.
+//! Explicit hybrid-TLS transport for the actual native PQ owner. The original
+//! loopback profile and the separately pinned endpoint development profile do
+//! not enable the public-history reactor or qualify WAN/PKI/custody/production.
 use super::*;
 mod context;
 mod io;
@@ -49,6 +49,9 @@ impl PqTlsClient {
             .filter(|d| !d.is_zero())
             .ok_or("PQ_NETWORK_DEADLINE")?;
         let stream = TcpStream::connect_timeout(&address, budget)?;
+        self.inner
+            .policy
+            .check_tls_client_ip(stream.local_addr()?)?;
         let mut channel = io::Channel::connect(stream, deadline, &self.context)?;
         channel.write_frame(wire)?;
         channel.read_frame()
@@ -73,6 +76,9 @@ impl PqTlsServer {
         })
     }
     fn connection(&self, stream: TcpStream, node: &Mutex<Node>, deadline: Instant) -> Result<()> {
+        // The actual kernel peer address is checked before any Node/witness
+        // observation or handshake debit. An IP pin grants no signer authority.
+        self.inner.policy.check_tls_client_ip(stream.peer_addr()?)?;
         self.inner.charge_connection(node, deadline)?;
         let mut channel =
             io::Channel::accept(stream, deadline, &self.context, node, &self.inner.policy)?;
@@ -86,9 +92,9 @@ impl PqTlsServer {
     }
 }
 
-/// Real Node listener, intentionally loopback only. TLS carries the same
-/// bounded Request and enters the existing metered admission, replay, work
-/// checking, execution and durable receipt path. No signature supplies work.
+/// Real Node listener. Existing profiles remain loopback-only; the explicit
+/// endpoint profile binds one exact address and requires the witness backend.
+/// Both enter the same metered admission, replay, work and durable receipt path.
 pub fn serve_pq_tls13(
     listener: TcpListener,
     node: Node,
@@ -97,10 +103,10 @@ pub fn serve_pq_tls13(
     server: PqTlsServer,
 ) -> Result<PqNetworkMetrics> {
     server.inner.policy.tls_pins()?;
-    ensure(
-        listener.local_addr()?.ip().is_loopback(),
-        "PQ_NETWORK_LOOPBACK_ONLY",
-    )?;
+    server
+        .inner
+        .policy
+        .check_tls_listener(listener.local_addr()?)?;
     ensure(
         !lifetime.is_zero() && lifetime <= Duration::from_secs(3600),
         "PQ_NETWORK_SERVER_BUDGET",
@@ -110,7 +116,15 @@ pub fn serve_pq_tls13(
     let owner = Mutex::new(node);
     let end = Instant::now() + lifetime;
     let mut metrics = PqNetworkMetrics::default();
-    while !stop.load(Ordering::Acquire) && Instant::now() < end {
+    let accept_limit = server
+        .inner
+        .policy
+        .tls_endpoint_pins()
+        .map(|_| TLS_ENDPOINT_ACCEPT_LIMIT);
+    while !stop.load(Ordering::Acquire)
+        && Instant::now() < end
+        && accept_limit.is_none_or(|limit| metrics.accepted + metrics.refused < limit)
+    {
         match listener.accept() {
             Ok((stream, _)) => {
                 let deadline = end.min(Instant::now() + Duration::from_secs(10));
@@ -132,3 +146,6 @@ pub fn serve_pq_tls13(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod endpoint_tests;

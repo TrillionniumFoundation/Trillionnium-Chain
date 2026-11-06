@@ -1,4 +1,4 @@
-//! Explicit ordinary-binary consumer of the experimental loopback TLS owner.
+//! Explicit ordinary-binary consumer of the experimental bounded TLS owners.
 //! It neither provisions production roots nor enables the public reactor.
 use super::{need, number};
 use openssl::{pkey::PKey, x509::X509};
@@ -20,7 +20,7 @@ use trnm_pon_node::{
     digest,
     ingress::pq_network::{
         tls::{serve_pq_tls13, PqTlsIdentity, PqTlsServer},
-        PqNetworkPolicy, PqTlsPins, TLS_PROFILE,
+        PqNetworkPolicy, PqTlsEndpointPins, PqTlsPins,
     },
     Node, Result, Settings,
 };
@@ -52,6 +52,15 @@ struct Configuration {
     server_name: String,
     #[serde(default, deserialize_with = "witness::present_configuration")]
     witness: Option<witness::Configuration>,
+    #[serde(default, deserialize_with = "present_endpoint")]
+    endpoint: Option<PqTlsEndpointPins>,
+}
+
+// A present null must not silently select the legacy loopback configuration.
+fn present_endpoint<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> std::result::Result<Option<PqTlsEndpointPins>, D::Error> {
+    PqTlsEndpointPins::deserialize(deserializer).map(Some)
 }
 
 // Fixed upper bounds and one inspected descriptor. Configuration is additionally
@@ -100,6 +109,7 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         "--tls-key",
         "--tls-ca",
         "--witness-writer-key",
+        "--tls-network-profile",
     ];
     ensure(
         args.keys().all(|key| ALLOWED.contains(&key.as_str())),
@@ -112,7 +122,16 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     let address: SocketAddr = need(args, "--listen")?
         .parse()
         .map_err(|_| "PQ_TLS_LISTEN")?;
-    ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+    let endpoint_selected = match args.get("--tls-network-profile").map(String::as_str) {
+        None => false,
+        Some("pinned-endpoint-v1") => true,
+        _ => return Err("PQ_TLS_NETWORK_PROFILE".into()),
+    };
+    // Preserve the old refusal before reading any configuration or key file.
+    // A new schema alone can never widen an existing loopback invocation.
+    if !endpoint_selected {
+        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+    }
     let seconds = number(args, "--seconds", 30)?;
     ensure((1..=3600).contains(&seconds), "PQ_NETWORK_SERVER_BUDGET")?;
     let workers = usize::try_from(number(args, "--workers", 1)?).map_err(|_| "PQ_TLS_WORKERS")?;
@@ -124,11 +143,19 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     let config: Configuration = serde_json::from_slice(&bytes)?;
     let witness_key = match config.schema.as_str() {
         "native-pq-tls-loopback-config-v1"
-            if config.witness.is_none() && !args.contains_key("--witness-writer-key") =>
+            if !endpoint_selected
+                && config.endpoint.is_none()
+                && config.witness.is_none()
+                && !args.contains_key("--witness-writer-key") =>
         {
             None
         }
-        "native-pq-tls-loopback-config-v2" => {
+        "native-pq-tls-loopback-config-v2" if !endpoint_selected && config.endpoint.is_none() => {
+            ensure(config.witness.is_some(), "PQ_TLS_WITNESS_CONFIG_REQUIRED")?;
+            Some(need(args, "--witness-writer-key")?)
+        }
+        "native-pq-tls-pinned-endpoint-config-v1" if endpoint_selected => {
+            ensure(config.endpoint.is_some(), "PQ_TLS_ENDPOINT_CONFIG_REQUIRED")?;
             ensure(config.witness.is_some(), "PQ_TLS_WITNESS_CONFIG_REQUIRED")?;
             Some(need(args, "--witness-writer-key")?)
         }
@@ -147,13 +174,23 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         .iter()
         .map(|s| spki(s))
         .collect::<Result<Vec<_>>>()?;
-    let policy = Arc::new(PqNetworkPolicy::new_tls13(
-        &settings,
-        &server_spki,
-        config.generation,
-        peers,
-        PqTlsPins::new(digest(&config.ca_certificate_sha256)?, config.server_name)?,
-    )?);
+    let pins = PqTlsPins::new(digest(&config.ca_certificate_sha256)?, config.server_name)?;
+    let policy = Arc::new(match config.endpoint {
+        Some(endpoint) => PqNetworkPolicy::new_tls13_endpoint(
+            &settings,
+            &server_spki,
+            config.generation,
+            peers,
+            pins,
+            endpoint,
+        )?,
+        None => {
+            PqNetworkPolicy::new_tls13(&settings, &server_spki, config.generation, peers, pins)?
+        }
+    });
+    // Validate the exact endpoint before contacting the witness, creating an
+    // owner, or binding a socket. The library independently checks its listener.
+    policy.check_tls_listener(address)?;
     let key_bytes = input(need(args, "--tls-key")?, 32_768, true)?;
     let key = PKey::private_key_from_pem(&key_bytes).map_err(|_| "PQ_TLS_LOCAL_KEY")?;
     let certificate = X509::from_pem(&input(need(args, "--tls-cert")?, 32_768, false)?)
@@ -182,10 +219,11 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
     println!(
         "{}",
         json!({"event":"pq-tls-ready","listen":listener.local_addr()?.to_string(),
-        "profile":TLS_PROFILE,"policy":hex::encode(policy.id()),
+        "profile":policy.profile(),"policy":hex::encode(policy.id()),
         "configured_group":"X25519MLKEM768","group_evidence":"single-configured-group-inference",
         "public_history_tls":false,"private_task_qualification":false,
         "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false,
+        "pinned_endpoint_development":endpoint_selected,"public_wan_qualification":false,
         "production_activation":false,"consensus_authority":false})
     );
     std::io::stdout().flush()?;
@@ -197,8 +235,9 @@ pub(super) fn run(args: &BTreeMap<String, String>) -> Result<Value> {
         server,
     )?;
     Ok(
-        json!({"profile":TLS_PROFILE,"metrics":metrics,"production_activation":false,
+        json!({"profile":policy.profile(),"metrics":metrics,"production_activation":false,
         "consensus_authority":false,"public_history_tls":false,
-        "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false}),
+        "pnq2_rollback_witness_selected":witness_selected,"whole_node_rollback_protection":false,
+        "pinned_endpoint_development":endpoint_selected,"public_wan_qualification":false}),
     )
 }

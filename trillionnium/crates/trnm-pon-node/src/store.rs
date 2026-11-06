@@ -1719,6 +1719,13 @@ impl Node {
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
+        if let Some(policy) = owners.pq_network.as_deref() {
+            ensure(
+                !crate::ingress::pq_network::policy_record_requires_endpoint_witness(policy)?
+                    || (state_backend == StateBackend::PqWitnessV4 && owners.pq_witness.is_some()),
+                "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",
+            )?;
+        }
         ensure(
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
