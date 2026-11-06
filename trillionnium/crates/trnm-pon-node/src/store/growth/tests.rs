@@ -2421,3 +2421,102 @@ mod mandatory_capacity;
 
 #[path = "work_checked_tests.rs"]
 mod work_checked;
+
+#[test]
+fn growth_packet_copy_bounds_preserve_genesis_and_duplicate_refusals() {
+    use rusqlite::types::Value;
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(dir.path(), settings.clone()).unwrap();
+    let packet = make(&node, settings.genesis(), vec![]);
+    let id = admit(&mut node, &packet);
+    let original = packet.encode().unwrap();
+    let values = [
+        Value::Null,
+        Value::Blob(vec![]),
+        Value::Blob(vec![0]),
+        Value::Blob(vec![0; limits::MAX_PACKET_BYTES + 2]),
+        Value::Text("packet".into()),
+        Value::Integer(7),
+        Value::Real(1.5),
+    ];
+    for value in &values {
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![value, settings.genesis().as_slice()],
+            )
+            .unwrap();
+        let error = node.growth_cold_open(false);
+        if matches!(value, Value::Null) {
+            error.unwrap();
+        } else {
+            assert!(error.is_err());
+        }
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=NULL WHERE id=?",
+                [settings.genesis().as_slice()],
+            )
+            .unwrap();
+        node.growth_cold_open(false).unwrap();
+        node.db.execute_batch("SAVEPOINT packet_bound").unwrap();
+        node.db
+            .execute(
+                "UPDATE blocks SET packet=? WHERE id=?",
+                params![value, id.as_slice()],
+            )
+            .unwrap();
+        let expected = node
+            .db
+            .query_row(
+                "SELECT packet FROM blocks WHERE id=?",
+                [id.as_slice()],
+                |r| r.get::<_, Vec<u8>>(0),
+            )
+            .map_err(Error::from)
+            .and_then(|raw| ensure(raw == original, "DUPLICATE_CONTENT"));
+        let actual = node.precheck_growth_admission_with_progress(&packet, 100_000, &|_| Ok(()));
+        assert_eq!(
+            actual.as_ref().err().map(cold_journal_error),
+            expected.as_ref().err().map(cold_journal_error)
+        );
+        node.db
+            .execute_batch("ROLLBACK TO packet_bound; RELEASE packet_bound")
+            .unwrap();
+        assert_eq!(
+            node.precheck_growth_admission_with_progress(&packet, 100_000, &|_| Ok(()))
+                .unwrap(),
+            Some(id)
+        );
+    }
+    drop(node);
+    Node::open_with_permanent_account_growth_v2(dir.path(), settings).unwrap();
+}
+
+#[test]
+fn growth_packet_copy_decoder_retains_exact_codec_ceiling_plus_one() {
+    let db = Connection::open_in_memory().unwrap();
+    for length in [
+        0,
+        1,
+        limits::MAX_PACKET_BYTES - 1,
+        limits::MAX_PACKET_BYTES,
+        limits::MAX_PACKET_BYTES + 1,
+        limits::MAX_PACKET_BYTES + 17,
+    ] {
+        let copied = db
+            .query_row("SELECT zeroblob(?)", [length], |row| {
+                super::super::fixed_blob::<{ limits::MAX_PACKET_BYTES }>(row, 0)
+            })
+            .unwrap();
+        assert_eq!(copied.len(), length.min(limits::MAX_PACKET_BYTES + 1));
+        let presence = db
+            .query_row("SELECT zeroblob(?)", [length], |row| {
+                super::super::optional_fixed_blob::<0>(row, 0)
+            })
+            .unwrap();
+        assert_eq!(presence.unwrap().len(), length.min(1));
+    }
+}

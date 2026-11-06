@@ -966,11 +966,9 @@ impl Node {
         }
         for (id, expected) in startup.ids.iter().zip(&startup.encoded) {
             progress()?;
-            let raw: Vec<u8> = self.db.query_row(
-                "SELECT packet FROM blocks WHERE id=?",
-                [id.as_slice()],
-                |row| row.get(0),
-            )?;
+            let raw: Vec<u8> = self
+                .db
+                .query_row(STORED_PACKET_SQL, [id.as_slice()], |row| row.get(0))?;
             ensure(raw == *expected, "OWNER_CONTINUOUS_PQ_STARTUP_RETAINED")?;
         }
         let (tip, generation) = self.active()?;
@@ -1306,11 +1304,7 @@ impl Node {
         // State, eligible task, lease or history traversal precedes this branch.
         let raw: Option<Vec<u8>> = self
             .db
-            .query_row(
-                "SELECT packet FROM blocks WHERE id=?",
-                [packet.id()?.as_slice()],
-                |r| r.get(0),
-            )
+            .query_row(STORED_PACKET_SQL, [packet.id()?.as_slice()], |r| r.get(0))
             .optional()?;
         ensure(
             raw.as_deref() == Some(encoded.as_slice()),
@@ -1399,11 +1393,9 @@ impl Node {
                     self.active()? == (packet.header.parent, index as u64),
                     "OWNER_CONTINUOUS_PQ_STARTUP_PARENT",
                 )?;
-                let raw: Vec<u8> = self.db.query_row(
-                    "SELECT packet FROM blocks WHERE id=?",
-                    [target.as_slice()],
-                    |row| row.get(0),
-                )?;
+                let raw: Vec<u8> =
+                    self.db
+                        .query_row(STORED_PACKET_SQL, [target.as_slice()], |row| row.get(0))?;
                 ensure(
                     raw == startup.encoded[index],
                     "OWNER_CONTINUOUS_PQ_STARTUP_PACKET",
@@ -1418,13 +1410,13 @@ impl Node {
                 ),
                 "OWNER_CONTINUOUS_ACTIVATE_PURPOSE_REQUIRED",
             )?;
-            let raw: Vec<u8> = self.db.query_row(
+            let digest: SqlPacketDigest = self.db.query_row(
                 "SELECT packet FROM blocks WHERE id=?",
                 [target.as_slice()],
                 |r| r.get(0),
             )?;
             ensure(
-                p.allocation.claim().payload == crate::operator_task_policy::digest_bytes(&raw),
+                p.allocation.claim().payload == digest.0,
                 "OWNER_CONTINUOUS_ACTIVATE_PACKET",
             )?;
             ContinuousScopeCheckpoint(a).check()?;
@@ -1480,11 +1472,7 @@ impl Node {
         let encoded = packet.encode_for_settings(&self.settings)?;
         let prior: Option<Vec<u8>> = self
             .db
-            .query_row(
-                "SELECT packet FROM blocks WHERE id=?",
-                [packet.id()?.as_slice()],
-                |r| r.get(0),
-            )
+            .query_row(STORED_PACKET_SQL, [packet.id()?.as_slice()], |r| r.get(0))
             .optional()?;
         if prior.as_deref() == Some(encoded.as_slice()) {
             return Ok(None);
@@ -2124,11 +2112,9 @@ impl Node {
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?
             .clone();
         o.ready()?;
-        let raw: Vec<u8> = self.db.query_row(
-            "SELECT packet FROM blocks WHERE id=?",
-            [tip.as_slice()],
-            |r| r.get(0),
-        )?;
+        let raw: Vec<u8> = self
+            .db
+            .query_row(STORED_PACKET_SQL, [tip.as_slice()], |r| r.get(0))?;
         let packet = Packet::decode_for_settings(&raw, &self.settings)?;
         ensure(
             hex::encode(packet.header.work_task) == o.view.body.declared_binding.task.native_task,

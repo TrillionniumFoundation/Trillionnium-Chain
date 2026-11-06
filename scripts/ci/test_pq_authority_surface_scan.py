@@ -1,9 +1,12 @@
 """Positive HOLD and adversarial refusal for the Rust source surface scanner."""
+import os
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from pq_authority_surface_scan import CRITICAL, AuditError, inspect
+from pq_authority_surface_scan import CRITICAL, MAX_SOURCE_BYTES, AuditError, inspect, read_source
 
 
 class TestPqAuthoritySurfaceScan(unittest.TestCase):
@@ -103,6 +106,74 @@ class TestPqAuthoritySurfaceScan(unittest.TestCase):
         outside.write_bytes(b'\xff')
         with self.assertRaisesRegex(AuditError, 'nonutf8 Rust source'):
             inspect(self.root)
+
+    def test_source_replaced_by_same_size_symlink_after_path_check_refuses(self):
+        target = self.put('trillionnium/crates/new-owner/src/effect.rs', 'safe source\n')
+        donor = self.put('outside.rs', 'other bytes\n')
+        original = Path.is_symlink
+        swapped = False
+
+        def replace_after_check(path):
+            nonlocal swapped
+            result = original(path)
+            if path == target and not swapped:
+                swapped = True
+                target.unlink()
+                target.symlink_to(donor)
+            return result
+
+        with patch.object(Path, 'is_symlink', replace_after_check):
+            with self.assertRaises(AuditError):
+                inspect(self.root)
+        self.assertTrue(swapped)
+
+    def test_source_growth_after_descriptor_metadata_is_bounded_and_refused(self):
+        target = self.put('growing.rs', 'small')
+        original = os.fstat
+        observed = False
+
+        def grow_after_metadata(fd):
+            nonlocal observed
+            metadata = original(fd)
+            if not observed:
+                observed = True
+                target.write_bytes(b'x' * (MAX_SOURCE_BYTES + 64))
+            return metadata
+
+        with patch('pq_authority_surface_scan.os.fstat', side_effect=grow_after_metadata):
+            with self.assertRaisesRegex(AuditError, 'source changed during scan'):
+                read_source(target)
+
+    def test_equal_size_named_replacement_after_read_is_refused(self):
+        target = self.put('replace.rs', 'before')
+        donor = self.put('replacement.rs', 'after!')
+        original = os.fstat
+        observations = 0
+
+        def replace_after_read(fd):
+            nonlocal observations
+            metadata = original(fd)
+            observations += 1
+            if observations == 2:
+                donor.replace(target)
+            return metadata
+
+        with patch('pq_authority_surface_scan.os.fstat', side_effect=replace_after_read):
+            with self.assertRaisesRegex(AuditError, 'source changed during scan'):
+                read_source(target)
+        self.assertEqual(observations, 2)
+
+    def test_fifo_read_refuses_without_waiting_for_writer(self):
+        target = self.root / 'blocked.rs'
+        os.mkfifo(target)
+        child = subprocess.run(
+            [sys.executable, '-c',
+             'from pathlib import Path; import sys; '
+             'from pq_authority_surface_scan import read_source; '
+             'read_source(Path(sys.argv[1]))', str(target)],
+            cwd=Path(__file__).parent, capture_output=True, timeout=5)
+        self.assertNotEqual(child.returncode, 0)
+        self.assertIn(b'oversize/nonregular Rust source', child.stderr)
 
     def test_crucial_file_removed_is_not_silent_success(self):
         (self.root / next(iter(CRITICAL))).unlink()

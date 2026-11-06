@@ -814,9 +814,15 @@ fn open_held(path: &Path, uid: u32) -> Result<File> {
             && before.mode() & 0o7777 == 0o600,
         PolicyError::Journal,
     )?;
+    open_held_after_check(path, &before)
+}
+
+// The pathname check alone cannot authorize the opened descriptor. In particular,
+// a FIFO replacement must not block before the descriptor identity is rejected.
+fn open_held_after_check(path: &Path, before: &fs::Metadata) -> Result<File> {
     let file = io(OpenOptions::new()
         .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
         .open(path))?;
     let held = io(file.metadata())?;
     require(
@@ -1325,3 +1331,7 @@ fn add(a: &Allocation, b: &Allocation) -> Result<Allocation> {
 #[cfg(test)]
 #[path = "operator_task_policy_tests.rs"]
 pub(crate) mod tests;
+
+#[cfg(test)]
+#[path = "operator_task_policy_file_tests.rs"]
+mod file_tests;

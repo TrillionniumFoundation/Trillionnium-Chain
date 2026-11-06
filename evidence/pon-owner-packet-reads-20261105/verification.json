@@ -1,0 +1,74 @@
+{
+  "base_commit": "133c0d458e46daccbe43f6d758d3887a40a72c0b",
+  "local_validated_source": "0083f3c1bfca1e03af63ad3c6f6e11199b7bfbed",
+  "local_validated_tree": "45f593fcb3eb69ff007c0c688957e4b9ffc8c05c",
+  "toolchain": "Rust 1.95.0; original Cargo test profile, locked dependencies, default features, one build job",
+  "binary_sha256": "9182d6f9032bc8ed369716659aae5ee3461273c459e3c2b989199faf31454a38",
+  "native_results": {
+    "native_authenticated": [
+      96,
+      0,
+      1
+    ],
+    "mining_owner": [
+      6,
+      0,
+      0
+    ],
+    "continuous_owner": [
+      14,
+      0,
+      0
+    ],
+    "pq_startup": [
+      14,
+      0,
+      0
+    ],
+    "task_observation": [
+      3,
+      0,
+      0
+    ],
+    "admission_wire": [
+      2,
+      0,
+      0
+    ],
+    "request_observation": [
+      22,
+      0,
+      0
+    ]
+  },
+  "result_columns": [
+    "passed",
+    "failed",
+    "ignored"
+  ],
+  "distinct_passed": 157,
+  "subset_runs": {
+    "digest": 1,
+    "owner_gates": 2
+  },
+  "source_controls": 37,
+  "ci_controls": 100,
+  "source_pins": 526,
+  "inline_pins": 26,
+  "strict_workspace_all_target_all_feature_clippy": "passed",
+  "formatting": "passed",
+  "prior_build_outcomes": [
+    "execution environment disconnected during first compile; tests not reached",
+    "reused incremental build linker exit 101; tests not reached",
+    "fresh incremental build disconnected; tests not reached"
+  ],
+  "final_build": "passed in 17m 34s after reversible cache quarantine",
+  "raw_validation_sha256": "dac8e8905ea9eb71e0dbde5b2c5eb192c76366bf616883701e04055bd5587c36",
+  "qualification": "HOLD; no original native campaign or fixed Host F0 qualification claimed",
+  "repository_check": {
+    "result": "PASS",
+    "local_links": 3334,
+    "workspace_packages": 26,
+    "evidence_added_source_state": "dirty-candidate"
+  }
+}

@@ -9,6 +9,8 @@ on:
       - trillionnium/crates/trnm-pon-node/src/account_archive_prototype/**
       - scripts/ci/check_native_constants_roster.py
       - scripts/ci/test_native_constants_roster.py
+      - scripts/ci/test_branch_migration_count.py
+      - evidence/branch-migration-count-20261106/**
       - .github/workflows/pon-branch-encoding-acceptance.yml
 permissions:
   contents: read
@@ -52,7 +54,7 @@ jobs:
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs)" = 3ac7b48c55ed48f125dbab3ec2b23c0507ab3c13
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_primitive_tests.rs)" = 2a4cfe2dd66692cfd27bc99948ee1d509ebb9dbf
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = 06828d9204db6418e3da7f50ced582540bd6132d
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs)" = ddc4e1d317ce962e453a1f08db7f608e43a8e152
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest.rs)" = 95d0dc21b1154aa89990a7b81f35dccffc5f05c1
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_root_digest_tests.rs)" = 9202edd5d62220f097ca4f7b87e4cbd2a130f8c4
           bash scripts/project-preflight.sh --audit
@@ -137,8 +139,9 @@ jobs:
           set -euo pipefail
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib account_archive_prototype::native_store::batch_tests -- --show-output --test-threads=1 2>&1 | tee "$OUT/batch.log"
           grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/batch.log"
+          python3 scripts/ci/test_branch_migration_count.py
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib authenticated_migration -- --show-output --test-threads=1 2>&1 | tee "$OUT/migration.log"
-          grep -E '^test result: ok\. 36 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
+          grep -E '^test result: ok\. 40 passed; 0 failed; 0 ignored;' "$OUT/migration.log"
       - name: Require exact work arithmetic and unchanged full-profile public service
         shell: bash
         run: |

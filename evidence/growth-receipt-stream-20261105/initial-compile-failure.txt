@@ -1,0 +1,47 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/29755d2a47ef/chain-decode-pages/trillionnium/crates/trnm-pon-node)
+error[E0425]: cannot find function `fixed_blob` in this scope
+   --> crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs:253:26
+    |
+253 |         let id = bytes32(fixed_blob::<32>(row, 0)?)?;
+    |                          ^^^^^^^^^^ not found in this scope
+    |
+help: consider importing this function
+    |
+  4 + use crate::store::fixed_blob;
+    |
+
+error[E0425]: cannot find function `fixed_blob` in this scope
+   --> crates/trnm-pon-node/src/store/authenticated_migration.rs:489:30
+    |
+489 |             let id = bytes32(fixed_blob::<32>(row, 0)?)?;
+    |                              ^^^^^^^^^^ not found in this scope
+    |
+help: consider importing this function
+    |
+  4 + use crate::store::fixed_blob;
+    |
+
+error[E0425]: cannot find function `fixed_blob` in this scope
+    --> crates/trnm-pon-node/src/store/authenticated_migration_tests.rs:1948:58
+     |
+1948 |             .query_row("SELECT ? AS id", [&bytes], |row| fixed_blob::<32>(row, 0))
+     |                                                          ^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this function
+     |
+   1 + use crate::store::fixed_blob;
+     |
+
+error[E0425]: cannot find function `fixed_blob` in this scope
+    --> crates/trnm-pon-node/src/store/authenticated_migration_tests.rs:1962:40
+     |
+1962 |             .query_row(&sql, [], |row| fixed_blob::<32>(row, 0))
+     |                                        ^^^^^^^^^^ not found in this scope
+     |
+help: consider importing this function
+     |
+   1 + use crate::store::fixed_blob;
+     |
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `trnm-pon-node` (lib test) due to 4 previous errors

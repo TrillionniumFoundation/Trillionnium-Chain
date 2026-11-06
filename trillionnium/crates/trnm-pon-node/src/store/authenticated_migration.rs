@@ -2,7 +2,8 @@
 //! writer and SQLite snapshot stay locked; no block admission, activation, replay
 //! acknowledgement or external owner operation runs while copying historical facts.
 use super::{
-    bytes32, canonical, native_authenticated, plain, schema, sync_dir, Delta, Node, StateBackend,
+    bytes32, canonical, fixed_blob, native_authenticated, plain, schema, sync_dir, Delta, Node,
+    StateBackend,
 };
 use crate::account_archive_execution::state_witness::{
     growth_commitment_from_complete_state_v2, growth_profile_binding_v2,
@@ -486,7 +487,7 @@ impl Node {
         let mut statement = source.prepare("SELECT id FROM blocks ORDER BY height,id")?;
         let mut rows = statement.query([])?;
         while let Some(row) = rows.next()? {
-            let id = bytes32(row.get(0)?)?;
+            let id = bytes32(fixed_blob::<32>(row, 0)?)?;
             let record = self.record(id)?;
             progress(AuthenticatedMigrationProgress::BeforeBlock {
                 height: record.height,
@@ -961,7 +962,7 @@ fn check_genesis(node: &Node) -> Result<()> {
     let packet: Option<Vec<u8>> = node.db.query_row(
         "SELECT packet FROM blocks WHERE id=?",
         [genesis.as_slice()],
-        |row| row.get(0),
+        |row| super::optional_fixed_blob::<0>(row, 0),
     )?;
     ensure(
         record.parent.is_none()
