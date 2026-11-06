@@ -7,6 +7,9 @@ use zeroize::Zeroizing;
 #[path = "current_tests.rs"]
 mod current_tests;
 
+#[path = "validated_root_tests.rs"]
+mod validated_root_tests;
+
 struct Fixture {
     root: PqReleaseRootV1,
     keys: BTreeMap<ReleaseKeyIdV1, PqNativeSigningKey>,

@@ -89,8 +89,13 @@ pub struct PqReleaseRootV1 {
     pub offline_root: PqReleaseRoleKeysV1,
     pub roles: BTreeMap<PqReleaseRoleV1, PqReleaseRoleKeysV1>,
 }
+
+/// A complete validation of this immutable root, retained only for this borrow.
+/// With unsigned owner time, validity at `now` also implies validity at zero.
+struct ValidatedPqReleaseRootV1<'a>(&'a PqReleaseRootV1);
+
 impl PqReleaseRootV1 {
-    fn validate(&self, now: u64) -> Result<(), PqReleaseErrorV1> {
+    fn validate(&self, now: u64) -> Result<ValidatedPqReleaseRootV1<'_>, PqReleaseErrorV1> {
         if self.network_id == [0; 32] || self.generation == 0 || self.expires_at <= now {
             return Err(PqReleaseErrorV1::InvalidRoot);
         }
@@ -109,29 +114,12 @@ impl PqReleaseRootV1 {
                 }
             }
         }
-        Ok(())
+        Ok(ValidatedPqReleaseRootV1(self))
     }
     /// Domain-separated digest of the bounded, uniquely encoded complete root.
     /// Metadata signing is pure ML-DSA over this project-specific message.
     pub fn signing_message(&self) -> Result<Vec<u8>, PqReleaseErrorV1> {
-        self.validate(0)?;
-        let mut bytes = Vec::new();
-        bytes.extend(RELEASE_PQ_PROFILE_V1);
-        bytes.push(0); // offline root domain, distinct from all content roles
-        bytes.extend(self.network_id);
-        bytes.extend(self.generation.to_be_bytes());
-        bytes.extend(self.expires_at.to_be_bytes());
-        bytes.extend(self.previous_root_digest);
-        self.offline_root.encode(&mut bytes);
-        for (role, keys) in &self.roles {
-            bytes.push(*role as u8);
-            keys.encode(&mut bytes);
-        }
-        let digest: [u8; 64] = Sha512::digest(&bytes).into();
-        let mut message = RELEASE_PQ_PROFILE_V1.to_vec();
-        message.push(0);
-        message.extend(digest);
-        Ok(message)
+        Ok(self.validate(0)?.signing_message())
     }
     pub fn digest(&self) -> Result<ReleaseDigestV1, PqReleaseErrorV1> {
         Ok(Sha256::digest(self.signing_message()?).into())
@@ -143,6 +131,29 @@ impl PqReleaseRootV1 {
             .chain(self.roles.values().flat_map(|r| r.keys.keys()))
             .copied()
             .collect()
+    }
+}
+
+impl ValidatedPqReleaseRootV1<'_> {
+    fn signing_message(self) -> Vec<u8> {
+        let root = self.0;
+        let mut bytes = Vec::new();
+        bytes.extend(RELEASE_PQ_PROFILE_V1);
+        bytes.push(0); // offline root domain, distinct from all content roles
+        bytes.extend(root.network_id);
+        bytes.extend(root.generation.to_be_bytes());
+        bytes.extend(root.expires_at.to_be_bytes());
+        bytes.extend(root.previous_root_digest);
+        root.offline_root.encode(&mut bytes);
+        for (role, keys) in &root.roles {
+            bytes.push(*role as u8);
+            keys.encode(&mut bytes);
+        }
+        let digest: [u8; 64] = Sha512::digest(&bytes).into();
+        let mut message = RELEASE_PQ_PROFILE_V1.to_vec();
+        message.push(0);
+        message.extend(digest);
+        message
     }
 }
 
@@ -265,12 +276,12 @@ impl PqReleaseAuthorityV1 {
         expected_root: ReleaseDigestV1,
         now: u64,
     ) -> Result<Self, PqReleaseErrorV1> {
-        root.validate(now)?;
-        let digest = root.digest()?;
+        let message = root.validate(now)?.signing_message();
+        let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         if expected_root != digest || root.generation != 1 || root.previous_root_digest != [0; 32] {
             return Err(PqReleaseErrorV1::RootPin);
         }
-        let checkpoint = next_checkpoint([0; 32], &root.signing_message()?, now);
+        let checkpoint = next_checkpoint([0; 32], &message, now);
         Ok(Self {
             root,
             root_digest: digest,
@@ -423,7 +434,7 @@ impl PqReleaseAuthorityV1 {
         }
         // Like TUF sequential root rotation, an expired old root may authorize a
         // fresh successor; expired roots cannot authorize release effects below.
-        next.validate(now)?;
+        let validated = next.validate(now)?;
         if next.network_id != self.root.network_id
             || next.previous_root_digest != self.root_digest
             || Some(next.generation) != self.root.generation.checked_add(1)
@@ -439,10 +450,10 @@ impl PqReleaseAuthorityV1 {
         if self.retired.len().saturating_add(removed.len()) > MAX_RETAINED_RELEASES_V1 {
             return Err(PqReleaseErrorV1::HistoryFull);
         }
-        let message = next.signing_message()?;
+        let message = validated.signing_message();
         verify_quorum(&self.root.offline_root, &message, old_signatures)?;
         verify_quorum(&next.offline_root, &message, new_signatures)?;
-        let digest = next.digest()?;
+        let digest: ReleaseDigestV1 = Sha256::digest(&message).into();
         let checkpoint = next_checkpoint(self.checkpoint, &message, now);
         self.retired.extend(removed);
         self.root = next;
