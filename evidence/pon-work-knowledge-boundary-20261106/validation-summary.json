@@ -1,0 +1,476 @@
+{
+  "schema": "pon-work-knowledge-boundary-validation-v1",
+  "result": "SELECTED_LOCAL_CHECKS_PASS_WITH_QUALIFICATION_LIMITS",
+  "published_source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+  "tested_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+  "composition_parents": [
+    "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+    "6dd21c7b35fa085f84b8280495b2583c67023fad"
+  ],
+  "identical_local_source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+  "local_commit_history_preserved_in_archive": "local-source-history.bundle",
+  "selected_checks": [
+    {
+      "name": "published-source-python-boundaries",
+      "registered_tests_passed": 104,
+      "scope": "Evaluation partitions, frozen inputs, exact partial W1 binding, context refusal, observer and artifact/inference contracts.",
+      "record": "checks/published-source-python-boundaries.json",
+      "log": "checks/published-source-python-boundaries.log",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_evaluation_bundle",
+        "test_settlement_inputs",
+        "test_work_utility",
+        "test_artifacts",
+        "test_model_contract",
+        "test_inference_receipt",
+        "test_evaluation"
+      ],
+      "timeout_seconds": 300,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "PYTHONPATH": "/workspace/scratch/51e4e62b58cf/chain/formal/pon-nakamoto-v1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 29.41417372199976,
+      "status_after": "",
+      "log_sha256": "06dd0446f1663107a7ea5d4d3b01e2f853efd5d33f9888ca878c57c1e595abcc"
+    },
+    {
+      "name": "published-source-m12-all",
+      "registered_tests_passed": 48,
+      "scope": "All targets and all features of trnm-service-settlement under the unchanged Cargo profile.",
+      "record": "checks/published-source-m12-all.json",
+      "log": "checks/published-source-m12-all.log",
+      "command": [
+        "env",
+        "RUSTUP_HOME=/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "RUSTUP_TOOLCHAIN=1.95.0",
+        "RUSTUP_AUTO_INSTALL=0",
+        "RUSTC=/workspace/scratch/bf693a71b444/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "/workspace/scratch/bf693a71b444/toolchain/cargo/bin/cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "--all-targets",
+        "--all-features"
+      ],
+      "timeout_seconds": 180,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/51e4e62b58cf/cargo-home",
+        "CARGO_TARGET_DIR": "/workspace/scratch/51e4e62b58cf/target",
+        "CARGO_BUILD_JOBS": "1",
+        "RUST_TEST_THREADS": "1"
+      },
+      "started_utc": "2026-11-06T14:24:31Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 0.7682281080001303,
+      "status_after": "",
+      "log_sha256": "96309f28ec8861e1d4c541ab3d9389079c07e307931986752bd7c00ddd08abd2"
+    },
+    {
+      "name": "published-source-native-funding-rustup",
+      "registered_tests_passed": 6,
+      "scope": "Only store::funding::tests; 1169 other Node lib tests were filtered out. Functional native payment/reorg checks, not I/O build qualification.",
+      "record": "checks/published-source-native-funding-rustup.json",
+      "log": "checks/published-source-native-funding-rustup.log",
+      "command": [
+        "env",
+        "RUSTUP_HOME=/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "RUSTUP_TOOLCHAIN=1.95.0",
+        "RUSTUP_AUTO_INSTALL=0",
+        "RUSTC=/workspace/scratch/bf693a71b444/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "/workspace/scratch/bf693a71b444/toolchain/cargo/bin/cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "store::funding::tests::",
+        "--",
+        "--test-threads=1"
+      ],
+      "timeout_seconds": 1200,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/51e4e62b58cf/cargo-home",
+        "CARGO_TARGET_DIR": "/workspace/scratch/51e4e62b58cf/target",
+        "CARGO_BUILD_JOBS": "1",
+        "RUST_TEST_THREADS": "1"
+      },
+      "started_utc": "2026-11-06T14:22:16Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 17.730721296999945,
+      "status_after": "",
+      "log_sha256": "abb6250cb8612510b1f6e4f13e5f248d2935eff18e3c64e78272326279125b65"
+    },
+    {
+      "name": "published-source-ci-contract",
+      "registered_tests_passed": 101,
+      "scope": "CI command contract, including the new settlement input suite.",
+      "record": "checks/published-source-ci-contract.json",
+      "log": "checks/published-source-ci-contract.log",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "timeout_seconds": 180,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {},
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 10.61180898900011,
+      "status_after": "",
+      "log_sha256": "0c2e3f57702ce6836f8c7070d7113d4ffb1c614139514a667576ee9cc43d4b70"
+    },
+    {
+      "name": "published-source-source-negatives",
+      "registered_tests_passed": 44,
+      "scope": "Negative source-integrity and required native roster controls.",
+      "record": "checks/published-source-source-negatives.json",
+      "log": "checks/published-source-source-negatives.log",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "timeout_seconds": 180,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {},
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 26.224297220999688,
+      "status_after": "",
+      "log_sha256": "0bc71bbdafe9ecb3fa5d38214b3ce1cdfaff53bf7eaf86dec8d181f4a4913c4c"
+    },
+    {
+      "name": "published-source-strict-clippy",
+      "registered_tests_passed": null,
+      "scope": "Full workspace/all-targets/all-features with -D warnings; the independent SQLite I/O build-qualification warning remains.",
+      "record": "checks/published-source-strict-clippy.json",
+      "log": "checks/published-source-strict-clippy.log",
+      "command": [
+        "env",
+        "RUSTC=/workspace/scratch/bf693a71b444/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "timeout_seconds": 1200,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/51e4e62b58cf/cargo-home",
+        "CARGO_TARGET_DIR": "/workspace/scratch/51e4e62b58cf/target",
+        "CARGO_BUILD_JOBS": "1"
+      },
+      "started_utc": "2026-11-06T14:19:08Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 116.11852152599977,
+      "status_after": "",
+      "log_sha256": "8e84782c5d4df419612e4690974a2bcddc52f90e7d2250348946847265257fae"
+    },
+    {
+      "name": "published-source-fmt",
+      "registered_tests_passed": null,
+      "scope": "Workspace cargo fmt --check.",
+      "record": "checks/published-source-fmt.json",
+      "log": "checks/published-source-fmt.log",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "timeout_seconds": 120,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/51e4e62b58cf/cargo-home",
+        "CARGO_TARGET_DIR": "/workspace/scratch/51e4e62b58cf/target"
+      },
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 12.808204300999932,
+      "status_after": "",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "published-source-source-integrity",
+      "registered_tests_passed": null,
+      "scope": "542 exact source blobs match; the expected HOLD_NO_GO qualification disposition is retained.",
+      "record": "checks/published-source-source-integrity.json",
+      "log": "checks/published-source-source-integrity.log",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "timeout_seconds": 180,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {},
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 0.3201945349997004,
+      "status_after": "",
+      "log_sha256": "3d0ba4bb72c086c77b80a64470253a19ccfc885db126794b5e51a5bc145775b2"
+    },
+    {
+      "name": "published-source-repository-contract",
+      "registered_tests_passed": null,
+      "scope": "26 packages, 1165 Rust files, 3438 local Markdown links, 25 normal dependency edges.",
+      "record": "checks/published-source-repository-contract.json",
+      "log": "checks/published-source-repository-contract.log",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "timeout_seconds": 600,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {},
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 50.460080736000236,
+      "status_after": "",
+      "log_sha256": "b54dd4dc0a5f2aafc68730f31efe7490ec90aff8eb76515047779b4ca0eaa3c6"
+    },
+    {
+      "name": "published-source-cargo-graphs",
+      "registered_tests_passed": null,
+      "scope": "Locked offline all-feature workspace and separate fuzz graphs; both lockfiles unchanged from the integration base.",
+      "record": "checks/published-source-cargo-graphs.json",
+      "log": "checks/published-source-cargo-graphs.log",
+      "command": [
+        "python3",
+        "/workspace/scratch/51e4e62b58cf/verify_graph.py",
+        "/workspace/scratch/51e4e62b58cf/chain",
+        "/workspace/scratch/51e4e62b58cf/graphs-published-source"
+      ],
+      "timeout_seconds": 180,
+      "source_commit": "873d33aefd33828842c1f1420382b77c15396d74",
+      "source_tree": "ac292aed065cef38686c099496fff0f2712a2e30",
+      "status_before": "",
+      "environment": {
+        "CARGO_HOME": "/workspace/scratch/51e4e62b58cf/cargo-home",
+        "CARGO_TARGET_DIR": "/workspace/scratch/51e4e62b58cf/target"
+      },
+      "started_utc": "2026-11-06T14:20:30Z",
+      "returncode": 0,
+      "timed_out": false,
+      "wall_seconds": 0.6293193219999011,
+      "status_after": "",
+      "log_sha256": "159c6b7814a49f007925bffda65bcd8faca72926b85dd7db7801dfd8183d753d"
+    }
+  ],
+  "retained_nonpassing_or_interrupted_checks": [
+    {
+      "name": "build-native-boundaries-debug0",
+      "source_commit": "6e47258cf9e87a2f0993aa675cb08f8a74de256c",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "dddc1bd0ea1bdc05a9819d7c50629841628aa108007c248acab3b90d45494870"
+    },
+    {
+      "name": "build-native-boundaries",
+      "source_commit": "6e47258cf9e87a2f0993aa675cb08f8a74de256c",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "f0897e9ca4b6b3e3fae5723c3048d5d39b557cc87755ee7156c042308d6bc378"
+    },
+    {
+      "name": "context-final-cargo-graphs",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": 1,
+      "result": null,
+      "log_sha256": "f5d55e293e39477e0d4dd17d16810f8e18bf6310107867b8ddd6ad194c0737a6"
+    },
+    {
+      "name": "context-final-ci-contract",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": null,
+      "result": "INTERRUPTED_EXEC_SERVER_RECOVERY",
+      "log_sha256": "71551ff2d13cc5ee096b0c142a59453856108168df57c14cd11463931401209c"
+    },
+    {
+      "name": "context-final-native-model-evidence",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "4dd5ef76f949e059cae0952ccc42669f2e0eb94bf4cbeb12c6deb506ef3e3f5d"
+    },
+    {
+      "name": "context-final-python-boundaries",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": null,
+      "result": "INTERRUPTED_EXEC_SERVER_RECOVERY",
+      "log_sha256": "d607f6b0580173cd3e9dbf40bbe14daa1af7bc15c8da763ce5bb7016410d639d"
+    },
+    {
+      "name": "context-final-repository-contract",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": null,
+      "result": "INTERRUPTED_EXEC_SERVER_RECOVERY",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "context-final-source-negatives",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": null,
+      "result": "INTERRUPTED_EXEC_SERVER_RECOVERY",
+      "log_sha256": "f7fa9f0b9c7b4a481f23e2a564c61a242417434971972186cdc2563b8f5ab843"
+    },
+    {
+      "name": "final-native-funding-functional",
+      "source_commit": "d320b92370cfc64dd2be5408e6a3f7122880443a",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "c933903202143290047f3d251f3051fc1d17dec8da63b92969400cd4ab1601ff"
+    },
+    {
+      "name": "final-strict-clippy",
+      "source_commit": "d320b92370cfc64dd2be5408e6a3f7122880443a",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "006a3ca5f3a9dcbeaf81e445a1d0fa6f20c36dc81e4118c4a051adf4f194b537"
+    },
+    {
+      "name": "recovered-final-m12-all",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": null,
+      "result": "EXECUTABLE_MISSING_AFTER_RECOVERY",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "recovered-toolchain-strict-clippy",
+      "source_commit": "0f8e870da57f1bb928e7644ab4a10c834df41821",
+      "returncode": 101,
+      "result": null,
+      "log_sha256": "b465bf1ce247e49e0511aa43f813256694aff9dc15c23e423a0b25a94be175ad"
+    }
+  ],
+  "historical_model": {
+    "execution_source": "873d33aefd33828842c1f1420382b77c15396d74",
+    "bundle": "68baee758d23ac6563c8b36f6412ed5f5375c111506b122bc8c10ec2e0172937",
+    "model": "f8caeae721b9dbaf893b4287fcd604299f055dd2f0036a626ace9c1066005ec5",
+    "original_report_exit": 1,
+    "original_report_failure_preserved": true,
+    "both_prediction_vectors_equal_original": true,
+    "whole_scores": {
+      "evaluation_a": 0,
+      "evaluation_b": 0
+    },
+    "marginal_scores": {
+      "evaluation_a": [
+        0,
+        0,
+        0
+      ],
+      "evaluation_b": [
+        0,
+        0,
+        0
+      ]
+    },
+    "outcome": "not_adopted",
+    "model_reward": 0,
+    "chain_created": false,
+    "historical_partial_W1_binding": "PASS",
+    "new_training": false,
+    "new_mining": false,
+    "original_inputs_unchanged": true
+  },
+  "qualification": {
+    "full_workspace_test_suite_run": false,
+    "native_model_evidence_v3_attempt_completed": false,
+    "remote_required_CI_observed_at_capture": false,
+    "sqlite_io_build_qualification_accepted": false,
+    "production_activation": false,
+    "work_hardness_accepted": false,
+    "independent_future_model_benefit_accepted": false,
+    "public_model_reward_eligible": false,
+    "ordinary_hepta_adoption_accepted": false,
+    "source_integrity_disposition": "HOLD_NO_GO"
+  },
+  "archive": {
+    "bytes": 397284,
+    "compression": "XZ CRC64 preset 6",
+    "file": "observations.tar.xz",
+    "gid": 0,
+    "member_order": "lexicographic",
+    "mode": "0644",
+    "mtime": 0,
+    "sha256": "cec13168bcd03f0fec639fd8dbe78f47427ccc9f2d72e31efce92fde2edc288b",
+    "tar_format": "PAX",
+    "uid": 0
+  },
+  "archive_members": 263,
+  "limitations": [
+    "The six native funding tests do not constitute the complete 1175-test Node library roster.",
+    "The cached native build retains an explicit SQLite I/O UNQUALIFIED warning; passing payment tests does not change that flag.",
+    "A full native model_evidence_v3 test attempt was killed during compilation and is not counted as executed.",
+    "Original SIGKILLs, disk exhaustion, missing offline fuzz cache, unavailable compiler and interrupted processes remain in the raw record.",
+    "Controlled positive ledger fixtures prove mechanical boundaries, not newly learned knowledge, data rights or independent model improvement.",
+    "Registered test counts must not be combined with the 25/42 M12 cases inside one existing test."
+  ]
+}

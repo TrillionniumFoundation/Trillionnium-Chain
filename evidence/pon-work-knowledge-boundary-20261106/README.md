@@ -6,6 +6,17 @@ the new repairs is `6e47258cf9e87a2f0993aa675cb08f8a74de256c`, tree
 `8454037b68ff047794184bb814a515e0da9027c6`. The merged histories and the original
 work-value implementation remain separate from the new source-bound checks.
 
+The published, executed source is
+`873d33aefd33828842c1f1420382b77c15396d74`, tree
+`ac292aed065cef38686c099496fff0f2712a2e30`. Its complete tree equals the local
+implementation commit `0f8e870da57f1bb928e7644ab4a10c834df41821` byte for byte.
+Publication used the connected GitHub API after terminal Git authentication
+became unavailable, so commit metadata changed. Both original #688/#717 parents
+remain in the published commit. The three local implementation/merge commits
+are retained in `local-source-history.bundle` inside the observation archive.
+The final evidence-only publication adds these records without changing runtime,
+test, CI, configuration or lockfile bytes.
+
 **Production activation, independent model benefit and work hardness remain
 unqualified.** The new controls repair existing local evidence consumers. They
 do not train a new model or turn a development test-unit payment into a public
@@ -123,3 +134,93 @@ full-release cost and negative-transfer testing, actual current-owner adoption,
 next-task readback and original hostile public-service acceptance. The existing
 HOLD/NO-GO gates remain authoritative. New local observations cannot close them
 by renaming a matrix product, fee, report digest or repeated output as knowledge.
+
+## Executed validation on the published source
+
+All rows below executed on clean commit `873d33aefd33828842c1f1420382b77c15396d74`,
+before this evidence-only addition. [validation-summary.json](validation-summary.json)
+records exact commands, source identities, profiles, exits and log hashes.
+
+| Check | Actual result | Scope |
+| --- | --- | --- |
+| Python boundary suites | 104 passed | Seven modules; includes 49 evaluation-bundle and 18 settlement-input tests |
+| M12 all targets/all features | 48 passed | Unchanged Cargo profile; source/lane and immutable failed-outcome controls |
+| Native funding suite | 6 passed, 0 ignored | Actual signed payment/reorg/reopen checks; 1169 other Node lib tests filtered out |
+| CI contract suite | 101 passed | Existing job contract plus the new retained input-substitution suite |
+| Negative source-integrity controls | 44 passed | Source and roster substitutions refuse |
+| Strict Clippy | exit 0 | Workspace, all targets, all features, `-D warnings` |
+| Formatting | exit 0 | Workspace `cargo fmt --check` |
+| Current source pins | 542 blobs match | Original `HOLD_NO_GO` qualification disposition retained |
+| Repository contract | exit 0 | 26 packages, 1165 Rust files, 3438 local links, 25 normal dependency edges |
+| Locked Cargo graphs | exit 0 | All features: workspace 26 members/180 resolved packages; separate fuzz graph 1/147 |
+
+The [Cargo graph summary](cargo-graphs-summary.json) records both lockfile hashes.
+Both locks are unchanged from integration base `513e92df`. The earlier default-
+feature graph had 175 resolved packages; it is not substituted for the final
+all-feature graph. No full workspace test run or complete Node test-roster pass
+is claimed.
+
+### Preserved failures and environment limits
+
+Original Node builds, two explicit reduced-debug/optimization experiments, the
+initial strict Clippy run and the attempted `model_evidence_v3` integration build
+were killed during compilation. Their raw `SIGKILL` observations remain; no
+unobserved test execution is counted. The model-evidence integration attempt
+was not completed. The later original-profile funding run and published-source
+replay each actually passed all six selected funding tests.
+
+Another Clippy attempt returned `No space left on device`. Only this task's
+regenerable incremental caches were cleared; source, original observations and
+other workspaces were preserved. The subsequent full strict Clippy command
+completed successfully. Offline fuzz metadata initially lacked `libfuzzer-sys`;
+missing local cache archives were recovered only after matching the unchanged
+lockfile checksums. That initial failure remains in the record.
+
+An executor recovery interrupted four checks and temporarily made the original
+compiler path unavailable. Those records retain unknown child exit status or a
+failed process start. The later published-source runs are separate executions.
+Rust/Cargo 1.95.0 identity and recovery details are preserved in the archive.
+
+The successful native payment run still reports the cached SQLite I/O build
+fence as **UNQUALIFIED**, and the Clippy build records an incomplete normal
+loader-directory set. These payment and lint results do not qualify that I/O
+boundary, hostile public service, a production deployment or all native tests.
+The fence was not disabled or relabelled.
+
+### Historical model result
+
+The [historical replay summary](historical-replay-summary.json) records the
+original frozen model/bundle and five committed partitions: train 1005,
+calibration 321, evaluation A 170, evaluation B 184 and consumer 213. Both
+evaluation prediction vectors exactly match their historical records. Whole
+adoption scores and all three marginal adoption scores remain zero; these are
+gate scores, not a claim of zero predictive accuracy.
+
+Current settlement returns `not_adopted`, `model_reward=0` and creates no chain.
+The existing 49,188-byte W1 proof independently passes the current fixed-expert,
+partial-contraction binding check. Correct work and absent accepted model gain
+therefore coexist in the same retained material.
+
+Direct replay of the original report fails with `OBSERVED_EVALUATION_MISMATCH`
+because its older format lacks the current `value_claim`; its bytes and failure
+remain intact. Evaluation-only replay in a new directory produces a separately
+named report schema. It does not import the original training-execution claim.
+Every step retains before/after hashes of 295 source files and 18 original
+files. No training, new mining challenge or new mining was performed.
+
+## Retained observation package
+
+- [observations.tar.xz](observations.tar.xz): 263 members, 20,145,763 uncompressed
+  bytes; 397,284 archive bytes. Includes all checks and earlier failed attempts,
+  red/green reproduction scripts, three separately identified historical
+  replays, locked graphs, environment records and the original local Git history.
+- [observations-manifest.json](observations-manifest.json): each member's size and
+  SHA256, nested replay and graph checks, and the exact archive identity.
+- Archive SHA256:
+  `cec13168bcd03f0fec639fd8dbe78f47427ccc9f2d72e31efce92fde2edc288b`.
+
+Packaging reread every member and compared its exact bytes with the source.
+Packaging success is not test success or a new qualification authority. Local
+history can be imported from the enclosed Git bundle when its two composition
+parents are available; the published source commit is already the identical
+tree and preserves both parent histories.
