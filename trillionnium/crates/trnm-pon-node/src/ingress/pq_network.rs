@@ -183,6 +183,7 @@ impl PqNetworkPolicy {
             "PQ_NETWORK_CRYPTO_PROFILE",
         )
     }
+    #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
     pub(crate) fn pinned_server_spki(&self) -> Result<Vec<u8>> {
         hex::decode(&self.record.server_spki).map_err(|_| "PQ_NETWORK_POLICY_RECORD".into())
     }
@@ -583,11 +584,13 @@ impl PqClient {
     pub fn peer_key_id(&self) -> Hash {
         self.signer.public_key_id()
     }
+    #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
     pub(crate) fn require_plaintext_selection(&self) -> Result<()> {
         self.policy.require_plaintext()
     }
     /// Historical metadata and exact canonical payload only. This never
     /// returns VerifiedRequest or makes an expired observation dispatchable.
+    #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
     pub(crate) fn audit_retained_request(
         &self,
         wire: &[u8],
