@@ -39,7 +39,7 @@ def workspace_script() -> str:
 
 
 def pq_script() -> str:
-    return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" <<\'PY\'\n', '          PY\n')
+    return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" "$PQ_OUT/native-registry.log" <<\'PY\'\n', '          PY\n')
 
 
 class NativeRosterTests(unittest.TestCase):
@@ -68,15 +68,19 @@ class NativeRosterTests(unittest.TestCase):
             selected = controls / 'selected-tests.tsv'
             return result, selected.read_text() if selected.exists() else None
 
-    def run_pq(self, *, script=None, value=None):
+    def run_pq(self, *, script=None, value=None, registry_names=None):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'config/pon').mkdir(parents=True)
             (root / 'config/pon/pq-system-required-tests-v1.json').write_text(
                 json.dumps(self.required if value is None else value))
             output = root / 'required.tsv'
-            result = subprocess.run([sys.executable, '-c', script or pq_script(), str(output)],
-                                    cwd=root, text=True, capture_output=True, timeout=10)
+            registry = root / 'native-registry.log'
+            names = self.required['tests'] if registry_names is None else registry_names
+            registry.write_text(''.join(f'{name}: test\n' for name in names))
+            result = subprocess.run(
+                [sys.executable, '-c', script or pq_script(), str(output), str(registry)],
+                cwd=root, text=True, capture_output=True, timeout=10)
             return result, output.read_text() if output.exists() else None
 
     def test_original_workspace_failure_remains_reproducible(self):
@@ -115,16 +119,22 @@ class NativeRosterTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIsNone(selected)
 
-    def test_original_pq_failure_and_repaired_52_names(self):
-        self.assertEqual(self.required['expected_meaningful_controls'], 52)
-        old = pq_script().replace('assert len(tests) == 52', 'assert len(tests) == 49')
+    def test_original_pq_failure_and_repaired_61_names(self):
+        self.assertEqual(self.required['expected_meaningful_controls'], 61)
+        self.assertEqual(self.required['expected_control_groups'],
+                         {'original': 52, 'durable_outbound': 9})
+        old = pq_script().replace('assert len(tests) == 61', 'assert len(tests) == 49')
         self.assertNotEqual(old, pq_script())
         failed, output = self.run_pq(script=old)
         self.assertNotEqual(failed.returncode, 0)
         self.assertIsNone(output)
         result, output = self.run_pq()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual([line.split('\t')[1] for line in output.splitlines()], self.required['tests'])
+        selected = [line.split('\t')[1] for line in output.splitlines()]
+        self.assertEqual(selected, self.required['tests'])
+        prefix = 'ingress::pq_network::outbound::tests::'
+        self.assertFalse(any(name.startswith(prefix) for name in selected[:52]))
+        self.assertTrue(all(name.startswith(prefix) for name in selected[52:]))
 
     def test_pq_missing_duplicate_extra_harness_and_invalid_selector_refused(self):
         changes = [self.required['tests'][:-1], self.required['tests'] + ['new::test'],
@@ -135,6 +145,14 @@ class NativeRosterTests(unittest.TestCase):
             with self.subTest(last=tests[-1]):
                 value = dict(self.required, tests=tests, expected_meaningful_controls=len(tests))
                 result, output = self.run_pq(value=value)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(output)
+
+    def test_pq_registry_missing_and_duplicate_required_entries_refused(self):
+        required = self.required['tests']
+        for registry in (required[:-1], required + [required[0]]):
+            with self.subTest(registry_count=len(registry)):
+                result, output = self.run_pq(registry_names=registry)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIsNone(output)
 
