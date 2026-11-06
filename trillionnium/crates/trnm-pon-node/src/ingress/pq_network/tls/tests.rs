@@ -549,3 +549,309 @@ fn tls_handshake_does_not_reset_the_original_client_deadline() {
     assert!(elapsed < Duration::from_secs(1));
 }
 
+fn send_untrusted_chain(
+    address: SocketAddr,
+    fixture: &Fixture,
+    leaf: openssl::x509::X509,
+    extra: Vec<openssl::x509::X509>,
+    wire: &[u8],
+) -> bool {
+    use openssl::ssl::{Ssl, SslContext, SslMethod, SslStream, SslVerifyMode, SslVersion};
+    let mut context = SslContext::builder(SslMethod::tls()).unwrap();
+    context
+        .set_min_proto_version(Some(SslVersion::TLS1_3))
+        .unwrap();
+    context
+        .set_max_proto_version(Some(SslVersion::TLS1_3))
+        .unwrap();
+    context.set_groups_list("X25519MLKEM768").unwrap();
+    context.set_sigalgs_list("mldsa65").unwrap();
+    context.set_verify(SslVerifyMode::PEER);
+    context
+        .cert_store_mut()
+        .add_cert(fixture.ca.clone())
+        .unwrap();
+    context.set_alpn_protos(b"\x0etrnm-pq-node/1").unwrap();
+    context.set_certificate(&leaf).unwrap();
+    context.set_private_key(&fixture.peer.key).unwrap();
+    for certificate in extra {
+        context.add_extra_chain_cert(certificate).unwrap();
+    }
+    let tcp = TcpStream::connect_timeout(&address, Duration::from_secs(5)).unwrap();
+    tcp.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+    tcp.set_write_timeout(Some(Duration::from_secs(5))).unwrap();
+    let mut ssl = Ssl::new(&context.build()).unwrap();
+    ssl.param_mut().set_host("localhost").unwrap();
+    let mut stream = SslStream::new(ssl, tcp).unwrap();
+    if stream.connect().is_err() {
+        return false;
+    }
+    let _ = stream.write_all(&(wire.len() as u32).to_be_bytes());
+    let _ = stream.write_all(wire);
+    let mut byte = [0];
+    stream.read(&mut byte).is_ok_and(|count| count != 0)
+}
+
+#[test]
+fn tls_invalid_intermediate_same_subject_chain_and_signature_spend_handshake_only() {
+    let fixture = Fixture::new();
+    let prepared = fixture
+        .client()
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    let root = fixtures::key(61);
+    let intermediate = fixtures::key(82);
+    let intermediate_cert = fixtures::certificate(
+        &intermediate,
+        &root,
+        "TRNM TLS fixture CA",
+        "TRNM TLS fixture CA",
+        true,
+        82,
+    );
+    let leaf = fixtures::certificate(
+        &fixture.peer.key,
+        &intermediate,
+        "peer",
+        "TRNM TLS fixture CA",
+        false,
+        83,
+    );
+    let wrong_key = fixtures::key(84);
+    let invalid_signature = fixtures::certificate(
+        &fixture.peer.key,
+        &wrong_key,
+        "peer",
+        "TRNM TLS fixture CA",
+        false,
+        84,
+    );
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let (address, stop, handle) = start(node, &fixture);
+    assert!(!send_untrusted_chain(
+        address,
+        &fixture,
+        leaf.clone(),
+        vec![intermediate_cert.clone()],
+        prepared.wire()
+    ));
+    // Genuine same-subject candidates whose constructed DER exceeds 64 KiB.
+    // The peer may reject early or omit duplicates, so this proves invalid-chain
+    // refusal, NOT bytes observed on the wire or a certificate CPU bound.
+    let candidates = vec![intermediate_cert; 16];
+    assert!(
+        candidates
+            .iter()
+            .map(|cert| cert.to_der().unwrap().len())
+            .sum::<usize>()
+            > 65_536
+    );
+    assert!(!send_untrusted_chain(
+        address,
+        &fixture,
+        leaf,
+        candidates,
+        prepared.wire()
+    ));
+    assert!(!send_untrusted_chain(
+        address,
+        &fixture,
+        invalid_signature,
+        vec![],
+        prepared.wire()
+    ));
+    assert_eq!(finish(stop, handle).refused, 3);
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let status = node.pq_network_status(&fixture.policy).unwrap();
+    assert_eq!(status["records"], 0);
+    assert_eq!(status["tls_handshake_attempts"], 3);
+    assert_eq!(status["inbound_signature_attempts"], 0);
+    assert!(status["ingress_bytes"].as_u64().unwrap() <= 3 * 65_536);
+    assert_eq!(status["tls_certificate_verification_cpu_qualified"], false);
+}
+
+#[test]
+fn tls_handshake_attempt_cap_is_durable_and_refuses_before_handshake_after_reopen() {
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let (address, stop, handle) = start(node, &fixture);
+    for _ in 0..TLS_HANDSHAKE_LIMIT {
+        let mut stream = TcpStream::connect(address).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        stream.write_all(b"PLAIN").unwrap();
+        let mut byte = [0];
+        let _ = stream.read(&mut byte);
+    }
+    assert_eq!(finish(stop, handle).refused, TLS_HANDSHAKE_LIMIT);
+    let reopened = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let before = reopened.pq_network_status(&fixture.policy).unwrap();
+    assert_eq!(before["tls_handshake_attempts"], TLS_HANDSHAKE_LIMIT);
+    assert_eq!(before["inbound_signature_attempts"], 0);
+    let (address, stop, handle) = start(reopened, &fixture);
+    let client = fixture.client();
+    let prepared = client
+        .prepare(1, crate::ingress::now().unwrap() + 60, Request::Head)
+        .unwrap();
+    assert!(client
+        .send(address, &prepared, Duration::from_secs(5))
+        .is_err());
+    assert_eq!(finish(stop, handle).refused, 1);
+    let reopened = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    assert_eq!(reopened.pq_network_status(&fixture.policy).unwrap(), before);
+}
+
+#[test]
+fn tls_authentication_does_not_replace_native_work_or_pnq_signature_checks() {
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let mut packet = node
+        .make(
+            fixture.settings.genesis(),
+            vec![],
+            crate::development_public(1).unwrap(),
+            fixture.settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    packet.proof[4 + 2 * 64 * 64 * 4] ^= 1; // Original W1 relation's C, not an envelope failure.
+    let client = fixture.client();
+    let expiry = crate::ingress::now().unwrap() + 60;
+    let bad_work = client
+        .prepare(
+            1,
+            expiry,
+            Request::Submit {
+                packet: hex::encode(packet.encode().unwrap()),
+            },
+        )
+        .unwrap();
+    let head = client.prepare(2, expiry, Request::Head).unwrap();
+    let mut bad_signature = head.wire().to_vec();
+    bad_signature[8 + 178] ^= 1;
+    let (address, stop, handle) = start(node, &fixture);
+    assert!(
+        !client
+            .send(address, &bad_work, Duration::from_secs(5))
+            .unwrap()
+            .ok
+    );
+    assert!(client
+        .exchange(
+            address,
+            &bad_signature,
+            Instant::now() + Duration::from_secs(5)
+        )
+        .is_err());
+    let head = client.send(address, &head, Duration::from_secs(5)).unwrap();
+    assert_eq!(head.value["height"], 0);
+    assert_eq!(head.value["stored_blocks"], 1);
+    let metrics = finish(stop, handle);
+    assert_eq!(metrics.accepted, 2); // Signed failure receipt + successful Head.
+    assert_eq!(metrics.refused, 1);
+    let reopened = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let status = reopened.pq_network_status(&fixture.policy).unwrap();
+    assert_eq!(status["records"], 2);
+    assert_eq!(status["inbound_signature_attempts"], 3);
+}
+
+#[test]
+fn actual_tcp_bio_refuses_byte_65537_before_openssl_and_preserves_durable_debit() {
+    // This exercises the receive direction, not a combined bidirectional cap.
+    let fixture = Fixture::new();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    let owner = Mutex::new(node);
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let sender = thread::spawn(move || {
+        let mut tcp = TcpStream::connect_timeout(&address, Duration::from_secs(5)).unwrap();
+        tcp.set_write_timeout(Some(Duration::from_secs(5))).unwrap();
+        tcp.write_all(&vec![0x5a; 65_537]).unwrap();
+    });
+    let (tcp, _) = listener.accept().unwrap();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    fixture
+        .server()
+        .inner
+        .charge_connection(&owner, deadline)
+        .unwrap();
+    let mut bio = io::DeadlineStream::new(tcp, deadline, Some((&owner, &fixture.policy))).unwrap();
+    let mut actual = vec![0; 65_536];
+    bio.read_exact(&mut actual).unwrap();
+    assert_eq!(actual, vec![0x5a; 65_536]);
+    let error = bio.read(&mut [0]).unwrap_err();
+    assert!(error.to_string().contains("PQ_TLS_CIPHERTEXT_LIMIT"));
+    sender.join().unwrap();
+    drop(bio);
+    let before = owner
+        .lock()
+        .unwrap()
+        .pq_network_status(&fixture.policy)
+        .unwrap();
+    assert_eq!(before["ingress_bytes"], 65_536);
+    assert_eq!(before["tls_handshake_attempts"], 1);
+    assert_eq!(before["inbound_signature_attempts"], 0);
+    assert_eq!(before["records"], 0);
+    drop(owner);
+    let reopened = Node::open_with_pq_network(
+        directory.path(),
+        fixture.settings.clone(),
+        1,
+        &fixture.policy,
+    )
+    .unwrap();
+    assert_eq!(reopened.pq_network_status(&fixture.policy).unwrap(), before);
+}
