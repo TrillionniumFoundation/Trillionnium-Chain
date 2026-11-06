@@ -40,6 +40,9 @@ case "${1:?required job}" in
     python3 -B scripts/ci/test_llm_hosted_once.py
     python3 scripts/test_llm_runtime_release.py
     python3 scripts/ci/test_replay_pinned_native.py
+    # Source-pin and failed-attempt readers do not grant product acceptance.
+    python3 scripts/ci/test_cross_repo_candidate.py
+    python3 scripts/ci/test_read_native_campaign_attempt.py
     python3 scripts/ci/test_cross_arch_cost.py
     python3 scripts/ci/test_zero_locality_cost.py
     python3 scripts/ci/test_zero_paired_cost.py

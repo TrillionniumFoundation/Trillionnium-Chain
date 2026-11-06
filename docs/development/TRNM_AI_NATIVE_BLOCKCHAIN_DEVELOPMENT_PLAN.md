@@ -7864,3 +7864,45 @@ consensus control; measure honest completion under hostile/cold/recovery load;
 and report confirmation TPS, useful-work rate, Cell bandwidth, model-load
 latency and quality per actual cost separately. Component success does not
 close the original service, full-Cell, economic, task-supply or adoption gates.
+
+### 2026-11-06 cross-repository pins and failure-preserving gate continuation
+
+The eight requested system gates remain HOLD. A new immutable-source reader,
+`scripts/ci/check_cross_repo_candidate.py`, compares every checked-in Hepta
+Chain dependency declaration and Cargo lock entry with the selected Chain
+commit, and checks the actual Bazel v28 crate-facts table and package roster.
+It records commit/tree identities and exact configuration, toolchain and lock
+bytes. It refuses stale query/fragment pins, forked or registry dependencies,
+unresolved workspace/configuration overrides, wrong package versions, nested
+stale lockfiles and malformed or misplaced Bazel facts. Git replace refs and
+lazy network fetches cannot supply an alternate source.
+
+The actual published Hepta `dd32a0d510cbeb3dfed0554d982c75168a59d95d`
+still declares and locks Chain `e445769cb44272c0de78ec98a10c3105fc786541`.
+It therefore does not form an aligned source pair with either the throughput
+`9eda0ada15be1702269e08e527917568c710f4d3` or PQ
+`5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` candidate. This observed mismatch
+must be resolved through the real Cargo/Bazel repin and its original consumer
+gates; an editable manifest cannot substitute for that work.
+
+This reader checks immutable source pins only. It does not verify a live
+worktree, effective build environment, model payload, release binary, native
+execution, independent administration or production activation. Matching pins
+leave all of those obligations open. Existing failures and source identities
+remain retained; source-only results cannot promote any of the eight gates.
+
+`scripts/ci/read_native_campaign_attempt.py` now reads failed or incomplete
+original campaigns without feeding them through the success-only acceptance
+reader. Fixed source/result/report digests, original commands, resource
+declarations and the complete 27-slot/189-packet denominator remain mandatory.
+Missing observations stay unknown. Positive summaries must agree with complete
+raw confirmation records. The required repository-truth lane executes both new
+adversarial suites, and its existing PQ source-corpus pin is refreshed.
+
+The latest retained three-run campaign is run `42201852774` at `9eda0ada`:
+all three native exits are 101; 12 of 27 planned confirmation slots were
+observed, 15 remain unknown/unreached, and only three baseline confirmations
+fall inside the original 30-second windows. Their actual call intervals are
+21.386744335, 20.983181759 and 20.980953195 seconds. Neither attack phase
+confirms. Those observations do not meet the four-second SLO. The new reader
+executes no native experiment and grants no current-pair or host qualification.
