@@ -37,9 +37,36 @@ impl PqTlsClient {
         prepared: &PreparedPqRequest,
         budget: Duration,
     ) -> Result<PqResponse> {
+        self.send_verified(address, prepared, budget)
+            .map(VerifiedPqReply::into_response)
+    }
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
         self.inner.policy.tls_pins()?;
         self.inner.check_send(address, prepared, budget)?;
         let end = Instant::now() + budget;
+        let response = self.exchange(address, prepared.wire(), end)?;
+        self.inner.finish_response(&response, prepared, end)
+    }
+    pub(super) fn signing_client(&self) -> &PqClient {
+        &self.inner
+    }
+    pub(super) fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        end: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        let budget = end
+            .checked_duration_since(Instant::now())
+            .filter(|value| !value.is_zero())
+            .ok_or("PQ_NETWORK_DEADLINE")?;
+        self.inner.check_send(address, prepared, budget)?;
         let response = self.exchange(address, prepared.wire(), end)?;
         self.inner.finish_response(&response, prepared, end)
     }
