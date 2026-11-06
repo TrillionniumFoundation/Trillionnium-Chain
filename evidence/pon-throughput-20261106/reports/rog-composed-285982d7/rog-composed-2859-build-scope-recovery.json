@@ -1,0 +1,26 @@
+{
+  "source": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "interrupted_workspace_jobs": [
+    "1a1afe5a464-fc05-6c8e",
+    "1a1aff0e037-fc05-6ced"
+  ],
+  "second_job_terminal": {
+    "state": "cancelled",
+    "exit_code": -15,
+    "timed_out": false,
+    "at_unix_ms": 1793953285018
+  },
+  "observed_second_build_diagnostic": "task_archive_store_recovery: cc linker exited 1; lld terminated with SIGBUS (signal 7)",
+  "cancellation_cause": "not stated by terminal records",
+  "tmpfs": {
+    "path": "/tmp",
+    "device": 51,
+    "target_partial_allocated_bytes": 17532547072
+  },
+  "new_target": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+  "new_target_filesystem": "ext4",
+  "scope": "Node and M06 library component build on disk; original complete-workspace CI remains separate and no complete-workspace success is inferred",
+  "profiles_and_resource_quota": "unchanged original Cargo test profiles, all-features, two build workers, CPU quota 200%, memory max 10 GiB",
+  "recorded_utc": "2026-11-06T08:31:07.195576+00:00"
+}

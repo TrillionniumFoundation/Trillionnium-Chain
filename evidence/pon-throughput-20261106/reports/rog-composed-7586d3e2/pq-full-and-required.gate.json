@@ -1,0 +1,98 @@
+{
+  "child_passed": true,
+  "collector_errors": [],
+  "execution": {
+    "argv": [
+      "/usr/bin/python3",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_pq_required_controls_v2.py",
+      "--repo-root",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "--expected-head",
+      "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+      "--build-jsonl",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.jsonl",
+      "--build-stderr",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.stderr",
+      "--build-receipt",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.json",
+      "--target-dir",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+      "--output",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/pq-full-and-required"
+    ],
+    "capture_errors": {},
+    "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/pq-full-and-required.command.json",
+    "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+    "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/pq-full-and-required.streams.jsonl",
+    "finished_utc": "2026-11-06T09:47:08.197636+00:00",
+    "log_exit": 0,
+    "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/pq-full-and-required.log",
+    "native_argv": [
+      "/usr/bin/python3",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_pq_required_controls_v2.py",
+      "--repo-root",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "--expected-head",
+      "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+      "--build-jsonl",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.jsonl",
+      "--build-stderr",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.stderr",
+      "--build-receipt",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.json",
+      "--target-dir",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+      "--output",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/pq-full-and-required"
+    ],
+    "native_exit": 0,
+    "observed_stream_bytes": {
+      "log": 12642,
+      "stderr": 0,
+      "stdout": 12642
+    },
+    "pid": 833546,
+    "resources_path": null,
+    "spawn_error": null,
+    "started_utc": "2026-11-06T09:31:35.054516+00:00",
+    "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/pq-full-and-required.stderr",
+    "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/pq-full-and-required.stdout",
+    "wall_ns": 933143125193
+  },
+  "full_library": {
+    "counts": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 32,
+      "measured": 0,
+      "passed": 1177
+    },
+    "harness_seconds": "894.59",
+    "harness_status": "ok",
+    "passed": true,
+    "registry_count": 1209,
+    "running": 1209,
+    "scope": "full original libtest invocation, including its ordinary child harness entries; not a substitute for the 52 meaningful required controls"
+  },
+  "label": "pq-full-and-required",
+  "observed": {
+    "confirmed_named_execution_count": 52,
+    "dispatched_selector_count": 52,
+    "passed_selector_count": 52
+  },
+  "passed": true,
+  "source_bound": true,
+  "summary_identity": {
+    "fingerprint": [
+      66306,
+      45746888,
+      33152,
+      381898,
+      1793958428166999580,
+      1793958428166999580
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/pq-full-and-required/summary.json",
+    "sha256": "66a567727e073bec9f9cf066098d6a861b66574845504aa34bf4d33e48399717",
+    "size": 381898
+  }
+}

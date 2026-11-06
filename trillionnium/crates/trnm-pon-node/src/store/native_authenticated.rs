@@ -820,41 +820,79 @@ pub(super) fn verify_history_with_readback(
     block: Hash,
     progress: &mut dyn FnMut() -> Result<()>,
     cache: Option<&ArithmeticCache>,
-    readback: Option<&mut PostWriteReadback<'_>>,
+    mut readback: Option<&mut PostWriteReadback<'_>>,
 ) -> Result<()> {
-    let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
-    let mut current = block;
-    let mut expected_height = None;
-    loop {
-        progress()?;
-        let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
-        verify_record(db, settings, &record, progress, cache)?;
-        local(ensure(
-            expected_height.is_none_or(|height| record.height == height),
-            "NATIVE_STATE_HISTORY",
-        ))?;
-        match record.parent {
-            Some(parent) => {
-                expected_height = Some(record.height.checked_sub(1).ok_or("NATIVE_STATE_HISTORY")?);
-                current = parent;
+    let result = (|| {
+        let _measurement = cache.map(|cache| cache.history.observe(HistoryStage::VerifyHistory));
+        let mut current = block;
+        let mut expected_height = None;
+        let mut pending = [None, None, None, None];
+        loop {
+            progress()?;
+            let record = load_observed(db, current, cache.map(|cache| (settings, cache)))?;
+            verify_record(db, settings, &record, progress, cache)?;
+            local(ensure(
+                expected_height.is_none_or(|height| record.height == height),
+                "NATIVE_STATE_HISTORY",
+            ))?;
+            if let Some(scope) = readback.as_deref_mut() {
+                // Only a nominated starting record may borrow its completed
+                // suffix. A fifth block still traverses its ENTIRE history,
+                // even if it reaches a nominated ancestor on that walk.
+                if current == block && scope.history_matches(db, settings, &record)? {
+                    progress()?;
+                    if !scope.history_matches(db, settings, &record)? {
+                        // A final callback wrote after the match. Reuse stays
+                        // disabled; rerun the original full history verifier.
+                        return verify_history_with_cache(db, settings, block, progress, cache);
+                    }
+                    scope.consumed = true;
+                    #[cfg(test)]
+                    {
+                        scope.history_hits += 1;
+                    }
+                    return Ok(());
+                }
+                scope.stage_history_record(&record, &mut pending);
             }
-            None => {
-                let bytes: Vec<u8> = db
-                    .prepare_cached("SELECT state FROM snapshots WHERE block=?")
-                    .map_err(|error| Error::from(error).local_integrity())?
-                    .query_row([current.as_slice()], |row| row.get(0))
-                    .map_err(|error| Error::from(error).local_integrity())?;
-                let state: State = serde_json::from_slice(&bytes)
-                    .map_err(|error| Error::from(error).local_integrity())?;
-                local(ensure(
-                    canonical(&state)? == bytes && state == settings.initial,
-                    "NATIVE_STATE_GENESIS",
-                ))?;
-                return verify_state_with_readback(
-                    db, settings, current, &state, progress, cache, readback,
-                );
+            match record.parent {
+                Some(parent) => {
+                    expected_height =
+                        Some(record.height.checked_sub(1).ok_or("NATIVE_STATE_HISTORY")?);
+                    current = parent;
+                }
+                None => {
+                    let bytes: Vec<u8> = db
+                        .prepare_cached("SELECT state FROM snapshots WHERE block=?")
+                        .map_err(|error| Error::from(error).local_integrity())?
+                        .query_row([current.as_slice()], |row| row.get(0))
+                        .map_err(|error| Error::from(error).local_integrity())?;
+                    let state: State = serde_json::from_slice(&bytes)
+                        .map_err(|error| Error::from(error).local_integrity())?;
+                    local(ensure(
+                        canonical(&state)? == bytes && state == settings.initial,
+                        "NATIVE_STATE_GENESIS",
+                    ))?;
+                    verify_state_with_readback(
+                        db,
+                        settings,
+                        current,
+                        &state,
+                        progress,
+                        cache,
+                        readback.as_deref_mut(),
+                    )?;
+                    if let Some(scope) = readback.as_deref_mut() {
+                        scope.remember_history(db, settings, pending)?;
+                    }
+                    return Ok(());
+                }
             }
         }
+    })();
+    match readback {
+        Some(scope) => scope.finish(result),
+        None => result,
     }
 }
 
@@ -917,7 +955,7 @@ pub(crate) fn publish_with_cache(
 #[allow(clippy::too_many_arguments)]
 pub(super) fn publish_with_readback<'db>(
     db: &'db Connection,
-    settings: &Settings,
+    settings: &'db Settings,
     parent: Hash,
     block: Hash,
     before: &State,

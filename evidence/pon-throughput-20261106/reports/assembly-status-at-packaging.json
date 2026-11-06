@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-throughput-assembly-status-v1",
+  "created_utc": "2026-11-06T08:55:32Z",
+  "source": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "readme_input_sha256": "ebbfab88bae26f5c57183f0796308678a75f0f0eb9d8d2cea9b7b4c944c147c3",
+  "readme_input_binding_sha256": "1545c4a7ae5b8d28922d5b4381192a815b3c548bf65b000f82a451fe1847f3a0",
+  "original_factual_sections_review": "reports/readme-original-draft-review.json",
+  "review_scope_not_extended": "the earlier reviewer did not review newly added packaging text or reported build updates",
+  "new_build_update_basis": "actual collaboration task messages from /root; assembler has not fetched or verified the corresponding remote raw attempts",
+  "new_build_update": {
+    "workspace_attempts_1_and_2": "cancelled SIGTERM; cancellation cause not established",
+    "workspace_attempt_2_additional_diagnostic": "lld SIGBUS in unchanged task_archive_store_recovery link; no complete successful build-finished",
+    "ext4_component_attempt_1": "reported failure after 6.7 seconds: GCC temporary files still used /tmp and encountered EDQUOT",
+    "owned_ext4_tmpdir_component_successor": "last reported running; exact source and flags unchanged; no terminal result inferred"
+  },
+  "pending_ci_rows": "coordinating agent will add newer exact-source terminal results; this assembly does not claim latest live API status",
+  "historical_records_policy": "older pending/failure/status text remains its original observation, not silently rewritten from later results"
+}

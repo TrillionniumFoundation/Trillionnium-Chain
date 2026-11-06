@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Execute the actual workflow selectors against retained native registries.
+"""Exercise actual selectors with historical and explicit source fixtures.
 
 These are registration regressions, not fresh native or service acceptance.
 The retained ZIP is the unchanged b173 head artifact, including its failure.
+The newer history/Host names are synthetic fixtures from current Rust test
+declarations; they are not a current ELF registry or evidence of execution.
 """
 from __future__ import annotations
 
@@ -53,6 +55,31 @@ class NativeRosterTests(unittest.TestCase):
                               for name in ('m06', 'node')}
             cls.original_failure = source.read('semantic-controls/registry-check.stderr').decode()
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
+        cls.source_fixture_extensions = {}
+        source_root = ROOT / 'trillionnium/crates/trnm-pon-node/src'
+        for group, relative, module, count in (
+            ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
+             'store::native_authenticated::post_write_readback::history_tests', 12),
+            ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
+             'host_kernel_parent::kernel_parent::relative_tests', 8),
+        ):
+            declarations = re.findall(
+                r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
+                (source_root / relative).read_text(), re.M)
+            names = [module + '::' + name for attributes, name in declarations
+                     if not re.search(r'^#\[ignore\b', attributes, re.M)]
+            if len(names) != count or len(set(names)) != count:
+                raise ValueError('unexpected current source fixture declarations: ' + group)
+            cls.source_fixture_extensions[group] = names
+        original_names = {line[:-6] for line in cls.registries['node'].splitlines()
+                          if line.endswith(': test')}
+        additions = [name for names in cls.source_fixture_extensions.values() for name in names]
+        if len(set(additions)) != 20 or original_names.intersection(additions):
+            raise ValueError('source fixture additions must be separate from the retained registry')
+        # Preserve the original registry string; this separate input is explicitly
+        # synthetic and exercises the complete current builder without skipping groups.
+        cls.source_fixture_node = cls.registries['node'] + ''.join(
+            name + ': test\n' for name in additions)
 
     def run_workspace(self, *, script=None, node=None, m06=None):
         with tempfile.TemporaryDirectory() as directory:
@@ -90,9 +117,26 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIsNone(selected)
 
     def test_all_original_workspace_groups_execute_selection(self):
+        # Historical libtest evidence cannot claim registration of newer controls.
         result, selected = self.run_workspace()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('postwrite-history: expected 12 actual registered controls, got 0', result.stderr)
+        self.assertIsNone(selected)
+        result, selected = self.run_workspace(node=self.source_fixture_node)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
+        original_groups = [row for row in report['groups']
+                           if row['group'] not in self.source_fixture_extensions]
+        self.assertEqual(sum(row['expected_count'] for row in original_groups), 60)
+        for row in original_groups:
+            retained = {line[:-6] for line in self.registries[row['crate']].splitlines()
+                        if line.endswith(': test')}
+            self.assertTrue(set(row['tests']).issubset(retained))
+        for name, tests in self.source_fixture_extensions.items():
+            extension = next(row for row in report['groups'] if row['group'] == name)
+            self.assertCountEqual(extension['tests'], tests)
+            self.assertEqual(extension['expected_count'], len(tests))
+        self.assertEqual(report['selected_count'], 80)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()
@@ -106,7 +150,7 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIn('prepared-current-history', selected)
 
     def test_missing_extra_and_duplicate_native_registration_refused(self):
-        node = self.registries['node']
+        node = self.source_fixture_node
         one = next(line for line in node.splitlines(True) if line.startswith(PREFIX))
         for value in (node.replace(one, '', 1), node + one,
                       node + PREFIX + 'unreviewed_additional_control: test\n', ''):

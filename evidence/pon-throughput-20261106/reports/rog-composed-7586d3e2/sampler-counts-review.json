@@ -1,0 +1,106 @@
+{
+  "actual_registry": {
+    "count": 9,
+    "names": [
+      "tests::all_six_structures_match_full_limb_and_independent_scalar_replay",
+      "tests::both_preparations_reject_noncanonical_material_even_in_zero_products",
+      "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+      "tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance",
+      "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+      "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+      "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+      "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+      "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+    ],
+    "native_exit": 0,
+    "result": {
+      "bytes": 1434,
+      "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence/validation/rog-composed-7586-sampler/registry.result.json",
+      "sha256": "4acb4a4b1f9df80caaaf4c188c459b83856ccb8329d966af0cb6e040a979e67e"
+    },
+    "stdout": {
+      "bytes": 775,
+      "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence/validation/rog-composed-7586-sampler/registry.stdout",
+      "sha256": "664b97fc53eccdc15f0bd3fc95356a54af836b3e200038c1dd3b2216b2a6d1bc"
+    }
+  },
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--locked",
+    "--offline",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--example",
+    "pon_w1_preparation_strategy_v4",
+    "--",
+    "--test-threads=1"
+  ],
+  "elf_identity_after_original_command": {
+    "fingerprint": [
+      66306,
+      45748326,
+      33216,
+      1347624,
+      1793958937391321725,
+      1793958937391321725
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+    "sha256": "daedc548aaca43422925b00ccd093ed011c4e1700ed441a70d99a09fe5935671",
+    "size": 1347624
+  },
+  "elf_identity_unchanged_through_registry_and_final_source_check": true,
+  "native_execution_or_build_for_this_review": false,
+  "native_exit": 0,
+  "one_actual_outer_harness": {
+    "counts": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 9
+    },
+    "harness_seconds": "0.04",
+    "running": 9,
+    "test_names": [
+      "tests::all_six_structures_match_full_limb_and_independent_scalar_replay",
+      "tests::both_preparations_reject_noncanonical_material_even_in_zero_products",
+      "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+      "tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance",
+      "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+      "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+      "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+      "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+      "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+    ]
+  },
+  "original_native_log": {
+    "bytes": 5245,
+    "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence/validation/rog-composed-7586-sampler/native/v4-sampler-release.log",
+    "sha256": "db88268a1ea4e5b16ef5a6ffb27c695db904fe6dac89ab3c62e50b0c0609890f"
+  },
+  "original_native_receipt": {
+    "bytes": 2618,
+    "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence/validation/rog-composed-7586-sampler/native/v4-sampler-release.json",
+    "sha256": "dc89ca4b6df571cc4c8dbad19fb0642c5e3e7010a033b6e30aec858d4ca1bfd6"
+  },
+  "original_summary": {
+    "bytes": 29544,
+    "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence/validation/rog-composed-7586-sampler/summary.json",
+    "sha256": "3db483cb62cb7dfa1974901c133f423f8a352dc0d385d3f2e296674ab7c4ab48"
+  },
+  "recorder_capture_exit_as_recorded": 0,
+  "recorder_log_exit_as_recorded": 0,
+  "reviewed_utc": "2026-11-06T10:04:50.851415+00:00",
+  "schema": "trnm-composed-7586-sampler-counts-read-only-review-v1",
+  "scope": "Nine original release/default sampler correctness controls on actual 7586 source. Target and checkout directory names are historical and do not rename the bound source. No counts borrowed from the Node library, no new native execution, no SQLite boundary, production TPS or service-SLO qualification.",
+  "source_commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "source_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "sqlite_qualification_granted_by_review": false,
+  "sqlite_selected_unit_qualification_verified": false,
+  "sqlite_status_as_recorded": "UNKNOWN_SELECTED_RELEASE_UNIT_BINDING"
+}

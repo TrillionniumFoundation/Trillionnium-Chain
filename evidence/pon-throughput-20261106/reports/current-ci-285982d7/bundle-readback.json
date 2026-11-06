@@ -1,0 +1,20 @@
+{
+  "schema": "current-evidence-archive-readback-v1",
+  "source_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "snapshot_utc": "2026-11-06 09:28:59 UTC",
+  "directory": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-285982d7",
+  "index": "manifests/index.json",
+  "artifact_count": 30,
+  "file_count": 2993,
+  "archive": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-285982d7-20261106T092859Z.zip",
+  "archive_bytes": 4264449,
+  "archive_sha256": "ec3455be864bc5114108169bc60ece5e76d643d3ddc4fb621ff59d37dad19ce2",
+  "zip_crc_and_file_hashes_verified": true,
+  "solid_tar_xz": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-285982d7-20261106T092859Z.tar.xz",
+  "solid_tar_xz_bytes": 756936,
+  "solid_tar_xz_sha256": "bd7c5e0152530fc48a86eabef21cce212bfb3bd0187a821bf24e302d85cf0cfc",
+  "member_manifest": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-285982d7-20261106T092859Z.members.json",
+  "member_manifest_sha256": "f0bec01ff23b91361f87d87dd4ee8ed42ec39daa417c904d8187d8739e02e270",
+  "safe_regular_members_only": true,
+  "tar_and_zip_members_byte_equal": true
+}

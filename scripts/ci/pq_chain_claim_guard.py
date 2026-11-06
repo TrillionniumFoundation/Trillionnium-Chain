@@ -36,6 +36,7 @@ GATES = {
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
         'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs',
+        'trillionnium/crates/trnm-pon-node/src/public_submit.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs',

@@ -684,6 +684,25 @@ defines A/B/C and the still-unimplemented same-chain activation/reorganization
 boundary; the [small reproduction record](../../evidence/pq-historical-migration-20261104/README.md)
 binds only this continuation's executed source and controls.
 
+
+<!-- Preserved PR #698 source observations at 42b5ca15; not new merge acceptance. -->
+
+#### Recovery consumption and current publication continuation
+
+Continue the existing PQ PR #698 from `59f75acd1d4261972b8aaa45e0c36259fcafd45c`
+and runtime PR #4729 from `5cb4ee7b63dc91e3c3023f0687f0ea7d2b0a8497`.
+M03's structural inspector must not grant direct runtime checkpoint reads or CAS;
+live recovery pins must match actual retained journal bytes, including earlier
+records and the sibling head. A content hash previously published by a Cell role
+does not carry that role's authorization past its expiry or a root rotation.
+Keep those facts when replaying release history. Add real pinned TUF SDK signing
+and verification to the existing primitive comparisons and retain all original
+controls. These component repairs do not qualify a complete updater, a deployed
+independent witness or whole-effect exactly-once semantics. All source combinations
+and failures require their own observations; historical results remain historical.
+The compact [component reproduction record](../../evidence/pq-recovery-release-sdk-v1/REPRODUCE.md)
+retains the reproduced defects, current results and still-open deployment gates.
+
 #### Joint source, native admission and reversible-artifact continuation — 2026-11-04
 
 Continue the existing PR #688 candidate from
@@ -937,6 +956,34 @@ candidate; historical F0/pressure results are not transferred. These changes do
 not establish a fastest-legal-producer lower bound, public confirmation SLO,
 prospective model improvement or independently administered evaluation. Existing
 qualification and activation decisions remain unchanged.
+
+#### Bound crypto configuration and parameter candidates — 2026-11-04
+
+Continue existing PQ integration PR #698 from exact
+`5a5ddbd4577207af7f7771a4a50c76620f32940f`. The
+[versioned cryptographic configuration](../security/CRYPTO_PROFILE_V1_20261104.md)
+binds algorithm/mode/encoding, per-use hashes, network/genesis/parameters,
+namespace, protocol version, activation interval and deterministic budgets.
+Trusted state selects a configuration; a received ID only compares with it.
+Current and historical selection results are distinct types, and state-generation
+rechecks remain separate from cached signature facts.
+
+Existing PNQ2 and NPQ2–NPQ6 owners expose a fixed ML-DSA-65 descriptor mapping
+without changing their historical bytes or stored schema. PNQ2 retained audit
+facts no longer carry a live request or convert to the admission type. Candidate
+CPQ1 performs actual complete multi-signature verification using explicit
+ML-DSA-65/87 suites and profile-bound SHA-512 key identities. Both candidates
+are rejected for current effects; signature observations cannot activate them.
+
+Keep the original W1 configuration, full verifier, challenge/ticket, CPU limits,
+the original 45 required PQ selectors and the four retained-ledger controls
+from the concurrent integration (49 total), rollback obligations and all
+qualification negatives.
+The local fixed-input parameter observer is distinct from original-budget
+business/WAN acceptance. Governance/release/CURRENT/FinalUse migration,
+whole-effect monotonic recovery, independent full capacity and W1 quantum/work
+qualification remain open. Exact native and reproduction results belong to this
+new source only; prior #698 evidence is not relabeled as a new execution.
 
 #### PoN exact-fact decoding and honest-rate sensitivity — 2026-11-03
 
@@ -5626,6 +5673,37 @@ with that historical source. This new combined source has not yet been built
 or accepted; it requires fresh exact-head and actual-merge evidence. All eight
 machine assertions remain false and PN0-PN6 remain HOLD.
 
+
+### 2026-11-03 whole-chain PQ integration continuation
+
+This source continuation was later reconciled with #688
+`9f04640877078204d367f753eba684d94e705a74`, preserving its independent
+History deadline repair and source records.
+
+Continue #688 from `116a3caf6046dd0db3caf1d0797e636c35c877b8` and pair source
+review with Hepta #4497 `f28af9b7700a61fbbcdcc121521cb879297d5e31`. Integrate
+#683's missing same-transaction witness admission guard, its two required
+controls, and the isolated SDK 3.0.6 Poseidon2 verifier profile. Preserve the
+current observation diagnostics, all 43 earlier required controls and original
+250 ms witness and four-second business bounds. The new 45-control composition
+requires its own native result; historical component passes do not transfer.
+
+The paired Hepta repair makes every final consumer boundary validate the same
+revocation head captured by its authenticated claim, while preserving consumed
+nonces and explicit revocation precedence. Ordinary explicitly selected PQ Cell
+composition does not close Objective/RunStart V1 or the inspected HTTP automation
+authority constructors. Generic production grant consumers support injected
+authority and require separate composition qualification. The remaining paths
+need versioned owner migration and current frontier checks, not an OR fallback.
+
+The [whole-chain claim record](../security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md#2026-11-03-integrated-source-continuation)
+keeps the three-table PqWitnessV4 scope distinct from paired V5 evidence names,
+canonical reorganization state distinct from monotonic local effect state, and
+primitive category distinct from a whole-system PQ-128 claim. Local source and
+format checks, resource failures and remote native outcomes are separate
+observations. All six qualification domains and production activation remain
+HOLD until their own evidence is accepted.
+
 ### 2026-11-03 six-axis performance implementation with original gates retained
 
 The integration baseline `af064bf751ed92c82da0b113682a7dfff3225d97`, tree
@@ -6445,6 +6523,57 @@ pass. The initial generated-table drift errors remain recorded alongside the
 subsequent correction; full public and scientific acceptance remains open.
 
 
+### 2026-11-03 current PQ admission and verifier composition
+
+Continue existing #698 on top of #688 at
+`01627151f3ab50750eac2adeb46d8883a601265f`, retaining both histories and
+the newer History, epoch and committed-CAS recovery work. Ordinary PNQ2
+admission keeps one authenticated IMMEDIATE transaction; actual expiry
+retirement still commits before a fresh admission guard. Keep the original
+43 required controls in order and add the two original admission controls.
+The optional succinct verifier retains SDK 3.0.6 with an explicit Poseidon2
+parameter digest and no alternate-suite fallback. It is not a Node backend.
+
+The current Hepta readback distinguishes the unsupported RunStart V1/HTTP
+automation compositions from generic PQ-capable grant types. Its exact
+source links and required owner migration are in the
+[current authority readback](../security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md#2026-11-03-current-authority-composition-readback).
+Execute the combined candidate's original native controls and strict checks
+on their actual source. Preserve earlier X230 formatting failure before native
+execution and this executor's actual Unix-socket EPERM capability failure.
+Neither is evidence of a successful runtime qualification. The original 250 ms
+witness deadline, four-second service condition, CPU allocations and all
+qualification/activation negatives are unchanged.
+
+
+The same continuation repairs the existing original-campaign cost reader.
+All known disjoint setup/search intervals now remain a lower bound on complete
+acquisition cost even when another interval is unknown. CPU and wall clocks
+both reject a known subtotal above the measured complete denominator; unknown
+values stay unknown. The original fixed historical receipt fixture and all
+existing reader controls remain. This is cost-accounting correctness, not
+measured quantum throughput, a W1 cost lower bound or a changed chainwork rule.
+
+### 2026-11-04 recorded PQ component execution
+
+The [retained execution evidence](../../evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md)
+now records terminal results: X230 executes the composed `60dae3` source with
+45/45 required native controls, strict Node Clippy, four frozen-verifier release
+controls and one existing complete W1 receipt. The original 250 ms witness
+budget is unchanged. Local 99 source/provider controls and strict workspace
+Clippy used an identical complete tree; the later `30e0cd59` cost reader passes
+21 original controls at its exact source. The three changed offline paths do
+not change native inputs, and native attribution remains `60dae3`.
+
+Hepta's original `5fa90c21` and pinned composition `2f04ecfd` each execute the
+original contracts package with 198 passed, zero skipped, and strict scoped
+Clippy exit 0. Existing configuration warnings remain recorded. The published
+`ef5723af` preserves the owner's later macOS-only fixtures and the four tested
+PR blobs; it is not claimed as a third complete-tree native run. Archive hashes,
+full source comparisons and retained failures make these scopes reviewable.
+All six whole-chain PQ domains remain UNQUALIFIED, with full Node/service,
+precise proof and quantum-work arguments, whole-state migration, and independent
+composed deployment acceptance still outstanding.
 ### 2026-11-04 complete-input calculation without redundant materialization
 
 Continue the same PR #688 after the concurrent `a10c3902` registration repair.
@@ -6569,6 +6698,60 @@ their original profiles and all features. Source and ELF guards remain unchanged
 through these local observations. The original complete Node, exact committed
 head and actual merge, service, history and independent qualification gates stay
 open until their own evidence passes.
+
+### 2026-11-04 effect recovery, current release authority and independent ML-DSA
+
+Continue #698 with its `5a5ddbd4` history and the concurrent #688 owner at
+`d0737cf5434894ce47fad8082376fc417313c2cb`. Preserve both parent histories,
+the original admission controls and all four newer cold-recovery controls:
+the native registry now contains 49 distinct names. Retain the upstream
+transaction-scope controls and unchanged witness/service budgets. This
+composition does not turn those registered names into executed results.
+
+The [release and key-owner contract](../security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md)
+adds two concrete boundaries. Cached Cell release observations require the
+current pinned key, retirement state, generation, scope and release sequence
+again at access. Selecting historical content requires a newly authorized
+sequence. The actual acquisition caller is migrated, while a live durable
+activation owner remains separate. The TAP 21 adapter reconstructs OLPC
+canonical signed metadata, computes SHA-512 and signs/verifies the exact v1
+domain using the existing RustCrypto ML-DSA-65 primitive with an empty context.
+Unsupported schemes and encodings refuse. This bounded ML-DSA-65/1 subset is
+not a full TUF client or the three-parameter-set TAP 21 conformance profile.
+
+The independent primitive lane compiles the actual portable C implementation
+from mldsa-native v2.0.0 commit
+`834a90d5e846ffa1e1611bd24e160bb2e9b86d35`. It compares fixed-seed key and
+signature bytes, both verification directions, application contexts, strict
+SPKI and length policy, and the pinned 210-case Wycheproof corpus against the
+actual RustCrypto adapter. Its source reader rejects changed/missing/extra
+inputs, symlinks, replacement Git trees, grafts and wrong checkout identity.
+The real replacement-tree counterexample is retained in the source tests;
+checking HEAD alone is insufficient. The workflow requires separate head and
+prospective-merge execution on x64 and ARM, with before/after source receipts.
+Local portable-C observations do not establish those remote architecture runs,
+production custody, constant-time behavior or whole-chain security.
+
+The real TLS probe now rejects a trusted Ed25519 certificate even when the
+negotiated hybrid exchange group is permitted. Hybrid exchange, PQ identity,
+application signature and FinalUse permission remain distinct gates. The
+installed public Node transport still uses raw TCP; the probe does not install
+RFC 10024 confidentiality there. The same contract inventories offline update
+and recovery roots, software/config targets, Cell publisher/evaluation/activation,
+signing-seed custody, identity roster and witness checkpoint roles, with their
+remaining generation, backup, restore, device and retirement owner requirements.
+
+The corresponding Hepta continuation tightens the external FinalUse frontier's
+global revision across epoch changes and aligns provider-effect cold recovery
+with the live acknowledgement-provenance rule. Prepare, consume, dispatch and
+reconcile remain distinct states; an uncertain effect retains its logical key.
+The provider-effect qualification journal, budget owner and FinalUse frontier
+are not yet one externally durable production transaction. Neither the Hepta
+evidence recovery snapshot nor this Chain's three-table PqWitnessV4 proves
+complete effect-history retention. Append consistency, atomic expected-old
+checkpoint advancement and an independently fresh failure domain remain required;
+unavailability may stop new effects. These witnesses gain no fork-choice or
+business-grant authority. All six whole-chain PQ qualification gates remain HOLD.
 
 ### 2026-11-04 complete model storage, tensor admission and retained-root GC
 
@@ -7265,6 +7448,233 @@ campaign minimum of three administrators/failure domains and 72 hours is
 unchanged. No source-control, local component, model-quality, economic,
 public-service or activation claim is promoted by this entry.
 
+<!-- Preserved PR #698 source observations at 42b5ca15; not new merge acceptance. -->
+
+
+The same continuation additionally composes the owner's late
+`e94781d2323f5dc8987e1eb7ed2bef23ee8745c3` storage, checkpoint, release-role and
+transparent-profile work. Keep those sources and their original observations.
+The frozen verifier uses the upstream profile owner with the same SDK, suite
+and parameter pins, retains every original test and both additional suite
+controls, and preserves the current complete-image and canonical-control checks.
+The actual TLS negative reuses the upstream explicitly pinned fixture. Rebuild
+and validate the affected composed packages at their new commit identity; the
+completed `7eba9107` and `04be4748` observations remain historical observations
+of their exact inputs, not executions of this later complete tree.
+
+A lease check then observes concurrent #698 head
+`885b6e82a1470f6a35b55fa8d3c95af44d2afea8`. Compose that complete profile/CPQ1
+history with `4cc3bd974339b50ceaae47aaf7d652d5b5602d7d`, preserving cumulative
+verification budgets, historical/current type separation and the unactivated
+ML-DSA-87 candidate. The ML-DSA-65 release baseline and all 49 required native
+selectors remain. Keep every earlier component observation under its original
+source identity and validate the resulting composition separately.
+
+
+### 2026-11-04 immutable profile identity through trusted retirement
+
+Continue PR #698 from `cbdd98dc16398d6a21e02364c71f0856742b3a72`, preserving the
+`ac2402e4` recovery, live-journal, current Cell publication and actual SDK work,
+its separate results and its four still-failing checkpoint Unix/daemon tests.
+Register the added live-journal source in the generated inventory and update
+only that entry's exact corpus pin alongside this change's own three source pins.
+
+An initially open-ended CURRENT descriptor could not later enter the old
+planned-retirement history without rebinding its ID. Add a trusted effective
+retirement registration that retains the original descriptor and ID. Its
+exclusive end must narrow the original interval and end no later than the
+current configuration's activation. Preserve the old constructor for predeclared
+retirement, the bounded nonoverlapping history, original parameters and protocol
+versions, current/historical types and final-use generation/identity checks.
+Height checks do not prove a record was accepted; the actual owner authenticates
+and persists both the accepted history and the retirement schedule.
+
+Eight new controls cover original-ID continuity, refusal of a rebound ID,
+exclusive ends and gaps, duplicates/overlap, foreign bindings, candidate and
+capacity refusals, and stale current observations. Descriptor bytes, golden IDs,
+legacy wire, CPQ1 signature and byte/attempt budgets, native W1 challenge/ticket
+and work configuration remain unchanged. Both candidate parameter sets remain
+unavailable for current authorization; ML-DSA-87 is not activated.
+
+The [fixed 59f evidence](../../evidence/crypto-profile-20261104/continuation-59f75acd/README.md)
+retains 24 actual command receipts: 23 successes and the original missing-cache
+fuzz failure, followed by a successful complete 147-node graph retry. It includes
+143 crypto and 94 protocol passes, two existing ignored protocol observations,
+two compile-fail doctest passes and 106 Python tests. Its fresh release observer
+completed 32 cases, 288 measurements and 18,432 samples, independently recomputed.
+These are observations of `59f75acd`, before this retirement fix. M06, Node/49,
+strict workspace Clippy and independent candidate interoperability were not run
+in that phase. New-source acceptance must retain its own actual command/source
+records; the prior passes do not validate this new source. The unarchived 885
+logs remain lost and are not reconstructed.
+
+The unified registry is still not integrated into every real effect owner.
+M15 root identity/checkpoint remain SHA-256 and its fixed ML-DSA-65 release suite
+is separate; candidate SHA-512 commitments do not qualify those boundaries.
+Current/FinalUse, complete monotonic recovery, original-budget capacity/WAN and
+independent W1 security remain open. Preserve all six UNQUALIFIED gates and HOLD.
+
+
+### 2026-11-04 trusted-retirement source validation and bounded parameter evidence
+
+The [53a90ad6 evidence](../../evidence/crypto-profile-20261104/retirement-53a90ad6/README.md)
+binds every valid native command receipt to commit
+`53a90ad66b224db9d5095ba3efdadc7319ad8423`, tree
+`6e8ed831672296129672df51f814abba05ea3355`, and the complete 8,926-entry,
+945,979,239-byte tracked worktree before and after execution. That source retains
+the immutable trusted-retirement fix, all concurrent `ac2402e4` recovery/current
+publication/SDK changes and their separately retained incomplete observations.
+A later documentation/evidence commit does not become the source of these runs.
+
+There are 32 valid terminal command receipts: 30 exit 0 and two Node build retries
+exit 101. The crypto/protocol command reports 143 + 102 passed and the two existing
+ignored cost observations; all eight new retirement controls pass. Protocol
+doctests report two passes. The selected M06 PQ unit module reports 15 passes
+and five integration targets report 44 passes on the successful retry. The
+five Python suites report 106 passes. Full locked offline workspace and fuzz
+graphs contain 180 and 147 nodes. Formatting, 466 source pins, inventory, claim
+guard, repository links and the original complete workspace/all-target/all-feature
+Clippy command with `-D warnings` pass.
+
+The fresh release observation retains 32 cases, 288 measurements and 18,432 raw
+samples, with an independent statistical readback. Its TRNMCPB1 frame is separate
+from CPQ1 and the existing runtime messages. Sixty-four samples, fixed input and
+order, and uncontrolled shared load do not qualify production tails or a stable
+65/87 speed ratio. Actual RustCrypto/OpenSSL 3.5.9 interoperability covers both
+parameters and four message lengths in both directions: 16 valid accepts and
+64 mathematical negative refusals, plus four separately classified empty-message
+CLI frontend limits. The linked EVP path covers empty-message mathematics. Its
+121 inner commands, 74 public fixtures, 242 output files and independent readback
+are preserved; this is finite interoperability, not certification or activation.
+
+The first M06 integration attempt and first Node build lost their final receipt
+to recording failures; their two original zero-byte JSON files and logs remain
+unknown, with no native success credit. The later M06 retry succeeds separately.
+Node retry1 has a complete exit-101 receipt and explicit LLVM output ENOSPC;
+retry2 has a complete exit-101 receipt and rustc SIGKILL. Its root cause remains
+unknown; shared cgroup OOM counters cannot attribute that process death.
+No Node test executable succeeded, so network, continuous owner and all 49
+required controls remain unexecuted. Strict Clippy success does not replace them.
+No budget, selector, compiler profile, original recorder or sandbox permission
+was relaxed. Reproducible outputs owned by this task were retired only after
+identity records and terminal results were retained; shared caches and providers
+were preserved.
+
+Native acceptance remains incomplete, ML-DSA-87 is not activated and all six
+whole-chain domains stay UNQUALIFIED. Complete the exact retained Node/49 controls
+on sufficient resources, then the actual profile-governed effect-owner migration,
+CURRENT/FinalUse/recovery composition, key custody and independent capacity/work
+qualification. Height-valid historical observations still require separately
+authenticated accepted records and a durably authenticated retirement schedule.
+Native W1 challenge, ticket and complete relation remain unchanged.
+
+
+### 2026-11-04 complete CPQ1 observations and original owner controls
+
+Continue the existing PR #698 from
+`b525fbc6dc780343c78710c98a94616f7cff59e4`. Preserve its trusted-retirement
+implementation, all concurrent recovery/release changes, the original TRNMCPB1
+benchmark and original failed Node observations. Do not replace a real fixed
+owner check with a redundant comparison of a freshly generated descriptor ID.
+The Operator scope remains unregistered until its distinct full-message grammar,
+compound bounds and actual owner mapping are implemented and verified together.
+
+Add a separate executable observation of actual CPQ1 canonical message/wire
+construction and real multi-signature verification for both candidate parameter
+sets. Retain maximum legal payloads, exact public fixtures, independent raw
+statistical/framing readback, all failure charging and a single budget within
+each saturation sample. New CI observation lanes must preserve the original
+native selectors, compiler profiles, provider and budgets. Local results do not
+supply unobserved ARM or prospective-merge acceptance.
+
+Retry the unchanged all-feature Node library build and the original 49 required
+controls on an isolated exact source. Include all network canonical controls and
+PQ Operator/startup controls; the 49-control roster does not cover those suites
+in full. Attribute each result and any build/interruption failure to its actual
+source and command. The [continuation record](../../evidence/crypto-profile-20261104/cpq1-owner-continuation/REPRODUCE.md)
+retains the real results; no earlier pass is relabeled as a new execution.
+
+The registry still does not authenticate or persist every effect owner's active
+profile, retirement schedule or monotonic frontier. Production 87 activation,
+CURRENT/FinalUse, complete migration/recovery, original-budget network acceptance
+and independent W1 security remain separate blockers. Keep every whole-chain PQ
+qualification and production activation false until its own evidence closes.
+
+Recorded completion for this continuation is now in the linked result index.
+The native implementation source is `13986046c9c0e0e3d0d1c76b399bea11878e0ab6`:
+32 complete CPQ1 cases / 352 measurements / 22,528 raw samples, independent
+readback, 245 component tests, 4 compile-fail documentation contracts, 238 Python
+controls and strict all-target/all-feature workspace Clippy completed. An
+independently hashed reproduction helper verified all 120 Rust fixture signatures
+with the reused OpenSSL 3.5.9 implementation and rejected 360 per-signature
+message/signature/context changes, with positive context controls. Its evidence
+is one-way mathematical interoperability, not owner authority or certification.
+
+The unchanged parent Node build was killed by SIGKILL under shared-host memory
+pressure; original 49 and expanded 94 owner controls remain unexecuted. Retain
+that terminal failure and the earlier interrupted receipt. Publication corrects
+three documentation links and records CI cargo/host context; it does not
+retroactively replace the measured implementation source, lower limits, activate
+87 or change the six UNQUALIFIED gates.
+
+
+### 2026-11-05 fixed-parent PQ owner composition; native acceptance pending
+
+Compose the fixed #688 source `84179f7b0f74bdc0152f904ffbf0b11709eec036`
+and #698 source `42b5ca15e271779bc5a66efe1987b485140d3880` while retaining
+both histories. The [composition record](../../evidence/pon-pq-owner-composition-20261105/README.md)
+records the three-way source decisions and remaining exact-source gates.
+The current #688 required roster contains 52 meaningful controls; #698's
+recorded 49-control and expanded 94-control observations remain statements
+about their older source. Keep every current selector, child-process exclusions,
+original budgets and exact nonzero execution checks. No predecessor PASS or
+failed native build becomes acceptance of this combined source.
+
+The ordinary classical public-submit recovery helper must check the actual
+Node's persisted network owner before local packet reads or network calls.
+A PQ transport owner can legitimately retain a classical account ledger;
+checking only application Settings would otherwise permit classical V3 fallback.
+Add a real nonempty-packet, cold-reopen and zero-connect refusal regression,
+and retain the original classical recovery target. This closes that downgrade
+surface; it does not implement a PQ parent-recovery protocol. Track the helper
+in the existing authority inventory and exact-source manifest.
+
+All six whole-chain domains remain UNQUALIFIED. Combined-source Rust execution,
+locked graphs, formatting, strict Clippy, original performance/business gates,
+independent custody/rollback/WAN evidence and quantum work/proof qualification
+require their own unchanged acceptance. There is no production activation.
+
+### 2026-11-06 throughput continuation on composed performance and PQ sources
+
+Continue the fixed #688 performance source
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0` with the fixed #723 PQ source
+`cad4c18fe146b7d742ac7fa8872044cd4136c22b`, retaining both histories.
+The [throughput continuation record](../../evidence/pon-throughput-20261106/README.md)
+distinguishes original failures, candidate safety controls, finite component
+measurements and new exact-source CI acceptance. No production TPS is established.
+
+Correct the original Workspace selector's stale 23 count to its actual 25
+controls and retain the composed 52-control PQ roster. Add actual workflow-builder
+negative controls, twelve separate history-reuse controls and eight Host
+directory/limit controls. Route production runtime/configuration/toolchain edits
+through the original F0 diagnostic without changing its six scheduled slots,
+42 packet exposures, fixed resource parent, budgets or cleanup requirements.
+
+Reduce repeated completed-history work only after the original writer's last
+write and inside its live zero-new-write transaction, binding the exact immutable
+Settings and starting Record. Retain full verification before sealing, fresh
+starting-row validation, cancellation, mutation/ABA fences and all cold paths.
+Keep only the original Host parent directory FD, freshly open/read/close all five
+limits at every existing checkpoint, and bind those reads with absolute directory
+identity/permission checks. This is no cached resource verdict or relaxed Host
+budget. Validate each change before treating it as a retained improvement.
+
+Use the pinned toolchain/provider and qualified SQLite witness. Retain failed
+build-environment attempts as unqualified, run real registered controls and the
+predeclared finite component comparisons, and preserve original campaign/F0
+business denominators. Whole-state scans, recovery, PQ cost, malicious-load
+fairness, data-plane isolation and useful-work economics remain separate work;
+no component result qualifies public throughput or production activation.
 
 ### 2026-11-06 six requested workpackages: real execution and preserved vetoes
 
@@ -7383,3 +7793,74 @@ These are component checks, not all-workspace unit-test or original-resource
 acceptance. The separate Hepta V13 publication is
 `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
 HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.
+
+
+### 2026-11-06 throughput continuation: final source and unchanged service vetoes
+
+The throughput continuation in [draft PR #736](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/736)
+retains both concurrent integration histories. Its final implementation is
+`7586d3e209b38246402e34cf73a27aa9b907bc9c`, tree
+`fc0e51b1235470b972de41f2d677f6d5948f4868`, with ordered parents
+`285982d78a4f62a064841cb0f106d18c865e19c5` and
+`56897f125df27994efa1dda935f2c62eceb36de9`.
+The [source-specific execution record](../../evidence/pon-throughput-20261106/README.md)
+keeps the original b173 and 9e50 failures, the corrected 1986 test, completed
+285 CI/native observations and the separately executed 7586 source. A later
+evidence-only commit does not change those measured identities.
+
+The Workspace and PQ roster errors are repaired without dropping required
+controls. The Workspace selector retains the original 25 post-write controls,
+adds 12 history and eight Host controls, and executes 80 selected controls;
+PQ retains all 52 required controls. Actual workflow-builder fixtures reject
+stale, missing, duplicate, extra and empty registries. The old b173 registry
+remains unchanged; the current-builder compatibility fixture explicitly uses
+20 synthetic Rust declarations and grants no native-execution credit.
+
+AuthenticatedV1 now reuses only a fully completed history suffix for four
+nominated records inside the original no-new-write writer scope. Connection,
+schema, immutable settings and record identity remain bound; errors and
+cancellation seal no receipt, and writes disable reuse or refuse publication.
+Each new scope still pays its first full history walk, while ordinary queries,
+cold recovery and full-state/non-account work retain their existing costs.
+The Host change holds an identity-checked parent directory and freshly opens
+and reads all five limits on every check, with absolute identity/permission
+fences before and after. It caches neither limit bytes nor a successful verdict.
+
+Fresh checks on exact committed 7586 pass 334 Python controls across 11 suites,
+the 593-pin/512-path corpus and 1,271-entry inventory, formatting, Markdown and
+all three offline locked Cargo graphs. Native execution passes 80 selected
+controls, the complete Node library with **1,177 passed / 0 failed / 32 ignored**,
+52 required PQ controls, 387 original M09 all-target controls, ten M09 doc
+controls and 35 selected M12 budget controls (11 filtered), plus strict workspace,
+all-target, all-feature Clippy with `-D warnings`. The independent original
+release/default sampler passes all nine named controls; its SQLite selected
+release-unit binding remains **UNKNOWN**, and that run grants no SQLite
+boundary qualification. Counts from overlapping commands are not summed.
+
+The latest completed original CI is bound to 285: all four Workspace matrices
+execute 80/80 controls, all 16 PQ jobs pass, and all four large-state CPU
+matrices pass. The three original campaigns still fail: first no-attack
+confirmations take 21.205759120 / 21.203138983 / 21.305650019 seconds and neither
+attack phase confirms a transaction. Original F0 still completes **0/6 planned
+slots within four seconds**; its only baseline confirmation is late at
+24.901798841 seconds from the scheduled slot. The original quarter-CPU,
+2-GiB, no-swap and 256-PID public envelope and all failure denominators remain.
+
+The single declared release/default-feature A/B/B/A experiment compares restored
+baseline `a93f906d` (tree `51fd2b87`) with candidate `9e50ca8e`. It retains all
+four original observations, with two samples per arm. Mean legal-call CPU is
+2.578% higher and mean refusal
+CPU is 1.918% lower in the candidate; this demonstrates no end-to-end gain or
+stable causal regression. The temporary-file Host comparison's approximately
+1.015% CPU reduction does not qualify real cgroup kernfs or the original F0.
+Interrupted, cancelled, failed and unknown attempts are preserved with their
+original source, profile, command and storage observations.
+
+**Production TPS remains unestablished; performance and the six workpackages
+remain HOLD / NO-GO.** Continue carrying existing Growth/COW/witness work into
+ordinary entry, query, recovery and PQ configuration; prepare stateless work
+before deterministic state commit; isolate model payload resources from
+consensus control; measure honest completion under hostile/cold/recovery load;
+and report confirmation TPS, useful-work rate, Cell bandwidth, model-load
+latency and quality per actual cost separately. Component success does not
+close the original service, full-Cell, economic, task-supply or adoption gates.

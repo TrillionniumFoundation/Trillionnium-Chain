@@ -1,0 +1,96 @@
+{
+  "directories_without_preexisting_sha_manifest": [
+    "ci-validation/final-source",
+    "ci-validation/pin-fix-precommit"
+  ],
+  "legacy_graph_metadata_receipt": {
+    "metadata": {
+      "archive_member": "validation/candidate-cargo-metadata.json",
+      "bytes": 849325,
+      "sha256": "9baebde795272ed0acb83678cf5dc746e34e0932c44f7abc231139dccfc4de74"
+    },
+    "receipt": {
+      "archive_member": "validation/candidate-cargo-graph.json",
+      "bytes": 757,
+      "sha256": "7d320cbbb0764326aeda9a4e2acff9b23011f18310edb108914c5334252cbc57"
+    },
+    "result": "PASS"
+  },
+  "manifest_coverage_note": "Earlier-stage manifests intentionally cover their original file sets. Every current original regular file is covered by the new package manifest; earlier manifests and raw files remain byte-identical.",
+  "manifests": [
+    {
+      "archive_member": "ci-validation/composed-fuzz-metadata-285982d7-attempt2/artifacts.sha256",
+      "result": "PASS",
+      "sha256": "ec5f7fb0e35a5b378586502f49d37117c28f8ced943baed0ed7d80671a2012d8",
+      "verified_entries": 24
+    },
+    {
+      "archive_member": "ci-validation/composed-source-285982d7/artifacts-corrected.sha256",
+      "result": "PASS",
+      "sha256": "87416cd71bb86fef27e50d419814d0988bd0f2baff875ff05535fae9a1cd6c5d",
+      "verified_entries": 138
+    },
+    {
+      "archive_member": "ci-validation/composed-source-285982d7/artifacts-final.sha256",
+      "result": "PASS",
+      "sha256": "7c5bee4adb2fce5453757e0068f214e94ddea4e0940bb0c24d73f8bb1a5cfbe4",
+      "verified_entries": 140
+    },
+    {
+      "archive_member": "ci-validation/composed-source-285982d7/artifacts.sha256",
+      "result": "PASS",
+      "sha256": "11f5ccf5cd75d68cb359ae259829df4a0ee557ac4872400800c10eda4ad0682e",
+      "verified_entries": 134
+    },
+    {
+      "archive_member": "ci-validation/history-counter-fix-source-1986fa08/artifacts.sha256",
+      "result": "PASS",
+      "sha256": "0354a0fb3a3ddc4fe9701c32013d9d8712e946f9e8f490cf491c520ab0644e94",
+      "verified_entries": 45
+    },
+    {
+      "archive_member": "ci-validation/published-source/artifacts.sha256",
+      "result": "PASS",
+      "sha256": "3a4f22e4b30ad38cdc446a3d8e65f0e3f73781d5f12ea05669660c804173ff39",
+      "verified_entries": 47
+    }
+  ],
+  "recovered_failure_log_receipts": [
+    {
+      "archive_member": "ci-validation/final-source/ci-contract.log",
+      "bytes": 21606,
+      "recorded_exit": 1,
+      "recorded_status": "completed",
+      "result": "PASS",
+      "sha256": "daed817948b6865993d80f35141f3c155015220dbe87d8bca9ae92d1e3ce25a4"
+    },
+    {
+      "archive_member": "ci-validation/final-source/source-integrity-negatives.log",
+      "bytes": 6898,
+      "recorded_exit": 0,
+      "recorded_status": "completed",
+      "result": "PASS",
+      "sha256": "25df05161a7c64673330718066304303666c7617388e04851671766d43d9c4de"
+    },
+    {
+      "archive_member": "ci-validation/final-source/repository-and-markdown-links.log",
+      "bytes": 289,
+      "recorded_exit": 2,
+      "recorded_status": "completed",
+      "result": "PASS",
+      "sha256": "3b273027ee6b4c0950b249917c8d7ef5548353531fb3c1dad6dc1365c3e83a67"
+    },
+    {
+      "archive_member": "ci-validation/final-source/repository-negative-controls.log",
+      "bytes": 3580,
+      "recorded_exit": null,
+      "recorded_status": "interrupted-outcome-unknown",
+      "result": "PASS",
+      "sha256": "146dc0f016b8165b270283ff5393f0a9546713bb2c5bc69d7d22bfb45f3148f3"
+    }
+  ],
+  "result": "PASS",
+  "schema": "trnm-ci-existing-evidence-manifest-verification-v1",
+  "source_files_modified": false,
+  "tests_executed": false
+}
