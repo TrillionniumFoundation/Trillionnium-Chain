@@ -337,12 +337,12 @@ class RuntimeMaterialTests(unittest.TestCase):
         with mock.patch.object(Marker, "evaluate", pre25_evaluate):
             with self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
                 self.declare(self.repack_metadata(
-                    'Requires-Dist: absent-runtime; python_version >= "3.12"\\n'))
+                    'Requires-Dist: absent-runtime; python_version >= "3.12"\n'))
             inactive = self.repack_metadata(
-                'Requires-Dist: absent-runtime; python_version < "3.0"\\n')
+                'Requires-Dist: absent-runtime; python_version < "3.0"\n')
             self.assertEqual(json.loads(self.declare(inactive))["python_dependencies"][0]["dependencies"], [])
             extra = self.repack_metadata(
-                'Provides-Extra: audit\\nRequires-Dist: absent-runtime; extra == "audit"\\n')
+                'Provides-Extra: audit\nRequires-Dist: absent-runtime; extra == "audit"\n')
             self.declare(extra)
             extra["wheels"][0]["extras"] = ["audit"]
             with self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
