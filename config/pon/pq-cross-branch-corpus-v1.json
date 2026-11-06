@@ -686,7 +686,7 @@
     "trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs": "30780ead7cf37c01de81b927b55b3327e9e8ae9a",
     "trillionnium/crates/trnm-pon-node/tests/pq_tls_feature_gate.rs": "7667534b36bb26bde4fdec0951113587f9e76640",
     "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs": "def79da7523fcd3543aad76f8483628b9eb94d77",
-    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs": "0b1bf6c79ffcaf6e0ea78367c1b2ebc8def1055c",
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs": "fac449ac99cea8b5e2383b1f504ba7a8b5073112",
     "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "af2da0c290045a250c3bc1d7995d69561df0e912",
     "trillionnium/crates/trnm-pon-node/tests/public_v3_request_accounting.rs": "f6f4f0aa32811ffe2132d8539aa3e8dd93debdeb",
     "trillionnium/crates/trnm-pon-node/tests/support/architecture_deadline.rs": "c8d082e2f902bda7911b10a87cb30164a864819f",
@@ -744,7 +744,7 @@
     "docs/security/PQ_TLS_PINNED_ENDPOINT_V1.md": "08fad9db25edcfbf348f026d1441ea02bbfbf96d",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs": "749723fcae5164cc32a9a9d639c048837d8aede7",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs": "91a4cced81579c44769abe9b2b1244546c607250",
-    "trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs": "5e697edfe5aea40f22a3722a712c4d1e46614cc8"
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs": "28ce9e83bb4f1109b7f790a0603975091fddf17b"
   },
   "pql11b_module_ancestry": {
     "exact_isolated_failures": 0,
