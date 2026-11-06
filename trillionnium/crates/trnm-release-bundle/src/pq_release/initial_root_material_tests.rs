@@ -192,3 +192,165 @@ fn initial_root_material_never_reuses_a_quorum_or_signature_result() {
     );
 }
 
+#[test]
+fn initial_root_material_keeps_historical_expiry_separate_from_current_use() {
+    let mut f = fixture(0);
+    f.root.expires_at = 30;
+    let material = prepared(&f);
+    let successor = fixture(20);
+    let mut first = from_material(&f, &material, 10);
+    let mut next = successor.root.clone();
+    next.generation = 2;
+    next.previous_root_digest = first.root_digest();
+    let message = next.signing_message().unwrap();
+    let old = signatures(&f, &f.root.offline_root, &message);
+    let new = signatures(&successor, &next.offline_root, &message);
+    first.rotate_root(next.clone(), &old, &new, 20).unwrap();
+    let m = metadata(&first, PqReleaseRoleV1::NodeSoftware, 20);
+    let signatures = sign_metadata(&successor, &m);
+    first.accept(&m, &signatures, 21).unwrap();
+    first
+        .check_current(m.role, m.content, first.checkpoint(), 40)
+        .unwrap();
+    let mut replay = from_material(&f, &material, 10);
+    replay.rotate_root(next, &old, &new, 20).unwrap();
+    replay.accept(&m, &signatures, 21).unwrap();
+    assert_eq!(replay.checkpoint(), first.checkpoint());
+    replay
+        .check_current(m.role, m.content, first.checkpoint(), 40)
+        .unwrap();
+    assert_eq!(
+        replay.check_current(m.role, m.content, first.checkpoint(), 19),
+        Err(PqReleaseErrorV1::ClockRollback)
+    );
+    assert_eq!(
+        PqReleaseAuthorityV1::bootstrap_pinned_with_material(
+            f.root.clone(),
+            f.root.digest().unwrap(),
+            40,
+            &material
+        )
+        .err(),
+        Some(PqReleaseErrorV1::InvalidRoot)
+    );
+}
+
+#[test]
+fn initial_root_material_rotation_still_requires_both_quorums_and_retirement() {
+    let f = fixture(0);
+    let material = prepared(&f);
+    let mut first = from_material(&f, &material, 10);
+    let mut sibling = from_material(&f, &material, 10);
+    let successor = fixture(20);
+    let mut next = successor.root.clone();
+    next.generation = 2;
+    next.previous_root_digest = first.root_digest();
+    let message = next.signing_message().unwrap();
+    let old = signatures(&f, &f.root.offline_root, &message);
+    let new = signatures(&successor, &next.offline_root, &message);
+    let initial = first.checkpoint();
+    assert_eq!(
+        first.rotate_root(next.clone(), &old[..1], &new, 20),
+        Err(PqReleaseErrorV1::InsufficientSignatures)
+    );
+    let mut corrupt = new.clone();
+    corrupt[0].signature[22] ^= 1;
+    assert_eq!(
+        first.rotate_root(next.clone(), &old, &corrupt, 20),
+        Err(PqReleaseErrorV1::SignatureRejected)
+    );
+    assert_eq!(first.checkpoint(), initial);
+    assert!(first.retired.is_empty());
+    assert!(Arc::ptr_eq(&first.verifiers, &sibling.verifiers));
+    first.rotate_root(next, &old, &new, 20).unwrap();
+    assert!(!Arc::ptr_eq(&first.verifiers, &sibling.verifiers));
+    assert_eq!(first.retired, f.root.all_keys());
+    assert_eq!(sibling.root_generation(), 1);
+    assert_eq!(sibling.checkpoint(), initial);
+    assert!(sibling.retired.is_empty());
+    accept(&f, &mut sibling, PqReleaseRoleV1::NodeSoftware, 22);
+    let m = metadata(&first, PqReleaseRoleV1::NodeSoftware, 23);
+    assert_eq!(
+        first.accept(&m, &sign_metadata(&f, &m), 21),
+        Err(PqReleaseErrorV1::UnknownSigner)
+    );
+    first
+        .accept(&m, &sign_metadata(&successor, &m), 21)
+        .unwrap();
+    let mut resurrect = f.root.clone();
+    resurrect.generation = 3;
+    resurrect.previous_root_digest = first.root_digest();
+    assert_eq!(
+        first.rotate_root(resurrect, &[], &[], 22),
+        Err(PqReleaseErrorV1::RetiredKey)
+    );
+    assert!(material.matches_root(&f.root, f.root.digest().unwrap()));
+}
+
+#[test]
+fn initial_root_material_preserves_full_preparation_limits_and_error_order() {
+    let f = fixture(0);
+    let pin = f.root.digest().unwrap();
+    let material = prepared(&f);
+    let mut malformed = Vec::new();
+    let mut root = f.root.clone();
+    root.offline_root.threshold = 0;
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    root.offline_root.keys.clear();
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    let spki = root.offline_root.keys.values().next().unwrap().clone();
+    root.offline_root.keys = (0..=MAX_RELEASE_KEYS_V1)
+        .map(|i| ([i as u8; 32], spki.clone()))
+        .collect();
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    root.roles.remove(&PqReleaseRoleV1::CellManifest);
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    root.roles
+        .insert(PqReleaseRoleV1::CellManifest, root.offline_root.clone());
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    root.offline_root
+        .keys
+        .values_mut()
+        .next()
+        .unwrap()
+        .truncate(1973);
+    malformed.push((root, 10));
+    let mut root = f.root.clone();
+    root.expires_at = 10;
+    root.offline_root.threshold = 0;
+    malformed.push((root, 10));
+    for (root, at) in malformed {
+        let error = PqReleaseAuthorityV1::bootstrap_pinned(root.clone(), pin, at).err();
+        assert!(error.is_some());
+        assert_eq!(
+            PqInitialRootKeyMaterialV1::prepare_pinned(root.clone(), pin, at).err(),
+            error
+        );
+        assert_eq!(
+            PqReleaseAuthorityV1::bootstrap_pinned_with_material(root, pin, at, &material).err(),
+            error
+        );
+    }
+    let another = fixture(40);
+    let other_pin = another.root.digest().unwrap();
+    assert!(PqReleaseAuthorityV1::bootstrap_pinned(another.root.clone(), other_pin, 10).is_ok());
+    assert_eq!(
+        PqReleaseAuthorityV1::bootstrap_pinned_with_material(
+            another.root,
+            other_pin,
+            10,
+            &material
+        )
+        .err(),
+        Some(PqReleaseErrorV1::RootPin)
+    );
+    assert_eq!(
+        from_material(&f, &material, 10).checkpoint(),
+        authority(&f).checkpoint()
+    );
+}
