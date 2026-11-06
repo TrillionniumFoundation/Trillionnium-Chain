@@ -287,6 +287,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "config/pon/binary-diverse60-training-v3.json",
     "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
     "scripts/ci/model-runtime-cpu-requirements.txt",
+    "scripts/ci/runtime-release-requirements.txt",
     "scripts/ci/run_cross_arch_cost.py",
     "scripts/llm_answer_eos_research_v3.py",
     "scripts/llm_answer_eos_task_research_v4.py",

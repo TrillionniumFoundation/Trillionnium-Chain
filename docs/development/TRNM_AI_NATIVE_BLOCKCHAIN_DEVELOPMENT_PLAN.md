@@ -7678,3 +7678,34 @@ budgets. Matching direct-source blobs and zero PQ-authentication attempts
 do not establish a same-host baseline comparison or rule out all binary
 differences. This service-performance qualification remains open; lock
 resolution and TLS startup admission cannot promote it to accepted.
+
+
+### 2026-11-06 verifier dependency and actual semantic registry closure
+
+The fixed-source `0eac6017` repository-truth lane exposed an unsupported
+`packaging.Marker.evaluate(context=...)` API. Preserve explicit metadata
+semantics and bind both truth lanes to an isolated verifier environment using
+the already reviewed packaging 26.3 wheel and hash. The shared material verifier
+refuses missing or pre-25.0 packaging before accepting even a marker-free wheel.
+Keep declared material, wheel bytes, dependency closure, offline policy and
+model-runtime dependencies unchanged. Add the actual verifier requirement to the
+mandatory source corpus, including the negative removal-of-file-and-pin control.
+
+The original complete-workspace native registry contained 25 post-write controls
+while its selector reader still required 23. Select all 25 and the original other
+nine groups, totaling 60 unique controls; retain the full workspace build, exact
+ELF binding, per-selector nonempty execution, 180-minute job and two-build-job
+budgets. Preserve the raw failed registry and replay its actual reader, including
+empty, missing, duplicate, extra and wrong-group refusals. Historical native logs
+remain historical; reader replay cannot manufacture a current native execution.
+
+The independently built `7957a144` tests-only source reproduced the TLS startup
+regressions with the original Rust 1.95.0 profiles: the library ran one positive
+and two failing controls; the ordinary CLI ran its one failing control. Both
+Cargo exits were 101, the expected wrong-SAN/expired markers were present, and
+full source readbacks matched before and after. Preserve those failures and the
+actual Cargo-advertised ELF hashes, then run the repaired candidate on its final
+fixed source. The original four-second service confirmation and the separate
+three-attempt thirty-second native campaign remain unaccepted business gates.
+No deadline, worker, Host quota, cold account, activation or whole-chain PQ
+qualification is relaxed by these source and CI-contract repairs.

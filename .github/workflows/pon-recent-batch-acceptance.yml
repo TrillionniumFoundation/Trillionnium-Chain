@@ -27,8 +27,10 @@ on:
       - scripts/ci/test_recent_batch_suite_count.py
       - scripts/ci/test_authenticated_suite_count.py
       - evidence/authenticated-suite-count-20261106/**
+      - evidence/workspace-semantic-registry-20261106/**
       - evidence/recent-batch-suite-count-20261106/**
       - .github/workflows/pon-recent-batch-acceptance.yml
+      - .github/workflows/pon-original-workspace-large-state-cpu.yml
 permissions:
   contents: read
 jobs:

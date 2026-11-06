@@ -16,6 +16,19 @@ WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
 UPLOAD = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
 DOWNLOAD = 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0'
+RUNTIME_RELEASE_REQUIREMENT = r'''packaging==26.3 \
+    --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c'''
+RUNTIME_RELEASE_COMMAND = '    "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py\n'
+RUNTIME_RELEASE_PYTHON = r'''      - name: Install isolated runtime material verifier dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
+          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
+          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+'''
+MERGE_RUNTIME_RELEASE_PYTHON = RUNTIME_RELEASE_PYTHON.replace(
+    '        shell: bash\n', "        if: matrix.lane == 'repository-truth'\n        shell: bash\n")
 SIGNED_STATE_PYTHON = '''      - name: Install isolated signed-state oracle Python environment
         run: |
           python3 -m venv "$RUNNER_TEMP/pon-state-env"
@@ -545,6 +558,19 @@ def validate(root: Path = ROOT) -> dict:
     require(len(body) == 2, 'one explicit jobs mapping required')
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body[1])
     jobs = dict(pairs)
+    runtime_requirements = (root / 'scripts/ci/runtime-release-requirements.txt').read_text()
+    runtime_pins = '\n'.join(line for line in runtime_requirements.splitlines()
+                             if line.strip() and not line.lstrip().startswith('#'))
+    require(runtime_pins == RUNTIME_RELEASE_REQUIREMENT and RUNTIME_RELEASE_REQUIREMENT in
+            (root / 'scripts/ci/model-runtime-cpu-requirements.txt').read_text(),
+            'runtime verifier reuses exactly the reviewed packaging wheel and hash')
+    for job, step, execution in (
+            ('repository-truth', RUNTIME_RELEASE_PYTHON,
+             '      - name: Run actual repository-truth checks\n'),
+            ('prospective-merge', MERGE_RUNTIME_RELEASE_PYTHON,
+             '      - name: Execute the same lane on the prospective merge\n')):
+        require(jobs.get(job, '').count(step) == 1 and step + execution in jobs[job],
+                'both repository-truth lanes install the pinned verifier dependency before execution')
     required = json.loads((root / 'config/repository-policy-v1.json').read_text())['required_check_names']
     require(len(jobs) == len(pairs) and set(jobs) == set(required) |
             {'prospective-merge', 'cross-arch-cost', 'cross-arch-cost-consistency',
@@ -707,6 +733,9 @@ def validate(root: Path = ROOT) -> dict:
     require('    python3 scripts/ci/test_cross_arch_cost.py\n' in script,
             'cross-architecture evidence negative checks missing')
     lane_pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
+    require(RUNTIME_RELEASE_COMMAND in dict(lane_pairs)['repository-truth']
+            and script.count(RUNTIME_RELEASE_COMMAND) == 1,
+            'runtime material controls execute once with the configured verifier interpreter')
     zero_negative = '    python3 scripts/ci/test_zero_locality_cost.py\n'
     require(zero_negative in dict(lane_pairs)['repository-truth'] and script.count(zero_negative) == 1,
             'zero locality evidence negative checks must execute in repository-truth')
