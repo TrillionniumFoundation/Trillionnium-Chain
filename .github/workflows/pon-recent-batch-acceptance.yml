@@ -24,6 +24,8 @@ on:
       - formal/pon-nakamoto-v1/test_work_query_bound.py
       - scripts/ci/read_native_cache_observation.py
       - scripts/ci/test_read_native_cache_observation.py
+      - scripts/ci/test_recent_batch_suite_count.py
+      - evidence/recent-batch-suite-count-20261106/**
       - .github/workflows/pon-recent-batch-acceptance.yml
 permissions:
   contents: read
@@ -137,8 +139,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/ci/test_recent_batch_suite_count.py
           cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib store::error_boundary_tests:: -- --show-output --test-threads=1 2>&1 | tee "$OUT/error-boundary.log"
-          grep -E '^test result: ok\. 13 passed; 0 failed; 0 ignored;' "$OUT/error-boundary.log"
+          grep -E '^test result: ok\. 16 passed; 0 failed; 0 ignored;' "$OUT/error-boundary.log"
           for test in recent_batch_exact_window_and_complete_call_observation recent_batch_retained_corruption_and_read_boundary_match_original recent_batch_branch_reopen_and_callback_errors_preserve_context; do
             selector="store::error_boundary_tests::$test"
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$OUT/$test.log"
