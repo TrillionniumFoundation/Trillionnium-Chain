@@ -1,531 +1,1782 @@
 {
-  "schema": "trnm-pq-integration-disposition-v2",
-  "state": "FINAL_SOURCE_SCOPED_HOLD",
-  "disposition": "HOLD",
-  "pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/723",
-  "code": {
-    "commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
-    "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
-    "parents": [
-      "ebd3c06da7d5f2bd136b7a24f24604508d420279",
-      "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
-    ],
-    "integration_target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
-    "native_execution_on_this_commit_claimed": false,
-    "embedded_corpus_provenance_changed_from_ebd": true
-  },
-  "broad_validation_source": {
-    "commit": "f85fea4e8da02404d513d074ceb35ad5292b017b",
-    "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de",
-    "target": "56897f125df27994efa1dda935f2c62eceb36de9",
-    "prospective_merge": "56ec6d4b9a429968cdb0dfa244c195b4551b7882",
-    "matching_tree_manufactures_additional_execution": false
-  },
-  "publication": {
-    "type": "evidence-and-plan-only-successor",
-    "direct_code_parent": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
-    "native_tests_on_containing_evidence_commit_claimed": false,
-    "identity_location": "Containing Git commit and PR #723 current marked update; no self-referential commit hash."
-  },
+  "archive_integrity_implies_product_qualification": false,
   "counting_policy": {
-    "grand_total_across_overlapping_scopes": null,
+    "additional_unique_release_names_from_repeats": 0,
+    "checkpoint_unique_business_tests_inferred": false,
     "command_observations_are_unique_tests": false,
-    "benchmark_samples_are_unique_tests": false,
-    "registered_tests_are_executed_tests": false,
-    "nested_child_passes_are_parent_pass": false,
-    "metadata_success_replaces_original_readback": false,
+    "initial_root_repeated_exact_executions": 6,
+    "old_failed_results_erased": false,
+    "registry_presence_is_execution": false,
+    "release_required_unique_names": 43,
     "same_tree_transfers_native_execution": false
   },
-  "repairs": [
-    {
-      "name": "classical-parent-recovery-profile-refusal",
-      "scope": "Reject forbidden classical recovery credentials before I/O for a PQ-network owner.",
-      "complete_pq_parent_recovery": false
+  "current_phase": {
+    "code": {
+      "commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "integration_target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "ordered_parents": [
+        "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+        "5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800"
+      ],
+      "tree": "35125592c14098385eab8693bbf05df0506d3610"
     },
-    {
-      "name": "current-release-authority-kernel",
-      "scope": "Current checkpoint, persisted time lower bound, root and publication expiry, content/generation/role, and live Cell manifest checks.",
-      "read_only_check_advances_persisted_time_floor": false,
-      "actual_product_final_use_installer_wired": false
+    "dependency_source_independent_readback": {
+      "bytes": 2571,
+      "member": "integration-review/c07-terminal-reader-recovery-v2/c07-cache-source-normalized-v1.json",
+      "sha256": "0674a7aa12a287443d742cd5ddf2fbfb885e1b9ddb46de7c722cda7704adbccf"
     },
-    {
-      "name": "tls-local-identity-startup",
-      "scope": "Single pinned CA, current time, intended purpose, exact chain, server DNS SAN with wildcard/CN fallback forbidden, refusal before owner/Node/listen.",
-      "remote_invalid_peer_authenticated_claimed": false
+    "locked_cache_preparation": {
+      "commands": 4,
+      "failed": 0,
+      "native_tests_executed": 0,
+      "original_summary": {
+        "bytes": 13150,
+        "member": "quantum-current-c07-terminal-v1/payload/locked-cache-c07e8b9c-v1/summary.json",
+        "sha256": "af19367aa81223be57652db4320738fa4b524eb3c68891567adb15cedac7107d"
+      },
+      "passed": 4,
+      "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "source_after": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_gates_qualified_by_fetch": false,
+      "source_unchanged": true,
+      "summary_sha256": "af19367aa81223be57652db4320738fa4b524eb3c68891567adb15cedac7107d",
+      "tree": "35125592c14098385eab8693bbf05df0506d3610"
     },
-    {
-      "name": "five-independent-cargo-locks",
-      "graphs": [
+    "native_original_summary": {
+      "aggregate_unique_business_test_count": null,
+      "authentication_cost_rerun": false,
+      "campaign_rerun": false,
+      "checkpoint_unique_business_tests_inferred": false,
+      "command_observations": 77,
+      "complete_release_execution_readback_succeeded": true,
+      "complete_release_required_named_controls": 43,
+      "component_actual_rust_summaries": [
+        "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s",
+        "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s",
+        "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s",
+        "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s",
+        "test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 72.56s"
+      ],
+      "component_command_status": "succeeded",
+      "driver_sha256": "953b5bb066c7f83417972f00aa7f0fdb347e0bb4be1b88d2b4457485341c95a8",
+      "failed_commands": [
+        "tls-witness-cli-00",
+        "tls-witness-cli-00-readback",
+        "required-controls-readback"
+      ],
+      "fatal_error": null,
+      "full_node_suite_executed": false,
+      "helper_sha256": "3455083d2b0c5f835343ec0cc2c81a51c8178fdc91b55439945a5b1f5699ad26",
+      "initial_root_exact_execution_readback_succeeded": true,
+      "initial_root_expected_additional_exact_executions": 6,
+      "initial_root_expected_overlap_with_release43": 6,
+      "old_f85_or_ebd_failures_reclassified": false,
+      "old_source_results_transferred": false,
+      "old_target_used": false,
+      "production_activation": false,
+      "public_wan_accepted": false,
+      "schema": "trnm-witness-release-original-profile-native-supplement-v2",
+      "source_after": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_unchanged": true,
+      "status_counts": {
+        "blocked": 2,
+        "failed": 1,
+        "succeeded": 74
+      },
+      "success": false,
+      "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+      "tls_witness_execution_readback_succeeded": false,
+      "tls_witness_required_control_counts": {
+        "cli": 4,
+        "feature-off": 1,
+        "lib": 13,
+        "witness-cli": 5
+      },
+      "tls_witness_required_named_controls": 23,
+      "whole_chain_pq_qualified": false,
+      "whole_node_rollback_protection": false
+    },
+    "native_semantic_readback": {
+      "actual_local_elf_or_provider_binary_rehash": false,
+      "additional_unique_release_controls_from_repeats": 0,
+      "checkpoint_groups": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "local_elf_body_rehashed": false,
+          "measured": 0,
+          "named_ok_tests": [
+            "tests::activation_and_key_boundaries_remain_closed",
+            "tests::authority_exact_cas_rejects_replay_and_reopens",
+            "tests::bound_anchor_replacement_fails_closed_before_load",
+            "tests::bound_lock_replacement_fails_closed_before_load",
+            "tests::bound_log_replacement_fails_closed_before_load",
+            "tests::bound_parent_directory_replacement_fails_closed_before_load",
+            "tests::journal_truncation_and_byte_edit_fail_closed",
+            "tests::oversized_checkpoint_head_read_is_bounded_and_refused",
+            "tests::pinned_recovery_rejects_head_deleted_after_precheck",
+            "tests::replayed_record_fails_closed",
+            "tests::unix_client_round_trip_uses_separate_thread_authority"
+          ],
+          "original_cargo_elf_identity": {
+            "binding": "artifact advertised by this Cargo invocation; hashed immediately afterward",
+            "bytes": 10585408,
+            "captured_unix_ns": 1793973444447378017,
+            "fresh": false,
+            "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+            "path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/trnm_checkpoint_store-680c505f2df06e62",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 2,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": true
+            },
+            "sha256": "2452e9c210ca6bf4db0cdbe664816509406821324aaf9c995a02c2fd8e204a4f",
+            "target": {
+              "crate_types": [
+                "lib"
+              ],
+              "doc": true,
+              "doctest": true,
+              "edition": "2021",
+              "kind": [
+                "lib"
+              ],
+              "name": "trnm_checkpoint_store",
+              "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+              "test": true
+            }
+          },
+          "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+          "passed": 11,
+          "raw_banner": "     Running unittests src/lib.rs (/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/trnm_checkpoint_store-680c505f2df06e62)",
+          "raw_summary": "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s",
+          "running": 11,
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2021",
+            "kind": [
+              "lib"
+            ],
+            "name": "trnm_checkpoint_store",
+            "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+            "test": true
+          }
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "local_elf_body_rehashed": false,
+          "measured": 0,
+          "named_ok_tests": [
+            "node_commit_ledger_v1::tests::abandoned_partial_temp_converges_to_source",
+            "node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+            "node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1",
+            "node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1",
+            "node_commit_ledger_v1::tests::durable_successor_reopens_exactly",
+            "node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1",
+            "node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+            "node_commit_ledger_v1::tests::journal_ahead_of_head_recovers_to_exact_target",
+            "node_commit_ledger_v1::tests::live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1",
+            "node_commit_ledger_v1::tests::live_root_records_lock_and_anchor_replacements_fail_closed_v1",
+            "node_commit_ledger_v1::tests::missing_record_and_head_ahead_fail_before_repair_v1",
+            "node_commit_ledger_v1::tests::record_and_temp_links_are_rejected_without_deleting_targets_v1",
+            "node_commit_ledger_v1::tests::third_state_is_rejected",
+            "node_commit_ledger_v1::tests::unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1",
+            "node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1"
+          ],
+          "original_cargo_elf_identity": {
+            "binding": "artifact advertised by this Cargo invocation; hashed immediately afterward",
+            "bytes": 10238280,
+            "captured_unix_ns": 1793973444377524057,
+            "fresh": false,
+            "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+            "path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/trnm_external_node_checkpoint_v2-d15ad50e2e19d4c1",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 2,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": true
+            },
+            "sha256": "af220e8a7b27aa31e4e7b911bafa380cb658a796bce06f5126623faecfa63403",
+            "target": {
+              "crate_types": [
+                "bin"
+              ],
+              "doc": true,
+              "doctest": false,
+              "edition": "2021",
+              "kind": [
+                "bin"
+              ],
+              "name": "trnm-external-node-checkpoint-v2",
+              "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+              "test": true
+            }
+          },
+          "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+          "passed": 15,
+          "raw_banner": "     Running unittests src/main.rs (/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/trnm_external_node_checkpoint_v2-d15ad50e2e19d4c1)",
+          "raw_summary": "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s",
+          "running": 15,
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "bin"
+            ],
+            "name": "trnm-external-node-checkpoint-v2",
+            "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/src/main.rs",
+            "test": true
+          }
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "local_elf_body_rehashed": false,
+          "measured": 0,
+          "named_ok_tests": [
+            "cold_recovery_rejects_self_consistent_old_complete_image",
+            "export_is_exact_new_domain_and_cannot_overwrite_an_external_pin",
+            "external_mismatch_is_rejected_before_stale_local_head_repair",
+            "extra_record_is_rejected_before_hash_replay",
+            "full_journal_pin_covers_removal_of_another_scope",
+            "healthy_existing_journal_reopens_with_exact_external_checkpoint",
+            "impossible_external_count_is_rejected_without_replay_or_repair",
+            "live_same_inode_head_rollback_is_rejected_without_repair",
+            "live_same_inode_rollback_cannot_export_or_extend_cached_history",
+            "live_same_length_prefix_edit_cannot_export_a_cached_journal_pin",
+            "pinned_reopen_never_reseeds_missing_existing_files",
+            "register_new_rejects_existing_even_empty_namespaces",
+            "same_count_different_root_is_not_a_fresh_recovery",
+            "structural_open_cannot_serve_or_export_a_freshness_claim",
+            "structural_reopen_cannot_bypass_recovery_through_direct_owner_methods"
+          ],
+          "original_cargo_elf_identity": {
+            "binding": "artifact advertised by this Cargo invocation; hashed immediately afterward",
+            "bytes": 10138376,
+            "captured_unix_ns": 1793973444413335931,
+            "fresh": false,
+            "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+            "path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/cold_recovery-97615ddc70ceebe9",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 2,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": true
+            },
+            "sha256": "f9f333dd376403e46958e008036f8295676a94325ec0089d6e65b6b0b53e893f",
+            "target": {
+              "crate_types": [
+                "bin"
+              ],
+              "doc": false,
+              "doctest": false,
+              "edition": "2021",
+              "kind": [
+                "test"
+              ],
+              "name": "cold_recovery",
+              "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+              "test": true
+            }
+          },
+          "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+          "passed": 15,
+          "raw_banner": "     Running tests/cold_recovery.rs (/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/cold_recovery-97615ddc70ceebe9)",
+          "raw_summary": "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s",
+          "running": 15,
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "cold_recovery",
+            "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
+            "test": true
+          }
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "local_elf_body_rehashed": false,
+          "measured": 0,
+          "named_ok_tests": [
+            "cli_missing_expected_and_legacy_implicit_start_fail_without_repair",
+            "cli_rejects_complete_old_image_before_attempting_transport",
+            "cli_second_process_cannot_open_while_the_owner_holds_its_lock",
+            "competing_owner_cannot_reopen_or_reregister_a_live_namespace",
+            "daemon_cold_restart_requires_external_pin_and_rejects_complete_snapshot_rollback",
+            "standalone_daemon_is_cross_process_and_rejects_truncated_log"
+          ],
+          "original_cargo_elf_identity": {
+            "binding": "artifact advertised by this Cargo invocation; hashed immediately afterward",
+            "bytes": 10214248,
+            "captured_unix_ns": 1793973444318327319,
+            "fresh": false,
+            "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+            "path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/cross_process-7649af5be9b8bb55",
+            "profile": {
+              "debug_assertions": true,
+              "debuginfo": 2,
+              "opt_level": "0",
+              "overflow_checks": true,
+              "test": true
+            },
+            "sha256": "33108d92a9d61f40fb9d5448102dbf9a10bfc83d8f4e3ae229473d3b3ae12c01",
+            "target": {
+              "crate_types": [
+                "bin"
+              ],
+              "doc": false,
+              "doctest": false,
+              "edition": "2021",
+              "kind": [
+                "test"
+              ],
+              "name": "cross_process",
+              "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+              "test": true
+            }
+          },
+          "package_id": "path+file:///tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store#0.1.0",
+          "passed": 6,
+          "raw_banner": "     Running tests/cross_process.rs (/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/native-target-original-profile/debug/deps/cross_process-7649af5be9b8bb55)",
+          "raw_summary": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s",
+          "running": 6,
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": false,
+            "doctest": false,
+            "edition": "2021",
+            "kind": [
+              "test"
+            ],
+            "name": "cross_process",
+            "src_path": "/tmp/chain-pq-independent-desktop-20261106-quantum-work-v1/witness-owner-integration-20261106-v1/source/trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
+            "test": true
+          }
+        }
+      ],
+      "checkpoint_unique_business_tests_inferred": false,
+      "complete_release": {
+        "failed": 0,
+        "not_successfully_observed": 0,
+        "passed": 43,
+        "required": 43,
+        "scope": "one actual complete release43 execution in original component command"
+      },
+      "component_original_log": {
+        "bytes": 99928,
+        "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/recovery-release-components.log",
+        "sha256": "673043eb582b7f0228d17e1b8193eee12dcf6b12d6706f9143b8a879928ef6e7"
+      },
+      "component_original_receipt": {
+        "bytes": 13493,
+        "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/recovery-release-components.json",
+        "sha256": "bfa16a1e6c563c955458af37173a2e3a5cd7d4c81120fc35a45223e7e7769b23"
+      },
+      "composition_executes_project_or_native_tests": false,
+      "dependency_preparation": {
+        "commands": 4,
+        "failed": 0,
+        "native_tests_executed": 0,
+        "passed": 4,
+        "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "source_gates_qualified_by_fetch": false,
+        "summary_sha256": "af19367aa81223be57652db4320738fa4b524eb3c68891567adb15cedac7107d",
+        "tree": "35125592c14098385eab8693bbf05df0506d3610"
+      },
+      "evidence": [
+        {
+          "bytes": 7552,
+          "member": "integration-review/tls-audit-recovery-v2/c07-node-provider-clippy-semantic-fragment-v1.json",
+          "sha256": "3ac5e3f77cf2f6c529561def819b63b8658c2943a190f70d3846066b4e8afe16"
+        },
+        {
+          "bytes": 23744,
+          "member": "integration-review/c07-terminal-reader-recovery-v2/c07-release-components-semantic-fragment-v1.json",
+          "sha256": "438352b32ba0c4bc966d4cf74e3256512b283f4f8966a6659a59a4ba189cb3c6"
+        },
+        {
+          "bytes": 2571,
+          "member": "integration-review/c07-terminal-reader-recovery-v2/c07-cache-source-normalized-v1.json",
+          "sha256": "0674a7aa12a287443d742cd5ddf2fbfb885e1b9ddb46de7c722cda7704adbccf"
+        }
+      ],
+      "initial_root_exact_repeats": {
+        "failed": 0,
+        "not_successfully_observed": 0,
+        "passed": 6,
+        "required": 6,
+        "scope": "six actual repeated exact executions plus original named-test readers"
+      },
+      "node_groups": [
+        {
+          "failed": 0,
+          "group": "lib",
+          "not_successfully_observed": 0,
+          "passed": 13,
+          "required": 13
+        },
+        {
+          "failed": 0,
+          "group": "cli",
+          "not_successfully_observed": 0,
+          "passed": 4,
+          "required": 4
+        },
+        {
+          "failed": 1,
+          "group": "witness-cli",
+          "not_successfully_observed": 0,
+          "passed": 4,
+          "required": 5
+        },
+        {
+          "failed": 0,
+          "group": "feature-off",
+          "not_successfully_observed": 0,
+          "passed": 1,
+          "required": 1
+        }
+      ],
+      "observed_failures": [
+        {
+          "actual_native_exit_code": 101,
+          "actual_test_result": {
+            "failed": 1,
+            "filtered_out": 4,
+            "ignored": 0,
+            "passed": 0
+          },
+          "assertions_not_reached": [
+            "Equality of the second response to the first receipt.",
+            "Running::finish report and metrics.accepted == 2 for this child.",
+            "External witness sequence/root advancement after those two accepted requests.",
+            "Replay of the identical receipt after a later real process reopen.",
+            "Restoration of the entire closed Node directory and rejection before listener readiness.",
+            "External witness checkpoint unchanged after the old-directory refusal."
+          ],
+          "child_stderr": {
+            "additional_server_or_witness_error_line_present": false,
+            "disposition": "Inherited into the complete original native log."
+          },
+          "child_stdout": {
+            "disposition": "Collected into an in-memory Vec by the test support thread; panic Drop joins and discards it.",
+            "ready_or_final_metrics_raw_bytes_saved_in_this_log": false,
+            "separate_persisted_stdout_path_defined_by_fixture": false
+          },
+          "deadline_hypothesis": "The server bounds a connection by its original two-second service end. Overall timing is compatible with that limit, but the original log does not expose the actual server refusal reason or per-exchange timing.",
+          "earlier_assertions_reached": [
+            "The create child published the required ready event and ended successfully through Running::finish.",
+            "The closed Node snapshot was nonempty; an external witness Current was read.",
+            "The open_existing child published ready with witness selected and whole-node/production flags false.",
+            "The first send returned a verified receipt with receipt.ok true and height 0."
+          ],
+          "evidence": [
+            {
+              "bytes": 133815,
+              "member": "integration-review/tls-audit-recovery-v2/first-witness-failure/tls-witness-cli-00.log",
+              "sha256": "f7ccec6999a36da0202d0a17438d8a9882621957af0c7b6055fa62bfafdd5c39"
+            },
+            {
+              "bytes": 7488,
+              "member": "integration-review/tls-audit-recovery-v2/first-witness-failure/tls-witness-cli-00.json",
+              "sha256": "b048ad4c75a521034dde6078c5fe45648706a8ea23bd284fcda6dd6e9aa21dd7"
+            }
+          ],
+          "fixture_directories": "Temporary Node and witness directories are owned by TempDir and ordinarily removed during panic unwinding; no broad filesystem search or reconstruction was performed.",
+          "label": "tls-witness-cli-00",
+          "later_reopen_or_rollback_claim_qualified_by_this_failed_control": false,
+          "limits_or_workload_changed": false,
+          "minimal_budget_preserving_implementation_fix_established": false,
+          "original_error": {
+            "error_code": null,
+            "kind": "Transport",
+            "message": "IO: Connection reset by peer (os error 104)",
+            "os_error": 104
+          },
+          "original_limits": {
+            "child_serve_seconds": 2,
+            "each_client_send_seconds": 5,
+            "outer_command_seconds": 1500,
+            "witness_exchange_milliseconds": 250
+          },
+          "panic": {
+            "column": 14,
+            "file": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+            "line": 71
+          },
+          "root_cause_established": false,
+          "server_side_refusal_cause": null,
+          "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+          "stage": "Second fresh TLS send of the same prepared Request::Head to the first open_existing child.",
+          "test": "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+          "timings": {
+            "command_receipt_elapsed_ns": 6683393539,
+            "individual_child_or_exchange_timestamps_recorded": false,
+            "libtest_reported_seconds": 4.67
+          }
+        }
+      ],
+      "original_component_argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-checkpoint-store",
+        "-p",
+        "trnm-release-bundle",
+        "--all-targets",
+        "--no-fail-fast",
+        "--message-format=json",
+        "--",
+        "--test-threads=1"
+      ],
+      "schema": "trnm-c07-unified-semantic-readback-v1",
+      "six_actual_literal_ok_checks": [
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68055,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-00.log",
+            "sha256": "dbd79a71df9dba2b73e5a87a6e315678b309344c3059478c2706e54f8cc07989"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 205,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-00-readback.log",
+            "sha256": "98da71b0b6f32de0fcf24522c8952bc15658ccece40aab97d2826f77fbdf1ec6"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_binds_every_root_field_and_independent_pin"
+        },
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68063,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-01.log",
+            "sha256": "5b7b1a661072d9b6616baf1d36bb872fbc942de7032a0c2ba533a8526a848ccd"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 209,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-01-readback.log",
+            "sha256": "5c6c29e4a3a08924d897ea8e29cd633193ee7120fb36313e1ea1b8091b3106b0"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_creates_independent_empty_state_and_fresh_time"
+        },
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68069,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-02.log",
+            "sha256": "21c7c88535cfe53e1276f07507918b28e7ed218fb8cfe491044cd25c25b203ef"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 212,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-02-readback.log",
+            "sha256": "e2cfaa595c02de49e7e2c5e932fecb54ed4d686d4b1cf837c62df04411c40481"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_keeps_historical_expiry_separate_from_current_use"
+        },
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68053,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-03.log",
+            "sha256": "0f9a24c3a530e90387f69f267f16d2e3a410f00a172c085269196193bbf5d8f1"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 204,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-03-readback.log",
+            "sha256": "9a2bd19b17768966fc30560e707eaeb5bcaf4ad5e4e806c4f54c91a5ed78042b"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_never_reuses_a_quorum_or_signature_result"
+        },
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68069,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-04.log",
+            "sha256": "1958e6b97eae8eaa374fabee972aeb4ad667e3ecaa7a90c8f49ec8047eaa2907"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 212,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-04-readback.log",
+            "sha256": "c6dfc9e5050e427c8c963776d31c5435bb9c6be0a08e6f8c3e6606dadf2217d0"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_preserves_full_preparation_limits_and_error_order"
+        },
+        {
+          "filtered_out": 42,
+          "literal_failed_lines": 0,
+          "literal_ok_lines": 1,
+          "native_log": {
+            "bytes": 68073,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-05.log",
+            "sha256": "bf5f51f98f1da132133fb531e414f823b4ca2332260dfc59e771daa53af4bde7"
+          },
+          "one_pass_summary_count": 1,
+          "original_reader_log": {
+            "bytes": 214,
+            "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/initial-root-05-readback.log",
+            "sha256": "f46ae6ed8556d52ccfa25507486858b540ca40f3f5053d3276a051572dc1413e"
+          },
+          "selector": "pq_release::tests::initial_root_material_tests::initial_root_material_rotation_still_requires_both_quorums_and_retirement"
+        }
+      ],
+      "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "source_before_after": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_gates": {
+        "blocked": 0,
+        "commands": 20,
+        "failed": 0,
+        "locked_graph_package_counts": [
+          175,
+          69,
+          193,
+          306,
+          191,
+          191
+        ],
+        "material_tests": 25,
+        "passed": 20,
+        "python_tests": 232,
+        "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "summary_sha256": "6a9e24b1b3e6ee25a4be0d7ca46f47b5688718cc479ddec97b705eac346611b8",
+        "tree": "35125592c14098385eab8693bbf05df0506d3610"
+      },
+      "strict_workspace_clippy": {
+        "argv": [
+          "cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "elapsed_seconds": 128.315971997,
+        "exit_code": 0,
+        "log": {
+          "bytes": 7221,
+          "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/strict-workspace-clippy.log",
+          "sha256": "a249c39a1f05009a95cbfa60acbd5f15c415b94089029d06dcca6c931c11bbe0"
+        },
+        "raw_command_status": "succeeded",
+        "receipt": {
+          "bytes": 4694,
+          "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/strict-workspace-clippy.json",
+          "sha256": "6ee5646f87e88da5f9df04fe299330b80e6d11585f248782b786280deb9f1438"
+        },
+        "scope": "workspace/all-targets/all-features -D warnings",
+        "status": "PASS"
+      },
+      "summary_sha256": "fddc4dbc5844c329eb7bb267a7abdc3186f2c5993394a0c9ac4eed8c586a977a",
+      "tree": "35125592c14098385eab8693bbf05df0506d3610",
+      "whole_chain_pq_qualified": false
+    },
+    "runtime_terminals": {
+      "cache": {
+        "at_unix_ms": 1793971002693,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b0ffe7a3-fc05-74c3",
+        "launch_nonce": "289a55a4878e860166c11d7412b3bfde",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 774,
+            "stored": 774
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "d6": {
+        "at_unix_ms": 1793969695958,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b0e5ac1f-fc05-73c8",
+        "launch_nonce": "93699db0093bfe909d0c74274cc59e73",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 4183,
+            "stored": 4183
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "native": {
+        "at_unix_ms": 1793973619413,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b1114b10-fc05-757f",
+        "launch_nonce": "8b9897c97efa05f170b90ac0b1908705",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 23564,
+            "stored": 23564
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "source": {
+        "at_unix_ms": 1793971642304,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b103d28f-fc05-74e8",
+        "launch_nonce": "e93e86b7f84c58231d4a41f24314e18a",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 2807,
+            "stored": 2807
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    "source_gates": {
+      "blocked": 0,
+      "failed": 0,
+      "independent_normalized": {
+        "blocked": 0,
+        "commands": 20,
+        "failed": 0,
+        "locked_graph_package_counts": [
+          175,
+          69,
+          193,
+          306,
+          191,
+          191
+        ],
+        "material_tests": 25,
+        "passed": 20,
+        "python_tests": 232,
+        "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "summary_sha256": "6a9e24b1b3e6ee25a4be0d7ca46f47b5688718cc479ddec97b705eac346611b8",
+        "tree": "35125592c14098385eab8693bbf05df0506d3610"
+      },
+      "locked_graphs": [
+        {
+          "label": "locked-workspace-graph",
+          "resolved_packages": 175
+        },
+        {
+          "label": "locked-w1-graph-0",
+          "resolved_packages": 69
+        },
+        {
+          "label": "locked-w1-graph-1",
+          "resolved_packages": 193
+        },
+        {
+          "label": "locked-w1-graph-2",
+          "resolved_packages": 306
+        },
+        {
+          "label": "locked-w1-graph-3",
+          "resolved_packages": 191
+        },
+        {
+          "label": "locked-w1-graph-4",
+          "resolved_packages": 191
+        }
+      ],
+      "native_tests_executed": 0,
+      "observed_commands": 20,
+      "observed_python_tests": 232,
+      "passed": 20,
+      "python_suite_counts": [
+        104,
+        43,
+        38,
+        22,
+        25
+      ],
+      "source": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+      "source_after": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_before": {
+        "base": null,
+        "candidate": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f",
+        "tested_tree": "35125592c14098385eab8693bbf05df0506d3610",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1090618849,
+        "tracked_entries": 10842,
+        "tracked_worktree_verified": true
+      },
+      "source_unchanged": true,
+      "strict_native_clippy_executed": false,
+      "tree": "35125592c14098385eab8693bbf05df0506d3610"
+    }
+  },
+  "disposition": "HOLD_NO_GO",
+  "formatter": {
+    "bytes": 21595,
+    "new_recovery_method": true,
+    "sha256": "aa83025245cc110b16f405c25be0a6a6a6709cdb62d71472811fa80ab52ac166"
+  },
+  "historical_ca4_original_inputs": {
+    "ca4_map": {
+      "bytes": 5472,
+      "member": "recovered-controller/ca4-phase-source_map.json",
+      "sha256": "f00df89335be2fbff65adba2fcdf622a87ecba9139fc92626dfaa39129a65944"
+    },
+    "ca4_qualification": {
+      "bytes": 20057,
+      "member": "recovered-controller/ca4-phase-qualification.json",
+      "sha256": "37c2ff8378620ec94dbec3e56e99fef5b22e39a7b17c3f583a7eba53fb070b26"
+    },
+    "ca4_readme": {
+      "bytes": 29821,
+      "member": "recovered-controller/ca4-phase-readme.md",
+      "sha256": "ab7e0f2fa2f549e6fdb9371d96d163f4915031b9cc00f5abcc8a1e317d51f326"
+    }
+  },
+  "historical_ca4_phase": {
+    "archive_hash_integrity_implies_product_qualification": false,
+    "broad_validation_source": {
+      "commit": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "matching_tree_manufactures_additional_execution": false,
+      "prospective_merge": "56ec6d4b9a429968cdb0dfa244c195b4551b7882",
+      "target": "56897f125df27994efa1dda935f2c62eceb36de9",
+      "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de"
+    },
+    "code": {
+      "commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "embedded_corpus_provenance_changed_from_ebd": true,
+      "integration_target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "native_execution_on_this_commit_claimed": false,
+      "parents": [
+        "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+        "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+      ],
+      "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0"
+    },
+    "counting_policy": {
+      "benchmark_samples_are_unique_tests": false,
+      "command_observations_are_unique_tests": false,
+      "grand_total_across_overlapping_scopes": null,
+      "metadata_success_replaces_original_readback": false,
+      "nested_child_passes_are_parent_pass": false,
+      "registered_tests_are_executed_tests": false,
+      "same_tree_transfers_native_execution": false
+    },
+    "disposition": "HOLD",
+    "ebd_native_supplement": {
+      "all_owned_process_groups_empty": true,
+      "design_evidence": {
+        "bytes": 1210,
+        "member": "integration-review/root-ebd14-driver-static-review.json",
+        "sha256": "db958f8438e5329ada598001cfd60cc0671bd2a190563421a094d3a4e4302337"
+      },
+      "evidence": [
+        {
+          "bytes": 30772,
+          "member": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json",
+          "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357"
+        },
+        {
+          "bytes": 8144,
+          "member": "integration-review/root-ebd14-whole-terminal-readback.json",
+          "sha256": "03ffbe0aa307c0467fb94bd2990961880d7b22920a1c30211ea9665c7c2e5d01"
+        },
+        {
+          "bytes": 3009,
+          "member": "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json",
+          "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d"
+        },
+        {
+          "bytes": 1837,
+          "member": "integration-review/root-ebd-auth-cost-failure-readback.json",
+          "sha256": "5419d1da51c3d8e0fdf1e60cbd456e7ad52c4dccdc3b6600664c9c8bdfa18724"
+        },
+        {
+          "bytes": 34223,
+          "member": "integration-review/ebd-authentication-cost-f85-comparison-release.json",
+          "sha256": "891d869285eba69d160dde0697bde7a4dc7e4f3903a1afbf017bdaadf3a2d4c8"
+        },
+        {
+          "bytes": 60238,
+          "member": "integration-review/ebd-authentication-budget-boundary-readback-tls.json",
+          "sha256": "5ba552015ddafbe9d3dced3778a9b86693655353e2adbe0fe332a668928e28d8"
+        }
+      ],
+      "expected_r4_controls": 10,
+      "full_node_suite_or_campaign_rerun": false,
+      "job": "1a1b066c3ff-fc05-7042",
+      "new_r4_controls": 4,
+      "observed_authentication_failure": {
+        "budget_or_samples_changed": false,
+        "cross_run_dynamic_cookie_wire_inputs_identical": false,
+        "derived_reader_failure_only": false,
+        "failed": 1,
+        "failure_disposition": "Original cumulative thread-CPU budget gate refuses before reservation and verification; original cost qualification fails.",
+        "native_exit_code": 101,
+        "observed_error_classification_independently_read_from_immutable_raw_jsonl": true,
+        "outer_timeout": false,
+        "passed": 0,
+        "production_under_accounting_or_invalid_signature_acceptance_established": false,
+        "raw_export_complete": true,
+        "rerun_to_replace_failure": false,
+        "root_cause_of_cross_host_cost_difference_established": false,
+        "sample_classification": {
+          "all_refused_samples_charged_cpu_cache_hits_expansions": 0,
+          "cached": 34,
+          "case": "sixteen-key-churn",
+          "error": "PUBLIC_MUTATION_CPU_BUDGET",
+          "first_arm": "cached",
+          "first_case_sample_zero_based": 61,
+          "first_global_sample_zero_based": 317,
+          "first_input": 30,
+          "first_pair": 15,
+          "original": 33,
+          "other_three_cases_match_expected": true
+        },
+        "samples": 512,
+        "unexpected_outcomes_or_accounting": 67,
+        "unknown_thread_cpu": 0,
+        "unobserved_setup_cpu_fabricated": false
+      },
+      "observed_native_result": {
+        "auth_named_reader": "blocked",
+        "control_artifact_aggregate": "blocked",
+        "cost_sample_aggregate": "blocked",
+        "failed": 1,
+        "local_reader_obtained_and_rehashed_elf_bytes": false,
+        "named_controls": 14,
+        "original_cost_failed": 1,
+        "original_cost_passed": 3,
+        "original_named_readers_passed": 13,
+        "passed": 13,
+        "per_native_executable_hashes_recorded": true,
+        "r4_passed": 10,
+        "strict_clippy_elapsed_seconds": 51.824281642,
+        "strict_workspace_all_targets_all_features_clippy_exit": 0
+      },
+      "original_cost_controls": 4,
+      "required_clippy_scope": "workspace/all-targets/all-features",
+      "retained_r4_controls": 6,
+      "state": "TERMINAL_FAILED_INDEPENDENTLY_READ_BACK",
+      "terminal": {
+        "cancelled": false,
+        "command_observations": 44,
+        "complete": true,
+        "durable": true,
+        "durable_exit_code": 1,
+        "root_independent_readback_complete": true,
+        "root_independent_readback_pending": false,
+        "runtime_timeout": false,
+        "source_before_after_equal": true,
+        "statuses": {
+          "blocked": 3,
+          "failed": 1,
+          "succeeded": 40
+        },
+        "tracked_bytes": 1031980491,
+        "tracked_entries": 10748
+      }
+    },
+    "ebd_source_gates": {
+      "ci_contract": 104,
+      "claim_guard": 22,
+      "corpus": 38,
+      "evidence": {
+        "bytes": 4431,
+        "member": "r4-expiry-accounting-fix/committed-source-gates/summary.json",
+        "sha256": "dd51bae3f33c085c378e5a6e76d415b0eb09f58fb5db4d55828857091a8625aa"
+      },
+      "native_tests_executed": 0,
+      "original_recorded_commands": 13,
+      "python_observations": 207,
+      "source_before_after_each_original_command": true,
+      "source_integrity": 43,
+      "status": "PASS",
+      "tracked_bytes": 1031980491,
+      "tracked_entries": 10748
+    },
+    "evidence_packages": {
+      "retained": {
+        "archive_bytes": 14283750,
+        "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
+        "index": "retained/publication/archive-index.json",
+        "members": 1848,
+        "parts": 10
+      },
+      "terminal": {
+        "identity": "Defined by the separate archive index, not embedded in this member to avoid self-reference.",
+        "index": "terminal/publication/archive-index.json",
+        "product_disposition": "HOLD; failed and incomplete gates remain failed and incomplete.",
+        "state": "COMPLETE_SOURCE_SPECIFIC_OBSERVATIONS_FROZEN_FOR_COLLECTION"
+      }
+    },
+    "expiry_accounting_source": {
+      "commit": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "parent": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895"
+    },
+    "f85_ci": {
+      "actual_sdk": {
+        "full_tuf_updater_or_final_use_qualified": false,
+        "installation_require_hashes": false,
+        "lanes": 4,
+        "metadata_pairs_per_lane": 18,
+        "openssl_version": "4.0.3",
+        "provider_equivalent_to_node_tls": false,
+        "rust_accept": 37,
+        "rust_reject": 29,
+        "rust_verifications_per_lane": 66,
+        "scope_specific_sdk_valid_rust_rejected": 5,
+        "sdk_accept": 42,
+        "sdk_reject": 24,
+        "sdk_verifications_per_lane": 66
+      },
+      "baseline": {
+        "jobs_observed": 0,
+        "native_or_packaging_fix_qualification_inferred": false,
+        "run_id": 42190535217,
+        "status": "pending"
+      },
+      "checks": {
+        "failure": 12,
+        "skipped": 1,
+        "success": 73
+      },
+      "cpq1": {
+        "lanes": 4,
+        "original_reader_recomputed_byte_equal": true,
+        "raw_values_per_lane": 22528,
+        "reader_negatives_per_lane": 25,
+        "rows_per_lane": 352,
+        "same_case_definitions": 32,
+        "samples_per_row": 64
+      },
+      "cutoff_utc": "2026-11-06 10:19:27 UTC",
+      "evidence": [
+        {
+          "bytes": 2256351,
+          "member": "integration-review/f85-ci-cutoff-20261106T101927Z/manifest.json",
+          "sha256": "54d79225a500455bda22561dcae7114f105d50f3f15673f52cbbc8b24a925be9"
+        },
+        {
+          "bytes": 4255,
+          "member": "integration-review/f85-ci-cutoff-20261106T101927Z/scope-summary.json",
+          "sha256": "e8e08693fddc6047030381919f5e3f4ff6c2e8f7f3a56f87e31cce43cc02a84d"
+        }
+      ],
+      "failed_families": [
+        {
+          "jobs": [
+            127801150481,
+            127801150929,
+            127801150236,
+            127801150133,
+            127801150331,
+            127801150310
+          ],
+          "kind": "original_4_second_confirmation_qualification"
+        },
+        {
+          "jobs": [
+            127801149888
+          ],
+          "kind": "original_three_run_30_second_campaign_qualification"
+        },
+        {
+          "jobs": [
+            127801150725,
+            127801150322,
+            127801150207,
+            127801149991
+          ],
+          "kind": "original_4105_block_history_control"
+        },
+        {
+          "jobs": [
+            127801149940
+          ],
+          "kind": "codeql_export_readiness_deadline"
+        }
+      ],
+      "fully_indexed_artifacts": 34,
+      "fully_read_original_jobs": 31,
+      "history_failure_diagnosis": {
+        "arm": "Final page advertised complete after 4104 successful returns; original importer reaches deadline before final state qualification.",
+        "evidence": {
+          "bytes": 112713,
+          "member": "integration-review/f85-history-four-failures-readback-tls.json",
+          "sha256": "f461bdeb6f9e34f554719c20fe39ddfc0ef563f2ec1419ff7a88e75c5ca4eb3d"
+        },
+        "minimal_safe_implementation_fix_established": false,
+        "original_block_target": 4105,
+        "original_per_import_budget_seconds": 30,
+        "original_server_lifetime_seconds": 1800,
+        "outer_command_timeout": false,
+        "pq_tls_or_public_v3_r4_root_cause_established": false,
+        "source_route": "classical public_v2 loopback signed plaintext",
+        "successful_returns_are_durable_block_count": false,
+        "x64": "Original server lifetime expires before a later RPC; connection refused."
+      },
+      "independent_c_mldsa": {
+        "c_verify_observations_per_lane": 391,
+        "fixed_seed_equality_cases_per_lane": 20,
+        "lanes": 4,
+        "rust_oracle_elf_uploaded": false,
+        "rust_verify_observations_per_lane": 396,
+        "uploaded_c_elf_rehashed": true,
+        "wycheproof_vectors_included_per_lane": 210
+      },
+      "lossless_selected_text_members": 4319,
+      "original_cost_controls": {
+        "all_four_elf_bytes_independently_rehashed": false,
+        "authentication_samples": 512,
+        "history_complete_calls": 64,
+        "m06_bindings": 1728,
+        "m06_timed_samples": 216,
+        "named_controls": 4,
+        "original_exact_ignored_execution": true,
+        "quantum_work_or_timing_ratio_qualified": false,
+        "root_observations": 408,
+        "three_controls_lack_per_command_elf_sha": true
+      },
+      "original_indexed_members": 23014,
+      "other_full_pq_jobs": {
+        "earlier_partial_control_stages_retained": true,
+        "later_full_library_cost_artifacts_fully_read": false,
+        "metadata_success_count": 3
+      },
+      "runs": {
+        "failure": 4,
+        "pending": 1,
+        "success": 10
+      },
+      "snapshot_not_all_workflows_terminal": true,
+      "workspace_matrices": {
+        "actual_build_then_exact_nonempty_execution": true,
+        "cpu_and_exit_controls": 4,
+        "growth_control": 1,
+        "lanes": 4,
+        "postwrite_controls": 25,
+        "same_unique_controls_per_lane": 65,
+        "semantic_controls": 60
+      },
+      "x64_head_full_node_library": {
+        "desktop_incomplete_observation_erased": false,
+        "failed": 0,
+        "ignored": 31,
+        "paid_pending_selector": "ok in this separate execution",
+        "passed": 1160
+      }
+    },
+    "f85_desktop": {
+      "command_observations": 271,
+      "equivalent_to_hosted_ci_machine_or_performance_configuration": false,
+      "evidence": [
+        {
+          "bytes": 1446,
+          "member": "integration-review/root-f85-whole-terminal-readback.json",
+          "sha256": "89fc86ebebc19988bf87e67cc998f89e1f1549dff4f3a3a4f770d8cb24cc8908"
+        },
+        {
+          "bytes": 108615,
+          "member": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json",
+          "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c"
+        }
+      ],
+      "full_library": {
+        "elapsed_seconds": 1502.206865663,
+        "exit_code": -15,
+        "failed_progress_selector": "ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
+        "failure_panic_available": false,
+        "nested_child_passes_counted": false,
+        "parent_summary_available": false,
+        "root_cause_established": false,
+        "status": "INCOMPLETE",
+        "timeout_seconds": 1500
+      },
+      "job": "1a1b010fbe6-fc05-6ddf",
+      "original_provider_version": "3.5.9",
+      "owned_process_groups_empty": true,
+      "source": {
+        "before_after_post_terminal_equal": true,
+        "tracked_bytes": 1031966791,
+        "tracked_entries": 10748
+      },
+      "statuses": {
+        "blocked": 1,
+        "succeeded": 269,
+        "timed_out": 1
+      },
+      "strict_clippy": {
+        "deny_warnings": true,
+        "elapsed_seconds": 128.911092781,
+        "scope": "workspace/all-targets/all-features",
+        "status": "PASS"
+      },
+      "terminal_exit_code": 1,
+      "terminal_output_complete_and_durable": true
+    },
+    "historical_ebd_final_documents": [
+      {
+        "bytes": 26170,
+        "member": "final-evidence-delivery/README.md",
+        "sha256": "e3dba15d595f4c6f1bec9d5d57c5d2b000f139d3728c121a473735cef9a3579b"
+      },
+      {
+        "bytes": 17301,
+        "member": "final-evidence-delivery/qualification.json",
+        "sha256": "2aec95c096ed0693da963a07f0330c9cdf7ab70c43f95b3157bd1cb5a0b71337"
+      },
+      {
+        "bytes": 4340,
+        "member": "final-evidence-delivery/source-publication-map.json",
+        "sha256": "2bbb9cdbec3ebce14aee04a0cd200108bb47db1df386249f39441b9075a99cdb"
+      }
+    ],
+    "historical_ebd_publication_parent_claim_retargets_current_publication": false,
+    "independent_rollback_custody_qualified": false,
+    "late_composition_source_gates": {
+      "evidence": {
+        "bytes": 8151,
+        "member": "late-target-513e92/committed-source-gates/summary.json",
+        "sha256": "d4c738465330d7e4d665a7608c393511b57fa868bf3bf62750d5ad39dd0e2fb6"
+      },
+      "guest_images_rebuilt": 0,
+      "main_locked_graph_packages": 175,
+      "material_tests": 25,
+      "native_rust_tests_executed": 0,
+      "packaging_version": "26.3",
+      "prior_native_results_transferred": false,
+      "proofs_rebuilt": 0,
+      "python_test_observations": 232,
+      "recorded_commands": 20,
+      "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "source_before_after_equal": true,
+      "source_ci_corpus_claim_tests": 207,
+      "status": "PASS",
+      "strict_native_clippy_executed": false,
+      "tracked_bytes": 1031991037,
+      "tracked_entries": 10754,
+      "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+      "w1_locked_graph_packages": [
         69,
         193,
         306,
         191,
         191
-      ],
-      "main_and_fuzz_locks_changed": false,
-      "new_guest_image_or_proof_created": false
+      ]
     },
-    {
-      "name": "isolated-material-verifier-packaging",
-      "version": "26.3",
-      "exact_hash_install": true,
-      "local_material_tests": 23,
-      "current_ci_baseline_execution": "pending with zero jobs at cutoff",
-      "local_material_tests_source": "f85fea4e8da02404d513d074ceb35ad5292b017b"
+    "main_merged": false,
+    "original_budgets_weakened": false,
+    "pq_deterministic_finality_activated": false,
+    "pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/723",
+    "pr_made_ready_for_review": false,
+    "production_activated": false,
+    "public_wan_qualified": false,
+    "publication": {
+      "direct_code_parent": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "identity_location": "Containing Git commit and PR #723 current marked update; no self-referential commit hash.",
+      "native_tests_on_containing_evidence_commit_claimed": false,
+      "type": "evidence-and-plan-only-successor"
     },
-    {
-      "name": "actual-workspace-registry",
-      "postwrite_controls": 25,
-      "semantic_controls": 60,
-      "full_native_execution_requirements_preserved": true
-    },
-    {
-      "name": "reactor-stage-expiry-accounting",
-      "source": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
-      "scope": "Conservatively count exact deadline/cookie errors only after original deadline; monotonic stop precedence for Deadline; preserve terminal/error/close/drop effects.",
-      "new_controls": 4,
-      "original_paid_pending_test_bytes_unchanged": true,
-      "cause_of_f85_desktop_failed_progress_established": false
-    },
-    {
-      "name": "later-marker-compatibility-composition",
-      "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
-      "target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
-      "supported_packaging_minimum": "25.0",
-      "isolated_pinned_version": "26.3",
-      "exact_wheel_hash_unchanged": true,
-      "metadata_effective_default_checked": true,
-      "complete_environment_and_explicit_extra": true,
-      "retry_or_fallback_added": false,
-      "method_union": 25,
-      "actual_material_tests_passed": 25,
-      "historical_target_24_x_logs_qualify_this_source": false
-    }
-  ],
-  "f85_desktop": {
-    "job": "1a1b010fbe6-fc05-6ddf",
-    "terminal_exit_code": 1,
-    "terminal_output_complete_and_durable": true,
-    "command_observations": 271,
-    "statuses": {
-      "succeeded": 269,
-      "timed_out": 1,
-      "blocked": 1
-    },
-    "full_library": {
-      "status": "INCOMPLETE",
-      "timeout_seconds": 1500,
-      "elapsed_seconds": 1502.206865663,
-      "exit_code": -15,
-      "failed_progress_selector": "ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
-      "failure_panic_available": false,
-      "root_cause_established": false,
-      "parent_summary_available": false,
-      "nested_child_passes_counted": false
-    },
-    "strict_clippy": {
-      "status": "PASS",
-      "scope": "workspace/all-targets/all-features",
-      "deny_warnings": true,
-      "elapsed_seconds": 128.911092781
-    },
-    "source": {
-      "tracked_entries": 10748,
-      "tracked_bytes": 1031966791,
-      "before_after_post_terminal_equal": true
-    },
-    "owned_process_groups_empty": true,
-    "original_provider_version": "3.5.9",
-    "equivalent_to_hosted_ci_machine_or_performance_configuration": false,
-    "evidence": [
+    "quantum_mining_economic_security_qualified": false,
+    "repairs": [
       {
-        "member": "integration-review/root-f85-whole-terminal-readback.json",
-        "bytes": 1446,
-        "sha256": "89fc86ebebc19988bf87e67cc998f89e1f1549dff4f3a3a4f770d8cb24cc8908"
+        "complete_pq_parent_recovery": false,
+        "name": "classical-parent-recovery-profile-refusal",
+        "scope": "Reject forbidden classical recovery credentials before I/O for a PQ-network owner."
       },
       {
-        "member": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json",
-        "bytes": 108615,
-        "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c"
-      }
-    ]
-  },
-  "f85_ci": {
-    "cutoff_utc": "2026-11-06 10:19:27 UTC",
-    "snapshot_not_all_workflows_terminal": true,
-    "checks": {
-      "skipped": 1,
-      "success": 73,
-      "failure": 12
-    },
-    "runs": {
-      "failure": 4,
-      "success": 10,
-      "pending": 1
-    },
-    "baseline": {
-      "run_id": 42190535217,
-      "status": "pending",
-      "jobs_observed": 0,
-      "native_or_packaging_fix_qualification_inferred": false
-    },
-    "fully_read_original_jobs": 31,
-    "fully_indexed_artifacts": 34,
-    "original_indexed_members": 23014,
-    "lossless_selected_text_members": 4319,
-    "x64_head_full_node_library": {
-      "passed": 1160,
-      "failed": 0,
-      "ignored": 31,
-      "paid_pending_selector": "ok in this separate execution",
-      "desktop_incomplete_observation_erased": false
-    },
-    "other_full_pq_jobs": {
-      "metadata_success_count": 3,
-      "later_full_library_cost_artifacts_fully_read": false,
-      "earlier_partial_control_stages_retained": true
-    },
-    "workspace_matrices": {
-      "lanes": 4,
-      "same_unique_controls_per_lane": 65,
-      "semantic_controls": 60,
-      "cpu_and_exit_controls": 4,
-      "growth_control": 1,
-      "postwrite_controls": 25,
-      "actual_build_then_exact_nonempty_execution": true
-    },
-    "cpq1": {
-      "lanes": 4,
-      "same_case_definitions": 32,
-      "rows_per_lane": 352,
-      "samples_per_row": 64,
-      "raw_values_per_lane": 22528,
-      "reader_negatives_per_lane": 25,
-      "original_reader_recomputed_byte_equal": true
-    },
-    "independent_c_mldsa": {
-      "lanes": 4,
-      "fixed_seed_equality_cases_per_lane": 20,
-      "c_verify_observations_per_lane": 391,
-      "rust_verify_observations_per_lane": 396,
-      "wycheproof_vectors_included_per_lane": 210,
-      "uploaded_c_elf_rehashed": true,
-      "rust_oracle_elf_uploaded": false
-    },
-    "actual_sdk": {
-      "lanes": 4,
-      "metadata_pairs_per_lane": 18,
-      "sdk_verifications_per_lane": 66,
-      "sdk_accept": 42,
-      "sdk_reject": 24,
-      "rust_verifications_per_lane": 66,
-      "rust_accept": 37,
-      "rust_reject": 29,
-      "scope_specific_sdk_valid_rust_rejected": 5,
-      "openssl_version": "4.0.3",
-      "provider_equivalent_to_node_tls": false,
-      "installation_require_hashes": false,
-      "full_tuf_updater_or_final_use_qualified": false
-    },
-    "original_cost_controls": {
-      "named_controls": 4,
-      "original_exact_ignored_execution": true,
-      "history_complete_calls": 64,
-      "authentication_samples": 512,
-      "root_observations": 408,
-      "m06_timed_samples": 216,
-      "m06_bindings": 1728,
-      "all_four_elf_bytes_independently_rehashed": false,
-      "three_controls_lack_per_command_elf_sha": true,
-      "quantum_work_or_timing_ratio_qualified": false
-    },
-    "failed_families": [
-      {
-        "kind": "original_4_second_confirmation_qualification",
-        "jobs": [
-          127801150481,
-          127801150929,
-          127801150236,
-          127801150133,
-          127801150331,
-          127801150310
-        ]
+        "actual_product_final_use_installer_wired": false,
+        "name": "current-release-authority-kernel",
+        "read_only_check_advances_persisted_time_floor": false,
+        "scope": "Current checkpoint, persisted time lower bound, root and publication expiry, content/generation/role, and live Cell manifest checks."
       },
       {
-        "kind": "original_three_run_30_second_campaign_qualification",
-        "jobs": [
-          127801149888
-        ]
+        "name": "tls-local-identity-startup",
+        "remote_invalid_peer_authenticated_claimed": false,
+        "scope": "Single pinned CA, current time, intended purpose, exact chain, server DNS SAN with wildcard/CN fallback forbidden, refusal before owner/Node/listen."
       },
       {
-        "kind": "original_4105_block_history_control",
-        "jobs": [
-          127801150725,
-          127801150322,
-          127801150207,
-          127801149991
-        ]
+        "graphs": [
+          69,
+          193,
+          306,
+          191,
+          191
+        ],
+        "main_and_fuzz_locks_changed": false,
+        "name": "five-independent-cargo-locks",
+        "new_guest_image_or_proof_created": false
       },
       {
-        "kind": "codeql_export_readiness_deadline",
-        "jobs": [
-          127801149940
-        ]
+        "current_ci_baseline_execution": "pending with zero jobs at cutoff",
+        "exact_hash_install": true,
+        "local_material_tests": 23,
+        "local_material_tests_source": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+        "name": "isolated-material-verifier-packaging",
+        "version": "26.3"
+      },
+      {
+        "full_native_execution_requirements_preserved": true,
+        "name": "actual-workspace-registry",
+        "postwrite_controls": 25,
+        "semantic_controls": 60
+      },
+      {
+        "cause_of_f85_desktop_failed_progress_established": false,
+        "name": "reactor-stage-expiry-accounting",
+        "new_controls": 4,
+        "original_paid_pending_test_bytes_unchanged": true,
+        "scope": "Conservatively count exact deadline/cookie errors only after original deadline; monotonic stop precedence for Deadline; preserve terminal/error/close/drop effects.",
+        "source": "ebd3c06da7d5f2bd136b7a24f24604508d420279"
+      },
+      {
+        "actual_material_tests_passed": 25,
+        "complete_environment_and_explicit_extra": true,
+        "exact_wheel_hash_unchanged": true,
+        "historical_target_24_x_logs_qualify_this_source": false,
+        "isolated_pinned_version": "26.3",
+        "metadata_effective_default_checked": true,
+        "method_union": 25,
+        "name": "later-marker-compatibility-composition",
+        "retry_or_fallback_added": false,
+        "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+        "supported_packaging_minimum": "25.0",
+        "target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
       }
     ],
-    "evidence": [
+    "schema": "trnm-pq-integration-disposition-v2",
+    "state": "FINAL_SOURCE_SCOPED_HOLD",
+    "unresolved_authority_and_operational_gates": [
+      "Complete legacy-account migration with prior PQ binding and all production profile entrypoints.",
+      "Full PQ parent-state recovery owner and protocol.",
+      "Actual final-use installer/config/Cell activation consumer with atomic current-authority effect binding.",
+      "Ordinary CLI independent witness wiring and protected independent fresh checkpoint custody.",
+      "Witness scope covering the actual stores claimed; PNQ2 resource/peer/request root is not account/block/History/CURRENT/Hepta coverage.",
+      "Private-listener and Cell transport confidentiality/identity, deployed PKI custody/revocation and malicious-handshake costs.",
+      "Sustained public-WAN qualification under original conditions.",
+      "Implemented, tested and explicitly activated PQ finality.",
+      "Quantum work/oracle/reversible computation/data-access/DAA/adversarial fork economic qualification.",
+      "Original service confirmation, campaign and full History acceptance; desktop full-library failure and incomplete parent summary; f85 CI snapshot baseline/CodeQL export completion.",
+      "Original authentication cost gate failed on ebd desktop: 67 original-budget refusals in sixteen-key churn; no budget or sample relaxation."
+    ],
+    "whole_chain_pq_128_or_256_bit_label_accepted": false,
+    "whole_chain_pq_qualified": false
+  },
+  "historical_ca4_phase_is_not_current_qualification": true,
+  "historical_d6": {
+    "blocked": 0,
+    "failed": 4,
+    "full_original_readback_completed": true,
+    "locked_graphs": [
       {
-        "member": "integration-review/f85-ci-cutoff-20261106T101927Z/manifest.json",
-        "bytes": 2256351,
-        "sha256": "54d79225a500455bda22561dcae7114f105d50f3f15673f52cbbc8b24a925be9"
+        "label": "locked-workspace-graph",
+        "resolved_packages": 175
       },
       {
-        "member": "integration-review/f85-ci-cutoff-20261106T101927Z/scope-summary.json",
-        "bytes": 4255,
-        "sha256": "e8e08693fddc6047030381919f5e3f4ff6c2e8f7f3a56f87e31cce43cc02a84d"
+        "label": "locked-w1-graph-0",
+        "resolved_packages": 69
       }
     ],
-    "history_failure_diagnosis": {
-      "source_route": "classical public_v2 loopback signed plaintext",
-      "original_block_target": 4105,
-      "original_server_lifetime_seconds": 1800,
-      "original_per_import_budget_seconds": 30,
-      "x64": "Original server lifetime expires before a later RPC; connection refused.",
-      "arm": "Final page advertised complete after 4104 successful returns; original importer reaches deadline before final state qualification.",
-      "outer_command_timeout": false,
-      "successful_returns_are_durable_block_count": false,
-      "minimal_safe_implementation_fix_established": false,
-      "pq_tls_or_public_v3_r4_root_cause_established": false,
-      "evidence": {
-        "member": "integration-review/f85-history-four-failures-readback-tls.json",
-        "bytes": 112713,
-        "sha256": "f461bdeb6f9e34f554719c20fe39ddfc0ef563f2ec1419ff7a88e75c5ca4eb3d"
-      }
-    }
-  },
-  "ebd_source_gates": {
-    "status": "PASS",
-    "original_recorded_commands": 13,
-    "python_observations": 207,
-    "ci_contract": 104,
-    "source_integrity": 43,
-    "corpus": 38,
-    "claim_guard": 22,
     "native_tests_executed": 0,
-    "tracked_entries": 10748,
-    "tracked_bytes": 1031980491,
-    "source_before_after_each_original_command": true,
-    "evidence": {
-      "member": "r4-expiry-accounting-fix/committed-source-gates/summary.json",
-      "bytes": 4431,
-      "sha256": "dd51bae3f33c085c378e5a6e76d415b0eb09f58fb5db4d55828857091a8625aa"
-    }
-  },
-  "ebd_native_supplement": {
-    "state": "TERMINAL_FAILED_INDEPENDENTLY_READ_BACK",
-    "job": "1a1b066c3ff-fc05-7042",
-    "expected_r4_controls": 10,
-    "new_r4_controls": 4,
-    "retained_r4_controls": 6,
-    "original_cost_controls": 4,
-    "required_clippy_scope": "workspace/all-targets/all-features",
-    "full_node_suite_or_campaign_rerun": false,
-    "observed_native_result": {
-      "named_controls": 14,
-      "passed": 13,
-      "failed": 1,
-      "r4_passed": 10,
-      "original_cost_passed": 3,
-      "original_cost_failed": 1,
-      "original_named_readers_passed": 13,
-      "auth_named_reader": "blocked",
-      "control_artifact_aggregate": "blocked",
-      "cost_sample_aggregate": "blocked",
-      "strict_workspace_all_targets_all_features_clippy_exit": 0,
-      "strict_clippy_elapsed_seconds": 51.824281642,
-      "per_native_executable_hashes_recorded": true,
-      "local_reader_obtained_and_rehashed_elf_bytes": false
-    },
-    "observed_authentication_failure": {
-      "native_exit_code": 101,
-      "passed": 0,
-      "failed": 1,
-      "samples": 512,
-      "unexpected_outcomes_or_accounting": 67,
-      "unknown_thread_cpu": 0,
-      "raw_export_complete": true,
-      "outer_timeout": false,
-      "derived_reader_failure_only": false,
-      "sample_classification": {
-        "case": "sixteen-key-churn",
-        "error": "PUBLIC_MUTATION_CPU_BUDGET",
-        "cached": 34,
-        "original": 33,
-        "first_case_sample_zero_based": 61,
-        "first_global_sample_zero_based": 317,
-        "first_arm": "cached",
-        "first_input": 30,
-        "first_pair": 15,
-        "all_refused_samples_charged_cpu_cache_hits_expansions": 0,
-        "other_three_cases_match_expected": true
-      },
-      "budget_or_samples_changed": false,
-      "rerun_to_replace_failure": false,
-      "failure_disposition": "Original cumulative thread-CPU budget gate refuses before reservation and verification; original cost qualification fails.",
-      "production_under_accounting_or_invalid_signature_acceptance_established": false,
-      "unobserved_setup_cpu_fabricated": false,
-      "root_cause_of_cross_host_cost_difference_established": false,
-      "observed_error_classification_independently_read_from_immutable_raw_jsonl": true,
-      "cross_run_dynamic_cookie_wire_inputs_identical": false
-    },
-    "terminal": {
-      "durable_exit_code": 1,
-      "complete": true,
-      "durable": true,
-      "cancelled": false,
-      "runtime_timeout": false,
-      "command_observations": 44,
-      "statuses": {
-        "succeeded": 40,
-        "failed": 1,
-        "blocked": 3
-      },
-      "source_before_after_equal": true,
-      "tracked_entries": 10748,
-      "tracked_bytes": 1031980491,
-      "root_independent_readback_pending": false,
-      "root_independent_readback_complete": true
-    },
-    "all_owned_process_groups_empty": true,
-    "design_evidence": {
-      "member": "integration-review/root-ebd14-driver-static-review.json",
-      "bytes": 1210,
-      "sha256": "db958f8438e5329ada598001cfd60cc0671bd2a190563421a094d3a4e4302337"
-    },
-    "evidence": [
-      {
-        "member": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json",
-        "bytes": 30772,
-        "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357"
-      },
-      {
-        "member": "integration-review/root-ebd14-whole-terminal-readback.json",
-        "bytes": 8144,
-        "sha256": "03ffbe0aa307c0467fb94bd2990961880d7b22920a1c30211ea9665c7c2e5d01"
-      },
-      {
-        "member": "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json",
-        "bytes": 3009,
-        "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d"
-      },
-      {
-        "member": "integration-review/root-ebd-auth-cost-failure-readback.json",
-        "bytes": 1837,
-        "sha256": "5419d1da51c3d8e0fdf1e60cbd456e7ad52c4dccdc3b6600664c9c8bdfa18724"
-      },
-      {
-        "member": "integration-review/ebd-authentication-cost-f85-comparison-release.json",
-        "bytes": 34223,
-        "sha256": "891d869285eba69d160dde0697bde7a4dc7e4f3903a1afbf017bdaadf3a2d4c8"
-      },
-      {
-        "member": "integration-review/ebd-authentication-budget-boundary-readback-tls.json",
-        "bytes": 60238,
-        "sha256": "5ba552015ddafbe9d3dced3778a9b86693655353e2adbe0fe332a668928e28d8"
-      }
-    ]
-  },
-  "unresolved_authority_and_operational_gates": [
-    "Complete legacy-account migration with prior PQ binding and all production profile entrypoints.",
-    "Full PQ parent-state recovery owner and protocol.",
-    "Actual final-use installer/config/Cell activation consumer with atomic current-authority effect binding.",
-    "Ordinary CLI independent witness wiring and protected independent fresh checkpoint custody.",
-    "Witness scope covering the actual stores claimed; PNQ2 resource/peer/request root is not account/block/History/CURRENT/Hepta coverage.",
-    "Private-listener and Cell transport confidentiality/identity, deployed PKI custody/revocation and malicious-handshake costs.",
-    "Sustained public-WAN qualification under original conditions.",
-    "Implemented, tested and explicitly activated PQ finality.",
-    "Quantum work/oracle/reversible computation/data-access/DAA/adversarial fork economic qualification.",
-    "Original service confirmation, campaign and full History acceptance; desktop full-library failure and incomplete parent summary; f85 CI snapshot baseline/CodeQL export completion.",
-    "Original authentication cost gate failed on ebd desktop: 67 original-budget refusals in sixteen-key churn; no budget or sample relaxation."
-  ],
-  "whole_chain_pq_qualified": false,
-  "whole_chain_pq_128_or_256_bit_label_accepted": false,
-  "quantum_mining_economic_security_qualified": false,
-  "public_wan_qualified": false,
-  "independent_rollback_custody_qualified": false,
-  "pq_deterministic_finality_activated": false,
-  "production_activated": false,
-  "main_merged": false,
-  "pr_made_ready_for_review": false,
-  "original_budgets_weakened": false,
-  "evidence_packages": {
-    "retained": {
-      "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
-      "archive_bytes": 14283750,
-      "parts": 10,
-      "members": 1848,
-      "index": "retained/publication/archive-index.json"
-    },
-    "terminal": {
-      "state": "COMPLETE_SOURCE_SPECIFIC_OBSERVATIONS_FROZEN_FOR_COLLECTION",
-      "index": "terminal/publication/archive-index.json",
-      "identity": "Defined by the separate archive index, not embedded in this member to avoid self-reference.",
-      "product_disposition": "HOLD; failed and incomplete gates remain failed and incomplete."
-    }
-  },
-  "archive_hash_integrity_implies_product_qualification": false,
-  "expiry_accounting_source": {
-    "commit": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
-    "tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895",
-    "parent": "f85fea4e8da02404d513d074ceb35ad5292b017b"
-  },
-  "late_composition_source_gates": {
-    "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
-    "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
-    "status": "PASS",
-    "recorded_commands": 20,
-    "python_test_observations": 232,
-    "source_ci_corpus_claim_tests": 207,
-    "material_tests": 25,
-    "main_locked_graph_packages": 175,
-    "w1_locked_graph_packages": [
-      69,
-      193,
-      306,
-      191,
-      191
+    "observed_commands": 20,
+    "observed_python_tests": 232,
+    "passed": 16,
+    "python_suite_counts": [
+      104,
+      43,
+      38,
+      22,
+      25
     ],
-    "source_before_after_equal": true,
-    "tracked_entries": 10754,
-    "tracked_bytes": 1031991037,
-    "packaging_version": "26.3",
-    "native_rust_tests_executed": 0,
+    "source": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+    "source_after": {
+      "base": null,
+      "candidate": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+      "tested_tree": "e279dd9e87058e8aa72dc951253a2bfb67665ce6",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1090582488,
+      "tracked_entries": 10839,
+      "tracked_worktree_verified": true
+    },
+    "source_before": {
+      "base": null,
+      "candidate": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "d6ec50bb4c9f92656c3b95430ca305896012e69c",
+      "tested_tree": "e279dd9e87058e8aa72dc951253a2bfb67665ce6",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1090582488,
+      "tracked_entries": 10839,
+      "tracked_worktree_verified": true
+    },
+    "source_unchanged": true,
     "strict_native_clippy_executed": false,
-    "guest_images_rebuilt": 0,
-    "proofs_rebuilt": 0,
-    "prior_native_results_transferred": false,
-    "evidence": {
-      "member": "late-target-513e92/committed-source-gates/summary.json",
-      "bytes": 8151,
-      "sha256": "d4c738465330d7e4d665a7608c393511b57fa868bf3bf62750d5ad39dd0e2fb6"
+    "tree": "e279dd9e87058e8aa72dc951253a2bfb67665ce6"
+  },
+  "historical_merge_preparation": {
+    "original_diff": {
+      "bytes": 87,
+      "member": "initial-root-composition-5bb/merge-readback/original_diff.log",
+      "sha256": "7d4960c1496f3a7f487c58fffd6604e66af7080909c7bb05f39caf404938e604"
+    },
+    "original_summary": {
+      "bytes": 5649,
+      "member": "initial-root-composition-5bb/merge-readback/original_summary.json",
+      "sha256": "02f08bddbd782e2ff594482403f91ec8ec9c46671b7264066135a302e899f2e1"
+    },
+    "original_terminal": {
+      "bytes": 951,
+      "member": "recovered-controller/material-merge-original-terminal.mcp.json",
+      "sha256": "6ed6ea22e31b57e95146bf593868e9691280fbab79b1a119e784cb3148ffbf64"
+    },
+    "resume_summary": {
+      "bytes": 5271,
+      "member": "initial-root-composition-5bb/merge-readback/resume_summary.json",
+      "sha256": "779a57b8941e896095e3c31182d6063202387ec27a82f0f42c1a2642b52d294d"
+    },
+    "resume_terminal": {
+      "bytes": 954,
+      "member": "recovered-controller/material-merge-resume-terminal.mcp.json",
+      "sha256": "b713ee5a11af1dbcec67f260bc6ca6e813b2c064e6d36510c309ef32138d48e9"
     }
   },
-  "historical_ebd_final_documents": [
+  "independent_readbacks": [
     {
-      "member": "final-evidence-delivery/README.md",
-      "bytes": 26170,
-      "sha256": "e3dba15d595f4c6f1bec9d5d57c5d2b000f139d3728c121a473735cef9a3579b"
+      "bytes": 85424,
+      "member": "integration-review/root-c07-whole-terminal-readback-v1/readback.json",
+      "sha256": "38c74882df2ea19fb959be00da296675384b812425e1eec581684f03b87951a8"
     },
     {
-      "member": "final-evidence-delivery/qualification.json",
-      "bytes": 17301,
-      "sha256": "2aec95c096ed0693da963a07f0330c9cdf7ab70c43f95b3157bd1cb5a0b71337"
+      "bytes": 196358,
+      "member": "integration-review/tls-audit-recovery-v2/c07-node-provider-clippy-readback-v1.json",
+      "sha256": "fe01d61410cc45a5007a70a3a7b7d800a210a3f4e08c12b47143f6bfe516cfe8"
     },
     {
-      "member": "final-evidence-delivery/source-publication-map.json",
-      "bytes": 4340,
-      "sha256": "2bbb9cdbec3ebce14aee04a0cd200108bb47db1df386249f39441b9075a99cdb"
+      "bytes": 670321,
+      "member": "integration-review/c07-terminal-reader-recovery-v2/terminal-readback-attempt-v2.json",
+      "sha256": "cb026091273729884a30f83d62760cfb5c7e1c6403b71ef817440697053752a1"
+    },
+    {
+      "bytes": 95073,
+      "member": "integration-review/d6-source20-full-readback-recovery-v1/full-readback.json",
+      "sha256": "6b4a90d5db5f050ce7cc7ea175e6191d34b977627c5e33fced1ae9aee69d4b8d"
+    },
+    {
+      "bytes": 984,
+      "member": "integration-review/d6-source20-full-readback-recovery-v1/historical-d6-full-readback-binding.json",
+      "sha256": "3fc71048b818e051e8d2ad3e3e70ecba4cd20408ff1997ac65787128b7dd97b6"
     }
   ],
-  "historical_ebd_publication_parent_claim_retargets_current_publication": false
+  "independent_rollback_custody_qualified": false,
+  "main_merged": false,
+  "original_budgets_weakened": false,
+  "pq_deterministic_finality_activated": false,
+  "pr_made_ready_for_review": false,
+  "production_activated": false,
+  "public_wan_qualified": false,
+  "publication": {
+    "containing_commit_and_archive_hashes_are_external": true,
+    "current_increment_index": "witness/publication/archive-index.json",
+    "kind": "evidence-and-plan-only-successor",
+    "native_tests_on_containing_publication_claimed": false,
+    "old_retained_and_terminal_archives_repacked": false,
+    "required_direct_parent": "c07e8b9cce4621c5ef6f61256482bfe94e5a622f"
+  },
+  "quantum_mining_economic_security_qualified": false,
+  "raw_current_evidence": {
+    "ca4_map": {
+      "bytes": 5472,
+      "member": "recovered-controller/ca4-phase-source_map.json",
+      "sha256": "f00df89335be2fbff65adba2fcdf622a87ecba9139fc92626dfaa39129a65944"
+    },
+    "ca4_qualification": {
+      "bytes": 20057,
+      "member": "recovered-controller/ca4-phase-qualification.json",
+      "sha256": "37c2ff8378620ec94dbec3e56e99fef5b22e39a7b17c3f583a7eba53fb070b26"
+    },
+    "ca4_readme": {
+      "bytes": 29821,
+      "member": "recovered-controller/ca4-phase-readme.md",
+      "sha256": "ab7e0f2fa2f549e6fdb9371d96d163f4915031b9cc00f5abcc8a1e317d51f326"
+    },
+    "cache_summary": {
+      "bytes": 13150,
+      "member": "quantum-current-c07-terminal-v1/payload/locked-cache-c07e8b9c-v1/summary.json",
+      "sha256": "af19367aa81223be57652db4320738fa4b524eb3c68891567adb15cedac7107d"
+    },
+    "d6_summary": {
+      "bytes": 61977,
+      "member": "integration-review/d6-source20-full-readback-recovery-v1/originals/raw/summary.json",
+      "sha256": "a2f68251c01f965a724c537de70f648c5d356779f3daa86125f5a17e42066f7c"
+    },
+    "native_summary": {
+      "bytes": 3173,
+      "member": "quantum-current-c07-terminal-v1/payload/native-witness-release-c07e8b9c-v2/summary.json",
+      "sha256": "fddc4dbc5844c329eb7bb267a7abdc3186f2c5993394a0c9ac4eed8c586a977a"
+    },
+    "source_summary": {
+      "bytes": 61633,
+      "member": "quantum-current-c07-terminal-v1/payload/source-gates-c07e8b9c-v3/summary.json",
+      "sha256": "6a9e24b1b3e6ee25a4be0d7ca46f47b5688718cc479ddec97b705eac346611b8"
+    }
+  },
+  "recovery_evidence": [
+    {
+      "bytes": 2308,
+      "member": "environment-recovery/bootstrap-receipt.json",
+      "sha256": "103d5e0a397bfff8d1bdf9ed4176d147d072c2f72d541979868bb99b39ecca85"
+    },
+    {
+      "bytes": 423,
+      "member": "environment-recovery/recovered-c07-source-identity.json",
+      "sha256": "d09b247f115febe10f5c8263baffaa36c99c47f55cb667afdc3be97e588b6bcb"
+    },
+    {
+      "bytes": 1214,
+      "member": "environment-recovery/recovered-c07-source-identity.receipt.json",
+      "sha256": "ed04e5d57f59687c26655e1f7e37042dfa650b60c06bf532e4e0eda8d5ff9f02"
+    },
+    {
+      "bytes": 460,
+      "member": "environment-recovery/terminal-archive-independent-recovery-verification.json",
+      "sha256": "7bc1ed816cc45580d0ae3b3d55d6174ffd636af0b1765c13bfe7621317a01a37"
+    },
+    {
+      "bytes": 946,
+      "member": "environment-recovery/recovered-methods-from-published-terminal.json",
+      "sha256": "270d8e461b94c8a9309a0772777bfb4c0d35b4fb7efc0679f0a50088b90ef9b5"
+    },
+    {
+      "bytes": 1946,
+      "member": "integration-review/tls-audit-recovery-v2/recovery-history.json",
+      "sha256": "bae98b8d5783d98747bd556923a86013857abccfc9414c944f24c349851602b4"
+    },
+    {
+      "bytes": 35448,
+      "member": "integration-review/c07-static-recovery-review-v1/review.json",
+      "sha256": "08106bec04ca19a0982593eaf42dc993f41b7b8bfe98d590a685b0f4d77b8973"
+    },
+    {
+      "bytes": 800,
+      "member": "integration-review/d6-source20-full-readback-recovery-v1/root-copy-readback.json",
+      "sha256": "c3354d910db8fdea573873a130b1ab1581429a1bd156ad686bf3631b1dec7a2d"
+    }
+  ],
+  "schema": "trnm-pq-current-terminal-disposition-v6-v2",
+  "state": "TERMINAL_SOURCE_SPECIFIC_OBSERVATIONS",
+  "unavailable_preparation_observations": [
+    {
+      "bytes": 7446,
+      "member": "environment-recovery/unavailable-preparation-records.json",
+      "sha256": "ef4808d59ca426d46885878eab555a87f9a52c867300f1d98a0e1485c206965e"
+    }
+  ],
+  "whole_chain_pq_128_or_256_bit_label_accepted": false,
+  "whole_chain_pq_qualified": false
 }

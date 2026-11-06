@@ -8057,3 +8057,114 @@ and production acceptance remain HOLD. The PR remains Draft.
 - Preserve the original f85 incomplete desktop library and ebd 13-pass/1-fail supplement, including the 67 authentication-cost budget refusals and blocked readers. This phase does not repeat the full Node/65536 run, authentication cost or campaigns, and does not relax or replace their outcomes.
 - Source preparation, targeted controls and archive integrity do not activate production, public-WAN acceptance, consensus authority, whole-Node/account/History/Cell rollback protection or whole-chain quantum-security qualification. All such qualifications remain explicitly ungranted.
 - The first composition preparation retained a real original `git diff --cached --check` exit 2: the incoming workflow line 173 contained ten trailing spaces on an otherwise empty line. This continuation removes only those ten spaces and updates only that workflow pin in the already verified corpus union. All three original inline registry-reader bodies remain byte-for-byte identical; the diff gate remains unchanged and new-source qualification is still pending.
+
+
+## 2026-11-06 terminal: witnessed owner and release-root material composition
+
+<!-- chain-pq-20261106-c07-terminal-8a6e -->
+
+The two preceding "validation pending" sections remain historical preparation
+records. The actually executed code is
+`c07e8b9cce4621c5ef6f61256482bfe94e5a622f`, tree
+`35125592c14098385eab8693bbf05df0506d3610`, with ordered parents
+`d6ec50bb4c9f92656c3b95430ca305896012e69c` and
+`5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800`. Its local metadata counterpart
+`532bb6ff6ec8ab1aaf185d6e38fc41506ca32def` has the same tree and parents.
+The 600-pin/519-path union and all three original inline readers are preserved.
+
+The original d6 source batch is still FAILED: twenty observations, sixteen
+successful commands and four failed offline graphs, with 232 passing Python
+tests and no native execution. The complete original 102-file record has been
+read back. Four separate c07 `cargo fetch --locked` commands subsequently
+succeeded as dependency preparation only; no manifest, lock, fixed revision,
+offline command or original result was changed.
+
+On exact c07, all twenty original finite source commands pass. Actual Python
+counts are 104 CI-contract + 43 source-integrity + 38 corpus + 22 claim guard +
+25 material verifier = 232. The six locked/offline graphs contain
+175/69/193/306/191/191 packages. The fresh isolated packaging 26.3 environment,
+hash-pinned installation and original report/flags are retained. This phase
+executes zero Rust native tests and no native Clippy.
+
+The unique c07 native batch is terminal with durable exit 1, no timeout or
+cancellation: 77 command/reader observations comprise 74 succeeded, one failed
+and two blocked. Thirteen TLS library, four ordinary CLI, one feature-off and
+four of five witness CLI controls pass. The actual registry is separate from
+execution. The failing test is
+`witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database`:
+Cargo exit 101, Rust 0 passed / 1 failed, 4.67 seconds. Its first send returns
+receipt.ok at height 0; the second fresh TLS send of the same signed request
+receives connection reset by peer at `pq_tls_witness_cli.rs:71:14`.
+The accepted=2, cross-process reopen/replay and restored old Node-directory
+refusal assertions are not reached. Its single-test reader and required-controls
+aggregate remain blocked. The original two-second fixture lifetime, five-second
+send deadline and 250 ms witness I/O deadline are unchanged. These timings
+provide a hypothesis, not an established cause. The original panic path loses
+the child stdout metrics; no later reconstruction or guessed fix substitutes
+for those unavailable observations.
+
+The unchanged checkpoint/release all-targets component command succeeds.
+Five actual harness summaries are 11/15/15/6/43 passed, each with zero failed
+or ignored. All 43 release names execute successfully; the six new initial-root
+exact executions and original readers also pass but overlap those same 43 names.
+There are no six additional unique release controls. Checkpoint counts remain
+per observed harness, without an inferred unique business-test sum.
+Strict whole-workspace/all-targets/all-features Clippy with `-D warnings`
+succeeds (exit 0; 128.315971997 seconds).
+
+Original Rust 1.95.0, fixed OpenSSL 3.5.9, isolated target, two build jobs,
+disabled incremental compilation, single-threaded tests, original Cargo profile
+settings and 1500-second command ceilings remain intact. Whole-source before
+and after bind 10,842 tracked entries / 1,090,618,849 bytes; additional phase
+checks bind the same identity. Per-command HEAD/status hints do not themselves
+prove all tracked bytes. All 70 native owned groups are empty; the 30 cache and
+source groups are also empty at sealing. The remote original owner and sealer
+rehash twelve retained ELFs totalling 1,356,549,040 bytes. The text package does
+not contain those binary bodies; the readback reviewers do not claim local
+rehashing of the ELF bodies.
+
+The current complete raw package contains 677 original files. Whole-package,
+Node/TLS/provider/Clippy and cache/source/checkpoint/release readbacks preserve
+the actual native failure. V6 reports bind those records, normalized cache/source
+counts, original terminal witnesses and eleven code metadata mappings. The
+original nine mapping rows and complete ca4 report/qualification/source-map
+objects remain historical data. Earlier 790 evidence publication is a separate
+mapping; its unavailable local commit body is not claimed newly verified.
+Recovery methods are explicitly new; preparation drafts without recovered exact
+bytes are listed by observed identity, never fabricated as original files.
+
+The ordinary TLS V2 owner now selects witnessed PNQ2 create/open_existing and
+checks Current before readiness. V1 remains unwitnessed and rejects V2 fields.
+Coverage is only the PNQ2 resource/peer/request tables. Current is not a writer
+lease or proof that the service never rolled back; service recovery still needs
+an independently retained fresh checkpoint. Lost CAS acknowledgement remains
+an uncertain effect. The fixture does not qualify independently deployed
+witness service custody, revocation, disaster recovery or WAN operation.
+
+Immutable initial-root material shares public verification-key mathematics,
+not signature/quorum success, current authorization or mutable owner state.
+Each bootstrap rechecks the full initial root, pin and current trusted
+initialization time. Old/new rotation quorums and independent owner state remain
+required. M15 current reads still do not persist a new time floor on every read;
+final installation/configuration/Cell activation effects still need explicit
+fresh authorization binding.
+
+The f85 full-Node timeout, frozen CI failures and ebd authentication-cost
+failure remain attached to their original sources and limits. No full-Node,
+65536 path, authentication-cost or campaign rerun occurs in this phase.
+The new publication changes only evidence and this sole plan on direct parent
+c07. Its exact containing commit and seven source-only publication checks are
+recorded externally after creation, without claiming new native execution.
+The retained and terminal archives keep their original bytes; the new increment
+is separately indexed at
+[the witness archive index](../../evidence/pq-integration-20261106/witness/publication/archive-index.json).
+
+The [current full report](../../evidence/pq-integration-20261106/README.md),
+[current disposition](../../evidence/pq-integration-20261106/qualification.json)
+and [source map](../../evidence/pq-integration-20261106/source-publication-map.json)
+retain HOLD / NO-GO. The actual native failure, final-use consumers, private
+transport coverage, production profiles, legacy-account migration, independent
+fresh recovery anchors, custody/revocation, long WAN and malicious-cost
+qualification, PQ finality and quantum-work/DAA/fork economics remain open.
+PR #723 remains Draft. No protected-main merge, self-approval, force push,
+production activation or whole-chain PQ acceptance is performed.
