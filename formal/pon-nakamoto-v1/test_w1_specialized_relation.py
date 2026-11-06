@@ -5,6 +5,9 @@ import copy
 import hashlib
 from pathlib import Path
 import struct
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from contract_wire import H, header_decode
@@ -108,6 +111,8 @@ class FullSavedW1Controls(unittest.TestCase):
 
     def test_complete_witness_native_bytes_and_all_cost_dimensions(self):
         _, report = sr.execute(self.header, self.proof, self.artifacts, self.witness)
+        self.assertTrue(report["complete_mathematical_witness_checked"])
+        self.assertFalse(self.report["complete_mathematical_witness_checked"])
         self.assertEqual(report["reduction_rows"], 62464)
         self.assertEqual(report["carry_equations"], 562176)
         self.assertEqual(report["field_multiplications"], 458752)
@@ -122,6 +127,30 @@ class FullSavedW1Controls(unittest.TestCase):
         self.assertEqual(H("block", self.header, self.proof[-32:]).hex(), report["work_id"])
         self.assertFalse(report["cryptographic_backend_implemented"])
         self.assertFalse(report["node_admission_authorized"])
+
+    def test_explicit_null_and_nonobject_witnesses_reject(self):
+        for witness in (None, False, 0, [], "null"):
+            with self.subTest(witness=witness):
+                with self.assertRaisesRegex(ValueError, "WITNESS_SCHEMA"):
+                    sr.execute(self.header, self.proof, self.artifacts, witness)
+
+    def test_cli_check_null_rejects_without_constructing_a_witness(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, data in (("header.bin", self.header), ("proof.bin", self.proof),
+                               ("artifacts.bin", self.artifacts), ("witness.json", b"null\n")):
+                (root / name).write_bytes(data)
+            result = subprocess.run([
+                sys.executable, str(Path(sr.__file__).resolve()), "check",
+                "--header", str(root / "header.bin"),
+                "--proof", str(root / "proof.bin"),
+                "--expected-artifacts", str(root / "artifacts.bin"),
+                "--witness", str(root / "witness.json"),
+            ], capture_output=True, text=True, timeout=15)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("WITNESS_SCHEMA", result.stderr)
+            self.assertEqual(result.stdout, "")
+            self.assertEqual((root / "witness.json").read_bytes(), b"null\n")
 
     def test_early_middle_and_final_prefix_corruption_reject(self):
         for index in (0, 16384, 32767):

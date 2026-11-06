@@ -232,6 +232,68 @@ class SupervisorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
             VerifierOwner(self.executable, "0" * 64)
 
+    def assert_preworker_refusal_settled(self, owner, row):
+        self.assertFalse(row["worker_started"])
+        self.assertEqual(row["worker_settlement"], "not_started")
+        self.assertEqual(row["worker_cpu_ns"], 0)
+        self.assertIsNone(row["proof_context_sha256"])
+        self.assertEqual(owner.stats()["workers_started"], 0)
+        self.assertEqual(owner.stats()["negative_cache_entries"], 0)
+        self.assertEqual(owner.stats()["active_workers"], 0)
+        self.assertEqual(owner.stats()["reserved_unverified_bytes"], 0)
+        self.assertEqual(owner.stats()["reserved_cpu_ns"], 0)
+        self.assertGreater(owner.stats()["settled_owner_thread_cpu_ns"], 0)
+        self.assertEqual(owner.stats()["available_cpu_ns"], owner.limits.campaign_cpu_ns
+                         - owner.stats()["settled_owner_thread_cpu_ns"])
+
+    def test_local_context_lengths_are_operational_without_worker_or_bad_proof_cache(self):
+        owner, path = self.owner(), self.refusal()
+        for local, expected in ((self.header, 318), (self.artifacts, 64)):
+            original = local.read_bytes()
+            for size in (0, expected - 1, expected + 1):
+                with self.subTest(local=local.name, size=size):
+                    local.write_bytes(b"x" * size)
+                    try:
+                        row = self.verify(owner, path)
+                        self.assertEqual(row["status"], "OperationalFailure")
+                        self.assert_preworker_refusal_settled(owner, row)
+                    finally:
+                        local.write_bytes(original)
+
+    def test_stable_oversized_receipt_remains_invalid_before_worker(self):
+        owner = self.owner()
+        path = self.root / "oversized-receipt"
+        with path.open("wb") as stream:
+            stream.truncate(supervisor.MAX_RECEIPT + 1)
+        row = self.verify(owner, path)
+        self.assertEqual(row["status"], "Invalid")
+        self.assert_preworker_refusal_settled(owner, row)
+
+    def test_receipt_growth_crossing_snapshot_bound_is_operational(self):
+        owner, path = self.owner(), self.fixture("")
+        original_read, original_stat = supervisor.os.read, path.stat()
+        changed = [False]
+
+        def grow_receipt(fd, size):
+            current = os.fstat(fd)
+            if not changed[0] and (current.st_dev, current.st_ino) == (
+                    original_stat.st_dev, original_stat.st_ino):
+                # Change the actual source between its first fstat and read.
+                # The small test bound avoids allocating a full-size receipt.
+                with path.open("ab") as stream:
+                    stream.write(bytes(65 - current.st_size))
+                changed[0] = True
+            return original_read(fd, size)
+
+        with mock.patch.object(supervisor, "MAX_RECEIPT", 64), \
+                mock.patch.object(supervisor.os, "read", side_effect=grow_receipt), \
+                mock.patch.object(supervisor, "run_bounded", wraps=supervisor.run_bounded) as process:
+            row = self.verify(owner, path)
+        self.assertTrue(changed[0])
+        process.assert_not_called()
+        self.assertEqual(row["status"], "OperationalFailure")
+        self.assert_preworker_refusal_settled(owner, row)
+
     def test_wire_tag_and_impossible_seal_length_refuse_before_worker(self):
         owner = self.owner()
         for i, contents in enumerate((b"", b"\0" * 12,

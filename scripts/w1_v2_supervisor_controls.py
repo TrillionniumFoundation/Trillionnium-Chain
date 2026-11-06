@@ -67,6 +67,12 @@ def main(argv=None):
         bad_artifacts = bytearray(paths["artifacts"].read_bytes())
         bad_artifacts[0] ^= 1
         (out / "bad-artifacts.bin").write_bytes(bad_artifacts)
+        for name, path in (("header", paths["header"]), ("artifacts", paths["artifacts"])):
+            data = path.read_bytes()
+            (out / ("short-" + name + ".bin")).write_bytes(data[:-1])
+            (out / ("long-" + name + ".bin")).write_bytes(data + b"\0")
+        with (out / "oversized-receipt.bin").open("xb") as stream:
+            stream.truncate(MAX_RECEIPT + 1)
         requests = [
             ("positive_original", paths["receipt"], paths["header"], paths["artifacts"], "VerifiedResearchStatement", False, "public", None),
             ("bad_seal", out / "bad-seal.bin", paths["header"], paths["artifacts"], "Invalid", False, "public", 22),
@@ -75,6 +81,11 @@ def main(argv=None):
             ("different_header", paths["receipt"], out / "bad-header.bin", paths["artifacts"], "Invalid", False, "relay", 21),
             ("different_expected_artifacts", paths["receipt"], paths["header"], out / "bad-artifacts.bin", "Invalid", False, "public", 21),
             ("wrong_wire_tag", out / "bad-wire.bin", paths["header"], paths["artifacts"], "Invalid", False, "public", None),
+            ("short_local_header", paths["receipt"], out / "short-header.bin", paths["artifacts"], "OperationalFailure", False, "public", None),
+            ("long_local_header", paths["receipt"], out / "long-header.bin", paths["artifacts"], "OperationalFailure", False, "history", None),
+            ("short_local_artifacts", paths["receipt"], paths["header"], out / "short-artifacts.bin", "OperationalFailure", False, "recovery", None),
+            ("long_local_artifacts", paths["receipt"], paths["header"], out / "long-artifacts.bin", "OperationalFailure", False, "relay", None),
+            ("stable_oversized_receipt", out / "oversized-receipt.bin", paths["header"], paths["artifacts"], "Invalid", False, "public", None),
             ("expired_original", paths["receipt"], paths["header"], paths["artifacts"], "Deadline", False, "public", None),
             ("good_proof_after_deadline", paths["receipt"], paths["header"], paths["artifacts"], "VerifiedResearchStatement", False, "public", None),
         ]
@@ -86,9 +97,12 @@ def main(argv=None):
         owner = VerifierOwner(args.verifier, args.verifier_sha256, limits)
         for name, receipt, header, expected, status, cache_hit, caller, code in requests:
             request_deadline = time.monotonic() - 1 if name == "expired_original" else deadline
+            before = owner.stats()
             row = owner.verify(receipt, header, expected, deadline=request_deadline, caller_class=caller)
             passed = (row["status"] == status and row["cache_hit"] is cache_hit
                       and row["owner_after"]["active_workers"] == 0
+                      and row["owner_after"]["reserved_unverified_bytes"] == 0
+                      and row["owner_after"]["reserved_cpu_ns"] == 0
                       and not row["owner_after"]["blocked_on_unknown_worker"])
             if code is not None:
                 passed &= row["returncode"] == code and row["worker_reaped"]
@@ -101,6 +115,14 @@ def main(argv=None):
                 passed &= not row["worker_started"]
             if name == "wrong_wire_tag":
                 passed &= row["wire_precheck_rejected"] and not row["worker_started"] and row["returncode"] is None
+            if status == "OperationalFailure" or name == "stable_oversized_receipt":
+                passed &= (row["worker_started"] is False and row["worker_cpu_ns"] == 0
+                           and row["worker_settlement"] == "not_started"
+                           and row["proof_context_sha256"] is None
+                           and row["owner_after"]["workers_started"] == before["workers_started"]
+                           and row["owner_after"]["negative_cache_entries"] == before["negative_cache_entries"])
+            passed &= (row["consensus_validity"] is None and row["admission_authorized"] is False
+                       and row["native_replay_calls"] == 0 and row["new_proofs_generated"] == 0)
             row.update(name=name, passed=bool(passed), expected_status=status)
             write_json(out / (name + ".json"), row)
             rows.append(row)
@@ -118,9 +140,9 @@ def main(argv=None):
         stats = owner.stats() if owner else None
         if owner and stats["active_workers"] == 0:
             owner.close()
-        complete = len(rows) == 9 and all(row["passed"] for row in rows) and error is None
+        complete = len(rows) == 14 and all(row["passed"] for row in rows) and error is None
         write_json(out / "result.json", {"schema": "TRNM-W1-V2-SUPERVISOR-CONTROLS1",
-                   "all_controls_passed": complete, "error": error, "planned_controls": 9,
+                   "all_controls_passed": complete, "error": error, "planned_controls": 14,
                    "completed_controls": len(rows), "passed_controls": sum(row["passed"] for row in rows),
                    "limits": asdict(limits), "owner_after": stats, "work_id": initial_work_id,
                    "verifier_sha256": args.verifier_sha256, "new_proofs_generated": 0,

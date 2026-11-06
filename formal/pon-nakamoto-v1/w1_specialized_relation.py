@@ -31,6 +31,8 @@ CARRY_BOUND = 1 << 17
 # six signed scalar limbs, four quotient*q terms, and two bounded carries.
 COLUMN_RESIDUAL_BOUND = 64 * 4 * 255**2 + 6 * 255 + 4 * 255**2 + 257 * CARRY_BOUND
 MAX_WITNESS_BYTES = 16 * 1024 * 1024
+# Construction is selected only by omission, never by a supplied JSON value.
+_BUILD_WITNESS = object()
 GROUP_COUNTS = {
     "noise_e": 4096, "noise_f": 4096, "a_prime": 4096, "b_prime": 4096,
     "prefix": 32768, "a_fl": 512, "c1": 4096, "er_b_prime": 512,
@@ -196,11 +198,11 @@ def accepted_words(chunk, remaining):
 
 
 class Execution:
-    def __init__(self, witness=None):
-        self.build = witness is None
-        self.witness = witness if witness is not None else {
+    def __init__(self, witness=_BUILD_WITNESS):
+        self.build = witness is _BUILD_WITNESS
+        self.witness = {
             "version": VERSION, "arithmetic": {}, "hashes": [], "statement": {},
-        }
+        } if self.build else witness
         require(type(self.witness) is dict and set(self.witness) == {
             "version", "arithmetic", "hashes", "statement"
         }, "WITNESS_SCHEMA")
@@ -267,11 +269,12 @@ class Execution:
         return self.witness
 
 
-def execute(header, proof, expected_artifacts, witness=None):
+def execute(header, proof, expected_artifacts, witness=_BUILD_WITNESS):
     """Check the complete mathematical relation against EXTERNAL expected bytes.
 
     Caller must independently obtain header and A/B commitments. Parent-state,
     target derivation, task authority and state transition remain Node duties.
+    Omit witness only to build; every supplied value, including None, is checked.
     """
     require(type(header) is bytes and len(header) == HEADER_BYTES, "HEADER_LENGTH")
     h = header_decode(header)
@@ -373,7 +376,7 @@ def main():
     header = bounded_regular(args.header, HEADER_BYTES)
     proof = bounded_regular(args.proof, PROOF_BYTES)
     artifacts = bounded_regular(args.expected_artifacts, 64)
-    witness = None
+    witness = _BUILD_WITNESS
     if args.mode == "check":
         witness = json.loads(bounded_regular(args.witness, MAX_WITNESS_BYTES), object_pairs_hook=unique)
     wall, cpu = time.monotonic_ns(), time.process_time_ns()

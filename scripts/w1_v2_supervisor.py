@@ -130,7 +130,7 @@ class Limits:
 
 
 class InputLength(ValueError):
-    """A format-length refusal, not an I/O or resource failure."""
+    """An on-open size refusal; only receipt inputs imply statement Invalid."""
 
 
 class DeadlineReached(ValueError):
@@ -180,8 +180,10 @@ def snapshot(path, destination, bound, exact, deadline):
                 if not data:
                     break
                 total += len(data)
-                if total > bound:
-                    raise InputLength("input exceeds frozen length bound")
+                # The initial same-fd size was within bound. Crossing it
+                # now means the local source changed during this snapshot;
+                # it is not a stable statement that can be judged Invalid.
+                require(total <= bound, "input changed beyond length bound during snapshot")
                 out.write(data)
                 digest.update(data)
         after = os.fstat(fd)
@@ -332,7 +334,15 @@ class VerifierOwner:
                         ("artifacts", expected_artifacts, ARTIFACT_BYTES, ARTIFACT_BYTES),
                         ("receipt", receipt, MAX_RECEIPT, None)):
                     paths[label] = str(Path(directory) / (label + ".bin"))
-                    assets[label] = snapshot(path, paths[label], bound, exact, effective_deadline)
+                    try:
+                        assets[label] = snapshot(path, paths[label], bound, exact, effective_deadline)
+                    except InputLength as error:
+                        if label == "receipt":
+                            raise
+                        # Header and expected commitments are caller-supplied
+                        # checked local context. A truncated/misconfigured
+                        # context file does not reject the remote statement.
+                        raise ValueError("local " + label + " input: " + str(error)) from error
                 row["assets"] = assets
                 digest = hashlib.sha256(CACHE_DOMAIN + PROFILE.encode() + bytes.fromhex(self.verifier_sha256))
                 for label in ("header", "artifacts", "receipt"):

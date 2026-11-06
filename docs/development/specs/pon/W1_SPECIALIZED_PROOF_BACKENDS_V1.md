@@ -36,6 +36,12 @@ implementation flags false. Its internal CPU/wall clock surrounds `execute`;
 JSON decoding/serialization, file I/O and process startup are outside that
 sample and need separate whole-process accounting.
 
+Witness construction is selected only by the explicit `build` command or an
+omitted Python witness argument. The `check` command rejects every non-object
+JSON witness, including `null`, before arithmetic/SHA witness generation. A
+malformed verification input cannot silently select the builder. The successful
+build report still states that a supplied mathematical witness was not checked.
+
 The [statement-v2 ABI](../../../../evidence/pon-w1-statement-v2-20261105/RELATION_ABI.md)
 already exposes the exact header, trace, ticket, original work ID, raw A/B
 artifact commitments and all product words. Expected header and artifact
@@ -330,10 +336,23 @@ external bindings have been ported or benchmarked here.
 The [author's publication page](https://ji-peng.com/) links the official
 [artifact DOI 10.5281/zenodo.20337923](https://doi.org/10.5281/zenodo.20337923).
 The [USENIX artifact results](https://secartifacts.github.io/usenixsec2026/results)
-list Artifacts Available; this review did not retrieve its source archive,
-verify its digest, run its benchmarks or establish functional/reproduced badges.
-Record that gap before claiming a code-level comparison. In particular, scaling
-the SHA batch number to 2,049 trace blocks is not a measured proving forecast.
+list Artifacts Available. This continuation retrieved the official metadata and
+317,725-byte `TensorZKP.zip`, checked the advertised MD5, and recorded SHA-256
+`fafd8ff682d77fb800d5d4be0022eec7b44dd92da59d6ea3b073b9b54bca8622`.
+The archive has 78 source files excluding macOS packaging metadata. Its README
+and CMake require Hopper `sm_90a` (H100/H800), CUDA 12.6 or later; WGMMA kernels
+are not a ready-made implementation for the existing 4060 hardware.
+
+The actual `benchmark/bench_proof.cu` permutation path uses zeroed placeholder
+Fiat-Shamir state and omits that transcript; its own comments acknowledge that
+the resulting values are incorrect in this timing path. The reported metric
+combines gate time divided by 1,024, permutation time divided by 64, and a
+Brakedown commitment. Some allocation/free work is outside the timers.
+Consequently running this benchmark alone would not demonstrate production of
+a complete independently verified proof. This source observation concerns the
+archived benchmark, not a claim that all paper constructions or kernels are
+incorrect. No TensorZKP code or GPU benchmark was executed here. Scaling the
+paper's SHA batch number to 2,049 trace blocks remains an unmeasured forecast.
 
 ### WHIR
 
@@ -347,10 +366,25 @@ The [author-linked implementation README](https://github.com/worldfnd/whir/blob/
 was inspected at main commit `83bc41744c994aa182c547d43c73ce3d1f76d04d`.
 Its README blob was `ef91b05da5b048b51399f1c2045813d974e85b26`.
 It labels the implementation an academic prototype, not production-ready.
-Documented defaults include security 100, `ConjectureList`, `Goldilocks2` and
-Blake3. Other documented choices include `UniqueDecoding`, `ProvableList`,
-`Goldilocks3`, `Field192`, `Field256` and SHA3. W1's q is not one of those
-documented field choices. This review did not compile or audit the implementation.
+Its README documents older defaults (security 100, `ConjectureList`,
+`Goldilocks2`), but the actual `src/bin/main.rs` at that same fixed commit now
+defaults to security 128, `Goldilocks3`, `--decoding-regime Johnson`, Blake3 and
+20 bits of internal PoW. The executable, its parser and parameters must be
+checked rather than relying on README defaults. W1's q is not an implemented
+field choice in that CLI.
+
+The fixed source was compiled with Rust 1.95.0 and `--locked`, then one small
+PCS positive was actually generated and verified: 256 coefficients, one
+evaluation, one verifier repetition, `Goldilocks3`, `Unique` decoding, requested
+security 128, PoW 0, no default features and no zero-knowledge flag. All 108 source
+files were compared with the original source archive after execution; none
+changed. The dev build used dependency opt-level zero, one build job and one
+Rayon thread. Its single reported commit/prove/verify observations were
+302.2 microseconds / 6.7 milliseconds / 9.4 milliseconds, with 92.0 KiB of proof.
+These are functional smoke observations, not a performance benchmark or the
+paper's different degree/security experiment. No negative controls ran for
+this upstream example. The printed 128.25-bit value is the upstream parameter
+analysis, not a newly established theorem, a QROM result or complete W1 security.
 
 A comparison must freeze the actual soundness regime, field, rate/folding,
 queries, grinding, hash, parser limits and source version. The default benchmark

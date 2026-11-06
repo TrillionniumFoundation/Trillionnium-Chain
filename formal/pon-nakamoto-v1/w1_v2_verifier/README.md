@@ -31,6 +31,14 @@ before input verification and cannot select a statement-invalid exit code.
 Neither error-text matching alone nor any nonzero exit is sufficient for the
 supervisor to cache a rejection.
 
+The supervisor distinguishes remote receipt syntax from its independently
+supplied local context. A wrong-length header or expected-artifact file is an
+operational failure before worker launch, not an invalid remote proof. A file
+that grows beyond the admitted bound while being copied is likewise unstable
+local input. A receipt that is already oversized at the initial same-descriptor
+size check remains a format refusal. These pre-worker outcomes return unused
+reservations, retain actual owner CPU, and add no rejection-cache entry.
+
 ## Research supervisor
 
 [`scripts/w1_v2_supervisor.py`](../../../scripts/w1_v2_supervisor.py) wraps the
@@ -128,9 +136,12 @@ python3 scripts/w1_v2_supervisor_controls.py \
   --out /new/control-directory
 ```
 
-That campaign first requires the complete real proof to verify. It then checks
+That fourteen-case campaign first requires the complete real proof to verify. It then checks
 late-seal, public-context and wire rejection; exact-byte negative reuse; a good
 proof with the same WorkID after a bad proof; and Deadline followed by a new
-successful request. All original failed observations remain separate. Passing
+successful request. Four additional cases retain the distinction between
+wrong-length local header/artifact files and invalid proofs, and one checks a
+stable oversized receipt. The original nine controls remain mandatory; all
+four caller labels still use the same owner. All original failed observations remain separate. Passing
 this finite corpus is not a global invalid-cost upper bound, a four-second
 confirmation result, a W1 cost-security result or production activation.
