@@ -292,12 +292,13 @@ def v2_success(cohort, planned, row, operators, *, control_context=None):
         replicas = operator_ids(result["complete_replica_operators"], operators, "REPLICA_OPERATORS")
         administrators = {operators[name]["administrator"] for name in replicas}
         domains = {operators[name]["failure_domain"] for name in replicas}
-        return (same_cell and result["effect_sha256"] == expected["effect_sha256"]
+        original_criteria_met = (same_cell and result["effect_sha256"] == expected["effect_sha256"]
                 and len(replicas) >= criteria["minimum_complete_replicas"]
                 and len(administrators) >= criteria["minimum_administrators"]
-                and len(domains) >= criteria["minimum_failure_domains"]
-                and (control_context is None or control_context.repair_allowed(
-                    replicas, criteria["minimum_administrators"], criteria["minimum_failure_domains"])))
+                and len(domains) >= criteria["minimum_failure_domains"])
+        if control_context is None:
+            return original_criteria_met
+        return control_context.repair_result(criteria, row, replicas, original_criteria_met)
     fields = V2_RECOVERY_FIELDS[criteria["mode"]]
     exact_keys(result, fields | {"mode", "redispatched_effects", "new_payments"}, "RECOVERY_RESULT")
     for name in fields:
@@ -505,6 +506,10 @@ class WanControlContext:
         return (self.complete(replicas) and len(self.groups(replicas)) >= minimum_groups
                 and len(domains) >= minimum_failure_domains)
 
+    def repair_result(self, criteria, row, replicas, original_criteria_met):
+        return (original_criteria_met and self.repair_allowed(
+            replicas, criteria["minimum_administrators"], criteria["minimum_failure_domains"]))
+
     def report(self):
         resolved = {operator: self.controls.group_for(subject)
                     for operator, subject in sorted(self.subjects.items())}
@@ -519,28 +524,152 @@ class WanControlContext:
                     external_independence_verified=False)
 
 
-def evaluate_v3(manifest, observations):
+class WanJointControlContext(WanControlContext):
+    """V4 matching of declared groups/domains; no physical independence proof."""
+
+    def __init__(self, manifest):
+        super().__init__(manifest)
+        self.repair_joint_results = []
+
+    def joint_replica_report(self, replicas):
+        # Each operator contributes at most one edge. Duplicate edges cannot
+        # increase a matching; the sorted representative makes its explanation
+        # independent of caller row order. Unknown or stale control adds no edge.
+        replicas = sorted(operator_ids(list(replicas), self.operators, "REPLICA_OPERATORS"))
+        edges, unknown = {}, []
+        domains = set()
+        for operator in replicas:
+            domain = self.operators[operator]["failure_domain"]
+            domains.add(domain)
+            group = self.controls.group_for(self.subjects[operator])
+            if group is None:
+                unknown.append(operator)
+            else:
+                edges.setdefault((group, domain), operator)
+        adjacency = collections.defaultdict(list)
+        for group, domain in sorted(edges):
+            adjacency[group].append(domain)
+
+        # Iterative augmenting paths, bounded by the manifest's 64 operators.
+        # Counting marginal groups/domains or greedily accepting the first edge
+        # is insufficient: a previous match may need to move to another domain.
+        domain_matches, group_matches = {}, {}
+        for start in sorted(adjacency):
+            pending = collections.deque([start])
+            seen_groups, parents = {start}, {}
+            available = None
+            while pending and available is None:
+                group = pending.popleft()
+                for domain in adjacency[group]:
+                    if domain in parents:
+                        continue
+                    parents[domain] = group
+                    occupied = domain_matches.get(domain)
+                    if occupied is None:
+                        available = domain
+                        break
+                    if occupied not in seen_groups:
+                        seen_groups.add(occupied)
+                        pending.append(occupied)
+            while available is not None:
+                group = parents[available]
+                previous = group_matches.get(group)
+                domain_matches[available] = group
+                group_matches[group] = available
+                available = previous
+
+        matched = sorted(edges[group, domain] for domain, group in domain_matches.items())
+        return dict(joint_control_failure_domain_count=len(matched),
+                    matched_operator_subset=matched,
+                    declared_control_group_count=len(adjacency),
+                    declared_failure_domain_count=len(domains),
+                    unknown_control_operators=unknown)
+
+    def repair_control_report(self, replicas, minimum_groups, minimum_failure_domains):
+        report = self.joint_replica_report(replicas)
+        required = min(minimum_groups, minimum_failure_domains)
+        marginal = (not report["unknown_control_operators"]
+                    and report["declared_control_group_count"] >= minimum_groups
+                    and report["declared_failure_domain_count"] >= minimum_failure_domains)
+        joint = report["joint_control_failure_domain_count"] >= required
+        failures = []
+        if report["unknown_control_operators"]:
+            failures.append("REPLICA_CONTROL_UNRESOLVED")
+        if report["declared_control_group_count"] < minimum_groups:
+            failures.append("REPLICA_CONTROL_GROUP_FLOOR_NOT_MET")
+        if report["declared_failure_domain_count"] < minimum_failure_domains:
+            failures.append("REPLICA_FAILURE_DOMAIN_FLOOR_NOT_MET")
+        if not joint:
+            failures.append("JOINT_CONTROL_FAILURE_DOMAIN_FLOOR_NOT_MET")
+        return dict(report, required_joint_count=required,
+                    marginal_control_and_failure_floors_met=marginal,
+                    joint_control_failure_domain_floor_met=joint,
+                    declared_repair_control_criteria_met=marginal and joint,
+                    failure_codes=failures)
+
+    def repair_allowed(self, replicas, minimum_groups, minimum_failure_domains):
+        return self.repair_control_report(replicas, minimum_groups, minimum_failure_domains)[
+            "declared_repair_control_criteria_met"]
+
+    def repair_result(self, criteria, row, replicas, original_criteria_met):
+        report = self.repair_control_report(
+            replicas, criteria["minimum_administrators"], criteria["minimum_failure_domains"])
+        if not original_criteria_met:
+            report["failure_codes"].append("ORIGINAL_REPAIR_CRITERIA_NOT_MET")
+        success = original_criteria_met and report["declared_repair_control_criteria_met"]
+        # Only claimed repaired results have a copy inventory. Failed/missing
+        # requests retain the original cohort counts, costs and denominator.
+        self.repair_joint_results.append(dict(report, observation_id=row["id"],
+            operator=row["operator"], cohort=row["cohort"], window=row["window"],
+            original_typed_replica_criteria_met=original_criteria_met,
+            typed_result_success=success))
+        return success
+
+    def report(self):
+        report = super().report()
+        joint = self.joint_replica_report(self.operators)
+        complete = not joint["unknown_control_operators"]
+        count = joint["joint_control_failure_domain_count"]
+        failures = []
+        if not complete:
+            failures.append("OPERATOR_CONTROL_UNRESOLVED")
+        if count < 3:
+            failures.append("JOINT_OPERATOR_CONTROL_FAILURE_DOMAIN_FLOOR_NOT_MET")
+        report.update(operator_joint_control_failure_domain_count=count,
+            operator_joint_required_count=3,
+            operator_joint_matched_subset=joint["matched_operator_subset"],
+            declared_operator_joint_floor_met=complete and count >= 3,
+            operator_joint_failure_codes=failures,
+            repair_joint_results=sorted(self.repair_joint_results, key=lambda row: row["observation_id"]),
+            physical_replica_independence_verified=False,
+            joint_matching_scope="Maximum matching of declared control groups and failure-domain labels; operator subsets are arithmetic explanations, not physical replicas or cryptographic witnesses")
+        return report
+
+
+def evaluate_controlled(manifest, observations, version):
+    if version not in (3, 4):
+        raise ValueError("MANIFEST_SCHEMA")
     references = {"chain_source_sha256", "hepta_source_sha256", "chain_binary_sha256",
                   "hepta_binary_sha256", "threat_model_sha256", "load_fault_plan_sha256"}
     added = {"profile_sha256", "network_sha256", "genesis_sha256", "parameters_sha256",
              "control_registry", "control_registry_sha256", "operator_subjects"}
     exact_keys(manifest, references | added | {"schema", "preregistered_unix_ms",
         "start_unix_ms", "end_unix_ms", "operators", "cohorts", "windows", "schedule"},
-        "V3_MANIFEST_FIELDS")
-    if manifest["schema"] != "trnm-wan-preregistration-v3":
+        f"V{version}_MANIFEST_FIELDS")
+    if manifest["schema"] != f"trnm-wan-preregistration-v{version}":
         raise ValueError("MANIFEST_SCHEMA")
     start = v2_integer(manifest["start_unix_ms"], "START", 1)
     v2_integer(manifest["end_unix_ms"], "END", start + V2_DURATION_MS)
-    controls = WanControlContext(manifest)
+    controls = (WanControlContext if version == 3 else WanJointControlContext)(manifest)
     # Original typed results, deadlines, windows, costs and denominators are
-    # evaluated by their existing owner. Only the explicit V3 selector adds
-    # common-control constraints to provider and replica success.
+    # evaluated by their existing owner. V3 adds common-control constraints;
+    # explicit V4 additionally requires simultaneous group/domain matching.
     v2 = {key: value for key, value in manifest.items() if key not in added}
     v2["schema"] = "trnm-wan-preregistration-v2"
     report = evaluate_v2(v2, observations, control_context=controls)
     control_report = controls.report()
     report.update(control_report)
-    report["schema"] = "trnm-wan-evidence-accounting-v3"
+    report["schema"] = f"trnm-wan-evidence-accounting-v{version}"
     report["control_registry_sha256"] = manifest["control_registry_sha256"]
     report["all_typed_window_arithmetic_slos_met"] = report["all_cohort_arithmetic_slos_met"]
     control_floor = report["declared_operator_control_floor_met"]
@@ -548,14 +677,33 @@ def evaluate_v3(manifest, observations):
         group["typed_window_arithmetic_slo_met"] = group["arithmetic_slo_met"]
         group["declared_operator_control_floor_met"] = control_floor
         group["arithmetic_slo_met"] = group["arithmetic_slo_met"] and control_floor
+        if version == 4:
+            joint_floor = report["declared_operator_joint_floor_met"]
+            group["declared_operator_joint_floor_met"] = joint_floor
+            group["arithmetic_slo_met"] = group["arithmetic_slo_met"] and joint_floor
     report["all_cohort_arithmetic_slos_met"] = all(group["arithmetic_slo_met"] for group in report["cohorts"])
     report["scope"] = ("Typed/windowed arithmetic with candidate common-control closure only; "
         "registry/evidence digests do not authenticate ownership, receipts, hosting, physical replicas, "
         "preregistration, duration, source/binary identities or independence")
+    if version == 4:
+        report["scope"] = ("Typed/windowed arithmetic with candidate common-control closure and "
+            "joint control-group/failure-domain matching only; matched operator subsets do not "
+            "authenticate ownership, receipts, hosting, physical replicas, preregistration, duration, "
+            "source/binary identities or independence")
     return report
 
 
+def evaluate_v3(manifest, observations):
+    return evaluate_controlled(manifest, observations, 3)
+
+
+def evaluate_v4(manifest, observations):
+    return evaluate_controlled(manifest, observations, 4)
+
+
 def evaluate(manifest, observations):
+    if manifest.get("schema") == "trnm-wan-preregistration-v4":
+        return evaluate_v4(manifest, observations)
     if manifest.get("schema") == "trnm-wan-preregistration-v3":
         return evaluate_v3(manifest, observations)
     if manifest.get("schema") == "trnm-wan-preregistration-v2":

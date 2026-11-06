@@ -252,6 +252,7 @@ case "${1:?required job}" in
   external-evidence-contract)
     # Control declarations and arithmetic never authenticate independent operators.
     python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_decentralization_evidence.py -v
     python3 scripts/ci/test_pon_wan_evidence.py -v
     python3 scripts/ci/test_pon_wan_control_domains.py -v
     python3 scripts/ci/prepare_evidence_sources.py

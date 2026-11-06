@@ -293,3 +293,55 @@ V3 success is declared-data arithmetic only. It keeps the external-attestation,
 raw-receipt, physical-duration, source/binary, preregistration, independent,
 PN5, public-network and production-activation acceptances false. The current
 **NOT RUN / HOLD_NO_GO** external WAN boundary above remains unchanged.
+
+## Explicit joint control and failure-domain accounting v4
+
+`trnm-wan-preregistration-v4` selects a new interpretation and produces
+`trnm-wan-evidence-accounting-v4`. It retains all V3 input fields and every
+original cohort, schedule, typed identity, sample, time, tail and resource
+requirement. V1/V2/V3 retain their schemas and historical meanings. Selecting
+V4 cannot relabel an earlier campaign as having preregistered the new rule.
+
+Separate counts do not establish simultaneous independence. Consider five
+complete-replica declarations:
+
+| Operator | Declared control group | Declared failure domain |
+| --- | --- | --- |
+| o0 | A | X |
+| o1 | A | Y |
+| o2 | A | Z |
+| o3 | B | X |
+| o4 | C | X |
+
+There are three groups and three failure-domain labels, but at most two
+operators can be selected with both labels different. V3's marginal arithmetic
+can pass this case. V4 constructs a bipartite graph from resolved control groups
+to failure-domain labels, with one edge per declared operator. It finds an exact
+maximum matching using deterministic iterative augmenting paths. Duplicate
+edges cannot add credit; unknown, stale or revoked control contributes no edge.
+The graph retains the existing maximum of 64 operators.
+
+The V4 global operator roster requires a matching of at least three, in addition
+to the original complete-control, administrator-label and failure-domain floors.
+For every claimed `repaired` record, V4 separately computes the matching on that
+record's `complete_replica_operators`. Its size must be at least
+`min(minimum_administrators, minimum_failure_domains)`. Both original marginal
+floors and `minimum_complete_replicas` still apply; with 3/3 floors the same
+three replicas must differ in both dimensions. A suitable global roster cannot
+replace the copies actually declared in that repair record.
+
+The report supplies `operator_joint_control_failure_domain_count`,
+`operator_joint_matched_subset`, `declared_operator_joint_floor_met` and explicit
+failure codes. `repair_joint_results` retains each claimed repair's observation
+identity, maximum joint count, required count, declared matching subset, unknown
+control and `typed_result_success`. The latter is only the typed result check;
+late reporting, missed deadlines, resources and every cohort/global requirement
+still govern the overall result. Failed and missing requests retain their
+original denominators and costs.
+
+A matching subset explains the declaration arithmetic. It is not a physical
+replica readback, independent-hosting observation, cryptographic witness or proof
+that all common infrastructure dependencies were disclosed.
+`physical_replica_independence_verified` and every original external/PN5/public/
+production acceptance flag remain false. Real publisher loss, repair, renewal,
+funding/payment and 72-hour independent WAN evidence remain required.

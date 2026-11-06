@@ -297,6 +297,65 @@ has no authenticated operators, known approving/blocking minimum or measured
 funding/hardware denominator. The source facts and execution evidence retain
 their distinct identities.
 
+## Read-only referenced-material bytes
+
+[`scripts/pon_decentralization_evidence.py`](../../../../scripts/pon_decentralization_evidence.py)
+adds a separate `trnm-decentralization-evidence-materialization-v1` report. It
+consumes the unchanged V1 `registry`/`audit` object and requires an independently
+fixed SHA-256 of its exact raw input bytes. This is different from the canonical
+registry/audit object digests. A caller must obtain the expected input digest
+from the selected retained input; computing a digest from an untrusted substitute
+and passing it back does not authenticate that substitute.
+
+The supplied artifact directory contains ordinary files named by each registry
+entry's lowercase SHA-256. The reader actually opens and hashes those bytes,
+retains the evidence reference's uses, and distinguishes missing material,
+wrong bytes, revoked/unknown declarations and dates that do not cover the audit
+window. It leaves unresolved references and every original accounting finding
+visible. Unused declared material does not supply a missing deployment roster.
+An empty registry returns `materialization_status: empty`,
+`all_declared_material_bytes_matched: false` and `DEPLOYMENT_EVIDENCE_MISSING`.
+
+Reads use no-follow directory/file descriptors, reject symlinks (including
+ancestors), hard-linked regular files, special files and traversal, and recheck
+files and directory identity before completing. The immutable-input limit is
+4 MiB, each artifact is at most 16 MiB, and at most 64 MiB of artifact bytes
+may be read. The report/reference-use limits are explicit in the new module.
+These are byte/accounting limits, not a bound on filesystem I/O latency.
+The command writes only a new output file outside the artifact directory.
+
+```sh
+python3 scripts/pon_decentralization_evidence.py \
+  --input retained-audit.json \
+  --expected-input-sha256 "$TRNM_EXPECTED_AUDIT_INPUT_SHA256" \
+  --artifact-dir retained-evidence-by-sha256 \
+  --output materialization-report.json
+python3 scripts/ci/test_pon_decentralization_evidence.py -v
+```
+
+Exit 0 means a report was produced, including reports with missing or corrupted
+material. `bytes_complete` establishes only that the declared local bytes were
+read and matched. It does not verify the contents' context, signatures,
+appointment, exclusivity of custody, observations, independence or deployment.
+Those acceptance flags remain false and status remains `HOLD`. Invalid input,
+unsafe/racing paths, exceeded limits and an existing output file return exit 2.
+The original source-only input still has no deployed evidence to materialize.
+
+The original accounting reader now explicitly reports
+`PRODUCER_CONTROL_UNRESOLVED` for a nonempty producer inventory with unresolved
+control. A `unit: unknown` remains a funding/hardware finding even when the
+supplied denominator is zero. A known-unit complete observation of zero activity
+remains valid zero data and does not manufacture a percentage. These findings
+correct omissions without changing work facets, original rosters or denominators.
+
+Each `ControlMap` holds its own read-only registry/window snapshot. Current
+reference/component/subject eligibility is precomputed for that snapshot;
+queries do not rescan every component reference for each vote. Author exclusion
+uses the same subject, declared-control and known-key relations. Stale/revoked
+relations remain available for exclusion. No state is reused across different
+registries, contexts or windows, and these cached declarations never become
+current runtime authorization.
+
 ## Required counterexamples
 
 The executable controls must cover same-controller nodes/IPs/keys/witnesses,

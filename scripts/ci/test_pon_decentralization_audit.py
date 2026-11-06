@@ -233,6 +233,94 @@ class ControlDomains(unittest.TestCase):
         self.assertFalse(control.related("subject-0", "subject-1"))
         self.assertEqual(control.sha256, original_pin)
 
+    def test_snapshot_views_cannot_relabel_cached_control_or_reference_eligibility(self):
+        registry = registry_fixture()
+        registry["controllers"][1]["parents"] = ["controller-0"]
+        evidence = registry["evidence"][0]
+        evidence["status"] = "revoked"
+        control = mapped(registry)
+        subjects = [row["id"] for row in registry["subjects"]]
+        before = control.quorum(subjects, 2)
+        self.assertIsNone(control.group_for("subject-1"))
+        self.assertTrue(control.related("subject-0", "subject-1"))
+        self.assertFalse(control.reference(evidence["sha256"]))
+        with self.assertRaises(TypeError):
+            control.evidence[evidence["sha256"]]["status"] = "current"
+        with self.assertRaises(TypeError):
+            control.subjects["subject-0"]["controller"] = "controller-2"
+        with self.assertRaises(TypeError):
+            control.subjects["injected"] = registry["subjects"][0]
+        with self.assertRaises(TypeError):
+            control.controllers["controller-1"]["parents"] = []
+        with self.assertRaises(AttributeError):
+            control.controllers["controller-1"]["parents"].append("controller-2")
+        with self.assertRaises(TypeError):
+            control.parent["controller-1"] = "controller-2"
+        with self.assertRaises(AttributeError):
+            control.component_references["controller-0"].clear()
+        with self.assertRaises(TypeError):
+            control.key_groups[registry["subjects"][0]["key_sha256"]] = "controller-2"
+        for attribute in ("subjects", "controllers", "evidence", "parent", "key_groups",
+                          "component_references", "sha256", "start", "end", "registry_current"):
+            with self.subTest(attribute=attribute), self.assertRaises(AttributeError):
+                setattr(control, attribute, None)
+        self.assertEqual(control.quorum(subjects, 2), before)
+        self.assertFalse(control.reference(evidence["sha256"]))
+        self.assertTrue(control.related("subject-0", "subject-1"))
+
+    def test_repeated_queries_do_not_rescan_component_evidence(self):
+        class CountedControlMap(D.ControlMap):
+            reference_calls = 0
+
+            def reference(self, *args, **kwargs):
+                self.reference_calls += 1
+                return super().reference(*args, **kwargs)
+
+        for count in (64, 256):
+            registry = registry_fixture(count)
+            for row in registry["controllers"][1:]:
+                row["parents"] = ["controller-0"]
+            control = CountedControlMap(registry, expected_sha256=D.canonical_sha256(registry),
+                expected_context=CONTEXT, start_unix_ms=START, end_unix_ms=END)
+            initial_calls = control.reference_calls
+            subjects = [row["id"] for row in registry["subjects"]]
+            with self.subTest(count=count):
+                # Bound actual verification operations, not a machine-dependent
+                # timing threshold. The one component has count distinct refs.
+                self.assertLessEqual(initial_calls, 4 * count)
+                for _ in range(3):
+                    self.assertEqual({control.group_for(subject) for subject in subjects}, {"controller-0"})
+                    self.assertEqual(control.summarize(subjects)["declared_group_count"], 1)
+                    quorum = control.quorum(subjects, count // 2, authors=subjects[:count // 2])
+                    self.assertEqual(quorum["author_related_subjects"], sorted(subjects))
+                    self.assertEqual(quorum["minimum_approving_groups"], 1)
+                    self.assertEqual(quorum["total_key_slots"], count)
+                self.assertEqual(control.reference_calls, initial_calls)
+
+    def test_snapshot_eligibility_is_not_shared_across_registry_context_or_window(self):
+        registry = registry_fixture()
+        registry["evidence"][0]["valid_until_unix_ms"] = END - 1
+        earlier = mapped(registry, end=END - 1)
+        later = mapped(registry)
+        self.assertEqual(earlier.group_for("subject-0"), "controller-0")
+        self.assertIsNone(later.group_for("subject-0"))
+        self.assertEqual(earlier.sha256, later.sha256)
+        self.assertNotEqual(earlier.end, later.end)
+        changed = copy.deepcopy(registry)
+        changed["evidence"][0]["valid_until_unix_ms"] = END
+        changed["evidence"][1]["status"] = "revoked"
+        different_registry = mapped(changed)
+        self.assertEqual(different_registry.group_for("subject-0"), "controller-0")
+        self.assertIsNone(different_registry.group_for("subject-1"))
+        changed["context"]["profile_sha256"] = "f" * 64
+        changed["evidence"][2]["status"] = "revoked"
+        different_context = mapped(changed, expected_context=changed["context"])
+        self.assertIsNone(different_context.group_for("subject-2"))
+        self.assertEqual(different_registry.group_for("subject-2"), "controller-2")
+        self.assertEqual(later.group_for("subject-1"), "controller-1")
+        self.assertEqual(earlier.group_for("subject-0"), "controller-0")
+        self.assertEqual(len({earlier.sha256, different_registry.sha256, different_context.sha256}), 3)
+
     def test_external_context_and_registry_digest_pins_reject_substitution(self):
         registry = registry_fixture()
         original_digest = D.canonical_sha256(registry)
@@ -320,6 +408,34 @@ class ControlDomains(unittest.TestCase):
 
 
 class QuorumCoalitions(unittest.TestCase):
+    def test_batched_author_exclusion_matches_pairwise_stale_and_unknown_relations(self):
+        registry = registry_fixture(8)
+        registry["controllers"][1]["parents"] = ["controller-0"]
+        registry["aliases"] = [dict(left="controller-2", right="controller-3",
+                                    evidence_sha256=registry["evidence"][2]["sha256"])]
+        registry["evidence"][2]["status"] = "revoked"
+        registry["subjects"][4].update(controller=None,
+                                        key_sha256=registry["subjects"][0]["key_sha256"])
+        registry["subjects"][5].update(controller=None,
+                                        key_sha256=registry["subjects"][7]["key_sha256"])
+        registry["subjects"][6].update(controller=None, key_sha256=None)
+        registry["subjects"][7].update(controller=None)
+        seal_subjects(registry)
+        control = mapped(registry)
+        roster = ["subject-0", "subject-1", "subject-2", "subject-3", "subject-6", "subject-7"]
+        possible_authors = ["subject-1", "subject-2", "subject-4", "subject-5", "subject-6"]
+        for count in range(len(possible_authors) + 1):
+            for authors in itertools.combinations(possible_authors, count):
+                expected = sorted(subject for subject in roster
+                                  if any(control.related(subject, author) for author in authors))
+                with self.subTest(authors=authors):
+                    quorum = control.quorum(roster, 3, authors=authors)
+                    self.assertEqual(quorum["author_related_subjects"], expected)
+                    self.assertEqual(quorum["total_key_slots"], 6)
+                    self.assertEqual(quorum["key_threshold"], 3)
+                    self.assertEqual(quorum["author_control_unresolved"],
+                                     any(control.group_for(author) is None for author in authors))
+
     def test_three_keys_can_require_one_or_two_controllers(self):
         for weights, expected in (([1, 1, 1], 2), ([2, 1], 1), ([3], 1)):
             registry = weighted_registry(weights)
@@ -497,6 +613,30 @@ class FiveAxisReports(unittest.TestCase):
         self.assertEqual(report["axes"]["work_production"]["facets"]["work_rule"]["declared_status"], "open")
         self.assertIs(report["permissionless_utility_accepted"], False)
 
+    def test_unresolved_nonempty_producer_inventory_remains_a_distinct_finding(self):
+        self.assertNotIn("PRODUCER_CONTROL_UNRESOLVED", finding_codes(audited(audit_fixture())))
+        for mode in ("unknown-owner", "missing-reference", "revoked-reference", "expired-reference"):
+            value = audit_fixture()
+            subject = next(row for row in value["registry"]["subjects"] if row["id"] == "provider-a")
+            if mode == "unknown-owner":
+                subject["controller"] = None
+            elif mode == "missing-reference":
+                subject["evidence_sha256"] = None
+            else:
+                subject["evidence_sha256"] = add_evidence(value["registry"], mode,
+                    status="revoked" if mode == "revoked-reference" else "current",
+                    end=END - 1 if mode == "expired-reference" else END)
+            seal_fixture(value)
+            report = audited(value)
+            work = report["axes"]["work_production"]
+            with self.subTest(mode=mode):
+                self.assertEqual(work["producers"]["unresolved_subjects"], ["provider-a"])
+                self.assertTrue(work["accounting_inventory_current"])
+                self.assertIn("PRODUCER_CONTROL_UNRESOLVED", finding_codes(report))
+                self.assertNotIn("PRODUCER_INVENTORY_EMPTY", finding_codes(report))
+                self.assertTrue(all(row["declared_status"] == "open" for row in work["facets"].values()))
+                self.assertFalse(report["permissionless_utility_accepted"])
+
     def test_data_roles_under_common_controller_collapse_independently(self):
         value = audit_fixture()
         bind_alias(value, "operator-a", "operator-b")
@@ -667,6 +807,49 @@ class FiveAxisReports(unittest.TestCase):
                 self.assertIsNone(report["unknown_owner_share_ppm"])
                 self.assertIsNone(report["known_groups_sufficient_for_majority"])
                 self.assertEqual(report["listed_units"], 900)
+
+    def test_unknown_unit_with_current_reference_keeps_positive_denominator_unresolved(self):
+        for kind in ("funding", "hardware"):
+            value = audit_fixture()
+            resource = value["audit"]["resources"][kind]
+            total = sum(row["units"] for row in resource["allocations"])
+            resource.update(unit="unknown", inventory_complete=True, total_units=total, unknown_units=0)
+            report = audited(value)
+            measured = report["axes"]["resources"][kind]
+            with self.subTest(kind=kind):
+                self.assertTrue(measured["accounting_inventory_current"])
+                self.assertTrue(measured["unit_reference_current"])
+                self.assertEqual(measured["total_units"], total)
+                self.assertEqual(measured["unknown_owner_units"], 0)
+                self.assertIsNone(measured["declared_group_share_ppm"])
+                self.assertIn(kind.upper() + "_DENOMINATOR_OR_CONTROL_UNRESOLVED", finding_codes(report))
+
+    def test_unknown_unit_with_current_reference_keeps_zero_denominator_unresolved(self):
+        value = audit_fixture()
+        for resource in value["audit"]["resources"].values():
+            resource.update(unit="unknown", inventory_complete=True, allocations=[], total_units=0, unknown_units=0)
+        report = audited(value)
+        for kind in ("funding", "hardware"):
+            measured = report["axes"]["resources"][kind]
+            with self.subTest(kind=kind):
+                self.assertEqual(measured["total_units"], 0)
+                self.assertTrue(measured["unit_reference_current"])
+                self.assertIsNone(measured["unknown_owner_share_ppm"])
+                self.assertIn(kind.upper() + "_DENOMINATOR_OR_CONTROL_UNRESOLVED", finding_codes(report))
+
+    def test_complete_zero_activity_in_a_defined_unit_is_not_missing_data(self):
+        value = audit_fixture()
+        for resource in value["audit"]["resources"].values():
+            resource.update(inventory_complete=True, allocations=[], total_units=0, unknown_units=0)
+        report = audited(value)
+        for kind in ("funding", "hardware"):
+            measured = report["axes"]["resources"][kind]
+            with self.subTest(kind=kind):
+                self.assertEqual(measured["total_units"], 0)
+                self.assertTrue(measured["unit_reference_current"])
+                self.assertEqual(measured["declared_group_units"], {})
+                self.assertIsNone(measured["declared_group_share_ppm"])
+                self.assertNotIn(kind.upper() + "_DENOMINATOR_OR_CONTROL_UNRESOLVED", finding_codes(report))
 
     def test_same_controller_resource_assets_aggregate_but_hardware_keeps_own_unit(self):
         value = audit_fixture()

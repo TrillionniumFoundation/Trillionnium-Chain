@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from types import MappingProxyType
 
 MAX_BYTES = 4 * 1024 * 1024
 MAX_ROWS = 4096
@@ -140,6 +141,8 @@ class ControlMap:
 
     `related` deliberately uses stale/revoked relations too: expiry must not turn
     a known alias of a forbidden source into a newly independent source.
+    All query state belongs to this immutable registry/window snapshot. Evidence
+    eligibility is computed once per reference/component, not once per vote.
     """
     def __init__(self, registry, *, expected_sha256, expected_context,
                  start_unix_ms, end_unix_ms):
@@ -154,30 +157,40 @@ class ControlMap:
         require(registry["context"] == expected_context, "CONTEXT_BINDING")
         interval(start_unix_ms, end_unix_ms)
         interval(registry["valid_from_unix_ms"], registry["valid_until_unix_ms"])
-        self.registry_current = (registry["valid_from_unix_ms"] <= start_unix_ms
-                                 and end_unix_ms <= registry["valid_until_unix_ms"])
-        self.sha256, self.start, self.end = expected_sha256, start_unix_ms, end_unix_ms
-        self.evidence = indexed(registry["evidence"], {"sha256", "valid_from_unix_ms",
-                                "valid_until_unix_ms", "status"}, "EVIDENCE", "sha256")
-        for row in self.evidence.values():
+        self._registry_current = (registry["valid_from_unix_ms"] <= start_unix_ms
+                                  and end_unix_ms <= registry["valid_until_unix_ms"])
+        self._sha256, self._start, self._end = expected_sha256, start_unix_ms, end_unix_ms
+        evidence = indexed(registry["evidence"], {"sha256", "valid_from_unix_ms",
+                           "valid_until_unix_ms", "status"}, "EVIDENCE", "sha256")
+        for row in evidence.values():
             interval(row["valid_from_unix_ms"], row["valid_until_unix_ms"])
             require(row["status"] in ("current", "revoked", "unknown"), "EVIDENCE_STATUS")
-        self.controllers = indexed(registry["controllers"], {"id", "parents", "evidence_sha256"}, "CONTROLLER")
-        self.subjects = indexed(registry["subjects"], {"id", "controller", "key_sha256", "evidence_sha256"}, "SUBJECT")
+        self._evidence = MappingProxyType({key: MappingProxyType(row) for key, row in evidence.items()})
+        self._reference_current = MappingProxyType({key: (
+            self._registry_current and row["status"] == "current"
+            and row["valid_from_unix_ms"] <= self._start and self._end <= row["valid_until_unix_ms"])
+            for key, row in evidence.items()})
+        controllers = indexed(registry["controllers"], {"id", "parents", "evidence_sha256"}, "CONTROLLER")
+        subjects = indexed(registry["subjects"], {"id", "controller", "key_sha256", "evidence_sha256"}, "SUBJECT")
         digest(registry["subjects_sha256"], "SUBJECTS_DIGEST")
         require(canonical_sha256(registry["subjects"]) == registry["subjects_sha256"], "SUBJECTS_BINDING")
-        self.parent = {key: key for key in self.controllers}
+        parent = {key: key for key in controllers}
+        def find(identity):
+            while parent[identity] != identity:
+                parent[identity] = parent[parent[identity]]
+                identity = parent[identity]
+            return identity
         edges, references = [], collections.defaultdict(set)
-        for identity, row in self.controllers.items():
+        for identity, row in controllers.items():
             self.reference(row["evidence_sha256"])
             references[identity].add(row["evidence_sha256"])
-            parents = self.identifiers(row["parents"], self.controllers, "PARENT")
+            parents = self.identifiers(row["parents"], controllers, "PARENT")
             require(identity not in parents, "SELF_PARENT")
             edges.extend((identity, parent) for parent in parents)
         aliases = set()
         for row in sequence(registry["aliases"], "ALIASES"):
             exact(row, {"left", "right", "evidence_sha256"}, "ALIAS_FIELDS")
-            left, right = self.identifiers([row["left"], row["right"]], self.controllers, "ALIAS")
+            left, right = self.identifiers([row["left"], row["right"]], controllers, "ALIAS")
             pair = tuple(sorted((left, right)))
             require(pair not in aliases, "DUPLICATE_ALIAS")
             aliases.add(pair)
@@ -186,13 +199,13 @@ class ControlMap:
             references[right].add(row["evidence_sha256"])
             edges.append(pair)
         key_owners = collections.defaultdict(list)
-        for row in self.subjects.values():
+        for row in subjects.values():
             owner = row["controller"]
             if owner is None:
                 self.reference(row["evidence_sha256"], nullable=True)
             else:
                 name(owner)
-                require(owner in self.controllers, "UNKNOWN_CONTROLLER")
+                require(owner in controllers, "UNKNOWN_CONTROLLER")
                 self.reference(row["evidence_sha256"], nullable=True)
             if row["key_sha256"] is not None:
                 digest(row["key_sha256"], "KEY_FINGERPRINT")
@@ -201,12 +214,68 @@ class ControlMap:
         for owners in key_owners.values():
             edges.extend((owners[0], owner) for owner in owners[1:])
         for left, right in edges:
-            a, b = self._find(left), self._find(right)
-            self.parent[max(a, b)] = min(a, b)
-        self.component_references = collections.defaultdict(set)
+            a, b = find(left), find(right)
+            parent[max(a, b)] = min(a, b)
+        component_references = collections.defaultdict(set)
         for identity, refs in references.items():
-            self.component_references[self._find(identity)].update(refs)
-        self.key_groups = {key: self._find(owners[0]) for key, owners in key_owners.items()}
+            component_references[find(identity)].update(refs)
+        self._controllers = MappingProxyType({key: MappingProxyType({**row, "parents": tuple(row["parents"])})
+                                               for key, row in controllers.items()})
+        self._subjects = MappingProxyType({key: MappingProxyType(row) for key, row in subjects.items()})
+        self._parent = MappingProxyType({key: find(key) for key in controllers})
+        self._component_references = MappingProxyType({key: frozenset(refs)
+                                                       for key, refs in component_references.items()})
+        self._key_groups = MappingProxyType({key: find(owners[0]) for key, owners in key_owners.items()})
+        self._declared_groups = MappingProxyType({subject: (
+            self._key_groups.get(row["key_sha256"]) if row["controller"] is None else find(row["controller"]))
+            for subject, row in subjects.items()})
+        component_current = {group: all(self._reference_current[ref] for ref in refs)
+                             for group, refs in component_references.items()}
+        self._current_groups = MappingProxyType({subject: (
+            group if group is not None and subjects[subject]["controller"] is not None
+            and self._reference_current.get(subjects[subject]["evidence_sha256"], False)
+            and component_current[group] else None)
+            for subject, group in self._declared_groups.items()})
+
+    @property
+    def sha256(self):
+        return self._sha256
+
+    @property
+    def start(self):
+        return self._start
+
+    @property
+    def end(self):
+        return self._end
+
+    @property
+    def registry_current(self):
+        return self._registry_current
+
+    @property
+    def evidence(self):
+        return self._evidence
+
+    @property
+    def controllers(self):
+        return self._controllers
+
+    @property
+    def subjects(self):
+        return self._subjects
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @property
+    def component_references(self):
+        return self._component_references
+
+    @property
+    def key_groups(self):
+        return self._key_groups
 
     @staticmethod
     def identifiers(values, known, code="SUBJECT"):
@@ -221,40 +290,27 @@ class ControlMap:
         if value is None and nullable:
             return False
         digest(value, "EVIDENCE_REFERENCE")
-        require(value in self.evidence, "UNKNOWN_EVIDENCE_REFERENCE")
-        row = self.evidence[value]
-        return (self.registry_current and row["status"] == "current"
-                and row["valid_from_unix_ms"] <= self.start and self.end <= row["valid_until_unix_ms"])
-
-    def _find(self, identity):
-        while self.parent[identity] != identity:
-            self.parent[identity] = self.parent[self.parent[identity]]
-            identity = self.parent[identity]
-        return identity
+        require(value in self._reference_current, "UNKNOWN_EVIDENCE_REFERENCE")
+        return self._reference_current[value]
 
     def declared_group_for(self, subject):
-        self.identifiers([subject], self.subjects)
-        owner = self.subjects[subject]["controller"]
-        return self.key_groups.get(self.subjects[subject]["key_sha256"]) if owner is None else self._find(owner)
+        self.identifiers([subject], self._subjects)
+        return self._declared_groups[subject]
 
     def group_for(self, subject):
-        group = self.declared_group_for(subject)
-        if (group is None or self.subjects[subject]["controller"] is None
-                or not self.reference(self.subjects[subject]["evidence_sha256"], nullable=True)
-                or not all(self.reference(ref) for ref in self.component_references[group])):
-            return None
-        return group
+        self.identifiers([subject], self._subjects)
+        return self._current_groups[subject]
 
     def related(self, first, second):
         a, b = self.declared_group_for(first), self.declared_group_for(second)
-        first_key, second_key = self.subjects[first]["key_sha256"], self.subjects[second]["key_sha256"]
+        first_key, second_key = self._subjects[first]["key_sha256"], self._subjects[second]["key_sha256"]
         return first == second or (a is not None and a == b) or (first_key is not None and first_key == second_key)
 
     def summarize(self, subjects):
-        subjects = self.identifiers(subjects, self.subjects)
+        subjects = self.identifiers(subjects, self._subjects)
         groups, unresolved = collections.defaultdict(list), []
         for subject in subjects:
-            group = self.group_for(subject)
+            group = self._current_groups[subject]
             if group is None:
                 unresolved.append(subject)
             else:
@@ -264,26 +320,31 @@ class ControlMap:
                 "unresolved_subjects": sorted(unresolved), "independent_administration_verified": False}
 
     def quorum(self, subjects, threshold, authors=(), *, total_key_slots=None, authors_complete=True):
-        subjects = self.identifiers(subjects, self.subjects)
+        subjects = self.identifiers(subjects, self._subjects)
         require(type(authors) in (list, tuple), "AUTHOR_ARRAY")
-        authors = self.identifiers(list(authors), self.subjects, "AUTHOR")
+        authors = self.identifiers(list(authors), self._subjects, "AUTHOR")
         total = len(subjects) if total_key_slots is None else integer(total_key_slots, "KEY_SLOTS")
         require(len(subjects) <= total <= MAX_ROWS, "KEY_SLOTS")
         integer(threshold, "KEY_THRESHOLD", 1)
         require(threshold <= total, "KEY_THRESHOLD")
         require(type(authors_complete) is bool, "AUTHOR_COMPLETENESS")
-        keys = [self.subjects[subject]["key_sha256"] for subject in subjects]
+        keys = [self._subjects[subject]["key_sha256"] for subject in subjects]
+        groups = [self._current_groups[subject] for subject in subjects]
         fingerprints = [key for key in keys if key is not None]
         require(len(set(fingerprints)) == len(fingerprints), "DUPLICATE_KEY_VOTE")
-        weights = collections.Counter(self.group_for(subject) for subject, key in zip(subjects, keys)
-                                      if key is not None and self.group_for(subject) is not None)
+        weights = collections.Counter(group for key, group in zip(keys, groups)
+                                      if key is not None and group is not None)
         unresolved = total - sum(weights.values())
         approve = minimum_coalition(weights.values(), threshold)
         block = minimum_coalition(weights.values(), total - threshold + 1)
-        excluded = [subject for subject in subjects if any(self.related(subject, author) for author in authors)]
-        author_unknown = not authors_complete or any(self.group_for(author) is None for author in authors)
-        eligible = [subject for subject in subjects if subject not in excluded
-                    and self.subjects[subject]["key_sha256"] is not None and self.group_for(subject) is not None]
+        author_subjects = set(authors)
+        author_groups = {self._declared_groups[author] for author in authors} - {None}
+        author_keys = {self._subjects[author]["key_sha256"] for author in authors} - {None}
+        excluded = {subject for subject, key in zip(subjects, keys) if (
+            subject in author_subjects or self._declared_groups[subject] in author_groups or key in author_keys)}
+        author_unknown = not authors_complete or any(self._current_groups[author] is None for author in authors)
+        eligible = [subject for subject, key, group in zip(subjects, keys, groups)
+                    if subject not in excluded and key is not None and group is not None]
         return {"total_key_slots": total, "key_threshold": threshold,
                 "identified_unique_keys": len(fingerprints), "unidentified_key_slots": total - len(fingerprints),
                 "unresolved_control_key_slots": unresolved, "declared_group_key_weights": dict(sorted(weights.items())),
@@ -293,7 +354,7 @@ class ControlMap:
                 "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
                 "author_related_subjects": sorted(excluded), "author_control_unresolved": author_unknown,
                 "author_separated_candidate_key_count": 0 if author_unknown else len(eligible),
-                "author_separated_candidate_group_count": 0 if author_unknown else len({self.group_for(s) for s in eligible}),
+                "author_separated_candidate_group_count": 0 if author_unknown else len({self._current_groups[s] for s in eligible}),
                 "author_separated_candidate_key_threshold_met": not author_unknown and len(eligible) >= threshold,
                 "independent_administration_verified": False}
 
@@ -383,10 +444,12 @@ def evaluate(audit, registry):
         facet_report[key] = {"declared_status": row["status"], "reference_current": current, "openness_verified": False}
         if row["status"] != "open" or not current:
             finding("work_production", key.upper() + "_NOT_ESTABLISHED_OPEN")
-    finish("work_production", {**inventory(work, controls), "facets": facet_report,
-                               "producers": controls.summarize(work["subjects"])})
+    producers = controls.summarize(work["subjects"])
+    finish("work_production", {**inventory(work, controls), "facets": facet_report, "producers": producers})
     if not work["subjects"]:
         finding("work_production", "PRODUCER_INVENTORY_EMPTY")
+    if producers["unresolved_subjects"]:
+        finding("work_production", "PRODUCER_CONTROL_UNRESOLVED")
     data = audit["data_distribution"]
     exact(data, INVENTORY | {"providers", "discovery", "replicas"}, "DATA_FIELDS")
     summaries = {key: controls.summarize(data[key]) for key in ("providers", "discovery", "replicas")}
@@ -479,7 +542,8 @@ def evaluate(audit, registry):
     resources = {key: resource_report(value, controls) for key, value in audit["resources"].items()}
     for key, report in resources.items():
         if (not report["accounting_inventory_current"] or report["total_units"] is None
-                or report["unknown_owner_units"] != 0 or not report["unit_reference_current"]):
+                or report["unknown_owner_units"] != 0 or not report["unit_reference_current"]
+                or report["unit"] == "unknown"):
             finding("resources", key.upper() + "_DENOMINATOR_OR_CONTROL_UNRESOLVED")
     axes["resources"] = resources
     missing_context = sorted(CONTEXT_FIELDS - set(audit["context"]))

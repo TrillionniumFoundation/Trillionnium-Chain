@@ -135,6 +135,7 @@ EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_eval
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
 DECENTRALIZATION_EVIDENCE_CONTROLS = (
     "    python3 scripts/ci/test_pon_decentralization_audit.py -v\n"
+    "    python3 scripts/ci/test_pon_decentralization_evidence.py -v\n"
     "    python3 scripts/ci/test_pon_wan_evidence.py -v\n"
     "    python3 scripts/ci/test_pon_wan_control_domains.py -v\n"
 )

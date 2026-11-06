@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Five-axis evidence continuation and joint WAN domains, 2026-11-06 America/New_York:**
+Continue the existing #742 candidate from
+`73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa` under the existing M17 evidence owner.
+Keep unresolved producer control and unknown resource units in the actionable
+findings. Freeze each control map's source/context/window and compute its
+usable control groups once; stale relations remain available for forbidden-origin
+exclusion. Add a separate bounded, read-only materialization report for actual
+referenced bytes, with an externally pinned input digest and create-only output.
+Matching file hashes does not verify signatures, appointment, ownership or
+independent administration. Explicit WAN V4 adds a simultaneous control-group
+and failure-domain matching requirement; V1/V2/V3 retain their historical
+interpretations, original schedules, failures, budgets and denominators.
+The [five-axis contract](../protocol/pon-nakamoto-v1/details/DECENTRALIZATION_AUDIT_V1.md)
+and [WAN accounting contract](../protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md)
+define these scoped additions. Empty deployed custody and resource inventories
+remain missing evidence. No production acceptance, new trust root, service
+activation or independent 72-hour campaign is inferred.
+
 **Five-dimensional decentralization audit, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate with the
 [declared-control evidence contract](../protocol/pon-nakamoto-v1/details/DECENTRALIZATION_AUDIT_V1.md).
