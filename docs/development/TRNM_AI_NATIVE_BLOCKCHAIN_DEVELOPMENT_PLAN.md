@@ -7248,3 +7248,333 @@ campaign; and the rejection collector's 30-second identity, 900-second build,
 campaign minimum of three administrators/failure domains and 72 hours is
 unchanged. No source-control, local component, model-quality, economic,
 public-service or activation claim is promoted by this entry.
+
+### 2026-11-06 joint evidence: H4 desktop pass, C4 hosted failures and archive directory HOLD
+
+**Disposition: all eight joint gates remain HOLD.** This entry records bounded
+component execution and independent readback. It does not activate a protocol,
+authorize a fresh learning trial, or transfer a result between source revisions.
+Earlier failures and plan history remain retained. The immutable
+[checkpoint 4 evidence package](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/7c97a2f390f6ae7ef4b449e5f2ed6a81b755e0aa/evidence/joint-components-20261105/README.md)
+contains the original receipts, source inventories, cost observations and scope
+reviews. The complete continuation is preserved at
+[the immutable final evidence checkpoint](https://github.com/TrillionniumFoundation/hepta-private-ci/blob/3b556e4aefa7a7b898e536dee4f70abeaf68a1fe/evidence/joint-components-20261105/README.md).
+The evidence repository is public; its historical name does not imply private visibility.
+
+#### Exact sources and original native outcomes
+
+| Candidate | Commit | Tree | Observed disposition |
+|---|---|---|---|
+| Chain C4 | `8df4b21d893906570d48f5beafabb3b31e0aefbc` | `6f5aaa2af0432e27e24b6bd2ad18013ab4423d14` | Complete source preparation, original local checks and separately scoped cost components passed. Public-service and joint qualification remain open. |
+| Hepta H1 | `9f785cb201ba12ab0ae0f0d341c0f7912cc65efc` | `24804b21d0306b617e12fa3f5b9454a12ed4ad41` | Original pipeline failed at two effect-owner controls; 65 of 67 executed selected cases passed. No overall pass. |
+| Hepta H2 | `620cb63ae9b58904483005bcb2c4e1507df99539` | `f2cebe6d99deca596c170922b8e60d66648d7393` | 70 selected cases passed before the process-recovery case reached its original 60-second limit. The whole pipeline failed. |
+| Hepta H3 | `6db78eca53a5acdda0d96873d3f4cd65863426f0` | `e91f5994017fc5d2cfe58d405a20ee6ad9376772` | Original pipeline FAILED on independent live-process attribution. Reached test commands passed; later full-suite/fix/format gates were not run. |
+| Hepta H4 | `6db78eca53a5acdda0d96873d3f4cd65863426f0` | `e91f5994017fc5d2cfe58d405a20ee6ad9376772` | Same source; separately frozen capture package. Actual complete desktop sequence SUCCEEDED, exit 0, at 23:05:10.435 UTC on 2026-11-05. This is a bounded component pass. |
+
+C4 was completely materialized and checked: 10,357 tracked files,
+985,270,534 bytes, no missing objects or hidden index flags, and matching
+before/after source and Cargo configuration. Its original applicability command
+completed in 67.939380245 seconds within 300 seconds. The 92 report controls,
+100 CI controls, three selected Rust controls, strict Clippy and formatting
+checks passed. C2 and C3 applicability failures at the unchanged 300-second
+limit remain failures. The content-keyed parser cache changes did not enlarge
+that deadline or change the checking rules.
+
+H1's two owner-control failures and H2's actual process-test timeout remain in
+their own receipts. H2's failed case was
+`pq_effect_survives_owned_agentd_kill_after_provider_fsync_without_resend`:
+60.007 seconds at the test level, command exit 100 and outer exit 1. It must not
+be relabelled an outer 5,400-second timeout. Later gates were not executed.
+For H3, the complete original small-file readback reconciles 74 selected,
+six compatibility, ten provider and 50 FinalUse passing case receipts. The
+FinalUse command had a valid pre-exec FD/outcome bijection, but the independent
+live observer could not bind one case to its primary PID. Its old capture
+format lacked the parent and argv evidence needed for the later H4 rule.
+The H3 pipeline therefore remains FAILED. Full 161-case execution, the ignored
+case list, fix and format were not run in H3. H4 evidence never backfills H3.
+
+H4 retained the same 11,840-file, 183,410,043-byte source tree, original
+13-step order, 74 selected names, minimum 22 selected cases, retry count zero,
+one test thread and original 60-second case limits. All 12 external files
+and five Git configurations were fixed and checked before and after.
+The 5,400-second outer limit was unchanged. Its actual coordinator took
+1,236.849169854 seconds; the durable outer job took 1,239.828 seconds.
+
+The actual H4 results include the 135- and 32-control Python runs, 13 utility
+controls, 74 selected Rust executions, six compatibility executions, ten
+provider executions, 50 FinalUse executions, the full 161-case suite, the
+original ignored-case listing, fix and format. There are 301 Rust executions
+but 276 distinct target/name pairs, not 301 independent scenarios. The full
+suite passed in 232.532794272 seconds within 600 seconds; fix passed in
+467.287264887 seconds within 1,200 seconds, and format in 4.090538387 seconds
+within 300 seconds. Every reached raw log, including empty logs, is preserved.
+
+The executable/outcome review found 301 unique pre-exec FD records and an exact
+case/outcome bijection. Live evidence comprises 293 direct primary-process
+observations plus one strictly validated FinalUse helper, for 294 bindings.
+That helper has the exact case and argv, two stable parent/child observations,
+an unbroken seven-node ancestor chain and stable held-FD image identity.
+It receives no extra test outcome. Remaining primary polling misses stay
+explicit misses; the full suite itself has 157 live observations for 161 cases.
+The unchanged bytecode cache was actually compared before/after; neither this
+check nor retained ELF bytes proves a complete import or runtime-library closure.
+
+The original effect-PQ product gate passed two different controls: one ordinary
+process crash/reconciliation scenario and the held-image negative helper
+`binary::held_daemon_image_reuse_refuses_wrong_changed_or_missing_files`.
+The ordinary scenario records one provider POST, one physical application, two lookups, one nonce,
+and the same operation ID, payload, ACK and terminal result across generation
+1 to generation 5. The first daemon image was fully copied and hashed; the
+second incarnation reused the explicitly identified held file object.
+The supervisor entered Draining and fenced before an owned SIGKILL. This is
+controlled local process recovery, not an unannounced host power loss, whole-store
+restore or independent-frontier-custody result.
+
+The native windows were serialized and each completed window required its
+exact unit, owned cgroup and process identities to be clear before reuse.
+H3's read-only release observation at 22:10:23 UTC found the exact unit and
+cgroup absent and both original root processes absent. No process was killed
+by that observation. A removed systemd unit's default `Result=success` never
+changes the authoritative FAILED native result.
+
+Actual executable evidence is retained without rebuilding. H1 has four unique
+retained images and seven original alias paths; its three individually missed
+captures remain missed. H2 has eight complete images and a 314,572,800-byte
+interrupted second-process copy. The latter is represented losslessly only
+after actual byte equality with the included first-daemon image prefix was
+verified. It is not a complete second-daemon image or completed execution
+binding. Remote archive completion, independent full-byte readback and executable/case
+attribution remain separate requirements. The data-only archive publication is the parentless commit
+`860dc2d8045f18808b9c5516f86edaef6e830734`, tree
+`ba8da0b1dad8ba8777c0be85bbdc3ae8d1c0cb26`. Independent readback verified all
+166 actual Git payloads and reconstructed their 894,008,077 original RPC bytes.
+The payloads contain four metadata files and 162 original archive parts:
+32 for H1, 62 for H2 and 68 for H3. The decoded parts total 670,306,272 bytes;
+the 893,971,896 payload bytes and RPC transport bytes are separate quantities.
+This orphan publication carries evidence, not a candidate source revision or
+new CI qualification.
+
+The single original unified consumer exited 0 at 00:59:04.738052 UTC on
+2026-11-06, after 238.563833430 seconds. It checked the 39 declared H1/H2/H3
+archive members, and the unchanged H4 dependent consumer checked the exact
+parent and child packages and all 11 logical image views. These successful
+byte checks remain recorded. They do not establish final archive acceptance:
+a subsequent independent strict physical-directory review exited 1 because the
+actual output contained undeclared files. A narrower read-only check separately
+verified the 16 declared H3 members and the H4 child metadata and references,
+while retaining that strict failure.
+
+Read-only examination identified five additional files totaling
+1,562,327,640 bytes. Comparison through held file descriptors, with stable
+before/after identities, found two complete byte-for-byte copies of declared
+images and three exact prefixes of declared images or the H3 archive. Their
+creator and cause remain unknown. Matching content, names and timestamps do not
+establish who created them or make them trusted archive members. All five files
+and the original failed review remain preserved in place; none was deleted, moved or substituted to obtain a clean result.
+
+The overall archive disposition is therefore
+**`HOLD_UNKNOWN_OUTPUT_PROVENANCE`**, despite the original consumer's successful
+exit and the matching declared contents. Exact output provenance remains an
+unresolved requirement. The old H1/H2/H3 binary-reader PAUSED states are
+unchanged, and no consumer or native run was repeated to remove this failure.
+H1/H2/H3 native failures, H1's missed captures and H2's incomplete second-process
+image retain their original limits. No matching bytes or reconstructed prefix
+fills missing process evidence, transfers native credit between runs, or closes
+any of the eight joint gates.
+
+
+H4's own archive job completed in 45.375 seconds within its separate 900-second
+archival limit. Its 100,964-byte child archive and original part were each read
+back independently, and all eight real metadata members were checked.
+The child explicitly references the exact H3 parent archive for 11 identical
+retained ELF images; it embeds no new ELF and is not standalone. Its actual
+H4 source reads hashed every selected file twice with stable metadata, preserving
+597 observations and 32 original aliases. Reuse of the same retained bytes does
+not transfer any native execution or missing process-capture credit between runs.
+
+#### W1 finite strategy observations and remaining service boundary
+
+The C4 four-kernel rejection component produced 96 proof flows and 1,152 timed
+verifier calls. Its clocks are monotonic wall time. The main legal-v3 campaign
+completed all 30 original shards and readers, plus nine kernel and six example
+controls. Its runner took 1,512.311208808 seconds. The four producers form the
+declared eager/lazy by transposed/FullLimb factorial; its four verifier labels
+contain three distinct kernels because production and explicit FullLimb use
+the same implementation. Horizons 1/8/64 reuse correlated search prefixes and
+are not independent samples or additive chain work.
+
+The separate 13-arm actual-reuse component, the FullLimb from-zero false-trace
+component and the two-target synthetic 15-arm census also completed their
+original requested executions and readers. The census includes Sparse and
+preserves every unsupported cell explicitly: 616 completed and 464 unsupported
+of 1,080 requested cells per target. It retains 64 attempts, eight samples and
+reuse 16; it is not the complete material-owner campaign or a model-adoption
+result. Its order is not fully balanced. These experiments broaden the known
+legal-strategy comparison; they do not establish a global cheapest algorithm,
+hardware-independent work lower bound or worst-case invalid-input cost.
+
+Independent raw accounting found a concrete from-zero cost asymmetry. The
+constructor uses public A/B, a zero C/initial-trace prefix and fresh claimed
+trace/ticket search; it requires no valid winner or previously computed AB
+product. Across nine classes, 72 prefix setups, 288 searches and all 573
+attempted nonces, its recorded total thread CPU was 20.182415 milliseconds.
+Production FullLimb rejection of those candidates used 427.969566 milliseconds:
+21.205072 times the recorded constructor total, with per-class ratios
+19.726812–23.367739. Charging one complete shared-material generation, another
+1.680241 milliseconds, to the denominator gives
+`427.969566 / (20.182415 + 1.680241) = 19.575369` times. This additional material
+charge is explicit; prefix setup and all searches are already inside the
+constructor total and must not be added a second time.
+
+The 19.575369 ratio is a finite observation on the recorded x64 source and
+binary. It is not a lower bound on attacker cost or a measured network-service
+amplification factor. The original timing excludes later buffer destruction,
+JSONL output, networking and concurrent receiver/state admission. Trial
+retention also charges avoidable constructor work. Costs from the different
+targets, reuse lifetimes, strategy orderings and clock domains must remain
+separate. No sampler or reader pass closes the W1 or public-service gate.
+
+The original public gate was not run on the desktop. Its actual environment
+had neither hosted CI identity nor the required fixed
+`/sys/fs/cgroup/trnmponpublic.slice`; the required resource files were absent.
+No hosted metadata was fabricated and no global sudo or systemd configuration
+was changed. The original quarter-CPU limit, 2 GiB memory, zero swap,
+256 PIDs, 16 hostile clients, seven honest submissions, depth six and four-second
+service contract remain unchanged. In these signed-confirmation tests, each
+client call is bounded by the earlier of its start plus two seconds and the
+original four-second traffic-window end. The server call retains its separate
+30-second duration parameter. The original 4,105-block history test also remains
+unchanged.
+The original public runner retains its 900-second build, 60-second format
+check and five TESTS, each with a 90-second bound. The separate four-kernel
+collector's 180-second native bound is a different component and must not be
+reported as the public-runner bound. Local cost observations cannot replace
+the public service and history gates.
+
+At the later actual hosted observation, C4's original GitHub Actions jobs had
+run. The earlier queued-only record and desktop missing-host-context record
+must not be presented as the latest C4 execution state. Four actual downloaded
+artifacts are bound to their provider SHA-256 digests and the exact C4 head/tree;
+every ZIP member was read and hashed. Selected original reports, logs,
+source/resource receipts and retained executables are preserved losslessly in
+the immutable evidence checkpoint. The selected-member tar excludes
+SQLite/packet/key bodies, and its inventory records those exclusions. The
+independent W1 review separately retains its complete original W1 ZIP, including
+the bodies omitted from that selected-member tar; the exclusion is not a claim
+that those bodies appear nowhere in the evidence checkpoint.
+
+The fresh-service job ran under the actual fixed parent with CPU `25000 100000`,
+memory 2 GiB, zero swap/burst, PIDs256 and the original 16 hostile workers / four
+seconds. The original native test exited 0, but its finite business target was
+false and the original reader rejected `CONFIRMATION_TARGET`. The separate fresh
+challenge diagnostic exited 101. Both pressure phases reached
+`PUBLIC_REQUEST_DEADLINE` during the independent client's history replay, with
+zero in-window business confirmations. This is an executed service failure,
+not an unexecuted prerequisite or an accepted invariant-only result.
+
+The priority job's original five tests each exited 0 without timeout, and its
+format check passed. Its overall original reader nevertheless failed
+`CONFIRMATION_TARGET`: the no-attack baseline confirmed one transaction in
+2.288198676 seconds, but the 16-worker pressure phase confirmed zero within
+four seconds. Seven signed submit ACKs were present in that pressure phase;
+only three of four history replay attempts completed in-window. ACKs and native
+test completion do not satisfy the confirmation gate.
+
+The original history test exited 101 after 3,085.27 seconds of reported libtest
+elapsed time, retaining `IO: Connection refused (os error 111)`. This is not a
+recorded 1,800-second outer timeout. Its 4,105 packet files do not establish
+successful paid full sync, reopen or corrupt-index refusal. Separately, all
+three original multiprocess campaign runs exited 101 after 112.469952244,
+112.235325948 and 112.162514069 seconds, each within its original 600-second
+outer bound. The original three modes, 0/24/24 attacker processes, 21 business
+blocks and 30-second phases were unchanged. All nine reported phases failed
+their finite criteria, including the attack-free baseline phases. These runs
+retain their own public quarter-CPU/2-GiB receiver/verifier placement and
+external-actor controller domain; they are not the separate four-second test.
+
+This work did not loosen, disable, cancel or rerun any CI gate to obtain these results.
+The original public liveness gate remains HOLD because the original hosted
+acceptance failed, as well as because finite local costs do not establish a
+global cheapest-work bound. Same-host hosted jobs are not independent WAN
+operators or a long-duration release run.
+
+
+#### Automated model CI is not cross-run learning authorization
+
+Two existing Hepta PR workflows have different input contracts. At H2, both
+actual model/training stages were skipped; that historical outcome cannot be
+assigned to H3. `hepta-neural-study-v1.yml` still writes a v1 native input without
+the two mandatory runtime-snapshot fields. The ordinary and positive entries
+both deserialize the required fields before creating a study, so this precise
+workflow currently refuses before training. If its producer is repaired later,
+its fresh output directory creates a new training ledger and final-holdout
+store with a fresh seed. It does not load the prior spent `1/1` state.
+
+`hepta-public-initial-v2.yml` already writes v2 with both pinned snapshot fields.
+After its original prerequisites it can automatically execute three matched
+training rounds, candidate-descendant diagnostics and the subsequent answer-EOS
+research comparison. Candidate, fresh LoRA and full-tune work is actual
+training even though installation remains blocked. This path also lacks a
+binding to the previous cross-run spent state. Consequently the H3 code remains
+reviewable by its fixed source branch and comparison, but its PR is not opened
+under the current no-new-learning constraint. No original CI is disabled,
+cancelled, weakened or marked successful. A future producer or authorization
+change needs its own concrete review; fixing a constructor is not permission
+to start another study.
+
+The plan update itself must be a strictly stacked, single-document review:
+base `fix/chain-six-axis-performance-20261103`, refreshed immediately before
+publication, with the complete PR diff limited to this canonical plan. A
+last commit containing only documentation does not make a large inherited
+diff against `main` documentation-only. The final read-only entry/workflow review is bound to
+`502fb53cb120e85f8c33a7b362883c2ffc10d24b` and the complete one-file comparison. The
+49-file review and subsequent exact changes retain five matching original CI workflows: CodeQL, original large-state, original
+workspace large-state, priority acceptance and required baseline. Their work
+includes model-algorithm fixtures and temporary-ledger checks;
+documentation-only does not mean no computation or no training-algorithm unit
+tests. The separate actual hosted-model entry requires its specific push
+branch and intent path, which this single-document stacked review does not
+match. This conclusion is conditional on the full PR diff and the inspected
+workflow source; refresh both before publication. Preserve all original checks.
+
+#### Remaining positive evidence beyond the local H4 pass
+
+The finite generic-effect audit still finds default Agentd/AppServer paths
+outside a current-PQ-root-to-every-sink authorization chain. Generic Allow/Block
+decisions do not carry all current root, issuer, owner, generation and capability
+bindings. A turn-start issuer alone does not authorize every provider attempt,
+and an entered-use token does not by itself maintain an active fence across
+await, streaming, WebSocket and retry boundaries. A deny flag or a test-only
+provider fixture cannot substitute for positive production sink closure.
+
+The complete-model adoption gate still lacks a current authentic complete
+closure and its positive publisher/cache-unavailable cold retrieval, install,
+real inference and readback. The bounded repository/Library search does not
+prove global nonexistence. Earlier small-model/header and ordinary-handoff
+failures remain separate failed attempts; source pins are not model weights.
+
+The previous learning trial remains spent at 1/1. No new trial, ledger reset,
+fresh final holdout, or qualified no-update result is created by this work.
+Future authorized quality acceptance still needs frozen strong controls,
+hidden/future tasks, negative-transfer accounting and complete real cost.
+Storage improvements and repeated-history decode observations do not yet form
+one affordable budget for paid custody, renewal, repair, GC, ledger and logs.
+No local component result establishes three independent administrators, real
+WAN/fault domains or the required 72-hour release acceptance.
+
+#### Joint gate disposition after these observations
+
+| Gate | Status | Remaining closure evidence |
+|---|---|---|
+| P0 fixed joint candidate | HOLD | One accepted joint Chain/Hepta source, configuration, dependency and binary pair, exercised through the ordinary joint entry. H4 closes its own desktop sequence; original H1/H2/H3 failures cannot be pooled into a pass. |
+| P0 W1 cost and public-service liveness | HOLD | Bound the eligible cheapest-known legal and invalid strategies with their true amortization, then pass the original public service and history gates under the original resources. |
+| P0 PQ and effect authorization | HOLD | Close every critical sink to the current PQ root, including downgrade, revocation, old generation and recovery boundaries on the accepted joint candidate. |
+| P0 recovery and unknown effects | HOLD | Complete independent frontier custody, whole-store restore, lost-ACK/crash-window recovery and stable operation-ID acceptance with full actual process evidence. |
+| P1 complete model adoption | HOLD | Publisher and original caches unavailable; cold retrieval of the complete closure, installation, actual inference and readback. |
+| P1 learning quality | HOLD | Freeze strong controls, hidden/future tasks, negative-transfer checks and real costs, with a continuous authorized trial/spent history; honest no-update remains permitted. |
+| P1 long-term storage and growth | HOLD | Joint sustainable budgets for paid custody, renewal, repair, GC, ledger and log growth; isolated growth observations are insufficient. |
+| Release independent long run | HOLD | At least three independent administrators and failure domains, real WAN, and at least 72 hours under predeclared workloads and acceptance criteria. |
+
+No gate is relaxed or closed by this documentation update. Preserve the
+separate source, command, actual executable, observation, readback and
+publication identities, including all failed attempts and unresolved evidence.
