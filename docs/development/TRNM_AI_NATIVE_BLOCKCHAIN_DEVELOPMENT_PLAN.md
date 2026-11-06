@@ -7655,3 +7655,26 @@ three tables and is not wired into the ordinary TLS CLI. Independent custody,
 whole-store recovery, all private listeners, WAN budgets and cheapest quantum
 work/fork-choice security remain separate open gates. Retain the sole plan and
 existing whole-chain HOLD while completing those real owners and observations.
+
+
+### 2026-11-06 independent work-graph locks and retained service refusal
+
+The `0eac6017` CI observation refused two independent work crates at
+`cargo metadata --locked`: their zeroize 1.8.2 locks disagreed with the
+shared crypto crate's exact 1.9.1 requirement. Follow each actual relation
+path and repair all five affected native, v2, zkVM host and guest locks with
+Cargo 1.95. Preserve existing unrelated package versions, checksums and Git
+revisions. Newly missing guest dependencies use the already fixed main
+workspace versions where compatible; main and fuzz locks are unchanged.
+The resulting locked graphs are resolution evidence, not a native proof or
+a guest-image rebuild. Historical image/proof records retain their old inputs.
+
+The original four-second, six-depth W1 service gate also refused the
+`0eac6017` prospective-merge tree under its original quarter-CPU Host quota.
+Both arms admitted seven honest packets during pressure, but independent
+History replay exhausted the original confirmation window. Retain the raw
+failures, cold CPU account, Host checks, sixteen workers and all original
+budgets. Matching direct-source blobs and zero PQ-authentication attempts
+do not establish a same-host baseline comparison or rule out all binary
+differences. This service-performance qualification remains open; lock
+resolution and TLS startup admission cannot promote it to accepted.

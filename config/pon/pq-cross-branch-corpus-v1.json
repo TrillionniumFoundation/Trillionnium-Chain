@@ -315,7 +315,7 @@
     "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py": "c7e5ebd5111b7e4b303e9d9761c51d072f5fe802",
     "formal/pon-nakamoto-v1/vectors/cell-dependency-closure-v1.json": "3f134a30554189a88462b6b94f07052b74193d5d",
     "formal/pon-nakamoto-v1/vectors/cell-model-root-v1.json": "cbabc0747dacd024fd771feb409157ae63f3c50a",
-    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "8e24d9743a340996ddccea81fa1a555e0daa1ac1",
+    "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock": "8b8f188c7c0d70521736277fafc5c2036c92e328",
     "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml": "50443c0fbc0169c400b9106ec3a22fa069d70b3b",
     "scripts/ci/check_ci_contract.py": "695b876aca6a937bd8c7e4a6d6d9922e5fc4030d",
     "scripts/ci/check_cpq1_parameter_observation.py": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
