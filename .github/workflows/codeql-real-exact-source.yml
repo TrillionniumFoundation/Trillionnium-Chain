@@ -1,0 +1,53 @@
+# Generate real GitHub CodeQL analyses; never fabricate source security checks.
+# Strict read-only checkout, followed by the official scanner's scoped SARIF upload.
+name: CodeQL actual exact-source scan
+on:
+  push:
+    branches:
+      - main
+      - fix/chain-six-axis-performance-20261103
+      - fix/chain-native-codeql-source-scan-20261106-gpt6
+  pull_request:
+    branches:
+      - main
+      - fix/chain-six-axis-performance-20261103
+permissions:
+  contents: read
+jobs:
+  codeql:
+    # Exclude untrusted forks from a job needing security-events upload authority.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    name: CodeQL real analysis (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [rust, python, actions]
+    steps:
+      - name: Checkout exact event source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Refuse any other source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          printf 'CODEQL_EVENT_SHA=%s CODEQL_EVENT_REF=%s CODEQL_LANGUAGE=%s\n' "$GITHUB_SHA" "$GITHUB_REF" '${{ matrix.language }}'
+      - name: Initialize pinned official CodeQL
+        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+      - name: Scan and upload real source analysis
+        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          category: /language:${{ matrix.language }}
