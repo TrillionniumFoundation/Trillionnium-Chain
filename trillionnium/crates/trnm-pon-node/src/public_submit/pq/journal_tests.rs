@@ -397,3 +397,406 @@ fn journal_expired_unknown_request_is_never_resigned_or_replaced_by_new_expiry()
     assert!(error.to_string().contains("PQ_RECOVERY_FENCED"));
 }
 
+#[test]
+fn journal_original_rpc_submit_and_parent_caps_survive_real_cold_open() {
+    let f = Fixture::new();
+    let client = f.client(address());
+    let path = f.path();
+    let packet = f
+        .node
+        .make(
+            f.node.settings().genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            f.node.settings().genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let id = packet.id().unwrap();
+    let body = Request::Submit {
+        packet: hex::encode(packet.encode_for_settings(f.node.settings()).unwrap()),
+    };
+    let mut journal = Journal::initialize(&path, &client, id, 1, &f.plan()).unwrap();
+    journal
+        .prepare_or_restore(&client, &body, expiry())
+        .unwrap();
+    for _ in 0..3 {
+        journal.record_attempt().unwrap();
+    }
+    for value in 1..=16 {
+        journal.reserve_parent([value; 32]).unwrap();
+    }
+    drop(journal);
+    let mut cold = Journal::open(&path, &client, id, 1).unwrap();
+    assert!(cold.record_attempt().is_err());
+    assert!(cold.reserve_parent([99; 32]).is_err());
+    cold.reserve_parent([1; 32]).unwrap(); // Existing planned parent is not refunded or charged twice.
+    assert_eq!(
+        cold.status().unwrap().per_packet_submit_counts.get(&id),
+        Some(&3)
+    );
+    assert_eq!(cold.status().unwrap().planned_parent_count, 16);
+    for _ in 3..64 {
+        cold.reserve_read().unwrap();
+    }
+    assert_eq!(cold.status().unwrap().used_calls, 64);
+    let before = fs::read(path.join("journal")).unwrap();
+    assert!(cold.reserve_read().is_err());
+    assert_eq!(fs::read(path.join("journal")).unwrap(), before);
+    drop(cold);
+    let again = Journal::open(&path, &client, id, 1).unwrap();
+    assert_eq!(again.status().unwrap().used_calls, 64);
+}
+
+#[test]
+fn journal_cold_open_cannot_renew_expired_epoch_or_change_boot_namespace_identity() {
+    let f = Fixture::new();
+    let client = f.client(address());
+    let path = f.path();
+    let plan = SubmitRecoveryPlan::new(Duration::from_secs(5)).unwrap();
+    let journal = Journal::initialize(&path, &client, [41; 32], 1, &plan).unwrap();
+    drop(journal);
+    thread::sleep(Duration::from_secs(6));
+    let mut cold = Journal::open(&path, &client, [41; 32], 1).unwrap();
+    assert!(cold.recovery_plan().is_err());
+    assert!(cold.reserve_read().is_err());
+    drop(cold);
+    let mut record = encoded_record(&path, "journal");
+    record.epoch.boot.inode ^= 1;
+    fault_write(&path.join("journal"), &serde_json::to_vec(&record).unwrap());
+    assert!(Journal::open(&path, &client, [41; 32], 1).is_err());
+}
+
+#[test]
+fn journal_lock_inode_and_named_directory_replacement_fence_before_snapshot_publication() {
+    for replace_directory in [false, true] {
+        let f = Fixture::new();
+        let client = f.client(address());
+        let path = f.path();
+        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+        journal
+            .prepare_or_restore(&client, &Request::Head, expiry())
+            .unwrap();
+        let before = fs::read(path.join("journal")).unwrap();
+        journal.files.callback = Some(Box::new(move |point, path| {
+            if point == Point::Prepared {
+                if replace_directory {
+                    fs::rename(path, path.with_extension("held"))?;
+                    std::fs::DirBuilder::new().mode(0o700).create(path)?;
+                } else {
+                    fs::rename(path.join("lock"), path.join("old-lock"))?;
+                    let lock = OpenOptions::new()
+                        .write(true)
+                        .create_new(true)
+                        .mode(0o600)
+                        .open(path.join("lock"))?;
+                    lock.sync_all()?;
+                }
+            }
+            Ok(())
+        }));
+        assert!(journal.record_attempt().is_err());
+        assert!(journal.status().is_err());
+        let actual = if replace_directory {
+            path.with_extension("held")
+        } else {
+            path.clone()
+        };
+        assert_eq!(fs::read(actual.join("journal")).unwrap(), before);
+        assert!(actual.join("prepared").is_file());
+    }
+}
+
+#[test]
+fn journal_hard_links_symlinks_fifo_oversize_and_broad_modes_refuse_before_decode() {
+    for fault in 0..5 {
+        let f = Fixture::new();
+        let client = f.client(address());
+        let path = f.path();
+        let journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+        drop(journal);
+        let current = path.join("journal");
+        if fault == 0 {
+            fs::hard_link(&current, path.join("extra-link")).unwrap();
+        }
+        if fault == 1 {
+            fs::rename(&current, path.join("old")).unwrap();
+            symlink(path.join("old"), &current).unwrap();
+        }
+        if fault == 2 {
+            fs::remove_file(&current).unwrap();
+            assert!(std::process::Command::new("mkfifo")
+                .arg("-m")
+                .arg("600")
+                .arg(&current)
+                .status()
+                .unwrap()
+                .success());
+        }
+        if fault == 3 {
+            File::options()
+                .write(true)
+                .open(&current)
+                .unwrap()
+                .set_len(MAX_METADATA as u64 + 1)
+                .unwrap();
+        }
+        if fault == 4 {
+            fs::set_permissions(&current, Permissions::from_mode(0o640)).unwrap();
+        }
+        assert!(Journal::open(&path, &client, [41; 32], 1).is_err());
+    }
+}
+
+#[test]
+fn journal_changed_held_blob_or_prepared_predecessor_never_becomes_a_new_publication() {
+    for bad_predecessor in [false, true] {
+        let f = Fixture::new();
+        let client = f.client(address());
+        let path = f.path();
+        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+        journal
+            .prepare_or_restore(&client, &Request::Head, expiry())
+            .unwrap();
+        let before = fs::read(path.join("journal")).unwrap();
+        journal.files.fail_at = Some(Point::Prepared);
+        assert!(journal.record_attempt().is_err());
+        drop(journal);
+        if bad_predecessor {
+            let mut next = encoded_record(&path, "prepared");
+            next.previous = Some([0; 32]);
+            fault_write(&path.join("prepared"), &serde_json::to_vec(&next).unwrap());
+        } else {
+            let record = encoded_record(&path, "journal");
+            let file = blob_path(&path, &record.operations[0].wire);
+            let mut raw = fs::read(&file).unwrap();
+            raw[8 + 178] ^= 1;
+            fault_write(&file, &raw);
+        }
+        assert!(Journal::open(&path, &client, [41; 32], 1).is_err());
+        assert_eq!(fs::read(path.join("journal")).unwrap(), before);
+        assert!(path.join("prepared").is_file());
+    }
+}
+
+#[test]
+fn journal_actual_fsynced_candidate_inode_is_bound_for_fresh_and_existing_pending() {
+    for mode in 0..3 {
+        let f = Fixture::new();
+        let client = f.client(address());
+        let path = f.path();
+        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+        let before = fs::read(path.join("journal")).unwrap();
+        let body = serde_json::to_vec(&Request::Head).unwrap();
+        let name = if mode == 0 {
+            "prepared".to_owned()
+        } else {
+            format!(
+                "blob-{}-pending",
+                hex::encode(hash(b"pq-parent-blob-v1", &[&body]))
+            )
+        };
+        if mode == 2 {
+            fault_write(&path.join(&name), &body);
+        }
+        let replaced = Arc::new(AtomicBool::new(false));
+        let observed = replaced.clone();
+        journal.files.callback = Some(Box::new(move |point, root| {
+            let target = root.join(&name);
+            if point == Point::WriteSynced
+                && target.is_file()
+                && !observed.swap(true, Ordering::SeqCst)
+            {
+                let raw = fs::read(&target)?;
+                let replacement = root.join("replacement-fault");
+                let mut file = OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .mode(0o600)
+                    .open(&replacement)?;
+                file.write_all(&raw)?;
+                drop(file); // Intentionally not the synchronized inode.
+                fs::rename(replacement, target)?;
+            }
+            Ok(())
+        }));
+        assert!(journal
+            .prepare_or_restore(&client, &Request::Head, expiry())
+            .is_err());
+        assert!(replaced.load(Ordering::SeqCst));
+        assert!(journal.status().is_err());
+        assert_eq!(fs::read(path.join("journal")).unwrap(), before);
+    }
+}
+
+#[test]
+fn journal_parent_entry_sync_rechecks_the_named_root_before_initialization_returns() {
+    let directory = tempfile::tempdir().unwrap();
+    let parent = directory.path().join("parent");
+    std::fs::DirBuilder::new()
+        .mode(0o700)
+        .create(&parent)
+        .unwrap();
+    let path = parent.join("campaign");
+    let held_parent = directory.path().join("held-parent");
+    let old = parent.clone();
+    let held = held_parent.clone();
+    let reached = Arc::new(AtomicBool::new(false));
+    let observed = reached.clone();
+    let result = Files::acquire_with_fault(
+        &path,
+        true,
+        Box::new(move |point, _| {
+            if point == Point::ParentSynced {
+                observed.store(true, Ordering::SeqCst);
+                fs::rename(&old, &held)?;
+                std::fs::DirBuilder::new().mode(0o700).create(&old)?;
+            }
+            Ok(())
+        }),
+    );
+    assert!(result.is_err());
+    assert!(reached.load(Ordering::SeqCst));
+    assert!(held_parent.join("campaign/lock").is_file());
+    assert!(!path.exists());
+}
+
+#[test]
+fn journal_expiry_fence_prepared_cut_is_sticky_and_cold_completion_never_reopens() {
+    let f = Fixture::new();
+    let client = f.client(address());
+    let path = f.path();
+    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+    journal
+        .prepare_or_restore(&client, &Request::Head, crate::ingress::now().unwrap() + 2)
+        .unwrap();
+    journal.record_attempt().unwrap();
+    let before = encoded_record(&path, "journal");
+    thread::sleep(Duration::from_secs(3));
+    journal.files.fail_at = Some(Point::Prepared);
+    assert!(journal.record_attempt().is_err());
+    assert!(journal.pending_request().is_err());
+    assert!(journal.status().is_err());
+    assert_eq!(encoded_record(&path, "journal"), before);
+    assert_eq!(
+        encoded_record(&path, "prepared").pending_fence,
+        Some(PendingFence::ExpiredUnconfirmed)
+    );
+    drop(journal);
+    let error = match Journal::open(&path, &client, [41; 32], 1) {
+        Ok(_) => panic!("prepared expiry fence reopened"),
+        Err(error) => error,
+    };
+    assert!(error.to_string().contains("PQ_RECOVERY_FENCED"));
+    let after = encoded_record(&path, "journal");
+    assert_eq!(after.operations, before.operations);
+    assert_eq!(after.epoch, before.epoch);
+    assert_eq!(after.pending_fence, Some(PendingFence::ExpiredUnconfirmed));
+    assert!(!path.join("prepared").exists());
+    assert!(Journal::open(&path, &client, [41; 32], 1).is_err());
+}
+
+#[test]
+fn journal_expiry_after_durable_attempt_keeps_the_reservation_and_fences_all_reentry() {
+    let f = Fixture::new();
+    let client = f.client(address());
+    let path = f.path();
+    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+    let prepared = journal
+        .prepare_or_restore(&client, &Request::Head, crate::ingress::now().unwrap() + 2)
+        .unwrap();
+    let delayed = Arc::new(AtomicBool::new(false));
+    let observed = delayed.clone();
+    journal.files.callback = Some(Box::new(move |point, _| {
+        if point == Point::Published && !observed.swap(true, Ordering::SeqCst) {
+            thread::sleep(Duration::from_secs(3));
+        }
+        Ok(())
+    }));
+    assert!(journal.record_attempt().is_err());
+    assert!(delayed.load(Ordering::SeqCst));
+    assert!(journal.recovery_plan().is_err());
+    assert!(journal.cursor().is_err());
+    let after = encoded_record(&path, "journal");
+    assert_eq!(after.operations[0].attempts, 1);
+    assert_eq!(after.pending_fence, Some(PendingFence::ExpiredUnconfirmed));
+    assert_eq!(
+        fs::read(blob_path(&path, &after.operations[0].wire)).unwrap(),
+        prepared.wire()
+    );
+    drop(journal);
+    assert!(Journal::open(&path, &client, [41; 32], 1).is_err());
+}
+
+#[test]
+fn journal_direct_send_expiry_fence_requires_exact_prepared_and_prior_attempt() {
+    let f = Fixture::new();
+    let path = f.path();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let client = f.client(listener.local_addr().unwrap());
+    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+    let prepared = journal
+        .prepare_or_restore(&client, &Request::Head, crate::ingress::now().unwrap() + 2)
+        .unwrap();
+    let unused = fs::read(path.join("journal")).unwrap();
+    assert!(journal.fence_expired_unconfirmed(&prepared).is_err());
+    assert_eq!(fs::read(path.join("journal")).unwrap(), unused);
+    journal.record_attempt().unwrap();
+    let before = encoded_record(&path, "journal");
+    thread::sleep(Duration::from_secs(3));
+    let error = match client.send(&prepared, Duration::from_secs(2)) {
+        Ok(_) => panic!("expired request was sent"),
+        Err(error) => error,
+    };
+    assert!(error.to_string().contains("PQ_NETWORK_EXPIRED_UNCONFIRMED"));
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        std::io::ErrorKind::WouldBlock
+    );
+    let other = client.prepare(9, expiry(), Request::Head).unwrap();
+    assert!(journal.fence_expired_unconfirmed(&other).is_err());
+    assert_eq!(encoded_record(&path, "journal"), before);
+    journal.fence_expired_unconfirmed(&prepared).unwrap();
+    assert!(journal.status().is_err());
+    assert!(journal.pending_request().is_err());
+    assert!(journal.cursor().is_err());
+    assert!(journal.reserve_read().is_err());
+    let after = encoded_record(&path, "journal");
+    assert_eq!(after.pending_fence, Some(PendingFence::ExpiredUnconfirmed));
+    assert_eq!(after.operations, before.operations);
+    assert_eq!(after.epoch, before.epoch);
+    assert_eq!(after.reads, before.reads);
+    assert_eq!(after.parents, before.parents);
+    drop(journal);
+    let error = match Journal::open(&path, &client, [41; 32], 1) {
+        Ok(_) => panic!("local send expiry conclusion reopened"),
+        Err(error) => error,
+    };
+    assert!(error.to_string().contains("PQ_RECOVERY_FENCED"));
+}
+
+#[test]
+fn journal_pre_io_recheck_binds_named_snapshot_without_changing_durable_budget() {
+    let f = Fixture::new();
+    let client = f.client(address());
+    let path = f.path();
+    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();
+    journal
+        .prepare_or_restore(&client, &Request::Head, expiry())
+        .unwrap();
+    journal.record_attempt().unwrap();
+    let before = fs::read(path.join("journal")).unwrap();
+    journal.recheck().unwrap();
+    assert_eq!(fs::read(path.join("journal")).unwrap(), before);
+    assert_eq!(journal.status().unwrap().used_calls, 1);
+    fs::rename(path.join("journal"), path.join("retained-original")).unwrap();
+    fault_write(&path.join("journal"), &before); // Equal bytes, a different named inode.
+    assert!(journal.recheck().is_err());
+    assert!(journal.status().is_err());
+    assert!(journal.cursor().is_err());
+    assert!(journal.reserve_read().is_err());
+    assert!(journal.record_attempt().is_err());
+    assert_eq!(fs::read(path.join("journal")).unwrap(), before);
+    assert_eq!(encoded_record(&path, "journal").operations[0].attempts, 1);
+}
