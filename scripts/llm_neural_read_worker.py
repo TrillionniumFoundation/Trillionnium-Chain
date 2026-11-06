@@ -58,14 +58,17 @@ def worker_sources():
     return sources
 
 
-def source_paths(plan):
-    paths = [Path(__file__), Path(python_runtime.__file__), Path(inherited.__file__),
-             Path(runtime.__file__), Path(inherited.parent_material.__file__),
-             Path(runtime.__file__).with_name('llm_base_material.py'),
-             Path(runtime.contract_module().__file__),
-             runtime.REPOSITORY / 'formal/pon-nakamoto-v1/contract_wire.py']
-    pins = dict(plan['inherited_sources'], **{'llm_neural_read_worker.py': plan['worker_source']})
-    return {str(path.resolve()): pins[path.name] for path in paths}
+def _install_runtime_guard(args, pins):
+    guard = python_runtime.install_import_guard(args.runtime_contract, pins)
+    # Preserve the complete host-admitted set, including non-Python config pins.
+    # Copy only after the original guard has validated the exact dict and bytes.
+    args.runtime_source_pins = dict(pins)
+    args.runtime_import_guard = guard
+
+
+def _verify_runtime_ready(args):
+    python_runtime.verify_loaded(args.runtime_contract, args.runtime_source_pins,
+                                 args.runtime_import_guard)
 
 
 def read_request(connection):
@@ -135,7 +138,7 @@ def worker(args):
     runtime.require(all(len(tokens) == 1 for tokens in action_tokens) and
                     len({tokens[0] for tokens in action_tokens}) == len(actions), 'NEURAL_READ_SINGLE_TOKEN_ACTIONS')
     model.eval()
-    python_runtime.verify_loaded(args.runtime_contract, source_paths(plan), args.runtime_import_guard)
+    _verify_runtime_ready(args)
     # Bind a relative socket inside the already-private owner directory; this
     # avoids Unix sun_path limits on long project paths without global /tmp state.
     os.chdir(directory)
@@ -257,7 +260,7 @@ def main():
     exec(compile(raw, str(helper), 'exec'), python_runtime.__dict__)
     args.runtime_contract = python_runtime.load_snapshot(args.runtime_snapshot, args.runtime_snapshot_sha256)
     python_runtime.configure(args.runtime_contract)
-    args.runtime_import_guard = python_runtime.install_import_guard(args.runtime_contract, pins)
+    _install_runtime_guard(args, pins)
     import llm_runtime_pilot as runtime
     import llm_inherited_runtime as inherited
     worker(args) if args.command == '_worker' else serve(args)

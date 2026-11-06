@@ -395,6 +395,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/llm_neural_read_worker.py",
     "scripts/llm_python_runtime_contract.py",
+    "scripts/test_llm_neural_read_worker.py",
     "scripts/test_llm_python_runtime_contract.py",
     "formal/pon-nakamoto-v1/llm_adapter_contract.py",
     "scripts/llm_parent_material.py",
