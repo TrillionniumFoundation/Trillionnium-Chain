@@ -1,0 +1,339 @@
+{
+  "actual_python_cases": 334,
+  "distributed_inventory_entries": 1271,
+  "driver_capture_exit": 0,
+  "driver_process_exit": 0,
+  "driver_snapshots": [
+    {
+      "bytes": 2736,
+      "copy": "driver/composed-source-7586-driver.stdout",
+      "sha256": "79556aa1093d486a91a84a38e5bc52cc6af38b4742f38df0be91a2db54a90eb2",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.stdout"
+    },
+    {
+      "bytes": 0,
+      "copy": "driver/composed-source-7586-driver.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.stderr"
+    },
+    {
+      "bytes": 2736,
+      "copy": "driver/composed-source-7586-driver.log",
+      "sha256": "79556aa1093d486a91a84a38e5bc52cc6af38b4742f38df0be91a2db54a90eb2",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.log"
+    },
+    {
+      "bytes": 3748,
+      "copy": "driver/composed-source-7586-driver.streams.jsonl",
+      "sha256": "5326fab08b8825711bd0ecb8396f2eeb79fc4b917f06a41647d4fd66d00f0a83",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.streams.jsonl"
+    },
+    {
+      "bytes": 1178,
+      "copy": "driver/composed-source-7586-driver.command.json",
+      "sha256": "4df32337287c65627dfbc926c6ac4c6eb27de0d10023c730645a2568cbc22f60",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.command.json"
+    },
+    {
+      "bytes": 1265,
+      "copy": "driver/composed-source-7586-driver.result.json",
+      "sha256": "de057b62c5f569260d24272369683b80752da7190bf3ac999441df7e00932307",
+      "source": "/workspace/scratch/1eed767ad985/validation/composed-source-7586-driver.result.json"
+    },
+    {
+      "bytes": 645,
+      "copy": "driver/launch_composed_source_7586.py",
+      "sha256": "1bcbab7406a131bb7d99f3dd9aed0bc6b3a8b867513d7eb21eab5bbdf568040e",
+      "source": "/workspace/scratch/1eed767ad985/validation/launch_composed_source_7586.py"
+    },
+    {
+      "bytes": 7119,
+      "copy": "driver/finalize_composed_source_7586.py",
+      "sha256": "061662a70d60e0987697d2bfd652f0688ff82b32acf3c60465ca64863a95bdd4",
+      "source": "/workspace/scratch/1eed767ad985/validation/finalize_composed_source_7586.py"
+    }
+  ],
+  "format": {
+    "process_exit": 0,
+    "toolchain_receipt": "formatter-toolchain.stdout"
+  },
+  "full_repository_truth_lane_executed": false,
+  "generated_utc": "2026-11-06T09:38:47.645247+00:00",
+  "historical_summaries_unchanged": true,
+  "historical_summary_hashes": {
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-fuzz-metadata-285982d7-attempt2/summary.json": "53743ef7ae9ada28a70e1596799ba5c94c477107e71d4396b95854ce24d4eb81",
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7/final-summary.json": "5182a9be7478c96aee55a8f4114e730f70dd80bec11633ee6d5222637bc2abb9",
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7/summary-corrected.json": "2511809f7af0ba8b9340b7abfed186798dafd1a7910b2602b379a97a576f9b6d",
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7/summary.json": "2c52c250eeebd45bd2bdb24c5e5530e0478a33a448a34cfbdf0fdbf24d66c87f",
+    "/workspace/scratch/1eed767ad985/ci-validation/history-counter-fix-source-1986fa08/summary.json": "4d0bcc462a97031a342677c96a1579ec0d3634d3fedd8c24aacfce87885620d7",
+    "/workspace/scratch/1eed767ad985/ci-validation/published-source/summary.json": "80d13f1dc8571214db250e7478551ce2880c7d696cd1d0385604ad634147c5a5"
+  },
+  "lockfiles": {
+    "tests/fuzz/Cargo.lock": {
+      "bytes": 33645,
+      "git_blob": "bd16198beb269fca436d74f54aa33e66ac5d517b",
+      "matches_committed_source": true,
+      "sha256": "b1e7d77c9935cd566288a90a78e39225248331c389772cf3b3c9406cf10fc13b"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40044,
+      "git_blob": "7fe3d5ac2c79c4a73f5b3a8217ae7dc1af109d4b",
+      "matches_committed_source": true,
+      "sha256": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83"
+    }
+  },
+  "lockfiles_unchanged": true,
+  "metadata": {
+    "cargo-metadata-all-features": {
+      "graph_receipt": "cargo-metadata-all-features.graph.json",
+      "packages": 180,
+      "passed": true,
+      "raw_metadata_sha256": "ab6793d88ec36c8bdfa7f461b788388b6d8dac740412191d6a243dd9741cd711",
+      "resolve_nodes": 180,
+      "workspace_members": 26,
+      "workspace_targets": 389
+    },
+    "cargo-metadata-default": {
+      "graph_receipt": "cargo-metadata-default.graph.json",
+      "packages": 175,
+      "passed": true,
+      "raw_metadata_sha256": "6e78566acb728b599a04598cd42a82a0ce49de7017ed28a6648333bb425c40fe",
+      "resolve_nodes": 175,
+      "workspace_members": 26,
+      "workspace_targets": 389
+    },
+    "cargo-metadata-fuzz-all-features": {
+      "graph_receipt": "cargo-metadata-fuzz-all-features.graph.json",
+      "packages": 147,
+      "passed": true,
+      "raw_metadata_sha256": "f2f1ea59eb53d78b1be58b0e70b9bc586cb2a769c674d162e57f704ad823e04e",
+      "resolve_nodes": 147,
+      "workspace_members": 1,
+      "workspace_targets": 3
+    }
+  },
+  "native_build_test_clippy_executed": false,
+  "ordered_parents": [
+    "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "56897f125df27994efa1dda935f2c62eceb36de9"
+  ],
+  "original_artifact_manifest": {
+    "path": "artifacts.sha256",
+    "sha256": "ab39008cb2fac23a6261a4cbd96fb7cfc6e1d1bebde19c0cd3ca0b5d7f1bfefb",
+    "verified_files": 153
+  },
+  "original_summary": {
+    "path": "summary.json",
+    "sha256": "888b1629d4b928b89fa6a54343b90bd46cf2565dee5d56e813e2377d2dccaa4a"
+  },
+  "pq_authority_scan": {
+    "reviewed_roles_mapped": 23,
+    "schema": "trnm-pq-rust-source-authority-inventory-v1",
+    "scope": "All Rust files beneath trillionnium/crates, including build scripts, examples, tests and nonstandard directories; no reachability or runtime-effect proof",
+    "source_files_read": 1190,
+    "status": "HOLD_INCOMPLETE_AUTHORITY_TRACING",
+    "unreviewed_indicator_files": 96,
+    "whole_chain_pq_qualified": false
+  },
+  "pq_claim_guard": {
+    "gates": {
+      "authorization": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+          "scripts/ci/pq_authority_surface_scan.py",
+          "scripts/ci/test_pq_authority_surface_scan.py",
+          "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "capacity_and_invalid_input": {
+        "source_paths": [
+          "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "config/pon/post-quantum-transition-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "independent_end_to_end": {
+        "source_paths": [
+          "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "migration_and_rollback": {
+        "source_paths": [
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+          "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "scripts/ci/pq_external_rollback_oracle.py",
+          "scripts/ci/test_pq_external_rollback_oracle.py",
+          "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "proof_pq128": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "quantum_mining_fork_choice": {
+        "source_paths": [
+          "config/pon/devnet-v1.json",
+          "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+          "scripts/ci/pq_quantum_daa_scenarios.py",
+          "scripts/ci/test_pq_quantum_daa_scenarios.py",
+          "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      }
+    },
+    "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+    "pq_128_qualified": false,
+    "production_activation": false,
+    "schema": "trnm-whole-chain-pq-claim-guard-v1",
+    "status": "HOLD",
+    "whole_chain_pq_qualified": false
+  },
+  "pq_source_integration": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 593,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "prior_results_credited_as_fresh_head": false,
+  "repository_and_markdown": {
+    "activation": false,
+    "head": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "local_links": 3507,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1190,
+    "source_state": "committed-clean",
+    "tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+    "workspace_packages": 26
+  },
+  "required_source_paths": 512,
+  "result": "PASS",
+  "schema": "trnm-composed-source-static-final-v2",
+  "scope": "11 Python source/claim/CI/repository suites, source/inventory/Markdown/format and three offline locked Cargo graphs on one committed source; no Rust build, native test or Clippy",
+  "source_before_after_equal": true,
+  "source_receipt": {
+    "base": null,
+    "candidate": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "tested_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1031948736,
+    "tracked_entries": 10740,
+    "tracked_worktree_verified": true
+  },
+  "tested_commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "tested_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "tests": {
+    "ci-contract": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 106
+    },
+    "pq-authority-controls": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 15
+    },
+    "pq-claim-controls": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 22
+    },
+    "pq-corpus-controls": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 37
+    },
+    "pq-record-command-controls": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 4
+    },
+    "project-boundary-controls": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 16
+    },
+    "repository-mutants": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 50
+    },
+    "six-workpackage-native-rosters": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 6
+    },
+    "source-integrity-negatives": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 43
+    },
+    "w1-full-v2-disposition": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 11
+    },
+    "w1-preparation-strategy-v4": {
+      "capture_exit": 0,
+      "process_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 24
+    }
+  }
+}

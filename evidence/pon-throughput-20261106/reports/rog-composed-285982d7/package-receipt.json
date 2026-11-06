@@ -1,0 +1,57 @@
+{
+  "all_selected_inputs_rechecked_unchanged": true,
+  "archive": {
+    "all_member_bytes_read_back": true,
+    "bytes": 599728,
+    "only_safe_regular_members": true,
+    "original_regular_files": 2119,
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-evidence.tar.xz",
+    "regular_members": 2123,
+    "sha256": "31a099caeb48a7261537e1d507b013d03e666726ab9905e0c287463596ac12b9"
+  },
+  "cancelled_attempt_missing_records": [
+    {
+      "path": "validation/rog-composed-2859-workspace-build.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-source-after.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-attempt2.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-attempt2-source-after.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    }
+  ],
+  "created_utc": "2026-11-06T09:07:51.667575+00:00",
+  "excluded_entries": [],
+  "expected_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "expected_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "finished_utc": "2026-11-06T09:07:53.587539+00:00",
+  "no_native_test_build_source_mutation_or_network_api": true,
+  "packager_sha256": "524336616c5b44a8665826efcb207015d3789234ca9af14fd053964a8a6b4e3c",
+  "schema": "trnm-composed-rog-package-receipt-v1",
+  "sidecars": {
+    "checksums": {
+      "bytes": 485251,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-evidence.SHA256SUMS",
+      "sha256": "34b3cb7578df887c17bfe3edf9852932572863585cca635b3be48ffe619a4893"
+    },
+    "index": {
+      "bytes": 13927,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-evidence.index.json",
+      "sha256": "55aafd2ab1d9ff633ddd9e544f03b91a553cc0f593d26e632359c97413ea548f"
+    },
+    "manifest": {
+      "bytes": 1152722,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-evidence.manifest.json",
+      "sha256": "b1a10357bd4fd5f8f8d7369e5c14e8863e9f8b1e2cfeac3a1486c4333c82b1ed"
+    }
+  },
+  "suite_membership_rechecked_unchanged": true,
+  "suite_passed_as_reported": true
+}

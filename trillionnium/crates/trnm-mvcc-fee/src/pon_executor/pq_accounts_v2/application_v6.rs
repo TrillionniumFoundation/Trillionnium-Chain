@@ -88,7 +88,14 @@ pub(super) fn configured(policy: &ApplicationPolicy, seeded: &BTreeSet<Hash>) ->
 }
 
 pub(super) fn charge(cfg: &Config, budget: &AtomicUsize) -> Result<()> {
-    let maximum = account_profile(cfg)?.maximum_verifications();
+    charge_checked(&CheckedConfiguration::new(cfg)?, budget)
+}
+
+pub(super) fn charge_checked(
+    checked: &CheckedConfiguration<'_>,
+    budget: &AtomicUsize,
+) -> Result<()> {
+    let maximum = checked.profile.wire_profile.maximum_verifications();
     budget
         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |used| {
             used.checked_add(1).filter(|next| *next <= maximum)

@@ -1,0 +1,486 @@
+{
+  "schema": "trnm-remaining-throughput-source-map-v1",
+  "source_commit": "5eb05ee0d14e3d1a59975154c3800b94c05fd7e1",
+  "source_tree": "523345bbbf2e1fbfe85cf6949297a3774dd06d50",
+  "scope": "Read-only source map. No new implementation, build, benchmark, pass claim, production capacity qualification, or activation. Temporary analysis outside repository.",
+  "sources": {
+    "m06": {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "symbol": "execute_with_state_inputs",
+      "line": 2914,
+      "file_sha256": "d7ae3ab6b2084696b43b075604ed260074c023088ba3edcf5e145444e29b838d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs#L2914"
+    },
+    "m06_apply": {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "symbol": "canonical apply loop",
+      "line": 3115,
+      "file_sha256": "d7ae3ab6b2084696b43b075604ed260074c023088ba3edcf5e145444e29b838d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs#L3115"
+    },
+    "detached_support": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "symbol": "Node::detached_execution_supported",
+      "line": 176,
+      "file_sha256": "a2e7ce3294be9600294283e74245a65b9ea193aa686fc4afe1a53365fb0a98a5",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs#L176"
+    },
+    "detached_commit": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+      "symbol": "Node::commit_shared_admission",
+      "line": 358,
+      "file_sha256": "a2e7ce3294be9600294283e74245a65b9ea193aa686fc4afe1a53365fb0a98a5",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs#L358"
+    },
+    "ordinary_admission": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "symbol": "admit_shared_checked",
+      "line": 1316,
+      "file_sha256": "4ee4efc6cc1f5fac5ee78710a2620cc7acba6034e9bfaf3aed5e602efdec002e",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress.rs#L1316"
+    },
+    "cell_fetch": {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "symbol": "CellPeerLimitsV1 / fetch_cell_with_schedule / request_with_retry",
+      "line": 41,
+      "file_sha256": "024573f60f646bfbcf493cd0bba6b13e6fa39784e587eb5030c0c3b0883b2cde",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-data-availability/src/cell/network.rs#L41"
+    },
+    "cell_serve": {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+      "symbol": "serve_cells_bounded",
+      "line": 103,
+      "file_sha256": "9d1cd0f97bc3073e8d24391be10f5e16a0eaa2e2c05688c709aa21c0bf33c881",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs#L103"
+    },
+    "cell_fairness_scope": {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+      "symbol": "serving fairness scope",
+      "line": 102,
+      "file_sha256": "9d1cd0f97bc3073e8d24391be10f5e16a0eaa2e2c05688c709aa21c0bf33c881",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs#L102"
+    },
+    "cell_repair": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "symbol": "Node::repair_native_cell",
+      "line": 269,
+      "file_sha256": "78c02d204889625c7bc8d76a99f377d6f16f3bbecacedcb95c87ab97c01ed997",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs#L269"
+    },
+    "material_bridge": {
+      "path": "scripts/llm_neural_read_worker.py",
+      "symbol": "_MaterialRuntimeBridgeV1.verify_loaded_contract",
+      "line": 192,
+      "file_sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/scripts/llm_neural_read_worker.py#L192"
+    },
+    "intake": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs",
+      "symbol": "ListenerIntake",
+      "line": 20,
+      "file_sha256": "53570d58166117b85fc9346744e25b0abb35d1b988328837137b4f311d7ea36f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs#L20"
+    },
+    "idle_pressure": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs",
+      "symbol": "ListenerIntake::cancel_idle_unpaid_under_pressure",
+      "line": 159,
+      "file_sha256": "53570d58166117b85fc9346744e25b0abb35d1b988328837137b4f311d7ea36f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs#L159"
+    },
+    "challenge": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs",
+      "symbol": "ListenerIntake::try_challenge",
+      "line": 197,
+      "file_sha256": "53570d58166117b85fc9346744e25b0abb35d1b988328837137b4f311d7ea36f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs#L197"
+    },
+    "public_caps": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "symbol": "original aggregate public capacities",
+      "line": 102,
+      "file_sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs#L102"
+    },
+    "cpu_caps": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "symbol": "PaidMutationCpuBudget constants",
+      "line": 17,
+      "file_sha256": "41b7be4de0ed9083afe69d37396bd78289c64efd3fda2834e70821208a2b6d69",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs#L17"
+    },
+    "work_priority": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "symbol": "LiveRequestCpu::promote_verified_identity",
+      "line": 567,
+      "file_sha256": "41b7be4de0ed9083afe69d37396bd78289c64efd3fda2834e70821208a2b6d69",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs#L567"
+    },
+    "public_scope": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "symbol": "PublicPolicy::id declared scope",
+      "line": 436,
+      "file_sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs#L436"
+    },
+    "pq_signature": {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "symbol": "ML_DSA_65_SIGNATURE_BYTES",
+      "line": 10,
+      "file_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-protocol/src/pq_frame.rs#L10"
+    },
+    "pq_cache": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache.rs",
+      "symbol": "VerifierCache / verify",
+      "line": 19,
+      "file_sha256": "736a3160e5ab372cab3bc40c19ae2c62708c20adfb40b44f4adfe74765e73b26",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache.rs#L19"
+    },
+    "pq_auth_budget": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "symbol": "AuthenticationBudget::perform",
+      "line": 159,
+      "file_sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs#L159"
+    },
+    "pq_history_scope": {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+      "symbol": "PublicPolicy::pq_history_id",
+      "line": 223,
+      "file_sha256": "5b03f9fc02960decfb3faba98bc0f18c94b755f62be8583017b8c479ad17dc7d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs#L223"
+    },
+    "pq_accounts": {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "symbol": "Native Accounts V2 / Application V6 capacities",
+      "line": 20,
+      "file_sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs#L20"
+    },
+    "pq_network": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "symbol": "Node::open_with_pq_network",
+      "line": 54,
+      "file_sha256": "f5e6af6a7c01f806b99ce09b4ee0910bba3fdf385b914528137e65f2d965e8e8",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs#L54"
+    },
+    "pq_witness": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "symbol": "Node::open_with_pq_witness",
+      "line": 102,
+      "file_sha256": "f5e6af6a7c01f806b99ce09b4ee0910bba3fdf385b914528137e65f2d965e8e8",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs#L102"
+    },
+    "pq_status": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "symbol": "Node::pq_network_status",
+      "line": 181,
+      "file_sha256": "f5e6af6a7c01f806b99ce09b4ee0910bba3fdf385b914528137e65f2d965e8e8",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs#L181"
+    },
+    "pq_witness_check": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+      "symbol": "Node::check_pq_witness_open",
+      "line": 340,
+      "file_sha256": "744f9aa2a9e33959dd2474e977c2d16e205458091e8eb6ba52740b71ed53849d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs#L340"
+    },
+    "backends": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "symbol": "StateBackend",
+      "line": 1273,
+      "file_sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store.rs#L1273"
+    },
+    "readback_selection": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "symbol": "post-write schema selection",
+      "line": 2090,
+      "file_sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store.rs#L2090"
+    },
+    "read_active": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "symbol": "Node::read_active_with_readback",
+      "line": 3348,
+      "file_sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store.rs#L3348"
+    },
+    "state_at": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "symbol": "Node::state_at_with_readback",
+      "line": 3695,
+      "file_sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store.rs#L3695"
+    },
+    "recover": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "symbol": "Node::recover",
+      "line": 6256,
+      "file_sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store.rs#L6256"
+    },
+    "growth_cold": {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs",
+      "symbol": "Node::growth_cold_open",
+      "line": 701,
+      "file_sha256": "e00f2b736cb22c42468cd494eece859eb78fe1005a7c83c621f14c319c74f743",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e50ca8e1ce655ef2f4686bd0ab58120b30c4632/trillionnium/crates/trnm-pon-node/src/store/growth/recovery.rs#L701"
+    }
+  },
+  "priorities": [
+    {
+      "id": "parallel_prepare_deterministic_commit",
+      "title": "无状态准备并行、状态结果确定性提交",
+      "implemented": [
+        {
+          "text": "M06 已用有界 scoped workers 准备和验签，workers 只接受 1/2/4/8。全部已启动 workers 在返回前 join，结果按原交易索引排序；错误在原位置消耗。",
+          "sources": [
+            "m06",
+            "m06_apply"
+          ]
+        },
+        {
+          "text": "余额、nonce、费用、receipts 按原顺序应用；冲突在当前状态 canonical replay 一次，不重复主签名验证。Growth partial view、PQ accounts V2、单 worker、全同 sender 使用串行状态路径，独立准备/验签仍可并行。",
+          "sources": [
+            "m06",
+            "m06_apply"
+          ]
+        },
+        {
+          "text": "普通 shared admission 可在私有 prepared artifact 形成后释放 Node mutex 执行 M06，再获取 owner 并由 commit_shared_admission 重验 epoch/current context；子阶段仍使用同一原 deadline 和 CPU 账户。",
+          "sources": [
+            "ordinary_admission",
+            "detached_commit"
+          ]
+        }
+      ],
+      "limitations_and_next_work": [
+        {
+          "text": "detached_execution_supported 排除 owner_policy、mining_owner、continuous_owner、PermanentAccountGrowthV2、Growth profile、active root rejection cache，不能声称所有入口都脱离 owner 锁。",
+          "sources": [
+            "detached_support"
+          ]
+        },
+        {
+          "text": "需按真实普通入口量化 prepare、owner wait、state read/commit、全部 worker CPU。同一共享 0.25 CPU 下多线程本身不增加容量；已有并行代码不是公网 TPS 证明。",
+          "sources": [
+            "ordinary_admission",
+            "m06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "model_data_control_isolation",
+      "title": "模型传输与控制资源分离",
+      "implemented": [
+        {
+          "text": "Cell 下载已有有限连接、响应字节、重试和绝对 deadline。bounded serving 使用有界 workers、独立已验证只读 cache reader，不持 SQLite lock 跨 socket I/O。",
+          "sources": [
+            "cell_fetch",
+            "cell_serve"
+          ]
+        },
+        {
+          "text": "repair_native_cell 要求绑定 CPU、下载字节、attempt reservation，在 effect window 内执行；其结果只是单次 invocation observation，不是 durable whole-lifecycle receipt。",
+          "sources": [
+            "cell_repair"
+          ]
+        },
+        {
+          "text": "material runtime bridge 精确绑定材料、plan、contract，解决 provenance/runtime 兼容边界；不能据此推导主机资源隔离。",
+          "sources": [
+            "material_bridge"
+          ]
+        }
+      ],
+      "limitations_and_next_work": [
+        {
+          "text": "Cell serving 源码明确不承诺攻击者占满全部 slots 时仍公平服务；独立模块和 bounded queues 不能证明 CPU、NIC、磁盘竞争下的链业务 deadline。",
+          "sources": [
+            "cell_fairness_scope"
+          ]
+        },
+        {
+          "text": "需同一固定 Host 同时运行大 Cell 传输/模型加载及真实签名确认、撤回、恢复，分别报告 Cell GB/s、冷/热加载分位数、链业务完成率与延迟和共同预算中的资源消耗。",
+          "sources": [
+            "cell_fetch",
+            "cell_serve",
+            "cell_repair"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "adversarial_fairness",
+      "title": "恶意负载下的诚实业务完成率",
+      "implemented": [
+        {
+          "text": "同一 CPU domain epoch 内跨 listeners 共享连接、body/output、read/mutation grants 和 challenges。原连接 64、paid body 8 MiB；read body reserve 128 KiB、control output reserve 512 KiB 从原总量分区。",
+          "sources": [
+            "intake",
+            "public_caps"
+          ]
+        },
+        {
+          "text": "原总连接满时可取消至少 250 ms 未付费输入空闲连接，但 slot 只在实际 lease drop 后释放。Challenge 在熵/签名前预留，取消不退款。",
+          "sources": [
+            "idle_pressure",
+            "challenge"
+          ]
+        },
+        {
+          "text": "原共享 CPU 为 2 s burst、0.25 CPU refill、100 ms start reserve、2 workers。完整 W1 identity 只在原账户内获得有限完成优先权；4096 digest slots 满或重复时不给额外优先权，普通验证/恢复继续。",
+          "sources": [
+            "cpu_caps",
+            "work_priority"
+          ]
+        }
+      ],
+      "limitations_and_next_work": [
+        {
+          "text": "PublicPolicy scope 明确含 no-general-distinct-valid-W1-fairness；重复包抑制、有限队列和单项控制通过不能推广为通用恶意负载公平性。",
+          "sources": [
+            "public_scope"
+          ]
+        },
+        {
+          "text": "继续保留原 campaign/F0 的所有阶段、计划槽、预算、失败和未完成分母，验证新 challenge、假 trace、不同合法 W1、冷缓存和恢复并发下诚实业务能否完成。",
+          "sources": [
+            "public_scope",
+            "intake"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pq_capacity",
+      "title": "PQ 的字节、验签、缓存与传播容量",
+      "implemented": [
+        {
+          "text": "ML-DSA-65 signature 固定 3309 bytes。V3 PQ 仅缓存 immutable key expansion，8 slots，以完整 SPKI 和 expected key ID 命中，仅成功验签后 publish，不缓存验签 verdict，也不持锁跨 crypto。",
+          "sources": [
+            "pq_signature",
+            "pq_cache"
+          ]
+        },
+        {
+          "text": "AuthenticationBudget 在验签前计 attempt/bytes，记录实际 CPU；失败、replay、cache hit 不退款，未知 clock/panic fail closed。history profile 明确 read-head-and-history-only、no-production-qualification。",
+          "sources": [
+            "pq_auth_budget",
+            "pq_history_scope"
+          ]
+        },
+        {
+          "text": "Native Accounts V2 与 Application V6 有不同显式上限；Application V6 每 envelope 16384 bytes、每 block 64 transactions / 64 verifications。",
+          "sources": [
+            "pq_accounts"
+          ]
+        }
+      ],
+      "limitations_and_next_work": [
+        {
+          "text": "需分别测 cache hit、冷 expansion、超过 8 key 的 churn、无效签名、完整消息字节与复制传播率，并计入同一 Host 原总预算。",
+          "sources": [
+            "pq_cache",
+            "pq_auth_budget",
+            "pq_accounts"
+          ]
+        },
+        {
+          "text": "只读 PQ history profile 与显式 policy-based PQ network 不能直接代表全部普通变更入口完成公网 PQ 容量验收。",
+          "sources": [
+            "pq_history_scope",
+            "pq_network",
+            "pq_status"
+          ]
+        }
+      ],
+      "dimensional_example": {
+        "assumption": "假设每笔交易一个独立签名；10000 TPS 是假设值，不是项目测得值。",
+        "signature_bytes": 3309,
+        "hypothetical_tps": 10000,
+        "signature_only_bytes_per_second": 33090000,
+        "decimal_MB_per_second": 33.09,
+        "excluded": [
+          "transaction body",
+          "key bytes when carried",
+          "work proof",
+          "replication/gossip amplification",
+          "verification CPU"
+        ],
+        "sources": [
+          "pq_signature"
+        ]
+      }
+    },
+    {
+      "id": "ordinary_ingress_query_recovery_profiles",
+      "title": "贯通普通入口、查询、恢复与 PQ 配置",
+      "implemented": [
+        {
+          "text": "StateBackend 将 AuthenticatedV1、PermanentAccountGrowthV2、PqNetworkV2、PqContinuousV3、PqWitnessV4 分开。本轮 post-write readback schema 只在 AuthenticatedV1 启用，不能假设覆盖所有 profile。",
+          "sources": [
+            "backends",
+            "readback_selection"
+          ]
+        },
+        {
+          "text": "read_active_with_readback 仍读 slot State 并验证 continuity/commitment/authenticated state；state_at_with_readback 向后查 snapshot，再沿 deltas 向前重建并检查中间状态。",
+          "sources": [
+            "read_active",
+            "state_at"
+          ]
+        },
+        {
+          "text": "recover 对 Growth 进入专用路径，其他路径保留 owner guards、resume intent、最高 work 激活。Growth cold-open 在同一读事务内逐 block 验 header/W1、execute、比较 state/deltas/receipts，再审计 roots、storage partition 和 epoch。",
+          "sources": [
+            "recover",
+            "growth_cold"
+          ]
+        },
+        {
+          "text": "PQ network/witness 有显式 opener 与持久 policy/replay owner，witness opener 要求既有外部 witness，反 rollback 检查必须保留。",
+          "sources": [
+            "pq_network",
+            "pq_witness",
+            "pq_witness_check"
+          ]
+        }
+      ],
+      "limitations_and_next_work": [
+        {
+          "text": "完整 State/历史读取、Growth cold replay、PQ owner/witness 路径仍需分别容量预算；同 writer no-write epoch 的有限历史后缀 receipt 不能证明这些路径都消除了 N/H 成本。",
+          "sources": [
+            "read_active",
+            "state_at",
+            "growth_cold",
+            "readback_selection"
+          ]
+        },
+        {
+          "text": "按各现有 profile、真实状态规模 N、历史长度 H、冷/热缓存验证 submit/query/reopen/recovery，在现有账本和 ownership 边界贯通增量读取；开发 fixture 的低难度确认不能换算成生产六块确认时间。",
+          "sources": [
+            "backends",
+            "ordinary_admission",
+            "recover",
+            "growth_cold"
+          ]
+        }
+      ]
+    }
+  ],
+  "metric_separation": [
+    "confirmed TPS and all scheduled-slot success denominator",
+    "useful work completed per second",
+    "Cell transfer bytes/s including retries/replication",
+    "cold/warm model load latency with all attempts",
+    "quality improvement per actual total CPU/GPU/network/storage cost"
+  ],
+  "candidate_boundary": "The Host parent-FD candidate preserves fresh checks while reducing repeated path-resolution overhead. Bounded history suffix receipts reuse only completed verification in the same writer/no-write epoch. Neither alone establishes public throughput, universal fairness, model/control resource isolation, or all-profile incremental recovery.",
+  "public_link_commit": "9e50ca8e1ce655ef2f4686bd0ab58120b30c4632",
+  "public_link_tree": "8d67d4812661393cfc9dba2474c279d8285d6dee",
+  "public_link_identity": "all referenced file SHA-256 values individually verified unchanged; original read source identity retained"
+}

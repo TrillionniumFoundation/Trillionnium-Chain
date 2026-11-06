@@ -350,9 +350,17 @@ impl CellPqReleaseAuthorizationV2 {
 /// authority owner at the actual use boundary; a copied old view is not fresh.
 /// This cache/acquisition API is not a CURRENT update or a FinalUse capability.
 ///
-/// ```compile_fail
-/// use trnm_data_availability::cell::VerifiedCellPqReleaseV2;
-/// fn stale_time_only(proof: &VerifiedCellPqReleaseV2<'_>) {
+/// ```compile_fail,E0308
+/// use trnm_data_availability::cell::CellReleaseManifestV1;
+/// use trnm_data_availability::cell::pq::{
+///     CellPqReleaseAuthorizationV2, CellPqReleaseExpectationV2,
+/// };
+/// fn stale_time_only(
+///     authorization: &CellPqReleaseAuthorizationV2,
+///     release: &CellReleaseManifestV1,
+///     expected: &CellPqReleaseExpectationV2<'_>,
+/// ) {
+///     let proof = authorization.verify_at(release, expected).unwrap();
 ///     let _ = proof.release_at(300);
 /// }
 /// ```

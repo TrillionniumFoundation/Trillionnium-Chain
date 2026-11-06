@@ -546,6 +546,7 @@ dependencies = [
  "ed25519-dalek",
  "hex",
  "ml-dsa",
+ "serde_json",
  "sha2",
  "trnm-protocol",
  "zeroize",

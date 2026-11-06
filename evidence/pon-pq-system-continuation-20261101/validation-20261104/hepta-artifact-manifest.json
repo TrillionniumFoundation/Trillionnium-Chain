@@ -1,0 +1,11 @@
+{
+  "archive": "/workspace/scratch/f4aa9e32ef1c/hepta-pq-validation/hepta-pq4729-native-20261104.tar.xz",
+  "bytes": 783340,
+  "sha256": "b8eb0d77e0befe411087152741bc5cf8f371bcdf77b36a4328d7f1f2689ea88f",
+  "archive_files": 32,
+  "readback_verified": true,
+  "source_checkouts_and_build_artifacts_included": false,
+  "credentials_or_key_material_included": false,
+  "summary": "/workspace/scratch/f4aa9e32ef1c/hepta-pq-validation/receipts/summary.json",
+  "readme": "/workspace/scratch/f4aa9e32ef1c/hepta-pq-validation/receipts/README.md"
+}

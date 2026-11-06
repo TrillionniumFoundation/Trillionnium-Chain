@@ -3,6 +3,107 @@
 use super::*;
 use std::sync::Mutex;
 
+#[test]
+fn native_growth_v2_header_program_reuse_rebinds_each_block_and_survives_reopen() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let first = make(&node, settings.genesis(), vec![]);
+    let first_id = admit(&mut node, &first);
+    let second = make(&node, first_id, vec![]);
+    let second_id = admit(&mut node, &second);
+    let before = rows(&node.db);
+    node.db.flush_prepared_statement_cache();
+    for (id, expected) in [
+        (first_id, &first.header),
+        (second_id, &second.header),
+        (first_id, &first.header),
+    ] {
+        assert_eq!(&node.growth_header(id).unwrap(), expected);
+    }
+    // Observe the real retained SQLite VM. A freshly prepared SQL program has
+    // zero runs; this proves repeated callers actually reused the cached one.
+    {
+        let statement = node.db.prepare_cached(GROWTH_HEADER_SQL).unwrap();
+        assert_eq!(statement.reset_status(rusqlite::StatementStatus::Run), 3);
+        assert_eq!(
+            statement.reset_status(rusqlite::StatementStatus::RePrepare),
+            0
+        );
+    }
+    assert!(node.growth_header([0; 32]).is_err());
+    assert_eq!(node.growth_header(second_id).unwrap(), second.header);
+    assert_eq!(rows(&node.db), before);
+    drop(node);
+    let node = Node::open_with_permanent_account_growth_v2(directory.path(), settings).unwrap();
+    assert_eq!(node.growth_header(first_id).unwrap(), first.header);
+    assert_eq!(node.growth_header(second_id).unwrap(), second.header);
+    assert_eq!(rows(&node.db), before);
+}
+
+#[test]
+fn native_growth_v2_warm_header_program_reads_changed_prefix_trace_and_length() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let first = make(&node, settings.genesis(), vec![]);
+    let id = admit(&mut node, &first);
+    let raw = first.encode().unwrap();
+    let before = rows(&node.db);
+    for fault in 0..6 {
+        assert_eq!(node.growth_header(id).unwrap(), first.header);
+        let mut changed = raw.clone();
+        let expected = match fault {
+            0 => {
+                changed[0] ^= 1;
+                "GROWTH_PACKET_LENGTH"
+            }
+            1 => {
+                changed[4] ^= 1;
+                "HEADER_CODEC"
+            }
+            2 => {
+                let last = changed.len() - 1;
+                changed[last] ^= 1;
+                "GROWTH_PACKET_ID"
+            }
+            3 => {
+                changed.truncate(4 + trnm_protocol::pon_growth::GROWTH_HEADER_BYTES);
+                "GROWTH_PACKET_LENGTH"
+            }
+            4 => {
+                changed.resize(limits::MAX_PACKET_BYTES + 1, 0);
+                "GROWTH_PACKET_LENGTH"
+            }
+            5 => {
+                let mut header = first.header.clone();
+                header.ledger.timestamp += 1;
+                let encoded = header.encode();
+                changed[4..4 + encoded.len()].copy_from_slice(&encoded);
+                "GROWTH_PACKET_ID"
+            }
+            _ => unreachable!(),
+        };
+        let transaction = node.db.unchecked_transaction().unwrap();
+        assert_eq!(
+            transaction
+                .execute(
+                    "UPDATE blocks SET packet=? WHERE id=?",
+                    params![changed, id.as_slice()],
+                )
+                .unwrap(),
+            1
+        );
+        assert_eq!(node.growth_header(id).unwrap_err().to_string(), expected);
+        transaction.rollback().unwrap();
+        assert_eq!(node.growth_header(id).unwrap(), first.header);
+        assert_eq!(rows(&node.db), before);
+        assert!(node.db.is_autocommit());
+    }
+}
+
 // The original check is deliberately retained as a test-only oracle. It obtains
 // target and median-time inputs through separate native reads, as before.
 fn original_check(node: &Node, packet: &GrowthPacket, now: u64) -> Result<()> {

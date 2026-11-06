@@ -1,0 +1,43 @@
+{
+  "all_selected_inputs_rechecked_unchanged": true,
+  "archive": {
+    "all_member_bytes_read_back": true,
+    "bytes": 593512,
+    "only_safe_regular_members": true,
+    "original_regular_files": 2144,
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+    "regular_members": 2148,
+    "sha256": "0d0092d47890a1ae0f08ab1cba07ad3847b13d052ec8a48fbfba070772d5b045"
+  },
+  "created_utc": "2026-11-06T09:57:27.248079+00:00",
+  "earlier_2859_build_attempts_included": false,
+  "excluded_entries": [],
+  "expected_head": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "expected_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "finished_utc": "2026-11-06T09:57:29.096179+00:00",
+  "no_native_test_build_source_mutation_or_network_api": true,
+  "packager_sha256": "e54bce6ce110e59c23647572086f716a59ad9ecbdf337861f44830d793f4207b",
+  "sampler_passed_as_reported": true,
+  "sampler_sqlite_status_as_reported": "UNKNOWN_SELECTED_RELEASE_UNIT_BINDING",
+  "schema": "trnm-composed-rog-package-receipt-v1",
+  "sidecars": {
+    "checksums": {
+      "bytes": 488561,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.SHA256SUMS",
+      "sha256": "603b1f600db2602665327e4916bab37f46675b42b5953fe6c991a0ebd0aa948f"
+    },
+    "index": {
+      "bytes": 24923,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.index.json",
+      "sha256": "7b9cf48ba2582b54e7502e0e86ba784868c906cbc0a5c7451526a44f642932f6"
+    },
+    "manifest": {
+      "bytes": 1160630,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.manifest.json",
+      "sha256": "a2e610e116112695b3c1a45044f35d9e9d060c1d19044f33303171d9331a2f39"
+    }
+  },
+  "sqlite_qualification_granted_by_packaging": false,
+  "suite_and_sampler_memberships_rechecked_unchanged": true,
+  "suite_passed_as_reported": true
+}

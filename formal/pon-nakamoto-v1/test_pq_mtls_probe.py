@@ -208,6 +208,17 @@ class PQMutualTLSProbeTests(unittest.TestCase):
                 self.assertIsNone(so)
                 self.assertIn("REFUSED peer_not_mldsa65",ce)
 
+    def test_hybrid_key_exchange_does_not_authorize_a_classical_peer_identity(self):
+        # The TLS chain is trusted and the configured group is hybrid. Only
+        # the independent PQ identity gate must refuse this classical key.
+        # Reuse the declared backend's certificate and exact DER pin prepared
+        # by setUpClass; do not regenerate or mutate another test's fixture.
+        c, s, co, so, ce, se = self.pair(client="classical", server_trust="classical")
+        self.assertNotEqual(s, 0, (ce, se))
+        self.assertIsNone(co)
+        self.assertIsNone(so)
+        self.assertIn("REFUSED peer_not_mldsa65", se)
+
     def test_hostname_and_trustroot_refused(self):
         c,s,co,so,ce,se=self.pair(hostname="malicious.invalid")
         self.assertNotEqual(c,0,(ce,se));self.assertIsNone(co)

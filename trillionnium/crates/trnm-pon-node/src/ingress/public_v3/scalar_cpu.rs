@@ -18,6 +18,10 @@ pub(super) const MUTATION_CPU_BURST_NS: u64 = 2_000_000_000;
 pub(super) const MUTATION_CPU_REFILL_NS_PER_SECOND: u64 = 250_000_000;
 pub(super) const MUTATION_CPU_START_RESERVE_NS: u64 = 100_000_000;
 pub(super) const MUTATION_CPU_WORKERS: usize = 2;
+// The caller holds its listener's original mutation dequeue mutex until start
+// admission finishes. At most one dequeued request per admitted listener can
+// wait here; this fixed registry stores only ordering ids, never request data.
+pub(super) const MUTATION_CPU_START_WAITERS: usize = super::MAX_LISTENERS_PER_CPU_DOMAIN;
 // Paid from the original account before a durable multi-step reorg intent.
 // The principal is unavailable to normal execution until same-scope cleanup
 // or publication finishes. Every actual cleanup interval is still charged.
@@ -170,6 +174,8 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    next_start_waiter: u64,
+    start_waiters: [u64; MUTATION_CPU_START_WAITERS],
     termination_reserved_ns: u64,
     // A full W1 success can protect only its existing public request. This is
     // scheduling state, not another bucket, start reserve or work authority.
@@ -188,6 +194,8 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            next_start_waiter: 0,
+            start_waiters: [0; MUTATION_CPU_START_WAITERS],
             termination_reserved_ns: 0,
             verified_completions: 0,
             completion_work: Box::new([[0; 32]; COMPLETION_WORK_CAPACITY]),
@@ -292,8 +300,20 @@ impl PaidMutationCpuBudget {
             - i128::from(self.termination_reserved_ns)
     }
     pub(super) fn reserve(&mut self, now: Instant) -> Result<()> {
+        self.reserve_start(now, None)
+    }
+    // FIFO orders only the already-dequeued public starts. Immediate local
+    // callers retain the original nonblocking predicates: several hold the
+    // Node lock and have already spent a durable operation allocation. A
+    // public backlog must not introduce an unconditional local refusal or a
+    // wait while that caller holds the Node. Both paths still use the same
+    // credit, worker ceiling and original verified-completion priority.
+    fn reserve_start(&mut self, now: Instant, waiter: Option<u64>) -> Result<()> {
         self.refill(now);
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        if let Some(id) = waiter {
+            ensure(self.start_waiters[0] == id, "PUBLIC_MUTATION_CPU_BUDGET")?;
+        }
         ensure(
             self.verified_completions == 0
                 && self.in_flight < MUTATION_CPU_WORKERS
@@ -308,7 +328,36 @@ impl PaidMutationCpuBudget {
                 .checked_add(MUTATION_CPU_START_RESERVE_NS)?;
             Some(())
         });
+        if let Some(id) = waiter {
+            // The exact head and the original reservation are claimed under
+            // the same shared-account lock, before any native dispatch.
+            self.remove_start_waiter(id);
+        }
         Ok(())
+    }
+    fn register_start_waiter(&mut self) -> Result<u64> {
+        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        let slot = self
+            .start_waiters
+            .iter()
+            .position(|id| *id == 0)
+            .ok_or("PUBLIC_MUTATION_CPU_BUDGET")?;
+        let Some(id) = self.next_start_waiter.checked_add(1) else {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        self.next_start_waiter = id;
+        self.start_waiters[slot] = id;
+        Ok(id)
+    }
+    fn remove_start_waiter(&mut self, id: u64) {
+        if let Some(at) = self.start_waiters.iter().position(|entry| *entry == id) {
+            self.start_waiters.copy_within(at + 1.., at);
+            self.start_waiters[MUTATION_CPU_START_WAITERS - 1] = 0;
+        } else {
+            // Lost ordering ownership must not permit a silent bypass.
+            self.unavailable = true;
+        }
     }
     pub(super) fn completion_pending(&self) -> bool {
         self.verified_completions != 0
@@ -466,6 +515,52 @@ impl PaidMutationCpuBudget {
         }
     }
 }
+
+/// One already-dequeued public mutation's position at the shared start gate.
+/// Dropping it removes only ordering metadata: it cannot refund CPU, release
+/// another request's reservation, or extend any task or connection deadline.
+pub(super) struct MutationCpuStartWaiter {
+    budget: Arc<Mutex<PaidMutationCpuBudget>>,
+    id: Option<u64>,
+}
+impl MutationCpuStartWaiter {
+    pub(super) fn register(budget: Arc<Mutex<PaidMutationCpuBudget>>) -> Result<Self> {
+        let id = budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .register_start_waiter()?;
+        Ok(Self {
+            budget,
+            id: Some(id),
+        })
+    }
+    pub(super) fn is_head(&self, budget: &PaidMutationCpuBudget) -> bool {
+        self.id.is_some_and(|id| budget.start_waiters[0] == id)
+    }
+    pub(super) fn reserve(
+        &mut self,
+        budget: &mut PaidMutationCpuBudget,
+        now: Instant,
+    ) -> Result<()> {
+        let id = self.id.ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        budget.reserve_start(now, Some(id))?;
+        self.id = None;
+        Ok(())
+    }
+}
+impl Drop for MutationCpuStartWaiter {
+    fn drop(&mut self) {
+        if let Some(id) = self.id.take() {
+            if let Ok(mut budget) = self.budget.lock() {
+                budget.remove_start_waiter(id);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+#[path = "scalar_cpu_start_fifo_tests.rs"]
+mod start_fifo_tests;
 /// Only this request's live thread baselines. No State, packet, identity or
 /// progress authority is cached. Locks are released before any native work.
 pub(super) struct LiveRequestCpu {
@@ -981,7 +1076,9 @@ impl ServiceMutationCpuDomain {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
     /// Begin on the actual owner thread, after separate task-purpose authority
-    /// but before expensive Native work. No ledger authority is minted here.
+    /// but before expensive Native work. Retains the original immediate local
+    /// admission conditions even when public starts wait; it never waits while
+    /// an owner holds the Node lock. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
         let stamp = ThreadCpuStamp::start();
         let mut budget = self

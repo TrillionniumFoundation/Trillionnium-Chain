@@ -366,6 +366,17 @@ jobs:
             "store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures",
         ])
         prefix("node", "postwrite-readback", "store::native_authenticated::post_write_readback::tests::", 25)
+        prefix("node", "postwrite-history", "store::native_authenticated::post_write_readback::history_tests::", 12)
+        exact("node", "host-parent-relative", [
+            "host_kernel_parent::kernel_parent::relative_tests::relative_limits_read_replacement_bytes_and_every_current_file",
+            "host_kernel_parent::kernel_parent::relative_tests::relative_limits_preserve_eof_size_utf8_and_late_io_error_precedence",
+            "host_kernel_parent::kernel_parent::relative_tests::relative_limits_never_follow_replacement_symlinks",
+            "host_kernel_parent::kernel_parent::relative_tests::held_parent_refuses_renamed_recreated_and_symlink_paths_then_rechecks_restore",
+            "host_kernel_parent::kernel_parent::relative_tests::held_parent_binds_actual_opened_fd_and_accepts_search_only_directory",
+            "host_kernel_parent::kernel_parent::relative_tests::held_parent_final_fence_refuses_changes_after_successful_limit_reads",
+            "host_kernel_parent::kernel_parent::relative_tests::held_parent_production_final_fence_observes_change_after_actual_fifth_open",
+            "host_kernel_parent::kernel_parent::relative_tests::held_parent_final_fence_does_not_replace_an_earlier_limit_parse_error",
+        ])
         assert len({(crate, test) for crate, group, test in selected}) == len(selected)
         (root / "selected-tests.tsv").write_text("".join(f"{crate}\t{group}\t{test}\n" for crate, group, test in selected))
         print(json.dumps({"result": "PASS", "scope": "exact libtest registry selection only; no execution verdict and not the complete runtime suite",

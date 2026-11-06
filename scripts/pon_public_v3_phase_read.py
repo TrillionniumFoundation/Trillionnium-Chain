@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read retained multiprocess observations; never infer confirmations from ACKs.
 
-Historical v1/v2 and the r11/r12/r13 paid CPU envelope's v3 observations are accepted.
+Historical v1/v2 and the r11 through r16 paid CPU envelope's v3 observations are accepted.
 The separate arithmetic-facts campaign retains its own schema and signed profile;
 reading it cannot qualify raw r13 or arbitrary-key service.
 An explicit observed policy is checked against exact revision vectors. Missing
@@ -54,6 +54,14 @@ def require(value, message):
 
 def integer(value):
     require(type(value) is int and value >= 0, 'nonnegative integer observation required')
+    return value
+
+
+def optional_clock_ns(value, bits):
+    # Process CPU samples are Option<u64>; elapsed().as_nanos() is u128.
+    # Historical unavailable observations remain null, including wall clocks.
+    require(value is None or (type(value) is int and 0 <= value < (1 << bits)),
+            f'optional u{bits} clock observation required')
     return value
 
 
@@ -868,12 +876,12 @@ def phase_summary(phase, *, interval_outcomes=True):
             base.update(observed_confirmation_rounds=0, unobserved_scheduled_rounds=ROUNDS,
                         confirmation_rounds=[])
         return base
-    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14'):
+    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14', 'r15', 'r16'):
         base['completion_work_observation'] = completion_work_observation(
             phase.get('completion_work_observation'))
     else:
         require('completion_work_observation' not in phase,
-                'completion-work observation requires explicit r13 or r14 policy')
+                'completion-work observation requires explicit r13, r14, r15 or r16 policy')
     if arithmetic_profile:
         owner = phase.get('work_arithmetic_owner')
         require(type(owner) is dict and set(owner) == {'schema', 'initial_state', 'slots',
@@ -918,7 +926,7 @@ def phase_summary(phase, *, interval_outcomes=True):
             'monotonic_epoch_is_observer_local')), 'v4 inclusive/local-clock scope required')
     if policy is not None:
         require(schema.endswith(('-v3', '-v4')) is (policy.get('base_resource_revision', policy['resource_revision'])
-                                         in ('r11', 'r12', 'r13', 'r14')),
+                                         in ('r11', 'r12', 'r13', 'r14', 'r15', 'r16')),
                 'public policy and observed CPU scope disagree')
     if schema.endswith(('-v3', '-v4')):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
@@ -977,10 +985,10 @@ def phase_summary(phase, *, interval_outcomes=True):
         'attacker_processes_requested': phase['attacker_processes_requested'],
         'attacker_processes_ready': phase['attacker_processes_ready'],
         'actor_reports_successful_without_cap_or_kill': phase['actor_reports_successful_without_cap_or_kill'],
-        'whole_parent_phase_cpu_ns': phase['whole_parent_phase_cpu_ns'],
-        'whole_parent_phase_wall_ns': phase['whole_parent_phase_wall_ns'],
-        'receiver_and_verifier_setup_cpu_ns': phase['receiver_and_verifier_setup_cpu_ns'],
-        'receiver_and_verifier_setup_wall_ns': phase['receiver_and_verifier_setup_wall_ns'],
+        'whole_parent_phase_cpu_ns': optional_clock_ns(phase['whole_parent_phase_cpu_ns'], 64),
+        'whole_parent_phase_wall_ns': optional_clock_ns(phase['whole_parent_phase_wall_ns'], 128),
+        'receiver_and_verifier_setup_cpu_ns': optional_clock_ns(phase['receiver_and_verifier_setup_cpu_ns'], 64),
+        'receiver_and_verifier_setup_wall_ns': optional_clock_ns(phase['receiver_and_verifier_setup_wall_ns'], 128),
     })
     return base
 
@@ -1015,8 +1023,8 @@ def analyze(report, *, interval_outcomes=True):
             'native_finite_experiment_criteria_met': report['finite_experiment_criteria_met'],
             'native_economics_complete': report['economics_complete'],
             'best_observed_cold_legal_method': report['best_observed_cold_legal_method'],
-            'honest_preparation_cpu_ns': report['preparation']['cpu_ns'],
-            'honest_preparation_wall_ns': report['preparation']['wall_ns'],
+            'honest_preparation_cpu_ns': optional_clock_ns(report['preparation']['cpu_ns'], 64),
+            'honest_preparation_wall_ns': optional_clock_ns(report['preparation']['wall_ns'], 128),
             'phases': [phase_summary(row, interval_outcomes=interval_outcomes) for row in report['phases']],
             'scope': {'reader_runs_native_admission': False,
                       'host_or_source_authentication_performed': False,

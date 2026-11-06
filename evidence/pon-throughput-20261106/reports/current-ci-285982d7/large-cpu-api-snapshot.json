@@ -1,0 +1,2882 @@
+{
+  "schema": "trnm-throughput-pr736-ci-observation-v1",
+  "sequence": 11,
+  "observed_at_utc": "2026-11-06 08:30:24 UTC",
+  "source_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "source_tree_prefix": "ce074eb1",
+  "primary_api_note": "Run and job calls are independent non-atomic snapshots. Head and prospective-merge matrix jobs remain separate; completed_success is a GitHub job conclusion, not public throughput qualification.",
+  "records": [
+    {
+      "kind": "run",
+      "key": "native_campaign",
+      "run_id": 42185197057,
+      "data": {
+        "id": 42185197057,
+        "name": "PoN original native campaign",
+        "node_id": "WFR_kwLOTty1_c8AAAAJ0m8GAQ",
+        "head_branch": "fix/chain-throughput-publish-20261106-1eed",
+        "head_sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "path": ".github/workflows/pon-native-campaign-qualification.yml",
+        "display_title": "perf: bound repeated history and Host checks; restore exact throughput acceptance",
+        "run_number": 921,
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "failure",
+        "workflow_id": 391170410,
+        "check_suite_id": 114303450088,
+        "check_suite_node_id": "CS_kwDOTty1_c8AAAAanQQ76A",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/736",
+            "id": 5184317251,
+            "number": 736,
+            "head": {
+              "ref": "fix/chain-throughput-publish-20261106-1eed",
+              "sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            },
+            "base": {
+              "ref": "fix/chain-six-axis-performance-20261103",
+              "sha": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-06T08:05:29Z",
+        "updated_at": "2026-11-06T08:28:02Z",
+        "actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-06T08:05:29Z",
+        "triggering_actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/logs",
+        "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/114303450088",
+        "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/artifacts",
+        "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/cancel",
+        "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197057/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/391170410",
+        "head_commit": {
+          "id": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tree_id": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "message": "merge: retain concurrent Cell transport and custody improvements\n\nPreserve the corrected throughput/PQ candidate and the current integration parent. Resolve only the exact-source corpus conflict by the reviewed union; retain 582 pins, 501 required paths, all 1268 distributed sources, and unchanged HOLD assertions. Runtime changes are inherited intact from their respective parents. Parent validation is retained under its original identity; the composed tree requires fresh validation.",
+          "timestamp": "2026-11-06T08:04:57Z",
+          "author": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        },
+        "head_repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        }
+      }
+    },
+    {
+      "kind": "jobs",
+      "key": "native_campaign",
+      "run_id": 42185197057,
+      "data": {
+        "jobs": [
+          {
+            "id": 127783768291,
+            "name": "original native campaign (x64, head, release)",
+            "status": "completed",
+            "conclusion": "failure",
+            "run_id": 42185197057,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Reserve new output and isolated Cargo directories",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Checkout the immutable candidate head",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Verify actual tracked bytes and original source boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Install the source-pinned compiler and fetch locked dependencies",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Prepare the exact original test runner without changing source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Run three original campaigns under verified actual limits",
+                "status": "completed",
+                "conclusion": "failure",
+                "number": 7
+              },
+              {
+                "name": "Preserve final source verification and all partial artifact hashes",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Upload successful, failed and partial observations",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 9
+              },
+              {
+                "name": "Post Checkout the immutable candidate head",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 18
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 19
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "run",
+      "key": "f0",
+      "run_id": 42185197083,
+      "data": {
+        "id": 42185197083,
+        "name": "PoN fixed Host ROOT F0 diagnostic",
+        "node_id": "WFR_kwLOTty1_c8AAAAJ0m8GGw",
+        "head_branch": "fix/chain-throughput-publish-20261106-1eed",
+        "head_sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+        "display_title": "perf: bound repeated history and Host checks; restore exact throughput acceptance",
+        "run_number": 148,
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "workflow_id": 399731485,
+        "check_suite_id": 114303450225,
+        "check_suite_node_id": "CS_kwDOTty1_c8AAAAanQQ8cQ",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/736",
+            "id": 5184317251,
+            "number": 736,
+            "head": {
+              "ref": "fix/chain-throughput-publish-20261106-1eed",
+              "sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            },
+            "base": {
+              "ref": "fix/chain-six-axis-performance-20261103",
+              "sha": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-06T08:05:29Z",
+        "updated_at": "2026-11-06T08:05:29Z",
+        "actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-06T08:05:29Z",
+        "triggering_actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/logs",
+        "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/114303450225",
+        "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/artifacts",
+        "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/cancel",
+        "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197083/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/399731485",
+        "head_commit": {
+          "id": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tree_id": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "message": "merge: retain concurrent Cell transport and custody improvements\n\nPreserve the corrected throughput/PQ candidate and the current integration parent. Resolve only the exact-source corpus conflict by the reviewed union; retain 582 pins, 501 required paths, all 1268 distributed sources, and unchanged HOLD assertions. Runtime changes are inherited intact from their respective parents. Parent validation is retained under its original identity; the composed tree requires fresh validation.",
+          "timestamp": "2026-11-06T08:04:57Z",
+          "author": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        },
+        "head_repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        }
+      }
+    },
+    {
+      "kind": "jobs",
+      "key": "f0",
+      "run_id": 42185197083,
+      "data": {
+        "jobs": [
+          {
+            "id": 127783768164,
+            "name": "F0 (x64, head, one baseline and one ROOT phase)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197083,
+            "logs_url": null,
+            "steps": null
+          }
+        ]
+      }
+    },
+    {
+      "kind": "run",
+      "key": "large_cpu",
+      "run_id": 42185197106,
+      "data": {
+        "id": 42185197106,
+        "name": "PoN original large-state CPU acceptance",
+        "node_id": "WFR_kwLOTty1_c8AAAAJ0m8GMg",
+        "head_branch": "fix/chain-throughput-publish-20261106-1eed",
+        "head_sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "path": ".github/workflows/pon-original-large-state-cpu.yml",
+        "display_title": "perf: bound repeated history and Host checks; restore exact throughput acceptance",
+        "run_number": 212,
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "workflow_id": 403449877,
+        "check_suite_id": 114303450177,
+        "check_suite_node_id": "CS_kwDOTty1_c8AAAAanQQ8QQ",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/736",
+            "id": 5184317251,
+            "number": 736,
+            "head": {
+              "ref": "fix/chain-throughput-publish-20261106-1eed",
+              "sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            },
+            "base": {
+              "ref": "fix/chain-six-axis-performance-20261103",
+              "sha": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-06T08:05:29Z",
+        "updated_at": "2026-11-06T08:27:58Z",
+        "actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-06T08:05:29Z",
+        "triggering_actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106/logs",
+        "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/114303450177",
+        "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106/artifacts",
+        "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106/cancel",
+        "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197106/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403449877",
+        "head_commit": {
+          "id": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tree_id": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "message": "merge: retain concurrent Cell transport and custody improvements\n\nPreserve the corrected throughput/PQ candidate and the current integration parent. Resolve only the exact-source corpus conflict by the reviewed union; retain 582 pins, 501 required paths, all 1268 distributed sources, and unchanged HOLD assertions. Runtime changes are inherited intact from their respective parents. Parent validation is retained under its original identity; the composed tree requires fresh validation.",
+          "timestamp": "2026-11-06T08:04:57Z",
+          "author": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        },
+        "head_repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        }
+      }
+    },
+    {
+      "kind": "jobs",
+      "key": "large_cpu",
+      "run_id": 42185197106,
+      "data": {
+        "jobs": [
+          {
+            "id": 127783767946,
+            "name": "original state and exit (ubuntu-24.04, head)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197106,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Build the unchanged default release test binary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run both original CPU budgets and actual reactor-exit regressions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17
+              }
+            ]
+          },
+          {
+            "id": 127783768279,
+            "name": "original state and exit (ubuntu-24.04-arm, head)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197106,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Build the unchanged default release test binary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run both original CPU budgets and actual reactor-exit regressions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17
+              }
+            ]
+          },
+          {
+            "id": 127783768359,
+            "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197106,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Build the unchanged default release test binary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run both original CPU budgets and actual reactor-exit regressions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17
+              }
+            ]
+          },
+          {
+            "id": 127783768380,
+            "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197106,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Build the unchanged default release test binary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Run both original CPU budgets and actual reactor-exit regressions",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 8
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 16
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 17
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "run",
+      "key": "workspace",
+      "run_id": 42185197125,
+      "data": {
+        "id": 42185197125,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "node_id": "WFR_kwLOTty1_c8AAAAJ0m8GRQ",
+        "head_branch": "fix/chain-throughput-publish-20261106-1eed",
+        "head_sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+        "display_title": "perf: bound repeated history and Host checks; restore exact throughput acceptance",
+        "run_number": 210,
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "workflow_id": 403747290,
+        "check_suite_id": 114303450362,
+        "check_suite_node_id": "CS_kwDOTty1_c8AAAAanQQ8-g",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/736",
+            "id": 5184317251,
+            "number": 736,
+            "head": {
+              "ref": "fix/chain-throughput-publish-20261106-1eed",
+              "sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            },
+            "base": {
+              "ref": "fix/chain-six-axis-performance-20261103",
+              "sha": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-06T08:05:29Z",
+        "updated_at": "2026-11-06T08:22:34Z",
+        "actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-06T08:05:29Z",
+        "triggering_actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125/logs",
+        "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/114303450362",
+        "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125/artifacts",
+        "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125/cancel",
+        "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197125/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403747290",
+        "head_commit": {
+          "id": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tree_id": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "message": "merge: retain concurrent Cell transport and custody improvements\n\nPreserve the corrected throughput/PQ candidate and the current integration parent. Resolve only the exact-source corpus conflict by the reviewed union; retain 582 pins, 501 required paths, all 1268 distributed sources, and unchanged HOLD assertions. Runtime changes are inherited intact from their respective parents. Parent validation is retained under its original identity; the composed tree requires fresh validation.",
+          "timestamp": "2026-11-06T08:04:57Z",
+          "author": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        },
+        "head_repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        }
+      }
+    },
+    {
+      "kind": "jobs",
+      "key": "workspace",
+      "run_id": 42185197125,
+      "data": {
+        "jobs": [
+          {
+            "id": 127783768171,
+            "name": "original workspace test CPU (ubuntu-24.04, head)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197125,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Build the original complete workspace in the unchanged test profile",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Execute selected arithmetic canonical and reorg semantic controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Observe fixed touched owners across actual account and history growth",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Recheck the same test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Recheck the same M06 test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "pending",
+                "conclusion": null,
+                "number": 26
+              }
+            ]
+          },
+          {
+            "id": 127783768324,
+            "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197125,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Build the original complete workspace in the unchanged test profile",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Execute selected arithmetic canonical and reorg semantic controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Observe fixed touched owners across actual account and history growth",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Recheck the same test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Recheck the same M06 test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "pending",
+                "conclusion": null,
+                "number": 26
+              }
+            ]
+          },
+          {
+            "id": 127783768333,
+            "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197125,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Build the original complete workspace in the unchanged test profile",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Execute selected arithmetic canonical and reorg semantic controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Observe fixed touched owners across actual account and history growth",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Recheck the same test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Recheck the same M06 test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "pending",
+                "conclusion": null,
+                "number": 26
+              }
+            ]
+          },
+          {
+            "id": 127783768483,
+            "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197125,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Checkout the exact candidate or actual target merge",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Verify unchanged source and original project boundary",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the source-pinned native toolchain",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Prepare the original pinned OpenSSL 3.5.9 PQ provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Build the original complete workspace in the unchanged test profile",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Execute both original test-profile CPU selectors and reactor-exit controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Execute selected arithmetic canonical and reorg semantic controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Observe fixed touched owners across actual account and history growth",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Recheck the same test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Recheck the same M06 test ELF after success or failure",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Reverify exact source after every outcome",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Retain actual successes and failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Post Checkout the exact candidate or actual target merge",
+                "status": "pending",
+                "conclusion": null,
+                "number": 26
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "run",
+      "key": "pq",
+      "run_id": 42185197027,
+      "data": {
+        "id": 42185197027,
+        "name": "PoN PQ network and rollback witness",
+        "node_id": "WFR_kwLOTty1_c8AAAAJ0m8F4w",
+        "head_branch": "fix/chain-throughput-publish-20261106-1eed",
+        "head_sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "path": ".github/workflows/pon-pq-system-continuation.yml",
+        "display_title": "perf: bound repeated history and Host checks; restore exact throughput acceptance",
+        "run_number": 189,
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "workflow_id": 403755130,
+        "check_suite_id": 114303450094,
+        "check_suite_node_id": "CS_kwDOTty1_c8AAAAanQQ77g",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls/736",
+            "id": 5184317251,
+            "number": 736,
+            "head": {
+              "ref": "fix/chain-throughput-publish-20261106-1eed",
+              "sha": "285982d78a4f62a064841cb0f106d18c865e19c5",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            },
+            "base": {
+              "ref": "fix/chain-six-axis-performance-20261103",
+              "sha": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+              "repo": {
+                "id": 1323087357,
+                "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+                "name": "Trillionnium-Chain"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-06T08:05:29Z",
+        "updated_at": "2026-11-06T08:05:29Z",
+        "actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-06T08:05:29Z",
+        "triggering_actor": {
+          "login": "Franksudoman",
+          "id": 273670192,
+          "node_id": "U_kgDOEE_gMA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/273670192?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/Franksudoman",
+          "html_url": "https://github.com/Franksudoman",
+          "followers_url": "https://api.github.com/users/Franksudoman/followers",
+          "following_url": "https://api.github.com/users/Franksudoman/following{/other_user}",
+          "gists_url": "https://api.github.com/users/Franksudoman/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/Franksudoman/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/Franksudoman/subscriptions",
+          "organizations_url": "https://api.github.com/users/Franksudoman/orgs",
+          "repos_url": "https://api.github.com/users/Franksudoman/repos",
+          "events_url": "https://api.github.com/users/Franksudoman/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/Franksudoman/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027/jobs",
+        "logs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027/logs",
+        "check_suite_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-suites/114303450094",
+        "artifacts_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027/artifacts",
+        "cancel_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027/cancel",
+        "rerun_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42185197027/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/workflows/403755130",
+        "head_commit": {
+          "id": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tree_id": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "message": "merge: retain concurrent Cell transport and custody improvements\n\nPreserve the corrected throughput/PQ candidate and the current integration parent. Resolve only the exact-source corpus conflict by the reviewed union; retain 582 pins, 501 required paths, all 1268 distributed sources, and unchanged HOLD assertions. Runtime changes are inherited intact from their respective parents. Parent validation is retained under its original identity; the composed tree requires fresh validation.",
+          "timestamp": "2026-11-06T08:04:57Z",
+          "author": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Franksudoman",
+            "email": "273670192+Franksudoman@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        },
+        "head_repository": {
+          "id": 1323087357,
+          "node_id": "R_kgDOTty1_Q",
+          "name": "Trillionnium-Chain",
+          "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+          "private": false,
+          "owner": {
+            "login": "TrillionniumFoundation",
+            "id": 262513357,
+            "node_id": "O_kgDOD6WizQ",
+            "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/TrillionniumFoundation",
+            "html_url": "https://github.com/TrillionniumFoundation",
+            "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+            "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+            "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+            "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+            "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+            "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+            "type": "Organization",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+          "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+          "fork": false,
+          "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+          "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+          "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+          "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+          "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+          "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+          "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+          "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+          "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+          "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+          "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+          "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+          "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+          "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+          "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments"
+        }
+      }
+    },
+    {
+      "kind": "jobs",
+      "key": "pq",
+      "run_id": 42185197027,
+      "data": {
+        "jobs": [
+          {
+            "id": 127783767541,
+            "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Compare real SDK and product adapter signatures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Retain SDK interoperability including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 127783767640,
+            "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Read the exact independent implementation",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run independent primitives on the exact candidate",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Retain independent primitive results including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Read the exact independent implementation",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 127783767681,
+            "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Prepare exact-source command records",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Require retained source and claim controls",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Prepare the independently pinned OpenSSL provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Record compiler, exact locked graph and formatting",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Execute every required native effect and rejection control",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Refuse classical submit recovery for retained PQ network owners",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Require native TLS and ordinary binary controls from actual registries",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Require original transaction scope controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Preserve native control records before the complete regression",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Preserve the complete original Node library regression suite",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Check strict Clippy without rewriting source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Observe complete component costs with unchanged native budgets",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Preserve complete records including failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "pending",
+                "conclusion": null,
+                "number": 32
+              }
+            ]
+          },
+          {
+            "id": 127783767704,
+            "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Retain complete CPQ1 records including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              }
+            ]
+          },
+          {
+            "id": 127783767742,
+            "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Compare real SDK and product adapter signatures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Retain SDK interoperability including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 127783767759,
+            "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Compare real SDK and product adapter signatures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Retain SDK interoperability including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Post Read the exact supported SDK source",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 12
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 13
+              }
+            ]
+          },
+          {
+            "id": 127783767813,
+            "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Prepare exact-source command records",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Require retained source and claim controls",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Prepare the independently pinned OpenSSL provider",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 6
+              },
+              {
+                "name": "Record compiler, exact locked graph and formatting",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 7
+              },
+              {
+                "name": "Execute every required native effect and rejection control",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Refuse classical submit recovery for retained PQ network owners",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Require native TLS and ordinary binary controls from actual registries",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Require original transaction scope controls",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Preserve native control records before the complete regression",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Preserve the complete original Node library regression suite",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Check strict Clippy without rewriting source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Observe complete component costs with unchanged native budgets",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Preserve complete records including failures",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "pending",
+                "conclusion": null,
+                "number": 32
+              }
+            ]
+          },
+          {
+            "id": 127783767821,
+            "name": "TAP21 actual SDK interoperability (ubuntu-24.04, prospective-merge)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783767844,
+            "name": "CPQ1 complete candidate observations (ubuntu-24.04, head)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783767857,
+            "name": "CPQ1 complete candidate observations (ubuntu-24.04, prospective-merge)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783767925,
+            "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+            "status": "completed",
+            "conclusion": "success",
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Install the original pinned compiler",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Observe actual CPQ1 APIs and independently recompute every sample",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Retain complete CPQ1 records including failures",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 5
+              },
+              {
+                "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 10
+              },
+              {
+                "name": "Complete job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 11
+              }
+            ]
+          },
+          {
+            "id": 127783767931,
+            "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, prospective-merge)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783767935,
+            "name": "ML-DSA independent C implementation (ubuntu-24.04-arm, head)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783767948,
+            "name": "PQ network and witness (ubuntu-24.04, head)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783768120,
+            "name": "ML-DSA independent C implementation (ubuntu-24.04, head)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          },
+          {
+            "id": 127783768211,
+            "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+            "status": "queued",
+            "conclusion": null,
+            "run_id": 42185197027,
+            "logs_url": null,
+            "steps": null
+          }
+        ]
+      }
+    }
+  ],
+  "summary": [
+    {
+      "key": "native_campaign",
+      "run_id": 42185197057,
+      "run_status": "completed",
+      "run_conclusion": "failure",
+      "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "run_attempt": 1,
+      "head_matches": true,
+      "job_counts": {
+        "completed_failure": 1
+      },
+      "active": [],
+      "terminal": [
+        {
+          "job_id": 127783768291,
+          "name": "original native campaign (x64, head, release)",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "key": "f0",
+      "run_id": 42185197083,
+      "run_status": "queued",
+      "run_conclusion": null,
+      "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "run_attempt": 1,
+      "head_matches": true,
+      "job_counts": {
+        "queued": 1
+      },
+      "active": [],
+      "terminal": []
+    },
+    {
+      "key": "large_cpu",
+      "run_id": 42185197106,
+      "run_status": "completed",
+      "run_conclusion": "success",
+      "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "run_attempt": 1,
+      "head_matches": true,
+      "job_counts": {
+        "completed_success": 4
+      },
+      "active": [],
+      "terminal": [
+        {
+          "job_id": 127783767946,
+          "name": "original state and exit (ubuntu-24.04, head)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783768279,
+          "name": "original state and exit (ubuntu-24.04-arm, head)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783768359,
+          "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783768380,
+          "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "key": "workspace",
+      "run_id": 42185197125,
+      "run_status": "in_progress",
+      "run_conclusion": null,
+      "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "run_attempt": 1,
+      "head_matches": true,
+      "job_counts": {
+        "in_progress": 4
+      },
+      "active": [
+        {
+          "job_id": 127783768171,
+          "name": "original workspace test CPU (ubuntu-24.04, head)",
+          "step": "Build the original complete workspace in the unchanged test profile"
+        },
+        {
+          "job_id": 127783768324,
+          "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+          "step": "Build the original complete workspace in the unchanged test profile"
+        },
+        {
+          "job_id": 127783768333,
+          "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+          "step": "Build the original complete workspace in the unchanged test profile"
+        },
+        {
+          "job_id": 127783768483,
+          "name": "original workspace test CPU (ubuntu-24.04-arm, head)",
+          "step": "Build the original complete workspace in the unchanged test profile"
+        }
+      ],
+      "terminal": []
+    },
+    {
+      "key": "pq",
+      "run_id": 42185197027,
+      "run_status": "queued",
+      "run_conclusion": null,
+      "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "run_attempt": 1,
+      "head_matches": true,
+      "job_counts": {
+        "completed_success": 6,
+        "in_progress": 2,
+        "queued": 8
+      },
+      "active": [
+        {
+          "job_id": 127783767681,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+          "step": "Execute every required native effect and rejection control"
+        },
+        {
+          "job_id": 127783767813,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+          "step": "Execute every required native effect and rejection control"
+        }
+      ],
+      "terminal": [
+        {
+          "job_id": 127783767541,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04, head)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783767640,
+          "name": "ML-DSA independent C implementation (ubuntu-24.04, prospective-merge)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783767704,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, prospective-merge)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783767742,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, prospective-merge)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783767759,
+          "name": "TAP21 actual SDK interoperability (ubuntu-24.04-arm, head)",
+          "conclusion": "success"
+        },
+        {
+          "job_id": 127783767925,
+          "name": "CPQ1 complete candidate observations (ubuntu-24.04-arm, head)",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}
+

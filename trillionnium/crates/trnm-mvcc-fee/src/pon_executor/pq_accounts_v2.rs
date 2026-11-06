@@ -6,6 +6,7 @@ use sha2::{Digest, Sha384};
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
 use trnm_crypto_primitives::pq_auth::verify_tpq1;
+use trnm_protocol::crypto_profile::{CryptoProfile, CryptoProfileId, ProfileBinding, ProfileScope};
 use trnm_protocol::pon_wire::hash;
 use trnm_protocol::pq_frame::{ml_dsa_65_key_id_from_spki, PqFrameExpectation};
 use trnm_protocol::pq_native_accounts_v2::{self as wire, ChainContext, UnverifiedEnvelope};
@@ -47,7 +48,14 @@ pub(crate) struct Profile {
 pub fn enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2.is_some() || cfg.params.get(SELECTOR).is_some()
 }
+#[cfg(test)]
+std::thread_local! {
+    // Per-thread observation only; no cache or production execution decision.
+    static CONFIG_DIGEST_CALLS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 fn config_digest(cfg: &Config) -> Result<Hash> {
+    #[cfg(test)]
+    CONFIG_DIGEST_CALLS.with(|calls| calls.set(calls.get() + 1));
     Ok(hash(
         b"native-pq-config-integrity-v2",
         &[
@@ -81,9 +89,59 @@ fn policy(cfg: &Config) -> Result<&Profile> {
     )?;
     Ok(p)
 }
+/// Configuration mathematics for one immutable borrow of the exact source.
+/// This never retains a State, authority, nonce, expiry or signature verdict.
+/// Each public preparation/admission entry constructs its own fresh view.
+struct CheckedConfiguration<'a> {
+    config: &'a Config,
+    profile: &'a Profile,
+}
+impl<'a> CheckedConfiguration<'a> {
+    fn new(config: &'a Config) -> Result<Self> {
+        Ok(Self {
+            config,
+            profile: policy(config)?,
+        })
+    }
+    fn context(&self) -> Result<ChainContext> {
+        let context = self.profile.context;
+        require(context.genesis != [0; 32], "PQ2_GENESIS")?;
+        Ok(context)
+    }
+    fn decode<'raw>(&self, raw: &'raw [u8]) -> Result<UnverifiedEnvelope<'raw>> {
+        UnverifiedEnvelope::decode_for_profile(raw, self.profile.wire_profile)
+            .map_err(|_| "PQ2_ENCODING")
+    }
+}
 /// Exact configured wire profile; callers never infer it from request bytes.
 pub fn account_profile(cfg: &Config) -> Result<wire::AccountProfile> {
     Ok(policy(cfg)?.wire_profile)
+}
+/// Read the fixed cryptographic configuration from the original trusted owner.
+/// The returned ID also binds this network, genesis, application version and
+/// fresh-genesis activation rule. No input bytes select or activate a profile,
+/// and the existing NPQ2--NPQ6 namespaces and stored bytes remain unchanged.
+pub fn crypto_profile_id(cfg: &Config) -> Result<CryptoProfileId> {
+    let selected = policy(cfg)?;
+    let protocol_version = match selected.wire_profile {
+        wire::AccountProfile::AccountsV2 => 2,
+        wire::AccountProfile::QuotaV3 => 3,
+        wire::AccountProfile::TasksV4 => 4,
+        wire::AccountProfile::TasksV5 => 5,
+        wire::AccountProfile::ApplicationV6 => 6,
+    };
+    CryptoProfile::LegacyMlDsa65V1
+        .bind(ProfileBinding {
+            network: selected.context.network,
+            parameters: selected.context.parameters,
+            genesis: selected.context.genesis,
+            protocol_version,
+            scope: ProfileScope::NativeAccounts,
+            activation_height: 0,
+            retirement_height: None,
+        })
+        .map(|profile| profile.id())
+        .map_err(|_| "PQ2_CRYPTO_PROFILE")
 }
 pub fn quota_v3_enabled(cfg: &Config) -> bool {
     cfg.native_pq_v2
@@ -607,10 +665,12 @@ pub fn validate_block(
     if !enabled(cfg) {
         return Ok(());
     }
-    context(cfg)?;
+    let checked = CheckedConfiguration::new(cfg)?;
+    checked.context()?;
+    let cfg = checked.config;
     require(timestamp.is_some() && miner != [0; 32], "PQ2_BLOCK_CONTEXT")?;
     require(
-        transactions.len() <= account_profile(cfg)?.maximum_transactions(),
+        transactions.len() <= checked.profile.wire_profile.maximum_transactions(),
         "PQ2_TRANSACTION_LIMIT",
     )?;
     let mut total = 0_usize;
@@ -618,13 +678,13 @@ pub fn validate_block(
     let mut accounts = BTreeMap::<Hash, (usize, bool)>::new();
     let mut task_demands = BTreeSet::new();
     for raw in transactions {
-        let tx = decode_for_config(raw, cfg)?;
+        let tx = checked.decode(raw)?;
         application_v6::command_profile(tx.kind, cfg)?;
         verifications = verifications
             .checked_add(tx.verification_count())
             .ok_or("PQ_VERIFY_BUDGET")?;
         require(
-            verifications <= account_profile(cfg)?.maximum_verifications(),
+            verifications <= checked.profile.wire_profile.maximum_verifications(),
             "PQ_VERIFY_BUDGET",
         )?;
         total = total
@@ -807,8 +867,10 @@ pub fn prepare_signature_metered(
     cfg: &Config,
     signatures: &std::sync::atomic::AtomicUsize,
 ) -> Result<PreparedCommand> {
-    let context = context(cfg)?;
-    let tx = decode_for_config(raw, cfg)?;
+    let checked = CheckedConfiguration::new(cfg)?;
+    let context = checked.context()?;
+    let cfg = checked.config;
+    let tx = checked.decode(raw)?;
     require(tx.common.context == context, "PQ2_CONTEXT")?;
     require(tx.common.max_fee <= cfg.limit("max_fee_limit")?, "FEE")?;
     if application_v6::enabled(cfg) {
@@ -839,14 +901,14 @@ pub fn prepare_signature_metered(
     let mut keys = Vec::with_capacity(tx.witnesses().len());
     for (index, witness) in tx.witnesses().iter().enumerate() {
         let spki = resolve(&mut view, &tx, index, cfg)?;
-        application_v6::charge(cfg, signatures)?;
+        application_v6::charge_checked(&checked, signatures)?;
         verify_tpq1(
             witness.frame,
             &PqFrameExpectation {
                 purpose: witness.role,
                 network: context.network,
                 owner_context: wire::owner_context_for_profile(
-                    account_profile(cfg)?,
+                    checked.profile.wire_profile,
                     &tx.common,
                     tx.kind,
                     witness.role,

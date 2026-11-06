@@ -1,0 +1,196 @@
+{
+  "actual_python_cases": 292,
+  "collector_correction": {
+    "path": "collector-reader-correction.json",
+    "raw_files_changed": false,
+    "sha256": "17f6f6f7b27396ce07b9b7ab3fe257659bcb7bd54822383ec3e348308f4d9263",
+    "tests_reexecuted": false
+  },
+  "failed_observations_retained": [
+    {
+      "path": "summary.json",
+      "reason": "collector combined-log tail misclassified two successful negative suites; offline fuzz metadata lacked libfuzzer-sys cache",
+      "sha256": "2c52c250eeebd45bd2bdb24c5e5530e0478a33a448a34cfbdf0fdbf24d66c87f",
+      "status": "FAIL"
+    },
+    {
+      "path": "summary-corrected.json",
+      "reason": "292 tests correctly read from original stderr; original offline fuzz metadata exit 101 remains failed",
+      "sha256": "2511809f7af0ba8b9340b7abfed186798dafd1a7910b2602b379a97a576f9b6d",
+      "status": "FAIL"
+    },
+    {
+      "path": "cargo-metadata-fuzz-all-features.stderr",
+      "reason": "no matching package named libfuzzer-sys in offline crates.io index",
+      "sha256": "08c9a736678f16b67409f327b98950eb025db82ff367d0250ce642fc09f08711",
+      "status": "exit 101"
+    }
+  ],
+  "format": {
+    "native_exit": 0,
+    "toolchain_receipt": "formatter-toolchain.stdout"
+  },
+  "full_repository_truth_lane_executed": false,
+  "fuzz_metadata": {
+    "attempt2_summary": "/workspace/scratch/1eed767ad985/ci-validation/composed-fuzz-metadata-285982d7-attempt2/summary.json",
+    "attempt2_summary_sha256": "53743ef7ae9ada28a70e1596799ba5c94c477107e71d4396b95854ce24d4eb81",
+    "command_exit": 0,
+    "packages": 147,
+    "preparation": "one bounded normal metadata command with locked dependencies and network download permitted; no build and no lockfile edit",
+    "raw_metadata_sha256": "549ba9cfd04f2f77e66a4db2359fafc63fb1692fc20546b0d1a85e8075d5c76a",
+    "resolve_nodes": 147,
+    "source_bound": true,
+    "workspace_members": 1,
+    "workspace_targets": 3
+  },
+  "historical_summaries_unchanged": true,
+  "input_manifest_verification": [
+    {
+      "files": 138,
+      "path": "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7/artifacts-corrected.sha256",
+      "sha256": "87416cd71bb86fef27e50d419814d0988bd0f2baff875ff05535fae9a1cd6c5d"
+    },
+    {
+      "files": 24,
+      "path": "/workspace/scratch/1eed767ad985/ci-validation/composed-fuzz-metadata-285982d7-attempt2/artifacts.sha256",
+      "sha256": "ec5f7fb0e35a5b378586502f49d37117c28f8ced943baed0ed7d80671a2012d8"
+    }
+  ],
+  "lockfiles": {
+    "tests/fuzz/Cargo.lock": {
+      "bytes": 33645,
+      "git_blob": "bd16198beb269fca436d74f54aa33e66ac5d517b",
+      "matches_committed_source": true,
+      "sha256": "b1e7d77c9935cd566288a90a78e39225248331c389772cf3b3c9406cf10fc13b"
+    },
+    "trillionnium/Cargo.lock": {
+      "bytes": 40044,
+      "git_blob": "7fe3d5ac2c79c4a73f5b3a8217ae7dc1af109d4b",
+      "matches_committed_source": true,
+      "sha256": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83"
+    }
+  },
+  "lockfiles_unchanged_across_all_attempts": true,
+  "main_metadata": {
+    "cargo-metadata-all-features": {
+      "graph_receipt": "cargo-metadata-all-features.graph.json",
+      "packages": 180,
+      "passed": true,
+      "raw_metadata_sha256": "9baebde795272ed0acb83678cf5dc746e34e0932c44f7abc231139dccfc4de74",
+      "resolve_nodes": 180,
+      "workspace_members": 26,
+      "workspace_targets": 388
+    },
+    "cargo-metadata-default": {
+      "graph_receipt": "cargo-metadata-default.graph.json",
+      "packages": 175,
+      "passed": true,
+      "raw_metadata_sha256": "8b6f0811ae781682154ecb240af87b251080c16cb0899308b0874fa8e49a9206",
+      "resolve_nodes": 175,
+      "workspace_members": 26,
+      "workspace_targets": 388
+    }
+  },
+  "native_build_test_clippy_executed": false,
+  "pq_source_integration": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 582,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "repository_and_markdown": {
+    "activation": false,
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "local_links": 3442,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1188,
+    "source_state": "committed-clean",
+    "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "workspace_packages": 26
+  },
+  "required_artifact_directories": [
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7",
+    "/workspace/scratch/1eed767ad985/ci-validation/composed-fuzz-metadata-285982d7-attempt2"
+  ],
+  "result": "PASS",
+  "schema": "trnm-composed-source-static-final-v1",
+  "scope": "292 actual Python source/claim/CI/repository negative controls, source/inventory/Markdown/format and exact locked Cargo metadata on one committed source; not the complete repository-truth lane and no native build/test/Clippy by this agent",
+  "source_before_after_equal_across_both_attempts": true,
+  "source_receipt": {
+    "base": null,
+    "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 992948649,
+    "tracked_entries": 10535,
+    "tracked_worktree_verified": true
+  },
+  "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "tests": {
+    "ci-contract": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 105
+    },
+    "pq-authority-controls": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 15
+    },
+    "pq-claim-controls": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 22
+    },
+    "pq-corpus-controls": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 37
+    },
+    "pq-record-command-controls": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 4
+    },
+    "project-boundary-controls": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 16
+    },
+    "repository-mutants": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 50
+    },
+    "source-integrity-negatives": {
+      "capture_exit": 0,
+      "native_exit": 0,
+      "terminal_stderr_summary": "OK",
+      "tests": 43
+    }
+  }
+}

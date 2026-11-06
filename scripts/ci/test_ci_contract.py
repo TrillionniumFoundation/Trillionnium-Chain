@@ -5,9 +5,12 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
+import sys
 import tempfile
+import textwrap
 import tomllib
 import unittest
 from pathlib import Path
@@ -119,6 +122,172 @@ class InlineSourcePinTests(unittest.TestCase):
                 for name, data in logs.items():
                     self.assertIn(hashlib.sha256(data).hexdigest() + '  ' + str(output / name), checksums)
                 self.assertTrue((output / 'SCOPE.txt').is_file())
+
+
+class WorkflowTriggerTests(unittest.TestCase):
+    def test_fixed_host_f0_tracks_production_sources_and_build_configuration(self):
+        workflow = (ROOT / '.github/workflows/pon-fixed-host-root-f0.yml').read_text()
+        pull_request = workflow.split('  pull_request:\n', 1)[1].split('  workflow_dispatch:', 1)[0]
+        paths = set(re.findall(r'^      - ([^\n]+)$', pull_request, re.M))
+        for required in ('trillionnium/**', 'config/**', '.cargo/**', 'rust-toolchain.toml'):
+            with self.subTest(path=required):
+                self.assertIn(required, paths)
+
+
+class WorkflowSelectorBuilderTests(unittest.TestCase):
+    """Run the actual selector builders; source fixtures do not certify libtest execution."""
+
+    @classmethod
+    def setUpClass(cls):
+        workflow = (ROOT / '.github/workflows/pon-original-workspace-large-state-cpu.yml').read_text()
+        cls.workspace_script = textwrap.dedent(workflow.split("<<'PYREGISTRY'\n", 1)[1]
+                                               .split('\n        PYREGISTRY', 1)[0])
+        workflow = (ROOT / '.github/workflows/pon-pq-system-continuation.yml').read_text()
+        cls.pq_script = textwrap.dedent(workflow.split("<<'PY'\n", 1)[1].split('\n          PY', 1)[0])
+        cls.manifest = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
+        cls.registries = {'m06': [], 'node': []}
+        cls.ignored_names = set()
+        # These are independent source locations, not names copied from the
+        # workflow selector list. The actual ELF registry remains the CI oracle.
+        modules = {
+            'm06': ('trnm-mvcc-fee', (
+                ('pon_commitment/full_root_arithmetic_tests.rs', 'pon_commitment::full_root_arithmetic_tests'),
+                ('pon_commitment/unchanged_snapshot_tests.rs', 'pon_commitment::unchanged_snapshot_tests'),
+                ('pon_executor/root_arithmetic_tests.rs', 'pon_executor::root_arithmetic_tests'),
+            )),
+            'node': ('trnm-pon-node', (
+                ('account_archive_prototype/native_root_digest_tests.rs', 'account_archive_prototype::native_root_digest::tests'),
+                ('store/growth/tests/scale_observation.rs', 'store::growth::tests::scale_observation'),
+                ('store/reorg_readback_tests.rs', 'store::reorg_readback_tests'),
+                ('store/append_readback_tests.rs', 'store::append_readback_tests'),
+                ('store/detached_admission/tests.rs', 'store::detached_admission::tests'),
+                ('store/historical_commitment_tests.rs', 'store::historical_commitment_tests'),
+                ('store/native_authenticated/post_write_readback/tests.rs', 'store::native_authenticated::post_write_readback::tests'),
+                ('store/native_authenticated/post_write_readback/history_tests.rs', 'store::native_authenticated::post_write_readback::history_tests'),
+                ('host_kernel_parent_relative_tests.rs', 'host_kernel_parent::kernel_parent::relative_tests'),
+            )),
+        }
+
+        def source_names(path, module):
+            source = path.read_text()
+            tests = re.findall(r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(', source, re.M)
+            names = [module + '::' + name for attributes, name in tests]
+            cls.ignored_names.update(module + '::' + name for attributes, name in tests
+                                     if re.search(r'^#\[ignore\b', attributes, re.M))
+            for filename, child in re.findall(r'^#\[path = "([^"]+)"\]\nmod ([A-Za-z_][A-Za-z0-9_]*);', source, re.M):
+                names.extend(source_names(path.parent / filename, module + '::' + child))
+            return names
+
+        for crate, (package, paths) in modules.items():
+            for relative, module in paths:
+                cls.registries[crate].extend(source_names(ROOT / 'trillionnium/crates' / package / 'src' / relative, module))
+        # This one control lives in an inline module instead of a standalone
+        # test file. Require its actual declaration before adding the fixture.
+        name = 'canonical_ascii_fast_encoding_keeps_direct_serde_budget_decisions_and_charges'
+        source = (ROOT / 'trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs').read_text()
+        if re.search(r'#\[test\]\s+fn ' + name + r'\(', source) is None:
+            raise AssertionError('missing inline canonical encoding control')
+        cls.registries['m06'].append('pon_commitment::bounded_encoding_tests::' + name)
+
+    def workspace_result(self, registries, script=None):
+        with tempfile.TemporaryDirectory(prefix='trnm-selector-registry-') as directory:
+            root = Path(directory)
+            controls = root / 'semantic-controls'
+            controls.mkdir()
+            for crate, names in registries.items():
+                (controls / f'{crate}-registry.log').write_text(''.join(name + ': test\n' for name in names))
+            result = subprocess.run([sys.executable, '-c', script or self.workspace_script],
+                                    env=dict(os.environ, TRNM_CI_RECEIPT_DIR=str(root)),
+                                    capture_output=True, text=True, timeout=10)
+            selected = controls / 'selected-tests.tsv'
+            return result, selected.read_text() if selected.exists() else None
+
+    def test_workspace_builder_selects_current_source_controls(self):
+        result, selected = self.workspace_result(self.registries)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(len(selected.splitlines()), report['selected_count'])
+        for group_name, prefix in (
+            ('postwrite-readback', 'store::native_authenticated::post_write_readback::tests::'),
+            ('postwrite-history', 'store::native_authenticated::post_write_readback::history_tests::'),
+            ('host-parent-relative', 'host_kernel_parent::kernel_parent::relative_tests::'),
+        ):
+            expected = sorted(name for name in self.registries['node']
+                              if name.startswith(prefix) and name not in self.ignored_names)
+            group = next(group for group in report['groups'] if group['group'] == group_name)
+            self.assertEqual(sorted(group['tests']), expected)
+            self.assertEqual(group['expected_count'], len(expected))
+
+    def test_workspace_builder_rejects_missing_duplicate_and_extra_controls(self):
+        exact = 'account_archive_prototype::native_root_digest::tests::native_root_digest_matches_record_and_sparse_references_after_exact_input_changes'
+        prefix = 'store::native_authenticated::post_write_readback::tests::'
+        postwrite = next(name for name in self.registries['node'] if name.startswith(prefix))
+        history_prefix = 'store::native_authenticated::post_write_readback::history_tests::'
+        history = next(name for name in self.registries['node'] if name.startswith(history_prefix))
+        host_prefix = 'host_kernel_parent::kernel_parent::relative_tests::'
+        host = next(name for name in self.registries['node']
+                    if name.startswith(host_prefix) and name not in self.ignored_names)
+        for label in ('missing-exact', 'missing-prefix', 'missing-history', 'missing-host',
+                      'duplicate', 'extra-prefix', 'ignored-host-only', 'empty'):
+            with self.subTest(case=label):
+                registries = {crate: names.copy() for crate, names in self.registries.items()}
+                if label.startswith('missing'):
+                    registries['node'].remove({'missing-exact': exact, 'missing-prefix': postwrite,
+                                               'missing-history': history, 'missing-host': host}[label])
+                elif label == 'duplicate':
+                    registries['node'].append(postwrite)
+                elif label == 'extra-prefix':
+                    registries['node'].append(prefix + 'unexpected_new_control')
+                elif label == 'ignored-host-only':
+                    registries['node'] = [name for name in registries['node']
+                                          if not name.startswith(host_prefix) or name in self.ignored_names]
+                else:
+                    registries['node'].clear()
+                result, selected = self.workspace_result(registries)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(selected, 'invalid registry must not emit an executable roster')
+
+    def test_stale_workspace_count_cannot_hide_current_source_controls(self):
+        prefix = 'store::native_authenticated::post_write_readback::tests::'
+        count = sum(name.startswith(prefix) for name in self.registries['node'])
+        current = f'"{prefix}", {count})'
+        self.assertEqual(self.workspace_script.count(current), 1)
+        # Reproduce the original 23-versus-25 defect without introducing a
+        # second hard-coded current count that drifts when controls are added.
+        stale = self.workspace_script.replace(current, f'"{prefix}", {count - 2})')
+        result, selected = self.workspace_result(self.registries, stale)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(f'postwrite-readback: expected {count - 2} actual registered controls, got {count}', result.stderr)
+        self.assertIsNone(selected)
+
+    def test_pq_builder_executes_complete_manifest_and_rejects_bad_rosters(self):
+        for label in ('current', 'duplicate', 'count-mismatch', 'extra', 'missing'):
+            with self.subTest(case=label), tempfile.TemporaryDirectory(prefix='trnm-pq-roster-') as directory:
+                root = Path(directory)
+                manifest = json.loads(json.dumps(self.manifest))
+                if label == 'duplicate':
+                    manifest['tests'][-1] = manifest['tests'][0]
+                elif label == 'count-mismatch':
+                    manifest['expected_meaningful_controls'] -= 1
+                elif label == 'extra':
+                    manifest['tests'].append('unexpected::new_control')
+                    manifest['expected_meaningful_controls'] += 1
+                elif label == 'missing':
+                    manifest['tests'].pop()
+                    manifest['expected_meaningful_controls'] -= 1
+                path = root / 'config/pon/pq-system-required-tests-v1.json'
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(manifest))
+                selected = root / 'required-tests.tsv'
+                result = subprocess.run([sys.executable, '-c', self.pq_script, str(selected)], cwd=root,
+                                        capture_output=True, text=True, timeout=10)
+                if label == 'current':
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual(selected.read_text().splitlines(),
+                                     [f'native-{index:02d}\t{name}' for index, name in enumerate(manifest['tests'])])
+                else:
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertFalse(selected.exists())
 
 
 class EvaluationQuorumLaneTests(unittest.TestCase):
@@ -591,7 +760,18 @@ class CiContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(prefix='trnm-ci-contract-')
         cls.root = Path(cls.temporary.name) / 'source'
-        shutil.copytree(ROOT, cls.root, ignore=shutil.ignore_patterns('.git', 'target', '__pycache__', 'artifacts'))
+        ignored = shutil.ignore_patterns('.git', 'target', '__pycache__', 'artifacts')
+
+        def ignore(directory, names):
+            excluded = ignored(directory, names)
+            if Path(directory) == ROOT:
+                # These validators consume source and literal workflow pins,
+                # not retained execution archives. Positive fixture validation
+                # still rejects any future pin whose input is missing.
+                excluded.add('evidence')
+            return excluded
+
+        shutil.copytree(ROOT, cls.root, ignore=ignore)
 
     @classmethod
     def tearDownClass(cls):

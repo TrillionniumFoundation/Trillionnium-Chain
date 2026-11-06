@@ -1,0 +1,14 @@
+
+running 1 test
+test store::native_authenticated::post_write_readback::history_tests::writes_restoration_and_prepare_only_schema_changes_disable_completed_history ... {"callbacks":16,"change":"no-row","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":0,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"no-row","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":1,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"restored-bytes","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":0,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"restored-bytes","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":1,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"reversed-ddl","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":0,"reuse_enabled":false,"sqlite_reprepares":[1,1,0,1,1],"sqlite_vm_runs":[3,3,0,3,2]}
+{"callbacks":16,"change":"reversed-ddl","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":1,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"prepare-only","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":0,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+{"callbacks":16,"change":"prepare-only","full_graph_calls":1,"history_hits":0,"original_full_callbacks":16,"pass":1,"reuse_enabled":false,"sqlite_reprepares":[0,0,0,0,0],"sqlite_vm_runs":[2,2,0,2,1]}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1201 filtered out; finished in 0.05s
+

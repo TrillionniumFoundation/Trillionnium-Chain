@@ -1,0 +1,246 @@
+{
+  "changed_rust_vs_285": [
+    {
+      "bytes": 28153,
+      "git_blob": "10236458a1fabf587e2aace247a43edbfabda7a9",
+      "matches_parent_commits": [
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+      "sha256": "95ef26992da9126e328007375bce91e94be8647705828a1975cbd03afa1dbfc8"
+    },
+    {
+      "bytes": 353919,
+      "git_blob": "eaa8ec8766ec3c3f78e433c079a8c326324b3b7e",
+      "matches_parent_commits": [],
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "sha256": "1e7db77a767d5e5b09024034530c77688abef9f229c372d72f1b4558092c1a5d"
+    },
+    {
+      "bytes": 16694,
+      "git_blob": "2f34c40de04f0c1edacd1e4770c2a18e4e8ac66a",
+      "matches_parent_commits": [
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "sha256": "e68b8fc16c08b3eed4272f492d9306e9cbb55c02b59742d3fad4428c4eb9fcbf"
+    },
+    {
+      "bytes": 23044,
+      "git_blob": "1d33ab7c97b358e7f240dbe29871d8c70e44b76e",
+      "matches_parent_commits": [
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs",
+      "sha256": "d6999c5c54b2492e8ce34d66883a27277aece0697c4b047d56fa963d4dd03271"
+    },
+    {
+      "bytes": 28065,
+      "git_blob": "8d2ba584ae97d5001eb1fc1b5ddab627e935555a",
+      "matches_parent_commits": [
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+      "sha256": "3d112a60a3551363dc28515e333d04cc0c1ac3a5e2d5f0fc7e5edb568ea4780c"
+    }
+  ],
+  "comparison_parents": [
+    "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "56897f125df27994efa1dda935f2c62eceb36de9"
+  ],
+  "inventory": {
+    "all_files_exist": true,
+    "all_include_bindings_match_labels": true,
+    "combined_entries": 1271,
+    "exact_parent_union": true,
+    "new_vs_285": [
+      "config/pon/w1-retained-disposition-v1.json",
+      "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs"
+    ],
+    "parent_285_entries": 1268,
+    "parent_568_entries": 1244,
+    "sha256": "1e7db77a767d5e5b09024034530c77688abef9f229c372d72f1b4558092c1a5d",
+    "unique_labels": true
+  },
+  "native_build_or_test_executed": false,
+  "only_synthetic_rust_file": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "parent_byte_classification": {
+    "both_parents": 1184,
+    "only_285": 46,
+    "only_568": 4,
+    "synthetic": 1
+  },
+  "protected_history_and_host_files": [
+    {
+      "bytes": 57606,
+      "git_blob": "41a6e7fdcac7c90c2eacec829a02b8719c5a94b9",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "ebdd58c5fab09b3a127b269272e708041d1081d6597e77be2957e6da5524c8b4"
+    },
+    {
+      "bytes": 17325,
+      "git_blob": "ae10808ad5d2882765dfe2f6d95dc58ea3934301",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+      "sha256": "e995fac615c2de0e972d0ffd2c8639e7c12eac9a3a4ad0e950517fa933288bba"
+    },
+    {
+      "bytes": 55792,
+      "git_blob": "c98c5333ab3609b30b11fd0a700917ce7f2a8999",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs",
+      "sha256": "ae673ce5027eb5a1780ff85680d151a4a599ccd60a4c4bfdb184a59544c80f2e"
+    },
+    {
+      "bytes": 96680,
+      "git_blob": "cae5ccefe2d7575df9e62de6e9f065fa67dc9ae5",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "sha256": "d024eb054af4696c688cdd5352ccfcf0a5701f87ec00133fcee599b1a79c6fb6"
+    },
+    {
+      "bytes": 23257,
+      "git_blob": "79a7c0ab6812d5a536f551241cee9a12ebdfb494",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "sha256": "f39f1d5e30c7ca81c5c373ffdd981c6070e8f497bffe93710101203e4ae795ac"
+    },
+    {
+      "bytes": 13879,
+      "git_blob": "9c1b5573ae7a4f43745fd29e6e6d1a28abf64da8",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "sha256": "608456c63fd4e11dabe818be51cea042aeae862bd77d4836b824b3c3c0c848a7"
+    },
+    {
+      "bytes": 20420,
+      "git_blob": "3fcbc873fcc89de208922e6ffd74361442797bed",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "sha256": "f160aca6fe2824621056ad02c8c282293db40f4914da9564bbeda3d301177cbf"
+    },
+    {
+      "bytes": 17092,
+      "git_blob": "74af81e2e181f6639dd1719a65d91c0ba5323c9b",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs",
+      "sha256": "e91b5f6fbdefff92d02d670b8d04ca9d4c7b3d2fdc598e450324fe89b513f6ec"
+    },
+    {
+      "bytes": 17093,
+      "git_blob": "3090e7a1b60b7d4d135166c7530383cc7be1aca5",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/current_accounts_tests.rs",
+      "sha256": "61c979708c26ec7f8b4e7ad034f3513dd29ee5b14e25bb7cea0ffff00bed49b1"
+    },
+    {
+      "bytes": 27602,
+      "git_blob": "6540d88dc33064ab504607bfa9b7340d42a3c585",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "sha256": "8de3fc5f217f38c87d37f0b41bda580b593b00b601af254e2e75b6326b8e1e18"
+    },
+    {
+      "bytes": 28141,
+      "git_blob": "27b6342619ee051c57944de88b4bbab33ff4627c",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "sha256": "819a67f4346289d7ae72608dc3975ed6105a6845e39e3084c7734ecedd679916"
+    },
+    {
+      "bytes": 16726,
+      "git_blob": "661aa39fa792c50186effe9ffb5710069a7556b4",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "sha256": "1e32b2d1c1e6aa885d4bf87eabdefa0d4affaedca52a577a3dbb16f4b6492380"
+    },
+    {
+      "bytes": 7162,
+      "git_blob": "4c4fe7aae2a194ef0d2d920c5f3e447ceb7197ba",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+      "sha256": "036ad091b995992bec61c6c1a7046231e1b4dae867d9f14ec2b605e031ab0766"
+    },
+    {
+      "bytes": 17306,
+      "git_blob": "fe84e7e93ca593473cf9a69b1bd47745cc014194",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "56897f125df27994efa1dda935f2c62eceb36de9"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+      "sha256": "8ea7e8594b57054dc96240a0bcd83cfd24153468e30f464171ddb388f2d3b42d"
+    },
+    {
+      "bytes": 22448,
+      "git_blob": "80b35db4e9b26256e5aebbd1ddc26c15360fa792",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_tests.rs",
+      "sha256": "8140b17233097d4eb78b9de0314307a829004af9fbf5e624ed4dc3317ebd36aa"
+    },
+    {
+      "bytes": 23716,
+      "git_blob": "96452989a4ad747c4b1213a21fb4a42a097ba9d3",
+      "matches_parent_commits": [
+        "285982d78a4f62a064841cb0f106d18c865e19c5"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "sha256": "6ba941116ef68df444a899aabd24962cd65777bf78fe49f5ce751fb16e2c27b4"
+    }
+  ],
+  "result": "NO_BLOCKER_WITHIN_REVIEWED_SCOPE",
+  "review_scope": "actual working-tree Rust bytes and inventory inheritance; not a native execution or whole-repository claim",
+  "reviewed_utc": "2026-11-06T09:21:44.353730+00:00",
+  "schema": "trnm-base-sync-5689-storage-rust-read-only-review-v1",
+  "source_files_modified": false,
+  "storage_service": {
+    "all_changed_lines_vs_285_are_standalone_line_comments": true,
+    "changed_comment_lines": 12,
+    "exact_568_parent_bytes": true,
+    "new_runtime_statement_added_by_composition": false,
+    "replay_owner_registered_once_under_cfg_test": true
+  },
+  "tracked_rust_files": 1235,
+  "worktree": "/workspace/scratch/1eed767ad985/chain-throughput-base-sync-5689",
+  "worktree_head_after": "6a59b2645f6b4a86951c683b04a37ec5abcd8771",
+  "worktree_head_before": "6a59b2645f6b4a86951c683b04a37ec5abcd8771"
+}

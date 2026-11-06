@@ -1,4 +1,4 @@
-//! Same-transaction graph readback, ported from the existing c165 owner.
+//! Same-transaction graph/history readback, ported from the existing c165 owner.
 //! No receipt survives its original writer, connection, SQL epoch or schema.
 use super::{CurrentAccountGraph, Record};
 use crate::account_archive_prototype::native_store::{scoped_readback::Frontier, Root};
@@ -95,19 +95,27 @@ fn readback_schema(db: &Connection) -> Result<Option<ReadbackSchema>> {
 /// this unchanged writer. The current complete-State check uses the SAME account
 /// parser as graph verification, including nonce and zero-balance accounts; no
 /// working state, Record binding or database read is supplied by the receipt.
+/// A completed tip-to-genesis history check may also retain the verified suffix
+/// of these same four named records. Only that history path may skip an already
+/// checked suffix, after freshly verifying its starting Record/block/deltas and
+/// checking the original immutable Settings borrow and no-write epoch again.
 /// Writes disable reuse for the remainder of this local scope.
 pub(in crate::store) struct PostWriteReadback<'db> {
     db: &'db Connection,
+    settings: &'db Settings,
     scope: TransactionScope<'db>,
     context: [Hash; 3],
     schema: ReadbackSchema,
     ids: [Option<Hash>; 4],
     graphs: [Option<Record>; 4],
+    histories: [Option<Record>; 4],
     frontier: Option<Frontier>,
     enabled: bool,
     pub(super) consumed: bool,
     #[cfg(test)]
     pub(super) hits: usize,
+    #[cfg(test)]
+    pub(super) history_hits: usize,
     #[cfg(test)]
     pub(super) partial_uses: usize,
     #[cfg(test)]
@@ -117,7 +125,7 @@ pub(in crate::store) struct PostWriteReadback<'db> {
 impl<'db> PostWriteReadback<'db> {
     pub(in crate::store) fn new(
         db: &'db Connection,
-        settings: &Settings,
+        settings: &'db Settings,
         child: Hash,
         original_owner: &TransactionScope<'_>,
         expected_schema: &BTreeMap<String, String>,
@@ -159,6 +167,7 @@ impl<'db> PostWriteReadback<'db> {
         };
         Ok(Some(Self {
             db,
+            settings,
             scope,
             context: [
                 settings.network(),
@@ -168,11 +177,14 @@ impl<'db> PostWriteReadback<'db> {
             schema,
             ids: [Some(child), Some(settings.genesis()), None, None],
             graphs: [None, None, None, None],
+            histories: [None, None, None, None],
             frontier: None,
             enabled: true,
             consumed: false,
             #[cfg(test)]
             hits: 0,
+            #[cfg(test)]
+            history_hits: 0,
             #[cfg(test)]
             partial_uses: 0,
             #[cfg(test)]
@@ -191,6 +203,7 @@ impl<'db> PostWriteReadback<'db> {
         if !same || self.enabled && readback_schema(db)?.as_ref() != Some(&self.schema) {
             self.enabled = false;
             self.graphs = [None, None, None, None];
+            self.histories = [None, None, None, None];
             self.frontier = None;
             // A previous caller has already consumed a successful graph hit.
             // Merely disabling FUTURE hits cannot validate its result after a
@@ -255,6 +268,64 @@ impl<'db> PostWriteReadback<'db> {
                 .iter()
                 .flatten()
                 .any(|verified| verified.accounts == record.accounts))
+    }
+
+    pub(super) fn history_matches(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        record: &Record,
+    ) -> Result<bool> {
+        // The three context hashes alone do not bind Settings.initial. Holding
+        // the original immutable borrow also excludes a foreign Settings clone
+        // with changed initial bytes but unchanged network/parameters/genesis.
+        // A miss needs the ordinary full traversal, not another schema query.
+        if !std::ptr::eq(self.settings, settings)
+            || !self.ids.contains(&Some(record.block))
+            || !self
+                .histories
+                .iter()
+                .flatten()
+                .any(|verified| verified == record)
+        {
+            return Ok(false);
+        }
+        self.current(db)
+    }
+
+    pub(super) fn stage_history_record(&self, record: &Record, pending: &mut [Option<Record>; 4]) {
+        // These bounded operation-local candidates cannot authorize a hit.
+        // The caller must finish EVERY ancestor and genesis check first.
+        if self.enabled {
+            for (id, candidate) in self.ids.iter().zip(pending) {
+                if *id == Some(record.block) {
+                    *candidate = Some(record.clone());
+                }
+            }
+        }
+    }
+
+    pub(super) fn remember_history(
+        &mut self,
+        db: &Connection,
+        settings: &Settings,
+        pending: [Option<Record>; 4],
+    ) -> Result<()> {
+        // Called only after full tip-to-genesis validation, including the
+        // canonical genesis snapshot, initial-State equality and the original
+        // genesis state/graph verifier's final callback. No partial/error path
+        // publishes these candidates, and no write can re-stamp their epoch.
+        if std::ptr::eq(self.settings, settings) && self.current(db)? {
+            for ((id, history), candidate) in self.ids.iter().zip(&mut self.histories).zip(pending)
+            {
+                if let Some(record) = candidate {
+                    if *id == Some(record.block) {
+                        *history = Some(record);
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 
     pub(super) fn graph_access<'input>(
@@ -358,3 +429,6 @@ pub(in crate::store) fn readback_scope_error(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod history_tests;

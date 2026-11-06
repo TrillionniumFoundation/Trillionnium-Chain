@@ -1,0 +1,174 @@
+{
+  "all_chunk_hashes_and_final_hash_verified": true,
+  "all_extracted_files_read_back_equal": true,
+  "all_manifest_and_checksum_entries_verified": true,
+  "all_sidecar_hashes_verified_against_independent_remote_receipt": true,
+  "archive_bytes": 593512,
+  "archive_sha256": "0d0092d47890a1ae0f08ab1cba07ad3847b13d052ec8a48fbfba070772d5b045",
+  "earlier_2859_build_attempts_included": false,
+  "generated_metadata_members": 4,
+  "local_archive": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence.tar.xz",
+  "local_extraction": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence",
+  "native_build_or_test": false,
+  "original_package_receipt": {
+    "bytes": 2001,
+    "path": "/workspace/scratch/1eed767ad985/validation/rog-composed-7586-native-evidence.package-receipt.json",
+    "sha256": "4515a2ae3894ec25e869478bf8a4d284752a3f6cc7cde78b11126f9d654c6e16"
+  },
+  "original_regular_files": 2144,
+  "pinned_chunks": [
+    {
+      "bytes": 65536,
+      "chunk_sha256": "bd1fc9941c853b824cb346e0c5b649663ee07ee60daa55ef41f5629e82e143c4",
+      "eof": false,
+      "next_offset": 65536,
+      "offset": 0,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "3277034478a269a9ecec085081e132f10ffccc62458644b3d99a8efd41ebda4e",
+      "eof": false,
+      "next_offset": 131072,
+      "offset": 65536,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "a3cdaea4590c96ac47cc121b7fbd349980ce8dbb71f361ed0702b4223aca2c72",
+      "eof": false,
+      "next_offset": 196608,
+      "offset": 131072,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "b6085d7fae241833cf53137d41822006e27a57691297a21c9fd98229bbad373d",
+      "eof": false,
+      "next_offset": 262144,
+      "offset": 196608,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "16a3cce0fb833643aaa9a82c425ef9cf8847f0a9d644cebc616d11edb6c73930",
+      "eof": false,
+      "next_offset": 327680,
+      "offset": 262144,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "9a4f6ad65e0f20f4ee107391e3849b2de2f109c963503a0f3b96592f53444c04",
+      "eof": false,
+      "next_offset": 393216,
+      "offset": 327680,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "259dd3064017914cc6c0c9bae990826590458930f5c55868e95e3385c1753b59",
+      "eof": false,
+      "next_offset": 458752,
+      "offset": 393216,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "8a848cbc3649228f7500f530ab37ddc62a7229fb4af8a15e676b70bf0ea8fcbd",
+      "eof": false,
+      "next_offset": 524288,
+      "offset": 458752,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 65536,
+      "chunk_sha256": "da970a9c552d22255ed26c7356b7f1dfaa962affc6bb46f00128df81bd62fc30",
+      "eof": false,
+      "next_offset": 589824,
+      "offset": 524288,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    },
+    {
+      "bytes": 3688,
+      "chunk_sha256": "2ed4c5bc87cff12408ca9cabd810774bf956c686603777f0858a692f8bd6f33e",
+      "eof": true,
+      "next_offset": 593512,
+      "offset": 589824,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+      "sha256_verified": true,
+      "size": 593512,
+      "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+    }
+  ],
+  "recorded_gate_passes": [
+    "controls-80",
+    "pq-full-and-required",
+    "cell-controls",
+    "strict-workspace-clippy"
+  ],
+  "remote_file_info": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 384,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 384,
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-evidence.tar.xz",
+    "sha256": "0d0092d47890a1ae0f08ab1cba07ad3847b13d052ec8a48fbfba070772d5b045",
+    "size": 593512,
+    "version": "66306:44616603:593512:1793959048927299592:1793959048927299592"
+  },
+  "remote_host": "rog",
+  "remote_mutation": false,
+  "sampler_counts_as_recorded": {
+    "failed": 0,
+    "filtered": 0,
+    "ignored": 0,
+    "measured": 0,
+    "passed": 9
+  },
+  "sampler_passed_as_recorded": true,
+  "sampler_sqlite_status_as_recorded": "UNKNOWN_SELECTED_RELEASE_UNIT_BINDING",
+  "schema": "trnm-composed-rog-pinned-transfer-readback-v1",
+  "source_commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "source_or_runtime_reexecution": false,
+  "source_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "sqlite_qualification_granted_by_transfer": false,
+  "suite_passed_as_recorded": true,
+  "total_safe_regular_members": 2148,
+  "transfer_scope": "read-only file_info/read_multiple_files and 10 version-pinned binary_read calls",
+  "verified_utc": "2026-11-06T10:02:31.227049+00:00"
+}

@@ -4,6 +4,18 @@ use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
+#[path = "current_tests.rs"]
+mod current_tests;
+
+#[path = "validated_root_tests.rs"]
+mod validated_root_tests;
+
+#[path = "bundle_quorum_tests.rs"]
+mod bundle_quorum_tests;
+
+#[path = "retained_verifier_tests.rs"]
+mod retained_verifier_tests;
+
 struct Fixture {
     root: PqReleaseRootV1,
     keys: BTreeMap<ReleaseKeyIdV1, PqNativeSigningKey>,
