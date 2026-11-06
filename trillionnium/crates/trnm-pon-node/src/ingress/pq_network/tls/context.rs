@@ -5,7 +5,12 @@ use openssl::{
         AlpnError, Ssl, SslContext, SslMethod, SslOptions, SslRef, SslSessionCacheMode,
         SslVerifyMode, SslVersion,
     },
-    x509::{verify::X509CheckFlags, X509VerifyResult, X509},
+    stack::Stack,
+    x509::{
+        store::X509StoreBuilder,
+        verify::{X509CheckFlags, X509VerifyParam},
+        X509PurposeId, X509StoreContext, X509VerifyResult, X509,
+    },
 };
 use sha2::{Digest, Sha256};
 
@@ -50,6 +55,47 @@ impl PqTlsIdentity {
             ca_certificate,
         })
     }
+
+    fn check_local_profile(&self, pins: &PqTlsPins, server: bool) -> Result<()> {
+        // Verify the local certificate before creating a Node or binding its
+        // listener. A valid signature/key pair does not establish validity,
+        // certificate purpose or the server's configured SAN. Use only the
+        // already pinned direct CA, never system roots or discovered issuers.
+        let mut parameters = X509VerifyParam::new().map_err(crypto)?;
+        parameters.set_depth(0);
+        parameters
+            .set_purpose(if server {
+                X509PurposeId::SSL_SERVER
+            } else {
+                X509PurposeId::SSL_CLIENT
+            })
+            .map_err(crypto)?;
+        if server {
+            parameters
+                .set_hostflags(X509CheckFlags::NO_WILDCARDS | X509CheckFlags::NEVER_CHECK_SUBJECT);
+            parameters.set_host(pins.server_name()).map_err(crypto)?;
+        }
+        let mut store = X509StoreBuilder::new().map_err(crypto)?;
+        store
+            .add_cert(self.ca_certificate.clone())
+            .map_err(crypto)?;
+        store.set_param(&parameters).map_err(crypto)?;
+        let untrusted = Stack::new().map_err(crypto)?;
+        let mut verifier = X509StoreContext::new().map_err(crypto)?;
+        let valid = verifier
+            .init(&store.build(), &self.certificate, &untrusted, |context| {
+                if !context.verify_cert()? {
+                    return Ok(false);
+                }
+                let Some(chain) = context.chain().filter(|chain| chain.len() == 2) else {
+                    return Ok(false);
+                };
+                let ca_sha256: Hash = Sha256::digest(chain[1].to_der()?).into();
+                Ok(ca_sha256 == pins.ca_certificate_sha256())
+            })
+            .map_err(|_| "PQ_TLS_LOCAL_CERTIFICATE_PROFILE")?;
+        ensure(valid, "PQ_TLS_LOCAL_CERTIFICATE_PROFILE")
+    }
 }
 
 pub(super) struct TlsContext {
@@ -78,6 +124,7 @@ impl TlsContext {
                 },
             "PQ_TLS_LOCAL_PIN",
         )?;
+        identity.check_local_profile(pins, server)?;
         let mut context = SslContext::builder(SslMethod::tls()).map_err(crypto)?;
         context
             .set_min_proto_version(Some(SslVersion::TLS1_3))
