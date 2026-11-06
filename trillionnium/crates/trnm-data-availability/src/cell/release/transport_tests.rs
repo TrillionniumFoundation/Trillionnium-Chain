@@ -1,6 +1,8 @@
 //! Complete release operations share their original transport reservation.
 //! Real TCP fixtures exercise every marker profile; no marker authorizes use.
 
+mod rarest;
+
 use super::*;
 use crate::cell::{
     serve_cells_bounded_with_availability, serve_cells_persistent, CellCacheConfigV4,

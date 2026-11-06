@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
+Continue the existing #688 candidate from
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
+profile so rarest-observed-first inventory and verified payload requests share
+one bounded connection pool, frame allowance, byte reservation and original
+absolute deadline across complete release members. Preserve V1/V2 namespaces,
+hash verification, create-only publication, cancellation and failure history.
+Use the existing M12 effect preflight in the single-Cell retention and repair
+entries before creating new holds, matching complete-release admission while
+preserving exact pending/completed recovery outside the original height window.
+Exercise real TCP and product CLI positive and refusal paths on the actual
+combined source. This does not introduce multiplexing, BEP 52 Merkle proofs,
+a DHT, provider independence, native coin locking/payment or ordinary Hepta
+CURRENT/FinalUse qualification. The original 272,189,990-byte/35-second failure
+and the distinct 272,190,131-byte observation retain their separate identities.
+
 **Cheapest legal work and Mode-A chronology, 2026-11-05:** Continue the
 existing #688 candidate, preserving concurrent architecture, Growth and public
 request work. The [work-cost research contract](specs/pon/WORK_EXPENSIVE_RESEARCH_V1.md)

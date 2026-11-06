@@ -1,4 +1,4 @@
-//! Explicit sequential connection reuse under a separate TCQ2/TCS2 profile.
+//! Explicit sequential connection reuse under separate V2 and V3 profiles.
 //!
 //! Each request is `TCQ2 || kind:u8 || pinned_digest:32`; each response is
 //! `TCS2 || status:u8 || length:u32be || bytes`. Kinds and object bytes retain
@@ -6,11 +6,36 @@
 //! under another namespace. There is no multiplexing or implicit activation.
 //! Every connection has one fixed absolute deadline established at dial/accept.
 //! A failed or partial frame discards that connection without retrying the frame.
+//! V3 uses TCQ3/TCS3 only, with the same object kinds plus kind 3 for inventory:
+//! pinned TCM1 ID, start:u32be, count:u16be (1..=256), and the canonical bitfield.
+//! Inventory, objects and every release member share the original reservation.
 
 use super::*;
 use std::sync::{MutexGuard, TryLockError};
 
 const MAX_REQUESTS: u64 = 100_000;
+
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum WireProfile {
+    OrderedV2,
+    RarestFirstV3,
+}
+
+impl WireProfile {
+    fn request_magic(self) -> &'static [u8; 4] {
+        match self {
+            Self::OrderedV2 => b"TCQ2",
+            Self::RarestFirstV3 => b"TCQ3",
+        }
+    }
+
+    fn response_magic(self) -> &'static [u8; 4] {
+        match self {
+            Self::OrderedV2 => b"TCS2",
+            Self::RarestFirstV3 => b"TCS3",
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct CellPersistentPeerLimitsV2 {
@@ -49,7 +74,7 @@ pub fn fetch_cell_persistent(
     peers: &[SocketAddr],
     limits: CellPersistentPeerLimitsV2,
 ) -> CellResultV1<(CellManifestV1, CellPersistentFetchReportV2)> {
-    fetch(store, pinned, peers, limits, None)
+    fetch(store, pinned, peers, limits, None, WireProfile::OrderedV2)
 }
 
 pub fn fetch_cell_persistent_to_file(
@@ -59,7 +84,50 @@ pub fn fetch_cell_persistent_to_file(
     limits: CellPersistentPeerLimitsV2,
     output: &Path,
 ) -> CellResultV1<(CellManifestV1, CellPersistentFetchReportV2)> {
-    fetch(store, pinned, peers, limits, Some(output))
+    fetch(
+        store,
+        pinned,
+        peers,
+        limits,
+        Some(output),
+        WireProfile::OrderedV2,
+    )
+}
+
+/// Explicit TCQ3/TCS3 inventory and verified object requests on the same pool.
+/// Inventory remains a scheduling hint; complete payload verification is required.
+pub fn fetch_cell_persistent_rarest_first(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPersistentPeerLimitsV2,
+) -> CellResultV1<(CellManifestV1, CellPersistentFetchReportV2)> {
+    fetch(
+        store,
+        pinned,
+        peers,
+        limits,
+        None,
+        WireProfile::RarestFirstV3,
+    )
+}
+
+/// The explicit V3 profile with the original create-only publication boundary.
+pub fn fetch_cell_persistent_rarest_first_to_file(
+    store: &CellStoreV1,
+    pinned: CellDigestV1,
+    peers: &[SocketAddr],
+    limits: CellPersistentPeerLimitsV2,
+    output: &Path,
+) -> CellResultV1<(CellManifestV1, CellPersistentFetchReportV2)> {
+    fetch(
+        store,
+        pinned,
+        peers,
+        limits,
+        Some(output),
+        WireProfile::RarestFirstV3,
+    )
 }
 
 fn fetch(
@@ -68,6 +136,7 @@ fn fetch(
     peers: &[SocketAddr],
     limits: CellPersistentPeerLimitsV2,
     output: Option<&Path>,
+    profile: WireProfile,
 ) -> CellResultV1<(CellManifestV1, CellPersistentFetchReportV2)> {
     limits.validate()?;
     require(
@@ -84,7 +153,7 @@ fn fetch(
         requests_left: &requests_left,
         responses: &responses,
     };
-    let pool = ConnectionPool::new(peers, limits);
+    let pool = ConnectionPool::with_profile(peers, limits, profile);
     let (manifest, fetch) = fetch_cell_with_schedule(
         store,
         pinned,
@@ -93,7 +162,7 @@ fn fetch(
         &transport,
         output,
         FetchSchedule {
-            rarest_first: false,
+            rarest_first: profile == WireProfile::RarestFirstV3,
             requests: Some(&pool),
         },
     )?;
@@ -116,6 +185,7 @@ pub(super) struct ConnectionPool {
     peers: Vec<(SocketAddr, Mutex<Option<PersistentConnection>>)>,
     pub(super) requests_left: AtomicU64,
     per_connection: u64,
+    profile: WireProfile,
 }
 
 struct PinnedRequest {
@@ -123,14 +193,31 @@ struct PinnedRequest {
     kind: u8,
     digest: CellDigestV1,
     maximum: usize,
+    page: Option<(u32, u16)>,
 }
 
 impl ConnectionPool {
     pub(super) fn new(peers: &[SocketAddr], limits: CellPersistentPeerLimitsV2) -> Self {
+        Self::with_profile(peers, limits, WireProfile::OrderedV2)
+    }
+
+    pub(super) fn new_rarest_first(
+        peers: &[SocketAddr],
+        limits: CellPersistentPeerLimitsV2,
+    ) -> Self {
+        Self::with_profile(peers, limits, WireProfile::RarestFirstV3)
+    }
+
+    fn with_profile(
+        peers: &[SocketAddr],
+        limits: CellPersistentPeerLimitsV2,
+        profile: WireProfile,
+    ) -> Self {
         Self {
             peers: peers.iter().map(|peer| (*peer, Mutex::new(None))).collect(),
             requests_left: AtomicU64::new(limits.max_requests),
             per_connection: limits.max_requests_per_connection,
+            profile,
         }
     }
 
@@ -146,6 +233,7 @@ impl ConnectionPool {
             kind,
             digest,
             maximum,
+            page,
         } = request;
         transport.check_cancelled()?;
         remaining(deadline)?;
@@ -209,16 +297,23 @@ impl ConnectionPool {
         let connection = slot.as_mut().unwrap();
         connection.requests += 1;
         let deadline = deadline.min(connection.deadline);
-        let mut query = [0; 37];
-        query[..4].copy_from_slice(b"TCQ2");
+        let mut query = [0; 43];
+        query[..4].copy_from_slice(self.profile.request_magic());
         query[4] = kind;
-        query[5..].copy_from_slice(&digest);
+        query[5..37].copy_from_slice(&digest);
+        let query_length = if let Some((start, count)) = page {
+            query[37..41].copy_from_slice(&start.to_be_bytes());
+            query[41..43].copy_from_slice(&count.to_be_bytes());
+            43
+        } else {
+            37
+        };
         let result = exchange_frame(
             &mut connection.stream,
             ObjectFrame {
                 peer,
-                query: &query,
-                response_magic: b"TCS2",
+                query: &query[..query_length],
+                response_magic: self.profile.response_magic(),
                 maximum,
             },
             deadline,
@@ -232,6 +327,30 @@ impl ConnectionPool {
         }
         result
     }
+
+    fn request_observed(
+        &self,
+        request: PinnedRequest,
+        transport: &RequestContext<'_>,
+    ) -> (CellResultV1<Vec<u8>>, usize) {
+        let peer = request.peer;
+        let kind = request.kind;
+        let started = Instant::now();
+        let deadline = transport.overall.min(started + transport.timeout);
+        let mut phase = "request-budget";
+        let result = self.request_inner(request, transport, deadline, &mut phase).map_err(|error| match error {
+            CellErrorV1::Io(error) => {
+                let detail: String = error.to_string().chars().take(192).collect();
+                CellErrorV1::Io(io::Error::new(error.kind(), format!(
+                    "cell persistent request peer={peer} kind={kind} phase={phase} elapsed_ms={} os={:?}: {detail}",
+                    started.elapsed().as_millis(), error.raw_os_error(),
+                )))
+            }
+            error => error,
+        });
+        // Both profiles refuse implicit retries or alternate wire namespaces.
+        (result, 1)
+    }
 }
 
 impl ObjectRequests for ConnectionPool {
@@ -243,26 +362,45 @@ impl ObjectRequests for ConnectionPool {
         maximum: usize,
         transport: &RequestContext<'_>,
     ) -> (CellResultV1<Vec<u8>>, usize) {
-        let started = Instant::now();
-        let deadline = transport.overall.min(started + transport.timeout);
-        let mut phase = "request-budget";
-        let result = self.request_inner(
-            PinnedRequest { peer, kind, digest, maximum },
+        self.request_observed(
+            PinnedRequest {
+                peer,
+                kind,
+                digest,
+                maximum,
+                page: None,
+            },
             transport,
-            deadline,
-            &mut phase,
-        ).map_err(|error| match error {
-            CellErrorV1::Io(error) => {
-                let detail: String = error.to_string().chars().take(192).collect();
-                CellErrorV1::Io(io::Error::new(error.kind(), format!(
-                    "cell persistent request peer={peer} kind={kind} phase={phase} elapsed_ms={} os={:?}: {detail}",
-                    started.elapsed().as_millis(), error.raw_os_error(),
-                )))
-            }
-            error => error,
-        });
-        // Unlike V1, this profile never retries a failed frame implicitly.
-        (result, 1)
+        )
+    }
+
+    fn inventory_page(
+        &self,
+        peer: SocketAddr,
+        manifest: CellDigestV1,
+        start: usize,
+        count: usize,
+        transport: &RequestContext<'_>,
+    ) -> CellResultV1<Vec<u8>> {
+        require(
+            self.profile == WireProfile::RarestFirstV3,
+            "persistent inventory profile",
+        )?;
+        require(
+            (1..=availability::MAX_PAGE_CHUNKS).contains(&count) && start <= u32::MAX as usize,
+            "availability page bound",
+        )?;
+        let (bytes, _) = self.request_observed(
+            PinnedRequest {
+                peer,
+                kind: 3,
+                digest: manifest,
+                maximum: count.div_ceil(8),
+                page: Some((start as u32, count as u16)),
+            },
+            transport,
+        );
+        availability::validate_page(peer, count, bytes?, transport)
     }
 }
 
@@ -341,6 +479,27 @@ fn serve_connection(
     requests_left: &AtomicU64,
     responses: &ResponseBudget,
 ) -> u64 {
+    serve_connection_profile(
+        stream,
+        store,
+        shutdown,
+        deadline,
+        (max_requests, WireProfile::OrderedV2),
+        requests_left,
+        responses,
+    )
+}
+
+fn serve_connection_profile(
+    stream: &mut TcpStream,
+    store: &CellStoreV1,
+    shutdown: &AtomicBool,
+    deadline: Instant,
+    request_profile: (u64, WireProfile),
+    requests_left: &AtomicU64,
+    responses: &ResponseBudget,
+) -> u64 {
+    let (max_requests, profile) = request_profile;
     let mut completed = 0;
     for _ in 0..max_requests {
         // A fully spent egress quota cannot admit another read slot. Only
@@ -365,8 +524,8 @@ fn serve_connection(
             deadline,
             Some(responses),
             false,
-            b"TCQ2",
-            b"TCS2",
+            profile.request_magic(),
+            profile.response_magic(),
         )
         .is_err()
         {
@@ -389,7 +548,14 @@ pub fn serve_cells_persistent(
     shutdown: &AtomicBool,
     limits: CellPersistentServeLimitsV2,
 ) -> CellResultV1<CellPersistentServeReportV2> {
-    serve_cells_persistent_inner(listener, cache, shutdown, limits, None)
+    serve_cells_persistent_inner(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        None,
+        WireProfile::OrderedV2,
+    )
 }
 
 /// Announce only after all bounded readers and the listener are usable.
@@ -402,7 +568,51 @@ pub fn serve_cells_persistent_with_ready(
     limits: CellPersistentServeLimitsV2,
     ready: &dyn Fn() -> CellResultV1<()>,
 ) -> CellResultV1<CellPersistentServeReportV2> {
-    serve_cells_persistent_inner(listener, cache, shutdown, limits, Some(ready))
+    serve_cells_persistent_inner(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        Some(ready),
+        WireProfile::OrderedV2,
+    )
+}
+
+/// Explicit TCQ3/TCS3 service. Bounded inventory and object reads share the
+/// same worker, connection lifetime, frame reservation and actual egress quota.
+/// V1, V2 and TCI1 requests are rejected without a namespace fallback.
+pub fn serve_cells_persistent_rarest_first(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellPersistentServeLimitsV2,
+) -> CellResultV1<CellPersistentServeReportV2> {
+    serve_cells_persistent_inner(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        None,
+        WireProfile::RarestFirstV3,
+    )
+}
+
+/// V3 Ready is observed under the original service budget without a probe dial.
+pub fn serve_cells_persistent_rarest_first_with_ready(
+    listener: &TcpListener,
+    cache: &Path,
+    shutdown: &AtomicBool,
+    limits: CellPersistentServeLimitsV2,
+    ready: &dyn Fn() -> CellResultV1<()>,
+) -> CellResultV1<CellPersistentServeReportV2> {
+    serve_cells_persistent_inner(
+        listener,
+        cache,
+        shutdown,
+        limits,
+        Some(ready),
+        WireProfile::RarestFirstV3,
+    )
 }
 
 fn serve_cells_persistent_inner(
@@ -411,6 +621,7 @@ fn serve_cells_persistent_inner(
     shutdown: &AtomicBool,
     limits: CellPersistentServeLimitsV2,
     ready: Option<&dyn Fn() -> CellResultV1<()>>,
+    profile: WireProfile,
 ) -> CellResultV1<CellPersistentServeReportV2> {
     limits.validate()?;
     let deadline = Instant::now() + limits.serving.overall_timeout;
@@ -456,15 +667,26 @@ fn serve_cells_persistent_inner(
                     match thread::Builder::new()
                         .name("cell-persistent-serve".into())
                         .spawn_scoped(scope, move || {
-                            let completed = serve_connection(
-                                &mut stream,
-                                &store,
-                                shutdown,
-                                connection_deadline,
-                                limits.max_requests_per_connection,
-                                requests_left,
-                                responses,
-                            );
+                            let completed = match profile {
+                                WireProfile::OrderedV2 => serve_connection(
+                                    &mut stream,
+                                    &store,
+                                    shutdown,
+                                    connection_deadline,
+                                    limits.max_requests_per_connection,
+                                    requests_left,
+                                    responses,
+                                ),
+                                WireProfile::RarestFirstV3 => serve_connection_profile(
+                                    &mut stream,
+                                    &store,
+                                    shutdown,
+                                    connection_deadline,
+                                    (limits.max_requests_per_connection, profile),
+                                    requests_left,
+                                    responses,
+                                ),
+                            };
                             (store, completed)
                         }) {
                         Ok(worker) => active[index] = Some(worker),
@@ -511,3 +733,6 @@ fn serve_cells_persistent_inner(
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod rarest_tests;

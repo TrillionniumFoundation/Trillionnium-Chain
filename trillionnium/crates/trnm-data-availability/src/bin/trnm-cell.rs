@@ -16,14 +16,17 @@ use std::{
 };
 
 use trnm_data_availability::cell::{
-    digest_hex, fetch_cell_persistent_to_file, fetch_cell_rarest_first_to_file, fetch_cell_to_file,
-    fetch_release_to_file, fetch_release_with_options_to_file, parse_digest, read_pinned_release,
-    serve_cells, serve_cells_bounded, serve_cells_bounded_with_availability,
+    digest_hex, fetch_cell_persistent_rarest_first_to_file, fetch_cell_persistent_to_file,
+    fetch_cell_rarest_first_to_file, fetch_cell_to_file, fetch_release_to_file,
+    fetch_release_with_options_to_file, parse_digest, read_pinned_release, serve_cells,
+    serve_cells_bounded, serve_cells_bounded_with_availability,
     serve_cells_bounded_with_availability_and_ready, serve_cells_bounded_with_ready,
-    serve_cells_persistent, serve_cells_persistent_with_ready, CellCacheConfigV4, CellContextV1,
-    CellErrorV1, CellFetchTransportV2, CellPeerLimitsV1, CellPersistentPeerLimitsV2,
-    CellPersistentServeLimitsV2, CellReleaseFetchLimitsV1, CellReleaseFetchOptionsV2,
-    CellReleaseLimitsV1, CellReleaseManifestV1, CellServeLimitsV1, CellStoreV1, MAX_CELL_BYTES,
+    serve_cells_persistent, serve_cells_persistent_rarest_first,
+    serve_cells_persistent_rarest_first_with_ready, serve_cells_persistent_with_ready,
+    CellCacheConfigV4, CellContextV1, CellErrorV1, CellFetchTransportV2, CellPeerLimitsV1,
+    CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2, CellReleaseFetchLimitsV1,
+    CellReleaseFetchOptionsV2, CellReleaseLimitsV1, CellReleaseManifestV1, CellServeLimitsV1,
+    CellStoreV1, MAX_CELL_BYTES,
 };
 
 use trnm_data_availability::cell::pq::{
@@ -38,10 +41,10 @@ const USAGE: &str = "trnm-cell: finite configured-peer content cache (no model a
 Writers (pack,fetch,verify,prepare-release,fetch-release,fetch-closure,verify-release) also require --cache-max-bytes N --cache-max-chunks N --cache-max-manifests N --cache-max-db-bytes N. Persisted TCL4/schema4 caps must match on every reopen; the main DB image cap derives separate WAL/SHM file-length caps; held readers can refuse writes before mutation. No allocated-block reservation or journal/TEMP/output/global-disk quota is claimed.
 pack --store DB --input FILE --family FAMILY --base HEX --parent HEX --tokenizer HEX --layout HEX --runtime HEX [--chunk-bytes 1048576]
 serve --store DB --bind IP:PORT --seconds N [--request-ms 2000] [--max-connections 8192] [--bounded-workers 1..4 --max-served-bytes N --availability true|false]
-  --transport single-request-v1 (default) or persistent-v2. Persistent requires bounded workers, --max-served-bytes N, --max-requests N and --max-requests-per-connection N; availability must be false.
+  --transport single-request-v1 (default), persistent-v2 or persistent-rarest-v3. Persistent profiles require bounded workers, --max-served-bytes N, --max-requests N and --max-requests-per-connection N; the V1 availability flag must be false. V3 includes bounded inventory on its own TCQ3/TCS3 connections.
   --announce-ready true is opt-in and requires bounded workers. The separate ready event follows full reader setup; listener publication alone does not establish readiness. Startup does not renew the service deadline.
 fetch --store DB --manifest HEX --peers IP:PORT,IP:PORT --output ABSENT_FILE --max-bytes N (--seconds N | --overall-ms N) [--parallelism 2] [--request-ms 2000] [--max-connections 32768] [--max-response-bytes N] [--scheduling ordered|rarest-first-v1]
-  --transport single-request-v1 (default) or persistent-v2. Persistent requires explicit --max-requests N and --max-requests-per-connection N, with ordered scheduling. One fixed deadline applies to each connection; frames do not renew it.
+  --transport single-request-v1 (default), persistent-v2 (ordered scheduling) or persistent-rarest-v3 (explicit rarest-first-v1 scheduling). Persistent profiles require explicit --max-requests N and --max-requests-per-connection N. Inventory and payload frames share those budgets; one fixed deadline applies to each connection and frames do not renew it.
   Response-byte default: 2 * max-bytes + 2097152 + 9 * max-connections; 0 is cache-only.
 verify --store DB --manifest HEX
 manifest --store DB --manifest HEX --output ABSENT_FILE
@@ -140,7 +143,7 @@ fn serve(args: &mut Args) -> Result<()> {
     let transport = args.optional("--transport", "single-request-v1");
     let persistent_requests = match transport.as_str() {
         "single-request-v1" => None,
-        "persistent-v2" => Some((
+        "persistent-v2" | "persistent-rarest-v3" => Some((
             args.take("--max-requests")?.parse::<u64>()?,
             args.take("--max-requests-per-connection")?.parse::<u64>()?,
         )),
@@ -157,7 +160,7 @@ fn serve(args: &mut Args) -> Result<()> {
     }
     if persistent_requests.is_some() && (workers == 0 || availability) {
         return Err(CellErrorV1::Invalid(
-            "persistent serving requires bounded workers without inventory",
+            "persistent serving requires bounded workers without the V1 availability flag",
         )
         .into());
     }
@@ -189,18 +192,28 @@ fn serve(args: &mut Args) -> Result<()> {
             );
             std::io::stdout().flush()?;
             let ready = || publish_service_ready(&listener);
+            let rarest = transport == "persistent-rarest-v3";
             let report = if announce_ready {
-                serve_cells_persistent_with_ready(
-                    &listener,
-                    &store,
-                    &AtomicBool::new(false),
-                    limits,
-                    &ready,
-                )?
+                let serve = if rarest {
+                    serve_cells_persistent_rarest_first_with_ready
+                } else {
+                    serve_cells_persistent_with_ready
+                };
+                serve(&listener, &store, &AtomicBool::new(false), limits, &ready)?
             } else {
-                serve_cells_persistent(&listener, &store, &AtomicBool::new(false), limits)?
+                let serve = if rarest {
+                    serve_cells_persistent_rarest_first
+                } else {
+                    serve_cells_persistent
+                };
+                serve(&listener, &store, &AtomicBool::new(false), limits)?
             };
-            println!("{{\"schema\":\"trnm.cell.serve.persistent.v2\",\"request_attempts\":{},\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
+            let schema = if rarest {
+                "trnm.cell.serve.persistent.rarest.v3"
+            } else {
+                "trnm.cell.serve.persistent.v2"
+            };
+            println!("{{\"schema\":\"{schema}\",\"request_attempts\":{},\"connections\":{},\"overloaded\":{},\"completed\":{},\"peak_active_workers\":{},\"sent_response_bytes\":{}}}",
                 report.request_attempts, report.serving.accepted_connections,
                 report.serving.overloaded_connections, report.serving.completed_requests,
                 report.serving.peak_active_workers, report.serving.sent_response_bytes);
@@ -302,9 +315,18 @@ fn fetch(args: &mut Args) -> Result<()> {
             args.take("--max-requests")?.parse::<u64>()?,
             args.take("--max-requests-per-connection")?.parse::<u64>()?,
         )),
+        "persistent-rarest-v3" if schedule == "rarest-first-v1" => Some((
+            args.take("--max-requests")?.parse::<u64>()?,
+            args.take("--max-requests-per-connection")?.parse::<u64>()?,
+        )),
         "persistent-v2" => {
             return Err(
                 CellErrorV1::Invalid("persistent transport requires ordered scheduling").into(),
+            )
+        }
+        "persistent-rarest-v3" => {
+            return Err(
+                CellErrorV1::Invalid("persistent V3 requires rarest-first-v1 scheduling").into(),
             )
         }
         _ => return Err(CellErrorV1::Invalid("fetch transport profile").into()),
@@ -326,9 +348,20 @@ fn fetch(args: &mut Args) -> Result<()> {
         };
         limits.validate()?;
         let store = CellStoreV1::open(&store, cache_config)?;
-        let (_, report) = fetch_cell_persistent_to_file(&store, pinned, &peers, limits, &output)?;
+        let rarest = transport == "persistent-rarest-v3";
+        let fetch = if rarest {
+            fetch_cell_persistent_rarest_first_to_file
+        } else {
+            fetch_cell_persistent_to_file
+        };
+        let (_, report) = fetch(&store, pinned, &peers, limits, &output)?;
         let fetch = report.fetch;
-        println!("{{\"schema\":\"trnm.cell.fetch.persistent.v2\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"request_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
+        let schema = if rarest {
+            "trnm.cell.fetch.persistent.rarest.v3"
+        } else {
+            "trnm.cell.fetch.persistent.v2"
+        };
+        println!("{{\"schema\":\"{schema}\",\"manifest\":\"{}\",\"payload_sha256\":\"{}\",\"bytes\":{},\"cached_chunks\":{},\"downloaded_chunks\":{},\"downloaded_bytes\":{},\"received_response_bytes\":{},\"max_response_bytes\":{},\"connection_attempts\":{},\"request_attempts\":{},\"rejected_responses\":{},\"suppliers\":{}}}",
             digest_hex(pinned), digest_hex(fetch.payload_sha256), fetch.payload_bytes,
             fetch.cached_chunks, fetch.downloaded_chunks, fetch.downloaded_bytes,
             fetch.received_response_bytes, max_response_bytes, fetch.connection_attempts,
@@ -508,8 +541,17 @@ fn fetch_transport(args: &mut Args) -> Result<CellFetchTransportV2> {
             max_requests: args.take("--max-requests")?.parse()?,
             max_requests_per_connection: args.take("--max-requests-per-connection")?.parse()?,
         }),
+        ("persistent-rarest-v3", "rarest-first-v1") => {
+            Ok(CellFetchTransportV2::PersistentRarestFirstV3 {
+                max_requests: args.take("--max-requests")?.parse()?,
+                max_requests_per_connection: args.take("--max-requests-per-connection")?.parse()?,
+            })
+        }
         ("persistent-v2", _) => {
             Err(CellErrorV1::Invalid("persistent transport requires ordered scheduling").into())
+        }
+        ("persistent-rarest-v3", _) => {
+            Err(CellErrorV1::Invalid("persistent V3 requires rarest-first-v1 scheduling").into())
         }
         _ => Err(CellErrorV1::Invalid("fetch transport/scheduling profile").into()),
     }
@@ -520,6 +562,7 @@ fn transport_name(transport: &CellFetchTransportV2) -> &'static str {
         CellFetchTransportV2::OrderedV1 => "single-request-v1",
         CellFetchTransportV2::RarestFirstV1 => "rarest-first-v1",
         CellFetchTransportV2::PersistentV2 { .. } => "persistent-v2",
+        CellFetchTransportV2::PersistentRarestFirstV3 { .. } => "persistent-rarest-v3",
     }
 }
 

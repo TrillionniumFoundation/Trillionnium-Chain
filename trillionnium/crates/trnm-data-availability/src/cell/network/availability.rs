@@ -8,13 +8,23 @@
 
 use super::*;
 
-const MAX_PAGE_CHUNKS: usize = 256;
+pub(super) const MAX_PAGE_CHUNKS: usize = 256;
 
 pub(super) fn observe(
     manifest: &CellManifestV1,
     missing: &[(usize, CellChunkV1)],
     peers: &[SocketAddr],
     transport: &RequestContext<'_>,
+) -> CellResultV1<(Vec<u8>, usize)> {
+    observe_via(manifest, missing, peers, transport, &SingleRequestV1)
+}
+
+pub(super) fn observe_via(
+    manifest: &CellManifestV1,
+    missing: &[(usize, CellChunkV1)],
+    peers: &[SocketAddr],
+    transport: &RequestContext<'_>,
+    requests: &dyn ObjectRequests,
 ) -> CellResultV1<(Vec<u8>, usize)> {
     require(peers.len() <= 8, "availability peer bound")?;
     let pages: BTreeSet<_> = missing
@@ -31,7 +41,7 @@ pub(super) fn observe(
         for start in &pages {
             remaining(transport.overall)?;
             let count = MAX_PAGE_CHUNKS.min(manifest.chunks().len() - start);
-            let result = request_page(peer, manifest.id(), *start, count, transport);
+            let result = requests.inventory_page(peer, manifest.id(), *start, count, transport);
             match result {
                 Ok(bits) => {
                     for offset in 0..count {
@@ -54,7 +64,7 @@ pub(super) fn observe(
     Ok((available, rejected))
 }
 
-fn request_page(
+pub(super) fn request_page(
     peer: SocketAddr,
     manifest: CellDigestV1,
     start: usize,
@@ -80,6 +90,15 @@ fn request_page(
         transport,
         &mut phase,
     )?;
+    validate_page(peer, count, bytes, transport)
+}
+
+pub(super) fn validate_page(
+    peer: SocketAddr,
+    count: usize,
+    bytes: Vec<u8>,
+    transport: &RequestContext<'_>,
+) -> CellResultV1<Vec<u8>> {
     let trailing_bits = count % 8;
     if bytes.len() != count.div_ceil(8)
         || (trailing_bits != 0

@@ -40,10 +40,13 @@ pub use manifest::{
 };
 pub use model_root::{CellModelReleaseRootV1, MAX_MODEL_RELEASE_ROOT_BYTES_V1};
 pub use network::{
-    fetch_cell, fetch_cell_persistent, fetch_cell_persistent_to_file, fetch_cell_rarest_first,
-    fetch_cell_rarest_first_to_file, fetch_cell_to_file, serve_cells, serve_cells_bounded,
-    serve_cells_bounded_with_availability, serve_cells_bounded_with_availability_and_ready,
-    serve_cells_bounded_with_ready, serve_cells_persistent, serve_cells_persistent_with_ready,
+    fetch_cell, fetch_cell_persistent, fetch_cell_persistent_rarest_first,
+    fetch_cell_persistent_rarest_first_to_file, fetch_cell_persistent_to_file,
+    fetch_cell_rarest_first, fetch_cell_rarest_first_to_file, fetch_cell_to_file, serve_cells,
+    serve_cells_bounded, serve_cells_bounded_with_availability,
+    serve_cells_bounded_with_availability_and_ready, serve_cells_bounded_with_ready,
+    serve_cells_persistent, serve_cells_persistent_rarest_first,
+    serve_cells_persistent_rarest_first_with_ready, serve_cells_persistent_with_ready,
     CellFetchReportV1, CellPeerLimitsV1, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
     CellPersistentServeLimitsV2, CellPersistentServeReportV2, CellServeLimitsV1, CellServeReportV1,
 };

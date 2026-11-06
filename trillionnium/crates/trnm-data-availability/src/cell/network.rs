@@ -25,9 +25,12 @@ mod cancellation_tests;
 mod persistent;
 mod serving;
 pub use persistent::{
-    fetch_cell_persistent, fetch_cell_persistent_to_file, serve_cells_persistent,
-    serve_cells_persistent_with_ready, CellPersistentFetchReportV2, CellPersistentPeerLimitsV2,
-    CellPersistentServeLimitsV2, CellPersistentServeReportV2,
+    fetch_cell_persistent, fetch_cell_persistent_rarest_first,
+    fetch_cell_persistent_rarest_first_to_file, fetch_cell_persistent_to_file,
+    serve_cells_persistent, serve_cells_persistent_rarest_first,
+    serve_cells_persistent_rarest_first_with_ready, serve_cells_persistent_with_ready,
+    CellPersistentFetchReportV2, CellPersistentPeerLimitsV2, CellPersistentServeLimitsV2,
+    CellPersistentServeReportV2,
 };
 pub use serving::{
     serve_cells_bounded, serve_cells_bounded_with_availability,
@@ -252,6 +255,17 @@ trait ObjectRequests: Sync {
         maximum: usize,
         transport: &RequestContext<'_>,
     ) -> (CellResultV1<Vec<u8>>, usize);
+
+    fn inventory_page(
+        &self,
+        _peer: SocketAddr,
+        _manifest: CellDigestV1,
+        _start: usize,
+        _count: usize,
+        _transport: &RequestContext<'_>,
+    ) -> CellResultV1<Vec<u8>> {
+        Err(CellErrorV1::Invalid("inventory transport unsupported"))
+    }
 }
 
 struct SingleRequestV1;
@@ -267,6 +281,17 @@ impl ObjectRequests for SingleRequestV1 {
     ) -> (CellResultV1<Vec<u8>>, usize) {
         request_with_retry(peer, kind, digest, maximum, transport)
     }
+
+    fn inventory_page(
+        &self,
+        peer: SocketAddr,
+        manifest: CellDigestV1,
+        start: usize,
+        count: usize,
+        transport: &RequestContext<'_>,
+    ) -> CellResultV1<Vec<u8>> {
+        availability::request_page(peer, manifest, start, count, transport)
+    }
 }
 
 struct FetchSchedule<'a> {
@@ -274,8 +299,8 @@ struct FetchSchedule<'a> {
     requests: Option<&'a dyn ObjectRequests>,
 }
 
-/// Explicit acquisition strategy. The variants cannot silently combine an
-/// unsupported inventory protocol with persistent V2 framing.
+/// Explicit acquisition strategy. V3 gives inventory its own persistent wire
+/// namespace; V1 and ordered V2 retain their original framing and semantics.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum CellFetchTransportV2 {
     #[default]
@@ -285,12 +310,20 @@ pub enum CellFetchTransportV2 {
         max_requests: u64,
         max_requests_per_connection: u64,
     },
+    PersistentRarestFirstV3 {
+        max_requests: u64,
+        max_requests_per_connection: u64,
+    },
 }
 
 impl CellFetchTransportV2 {
     pub fn validate(self, peer: CellPeerLimitsV1) -> CellResultV1<()> {
         peer.validate()?;
         if let Self::PersistentV2 {
+            max_requests,
+            max_requests_per_connection,
+        }
+        | Self::PersistentRarestFirstV3 {
             max_requests,
             max_requests_per_connection,
         } = self
@@ -338,6 +371,17 @@ impl<'a> NetworkFetchSession<'a> {
                 max_requests,
                 max_requests_per_connection,
             } => Some(persistent::ConnectionPool::new(
+                peers,
+                CellPersistentPeerLimitsV2 {
+                    peer: limits,
+                    max_requests,
+                    max_requests_per_connection,
+                },
+            )),
+            CellFetchTransportV2::PersistentRarestFirstV3 {
+                max_requests,
+                max_requests_per_connection,
+            } => Some(persistent::ConnectionPool::new_rarest_first(
                 peers,
                 CellPersistentPeerLimitsV2 {
                     peer: limits,
@@ -402,7 +446,11 @@ impl<'a> NetworkFetchSession<'a> {
             &self.context(),
             None,
             FetchSchedule {
-                rarest_first: self.profile == CellFetchTransportV2::RarestFirstV1,
+                rarest_first: matches!(
+                    self.profile,
+                    CellFetchTransportV2::RarestFirstV1
+                        | CellFetchTransportV2::PersistentRarestFirstV3 { .. }
+                ),
                 requests: self.pool.as_ref().map(|pool| pool as &dyn ObjectRequests),
             },
         )
@@ -414,9 +462,11 @@ impl<'a> NetworkFetchSession<'a> {
 
     pub(super) fn request_attempts(&self) -> u64 {
         match (&self.pool, self.profile) {
-            (Some(pool), CellFetchTransportV2::PersistentV2 { max_requests, .. }) => {
-                max_requests - pool.requests_left.load(Ordering::Relaxed)
-            }
+            (
+                Some(pool),
+                CellFetchTransportV2::PersistentV2 { max_requests, .. }
+                | CellFetchTransportV2::PersistentRarestFirstV3 { max_requests, .. },
+            ) => max_requests - pool.requests_left.load(Ordering::Relaxed),
             _ => self.connection_attempts(),
         }
     }
@@ -490,7 +540,12 @@ fn fetch_cell_with_schedule(
     }
     let availability = if schedule.rarest_first && !missing.is_empty() {
         transport.check_cancelled()?;
-        let (available, rejected) = availability::observe(&manifest, &missing, peers, transport)?;
+        let (available, rejected) = match schedule.requests {
+            Some(requests) => {
+                availability::observe_via(&manifest, &missing, peers, transport, requests)?
+            }
+            None => availability::observe(&manifest, &missing, peers, transport)?,
+        };
         report.rejected_responses += rejected;
         // An unavailable/stale hint cannot prevent an ordinary fallback fetch.
         // Unknown chunks run after positively observed chunks, in stable order.
@@ -892,8 +947,11 @@ fn serve_one_wire(
     if let Some(responses) = responses {
         responses.require_remaining()?;
     }
-    let bytes = if inventory {
-        require(query[4] == 1, "availability request type")?;
+    let persistent_inventory = request_magic == b"TCQ3" && query[4] == 3;
+    let bytes = if inventory || persistent_inventory {
+        if inventory {
+            require(query[4] == 1, "availability request type")?;
+        }
         availability::serve_page(stream, store, digest, deadline)?
     } else {
         match query[4] {
