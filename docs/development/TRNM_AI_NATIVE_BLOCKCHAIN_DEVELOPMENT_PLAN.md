@@ -8010,3 +8010,12 @@ four-second/six-confirmation target, quarter-CPU/2-GiB/no-swap/256-PID envelope,
 hostile-worker count, F0 slots and business denominators remain unchanged.
 Whole-chain PQ, public throughput, data-plane isolation and model adoption stay
 unqualified until their own original end-to-end gates pass.
+
+The implementation checkpoint is `54ea3ef36671cd1d9a82b3fcd06c7ab26437598e`.
+The actual target then advanced to
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f`; preserve that target's packaging
+metadata compatibility work and controls in the composition. Its older
+packaging observations retain their historical source, while the combined
+candidate retains the PQ branch's explicit minimum-version refusal boundary.
+The interrupted local compiler/Clippy attempts and environment restart are
+failed or incomplete development observations, not source-bound acceptance.

@@ -9,7 +9,8 @@ policy and execution namespace binding; the tiny cold interpreter control does n
 It does not create a namespace capability, install a runtime, invoke a model, or
 qualify I10. In particular, a digest is not protection against later mutation.
 
-The verifier requires packaging >= 25.0 for explicit metadata marker semantics.
+The verifier requires packaging >= 25.0 and metadata marker semantics. Its
+documented default metadata context is used with a fully pinned environment.
 The reviewed host dependency is pinned in scripts/ci/runtime-release-requirements.txt;
 install it in the verifier environment, never into the declared material root.
 """
@@ -437,8 +438,11 @@ def wheel_closure(root_fd, members, spec, maximum_bytes):
         needed = set()
         for raw in package["requirements"]:
             requirement = Requirement(raw)
+            # Core metadata is the documented default; keep the environment-only API.
+            # The >=25 host policy still applies. Supply every pinned field and extra;
+            # do not retry or hide evaluation errors.
             if requirement.marker is not None and not any(requirement.marker.evaluate(
-                    environment=dict(spec["marker_environment"], extra=extra), context="metadata")
+                    environment=dict(spec["marker_environment"], extra=extra))
                     for extra in ["", *package["wheel"]["extras"]]):
                 continue
             dependency = canonicalize_name(requirement.name)

@@ -171,7 +171,10 @@ fn collect(
         Ok(())
     };
     let (next, count) = if optimized {
-        ensure((1..=HISTORY_HEADER_BATCH).contains(&maximum), "ANCESTRY_LIMIT")?;
+        ensure(
+            (1..=HISTORY_HEADER_BATCH).contains(&maximum),
+            "ANCESTRY_LIMIT",
+        )?;
         if tip == node.settings.genesis() {
             (tip, 0)
         } else {

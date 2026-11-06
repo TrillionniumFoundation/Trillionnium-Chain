@@ -363,13 +363,42 @@ class RuntimeMaterialTests(unittest.TestCase):
                                side_effect=Marker.evaluate) as evaluate:
             result = json.loads(self.declare(spec))
         self.assertEqual(result["python_dependencies"][0]["dependencies"], ["pon-closure-probe"])
-        self.assertEqual([call.kwargs for call in evaluate.call_args_list], [
-            dict(environment=dict(spec["marker_environment"], extra=extra), context="metadata")
+        self.assertEqual([call.kwargs["environment"] for call in evaluate.call_args_list], [
+            dict(spec["marker_environment"], extra=extra)
             for extra in ("", "audit")])
         # Lock-file-only sets are not silently supplied by a different context.
         for marker in ('"audit" in extras', '"audit" in dependency_groups'):
             with self.subTest(marker=marker), self.assertRaises(KeyError):
                 self.declare(self.repack_metadata('Requires-Dist: absent-runtime; ' + marker + '\n'))
+
+    def test_metadata_markers_keep_pre25_evaluate_signature(self):
+        from packaging.markers import Marker
+        original = Marker.evaluate
+        observed = []
+
+        def legacy_evaluate(marker, environment=None):
+            observed.append(environment.copy())
+            return original(marker, environment=environment)
+
+        with mock.patch.object(Marker, "evaluate", legacy_evaluate):
+            self.test_real_metadata_dependency_markers_extras_and_python_version()
+        self.assertTrue(observed)
+        self.assertTrue(all(set(env) == release.MARKER_FIELDS | {"extra"} for env in observed))
+        self.assertIn("audit", {env["extra"] for env in observed})
+        self.assertIn("", {env["extra"] for env in observed})
+
+    def test_metadata_markers_use_pinned_environment_and_propagate_errors(self):
+        from packaging.markers import Marker
+        spec = self.repack_metadata('Requires-Dist: absent-runtime; sys_platform == "linux"\n')
+        ambient = dict(default_environment(), sys_platform="win32", python_version="0.0")
+        with mock.patch("packaging.markers.default_environment", return_value=ambient), \
+                self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
+            self.declare(spec)
+        with mock.patch.object(Marker, "evaluate", side_effect=TypeError("marker-internal-failure")), \
+                self.assertRaisesRegex(TypeError, "marker-internal-failure"):
+            self.declare(spec)
+        with self.assertRaises(ValueError):
+            self.declare(self.repack_metadata('Requires-Dist: absent-runtime; unknown_marker == "x"\n'))
 
     def test_symlink_hardlink_fifo_and_import_side_effect_files_refuse(self):
         path = self.root / "project/untrusted"
