@@ -176,7 +176,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 97 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 109 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -193,10 +193,26 @@ jobs:
               'store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate',
           }
           observed_current = {name for name in names if name.startswith('store::native_authenticated::current_accounts_tests::')}
-          if (len(names) != 97 or len(set(names)) != 97 or len(post_write) != 25
+          history = {
+              'store::native_authenticated::post_write_readback::history_tests::completed_parent_suffix_reduces_real_sql_reads_only_for_the_four_named_records',
+              'store::native_authenticated::post_write_readback::history_tests::incomplete_history_preserves_full_walk_callbacks_and_mints_no_suffix',
+              'store::native_authenticated::post_write_readback::history_tests::every_remaining_history_hit_boundary_preserves_cancellation',
+              'store::native_authenticated::post_write_readback::history_tests::first_history_hit_final_write_repeats_the_original_full_verifier',
+              'store::native_authenticated::post_write_readback::history_tests::full_history_final_callback_write_cannot_publish_pending_suffixes',
+              'store::native_authenticated::post_write_readback::history_tests::writes_restoration_and_prepare_only_schema_changes_disable_completed_history',
+              'store::native_authenticated::post_write_readback::history_tests::consumed_history_keeps_the_outer_last_write_fence',
+              'store::native_authenticated::post_write_readback::history_tests::history_early_and_final_errors_cannot_hide_transaction_replacement',
+              'store::native_authenticated::post_write_readback::history_tests::foreign_initial_state_with_identical_context_cannot_borrow_history',
+              'store::native_authenticated::post_write_readback::history_tests::damaged_ancestors_genesis_and_graph_keep_original_errors_after_a_receipt',
+              'store::native_authenticated::post_write_readback::history_tests::a_different_actual_connection_cannot_use_completed_history',
+              'store::native_authenticated::post_write_readback::history_tests::completed_history_never_survives_rollback_or_cold_open',
+          }
+          observed_history = {name for name in names if name.startswith('store::native_authenticated::post_write_readback::history_tests::')}
+          if (len(names) != 109 or len(set(names)) != 109 or len(post_write) != 25
                   or observed_current != current_accounts
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 97 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 72 non-post-write and 25 post-write executions, including all five current-account controls, in one log')
+                  or observed_history != history
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 109 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires all 97 retained and 12 history executions, including 25 post-write and five current-account controls, in one log')
           PYLOG
             fi
           done

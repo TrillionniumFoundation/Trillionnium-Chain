@@ -8031,3 +8031,17 @@ Preserve the initial disk-full runtime-material attempt (zero tests) and its
 separate 25-test successful rerun under the same original source. These
 development and source checks do not replace the new source's native execution
 or the original fixed-Host business acceptance.
+
+The subsequent exact `97aaf286ba01316a527ae07782120fd47724efc9` source
+passes 374 Python controls, including the full 37-test applicability suite,
+and its three locked graphs, workspace formatting and strict Clippy. An
+additional retained-fixture compatibility run still fails three of ten tests:
+the newly composed historical guard expects 97 authenticated tests where the
+current source has 109, and treats a historical 60-control registry as the new
+105-control selection. Preserve this failed execution. Correct the current
+guard to require all 97 retained tests and all 12 history controls, and keep
+historical executions separate from explicitly synthetic reader inputs.
+The ten original compatibility test methods remain; add a missing-group
+counterexample and bind this reader in the source corpus. The four separate
+recent-batch compatibility tests also pass on `97aaf`; none of these reader
+checks substitutes for the in-progress native execution or service gates.

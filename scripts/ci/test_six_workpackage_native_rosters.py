@@ -44,6 +44,39 @@ def pq_script() -> str:
     return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" <<\'PY\'\n', '          PY\n')
 
 
+def source_fixture_extensions():
+    """Current declarations for synthetic reader inputs, never native evidence."""
+    extensions = {}
+    source_root = ROOT / 'trillionnium/crates/trnm-pon-node/src'
+    for group, relative, module, count in (
+        ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
+         'store::native_authenticated::post_write_readback::history_tests', 12),
+        ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
+         'host_kernel_parent::kernel_parent::relative_tests', 8),
+        ('header-material', 'store/observed_history/tests.rs',
+         'store::observed_history::tests', 8),
+        ('shared-ready', 'ingress/public_v3/intake/shared_readiness_tests.rs',
+         'ingress::public_v3::intake::shared_readiness_tests', 9),
+        ('host-resource', 'host_kernel_parent_resource_tests.rs',
+         'host_kernel_parent::kernel_parent::resource_tests', 7),
+    ):
+        declarations = re.findall(
+            r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
+            (source_root / relative).read_text(), re.M)
+        names = [module + '::' + name for attributes, name in declarations
+                 if not re.search(r'^#\[ignore\b', attributes, re.M)]
+        if len(names) != count or len(set(names)) != count:
+            raise ValueError('unexpected current source fixture declarations: ' + group)
+        extensions[group] = names
+    live_name = 'shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'
+    live_source = (source_root / 'ingress/public_v3/intake_domain_tests.rs').read_text()
+    if len(re.findall(r'^fn ' + live_name + r'\(', live_source, re.M)) != 1:
+        raise ValueError('expected one actual shared-readiness listener control declaration')
+    extensions['shared-ready-live'] = [
+        'ingress::public_v3::intake_domain_tests::' + live_name]
+    return extensions
+
+
 class NativeRosterTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -55,34 +88,7 @@ class NativeRosterTests(unittest.TestCase):
                               for name in ('m06', 'node')}
             cls.original_failure = source.read('semantic-controls/registry-check.stderr').decode()
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
-        cls.source_fixture_extensions = {}
-        source_root = ROOT / 'trillionnium/crates/trnm-pon-node/src'
-        for group, relative, module, count in (
-            ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
-             'store::native_authenticated::post_write_readback::history_tests', 12),
-            ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
-             'host_kernel_parent::kernel_parent::relative_tests', 8),
-            ('header-material', 'store/observed_history/tests.rs',
-             'store::observed_history::tests', 8),
-            ('shared-ready', 'ingress/public_v3/intake/shared_readiness_tests.rs',
-             'ingress::public_v3::intake::shared_readiness_tests', 9),
-            ('host-resource', 'host_kernel_parent_resource_tests.rs',
-             'host_kernel_parent::kernel_parent::resource_tests', 7),
-        ):
-            declarations = re.findall(
-                r'^#\[test\]\n((?:#\[[^\n]*\]\n)*)fn ([A-Za-z_][A-Za-z0-9_]*)\(',
-                (source_root / relative).read_text(), re.M)
-            names = [module + '::' + name for attributes, name in declarations
-                     if not re.search(r'^#\[ignore\b', attributes, re.M)]
-            if len(names) != count or len(set(names)) != count:
-                raise ValueError('unexpected current source fixture declarations: ' + group)
-            cls.source_fixture_extensions[group] = names
-        live_name = 'shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'
-        live_source = (source_root / 'ingress/public_v3/intake_domain_tests.rs').read_text()
-        if len(re.findall(r'^fn ' + live_name + r'\(', live_source, re.M)) != 1:
-            raise ValueError('expected one actual shared-readiness listener control declaration')
-        cls.source_fixture_extensions['shared-ready-live'] = [
-            'ingress::public_v3::intake_domain_tests::' + live_name]
+        cls.source_fixture_extensions = source_fixture_extensions()
         original_names = {line[:-6] for line in cls.registries['node'].splitlines()
                           if line.endswith(': test')}
         additions = [name for names in cls.source_fixture_extensions.values() for name in names]

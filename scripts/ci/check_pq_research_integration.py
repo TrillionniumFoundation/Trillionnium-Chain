@@ -439,6 +439,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/read_w1_full_v2_disposition.py",
     "scripts/pon_w1_preparation_strategy_reader_v4.py",
     "scripts/ci/test_six_workpackage_native_rosters.py",
+    "scripts/ci/test_authenticated_suite_count.py",
     "scripts/ci/test_w1_full_v2_disposition.py",
     "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py",
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",

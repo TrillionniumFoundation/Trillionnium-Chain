@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Replay the actual workflow guards; not a new native execution."""
+"""Replay historical guards and current guards with explicit synthetic inputs.
+
+The four retained 97-test executions and native registries stay byte-for-byte
+historical. New declarations extend only in-memory reader fixtures; a passing
+fixture grants neither current ELF registration nor native execution evidence.
+"""
 from pathlib import Path
 import gzip
 import hashlib
@@ -11,6 +16,7 @@ import sys
 import tempfile
 import textwrap
 import unittest
+from test_six_workpackage_native_rosters import source_fixture_extensions
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-recent-batch-acceptance.yml'
@@ -35,8 +41,12 @@ def workflow_guards():
     return grep, code
 
 
-def check(log, old=False):
+def check(log, old=False, historical=False):
     pattern, code = workflow_guards()
+    if historical or old:
+        pattern = pattern.replace('109 passed', '97 passed')
+        code = (code.replace('109 passed', '97 passed').replace('!= 109', '!= 97')
+                .replace('or observed_history != history', 'or observed_history != set()'))
     if old:
         pattern = pattern.replace('97 passed', '91 passed')
         code = code.replace('97 passed', '91 passed').replace('!= 97', '!= 91').replace('!= 25', '!= 23')
@@ -52,12 +62,37 @@ def fixture(job):
     return gzip.decompress((EVIDENCE / f'{job}.txt.gz').read_bytes()).decode()
 
 
+def source_fixture_history():
+    return source_fixture_extensions()['postwrite-history']
+
+
+def source_fixture_log(job):
+    """Synthetic positive reader input, not retained output from any process."""
+    historical = fixture(job)
+    names = source_fixture_history()
+    assert len(names) == len(set(names)) == 12
+    assert all(name not in historical for name in names)
+    return ('SOURCE-ONLY SYNTHETIC READER FIXTURE; NOT NATIVE EXECUTION\n'
+            + historical.replace('97 passed', '109 passed').replace('running 97 tests', 'running 109 tests')
+            + ''.join(f'test {name} ... ok\n' for name in names))
+
+
 def registry_fixtures():
     result = {}
     for crate, expected in REGISTRY_SHA256.items():
         raw = gzip.decompress((REGISTRY_EVIDENCE / f'{crate}-registry.log.gz').read_bytes())
         assert hashlib.sha256(raw).hexdigest() == expected, crate + ' native registry fixture changed'
         result[crate] = raw.decode()
+    return result
+
+
+def source_registry_fixtures():
+    """Keep actual registry bytes separate from synthetic current declarations."""
+    result = registry_fixtures()
+    names = [name for group in source_fixture_extensions().values() for name in group]
+    assert len(names) == len(set(names)) == 45
+    assert all(name + ': test\n' not in result['node'] for name in names)
+    result['node'] += ''.join(name + ': test\n' for name in names)
     return result
 
 
@@ -84,8 +119,10 @@ class AuthenticatedSuiteCount(unittest.TestCase):
     def test_all_four_original_logs_pass_both_corrected_guards_and_fail_old(self):
         for job in JOBS:
             with self.subTest(job=job):
-                self.assertEqual(check(fixture(job)), (True, True))
+                self.assertEqual(check(fixture(job), historical=True), (True, True))
                 self.assertEqual(check(fixture(job), old=True), (False, False))
+                self.assertEqual(check(fixture(job)), (False, False))
+                self.assertEqual(check(source_fixture_log(job)), (True, True))
 
     def test_complete_roster_matches_source_owners_and_subgroups(self):
         store = ROOT / 'trillionnium/crates/trnm-pon-node/src/store'
@@ -93,22 +130,24 @@ class AuthenticatedSuiteCount(unittest.TestCase):
         files += list((store / 'native_authenticated').rglob('*.rs'))
         source = [name for path in files for name in re.findall(
             r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(', path.read_text())]
-        self.assertEqual(len(source), 97)
+        self.assertEqual(len(source), 109)
         for job in JOBS:
             names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', fixture(job), re.M)
             self.assertEqual(len(names), 97)
             self.assertEqual(len(set(names)), 97)
-            self.assertCountEqual(source, [name.rsplit('::', 1)[1] for name in names])
+            self.assertCountEqual(source, [name.rsplit('::', 1)[1]
+                                           for name in names + source_fixture_history()])
             self.assertEqual(sum('::post_write_readback::tests::' in name for name in names), 25)
             self.assertEqual(sum('::current_accounts_tests::' in name for name in names), 5)
 
     def test_missing_duplicate_wrong_group_and_current_identity_rejected(self):
-        log = fixture(JOBS[0])
+        log = source_fixture_log(JOBS[0])
         names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', log, re.M)
         first = f'test {names[0]} ... ok\n'
         for changed in (log.replace(first, '', 1), log + first,
                         log.replace('::post_write_readback::tests::', '::other::', 1),
-                        log.replace('::current_accounts_tests::', '::other::', 1)):
+                        log.replace('::current_accounts_tests::', '::other::', 1),
+                        log.replace('::history_tests::', '::other::', 1)):
             with self.subTest(changed=changed[:60]):
                 self.assertFalse(check(changed)[1])
 
@@ -116,6 +155,15 @@ class AuthenticatedSuiteCount(unittest.TestCase):
         log = fixture(JOBS[0])
         for old, new in [('97 passed', '91 passed'), ('97 passed', '96 passed'),
                          ('97 passed', '98 passed'), ('0 failed', '1 failed'),
+                         ('0 ignored', '1 ignored'), ('result: ok.', 'result: FAILED.')]:
+            with self.subTest(new=new):
+                self.assertEqual(check(log.replace(old, new), historical=True), (False, False))
+        summary = next(line for line in log.splitlines() if line.startswith('test result:'))
+        self.assertEqual(check(log.replace(summary, ''), historical=True), (False, False))
+        self.assertFalse(check(log + summary + '\n', historical=True)[1])
+        log = source_fixture_log(JOBS[0])
+        for old, new in [('109 passed', '97 passed'), ('109 passed', '108 passed'),
+                         ('109 passed', '110 passed'), ('0 failed', '1 failed'),
                          ('0 ignored', '1 ignored'), ('result: ok.', 'result: FAILED.')]:
             with self.subTest(new=new):
                 self.assertEqual(check(log.replace(old, new)), (False, False))
@@ -137,24 +185,35 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
     def test_actual_native_registry_passes_current_guard_and_rejects_stale_count(self):
         registries = registry_fixtures()
         result, selected = workspace_registry_check(registries)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('postwrite-history: expected 12 actual registered controls, got 0', result.stderr)
+        self.assertIsNone(selected)
+        registries = source_registry_fixtures()
+        result, selected = workspace_registry_check(registries)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report['selected_count'], 60)
-        self.assertEqual(len(selected.splitlines()), 60)
-        self.assertEqual(len(set(selected.splitlines())), 60)
-        self.assertEqual({group['group']: group['expected_count'] for group in report['groups']}, {
+        self.assertEqual(report['selected_count'], 105)
+        self.assertEqual(len(selected.splitlines()), 105)
+        self.assertEqual(len(set(selected.splitlines())), 105)
+        extensions = source_fixture_extensions()
+        self.assertEqual({group['group']: group['expected_count'] for group in report['groups']
+                          if group['group'] not in extensions}, {
             'full-root-arithmetic': 5, 'unchanged-canonical-map': 6, 'account-root-digest': 3,
             'growth-return-observations': 2, 'canonical-ascii': 7, 'reorg-tail': 6,
             'direct-append-readback': 2, 'current-sql-root': 1,
             'prepared-current-history': 3, 'postwrite-readback': 25,
         })
+        for group in report['groups']:
+            if group['group'] in extensions:
+                self.assertCountEqual(group['tests'], extensions[group['group']])
+                self.assertEqual(group['expected_count'], len(extensions[group['group']]))
         old, omitted = workspace_registry_check(registries, old=True)
         self.assertNotEqual(old.returncode, 0)
         self.assertIn('postwrite-readback: expected 23 actual registered controls, got 25', old.stderr)
         self.assertIsNone(omitted)
 
     def test_selected_postwrite_roster_matches_source_and_four_executed_native_logs(self):
-        result, selected = workspace_registry_check(registry_fixtures())
+        result, selected = workspace_registry_check(source_registry_fixtures())
         self.assertEqual(result.returncode, 0, result.stderr)
         observed = [line.split('\t')[2] for line in selected.splitlines()
                     if line.split('\t')[1] == 'postwrite-readback']
@@ -170,7 +229,7 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
             self.assertCountEqual(observed, executed)
 
     def test_empty_missing_duplicate_extra_and_wrong_group_registries_rejected(self):
-        registries = registry_fixtures()
+        registries = source_registry_fixtures()
         line = next(line + '\n' for line in registries['node'].splitlines()
                     if line.startswith(POSTWRITE_PREFIX))
         for label, node in (
@@ -184,7 +243,7 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
                 self.assertIsNone(selected)
 
     def test_missing_exact_control_in_each_crate_rejected(self):
-        registries = registry_fixtures()
+        registries = source_registry_fixtures()
         for crate, name in (
                 ('m06', 'pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_shares_only_after_full_actual_bytes_match'),
                 ('node', 'store::append_readback_tests::direct_append_keeps_complete_rows_events_state_and_cold_reopen')):
@@ -194,6 +253,16 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
                 result, selected = workspace_registry_check(changed)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('missing exact control:', result.stderr)
+                self.assertIsNone(selected)
+
+    def test_every_source_fixture_group_is_required_without_promoting_historical_execution(self):
+        registries = source_registry_fixtures()
+        for group, names in source_fixture_extensions().items():
+            with self.subTest(group=group):
+                changed = dict(registries)
+                changed['node'] = changed['node'].replace(names[0] + ': test\n', '', 1)
+                result, selected = workspace_registry_check(changed)
+                self.assertNotEqual(result.returncode, 0)
                 self.assertIsNone(selected)
 
     def test_original_build_and_execution_contract_remains_required(self):
