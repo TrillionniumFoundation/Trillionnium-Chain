@@ -142,7 +142,7 @@
   "pinned_blobs": {
     ".github/workflows/pon-branch-encoding-acceptance.yml": "b459945f8b071c70f83cc5fce0fa895225d5c8d0",
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
-    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "548bc418038b5d3e5ad6e732c858108930a794eb",
+    ".github/workflows/pon-original-workspace-large-state-cpu.yml": "516ca1abb0dfeb6c52b3a99efc8f041390d78223",
     ".github/workflows/pon-pq-system-continuation.yml": "f502450773e39fd023d33152098397de1ec6ebe6",
     ".github/workflows/pon-recent-batch-acceptance.yml": "18aa6e06366f649d4061e492d1f988ef8924494d",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
