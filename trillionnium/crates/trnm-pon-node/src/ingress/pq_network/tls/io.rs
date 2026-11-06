@@ -18,6 +18,7 @@ pub(super) struct DeadlineStream<'a> {
     written_bytes: usize,
     limit: usize,
     owner: Option<(&'a Mutex<Node>, &'a PqNetworkPolicy)>,
+    observation: Option<&'a diagnostics::Observation>,
 }
 impl<'a> DeadlineStream<'a> {
     pub(super) fn new(
@@ -38,6 +39,7 @@ impl<'a> DeadlineStream<'a> {
             written_bytes: 0,
             limit: HANDSHAKE_BYTES,
             owner,
+            observation: None,
         })
     }
     fn remaining(&self) -> io::Result<Duration> {
@@ -48,6 +50,7 @@ impl<'a> DeadlineStream<'a> {
     }
     fn charge(&self, bytes: usize) -> io::Result<()> {
         if let Some((node, policy)) = self.owner {
+            let started = self.observation.map(|_| Instant::now());
             let result = lock_live_owner(node, self.deadline, None).and_then(|mut owner| {
                 owner.charge_pq_ingress_with_check(
                     policy,
@@ -58,6 +61,9 @@ impl<'a> DeadlineStream<'a> {
                     &mut || check_live_request(self.deadline, None),
                 )
             });
+            if let (Some(observation), Some(started)) = (self.observation, started) {
+                observation.charge(started.elapsed(), result.as_ref().err());
+            }
             result.map_err(|error| io::Error::other(error.to_string()))?;
         }
         self.remaining().map(|_| ())
@@ -116,7 +122,7 @@ impl<'a> Channel<'a> {
         deadline: Instant,
         context: &context::TlsContext,
     ) -> Result<Self> {
-        Self::handshake(stream, deadline, context, None, false)
+        Self::handshake(stream, deadline, context, None, false, None)
     }
     pub(super) fn accept(
         stream: TcpStream,
@@ -124,11 +130,19 @@ impl<'a> Channel<'a> {
         context: &context::TlsContext,
         node: &'a Mutex<Node>,
         policy: &'a PqNetworkPolicy,
+        observation: &'a diagnostics::Observation,
     ) -> Result<Self> {
         // connection() has already spent this owner's durable TLS handshake
         // attempt. Certificate-path construction may perform multiple signature
         // operations: it is NOT charged as one/two native TPQ verifications.
-        Self::handshake(stream, deadline, context, Some((node, policy)), true)
+        Self::handshake(
+            stream,
+            deadline,
+            context,
+            Some((node, policy)),
+            true,
+            Some(observation),
+        )
     }
     fn handshake(
         stream: TcpStream,
@@ -136,8 +150,10 @@ impl<'a> Channel<'a> {
         context: &context::TlsContext,
         owner: Option<(&'a Mutex<Node>, &'a PqNetworkPolicy)>,
         server: bool,
+        observation: Option<&'a diagnostics::Observation>,
     ) -> Result<Self> {
-        let io = DeadlineStream::new(stream, deadline, owner)?;
+        let mut io = DeadlineStream::new(stream, deadline, owner)?;
+        io.observation = observation;
         let mut stream = SslStream::new(context.session()?, io).map_err(crypto)?;
         check_live_request(deadline, None)?;
         if server {

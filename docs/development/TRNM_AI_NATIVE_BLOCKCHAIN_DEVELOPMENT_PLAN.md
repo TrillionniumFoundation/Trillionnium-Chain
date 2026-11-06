@@ -8168,3 +8168,17 @@ fresh recovery anchors, custody/revocation, long WAN and malicious-cost
 qualification, PQ finality and quantum-work/DAA/fork economics remain open.
 PR #723 remains Draft. No protected-main merge, self-approval, force push,
 production activation or whole-chain PQ acceptance is performed.
+
+
+## 2026-11-06: bounded TLS refusal diagnosis on the exact endpoint candidate
+
+The isolated diagnostic candidate starts at `62cb191a9aad3d7effad9336fac2a72c4c255029`.
+Its original witness and endpoint CLI failures remain failed observations.
+A listener now records at most sixteen local, fixed-field connection refusals,
+including the connection stage and the first BIO ingress-owner failure before
+OpenSSL wraps it. No payload, address, path, certificate, key or raw error text
+is exported. Unknown legacy diagnostics remain unclassified and do not select
+dispatch, retries or cleanup authority. Original listener, witness and request
+deadlines, metering, TLS negotiation and all signed/stored domains are unchanged.
+Exact-source native compilation and original-window execution are pending;
+source-integrity checks alone do not close either failed native control.

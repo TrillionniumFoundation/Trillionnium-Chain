@@ -4404,6 +4404,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
