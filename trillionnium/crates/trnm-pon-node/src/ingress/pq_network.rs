@@ -46,6 +46,11 @@ pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
 
+mod shared;
+pub use shared::serve_pq_authenticated_shared;
+#[cfg(feature = "pq-native-openssl")]
+pub use shared::serve_pq_tls13_shared;
+
 #[derive(Clone, Copy)]
 #[repr(u8)]
 enum Direction {
@@ -177,6 +182,9 @@ impl PqNetworkPolicy {
             claimed == self.crypto_profile_id(),
             "PQ_NETWORK_CRYPTO_PROFILE",
         )
+    }
+    pub(crate) fn pinned_server_spki(&self) -> Result<Vec<u8>> {
+        hex::decode(&self.record.server_spki).map_err(|_| "PQ_NETWORK_POLICY_RECORD".into())
     }
     pub fn server_key_id(&self) -> Hash {
         self.server_id
@@ -520,6 +528,34 @@ impl PreparedPqRequest {
     pub fn operation_id(&self) -> Hash {
         self.verified.operation
     }
+    pub fn sequence(&self) -> u64 {
+        self.verified.sequence
+    }
+    pub fn expires_at(&self) -> u64 {
+        self.verified.expiry
+    }
+    pub fn request(&self) -> &Request {
+        &self.verified.request
+    }
+}
+
+/// The exact signed bytes verified by a live exchange. This receipt is an
+/// observation, not current permission, sequence allocation or rollback proof.
+#[derive(Debug)]
+pub struct PqResponseEvidence {
+    response: PqResponse,
+    wire: Vec<u8>,
+}
+impl PqResponseEvidence {
+    pub fn response(&self) -> &PqResponse {
+        &self.response
+    }
+    pub fn wire(&self) -> &[u8] {
+        &self.wire
+    }
+    pub fn into_response(self) -> PqResponse {
+        self.response
+    }
 }
 
 pub struct PqClient {
@@ -540,6 +576,59 @@ impl PqClient {
             #[cfg(test)]
             before_response_completion: None,
         })
+    }
+    pub fn policy(&self) -> &PqNetworkPolicy {
+        &self.policy
+    }
+    pub fn peer_key_id(&self) -> Hash {
+        self.signer.public_key_id()
+    }
+    pub(crate) fn require_plaintext_selection(&self) -> Result<()> {
+        self.policy.require_plaintext()
+    }
+    /// Historical metadata and exact canonical payload only. This never
+    /// returns VerifiedRequest or makes an expired observation dispatchable.
+    pub(crate) fn audit_retained_request(
+        &self,
+        wire: &[u8],
+        request: &Request,
+    ) -> Result<(u64, u64, Hash)> {
+        let retained = self.policy.verify_retained_request(wire)?;
+        ensure(
+            retained.peer == self.signer.public_key_id(),
+            "PQ_NETWORK_CLIENT_CONTEXT",
+        )?;
+        let (_, payload) = decode_wire(wire, self.policy.request_magic())?;
+        ensure(
+            serde_json::to_vec(request)? == payload,
+            "PQ_NETWORK_RETAINED_REQUEST_BODY",
+        )?;
+        Ok((retained.sequence, retained.expiry, retained.operation))
+    }
+    /// Restore the original signed bytes under this client's live policy.
+    /// This does not renew expiry, re-sign, allocate a sequence or send.
+    pub fn restore_prepared(&self, wire: &[u8]) -> Result<PreparedPqRequest> {
+        let verified = self.policy.verify_request(wire, super::now()?)?;
+        ensure(
+            verified.peer == self.signer.public_key_id(),
+            "PQ_NETWORK_CLIENT_CONTEXT",
+        )?;
+        ensure(
+            super::now()? <= verified.expiry,
+            "PQ_NETWORK_EXPIRED_UNCONFIRMED",
+        )?;
+        Ok(PreparedPqRequest { verified })
+    }
+    /// Audit historical signed facts only, including after the original expiry.
+    /// No live request or current authorization is returned. A signed reply
+    /// alone cannot establish the remote physical store's rollback resistance.
+    pub fn audit_retained_reply(&self, request_wire: &[u8], reply_wire: &[u8]) -> Result<()> {
+        let retained = self.policy.verify_retained_request(request_wire)?;
+        ensure(
+            retained.peer == self.signer.public_key_id(),
+            "PQ_NETWORK_CLIENT_CONTEXT",
+        )?;
+        self.policy.verify_retained_response(reply_wire, &retained)
     }
     pub fn prepare(
         &self,
@@ -586,6 +675,15 @@ impl PqClient {
         prepared: &PreparedPqRequest,
         budget: Duration,
     ) -> Result<PqResponse> {
+        self.send_with_evidence(address, prepared, budget)
+            .map(PqResponseEvidence::into_response)
+    }
+    pub fn send_with_evidence(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<PqResponseEvidence> {
         // A TLS-required policy cannot reach the original plaintext socket,
         // even if the caller supplies an otherwise valid prepared request.
         self.policy.require_plaintext()?;
@@ -593,8 +691,77 @@ impl PqClient {
         let end = Instant::now() + budget;
         let mut stream = TcpStream::connect_timeout(&address, budget)?;
         super::write_frame_deadline(&mut stream, prepared.wire(), end)?;
-        let response = super::read_frame_deadline(&mut stream, end)?;
-        self.finish_response(&response, prepared, end)
+        let wire = super::read_frame_deadline(&mut stream, end)?;
+        let response = self.finish_response(&wire, prepared, end)?;
+        Ok(PqResponseEvidence { response, wire })
+    }
+    /// Preserve the caller's absolute epoch through validation, connect,
+    /// framing and final signature verification. The original ten-second
+    /// per-call limit and plaintext-only policy admission still apply.
+    pub fn send_with_evidence_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<PqResponseEvidence> {
+        self.policy.require_plaintext()?;
+        self.check_send_until(address, prepared, deadline)?;
+        let connect_budget = deadline
+            .checked_duration_since(Instant::now())
+            .filter(|v| !v.is_zero())
+            .ok_or_else(|| Error::new(ErrorCode::PqNetworkDeadline))?;
+        let mut stream = TcpStream::connect_timeout(&address, connect_budget)?;
+        super::write_frame_deadline(&mut stream, prepared.wire(), deadline)?;
+        let wire = super::read_frame_deadline(&mut stream, deadline)?;
+        let response = self.finish_response_until(&wire, prepared, deadline)?;
+        Ok(PqResponseEvidence { response, wire })
+    }
+    // Absolute-deadline recovery needs a typed, exclusively local expiry
+    // observation. Preserve the legacy methods and their diagnostic strings.
+    fn check_send_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<()> {
+        let budget = deadline
+            .checked_duration_since(Instant::now())
+            .filter(|v| !v.is_zero())
+            .ok_or_else(|| Error::new(ErrorCode::PqNetworkDeadline))?;
+        ensure(
+            prepared.verified.policy == self.policy.id
+                && prepared.verified.peer == self.signer.public_key_id(),
+            "PQ_NETWORK_CLIENT_CONTEXT",
+        )?;
+        ensure(
+            !budget.is_zero() && budget <= Duration::from_secs(10),
+            "PQ_NETWORK_CLIENT_BUDGET",
+        )?;
+        ensure(address.ip().is_loopback(), "PQ_NETWORK_LOOPBACK_ONLY")?;
+        check_live_request(deadline, Some(prepared.expires_at()))
+    }
+    fn finish_response_until(
+        &self,
+        response: &[u8],
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<PqResponse> {
+        check_live_request(deadline, None)?;
+        // Use the same wall-clock sample for the local expiry decision and
+        // full response verification. A remote error payload never enters it.
+        let now = super::now()?;
+        if now > prepared.expires_at() {
+            return Err(Error::new(ErrorCode::PqNetworkExpired));
+        }
+        let verified = self
+            .policy
+            .verify_response(response, &prepared.verified, now)?;
+        #[cfg(test)]
+        if let Some(before_completion) = self.before_response_completion.as_ref() {
+            before_completion(deadline);
+        }
+        check_live_request(deadline, Some(prepared.expires_at()))?;
+        Ok(verified)
     }
     fn check_send(
         &self,

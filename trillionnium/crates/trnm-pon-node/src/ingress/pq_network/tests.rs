@@ -2,6 +2,11 @@ use super::*;
 use openssl::pkey::{KeyType, PKey};
 use std::{io::Write, thread};
 
+mod recovery_request {
+    use super::*;
+    include!("recovery_request_tests.rs");
+}
+
 mod post_intent_cancellation {
     include!("post_intent_cancel_tests.rs");
 }
