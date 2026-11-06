@@ -379,3 +379,395 @@ fn epoch_now(record: &Record) -> Result<u64> {
     )?;
     Ok(now)
 }
+impl Journal {
+    pub fn initialize(
+        path: &Path,
+        client: &PinnedPqRecoveryClient<'_>,
+        target: Hash,
+        initial_sequence: u64,
+        plan: &SubmitRecoveryPlan,
+    ) -> Result<Self> {
+        let epoch = Epoch::new(plan)?;
+        let record = Record {
+            schema: SCHEMA.into(),
+            binding: Binding::new(client, target, initial_sequence)?,
+            last_boot: epoch.created,
+            epoch,
+            revision: 0,
+            previous: None,
+            reads: 0,
+            parents: BTreeSet::new(),
+            operations: Vec::new(),
+            pending_fence: None,
+        };
+        let raw = serde_json::to_vec(&record)?;
+        let mut files = Files::acquire(path, true)?;
+        files.prepare(&raw)?;
+        files.publish()?;
+        let journal = Self {
+            files,
+            record,
+            raw,
+            fenced: Cell::new(false),
+        };
+        journal.recovery_plan()?;
+        Ok(journal)
+    }
+    pub fn open(
+        path: &Path,
+        client: &PinnedPqRecoveryClient<'_>,
+        target: Hash,
+        initial_sequence: u64,
+    ) -> Result<Self> {
+        let binding = Binding::new(client, target, initial_sequence)?;
+        let mut files = Files::acquire(path, false)?;
+        let (committed, prepared) = files.load()?;
+        let selected = committed
+            .as_ref()
+            .or(prepared.as_ref())
+            .ok_or("PQ_RECOVERY_EMPTY")?;
+        let prior = parse(selected)?;
+        ensure(prior.binding == binding, "PQ_RECOVERY_CONTEXT")?;
+        let (record, raw) = if let Some(next_raw) = prepared.as_ref() {
+            let next = parse(next_raw)?;
+            ensure(next.binding == binding, "PQ_RECOVERY_CONTEXT")?;
+            if let Some(old_raw) = committed.as_ref() {
+                step(&prior, &next, old_raw)?;
+            } else {
+                ensure(next.revision == 0, "PQ_RECOVERY_INITIALIZATION")?;
+            }
+            (next, next_raw.clone())
+        } else {
+            (prior, selected.clone())
+        };
+        // step preserves every old immutable reference. Auditing this selected
+        // complete record validates all old and newly retained signatures once,
+        // without retaining an authorization or signature-result cache.
+        audit(&mut files, &record, client)?;
+        epoch_now(&record)?;
+        if prepared.is_some() {
+            files.publish()?;
+        }
+        epoch_now(&record)?;
+        files.recheck()?;
+        let journal = Self {
+            files,
+            record,
+            raw,
+            fenced: Cell::new(false),
+        };
+        // A durable fence is a historical conclusion. Its rejection does not
+        // sample the wall clock, so a later backward step cannot reopen it.
+        journal.healthy()?;
+        Ok(journal)
+    }
+    fn healthy(&self) -> Result<()> {
+        ensure(
+            !self.fenced.get() && !self.files.is_fenced() && self.record.pending_fence.is_none(),
+            "PQ_RECOVERY_FENCED",
+        )
+    }
+    fn clock(&self) -> Result<u64> {
+        self.healthy()?;
+        let result = epoch_now(&self.record);
+        if result.is_err() {
+            self.fenced.set(true);
+        }
+        result
+    }
+    pub fn recovery_plan(&self) -> Result<SubmitRecoveryPlan> {
+        // Anchor Instant before BOOTTIME and identity I/O. Cold reopening cannot
+        // add that I/O interval back onto the original absolute deadline.
+        let anchor = Instant::now();
+        let now = self.clock()?;
+        let remaining = self
+            .record
+            .epoch
+            .deadline
+            .checked_sub(now)
+            .filter(|n| *n > 0)
+            .ok_or("SUBMIT_RECOVERY_DEADLINE")?;
+        let deadline = anchor
+            .checked_add(Duration::from_nanos(remaining))
+            .ok_or("PQ_RECOVERY_CLOCK")?;
+        let started = deadline
+            .checked_sub(Duration::from_nanos(self.record.epoch.budget))
+            .ok_or("PQ_RECOVERY_CLOCK")?;
+        let plan = SubmitRecoveryPlan {
+            started,
+            deadline,
+            max_submit_attempts: self.record.epoch.submits,
+            max_calls: self.record.epoch.calls,
+            max_parent_packets: self.record.epoch.parents,
+            retry_pause: Duration::from_nanos(self.record.epoch.retry_pause),
+        };
+        plan.validate()?;
+        Ok(plan)
+    }
+    fn same_client(&self, client: &PinnedPqRecoveryClient<'_>) -> Result<()> {
+        ensure(
+            Binding::new(
+                client,
+                self.record.binding.target,
+                self.record.binding.initial,
+            )? == self.record.binding,
+            "PQ_RECOVERY_CONTEXT",
+        )
+    }
+    fn save(&mut self, mut next: Record) -> Result<()> {
+        self.healthy()?;
+        next.last_boot = self.clock()?;
+        next.revision = self.record.revision + 1;
+        next.previous = Some(metadata_digest(&self.raw));
+        step(&self.record, &next, &self.raw)?;
+        let raw = serde_json::to_vec(&next)?;
+        let result = (|| {
+            self.files.prepare(&raw)?;
+            self.files.publish()
+        })();
+        if result.is_err() {
+            self.fenced.set(true);
+        }
+        result?;
+        self.record = next;
+        self.raw = raw;
+        Ok(())
+    }
+    fn fence_pending(&mut self, reason: PendingFence) -> Result<()> {
+        let mut next = self.record.clone();
+        next.pending_fence = Some(reason);
+        let result = self.save(next);
+        // A persistence failure is unknown and still closes this owner. Any
+        // complete/truncated prepared fence remains for cold verification.
+        self.fenced.set(true);
+        result
+    }
+    /// Called only for the direct local send expiry error, never response.value.
+    /// Bind that already-observed conclusion to the exact attempted request.
+    /// Deliberately do not sample wall time again.
+    pub(super) fn fence_expired_unconfirmed(&mut self, prepared: &PreparedPqRequest) -> Result<()> {
+        self.healthy()?;
+        let op = self
+            .record
+            .operations
+            .last()
+            .filter(|op| op.reply.is_none() && op.attempts > 0)
+            .ok_or("PQ_RECOVERY_NO_ATTEMPT")?;
+        ensure(
+            (
+                prepared.sequence(),
+                prepared.expires_at(),
+                prepared.operation_id(),
+            ) == (op.sequence, op.expiry, op.operation),
+            "PQ_RECOVERY_REQUEST_CONTEXT",
+        )?;
+        ensure(
+            self.files.get(&op.wire)? == prepared.wire(),
+            "PQ_RECOVERY_REQUEST_CONTEXT",
+        )?;
+        self.fence_pending(PendingFence::ExpiredUnconfirmed)
+    }
+    fn refuse_expired_pending(&mut self) -> Result<()> {
+        self.healthy()?;
+        let expiry = self
+            .record
+            .operations
+            .last()
+            .filter(|op| op.reply.is_none())
+            .map(|op| op.expiry);
+        if let Some(expiry) = expiry {
+            if crate::ingress::now()? > expiry {
+                self.fence_pending(PendingFence::ExpiredUnconfirmed)?;
+                return Err("PQ_NETWORK_EXPIRED_UNCONFIRMED".into());
+            }
+        }
+        Ok(())
+    }
+    /// Reobserve storage identity only; no deadline, permission or budget renewal.
+    pub(super) fn recheck(&mut self) -> Result<()> {
+        self.healthy()?;
+        self.files.recheck()
+    }
+    pub fn cursor(&self) -> Result<u64> {
+        self.healthy()?;
+        Ok(self.record.binding.initial
+            + self
+                .record
+                .operations
+                .iter()
+                .filter(|op| op.reply.is_some())
+                .count() as u64)
+    }
+    pub fn status(&self) -> Result<JournalStatus> {
+        self.healthy()?;
+        shape(&self.record)
+    }
+    pub fn pending_request(&mut self) -> Result<Option<PendingMetadata>> {
+        self.healthy()?;
+        let Some(op) = self
+            .record
+            .operations
+            .last()
+            .filter(|op| op.reply.is_none())
+        else {
+            return Ok(None);
+        };
+        let raw = self.files.get(&op.request)?;
+        Ok(Some(PendingMetadata {
+            sequence: op.sequence,
+            expires_at: op.expiry,
+            operation: op.operation,
+            attempts: op.attempts,
+            packet_id: op.packet,
+            canonical_request_json: String::from_utf8(raw)
+                .map_err(|_| "PQ_RECOVERY_REQUEST_ENCODING")?,
+        }))
+    }
+    pub fn prepare_or_restore(
+        &mut self,
+        client: &PinnedPqRecoveryClient<'_>,
+        body: &Request,
+        expiry: u64,
+    ) -> Result<PreparedPqRequest> {
+        self.refuse_expired_pending()?;
+        self.recovery_plan()?;
+        self.same_client(client)?;
+        self.files.recheck()?;
+        let body_raw = serde_json::to_vec(body)?;
+        let (body, packet) = request(&body_raw, client)?;
+        if let Some(op) = self
+            .record
+            .operations
+            .last()
+            .filter(|op| op.reply.is_none())
+        {
+            ensure(
+                self.files.get(&op.request)? == body_raw,
+                "PQ_RECOVERY_PENDING_REQUEST",
+            )?;
+            let wire = self.files.get(&op.wire)?;
+            let expected = (op.sequence, op.expiry, op.operation);
+            let prepared = match client.restore_prepared(&wire) {
+                Ok(prepared) => prepared,
+                Err(error) => {
+                    // The live verifier may itself have observed expiry before
+                    // a wall-clock step back. Never infer success from a later sample.
+                    self.fence_pending(PendingFence::LiveRestoreRejected)?;
+                    return Err(error);
+                }
+            };
+            ensure(
+                (
+                    prepared.sequence(),
+                    prepared.expires_at(),
+                    prepared.operation_id(),
+                ) == expected,
+                "PQ_RECOVERY_REQUEST_CONTEXT",
+            )?;
+            self.files.recheck()?;
+            self.refuse_expired_pending()?;
+            self.recovery_plan()?;
+            return Ok(prepared);
+        }
+        ensure(
+            self.status()?.used_calls < self.record.epoch.calls
+                && self.record.operations.len() < self.record.epoch.calls as usize,
+            "SUBMIT_RECOVERY_CALL_LIMIT",
+        )?;
+        let prepared = client.prepare(self.cursor()?, expiry, body)?;
+        let operation = Operation {
+            request: self.files.put(&body_raw)?,
+            wire: self.files.put(prepared.wire())?,
+            reply: None,
+            sequence: prepared.sequence(),
+            expiry: prepared.expires_at(),
+            operation: prepared.operation_id(),
+            packet,
+            attempts: 0,
+        };
+        let mut next = self.record.clone();
+        next.operations.push(operation);
+        self.save(next)?;
+        self.refuse_expired_pending()?;
+        self.recovery_plan()?;
+        Ok(prepared)
+    }
+    pub fn record_attempt(&mut self) -> Result<()> {
+        self.refuse_expired_pending()?;
+        self.recovery_plan()?;
+        let mut next = self.record.clone();
+        let op = next
+            .operations
+            .last_mut()
+            .filter(|op| op.reply.is_none())
+            .ok_or("PQ_RECOVERY_NO_PENDING")?;
+        // Pin the exact pending bytes under this File owner before reserving
+        // another attempt; no historical response can discharge this step.
+        self.files.get(&op.request)?;
+        self.files.get(&op.wire)?;
+        op.attempts = op
+            .attempts
+            .checked_add(1)
+            .ok_or("SUBMIT_RECOVERY_CALL_LIMIT")?;
+        self.save(next)?;
+        self.refuse_expired_pending()?;
+        self.recovery_plan().map(|_| ())
+    }
+    pub fn reserve_read(&mut self) -> Result<()> {
+        self.refuse_expired_pending()?;
+        self.recovery_plan()?;
+        let mut next = self.record.clone();
+        next.reads = next
+            .reads
+            .checked_add(1)
+            .ok_or("SUBMIT_RECOVERY_CALL_LIMIT")?;
+        self.save(next)?;
+        self.recovery_plan().map(|_| ())
+    }
+    pub fn reserve_parent(&mut self, id: Hash) -> Result<()> {
+        self.refuse_expired_pending()?;
+        self.recovery_plan()?;
+        self.files.recheck()?;
+        if self.record.parents.contains(&id) {
+            return Ok(());
+        }
+        let mut next = self.record.clone();
+        next.parents.insert(id);
+        self.save(next)?;
+        self.recovery_plan().map(|_| ())
+    }
+    pub fn complete(
+        &mut self,
+        client: &PinnedPqRecoveryClient<'_>,
+        evidence: &PqResponseEvidence,
+    ) -> Result<()> {
+        self.healthy()?;
+        self.same_client(client)?;
+        self.files.recheck()?;
+        let op = self
+            .record
+            .operations
+            .last()
+            .filter(|op| op.reply.is_none() && op.attempts > 0)
+            .ok_or("PQ_RECOVERY_NO_ATTEMPT")?;
+        let wire = self.files.get(&op.wire)?;
+        client.audit_retained_reply(&wire, evidence.wire())?;
+        ensure(
+            evidence.response().operation == hex::encode(op.operation),
+            "PQ_RECOVERY_REPLY_CONTEXT",
+        )?;
+        let reply = self.files.put(evidence.wire())?;
+        let mut next = self.record.clone();
+        next.operations
+            .last_mut()
+            .ok_or("PQ_RECOVERY_NO_PENDING")?
+            .reply = Some(reply);
+        // Preserve an actual signed fact even after the campaign's deadline.
+        // It does not renew that deadline or permit any new network operation.
+        self.save(next)
+    }
+}
+
+#[cfg(test)]
+#[path = "journal_tests.rs"]
+mod tests;
