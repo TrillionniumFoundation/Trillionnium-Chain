@@ -1,5 +1,7 @@
 use super::*;
-use crate::ingress::pq_network::{canonical_tests::key, tls::serve_pq_tls13, tls_fixtures, PqServer};
+use crate::ingress::pq_network::{
+    canonical_tests::key, tls::serve_pq_tls13, tls_fixtures, PqServer,
+};
 use crate::{Node, Settings};
 use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
 use std::{
@@ -393,6 +395,9 @@ fn admission_resource_refusal_has_no_terminal_seal_and_cannot_advance_client_seq
 
 #[test]
 fn sealed_reply_rejects_other_policy_peer_and_randomized_wire_even_for_same_operation() {
+    use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
+    use trnm_protocol::pq_frame::TPQ1_UNSIGNED_BYTES;
+
     let directory = tempfile::tempdir().unwrap();
     let (settings, policy) = setup();
     let node_path = directory.path().join("node");
@@ -420,9 +425,30 @@ fn sealed_reply_rejects_other_policy_peer_and_randomized_wire_even_for_same_oper
         .send_pending(until(), &AtomicBool::new(false))
         .is_err());
     let retained = serving.join().unwrap().unwrap();
-    let another = client(&policy);
+    // The canonical seed owner signs deterministically. Exercise signature-only
+    // variation with the existing OpenSSL owner for the same pinned public key.
+    let repeated = client(&policy).prepare(1, expiry, Request::Head).unwrap();
+    assert_eq!(repeated.wire(), retained.request);
+    let signer =
+        PqNativeSigningKey::from_owned_key(tls_fixtures::key(72), key(72).public_key_id()).unwrap();
+    assert_eq!(signer.public_spki(), key(72).public_spki());
+    let another = PqClient::new(policy.clone(), signer).unwrap();
     let randomized = another.prepare(1, expiry, Request::Head).unwrap();
     assert_ne!(randomized.wire(), retained.request);
+    let signature_start = 8 + TPQ1_UNSIGNED_BYTES + 2;
+    assert_eq!(
+        &randomized.wire()[..signature_start],
+        &retained.request[..signature_start]
+    );
+    assert_eq!(
+        &randomized.wire()[8 + TPQ1_SIGNED_BYTES..],
+        &retained.request[8 + TPQ1_SIGNED_BYTES..]
+    );
+    let randomized = PreparedPqRequest {
+        verified: policy
+            .verify_request(randomized.wire(), crate::ingress::now().unwrap())
+            .unwrap(),
+    };
     assert_eq!(
         randomized.operation_id(),
         outbound.status().unwrap().pending.unwrap().operation
