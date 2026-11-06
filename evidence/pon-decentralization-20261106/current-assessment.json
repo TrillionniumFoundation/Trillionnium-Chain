@@ -1,0 +1,259 @@
+{
+  "audit_sha256": "2b96b4fe6e5ca396592ca7ec26a9d24a5051273d0b3040df6a1f377bc504a388",
+  "axes": {
+    "authority": {
+      "accounting_inventory_current": false,
+      "alternate_route_scope": "each route stands separately; one route never hides another",
+      "cross_role_control_groups": {},
+      "declared_inventory_complete": false,
+      "evaluation_authority_control_overlap": [],
+      "inventory_reference_current": false,
+      "missing_roles": [
+        "recovery",
+        "release",
+        "root",
+        "upgrade",
+        "witness"
+      ],
+      "overlap_scope": "declared control including stale relations; diagnostic, not an automatic conflict verdict",
+      "routes": []
+    },
+    "data_distribution": {
+      "accounting_inventory_current": false,
+      "declared_inventory_complete": false,
+      "discovery": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 0,
+        "unresolved_subjects": []
+      },
+      "inventory_reference_current": false,
+      "providers": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 0,
+        "unresolved_subjects": []
+      },
+      "replicas": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 0,
+        "unresolved_subjects": []
+      }
+    },
+    "evaluation": {
+      "accounting_inventory_current": false,
+      "author_control_unresolved": true,
+      "author_related_subjects": [],
+      "author_separated_candidate_group_count": 0,
+      "author_separated_candidate_key_count": 0,
+      "author_separated_candidate_key_threshold_met": false,
+      "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+      "declared_group_key_weights": {},
+      "declared_inventory_complete": false,
+      "identified_unique_keys": 0,
+      "independent_administration_verified": false,
+      "inventory_reference_current": false,
+      "key_threshold": 2,
+      "known_groups_sufficient_to_approve": null,
+      "known_groups_sufficient_to_block": null,
+      "minimum_approving_groups": null,
+      "minimum_blocking_groups": null,
+      "total_key_slots": 3,
+      "unidentified_key_slots": 3,
+      "unresolved_control_key_slots": 3
+    },
+    "resources": {
+      "funding": {
+        "accounting_inventory_current": false,
+        "declared_group_share_ppm": null,
+        "declared_group_units": {},
+        "declared_inventory_complete": false,
+        "independent_administration_verified": false,
+        "inventory_reference_current": false,
+        "known_groups_sufficient_for_majority": null,
+        "largest_declared_group_share_ppm": null,
+        "listed_units": 0,
+        "total_units": null,
+        "unit": "unknown",
+        "unit_reference_current": false,
+        "unknown_owner_share_ppm": null,
+        "unknown_owner_units": null,
+        "unresolved_listed_units": 0
+      },
+      "hardware": {
+        "accounting_inventory_current": false,
+        "declared_group_share_ppm": null,
+        "declared_group_units": {},
+        "declared_inventory_complete": false,
+        "independent_administration_verified": false,
+        "inventory_reference_current": false,
+        "known_groups_sufficient_for_majority": null,
+        "largest_declared_group_share_ppm": null,
+        "listed_units": 0,
+        "total_units": null,
+        "unit": "unknown",
+        "unit_reference_current": false,
+        "unknown_owner_share_ppm": null,
+        "unknown_owner_units": null,
+        "unresolved_listed_units": 0
+      }
+    },
+    "work_production": {
+      "accounting_inventory_current": false,
+      "declared_inventory_complete": false,
+      "facets": {
+        "network_service": {
+          "declared_status": "unknown",
+          "openness_verified": false,
+          "reference_current": false
+        },
+        "resource_access": {
+          "declared_status": "unknown",
+          "openness_verified": false,
+          "reference_current": false
+        },
+        "task_admission": {
+          "declared_status": "unknown",
+          "openness_verified": false,
+          "reference_current": false
+        },
+        "work_rule": {
+          "declared_status": "unknown",
+          "openness_verified": false,
+          "reference_current": false
+        }
+      },
+      "inventory_reference_current": false,
+      "producers": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 0,
+        "unresolved_subjects": []
+      }
+    }
+  },
+  "context": {
+    "chain_source_sha256": "b417a121273495f66d553603ae3af0886e4c375d0b4b29da16525a191b2ed238",
+    "profile_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+  },
+  "control_registry_sha256": "918c1da0353d35807c9eeee0664bc7e5e4208cfc5d1421cf79cf23ce317a6587",
+  "evidence_references_authenticated": false,
+  "findings": [
+    {
+      "axis": "work_production",
+      "code": "WORK_RULE_NOT_ESTABLISHED_OPEN"
+    },
+    {
+      "axis": "work_production",
+      "code": "TASK_ADMISSION_NOT_ESTABLISHED_OPEN"
+    },
+    {
+      "axis": "work_production",
+      "code": "NETWORK_SERVICE_NOT_ESTABLISHED_OPEN"
+    },
+    {
+      "axis": "work_production",
+      "code": "RESOURCE_ACCESS_NOT_ESTABLISHED_OPEN"
+    },
+    {
+      "axis": "work_production",
+      "code": "INVENTORY_INCOMPLETE_OR_UNCURRENT"
+    },
+    {
+      "axis": "work_production",
+      "code": "PRODUCER_INVENTORY_EMPTY"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "PROVIDERS_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "DISCOVERY_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "REPLICAS_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "INVENTORY_INCOMPLETE_OR_UNCURRENT"
+    },
+    {
+      "axis": "evaluation",
+      "code": "INVENTORY_INCOMPLETE_OR_UNCURRENT"
+    },
+    {
+      "axis": "evaluation",
+      "code": "EVALUATION_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "evaluation",
+      "code": "AUTHOR_SEPARATED_KEY_THRESHOLD_NOT_ESTABLISHED"
+    },
+    {
+      "axis": "authority",
+      "code": "MISSING_AUTHORITY_ROLE:recovery"
+    },
+    {
+      "axis": "authority",
+      "code": "MISSING_AUTHORITY_ROLE:release"
+    },
+    {
+      "axis": "authority",
+      "code": "MISSING_AUTHORITY_ROLE:root"
+    },
+    {
+      "axis": "authority",
+      "code": "MISSING_AUTHORITY_ROLE:upgrade"
+    },
+    {
+      "axis": "authority",
+      "code": "MISSING_AUTHORITY_ROLE:witness"
+    },
+    {
+      "axis": "authority",
+      "code": "INVENTORY_INCOMPLETE_OR_UNCURRENT"
+    },
+    {
+      "axis": "resources",
+      "code": "FUNDING_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "resources",
+      "code": "HARDWARE_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "context",
+      "code": "INCOMPLETE_DEPLOYMENT_CONTEXT"
+    },
+    {
+      "axis": "all",
+      "code": "EXTERNAL_INDEPENDENCE_ACCEPTANCE_NOT_PERFORMED"
+    }
+  ],
+  "independent_administration_verified": false,
+  "missing_context_fields": [
+    "chain_binary_sha256",
+    "genesis_sha256",
+    "hepta_binary_sha256",
+    "hepta_source_sha256",
+    "network_sha256",
+    "parameters_sha256"
+  ],
+  "permissionless_utility_accepted": false,
+  "policy_sha256": "2be2526818b7db0fcdfa222ccbb4dc5f23a7bc1abdc40479c1332041be99cc2c",
+  "production_activation": false,
+  "public_network_ready": false,
+  "schema": "trnm-decentralization-report-v1",
+  "status": "HOLD",
+  "window": {
+    "end_unix_ms": 1793972882000,
+    "start_unix_ms": 1793972881000
+  }
+}

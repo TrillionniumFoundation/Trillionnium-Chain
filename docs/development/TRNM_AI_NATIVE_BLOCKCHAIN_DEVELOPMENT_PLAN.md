@@ -17,6 +17,25 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Five-dimensional decentralization audit, 2026-11-06 America/New_York:**
+Continue the existing #688 candidate with the
+[declared-control evidence contract](../protocol/pon-nakamoto-v1/details/DECENTRALIZATION_AUDIT_V1.md).
+Assess work access, complete data distribution, evaluator administration,
+release/root/upgrade and recovery authority, and funding/hardware concentration
+separately. Collapse declared common control across node, endpoint, key and
+witness aliases; preserve unknown ownership and the original share denominators.
+Report key thresholds separately from the minimum declared approving and
+blocking control coalitions, and retain author/common-control conflicts.
+Extend the existing PN5 evidence-accounting owner under an explicit new version;
+preserve V1/V2 inputs, signed consensus/release bytes, frozen rosters, original
+service budgets and all existing owner boundaries. Candidate JSON and source
+tests cannot authenticate custody or independent operation. The
+[source and execution record](../../evidence/pon-decentralization-20261106/README.md)
+keeps actual inspected bytes and observed test results separate. Three genuinely
+independent administrators and failure domains, the original preregistered
+cohorts and at least 72 hours of real WAN operation remain external PN5 gates;
+no public, utility, release, security or production acceptance is promoted.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

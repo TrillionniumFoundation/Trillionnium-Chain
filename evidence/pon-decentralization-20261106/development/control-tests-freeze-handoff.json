@@ -1,0 +1,17 @@
+{
+  "test_file": "scripts/ci/test_pon_decentralization_audit.py",
+  "test_count": 55,
+  "last_full_run_before_new_type_case": {
+    "tests": 54,
+    "returncode": 0
+  },
+  "remaining_bug": {
+    "selector": "FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping",
+    "returncode": 1,
+    "failures": 1,
+    "errors": 4,
+    "cause": "quorum list(authors) accepts object keys and throws unhandled TypeError on null/bool/integer. Require JSON array in evaluate before quorum, and explicit list/tuple shape for quorum authors optional convenience API."
+  },
+  "wan_review_returncode": 0,
+  "file_sha256": "b11bf6d3e7953d80dca951b9746ca3823ad64e9b3d5180877f6714d8bc3aadd3"
+}

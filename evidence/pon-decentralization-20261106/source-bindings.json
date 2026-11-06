@@ -1,0 +1,23 @@
+{
+  "base_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+  "base_tree": "945c280e0690923f82726995484811f4b10e597e",
+  "deployment_observed": false,
+  "independent_accepted": false,
+  "interpretation": "The SHA-256 of this retained descriptor is the source identity reference for the current source-only audit. It is not a complete runtime-material SHA-256 seal, a built binary digest, or evidence of deployment.",
+  "native_binary_observed": false,
+  "production_activation": false,
+  "profile": {
+    "bytes": 1964,
+    "path": "config/pon/devnet-v1.json",
+    "scope": "Exact baseline development configuration bytes, not an active deployment claim.",
+    "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+  },
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "trnm-decentralization-source-binding-v1",
+  "source_inventory": {
+    "bytes": 11546,
+    "path": "evidence/pon-decentralization-20261106/source-inventory.json",
+    "scope": "Selected seventeen source/configuration/documentation files inspected at the fixed base commit; exact leaf hashes retained.",
+    "sha256": "ee46eb9f20268ac357f23b1fcc4743b3311d3fbcb52dbdf39748eb0fc9db7fc9"
+  }
+}

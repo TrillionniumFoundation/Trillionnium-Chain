@@ -263,7 +263,7 @@ def v2_expected(cohort, expected, operators):
             digest(expected[name], name)
 
 
-def v2_success(cohort, planned, row, operators):
+def v2_success(cohort, planned, row, operators, *, control_context=None):
     kind, criteria = cohort["kind"], cohort["success_criteria"]
     expected, result = planned["expected"], row["result"]
     if row["outcome"] != V2_SUCCESS[kind]:
@@ -285,7 +285,9 @@ def v2_success(cohort, planned, row, operators):
         if kind == "cell_retrieval":
             sources = operator_ids(result["source_operators"], operators, "SOURCE_OPERATORS")
             return (same_cell and len(sources) >= criteria["minimum_source_operators"]
-                    and not sources.intersection(expected["forbidden_source_operators"]))
+                    and not sources.intersection(expected["forbidden_source_operators"])
+                    and (control_context is None or control_context.retrieval_allowed(
+                        sources, expected["forbidden_source_operators"], criteria["minimum_source_operators"])))
         digest(result["effect_sha256"], "REPAIR_EFFECT")
         replicas = operator_ids(result["complete_replica_operators"], operators, "REPLICA_OPERATORS")
         administrators = {operators[name]["administrator"] for name in replicas}
@@ -293,7 +295,9 @@ def v2_success(cohort, planned, row, operators):
         return (same_cell and result["effect_sha256"] == expected["effect_sha256"]
                 and len(replicas) >= criteria["minimum_complete_replicas"]
                 and len(administrators) >= criteria["minimum_administrators"]
-                and len(domains) >= criteria["minimum_failure_domains"])
+                and len(domains) >= criteria["minimum_failure_domains"]
+                and (control_context is None or control_context.repair_allowed(
+                    replicas, criteria["minimum_administrators"], criteria["minimum_failure_domains"])))
     fields = V2_RECOVERY_FIELDS[criteria["mode"]]
     exact_keys(result, fields | {"mode", "redispatched_effects", "new_payments"}, "RECOVERY_RESULT")
     for name in fields:
@@ -305,7 +309,7 @@ def v2_success(cohort, planned, row, operators):
             and payments <= criteria["maximum_new_payments"])
 
 
-def evaluate_v2(manifest, observations):
+def evaluate_v2(manifest, observations, *, control_context=None):
     references = {"chain_source_sha256", "hepta_source_sha256", "chain_binary_sha256",
                   "hepta_binary_sha256", "threat_model_sha256", "load_fault_plan_sha256"}
     exact_keys(manifest, references | {"schema", "preregistered_unix_ms", "start_unix_ms", "end_unix_ms",
@@ -399,7 +403,8 @@ def evaluate_v2(manifest, observations):
         if receipt in receipts:
             raise ValueError("REPLAYED_RAW_RECEIPT")
         receipts.add(receipt)
-        success = v2_success(cohorts[planned["cohort"]], planned, row, operators)
+        success = v2_success(cohorts[planned["cohort"]], planned, row, operators,
+                             control_context=control_context)
         actual[identity] = (row, success)
 
     reports = []
@@ -452,7 +457,107 @@ def evaluate_v2(manifest, observations):
         scope="Typed/windowed arithmetic only; JSON does not authenticate receipts, preregistration, duration, operators, funding, physical replicas or source/binary identities")
 
 
+class WanControlContext:
+    """Candidate common-control declarations, never authenticated independence."""
+
+    def __init__(self, manifest):
+        from pon_decentralization_audit import ControlMap
+
+        context_fields = ("chain_source_sha256", "hepta_source_sha256", "chain_binary_sha256",
+                          "hepta_binary_sha256", "profile_sha256", "network_sha256",
+                          "genesis_sha256", "parameters_sha256")
+        context = {name: digest(manifest[name], name) for name in context_fields}
+        self.controls = ControlMap(manifest["control_registry"],
+            expected_sha256=digest(manifest["control_registry_sha256"], "CONTROL_REGISTRY_DIGEST"),
+            expected_context=context, start_unix_ms=manifest["start_unix_ms"],
+            end_unix_ms=manifest["end_unix_ms"])
+        operators = indexed(manifest["operators"],
+            {"id", "administrator", "failure_domain", "endpoint", "external_attestation_sha256"},
+            "OPERATOR_IDENTITY", 64)
+        self.operators = {identity: dict(row) for identity, row in operators.items()}
+        exact_keys(manifest["operator_subjects"], self.operators, "OPERATOR_SUBJECT_BINDING")
+        self.subjects = dict(manifest["operator_subjects"])
+        for subject in self.subjects.values():
+            v2_name(subject, "OPERATOR_SUBJECT")
+            # Resolve every supplied identity, including unknown-control subjects;
+            # a misspelled/foreign subject is not an unknown ownership declaration.
+            self.controls.group_for(subject)
+
+    def groups(self, operators):
+        return {group for operator in operators
+                if (group := self.controls.group_for(self.subjects[operator])) is not None}
+
+    def complete(self, operators):
+        return all(self.controls.group_for(self.subjects[operator]) is not None for operator in operators)
+
+    def retrieval_allowed(self, sources, forbidden, minimum_groups):
+        # Unknown or stale forbidden ownership cannot establish origin exclusion.
+        # related() retains even stale common-control links; fresh renamed keys
+        # cannot launder a known forbidden controller through another endpoint.
+        return (self.complete(sources) and self.complete(forbidden)
+                and len(self.groups(sources)) >= minimum_groups
+                and not any(self.controls.related(self.subjects[source], self.subjects[origin])
+                            for source in sources for origin in forbidden))
+
+    def repair_allowed(self, replicas, minimum_groups, minimum_failure_domains):
+        # Physical/failure-domain labels remain separate candidate declarations.
+        domains = {self.operators[operator]["failure_domain"] for operator in replicas}
+        return (self.complete(replicas) and len(self.groups(replicas)) >= minimum_groups
+                and len(domains) >= minimum_failure_domains)
+
+    def report(self):
+        resolved = {operator: self.controls.group_for(subject)
+                    for operator, subject in sorted(self.subjects.items())}
+        groups = self.groups(self.operators)
+        unknown = [operator for operator, group in resolved.items() if group is None]
+        return dict(operator_subjects=dict(sorted(self.subjects.items())),
+                    candidate_operator_control_groups=resolved,
+                    declared_control_group_count=len(groups),
+                    unknown_control_operators=unknown,
+                    control_inventory_complete=not unknown,
+                    declared_operator_control_floor_met=not unknown and len(groups) >= 3,
+                    external_independence_verified=False)
+
+
+def evaluate_v3(manifest, observations):
+    references = {"chain_source_sha256", "hepta_source_sha256", "chain_binary_sha256",
+                  "hepta_binary_sha256", "threat_model_sha256", "load_fault_plan_sha256"}
+    added = {"profile_sha256", "network_sha256", "genesis_sha256", "parameters_sha256",
+             "control_registry", "control_registry_sha256", "operator_subjects"}
+    exact_keys(manifest, references | added | {"schema", "preregistered_unix_ms",
+        "start_unix_ms", "end_unix_ms", "operators", "cohorts", "windows", "schedule"},
+        "V3_MANIFEST_FIELDS")
+    if manifest["schema"] != "trnm-wan-preregistration-v3":
+        raise ValueError("MANIFEST_SCHEMA")
+    start = v2_integer(manifest["start_unix_ms"], "START", 1)
+    v2_integer(manifest["end_unix_ms"], "END", start + V2_DURATION_MS)
+    controls = WanControlContext(manifest)
+    # Original typed results, deadlines, windows, costs and denominators are
+    # evaluated by their existing owner. Only the explicit V3 selector adds
+    # common-control constraints to provider and replica success.
+    v2 = {key: value for key, value in manifest.items() if key not in added}
+    v2["schema"] = "trnm-wan-preregistration-v2"
+    report = evaluate_v2(v2, observations, control_context=controls)
+    control_report = controls.report()
+    report.update(control_report)
+    report["schema"] = "trnm-wan-evidence-accounting-v3"
+    report["control_registry_sha256"] = manifest["control_registry_sha256"]
+    report["all_typed_window_arithmetic_slos_met"] = report["all_cohort_arithmetic_slos_met"]
+    control_floor = report["declared_operator_control_floor_met"]
+    for group in report["cohorts"]:
+        group["typed_window_arithmetic_slo_met"] = group["arithmetic_slo_met"]
+        group["declared_operator_control_floor_met"] = control_floor
+        group["arithmetic_slo_met"] = group["arithmetic_slo_met"] and control_floor
+    report["all_cohort_arithmetic_slos_met"] = all(group["arithmetic_slo_met"] for group in report["cohorts"])
+    report["scope"] = ("Typed/windowed arithmetic with candidate common-control closure only; "
+        "registry/evidence digests do not authenticate ownership, receipts, hosting, physical replicas, "
+        "preregistration, duration, source/binary identities or independence")
+    return report
+
+
 def evaluate(manifest, observations):
+    if manifest.get("schema") == "trnm-wan-preregistration-v3":
+        return evaluate_v3(manifest, observations)
     if manifest.get("schema") == "trnm-wan-preregistration-v2":
         return evaluate_v2(manifest, observations)
     return evaluate_v1(manifest, observations)

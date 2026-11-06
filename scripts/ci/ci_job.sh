@@ -250,6 +250,10 @@ case "${1:?required job}" in
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;
   external-evidence-contract)
+    # Control declarations and arithmetic never authenticate independent operators.
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
     python3 scripts/ci/prepare_evidence_sources.py
     python3 scripts/ci/test_evidence_sources.py
     python3 scripts/ci/check_repository.py
