@@ -1,0 +1,125 @@
+{
+  "schema": "trnm-pq-source-publication-map-v3",
+  "original_parents": [
+    "cad4c18fe146b7d742ac7fa8872044cd4136c22b",
+    "b173c1f52d927522af67df30dd08ecfb2e3a1bb0"
+  ],
+  "code_commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+  "mapping": [
+    {
+      "stage": "merge",
+      "local_metadata_commit": "385ae25f878c8b741d898996e361acc29d068b99",
+      "github_metadata_commit": "c2fe3a2e4710dadaf064d5177bf57a2fd09a5602",
+      "identical_tree": "51fd2b87858f7c08be25574f84d119312029a178",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "tests-only",
+      "local_metadata_commit": "7f0c754dfb14bf6cd005eaf9126a704748101b96",
+      "github_metadata_commit": "7957a144312eece4e59837176191eb5dab247f09",
+      "identical_tree": "160b56f0ab2c8fba903128b658b894c606b36516",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "implementation",
+      "local_metadata_commit": "6671e8e17d37a5c68d51997b0c5594b0bd7b5bda",
+      "github_metadata_commit": "7e66b94ea2a3765b583a927b3cf7a6fa7df7560b",
+      "identical_tree": "389ff66dc4e680d1eb471788e289d1590715d76a",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "documentation",
+      "local_metadata_commit": "368b30c08e316b1e448ab27c9bdc24991138573b",
+      "github_metadata_commit": "0eac6017b1e4087a69bc9c40962b4e216b9c4ee2",
+      "identical_tree": "8b25abdd3c09268d8c68752c56d49d50dafa12be",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "independent-locks",
+      "local_metadata_commit": "f5d824ceda77073023b81181e964ff744e6e4d9e",
+      "github_metadata_commit": "e702b91753ff16b8ca90120b30e11a84252007c4",
+      "identical_tree": "cb272221183059a919ebb080c01de4d8082a820d",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "ci-contracts",
+      "local_metadata_commit": "939aee0bf0c9746a50fc0b0b2a1e9024acc9fdc3",
+      "github_metadata_commit": "2e9deaf1f1ee1a96e00c82d7f9b8c3fc8efe6452",
+      "identical_tree": "7481cd3bcabc9251a10ed072f45d8a0fe4930f3c",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "advancing-target-composition",
+      "local_metadata_commit": "81b96bb06f87722a9849218cfc2cc51316ca66dc",
+      "github_metadata_commit": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+      "identical_tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "expiry-accounting",
+      "local_metadata_commit": "a76c33b96f16a02cf49455f27ece0d97d4284fe0",
+      "github_metadata_commit": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "identical_tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895",
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    },
+    {
+      "stage": "later-marker-contract-composition",
+      "local_metadata_commit": "6e4071c17b92ced2a7c0055999eb78815c9e2ff6",
+      "github_metadata_commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "identical_tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+      "ordered_parents": [
+        "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+        "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+      ],
+      "native_results_transfer_by_this_mapping": false,
+      "local_and_github_tree_objects_rechecked": true
+    }
+  ],
+  "whole_chain_pq_qualified": false,
+  "code_tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+  "code_parents": [
+    "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+    "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+  ],
+  "integration_targets": [
+    "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+    "56897f125df27994efa1dda935f2c62eceb36de9",
+    "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+  ],
+  "earlier_map": {
+    "path": "final-evidence-staging/source-publication-map.json",
+    "sha256": "fbe6a9b7d0e10e1cf754479ede43fba4aebbdef8942602f7ddc30f6bc8250246",
+    "historical_identity_preserved": true
+  },
+  "expiry_delta_paths": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "publication": {
+    "kind": "evidence-and-plan-only-successor",
+    "required_direct_parent": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+    "native_results_for_containing_evidence_commit_claimed": false,
+    "exact_published_identity_location": "PR #723 current marked update and final delivery; the containing commit cannot embed its own hash."
+  },
+  "previous_frozen_map": {
+    "member": "final-evidence-delivery/source-publication-map.json",
+    "bytes": 4340,
+    "sha256": "2bbb9cdbec3ebce14aee04a0cd200108bb47db1df386249f39441b9075a99cdb",
+    "historical_identity_preserved": true,
+    "current_publication_parent_claim": false
+  },
+  "later_marker_composition_evidence": {
+    "member": "late-target-513e92/canonical-source-readback.json",
+    "bytes": 950,
+    "sha256": "db24babfea810a20bed628f52aac1695e8fe466fdde3c47ce0b44eaf2130db88"
+  }
+}

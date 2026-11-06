@@ -1,0 +1,531 @@
+{
+  "schema": "trnm-pq-integration-disposition-v2",
+  "state": "FINAL_SOURCE_SCOPED_HOLD",
+  "disposition": "HOLD",
+  "pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/723",
+  "code": {
+    "commit": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+    "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+    "parents": [
+      "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f"
+    ],
+    "integration_target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+    "native_execution_on_this_commit_claimed": false,
+    "embedded_corpus_provenance_changed_from_ebd": true
+  },
+  "broad_validation_source": {
+    "commit": "f85fea4e8da02404d513d074ceb35ad5292b017b",
+    "tree": "0c1da9d2c13052b30af600e2a32a5eb286e985de",
+    "target": "56897f125df27994efa1dda935f2c62eceb36de9",
+    "prospective_merge": "56ec6d4b9a429968cdb0dfa244c195b4551b7882",
+    "matching_tree_manufactures_additional_execution": false
+  },
+  "publication": {
+    "type": "evidence-and-plan-only-successor",
+    "direct_code_parent": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+    "native_tests_on_containing_evidence_commit_claimed": false,
+    "identity_location": "Containing Git commit and PR #723 current marked update; no self-referential commit hash."
+  },
+  "counting_policy": {
+    "grand_total_across_overlapping_scopes": null,
+    "command_observations_are_unique_tests": false,
+    "benchmark_samples_are_unique_tests": false,
+    "registered_tests_are_executed_tests": false,
+    "nested_child_passes_are_parent_pass": false,
+    "metadata_success_replaces_original_readback": false,
+    "same_tree_transfers_native_execution": false
+  },
+  "repairs": [
+    {
+      "name": "classical-parent-recovery-profile-refusal",
+      "scope": "Reject forbidden classical recovery credentials before I/O for a PQ-network owner.",
+      "complete_pq_parent_recovery": false
+    },
+    {
+      "name": "current-release-authority-kernel",
+      "scope": "Current checkpoint, persisted time lower bound, root and publication expiry, content/generation/role, and live Cell manifest checks.",
+      "read_only_check_advances_persisted_time_floor": false,
+      "actual_product_final_use_installer_wired": false
+    },
+    {
+      "name": "tls-local-identity-startup",
+      "scope": "Single pinned CA, current time, intended purpose, exact chain, server DNS SAN with wildcard/CN fallback forbidden, refusal before owner/Node/listen.",
+      "remote_invalid_peer_authenticated_claimed": false
+    },
+    {
+      "name": "five-independent-cargo-locks",
+      "graphs": [
+        69,
+        193,
+        306,
+        191,
+        191
+      ],
+      "main_and_fuzz_locks_changed": false,
+      "new_guest_image_or_proof_created": false
+    },
+    {
+      "name": "isolated-material-verifier-packaging",
+      "version": "26.3",
+      "exact_hash_install": true,
+      "local_material_tests": 23,
+      "current_ci_baseline_execution": "pending with zero jobs at cutoff",
+      "local_material_tests_source": "f85fea4e8da02404d513d074ceb35ad5292b017b"
+    },
+    {
+      "name": "actual-workspace-registry",
+      "postwrite_controls": 25,
+      "semantic_controls": 60,
+      "full_native_execution_requirements_preserved": true
+    },
+    {
+      "name": "reactor-stage-expiry-accounting",
+      "source": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+      "scope": "Conservatively count exact deadline/cookie errors only after original deadline; monotonic stop precedence for Deadline; preserve terminal/error/close/drop effects.",
+      "new_controls": 4,
+      "original_paid_pending_test_bytes_unchanged": true,
+      "cause_of_f85_desktop_failed_progress_established": false
+    },
+    {
+      "name": "later-marker-compatibility-composition",
+      "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+      "target": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "supported_packaging_minimum": "25.0",
+      "isolated_pinned_version": "26.3",
+      "exact_wheel_hash_unchanged": true,
+      "metadata_effective_default_checked": true,
+      "complete_environment_and_explicit_extra": true,
+      "retry_or_fallback_added": false,
+      "method_union": 25,
+      "actual_material_tests_passed": 25,
+      "historical_target_24_x_logs_qualify_this_source": false
+    }
+  ],
+  "f85_desktop": {
+    "job": "1a1b010fbe6-fc05-6ddf",
+    "terminal_exit_code": 1,
+    "terminal_output_complete_and_durable": true,
+    "command_observations": 271,
+    "statuses": {
+      "succeeded": 269,
+      "timed_out": 1,
+      "blocked": 1
+    },
+    "full_library": {
+      "status": "INCOMPLETE",
+      "timeout_seconds": 1500,
+      "elapsed_seconds": 1502.206865663,
+      "exit_code": -15,
+      "failed_progress_selector": "ingress::public_v3::tests::r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work",
+      "failure_panic_available": false,
+      "root_cause_established": false,
+      "parent_summary_available": false,
+      "nested_child_passes_counted": false
+    },
+    "strict_clippy": {
+      "status": "PASS",
+      "scope": "workspace/all-targets/all-features",
+      "deny_warnings": true,
+      "elapsed_seconds": 128.911092781
+    },
+    "source": {
+      "tracked_entries": 10748,
+      "tracked_bytes": 1031966791,
+      "before_after_post_terminal_equal": true
+    },
+    "owned_process_groups_empty": true,
+    "original_provider_version": "3.5.9",
+    "equivalent_to_hosted_ci_machine_or_performance_configuration": false,
+    "evidence": [
+      {
+        "member": "integration-review/root-f85-whole-terminal-readback.json",
+        "bytes": 1446,
+        "sha256": "89fc86ebebc19988bf87e67cc998f89e1f1549dff4f3a3a4f770d8cb24cc8908"
+      },
+      {
+        "member": "quantum-readback-cad4c18f/desktop-f85-terminal-v2/manifest.json",
+        "bytes": 108615,
+        "sha256": "e20fc9c30c0fae8102508b12bc9bff6153e85a545f0fe11e2ccc2af7a8c59a3c"
+      }
+    ]
+  },
+  "f85_ci": {
+    "cutoff_utc": "2026-11-06 10:19:27 UTC",
+    "snapshot_not_all_workflows_terminal": true,
+    "checks": {
+      "skipped": 1,
+      "success": 73,
+      "failure": 12
+    },
+    "runs": {
+      "failure": 4,
+      "success": 10,
+      "pending": 1
+    },
+    "baseline": {
+      "run_id": 42190535217,
+      "status": "pending",
+      "jobs_observed": 0,
+      "native_or_packaging_fix_qualification_inferred": false
+    },
+    "fully_read_original_jobs": 31,
+    "fully_indexed_artifacts": 34,
+    "original_indexed_members": 23014,
+    "lossless_selected_text_members": 4319,
+    "x64_head_full_node_library": {
+      "passed": 1160,
+      "failed": 0,
+      "ignored": 31,
+      "paid_pending_selector": "ok in this separate execution",
+      "desktop_incomplete_observation_erased": false
+    },
+    "other_full_pq_jobs": {
+      "metadata_success_count": 3,
+      "later_full_library_cost_artifacts_fully_read": false,
+      "earlier_partial_control_stages_retained": true
+    },
+    "workspace_matrices": {
+      "lanes": 4,
+      "same_unique_controls_per_lane": 65,
+      "semantic_controls": 60,
+      "cpu_and_exit_controls": 4,
+      "growth_control": 1,
+      "postwrite_controls": 25,
+      "actual_build_then_exact_nonempty_execution": true
+    },
+    "cpq1": {
+      "lanes": 4,
+      "same_case_definitions": 32,
+      "rows_per_lane": 352,
+      "samples_per_row": 64,
+      "raw_values_per_lane": 22528,
+      "reader_negatives_per_lane": 25,
+      "original_reader_recomputed_byte_equal": true
+    },
+    "independent_c_mldsa": {
+      "lanes": 4,
+      "fixed_seed_equality_cases_per_lane": 20,
+      "c_verify_observations_per_lane": 391,
+      "rust_verify_observations_per_lane": 396,
+      "wycheproof_vectors_included_per_lane": 210,
+      "uploaded_c_elf_rehashed": true,
+      "rust_oracle_elf_uploaded": false
+    },
+    "actual_sdk": {
+      "lanes": 4,
+      "metadata_pairs_per_lane": 18,
+      "sdk_verifications_per_lane": 66,
+      "sdk_accept": 42,
+      "sdk_reject": 24,
+      "rust_verifications_per_lane": 66,
+      "rust_accept": 37,
+      "rust_reject": 29,
+      "scope_specific_sdk_valid_rust_rejected": 5,
+      "openssl_version": "4.0.3",
+      "provider_equivalent_to_node_tls": false,
+      "installation_require_hashes": false,
+      "full_tuf_updater_or_final_use_qualified": false
+    },
+    "original_cost_controls": {
+      "named_controls": 4,
+      "original_exact_ignored_execution": true,
+      "history_complete_calls": 64,
+      "authentication_samples": 512,
+      "root_observations": 408,
+      "m06_timed_samples": 216,
+      "m06_bindings": 1728,
+      "all_four_elf_bytes_independently_rehashed": false,
+      "three_controls_lack_per_command_elf_sha": true,
+      "quantum_work_or_timing_ratio_qualified": false
+    },
+    "failed_families": [
+      {
+        "kind": "original_4_second_confirmation_qualification",
+        "jobs": [
+          127801150481,
+          127801150929,
+          127801150236,
+          127801150133,
+          127801150331,
+          127801150310
+        ]
+      },
+      {
+        "kind": "original_three_run_30_second_campaign_qualification",
+        "jobs": [
+          127801149888
+        ]
+      },
+      {
+        "kind": "original_4105_block_history_control",
+        "jobs": [
+          127801150725,
+          127801150322,
+          127801150207,
+          127801149991
+        ]
+      },
+      {
+        "kind": "codeql_export_readiness_deadline",
+        "jobs": [
+          127801149940
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "member": "integration-review/f85-ci-cutoff-20261106T101927Z/manifest.json",
+        "bytes": 2256351,
+        "sha256": "54d79225a500455bda22561dcae7114f105d50f3f15673f52cbbc8b24a925be9"
+      },
+      {
+        "member": "integration-review/f85-ci-cutoff-20261106T101927Z/scope-summary.json",
+        "bytes": 4255,
+        "sha256": "e8e08693fddc6047030381919f5e3f4ff6c2e8f7f3a56f87e31cce43cc02a84d"
+      }
+    ],
+    "history_failure_diagnosis": {
+      "source_route": "classical public_v2 loopback signed plaintext",
+      "original_block_target": 4105,
+      "original_server_lifetime_seconds": 1800,
+      "original_per_import_budget_seconds": 30,
+      "x64": "Original server lifetime expires before a later RPC; connection refused.",
+      "arm": "Final page advertised complete after 4104 successful returns; original importer reaches deadline before final state qualification.",
+      "outer_command_timeout": false,
+      "successful_returns_are_durable_block_count": false,
+      "minimal_safe_implementation_fix_established": false,
+      "pq_tls_or_public_v3_r4_root_cause_established": false,
+      "evidence": {
+        "member": "integration-review/f85-history-four-failures-readback-tls.json",
+        "bytes": 112713,
+        "sha256": "f461bdeb6f9e34f554719c20fe39ddfc0ef563f2ec1419ff7a88e75c5ca4eb3d"
+      }
+    }
+  },
+  "ebd_source_gates": {
+    "status": "PASS",
+    "original_recorded_commands": 13,
+    "python_observations": 207,
+    "ci_contract": 104,
+    "source_integrity": 43,
+    "corpus": 38,
+    "claim_guard": 22,
+    "native_tests_executed": 0,
+    "tracked_entries": 10748,
+    "tracked_bytes": 1031980491,
+    "source_before_after_each_original_command": true,
+    "evidence": {
+      "member": "r4-expiry-accounting-fix/committed-source-gates/summary.json",
+      "bytes": 4431,
+      "sha256": "dd51bae3f33c085c378e5a6e76d415b0eb09f58fb5db4d55828857091a8625aa"
+    }
+  },
+  "ebd_native_supplement": {
+    "state": "TERMINAL_FAILED_INDEPENDENTLY_READ_BACK",
+    "job": "1a1b066c3ff-fc05-7042",
+    "expected_r4_controls": 10,
+    "new_r4_controls": 4,
+    "retained_r4_controls": 6,
+    "original_cost_controls": 4,
+    "required_clippy_scope": "workspace/all-targets/all-features",
+    "full_node_suite_or_campaign_rerun": false,
+    "observed_native_result": {
+      "named_controls": 14,
+      "passed": 13,
+      "failed": 1,
+      "r4_passed": 10,
+      "original_cost_passed": 3,
+      "original_cost_failed": 1,
+      "original_named_readers_passed": 13,
+      "auth_named_reader": "blocked",
+      "control_artifact_aggregate": "blocked",
+      "cost_sample_aggregate": "blocked",
+      "strict_workspace_all_targets_all_features_clippy_exit": 0,
+      "strict_clippy_elapsed_seconds": 51.824281642,
+      "per_native_executable_hashes_recorded": true,
+      "local_reader_obtained_and_rehashed_elf_bytes": false
+    },
+    "observed_authentication_failure": {
+      "native_exit_code": 101,
+      "passed": 0,
+      "failed": 1,
+      "samples": 512,
+      "unexpected_outcomes_or_accounting": 67,
+      "unknown_thread_cpu": 0,
+      "raw_export_complete": true,
+      "outer_timeout": false,
+      "derived_reader_failure_only": false,
+      "sample_classification": {
+        "case": "sixteen-key-churn",
+        "error": "PUBLIC_MUTATION_CPU_BUDGET",
+        "cached": 34,
+        "original": 33,
+        "first_case_sample_zero_based": 61,
+        "first_global_sample_zero_based": 317,
+        "first_arm": "cached",
+        "first_input": 30,
+        "first_pair": 15,
+        "all_refused_samples_charged_cpu_cache_hits_expansions": 0,
+        "other_three_cases_match_expected": true
+      },
+      "budget_or_samples_changed": false,
+      "rerun_to_replace_failure": false,
+      "failure_disposition": "Original cumulative thread-CPU budget gate refuses before reservation and verification; original cost qualification fails.",
+      "production_under_accounting_or_invalid_signature_acceptance_established": false,
+      "unobserved_setup_cpu_fabricated": false,
+      "root_cause_of_cross_host_cost_difference_established": false,
+      "observed_error_classification_independently_read_from_immutable_raw_jsonl": true,
+      "cross_run_dynamic_cookie_wire_inputs_identical": false
+    },
+    "terminal": {
+      "durable_exit_code": 1,
+      "complete": true,
+      "durable": true,
+      "cancelled": false,
+      "runtime_timeout": false,
+      "command_observations": 44,
+      "statuses": {
+        "succeeded": 40,
+        "failed": 1,
+        "blocked": 3
+      },
+      "source_before_after_equal": true,
+      "tracked_entries": 10748,
+      "tracked_bytes": 1031980491,
+      "root_independent_readback_pending": false,
+      "root_independent_readback_complete": true
+    },
+    "all_owned_process_groups_empty": true,
+    "design_evidence": {
+      "member": "integration-review/root-ebd14-driver-static-review.json",
+      "bytes": 1210,
+      "sha256": "db958f8438e5329ada598001cfd60cc0671bd2a190563421a094d3a4e4302337"
+    },
+    "evidence": [
+      {
+        "member": "quantum-readback-cad4c18f/desktop-ebd14-terminal-v1/manifest.json",
+        "bytes": 30772,
+        "sha256": "754b565c4994ca01ae5d67abe574d3c66268e77071fdcff5fbadcb0a61e55357"
+      },
+      {
+        "member": "integration-review/root-ebd14-whole-terminal-readback.json",
+        "bytes": 8144,
+        "sha256": "03ffbe0aa307c0467fb94bd2990961880d7b22920a1c30211ea9665c7c2e5d01"
+      },
+      {
+        "member": "quantum-readback-cad4c18f/desktop-ebd-auth-cost-failure-v1/manifest.json",
+        "bytes": 3009,
+        "sha256": "fb6435eb760b7279e89bc9a18bba1d822808e4df750d6b07ba2954a8b82a7d4d"
+      },
+      {
+        "member": "integration-review/root-ebd-auth-cost-failure-readback.json",
+        "bytes": 1837,
+        "sha256": "5419d1da51c3d8e0fdf1e60cbd456e7ad52c4dccdc3b6600664c9c8bdfa18724"
+      },
+      {
+        "member": "integration-review/ebd-authentication-cost-f85-comparison-release.json",
+        "bytes": 34223,
+        "sha256": "891d869285eba69d160dde0697bde7a4dc7e4f3903a1afbf017bdaadf3a2d4c8"
+      },
+      {
+        "member": "integration-review/ebd-authentication-budget-boundary-readback-tls.json",
+        "bytes": 60238,
+        "sha256": "5ba552015ddafbe9d3dced3778a9b86693655353e2adbe0fe332a668928e28d8"
+      }
+    ]
+  },
+  "unresolved_authority_and_operational_gates": [
+    "Complete legacy-account migration with prior PQ binding and all production profile entrypoints.",
+    "Full PQ parent-state recovery owner and protocol.",
+    "Actual final-use installer/config/Cell activation consumer with atomic current-authority effect binding.",
+    "Ordinary CLI independent witness wiring and protected independent fresh checkpoint custody.",
+    "Witness scope covering the actual stores claimed; PNQ2 resource/peer/request root is not account/block/History/CURRENT/Hepta coverage.",
+    "Private-listener and Cell transport confidentiality/identity, deployed PKI custody/revocation and malicious-handshake costs.",
+    "Sustained public-WAN qualification under original conditions.",
+    "Implemented, tested and explicitly activated PQ finality.",
+    "Quantum work/oracle/reversible computation/data-access/DAA/adversarial fork economic qualification.",
+    "Original service confirmation, campaign and full History acceptance; desktop full-library failure and incomplete parent summary; f85 CI snapshot baseline/CodeQL export completion.",
+    "Original authentication cost gate failed on ebd desktop: 67 original-budget refusals in sixteen-key churn; no budget or sample relaxation."
+  ],
+  "whole_chain_pq_qualified": false,
+  "whole_chain_pq_128_or_256_bit_label_accepted": false,
+  "quantum_mining_economic_security_qualified": false,
+  "public_wan_qualified": false,
+  "independent_rollback_custody_qualified": false,
+  "pq_deterministic_finality_activated": false,
+  "production_activated": false,
+  "main_merged": false,
+  "pr_made_ready_for_review": false,
+  "original_budgets_weakened": false,
+  "evidence_packages": {
+    "retained": {
+      "archive_sha256": "78142ab292525bcd911029ee07177bbad1630d74b512c0152125afbf0f89ab0f",
+      "archive_bytes": 14283750,
+      "parts": 10,
+      "members": 1848,
+      "index": "retained/publication/archive-index.json"
+    },
+    "terminal": {
+      "state": "COMPLETE_SOURCE_SPECIFIC_OBSERVATIONS_FROZEN_FOR_COLLECTION",
+      "index": "terminal/publication/archive-index.json",
+      "identity": "Defined by the separate archive index, not embedded in this member to avoid self-reference.",
+      "product_disposition": "HOLD; failed and incomplete gates remain failed and incomplete."
+    }
+  },
+  "archive_hash_integrity_implies_product_qualification": false,
+  "expiry_accounting_source": {
+    "commit": "ebd3c06da7d5f2bd136b7a24f24604508d420279",
+    "tree": "367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895",
+    "parent": "f85fea4e8da02404d513d074ceb35ad5292b017b"
+  },
+  "late_composition_source_gates": {
+    "source": "ca4e2fb9160d3e388e131624f7b3350ae4f5d56b",
+    "tree": "ba691b8b5f06a0cfeb062261d6a33f0c086f06b0",
+    "status": "PASS",
+    "recorded_commands": 20,
+    "python_test_observations": 232,
+    "source_ci_corpus_claim_tests": 207,
+    "material_tests": 25,
+    "main_locked_graph_packages": 175,
+    "w1_locked_graph_packages": [
+      69,
+      193,
+      306,
+      191,
+      191
+    ],
+    "source_before_after_equal": true,
+    "tracked_entries": 10754,
+    "tracked_bytes": 1031991037,
+    "packaging_version": "26.3",
+    "native_rust_tests_executed": 0,
+    "strict_native_clippy_executed": false,
+    "guest_images_rebuilt": 0,
+    "proofs_rebuilt": 0,
+    "prior_native_results_transferred": false,
+    "evidence": {
+      "member": "late-target-513e92/committed-source-gates/summary.json",
+      "bytes": 8151,
+      "sha256": "d4c738465330d7e4d665a7608c393511b57fa868bf3bf62750d5ad39dd0e2fb6"
+    }
+  },
+  "historical_ebd_final_documents": [
+    {
+      "member": "final-evidence-delivery/README.md",
+      "bytes": 26170,
+      "sha256": "e3dba15d595f4c6f1bec9d5d57c5d2b000f139d3728c121a473735cef9a3579b"
+    },
+    {
+      "member": "final-evidence-delivery/qualification.json",
+      "bytes": 17301,
+      "sha256": "2aec95c096ed0693da963a07f0330c9cdf7ab70c43f95b3157bd1cb5a0b71337"
+    },
+    {
+      "member": "final-evidence-delivery/source-publication-map.json",
+      "bytes": 4340,
+      "sha256": "2bbb9cdbec3ebce14aee04a0cd200108bb47db1df386249f39441b9075a99cdb"
+    }
+  ],
+  "historical_ebd_publication_parent_claim_retargets_current_publication": false
+}

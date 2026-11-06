@@ -7934,3 +7934,102 @@ source requires its own material-verifier and source gates. Existing f85 and ebd
 native passes, failures, timeouts and blocked readers remain bound to those
 commits. Whole-chain PQ, performance, public-WAN and production acceptance stays
 HOLD; no new native outcome is implied by preparing this composition.
+
+
+### 2026-11-06 PQ integration terminal observations and source-specific HOLD
+
+<!-- chain-pq-20261106-terminal-delivery-8a6e -->
+
+The combined source is `f85fea4e8da02404d513d074ceb35ad5292b017b`, tree
+`0c1da9d2c13052b30af600e2a32a5eb286e985de`, preserving actual target
+`56897f125df27994efa1dda935f2c62eceb36de9`. Its independent desktop batch is
+terminal with exit 1: 271 observations, 269 succeeded, one original full-library
+timeout and one dependent reader blocked. The separate same-source x64/head CI
+library records 1,160 passed and 31 ignored; it does not erase the desktop's
+failed progress row or supply its missing panic. The original full-workspace
+Clippy, nonempty component/control scopes, independent C/SDK and source-specific
+CI artifacts are retained with their actual scopes and ELF-evidence limits.
+
+At the frozen 2026-11-06 10:19:27 UTC f85 CI cutoff, 73 checks are successful,
+12 failed and one skipped; the baseline run is still pending with zero jobs.
+The original four-second service gates, three-attempt campaign, four 4,105-block
+History gates and CodeQL-export deadline are not accepted. History uses the
+classical public_v2 owner: x64 reaches the original server lifetime, while ARM
+reaches the original final import deadline. Successful import returns or a
+complete-advertised page are not final state/reopen qualification.
+
+The expiry-accounting source is
+`ebd3c06da7d5f2bd136b7a24f24604508d420279`, tree
+`367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895`, with f85 as its only parent.
+Its 13 source gates and 207 Python observations pass. Its actual original-profile
+desktop supplement is terminal with exit 1: 44 observations comprise 40 successes,
+one native failure and three blocked readers. All ten exact R4 controls (four
+new, six retained), the original History/root/M06 cost controls and strict Clippy
+for all workspace targets and features pass. The original authentication cost
+control fails with exit 101: 67 of 512 samples, all in sixteen-key churn, are
+refused before reservation/verification by the unchanged cumulative two-second
+thread-CPU budget. Original and cached arms share cookie-signing/warm-up charges.
+The original acceptance condition is unmet; this is not evidence of 67 incorrect
+signature decisions or product under-accounting. The named reader for the failed test and
+two dependent aggregate readers remain blocked. No budget, sample, profile or
+worker limit is relaxed and no failure is replaced by a rerun. The complete ebd
+source matches before/after/post-terminal; owned groups are empty.
+
+The containing publication adds evidence and these plan observations on top of
+the later ca4e2fb9 composition described below. Its different commit identity
+does not create native execution of the publication commit. Nine local/server
+code-commit pairs retain their identical tree proof without transferring
+execution results. The old retained snapshot and
+new terminal increment are separate, hash-indexed packages, with raw failures,
+readers, method corrections and scoped conclusions preserved.
+
+The [full report](../../evidence/pq-integration-20261106/README.md) and
+[machine-readable disposition](../../evidence/pq-integration-20261106/qualification.json)
+record the remaining final-use installer/Cell activation consumer, ordinary-CLI
+independent witness wiring and custody, private-transport/WAN/PKI qualification,
+PQ finality, legacy migration and quantum work/DAA/fork-economic requirements.
+Current-check reads do not persist a new time floor on every read. PNQ2 witness
+coverage is limited to its resource/peer/request root; it is not account, block,
+History, CURRENT or Hepta rollback coverage. All whole-chain PQ, public-network,
+independent recovery, economic and production acceptance remains HOLD / NO-GO.
+PR #723 remains draft; no protected-main merge or production activation occurs.
+
+
+### 2026-11-06 Later target composition and finite committed-source acceptance
+
+<!-- chain-pq-20261106-ca4-terminal-8a6e -->
+
+The final code source is `ca4e2fb9160d3e388e131624f7b3350ae4f5d56b`,
+tree `ba691b8b5f06a0cfeb062261d6a33f0c086f06b0`, with ordered parents
+`ebd3c06da7d5f2bd136b7a24f24604508d420279` and actual later target
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f`. The local metadata counterpart
+`6e4071c17b92ced2a7c0055999eb78815c9e2ff6` has the same tree and parents.
+The direct Git ref was newer than the cached PR base, so both actual histories
+are preserved rather than inferring the target from stale PR metadata.
+
+The supported-host contract still refuses missing packaging and versions below
+25.0, including marker-free material. The isolated packaging 26.3 wheel/hash
+and both CI install paths remain fixed. A single evaluate call uses the verified
+metadata default with all pinned fields and explicit extra; errors propagate
+without retries. The two histories' test sets have exactly 25 retained methods.
+The old target's six compatibility evidence files are preserved as historical
+observations, including actual 24.x successes under that earlier policy; they
+do not qualify actual 24.x for this composed policy.
+
+All 20 finite recorded commands on committed ca4 pass: 104 CI-contract,
+43 source-integrity, 38 corpus, 22 claim-guard and 25 material-verifier tests;
+six locked/offline graphs, formatting, inventory, repository links/truth and
+diff checks. Every recorder and batch before/after proof binds 10,754 tracked
+entries and 1,031,991,037 bytes. These 232 Python observations are separate from
+native tests and from repeated prior-source runs. Main graph 175 packages and
+five W1 graphs 69/193/306/191/191 retain their locked identities.
+
+Rust bodies, manifests/locks, workflows and original native limits are unchanged
+from ebd, but the changed corpus pins are embedded provenance inputs. There is
+no ca4 native execution or strict native Clippy result, and no claim of equal
+compiled inputs or ELF. The f85 and ebd native results above remain bound to
+their actual sources, including both unresolved failures and original budgets.
+The old frozen EBD delivery is retained as history; the current outer report,
+qualification and nine-pair source map describe this ca4 composition.
+Whole-chain PQ, final-use/recovery custody, public WAN, finality, quantum work
+and production acceptance remain HOLD. The PR remains Draft.

@@ -1,0 +1,30 @@
+{
+  "schema": "trnm-frozen-publication-whitespace-observation-v1",
+  "core_whitespace": "default (unset)",
+  "scope": "No-index publication-format preparation only; not source/native test execution.",
+  "checks_with_output": [
+    {
+      "path": "evidence/pq-integration-20261106/retained/publication/README.md",
+      "source": "/workspace/scratch/8a6ecb667c1e/final-evidence-curated-f85fea4e-v2/publication/README.md",
+      "exit_code": 3,
+      "stdout": "/workspace/scratch/8a6ecb667c1e/final-evidence-curated-f85fea4e-v2/publication/README.md:3: trailing whitespace.\n+Candidate: `f85fea4e8da02404d513d074ceb35ad5292b017b`  \n/workspace/scratch/8a6ecb667c1e/final-evidence-curated-f85fea4e-v2/publication/README.md:4: trailing whitespace.\n+Tree: `0c1da9d2c13052b30af600e2a32a5eb286e985de`  \n",
+      "stderr": ""
+    },
+    {
+      "path": "evidence/pq-integration-20261106/README.md",
+      "source": "/workspace/scratch/8a6ecb667c1e/final-evidence-delivery-v2/README.md",
+      "exit_code": 3,
+      "stdout": "/workspace/scratch/8a6ecb667c1e/final-evidence-delivery-v2/README.md:425: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "path": "evidence/pq-integration-20261106/terminal/publication/README.md",
+      "source": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/README.md",
+      "exit_code": 3,
+      "stdout": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/README.md:3: trailing whitespace.\n+Publication candidate: `ca4e2fb9160d3e388e131624f7b3350ae4f5d56b`  \n/workspace/scratch/8a6ecb667c1e/terminal-evidence-curated-final-20261106-v1/publication/README.md:4: trailing whitespace.\n+Tree: `ba691b8b5f06a0cfeb062261d6a33f0c086f06b0`  \n",
+      "stderr": ""
+    }
+  ],
+  "native_tests_executed": 0,
+  "frozen_bytes_modified": false
+}
