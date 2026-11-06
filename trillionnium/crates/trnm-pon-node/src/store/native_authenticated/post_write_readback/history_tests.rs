@@ -1,5 +1,6 @@
 //! Real SQLite history-readback controls. Statement VM counters observe actual
-//! executions without replacing the original transaction-scope trace hook.
+//! execution attempts, including schema retries, without replacing the original
+//! transaction-scope trace hook. RUN is not a logical-query or row-read count.
 use super::super::{
     load_observed, verify_history_with_cache, verify_history_with_readback, DELTA_ROWS_SQL,
     NATIVE_BLOCK_SQL, NATIVE_PARENT_SQL,
@@ -20,20 +21,34 @@ const HISTORY_SQL: [&str; 5] = [
 #[derive(Debug)]
 struct SqlCounts {
     runs: [i32; 5],
+    reprepares: [i32; 5],
     steps: [i32; 5],
 }
 
 fn take_sql_counts(db: &Connection) -> SqlCounts {
     let mut counts = SqlCounts {
         runs: [0; 5],
+        reprepares: [0; 5],
         steps: [0; 5],
     };
     for (index, sql) in HISTORY_SQL.into_iter().enumerate() {
         let statement = db.prepare_cached(sql).unwrap();
         counts.runs[index] = statement.reset_status(StatementStatus::Run);
+        counts.reprepares[index] = statement.reset_status(StatementStatus::RePrepare);
         counts.steps[index] = statement.reset_status(StatementStatus::VmStep);
     }
     counts
+}
+
+fn account_graph_calls(node: &Node) -> u64 {
+    node.native_history_arithmetic_observation()["stages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|row| row["stage"] == "account_graph")
+        .unwrap()["totals"]["calls"]
+        .as_u64()
+        .unwrap()
 }
 
 fn history(
@@ -126,6 +141,8 @@ fn completed_parent_suffix_reduces_real_sql_reads_only_for_the_four_named_record
     // genesis snapshot. Both reads execute every check on the current start.
     assert_eq!(original.runs, [12, 7, 5, 7, 1]);
     assert_eq!(reused.runs, [2, 1, 1, 1, 0]);
+    assert_eq!(original.reprepares, [0; 5]);
+    assert_eq!(reused.reprepares, [0; 5]);
     for (full, reused) in original.steps.iter().zip(reused.steps) {
         assert!(*full > reused);
     }
@@ -141,6 +158,9 @@ fn completed_parent_suffix_reduces_real_sql_reads_only_for_the_four_named_record
             "sql_order": ["record", "block", "parent", "delta", "genesis_snapshot"],
             "full_runs": original.runs,
             "reused_runs": reused.runs,
+            "full_reprepares": original.reprepares,
+            "reused_reprepares": reused.reprepares,
+            "counter_scope": "SQLite VM execution attempts; not logical queries or row reads",
             "full_vm_steps": original.steps,
             "reused_vm_steps": reused.steps,
             "reused_progress": callbacks,
@@ -298,6 +318,20 @@ fn full_history_final_callback_write_cannot_publish_pending_suffixes() {
 fn writes_restoration_and_prepare_only_schema_changes_disable_completed_history() {
     for change in ["no-row", "restored-bytes", "reversed-ddl", "prepare-only"] {
         let f = fixture();
+        let mut full_callbacks = 0;
+        let reference_graphs = account_graph_calls(&f.node);
+        verify_history_with_cache(
+            &f.node.db,
+            &f.node.settings,
+            f.node.settings.genesis(),
+            &mut || {
+                full_callbacks += 1;
+                Ok(())
+            },
+            Some(&f.node.authenticated_arithmetic),
+        )
+        .unwrap();
+        assert_eq!(account_graph_calls(&f.node) - reference_graphs, 1);
         let mut scope = mint_genesis_history(&f.node);
         match change {
             "no-row" => {
@@ -337,19 +371,42 @@ fn writes_restoration_and_prepare_only_schema_changes_disable_completed_history(
             _ => unreachable!(),
         }
         take_sql_counts(&f.node.db);
-        for _ in 0..2 {
+        for pass in 0..2 {
+            let before_graphs = account_graph_calls(&f.node);
+            let mut callbacks = 0;
             history(&f.node, f.node.settings.genesis(), &mut scope, &mut || {
+                callbacks += 1;
                 Ok(())
             })
             .unwrap();
-            assert_eq!(
-                take_sql_counts(&f.node.db).runs,
-                [2, 2, 0, 2, 1],
-                "{change}"
-            );
             assert_eq!(scope.history_hits, 0, "{change}");
             assert!(scope.histories.iter().all(Option::is_none), "{change}");
             assert!(!scope.enabled, "{change}");
+            assert_eq!(callbacks, full_callbacks, "{change}");
+            assert_eq!(account_graph_calls(&f.node) - before_graphs, 1, "{change}");
+            let counts = take_sql_counts(&f.node.db);
+            // Pinned SQLite 3.51.3 executes OP_Init before detecting the old
+            // schema cookie after CREATE/DROP. sqlite3_step then reprepares,
+            // resets and reruns that VM: RUN includes both attempts. The next
+            // pass has no schema retry. Keep exact cold/warm expectations;
+            // neither extra VM attempts nor REPREPARE are logical row reads.
+            let (runs, reprepares) = if change == "reversed-ddl" && pass == 0 {
+                ([3, 3, 0, 3, 2], [1, 1, 0, 1, 1])
+            } else {
+                ([2, 2, 0, 2, 1], [0; 5])
+            };
+            assert_eq!(counts.runs, runs, "{change} pass {pass}");
+            assert_eq!(counts.reprepares, reprepares, "{change} pass {pass}");
+            println!(
+                "{}",
+                serde_json::json!({
+                    "change": change, "pass": pass,
+                    "sqlite_vm_runs": counts.runs, "sqlite_reprepares": counts.reprepares,
+                    "full_graph_calls": account_graph_calls(&f.node) - before_graphs,
+                    "callbacks": callbacks, "original_full_callbacks": full_callbacks,
+                    "history_hits": scope.history_hits, "reuse_enabled": scope.enabled,
+                })
+            );
         }
         f.node.db.execute_batch("ROLLBACK").unwrap();
     }
