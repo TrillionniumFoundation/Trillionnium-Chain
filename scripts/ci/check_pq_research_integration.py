@@ -397,6 +397,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/llm_python_runtime_contract.py",
     "scripts/test_llm_neural_read_worker.py",
     "scripts/test_llm_material_runtime_bridge.py",
+    "scripts/test_llm_material_runtime_entry.py",
     "tests/fixtures/llm_material_runtime_bridge_v1/historical_plan.json",
     "tests/fixtures/llm_material_runtime_bridge_v1/historical_target.json",
     "scripts/test_llm_python_runtime_contract.py",

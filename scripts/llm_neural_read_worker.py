@@ -195,16 +195,74 @@ class _MaterialRuntimeBridgeV1:
         return json.loads(self._record, object_pairs_hook=unique)
 
 
-def worker(args):
+BRIDGED_PLAN_SCHEMA_V1 = 'hepta-smollm-neural-read-plan-material-bridge-v1'
+BRIDGED_READY_SCHEMA_V1 = 'hepta-smollm-neural-read-ready-material-bridge-v1'
+
+
+def _bridge_source_commitment(args):
+    identities = {}
+    for path, digest in args.runtime_source_pins.items():
+        name = Path(path).name
+        runtime.require(name not in identities, 'NEURAL_BRIDGE_SOURCE_ALIAS')
+        identities[name] = digest
+    ordinary = set(worker_sources()) | {Path(__file__).name}
+    caller = {'hepta_neural_forward_v2.py', 'hepta_neural_forward_bootstrap_v2.py'}
+    runtime.require(set(identities) in (ordinary, ordinary | caller),
+                    'NEURAL_BRIDGE_SOURCE_SET')
+    return _bridge_identity(identities)
+
+
+def _bridge_execution_sources(args):
+    commitment = _bridge_source_commitment(args)
+    source = str(Path(runtime.__file__).resolve())
+    runtime.require(args.runtime_source_pins.get(source) == _EXECUTION_RUNTIME_SHA256 and
+                    runtime.file_sha(source) == _EXECUTION_RUNTIME_SHA256,
+                    'NEURAL_BRIDGE_EXECUTION_SOURCE')
+    return commitment
+
+
+def _read_worker_plan(args, bridged):
     python_runtime.verify_files(args.runtime_contract)
     plan = inherited.checked_json(args.plan, args.plan_sha256, 512 * 1024)
-    runtime.require(type(plan) is dict and set(plan) == {'schema', 'runtime', 'parent',
-        'inherited_sources', 'worker_source', 'actions', 'runtime_snapshot_sha256'}, 'NEURAL_READ_PLAN')
-    runtime.require(plan['schema'] == SCHEMA and plan['inherited_sources'] == worker_sources()
+    fields = {'schema', 'runtime', 'parent', 'inherited_sources', 'worker_source',
+              'actions', 'runtime_snapshot_sha256'}
+    runtime.require(type(plan) is dict and
+                    set(plan) == (fields | {'material_bridge'} if bridged else fields),
+                    'NEURAL_READ_PLAN')
+    schema = BRIDGED_PLAN_SCHEMA_V1 if bridged else SCHEMA
+    runtime.require(plan['schema'] == schema and plan['inherited_sources'] == worker_sources()
         and plan['worker_source'] == runtime.file_sha(__file__) and
         plan['runtime_snapshot_sha256'] == args.runtime_snapshot_sha256, 'NEURAL_READ_SOURCE_CHANGED')
     pilot = runtime.validate_plan(plan['runtime'])
     runtime.require(pilot['backend'] == 'cpu' and pilot['threads'] <= 4, 'NEURAL_READ_CPU_ONLY')
+    bridge = None
+    if bridged:
+        _bridge_execution_sources(args)
+        value = plan['material_bridge']
+        runtime.require(type(value) is dict and set(value) == {'profile', 'material_plan'} and
+                        type(value['material_plan']) is str, 'NEURAL_BRIDGE_INPUT')
+        parent = inherited.validate_parent(plan['parent'])
+        _, parent_raw, _ = inherited.read_parent(parent)
+        bridge = _MaterialRuntimeBridgeV1(value['profile'], value['material_plan'].encode(),
+            pilot, parent_raw, parent['contract'])
+    return plan, pilot, bridge
+
+
+def preflight_material_runtime_bridge_v1(args):
+    """Validate this explicit mode before a direct caller starts its client."""
+    _read_worker_plan(args, True)
+
+
+def worker(args):
+    return _worker(args, False)
+
+
+def worker_bridge_v1(args):
+    return _worker(args, True)
+
+
+def _worker(args, bridged):
+    plan, pilot, bridge = _read_worker_plan(args, bridged)
     directory, materials = Path(args.output).resolve(), Path(args.materials).resolve()
     observer = runtime.Observer(directory, 'cpu')
     manifest, _ = observer.stage('material-verification', lambda: runtime.verify_materials(materials))
@@ -217,8 +275,12 @@ def worker(args):
         lambda: runtime.make_contract(model, tokenizer, shapes, materials, manifest, pilot))
     parent = inherited.validate_parent(plan['parent'])
     contract, _, factors = observer.stage('parent-material-verification', lambda: inherited.read_parent(parent))
-    runtime.require({k: v for k, v in actual.items() if k != 'registration'} ==
-                    {k: v for k, v in contract.items() if k != 'registration'}, 'NEURAL_READ_RUNTIME_BINDING')
+    if bridge is None:
+        runtime.require({k: v for k, v in actual.items() if k != 'registration'} ==
+                        {k: v for k, v in contract.items() if k != 'registration'}, 'NEURAL_READ_RUNTIME_BINDING')
+        bridge_record = None
+    else:
+        bridge_record = bridge.verify_loaded_contract(actual)
     model = runtime.insert_lora(model, pilot, 'candidate', torch)
     loaded = observer.stage('actual-parent-reload', lambda: inherited.load_factors(model, contract,
         parent['contract'], factors, parent['adapter'], torch, device))
@@ -243,6 +305,10 @@ def worker(args):
             runtime_snapshot_sha256=args.runtime_snapshot_sha256,
             actions=actions, observed_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024,
             authority=inherited.NO_AUTHORITY)
+        if bridge_record is not None:
+            ready['schema'] = BRIDGED_READY_SCHEMA_V1
+            ready['material_runtime_bridge'] = bridge_record
+            ready['runtime_source_set_sha256'] = _bridge_source_commitment(args)
         # Publish only a complete ready observation. The host must never race a
         # partially written JSON file while deciding whether to expose reads.
         with (directory/'ready.pending').open('x', encoding='utf-8') as handle:
@@ -291,22 +357,42 @@ def worker(args):
 
 
 def serve(args):
+    return _serve(args, None)
+
+
+def serve_bridge_v1(args):
+    raw = bootstrap_bytes(args.material_plan, 64 * 1024)
+    require(args.material_plan_sha256 == _MATERIAL_PLAN_SHA256 and
+            hashlib.sha256(raw).hexdigest() == _MATERIAL_PLAN_SHA256,
+            'NEURAL_BRIDGE_MATERIAL_PLAN')
+    return _serve(args, raw)
+
+
+def _serve(args, material_plan_raw):
     runtime.require(Path(args.output).is_absolute(), 'NEURAL_READ_OUTPUT_PATH')
     runtime.require(type(args.threads) is int and 1 <= args.threads <= 4, 'NEURAL_READ_CPU_ONLY')
     parent = inherited.validate_parent(inherited.checked_json(args.parent, args.parent_sha256))
-    inherited.read_parent(parent)
+    _, parent_raw, _ = inherited.read_parent(parent)
     actions = action_profile(inherited.checked_json(args.actions, args.actions_sha256))
     manifest, _ = runtime.verify_materials(args.materials)
     plan = dict(schema=SCHEMA, runtime=runtime.experiment_plan(manifest, threads=args.threads, steps=10),
                 parent=parent, actions=actions, inherited_sources=worker_sources(), worker_source=runtime.file_sha(__file__),
                 runtime_snapshot_sha256=args.runtime_snapshot_sha256)
+    if material_plan_raw is not None:
+        _bridge_execution_sources(args)
+        _MaterialRuntimeBridgeV1(MATERIAL_BRIDGE_PROFILE_V1, material_plan_raw,
+            plan['runtime'], parent_raw, parent['contract'])
+        plan['schema'] = BRIDGED_PLAN_SCHEMA_V1
+        plan['material_bridge'] = dict(profile=MATERIAL_BRIDGE_PROFILE_V1,
+                                       material_plan=material_plan_raw.decode())
     root = Path(args.output)
     root.mkdir(mode=0o700, parents=False, exist_ok=False)
     plan_path = root/'worker-plan.json'
     runtime.save(plan_path, plan)
     with runtime.cooperative_supervisor_stop() as stop_request:
+        command = '_worker' if material_plan_raw is None else '_worker-bridge-v1'
         result = runtime.supervise([sys.executable, '-I', '-S', '-B', '-X',
-            'pycache_prefix=' + sys.pycache_prefix, str(Path(__file__).resolve()), '_worker',
+            'pycache_prefix=' + sys.pycache_prefix, str(Path(__file__).resolve()), command,
             '--materials', str(Path(args.materials).resolve()), '--output', str(root/'worker'),
             '--runtime-snapshot', str(Path(args.runtime_snapshot).resolve()),
             '--runtime-snapshot-sha256', args.runtime_snapshot_sha256,
@@ -355,14 +441,29 @@ def main():
     child = commands.add_parser('_worker')
     for name in ('materials', 'output', 'plan', 'plan-sha256'):
         child.add_argument('--'+name, required=True)
-    for command in (runner, child):
+    bridge_runner = commands.add_parser('serve-bridge-v1')
+    for name in ('materials', 'parent', 'parent-sha256', 'actions', 'actions-sha256', 'output',
+                 'material-plan', 'material-plan-sha256'):
+        bridge_runner.add_argument('--'+name, required=True)
+    bridge_runner.add_argument('--threads', type=int, default=4)
+    bridge_child = commands.add_parser('_worker-bridge-v1')
+    for name in ('materials', 'output', 'plan', 'plan-sha256'):
+        bridge_child.add_argument('--'+name, required=True)
+    for command in (runner, child, bridge_runner, bridge_child):
         command.add_argument('--runtime-snapshot', required=True)
         command.add_argument('--runtime-snapshot-sha256', required=True)
         command.add_argument('--source-pins', required=True)
         command.add_argument('--source-pins-sha256', required=True)
     args = parser.parse_args()
     bootstrap_runtime_v2(args)
-    worker(args) if args.command == '_worker' else serve(args)
+    if args.command == '_worker':
+        worker(args)
+    elif args.command == '_worker-bridge-v1':
+        worker_bridge_v1(args)
+    elif args.command == 'serve-bridge-v1':
+        serve_bridge_v1(args)
+    else:
+        serve(args)
 
 
 if __name__ == '__main__':
