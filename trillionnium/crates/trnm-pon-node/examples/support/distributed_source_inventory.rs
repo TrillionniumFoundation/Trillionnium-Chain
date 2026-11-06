@@ -1156,6 +1156,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1202,6 +1209,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs"
         )),
     ),
     (
@@ -1370,6 +1384,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs"
         )),
     ),
     (
@@ -5353,6 +5374,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/cache_quota_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs"
         )),
     ),
     (

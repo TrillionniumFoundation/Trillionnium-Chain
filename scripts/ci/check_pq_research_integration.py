@@ -336,6 +336,14 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
     "trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
 ))
+# Explicit inventory-over-persistent composition and single-object height-window
+# admission keep their real refusal/recovery controls in the same source set.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release/transport_tests/rarest.rs",
+    "trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli/rarest.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/height_window_tests.rs",
+))
 # Exact consumer and business-path bytes for the request/working-state/data
 # continuation. Observation output is never execution authority, and these
 # finite resource checks do not establish host isolation or public acceptance.

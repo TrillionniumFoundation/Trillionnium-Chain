@@ -2,6 +2,8 @@ use super::*;
 
 #[path = "cache_quota_tests.rs"]
 mod cache_quota;
+#[path = "height_window_tests.rs"]
+mod height_window;
 #[path = "release_tests.rs"]
 mod release;
 use crate::development_public;
