@@ -1,0 +1,52 @@
+{
+  "archive_index_sha256": "88d098f87c21e7e5170aa7f2440d0f73ec48f11b66081b9e67dca765825969ad",
+  "archive_integrity_is_native_pass": false,
+  "archive_members_verified": 971,
+  "archive_sha256": "9f84ba375daa13b11650e173133bb042183bc4ed8570ff040aacc93c8e23027a",
+  "files": [
+    {
+      "bytes": 20233,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/review_final_increment.py",
+      "sha256": "dc989f2c41ab7cd6661d97920905828c3a1a65bfe527ff60475e89d7062b349b"
+    },
+    {
+      "bytes": 3796,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execute_review_once.py",
+      "sha256": "b54ea7e4775c0e84e6eba11a584e23a9cbc98c6a3b53da25adf8799c988018a2"
+    },
+    {
+      "bytes": 10634,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/review.json",
+      "sha256": "a618334b59f40e679c4ac235bfe98340a26eb33c45ff4e2301feb1544f36aac8"
+    },
+    {
+      "bytes": 1649,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execution.json",
+      "sha256": "2e257bbb4dd2507195a9b8436a179aa9e0c6bb3c42727fecf71e4bac1b7dafdd"
+    },
+    {
+      "bytes": 302,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execution.stdout.log",
+      "sha256": "bdc78a7b1c81e841fe9bc5c39c6daef1530e0c2e01c252870134a3719bd12315"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execution.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "manifest_bindings_verified": 855,
+  "native_status_counts_preserved": {
+    "blocked": 2,
+    "failed": 1,
+    "succeeded": 74
+  },
+  "node_controls_failed": 1,
+  "node_controls_passed": 22,
+  "original_failures_and_unreached_assertions_preserved": true,
+  "original_native_result": "failed",
+  "project_native_or_archived_code_executed": false,
+  "schema": "trnm-final-increment-independent-review-handoff-v1",
+  "selection_sha256": "2357bb2951cd794e2e84ceeb3a7b2b285e72ecbbd022aac1ab45d4f7ba200850",
+  "state": "COMPLETED_INDEPENDENT_READBACK_INTEGRITY_ONLY"
+}
