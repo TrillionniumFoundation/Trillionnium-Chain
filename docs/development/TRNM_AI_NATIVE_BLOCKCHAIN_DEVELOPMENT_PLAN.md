@@ -7367,3 +7367,19 @@ of source pins and the full distributed inventory. The combined native storage
 selector contains 22 tests; it requires fresh execution. V4 timings retain their
 original 95-input/ELF boundary. Original M09 cold-cohort, four-second public
 service, History, proof-benefit and independent-adoption vetoes remain open.
+
+
+### 2026-11-06 final six-workpackage composition validation
+
+The existing integration candidate's concurrent `1f723bba961ec5f8d7e25e7b33db222dac7ef50c`
+continuation and the separately frozen `038c063e48bf2f42884a44f62c65f22ac626595e`
+candidate were combined without dropping either parent. Fresh checks on
+`361825dd1f924770562705d7a68c78170f0375c3` preserve 387 M09 native controls,
+10 M09 documentation controls, all 22 combined storage controls, 35 native
+budget controls and nine release sampler controls, with no failed or ignored
+tests in those exact commands. Their complete raw receipts and source gates
+are retained in [final validation](../../evidence/pon-six-workpackages-20261106/composition/README.md#final-source-specific-composition-validation).
+These are component checks, not all-workspace unit-test or original-resource
+acceptance. The separate Hepta V13 publication is
+`fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
+HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.

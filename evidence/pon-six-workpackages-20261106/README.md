@@ -195,3 +195,13 @@ working candidate.
 ## Concurrent integration source
 
 The existing candidate advanced during this work. The [composition record](composition/README.md) preserves all incoming transport/custody changes, combines the two identical production guards once, and keeps old observations under their original source identities. Final merged-source verification is separate; no prior 20-test or V4 timing result is renamed as a new-head run.
+
+## Final composed validation and paired publication
+
+Fresh native and source checks of the committed composition are recorded in
+[the final composition result](composition/README.md#final-source-specific-composition-validation).
+They bind `361825dd1f924770562705d7a68c78170f0375c3` and preserve the concurrent
+branch as the first parent. The separate Hepta V13 implementation is published
+at `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. These exact source identities do
+not combine the two runtime claims. Documentation/evidence-only publication
+does not promote the original performance, proof or resource observations.
