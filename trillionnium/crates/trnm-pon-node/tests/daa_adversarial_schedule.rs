@@ -181,9 +181,18 @@ impl DaaEvidence {
     }
 
     fn retain(&self, report: &Value) {
+        self.retain_named(
+            report,
+            "TRNM_DAA_EVIDENCE_DIR",
+            "daa-bounds.json",
+            "pon_native_daa_bounds_v1",
+        );
+    }
+
+    fn retain_named(&self, report: &Value, environment: &str, filename: &str, marker: &str) {
         // Optional native runner evidence is create-only. No existing report or
         // packet can be replaced, and the temporary database is never exported.
-        if let Some(path) = std::env::var_os("TRNM_DAA_EVIDENCE_DIR") {
+        if let Some(path) = std::env::var_os(environment) {
             let path = std::path::PathBuf::from(path);
             fs::create_dir(&path).unwrap();
             fs::create_dir(path.join("packets")).unwrap();
@@ -199,15 +208,12 @@ impl DaaEvidence {
             fs::OpenOptions::new()
                 .write(true)
                 .create_new(true)
-                .open(path.join("daa-bounds.json"))
+                .open(path.join(filename))
                 .unwrap()
                 .write_all(&serde_json::to_vec_pretty(report).unwrap())
                 .unwrap();
         }
-        eprintln!(
-            "pon_native_daa_bounds_v1 {}",
-            serde_json::to_string(report).unwrap()
-        );
+        eprintln!("{} {}", marker, serde_json::to_string(report).unwrap());
     }
 }
 
@@ -456,4 +462,213 @@ fn native_daa_clamps_mtp_future_chainwork_and_authenticated_reopen() {
         "timestamp_attack_profitability_measured":false,"public_network_qualification":false
     });
     evidence.retain(&report);
+}
+
+#[test]
+fn native_daa_shorter_harder_branch_wins_and_equal_work_tip_survives_authenticated_reopen() {
+    let temporary = tempfile::tempdir().unwrap();
+    let path = temporary.path().join("authenticated-fork-choice-node");
+    let settings = Settings::development(Some(GENESIS_TIME)).unwrap();
+    let mut node = Node::open_with_authenticated_state(&path, settings.clone(), 1).unwrap();
+    let genesis_work = active_work(&node);
+    let mut evidence = DaaEvidence::default();
+    let mut common = settings.genesis();
+    let mut common_work = genesis_work;
+    for height in 1..=31 {
+        let packet = node
+            .make(
+                common,
+                vec![],
+                development_public(0).unwrap(),
+                GENESIS_TIME + height,
+                4096,
+            )
+            .unwrap();
+        common_work = evidence.admit(
+            &mut node,
+            &packet,
+            "common-compressed",
+            GENESIS_TIME + height * 10,
+            common_work,
+        );
+        common = packet.id().unwrap();
+        assert_eq!(
+            node.activate_observed(common, GENESIS_TIME + height * 10)
+                .unwrap(),
+            common
+        );
+    }
+    let period_target = node.expected_target(common).unwrap();
+    let names = ["lower-clamp", "upper-clamp"];
+    let mut tips = [common; 2];
+    let mut works = [common_work; 2];
+    for height in 32..=47 {
+        for arm in 0..2 {
+            let offset = if arm == 0 {
+                height
+            } else {
+                match height {
+                    32 => 27,
+                    47 => 627,
+                    _ => height * 10,
+                }
+            };
+            let now = GENESIS_TIME
+                + if arm == 1 && height == 47 {
+                    507
+                } else {
+                    height * 10
+                };
+            let packet = node
+                .make(
+                    tips[arm],
+                    vec![],
+                    development_public(arm as u64).unwrap(),
+                    GENESIS_TIME + offset,
+                    4096,
+                )
+                .unwrap();
+            assert_eq!(packet.header.height, height);
+            assert_eq!(packet.header.target, period_target);
+            works[arm] = evidence.admit(&mut node, &packet, names[arm], now, works[arm]);
+            tips[arm] = packet.id().unwrap();
+        }
+    }
+    assert_eq!(works[0], works[1]);
+    let next_targets = tips.map(|tip| node.expected_target(tip).unwrap());
+    assert!(next_targets[0] < next_targets[1]);
+    let mut harder = Vec::new();
+    let mut hard_work = None;
+    for miner in [7, 8] {
+        let packet = node
+            .make(
+                tips[0],
+                vec![],
+                development_public(miner).unwrap(),
+                GENESIS_TIME + 48,
+                4096,
+            )
+            .unwrap();
+        assert_eq!(packet.header.height, 48);
+        assert_eq!(packet.header.target, next_targets[0]);
+        let work = evidence.admit(
+            &mut node,
+            &packet,
+            "equal-work-hard-sibling",
+            GENESIS_TIME + 509,
+            works[0],
+        );
+        if let Some(previous) = hard_work {
+            assert_eq!(previous, work);
+        }
+        hard_work = Some(work);
+        harder.push(packet);
+    }
+    let hard_work = hard_work.unwrap();
+    harder.sort_by_key(|packet| packet.id().unwrap());
+    let equal_candidate = harder[0].id().unwrap();
+    let selected_hard = harder[1].id().unwrap();
+    // Recovery's secondary ordering is height then id. Selecting the larger id
+    // makes a later equal-work recovery candidate adversarial to active-tip
+    // preservation, rather than accidentally choosing the same candidate again.
+    assert!(equal_candidate < selected_hard);
+    for height in 48..=49 {
+        let packet = node
+            .make(
+                tips[1],
+                vec![],
+                development_public(1).unwrap(),
+                GENESIS_TIME + 580 + height,
+                4096,
+            )
+            .unwrap();
+        assert_eq!(packet.header.height, height);
+        assert_eq!(packet.header.target, next_targets[1]);
+        works[1] = evidence.admit(
+            &mut node,
+            &packet,
+            "longer-easier",
+            GENESIS_TIME + 509,
+            works[1],
+        );
+        tips[1] = packet.id().unwrap();
+    }
+    let longer_easy = tips[1];
+    assert!(works[1] < hard_work);
+    assert_eq!(node.packet(longer_easy).unwrap().header.height, 49);
+    assert_eq!(node.packet(selected_hard).unwrap().header.height, 48);
+    assert_eq!(
+        node.activate_observed(longer_easy, GENESIS_TIME + 509)
+            .unwrap(),
+        longer_easy
+    );
+    assert_eq!(active_work(&node), works[1]);
+    let longer_selected = node.stats().unwrap();
+    assert_eq!(
+        node.activate_observed(selected_hard, GENESIS_TIME + 509)
+            .unwrap(),
+        selected_hard
+    );
+    assert_eq!(active_work(&node), hard_work);
+    let harder_selected = node.stats().unwrap();
+    let before = node.read_active().unwrap();
+    let mut non_winning_candidates = Vec::new();
+    for candidate in [longer_easy, equal_candidate] {
+        let returned = node
+            .activate_observed(candidate, GENESIS_TIME + 509)
+            .unwrap();
+        assert_eq!(returned, selected_hard);
+        assert_eq!(node.read_active().unwrap(), before);
+        assert_eq!(node.stats().unwrap(), harder_selected);
+        non_winning_candidates.push(json!({
+            "stage":"before-reopen","candidate":hex::encode(candidate),
+            "returned_tip":hex::encode(returned),"stats":node.stats().unwrap()
+        }));
+    }
+    drop(node);
+    let mut reopened = Node::open_with_authenticated_state(&path, settings.clone(), 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), before);
+    assert_eq!(reopened.stats().unwrap(), harder_selected);
+    for (id, bytes) in &evidence.packets {
+        assert_eq!(reopened.packet(*id).unwrap().encode().unwrap(), *bytes);
+    }
+    for candidate in [longer_easy, equal_candidate] {
+        let returned = reopened
+            .activate_observed(candidate, GENESIS_TIME + 509)
+            .unwrap();
+        assert_eq!(returned, selected_hard);
+        assert_eq!(reopened.read_active().unwrap(), before);
+        assert_eq!(reopened.stats().unwrap(), harder_selected);
+        non_winning_candidates.push(json!({
+            "stage":"after-reopen","candidate":hex::encode(candidate),
+            "returned_tip":hex::encode(returned),"stats":reopened.stats().unwrap()
+        }));
+    }
+    let mut pow_limit = [255; 32];
+    pow_limit[0] = 127;
+    let report = json!({
+        "schema":"pon-native-daa-fork-choice-v1",
+        "network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),
+        "genesis":hex::encode(settings.genesis()),"genesis_timestamp":GENESIS_TIME,
+        "genesis_chainwork_hex":hex::encode(genesis_work.bytes()),
+        "interval":16,"spacing_seconds":10,"median_window":11,"future_skew_seconds":120,
+        "desired_span_seconds":150,"clamped_span_lower_seconds":38,"clamped_span_upper_seconds":600,
+        "pow_limit":hex::encode(pow_limit),"branch_period_target":hex::encode(period_target),
+        "records":evidence.rows,
+        "longer_easier_selected":longer_selected,"shorter_harder_selected":harder_selected,
+        "equal_work_candidate":hex::encode(equal_candidate),
+        "non_winning_candidates":non_winning_candidates,
+        "after_authenticated_reopen":reopened.stats().unwrap(),
+        "longer_lower_work_replaces_harder_branch":false,
+        "equal_work_replaces_active_tip":false,
+        "default_consensus_rules_changed":false,"logical_validation_clock_schedule":true,
+        "wall_clock_cadence_measured":false,"attacker_work_fraction_measured":false,
+        "timestamp_attack_profitability_measured":false,"public_network_qualification":false
+    });
+    evidence.retain_named(
+        &report,
+        "TRNM_DAA_FORK_CHOICE_EVIDENCE_DIR",
+        "daa-fork-choice.json",
+        "pon_native_daa_fork_choice_v1",
+    );
 }

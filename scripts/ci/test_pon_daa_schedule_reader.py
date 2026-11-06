@@ -115,13 +115,116 @@ class RetainedDaaCounterexamples(unittest.TestCase):
         self.reject(forge, 'full Python PNW1 replay .*TRANSCRIPT')
 
 
+
+class RetainedForkChoiceCounterexamples(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.raw = (RAW_DIR / 'daa-fork-choice.json').read_bytes()
+        cls.report = reader.load_report(cls.raw)
+        cls.packets = {'packets/' + path.name: path.read_bytes() for path in (RAW_DIR / 'packets').iterdir()}
+        cls.original = {'daa-fork-choice.json': reader.sha(cls.raw),
+                        **{name: reader.sha(raw) for name, raw in cls.packets.items()}}
+        cls.validated = reader.analyze(RAW_DIR, reader.sha(cls.raw), 'fork-choice')
+
+    @classmethod
+    def tearDownClass(cls):
+        for name, expected in cls.original.items():
+            if reader.sha((RAW_DIR / name).read_bytes()) != expected:
+                raise ValueError('original native fork-choice evidence changed: ' + name)
+
+    def reject(self, change, pattern):
+        report, packets = copy.deepcopy(self.report), dict(self.packets)
+        change(report, packets)
+        with self.assertRaisesRegex(ValueError, pattern):
+            reader.analyze_report(report, packets)
+
+    def test_full_proofs_support_shorter_harder_and_equal_work_control_only(self):
+        self.assertEqual(self.validated['unique_full_python_verified_proofs'], 67)
+        self.assertEqual(self.validated['unique_native_admitted_packets_observed'], 67)
+        self.assertEqual(self.validated['longer_easier_height'], 49)
+        self.assertEqual(self.validated['shorter_harder_height'], 48)
+        self.assertGreater(self.validated['shorter_harder_required_chainwork'],
+                           self.validated['longer_easier_required_chainwork'])
+        self.assertEqual(self.validated['non_winning_activation_attempts_observed'], 4)
+        self.assertTrue(self.validated['selected_larger_id_equal_work_sibling'])
+        self.assertTrue(self.validated['full_python_transcript_and_product_recomputed'])
+        self.assertFalse(self.validated['reader_performed_native_admission'])
+        self.assertFalse(self.validated['reader_reopened_native_database'])
+        self.assertFalse(self.validated['proof_hardness_or_timestamp_attack_profitability_qualified'])
+
+    def test_no_packet_or_observation_can_be_dropped(self):
+        self.reject(lambda report, _: report['records'].pop(), '67-observation')
+        self.reject(lambda _, packets: packets.pop(next(iter(packets))), 'retained packet required')
+
+    def test_selected_chainwork_must_equal_target_required_work_sum(self):
+        self.reject(lambda report, _: report['longer_easier_selected'].update(chainwork_hex='00' * 64),
+                    'selected cumulative work mismatch')
+        self.reject(lambda report, _: report['records'][0]['admission'].update(cumulative_required_work_hex='00' * 64),
+                    'cumulative branch work mismatch')
+
+    def test_equal_candidate_must_be_a_distinct_same_parent_full_work_sibling(self):
+        self.reject(lambda report, _: report.update(equal_work_candidate=report['shorter_harder_selected']['tip']),
+                    'selected hard sibling must oppose recovery id ordering')
+
+    def test_nonwinning_attempt_cannot_change_tip_root_or_generation(self):
+        self.reject(lambda report, _: report['non_winning_candidates'][0].update(
+            returned_tip=report['longer_easier_selected']['tip']), 'lower or equal work changed')
+        self.reject(lambda report, _: report['non_winning_candidates'][1]['stats'].update(generation=34),
+                    'lower or equal work changed')
+        self.reject(lambda report, _: report['non_winning_candidates'][2]['stats'].update(state_root='00' * 32),
+                    'lower or equal work changed')
+
+    def test_each_candidate_must_be_tested_before_and_after_authenticated_reopen(self):
+        self.reject(lambda report, _: report['non_winning_candidates'].pop(), 'both candidates must be retried')
+        self.reject(lambda report, _: report['non_winning_candidates'][3].update(stage='before-reopen'),
+                    'non-winning activation grid changed')
+        self.reject(lambda report, _: report['after_authenticated_reopen'].update(generation=34),
+                    'authenticated reopen changed')
+
+    def test_longer_height_cannot_be_relabelled_and_synthetic_clock_cannot_be_qualified(self):
+        self.reject(lambda report, _: report['longer_easier_selected'].update(height=48), 'active height or generation')
+        self.reject(lambda report, _: report.update(attacker_work_fraction_measured=True), 'unsupported qualification')
+        self.reject(lambda report, _: report.update(equal_work_replaces_active_tip=True), 'unsupported fork-choice claim')
+
+    def test_external_digest_and_explicit_schema_selection_are_required(self):
+        with self.assertRaisesRegex(ValueError, 'externally recorded DAA report digest'):
+            reader.analyze(RAW_DIR, '00' * 32, 'fork-choice')
+        self.reject(lambda report, _: report.update(schema='pon-native-daa-fork-choice-v2'), 'unsupported native DAA report')
+
+    def test_forged_leaf_trace_with_valid_cheap_ticket_fails_full_python_relation(self):
+        def forge(report, packets):
+            row = next(row for row in report['records'] if row['schedule'] == 'longer-easier' and row['height'] == 49)
+            old_id = row['id']
+            raw = packets.pop(row['packet_file'])
+            header = raw[:318]
+            challenge = reader.wire.H('challenge', header)
+            target = bytes.fromhex(row['target'])
+            for nonce in range(4096):
+                trace = hashlib.sha256(b'DAA-fork-choice-false-trace-only' + nonce.to_bytes(8, 'little')).digest()
+                if reader.wire.H('ticket', challenge, trace) <= target:
+                    break
+            else:
+                raise AssertionError('bounded manufactured ticket search exhausted')
+            raw = raw[:-32] + trace
+            identifier = reader.wire.H('block', header, trace).hex()
+            row.update(id=identifier, packet_file='packets/' + identifier + '.pnk', trace=trace.hex(),
+                       packet_sha256=reader.sha(raw), proof_sha256=reader.sha(raw[320:]))
+            packets[row['packet_file']] = raw
+            report['longer_easier_selected']['tip'] = identifier
+            for attempt in report['non_winning_candidates']:
+                if attempt['candidate'] == old_id:
+                    attempt['candidate'] = identifier
+        self.reject(forge, 'full Python PNW1 replay .*TRANSCRIPT')
+
 def main():
     global RAW_DIR
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--raw-dir', required=True, type=Path)
+    parser.add_argument('--report-kind', choices=('bounds', 'fork-choice'), default='bounds')
     args, remaining = parser.parse_known_args()
     RAW_DIR = args.raw_dir
-    result = unittest.main(argv=[sys.argv[0], *remaining], exit=False)
+    selected = RetainedForkChoiceCounterexamples if args.report_kind == 'fork-choice' else RetainedDaaCounterexamples
+    result = unittest.main(argv=[sys.argv[0], *remaining], defaultTest=selected.__name__, exit=False)
     return 0 if result.result.wasSuccessful() else 1
 
 
