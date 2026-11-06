@@ -325,6 +325,29 @@ class RuntimeMaterialTests(unittest.TestCase):
         spec["wheels"][0]["sha256"] = sha(archive.read_bytes())
         return spec
 
+    def test_metadata_markers_support_pre25_packaging_api(self):
+        # Exercise the real wheel declaration path using the pre-25.0 API:
+        # its Marker.evaluate has no context keyword.
+        from packaging.markers import Marker
+        original_evaluate = Marker.evaluate
+
+        def pre25_evaluate(marker, environment=None):
+            return original_evaluate(marker, environment=environment)
+
+        with mock.patch.object(Marker, "evaluate", pre25_evaluate):
+            with self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
+                self.declare(self.repack_metadata(
+                    'Requires-Dist: absent-runtime; python_version >= "3.12"\n'))
+            inactive = self.repack_metadata(
+                'Requires-Dist: absent-runtime; python_version < "3.0"\n')
+            self.assertEqual(json.loads(self.declare(inactive))["python_dependencies"][0]["dependencies"], [])
+            extra = self.repack_metadata(
+                'Provides-Extra: audit\nRequires-Dist: absent-runtime; extra == "audit"\n')
+            self.declare(extra)
+            extra["wheels"][0]["extras"] = ["audit"]
+            with self.assertRaisesRegex(ValueError, "PYTHON_DEPENDENCY_MISSING"):
+                self.declare(extra)
+
     def test_real_metadata_dependency_markers_extras_and_python_version(self):
         for header in ("Requires-Dist: absent-runtime>=1\n",
                        'Requires-Dist: absent-runtime; python_version >= "3.12"\n'):

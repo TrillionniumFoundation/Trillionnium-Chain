@@ -428,7 +428,9 @@ def wheel_closure(root_fd, members, spec, maximum_bytes):
         for raw in package["requirements"]:
             requirement = Requirement(raw)
             if requirement.marker is not None and not any(requirement.marker.evaluate(
-                    environment=dict(spec["marker_environment"], extra=extra), context="metadata")
+                    # Core-metadata marker evaluation is the default in packaging >= 25.0;
+                    # packaging < 25.0 accepts no context keyword, with the same default.
+                    environment=dict(spec["marker_environment"], extra=extra))
                     for extra in ["", *package["wheel"]["extras"]]):
                 continue
             dependency = canonicalize_name(requirement.name)
