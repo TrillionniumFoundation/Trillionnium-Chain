@@ -109,6 +109,7 @@ impl PqNetworkPolicy {
         }
     }
 
+    #[cfg(feature = "pq-native-openssl")]
     pub(super) fn check_tls_client_ip(&self, address: SocketAddr) -> Result<()> {
         match self.tls_endpoint_pins() {
             Some(pins) => ensure(
