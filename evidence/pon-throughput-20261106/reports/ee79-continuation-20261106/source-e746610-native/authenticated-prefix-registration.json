@@ -1,0 +1,72 @@
+{
+  "all_118_executed": false,
+  "binary": {
+    "bytes": 458828736,
+    "fingerprint": [
+      66306,
+      48125610,
+      33216,
+      458828736,
+      1793985445102381164,
+      1793985445125380331
+    ],
+    "path": "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582",
+    "sha256": "693c5d58161cfcdef42371e5df15012e10ff0da0fb18e495f7bbbda752c39638"
+  },
+  "command": {
+    "argv": [
+      "/home/qq/work/chain-throughput-20261106-ee79/target/debug/deps/trnm_pon_node-9e920dda58733582",
+      "store::native_authenticated::",
+      "--list",
+      "--ignored",
+      "--format",
+      "terse"
+    ],
+    "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo/trillionnium/crates/trnm-pon-node",
+    "elapsed_ns": 2965854,
+    "exit_code": 0,
+    "finished_utc": "2026-11-06T17:17:57.168931+00:00",
+    "log": {
+      "bytes": 123,
+      "fingerprint": [
+        66306,
+        48129968,
+        33152,
+        123,
+        1793985477167219062,
+        1793985477167219062
+      ],
+      "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/authenticated-ignored-list.log",
+      "sha256": "fce4c92c02b6f2119a257a5a626a6789b70a6735ff2299bcde5c507c1ade3bb8"
+    },
+    "log_file": "authenticated-ignored-list.log",
+    "schema": "trnm-native-runner-child-command-v1",
+    "started_utc": "2026-11-06T17:17:57.165792+00:00",
+    "status": "command_succeeded"
+  },
+  "default_workspace_test_profile_excludes_ignored": true,
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "ignored": [
+    "store::native_authenticated::stored_delta_stream_tests::retained_delta_stream_cost_preserves_all_paired_observations"
+  ],
+  "ignored_count": 1,
+  "prefix": "store::native_authenticated::",
+  "registered_count": 118,
+  "release_with_include_ignored_executed": false,
+  "schema": "trnm-authenticated-native-registration-observation-v1",
+  "scope": "actual original workspace test-profile ELF registration only; no release or ignored-test execution qualification",
+  "source": {
+    "base": null,
+    "candidate": "e7466106a2a647c8032556273101440384d88b70",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+    "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1045782996,
+    "tracked_entries": 10905,
+    "tracked_worktree_verified": true
+  },
+  "tests_executed_by_this_command": false
+}

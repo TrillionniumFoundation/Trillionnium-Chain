@@ -1,0 +1,42 @@
+{
+  "archive": {
+    "bytes": 6309,
+    "file": "original-probe.tar.gz",
+    "sha256": "88ef6effff358a6a956c8e78effd459b65b70aaf7ee8dcea5cb8fb4f28ffb6d8"
+  },
+  "files": [
+    {
+      "bytes": 1435,
+      "path": "download-receipt.json",
+      "sha256": "d0386ee5b4688d34cd619d3f8e6b5d3ef7db779bec134214a3b2afc3d2ec0c7a"
+    },
+    {
+      "bytes": 8912,
+      "path": "job-launch.json",
+      "sha256": "17c6355be8c6f7df8fab0986869a75d8d02c1711634b45c78a8fccc9f2303adf"
+    },
+    {
+      "bytes": 731,
+      "path": "job-status.json",
+      "sha256": "bf73224b7d1fc8c772ffa14e778142cff43215898c70f3ab17d29956115c5a62"
+    },
+    {
+      "bytes": 6132,
+      "path": "probe-helper.py",
+      "sha256": "6dcd3959a34942eb2f07e5d9de1efdc8ee70d102fd0a029df66f577db3ab272e"
+    },
+    {
+      "bytes": 0,
+      "path": "probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6444,
+      "path": "probe.stdout",
+      "sha256": "410d578de51c094bad149be56186a234040b986dc9d40aea67dea6281fc3f4c1"
+    }
+  ],
+  "schema": "trnm-original-remote-carrier-v1",
+  "scope": "Readonly feasibility on 516382 only; no release directory or build created.",
+  "source": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb"
+}

@@ -1,0 +1,124 @@
+{
+  "attempted_controls": 105,
+  "classification": "readback of original archived remote records; not another native execution",
+  "docs": "NOT_RUN_controls_failed",
+  "expected_controls": 105,
+  "groups": {
+    "account-root-digest": {
+      "attempted": 3,
+      "failed": [],
+      "passed": 3
+    },
+    "canonical-ascii": {
+      "attempted": 7,
+      "failed": [],
+      "passed": 7
+    },
+    "current-sql-root": {
+      "attempted": 1,
+      "failed": [],
+      "passed": 1
+    },
+    "direct-append-readback": {
+      "attempted": 2,
+      "failed": [],
+      "passed": 2
+    },
+    "full-root-arithmetic": {
+      "attempted": 5,
+      "failed": [],
+      "passed": 5
+    },
+    "growth-return-observations": {
+      "attempted": 2,
+      "failed": [],
+      "passed": 2
+    },
+    "header-material": {
+      "attempted": 8,
+      "failed": [
+        {
+          "checker_exit": 1,
+          "index": 85,
+          "log_sha256": "d911f72c195c102b05dda878fb5524ec442cc8f4e3131abe7f9924dd15f4be11",
+          "native_exit": 101,
+          "selector": "store::observed_history::tests::adjacent_material_preserves_corruption_types_and_first_error_order"
+        }
+      ],
+      "passed": 7
+    },
+    "host-parent-relative": {
+      "attempted": 8,
+      "failed": [],
+      "passed": 8
+    },
+    "host-resource": {
+      "attempted": 7,
+      "failed": [],
+      "passed": 7
+    },
+    "postwrite-history": {
+      "attempted": 12,
+      "failed": [],
+      "passed": 12
+    },
+    "postwrite-readback": {
+      "attempted": 25,
+      "failed": [],
+      "passed": 25
+    },
+    "prepared-current-history": {
+      "attempted": 3,
+      "failed": [],
+      "passed": 3
+    },
+    "reorg-tail": {
+      "attempted": 6,
+      "failed": [],
+      "passed": 6
+    },
+    "shared-ready": {
+      "attempted": 9,
+      "failed": [],
+      "passed": 9
+    },
+    "shared-ready-live": {
+      "attempted": 1,
+      "failed": [],
+      "passed": 1
+    },
+    "unchanged-canonical-map": {
+      "attempted": 6,
+      "failed": [],
+      "passed": 6
+    }
+  },
+  "locked_graphs": [
+    {
+      "manifest": "trillionnium/Cargo.toml",
+      "packages": 175,
+      "passed": true,
+      "resolved_nodes": 175
+    },
+    {
+      "manifest": "tests/fuzz/Cargo.toml",
+      "packages": 147,
+      "passed": true,
+      "resolved_nodes": 147
+    },
+    {
+      "manifest": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.toml",
+      "packages": 69,
+      "passed": true,
+      "resolved_nodes": 69
+    }
+  ],
+  "not_executed_controls": 0,
+  "passed_controls": 104,
+  "production_qualified": false,
+  "runtime": "NOT_RUN_controls_failed",
+  "schema": "trnm-original-97-qualification-index-v1",
+  "source": "97aaf286ba01316a527ae07782120fd47724efc9",
+  "status": "failed",
+  "tree": "a4ad6a6945eb597eead276aa44c4f98e8d9e0a36"
+}

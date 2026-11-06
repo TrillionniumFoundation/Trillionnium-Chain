@@ -1,0 +1,328 @@
+{
+  "all_original_file_hashes_verified": true,
+  "archive_remote_path": "/home/qian-qi/chain-ee79-release-e746-v1/archive/release-e746-originals.tar.gz",
+  "archive_version": "66306:28464109:55341:1793985809995625481:1793985809995625481",
+  "files": [
+    {
+      "bytes": 55341,
+      "origin": "/home/qian-qi/chain-ee79-release-e746-v1/archive/release-e746-originals.tar.gz",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/release-e746-originals.tar.gz",
+      "relative_path": "release-e746-originals.tar.gz",
+      "sha256": "51357a1f5cd3d3544a2de3684a11ab55fc3af21c7c529faac99998f08cb7b56c"
+    },
+    {
+      "bytes": 1235,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/guard-release.json",
+      "relative_path": "raw/guard-release.json",
+      "sha256": "3db404f727c03abb4c88cf01612557a94849af8860511d500a202283125ba182"
+    },
+    {
+      "bytes": 344,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/guard-release.log",
+      "relative_path": "raw/guard-release.log",
+      "sha256": "1dbc3e0f68575c01eb9dae68b57e0adb0c286c4926f8a67c0d4eae3f1af77ec5"
+    },
+    {
+      "bytes": 2003,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/launch-result.json",
+      "relative_path": "raw/launch-result.json",
+      "sha256": "a97a612f80c60f1d9398f670055b7102904fedcde8c887669f9bea07bebf86f5"
+    },
+    {
+      "bytes": 423,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/observation-source-after.json",
+      "relative_path": "raw/observation-source-after.json",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 423,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/observation-source-after.log",
+      "relative_path": "raw/observation-source-after.log",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 423,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/observation-source-before.json",
+      "relative_path": "raw/observation-source-before.json",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 423,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/observation-source-before.log",
+      "relative_path": "raw/observation-source-before.log",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 4779,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/original-release-authenticated-guard.py",
+      "relative_path": "raw/original-release-authenticated-guard.py",
+      "sha256": "7a4fd0d5fc4d93ccd574db2d973ade4521d8a860b2ebee6c45eb5abf4470848f"
+    },
+    {
+      "bytes": 1631,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/outer-job-launch.json",
+      "relative_path": "raw/outer-job-launch.json",
+      "sha256": "42f2d808355dc54cc21ac53b93b39f36b81c55bc12f8f65a5cd5f951d2abccbd"
+    },
+    {
+      "bytes": 731,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/outer-job-terminal.json",
+      "relative_path": "raw/outer-job-terminal.json",
+      "sha256": "a1454722b27924548e522da7cb3d83fe061b2459009847fb81866022d7a03500"
+    },
+    {
+      "bytes": 0,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/outer-job.stderr",
+      "relative_path": "raw/outer-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3191,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/outer-job.stdout",
+      "relative_path": "raw/outer-job.stdout",
+      "sha256": "6a91642f58a4bcfce982119b200e80f20ba3e2ff753447436219c4173c3c30ab"
+    },
+    {
+      "bytes": 6446,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/readonly-feasibility.json",
+      "relative_path": "raw/readonly-feasibility.json",
+      "sha256": "e75cc91e90fe66ce5b703a116ac80143c06fb3047318714a094f16dae81438b8"
+    },
+    {
+      "bytes": 1216,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-preflight-recorder.json",
+      "relative_path": "raw/release-authenticated-preflight-recorder.json",
+      "sha256": "1980bd31ded74605dfd60e99355b72f246ec1a959af79144da9bc285977cddb6"
+    },
+    {
+      "bytes": 144,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-preflight-recorder.log",
+      "relative_path": "raw/release-authenticated-preflight-recorder.log",
+      "sha256": "8a35c5d28e67c356fb847115a2500450ef476d2c95b5d4552f6020f369e5c0bd"
+    },
+    {
+      "bytes": 2296,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-preflight.json",
+      "relative_path": "raw/release-authenticated-preflight.json",
+      "sha256": "568282b03ac60cbc06ea661739a9055bd75ad49effd7474eea335df5b89333d7"
+    },
+    {
+      "bytes": 175,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-preflight.log",
+      "relative_path": "raw/release-authenticated-preflight.log",
+      "sha256": "35d435f5a0f8b7a0356c6167f927c4e5adb2a1a7e067166a5b4a4195d59ab4e5"
+    },
+    {
+      "bytes": 1413,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-recorder.json",
+      "relative_path": "raw/release-authenticated-recorder.json",
+      "sha256": "8830e56551b8fe911996a04392f958848d3e634e9af319e0059a9c334977e32d"
+    },
+    {
+      "bytes": 134,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-recorder.log",
+      "relative_path": "raw/release-authenticated-recorder.log",
+      "sha256": "060d720db2ee4e35be9d20d9d884243b111b7cb49115eb31f80dbe9dee5d5471"
+    },
+    {
+      "bytes": 1366,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-roster-check-recorder.json",
+      "relative_path": "raw/release-authenticated-roster-check-recorder.json",
+      "sha256": "231f3c7ba676b5ff42aaa582f537f3c88dae7bcc30fca93e45f957c13b60953e"
+    },
+    {
+      "bytes": 147,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-roster-check-recorder.log",
+      "relative_path": "raw/release-authenticated-roster-check-recorder.log",
+      "sha256": "bffa3466ecd4e3503b1a2077929586e8c79ab6054843f1b25c3aa667f4b2c357"
+    },
+    {
+      "bytes": 2438,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-roster-check.json",
+      "relative_path": "raw/release-authenticated-roster-check.json",
+      "sha256": "d9227eca952c1a3f2ebb0d9086e40a4ef13c960403ec33ab3b211a00be8c5bdc"
+    },
+    {
+      "bytes": 0,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-roster-check.log",
+      "relative_path": "raw/release-authenticated-roster-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12686,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-stage.json",
+      "relative_path": "raw/release-authenticated-stage.json",
+      "sha256": "e35ac0fc95a01a9a6b52043be10c05c5c9beb8f5267be8700ef001f6dad2b28c"
+    },
+    {
+      "bytes": 1325,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-summary-check-recorder.json",
+      "relative_path": "raw/release-authenticated-summary-check-recorder.json",
+      "sha256": "f433e6a108897aefe16ba0cd3cbd7801ea4291d617de002b278328a6b5460951"
+    },
+    {
+      "bytes": 148,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-summary-check-recorder.log",
+      "relative_path": "raw/release-authenticated-summary-check-recorder.log",
+      "sha256": "3989ad26008dc7559b05ee91034099a6a89e581ab2a8d89bb83e1fe78ed02829"
+    },
+    {
+      "bytes": 2397,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-summary-check.json",
+      "relative_path": "raw/release-authenticated-summary-check.json",
+      "sha256": "5d1b59cb4b9be43063f109335a68bd2199b3343361999b93fb0e2eb3a554c878"
+    },
+    {
+      "bytes": 100,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated-summary-check.log",
+      "relative_path": "raw/release-authenticated-summary-check.log",
+      "sha256": "59b99e797de576503f2439dc3c9df800cf4ea45b2b6aa628c96dc35274903869"
+    },
+    {
+      "bytes": 2515,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated.json",
+      "relative_path": "raw/release-authenticated.json",
+      "sha256": "66d2e521a3a28c068e2dee2fcd14a1c43555bb4064ac2b562aab3f614b75a966"
+    },
+    {
+      "bytes": 50123,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-authenticated.log",
+      "relative_path": "raw/release-authenticated.log",
+      "sha256": "6ab13e836a426d0106630e9ca4a9b42c6f67e0a87b13eed74e47eebb495991f3"
+    },
+    {
+      "bytes": 8107,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/release-elf-cost-observation.json",
+      "relative_path": "raw/release-elf-cost-observation.json",
+      "sha256": "6610446f77a701d90492d0694644f84f04800b9d51ee6a99d29caa6eca6451e9"
+    },
+    {
+      "bytes": 6995,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/retained-delta-cost.jsonl",
+      "relative_path": "raw/retained-delta-cost.jsonl",
+      "sha256": "156005725eec2d1a461b8a398c3f2f8e16de6bbf62ab18d51f26b8492058037a"
+    },
+    {
+      "bytes": 12830,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/raw/setup-receipt.json",
+      "relative_path": "raw/setup-receipt.json",
+      "sha256": "6e3d964c4f432c533e90a3d03f10219b8086f64431482256a6ed9c469295c0ce"
+    },
+    {
+      "bytes": 3773,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/run_release_authenticated.py",
+      "relative_path": "run_release_authenticated.py",
+      "sha256": "9e04edbe9b2ffd1830bfe229f595b79f1b6ef0c3076cb153252d00a69298b592"
+    },
+    {
+      "bytes": 26709,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/run_native_qualification.py",
+      "relative_path": "run_native_qualification.py",
+      "sha256": "da7dc56e80384b2d5b44ae84d11024a36fa28e94a6ba7c0cf7684937cc322fb2"
+    },
+    {
+      "bytes": 6457,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/disk_guard.py",
+      "relative_path": "disk_guard.py",
+      "sha256": "9e050c1a0170b100662759b3d4161f79b490888ef2b53d88e410e417b893e322"
+    },
+    {
+      "bytes": 60721,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/setup-script.py",
+      "relative_path": "setup-script.py",
+      "sha256": "95e6e81fc81b323ff437aaaffc02b7f8c8aa98bf2928b33e8751fc79237a28f2"
+    },
+    {
+      "bytes": 24082,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/observe-release.py",
+      "relative_path": "observe-release.py",
+      "sha256": "37d7a90c1ca8890f2d44ec7c34318ac0d30a8d2a09d40a1a5d501debf1a9056f"
+    },
+    {
+      "bytes": 16291,
+      "origin": "original archive member verified against remote SHA manifest",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/manifest.json",
+      "relative_path": "manifest.json",
+      "sha256": "9923b7c78b5781435a64cbeb57a0d2dfa703f95758fe04e475b2c173e02aa97c"
+    },
+    {
+      "bytes": 1392,
+      "origin": "/home/qian-qi/chain-ee79-release-e746-v1/archive/archive-receipt.json",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/archive-receipt.json",
+      "relative_path": "archive-receipt.json",
+      "sha256": "3799afd1d0204271d7d9ae6fc921a57f6bce96c23c7195be7ae527e5e07b0525"
+    },
+    {
+      "bytes": 1204,
+      "origin": "original observation/archive MCP job result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/observer-job-launch.json",
+      "relative_path": "observer-job-launch.json",
+      "sha256": "0e1cfd1a249af9865df1f241e0f99f4dbd9ef1f82de537e67d92561ce19a859e"
+    },
+    {
+      "bytes": 731,
+      "origin": "original observation/archive MCP job result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/observer-job-terminal.json",
+      "relative_path": "observer-job-terminal.json",
+      "sha256": "3c4198ed234c5cdfb3796c5b484c01f8db27110457d6ef8cc8d2d27dc809c010"
+    },
+    {
+      "bytes": 1182,
+      "origin": "original observation/archive MCP job result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/observer-job.stdout",
+      "relative_path": "observer-job.stdout",
+      "sha256": "924b35ff18bef53d90a1de3cd51e398ccaae07a912c1aef1899e60609d638bfa"
+    },
+    {
+      "bytes": 0,
+      "origin": "original observation/archive MCP job result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-release/observer-job.stderr",
+      "relative_path": "observer-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_job": "1a1b1db83f0-fc05-7b28",
+  "original_archive_files": 38,
+  "schema": "trnm-original-release-download-v1",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+  "tests_executed_during_download": false
+}

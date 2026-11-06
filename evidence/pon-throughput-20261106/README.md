@@ -6,6 +6,14 @@ business gates remain failed. The finite local observations do not establish
 independent WAN capacity, production work hardness, whole-chain PQ readiness or
 activation. Documentation publication never changes a measurement's source.
 
+The [later six-priority continuation](reports/ee79-continuation-20261106/README.md)
+records implementation/test source `e7466106`, its measured history reuse,
+actual PQ worker controls, shared scheduling and fresh Host acquisition.
+Its selected controls, release authenticated suite and documentation pass;
+its complete development-host workspace command still fails at the original
+fixed-Host public delivery boundary. This earlier record retains its own
+source identities and failed business observations unchanged.
+
 This record retains the original-CI snapshot of **2026-11-06 08:13:54 UTC**,
 the complete terminal `285982d7` CI snapshot of **09:28:59 UTC**, and the
 separately executed static/native checks on final implementation `7586d3e2`.

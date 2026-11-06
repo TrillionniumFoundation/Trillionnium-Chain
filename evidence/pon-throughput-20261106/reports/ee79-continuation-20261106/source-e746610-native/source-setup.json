@@ -1,0 +1,281 @@
+{
+  "TMPDIR": "/home/qq/trnm-ee79-e7466106a2a6-tmp",
+  "available_bytes": 403577610240,
+  "branch": "fix/chain-throughput-publish-20261106-1eed",
+  "carrier_sha256": "d961e98ec651ef6dc246f3e2bd14e61ce15ce1ff1e06e26b0a13af5e0a7950bc",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984958910407973,
+      "label": "source-old-head-tree",
+      "log_sha256": "f3986cca78cdfdf48f0aa31c96ef608bdd48b8298752eb1d0fad5a9fda9a9408",
+      "started_ns": 1793984958905966221
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "--short",
+        "HEAD"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984958911084829,
+      "label": "source-old-branch",
+      "log_sha256": "6a79d873cfe1aed09fcd5eee98b26eaa16c34a446b9e30ea51b3fae908a7db3d",
+      "started_ns": 1793984958910452761
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984959093696584,
+      "label": "source-old-status",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_ns": 1793984958911116017
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984959122414873,
+      "label": "source-old-preflight",
+      "log_sha256": "35d435f5a0f8b7a0356c6167f927c4e5adb2a1a7e067166a5b4a4195d59ab4e5",
+      "started_ns": 1793984959093879568
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "--output",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/source-old-identity.json"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961718006645,
+      "label": "source-old-identity",
+      "log_sha256": "e52d9e1eb1182912da8bbd3f063b9c94bae6d87ccff09db8b8947ace83bca1d1",
+      "started_ns": 1793984959122520809
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/source.bundle"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961718999619,
+      "label": "bundle-verify",
+      "log_sha256": "ff0de4ba13a5362b9f395059af5b922f8efbd2249c35897473efae005a182887",
+      "started_ns": 1793984961718145630
+    },
+    {
+      "argv": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/source.bundle"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961719604988,
+      "label": "bundle-heads",
+      "log_sha256": "9a5d983ab34b3ddbf7235573379bbb2d71c4e5c02d3843597455a3f90528a267",
+      "started_ns": 1793984961719052897
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/source.bundle",
+        "HEAD"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961772242836,
+      "label": "bundle-fetch",
+      "log_sha256": "5979c8bfcf025692ecce62e766330e9efdfc9d888b877b9ee2656e8d1614ef56",
+      "started_ns": 1793984961719642656
+    },
+    {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+        "e7466106a2a647c8032556273101440384d88b70"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961773424694,
+      "label": "source-ancestry",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_ns": 1793984961772434469
+    },
+    {
+      "argv": [
+        "git",
+        "merge",
+        "--ff-only",
+        "--no-edit",
+        "e7466106a2a647c8032556273101440384d88b70"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961797306224,
+      "label": "source-fast-forward",
+      "log_sha256": "96ad727b2c2e00deec0ee9625fe89e4650f42c4755c657a3c1c322e78712d97b",
+      "started_ns": 1793984961773473242
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961798611058,
+      "label": "source-new-head-tree",
+      "log_sha256": "08a4870266807eb8d2d2562ef8b5e16a4be8453f4de846c862dc4dd64b12db42",
+      "started_ns": 1793984961797454479
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961814224203,
+      "label": "source-new-status",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "started_ns": 1793984961798699415
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984961837883651,
+      "label": "source-new-preflight",
+      "log_sha256": "35d435f5a0f8b7a0356c6167f927c4e5adb2a1a7e067166a5b4a4195d59ab4e5",
+      "started_ns": 1793984961814359148
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "e7466106a2a647c8032556273101440384d88b70",
+        "--output",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/source-new-identity.json"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984962511241574,
+      "label": "source-new-identity",
+      "log_sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352",
+      "started_ns": 1793984961837986118
+    },
+    {
+      "argv": [
+        "rustc",
+        "+1.95.0",
+        "--version"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984962634370666,
+      "label": "rustc-version",
+      "log_sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148",
+      "started_ns": 1793984962511379369
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "--version"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984962673727396,
+      "label": "cargo-version",
+      "log_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+      "started_ns": 1793984962634538560
+    },
+    {
+      "argv": [
+        "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+        "version"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "exit_code": 0,
+      "finished_ns": 1793984962689901991,
+      "label": "provider-version",
+      "log_sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547",
+      "started_ns": 1793984962688838388
+    }
+  ],
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_HOME": "/home/qq/work/chain-throughput-20261106-ee79/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-throughput-20261106-ee79/target",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qq/trnm-ee79-e7466106a2a6-tmp",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "files": {
+    "disk_guard.py": "9e050c1a0170b100662759b3d4161f79b490888ef2b53d88e410e417b893e322",
+    "observe_authenticated_ignored.py": "b212575359d26031fa9418ec529943c8c553239680550d4b1087d2ee7385a97f",
+    "run_ai395_pipeline.py": "8fba04f38b167876e0d24e4773e796efc84a1389bc5063c14cd0e344a1ca8ce0",
+    "run_native_qualification.py": "da7dc56e80384b2d5b44ae84d11024a36fa28e94a6ba7c0cf7684937cc322fb2",
+    "setup_ai395_e746.py": "732d921eb31277668178dbd0d07e1bd6e929808e3db2cb3c3bac57ebd3e71db0",
+    "source.bundle": "45331d85469904e07c1816eb7a2d760d7aa2a019a642283f21c8794920bfc9d2"
+  },
+  "finished_ns": 1793984962716840482,
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "original_head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "original_runtime2_archive_sha256": "1ab4b2ea15284eb9cbc8b8c1e2e2ad3404634221f91caeea22397c38b9a614b7",
+  "schema": "trnm-task-exclusive-source-setup-v1",
+  "started_ns": 1793984958905670501,
+  "status": "passed",
+  "tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

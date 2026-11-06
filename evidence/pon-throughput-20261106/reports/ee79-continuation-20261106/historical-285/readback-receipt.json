@@ -1,0 +1,80 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/historical-cost-recovered/reader-source-af144/scripts/ci/throughput_cost_coverage.py",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/historical-cost-recovered/original-selected/run-1-raw/report.json",
+    "--report-sha256",
+    "3c3daa37eeb2584e82ea7551f3821c451bbb8463c697f722068c1632224a7d58",
+    "--source",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/historical-cost-recovered/original-selected/source-before.json",
+    "--source-after",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/historical-cost-recovered/original-selected/source-after.json",
+    "--expected-head",
+    "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "--expected-tree",
+    "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "--kind",
+    "head",
+    "--output",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/historical-cost-recovered/run-1-cost-coverage-recomputed.json"
+  ],
+  "completed_utc": "2026-11-06T15:53:44.069573+00:00",
+  "current_source_qualification": false,
+  "exit_code": 0,
+  "historical_source_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "historical_source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "new_native_benchmark_executed": false,
+  "operation": "post-executor-loss recomputation",
+  "original_historical_cost_readback_receipt_recovered": false,
+  "output_bytes": 546525,
+  "output_sha256": "b0f0b823fc293c156d191d816ac607c450245dec235860846de142621a32144f",
+  "prior_coverage_expected_bytes": 546525,
+  "prior_coverage_expected_sha256": "b0f0b823fc293c156d191d816ac607c450245dec235860846de142621a32144f",
+  "reader_source": {
+    "files": [
+      {
+        "bytes": 23761,
+        "git_blob": "c5c42e923b5ac9b9189e1b70ffd665c6f71a87c9",
+        "repo_path": "scripts/ci/throughput_cost_coverage.py",
+        "sha256": "14cb0e6b78c3a6b71b3bd35955e7f49a74f91494603117ebd42f5a5cb58b7c50"
+      },
+      {
+        "bytes": 69332,
+        "git_blob": "d29b3d1a7b63a6c3ae3014e8debfd50152d44377",
+        "repo_path": "scripts/pon_public_v3_phase_read.py",
+        "sha256": "37a2559193761bdf5c55082430723ed194c972d7d3c4abc81b664adef518ed96"
+      },
+      {
+        "bytes": 7350,
+        "git_blob": "7c72b7307aa9b0c91ee2c0d84f49da8c4791939a",
+        "repo_path": "scripts/pon_public_v3_policy_read.py",
+        "sha256": "dee1aa712998ec24c65b39e5359a4b4cd622f8f80d0044c2425570d2c26a5527"
+      },
+      {
+        "bytes": 9219,
+        "git_blob": "eb60b89a8e4f6bd29a6bc2405e538b3d610add75",
+        "repo_path": "scripts/ci/read_native_cache_observation.py",
+        "sha256": "66da3ae13ded590fbef939233a158a9ca9ad38567f70a89d9796f01bbdab1e3b"
+      },
+      {
+        "bytes": 28457,
+        "git_blob": "791a4c24972b509bae1fa50bf9847e1b82942797",
+        "repo_path": "config/pon/public-resource-profile-vectors-v1.json",
+        "sha256": "41c5f557fc9b7064f9c9262365112039f1ad4641d8ba6052ee239d61039ac238"
+      }
+    ],
+    "reader_commit": "af1441ef62e036eca60f4bd756b7a332b685f8c9",
+    "schema": "historical-cost-reader-source-blobs-v1",
+    "scope": "Only exact committed reader and its local dependencies; does not qualify current mutable worktree or historical execution."
+  },
+  "recomputed_coverage_byte_identical_to_known_previous_digest": true,
+  "report_sha256": "3c3daa37eeb2584e82ea7551f3821c451bbb8463c697f722068c1632224a7d58",
+  "schema": "historical-cost-readback-post-executor-loss-v1",
+  "source_after_sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac",
+  "source_before_after_byte_identical": true,
+  "source_before_sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac",
+  "started_utc": "2026-11-06T15:53:41.646455+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

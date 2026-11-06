@@ -8178,3 +8178,64 @@ prior rejection. The 118 selected / 118 authenticated / 21 history counts
 are unchanged. Exact `516382d87bbfdba85fbf34b6aa7b62edbc5759bb` already passes
 its own 389 Python controls and all 17 source/reader commands; the new fixture
 correction requires its own exact-source native and source qualification.
+
+### 2026-11-06 close component evidence and retain the fixed-Host runtime refusal
+
+Exact implementation/test source `e7466106a2a647c8032556273101440384d88b70`,
+tree `63e03dc848eeb92d747fe2c7926c2f758b277cef`, now passes all 389 Python
+controls across fourteen suites and all 17 original local commands. Its
+615-pin / 534-required-path corpus, source inventory and repository/Markdown
+checks pass. The three locked Cargo graphs, complete workspace formatting,
+strict all-target/all-feature Clippy and the full original no-run build also
+pass, retaining all 390 metadata targets in all 26 members.
+
+All **118 selected native controls execute and pass**, including the four
+new actual PQ worker/application controls. The separate original release
+authenticated prefix also records **118 passed / zero failed / zero ignored**,
+with its original summary and complete-roster guards. These overlapping
+selections are not 236 unique tests. Keep their distinct profiles, providers,
+announced ELF identities and unchanged before/after source receipts.
+
+The complete original workspace runtime command remains **failed**, Cargo
+exit 101. The Node library completes **1,216 passed / zero failed / 32 ignored**;
+the subsequent architecture delivery target records **12 passed / one failed**.
+All eighteen samples in that failed test report `PUBLIC_HOST_KERNEL_PARENT`
+when the independently syncing client imports public history. Cold reopening
+still matches, but the refused client import cannot establish equal native
+state or a passing replay invariant. Keep the test predicate and its failure.
+The separately executed original documentation command passes with exit zero.
+Do not credit later runtime targets after Cargo stopped.
+
+A separate readonly Host observation finds no fixed administrator parent on
+the development machine. The original current-ELF adapter and provisioning
+lease explicitly require the genuine hosted CI job, exact source and waiting
+native parent; a manually chosen environment marker cannot grant that
+authority. No Rust or oracle change is justified by this missing environment.
+Do not fabricate GitHub job identity, install a global parent on this machine,
+weaken the public importer, or turn a component success into whole-workspace
+acceptance. The real source-specific GitHub workflows are still pending or
+queued in the retained observation, so their fixed-Host result is unobserved.
+
+The external runtime wrapper did not export the original report-retention
+variable to this full-workspace command. Its temporary complete architecture
+report was deleted with the fixture; preserve the original bounded eighteen
+failure rows in stdout and the actual failed readback attempts. Do not
+reconstruct the missing report and label it original. Future original runtime
+executions must use their own fresh, recorded report destination; retention
+does not itself satisfy the fixed-Host authority contract.
+
+Both 0bca and e746610 history controls preserve the transaction trace while
+measuring all-SQL work of 1,882 to 1,818 and 1,990 to 1,818 in their two
+same-connection fixtures. The existing retained-delta release comparison
+keeps all 32 observations / 16 pairs / four fixtures, including slower narrow
+rows and faster wide rows. It is not an isolated measurement of this P1/PQ
+change. No first-history, full-State, activation, Host-checkpoint or business
+TPS improvement follows from these finite observations.
+
+Publish the source-specific original carriers, manifests, failed observations
+and the earlier executor-loss provenance gap in the continuation evidence.
+An evidence-only child does not relabel any execution. Keep PR #736 in draft;
+the original four-second/depth-six/resource envelope, Cell shared-resource
+isolation, complete cost coverage and service acceptance remain open. No
+merge, deployment, activation or change to existing services is authorized
+by the evidence publication.

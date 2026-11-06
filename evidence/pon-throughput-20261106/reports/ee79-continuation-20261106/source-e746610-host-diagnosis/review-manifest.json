@@ -1,0 +1,93 @@
+{
+  "file_count": 16,
+  "files": [
+    {
+      "bytes": 2409,
+      "relative_path": "history-job-launch.json",
+      "sha256": "082b6bfbaf6882f33cb80f335de033ca20c6a884aa4868bfdda03a2191642fa8"
+    },
+    {
+      "bytes": 731,
+      "relative_path": "history-job-terminal.json",
+      "sha256": "7d926aca0586ea479e91e1be654911acd874acf01c050352d8ee6e4657061305"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "history-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1523,
+      "relative_path": "history-job.stdout",
+      "sha256": "8f836f66de654965cca0f5e44364fa896ff887ab5c516f208f64beaee68a7502"
+    },
+    {
+      "bytes": 1011,
+      "relative_path": "history-probe.py",
+      "sha256": "f4c90b751559d6c169376689c8124f6837ee699e39e45700510f09449ecde40a"
+    },
+    {
+      "bytes": 1408,
+      "relative_path": "local-af144-to-e746-stat.stdout",
+      "sha256": "ce287fdec528eb1d42956054b8aecd2f97513851c1b73e49656ea76af9015c6d"
+    },
+    {
+      "bytes": 1331,
+      "relative_path": "local-initial-source-history.stdout",
+      "sha256": "9784ca9c25643762302df36c3448efe891b6f539053454fd66116497f1a51998"
+    },
+    {
+      "bytes": 369,
+      "relative_path": "local-source-identity.stdout",
+      "sha256": "d534cbcbbd29f762807143fe2c537b66544110806601c60050ac08921036ac32"
+    },
+    {
+      "bytes": 3159,
+      "relative_path": "manifest.json",
+      "sha256": "3df90717655e591bfdf68bd068456685733f767bf0006b9a96a3102748d54ca7"
+    },
+    {
+      "bytes": 112,
+      "relative_path": "required-ci-20261106T174605Z/queue-query-0-connector-error.txt",
+      "sha256": "057f31fbf5e0244c0b80e46027d0a6ac619dee619f775a71ec728945a64a4896"
+    },
+    {
+      "bytes": 112,
+      "relative_path": "required-ci-20261106T174605Z/queue-query-1-connector-error.txt",
+      "sha256": "057f31fbf5e0244c0b80e46027d0a6ac619dee619f775a71ec728945a64a4896"
+    },
+    {
+      "bytes": 3113,
+      "relative_path": "required-ci-20261106T174605Z/readback.json",
+      "sha256": "e45d82a306bfe8cf0a271c07fae25f22f22e3c3a4c4b66330f3e08f2a2dc46fd"
+    },
+    {
+      "bytes": 32,
+      "relative_path": "required-ci-20261106T174605Z/required-run-artifacts.json",
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "bytes": 27,
+      "relative_path": "required-ci-20261106T174605Z/required-run-jobs.json",
+      "sha256": "b3dab5870ff3a8209160335de7c1077b89e461d875d9041ac9d8b8ed7c1666f6"
+    },
+    {
+      "bytes": 15161,
+      "relative_path": "required-ci-20261106T174605Z/required-run.json",
+      "sha256": "ab9909bad99bccd9947f9f276f53c432a5238d68deb4aa9c5d71f488430dd350"
+    },
+    {
+      "bytes": 25389,
+      "relative_path": "source-excerpts.json",
+      "sha256": "57389c362b91346c3a18421941dc5f177e7a89b091ac4955e3d1756b005e86d0"
+    }
+  ],
+  "github_actions_mutated": false,
+  "host_provisioned": false,
+  "native_or_build_executed": false,
+  "schema": "trnm-architecture-host-readonly-review-manifest-v1",
+  "scope": "retained exact source/history originals and bounded current GitHub pending snapshot; original AI runtime failure is separately retained by its execution owner; no missing report reconstructed",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_modified": false,
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

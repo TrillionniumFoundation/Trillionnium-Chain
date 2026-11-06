@@ -1,0 +1,314 @@
+{
+  "executor_loss_previous_raw_reconstructed": false,
+  "finished_utc": "2026-11-06T16:13:43.758294+00:00",
+  "native_execution": false,
+  "passed_commands": 17,
+  "passed_python_tests": 389,
+  "planned_commands": 17,
+  "planned_python_tests": 389,
+  "production_qualified": false,
+  "rows": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_authenticated_suite_count.py",
+        "-v"
+      ],
+      "elapsed_ns": 4737716555,
+      "expected_python_tests": 11,
+      "label": "authenticated-roster",
+      "log_sha256": "840d170ced43354d2f0d3af6917e206752dfbb72d0681ae05214911854b88306",
+      "observed_test_summaries": [
+        11
+      ],
+      "passed": true,
+      "receipt_sha256": "94cb7ab6f5dcd60eed3f4a7172b1ec61e6254c565f6252ddee2a4a28c851daeb",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "elapsed_ns": 10664168545,
+      "expected_python_tests": 109,
+      "label": "ci-contract",
+      "log_sha256": "04589ef6c0be4cf4dd5454a0f1bc99765a124d02752fe5590c41a04c32402ae6",
+      "observed_test_summaries": [
+        109
+      ],
+      "passed": true,
+      "receipt_sha256": "bbae8466cf5f044b8d24f75c36ff2ef3d2e889489d52b13300e178cdb7cc20a7",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "elapsed_ns": 5961628284,
+      "expected_python_tests": 43,
+      "label": "source-integrity",
+      "log_sha256": "e4ee98b6d904053f3c1e0f17f7c6431ad5ceb408af39b6477b5f6fa8ca6a0714",
+      "observed_test_summaries": [
+        43
+      ],
+      "passed": true,
+      "receipt_sha256": "b3306e842edd5cdb33de7c774dedf71c79e34684a851638bbf0439121cdbff84",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_record_pq_native_command.py",
+        "-v"
+      ],
+      "elapsed_ns": 2803366272,
+      "expected_python_tests": 4,
+      "label": "command-recorder",
+      "log_sha256": "fcd4b5ded83bc6b89934f7f9dd30f6b0465cf03190eee82ba1327f322fd50bcc",
+      "observed_test_summaries": [
+        4
+      ],
+      "passed": true,
+      "receipt_sha256": "16441c79558a7536bf7056b8e391292a0088155296da0b3e3498eb63b7d746c9",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_throughput_cost_coverage.py",
+        "-v"
+      ],
+      "elapsed_ns": 2853697116,
+      "expected_python_tests": 18,
+      "label": "cost-coverage",
+      "log_sha256": "f6cc174ddd140d62e596533945b16188e32d5edb85b5d3f18d0c78162e51ef7e",
+      "observed_test_summaries": [
+        18
+      ],
+      "passed": true,
+      "receipt_sha256": "bbe66e7d1b633d06d2f4aeb1dcb857c3f39ca18e497172632d7513ce9db8d696",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_fixed_root_phase_host.py",
+        "-v"
+      ],
+      "elapsed_ns": 2748765884,
+      "expected_python_tests": 19,
+      "label": "fixed-host-phase-reader",
+      "log_sha256": "d9e5d6546c532ac59f64fd96a7d6451b24343563b87d80fb7b54f145035905b1",
+      "observed_test_summaries": [
+        19
+      ],
+      "passed": true,
+      "receipt_sha256": "d6b38fb15f492704306506e18a468de407cedc015573faa2661b164419248328",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_native_phase_host.py",
+        "-v"
+      ],
+      "elapsed_ns": 2861815988,
+      "expected_python_tests": 11,
+      "label": "native-host-phase-reader",
+      "log_sha256": "92b22b84dd0657cc0d53aebe52b4e58558beb0bb2b468bd576903b7025d776c7",
+      "observed_test_summaries": [
+        11
+      ],
+      "passed": true,
+      "receipt_sha256": "69e67d7f1ce857c81003cfda861f38ab02a0f7dd16c0a2c020208c1e3d55d0f6",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_six_workpackage_native_rosters.py",
+        "-v"
+      ],
+      "elapsed_ns": 3023749479,
+      "expected_python_tests": 6,
+      "label": "six-native-rosters",
+      "log_sha256": "b56c707bb817c5599f6e08c655ff16e3aea1460cc87e877bc97b70c9166cab49",
+      "observed_test_summaries": [
+        6
+      ],
+      "passed": true,
+      "receipt_sha256": "1e85ce4fb1b408afd9b7dd994d606a96295d5204517a342bf6599186dbd57d30",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/test_llm_runtime_release.py",
+        "-v"
+      ],
+      "elapsed_ns": 6702894011,
+      "expected_python_tests": 25,
+      "label": "runtime-packaging",
+      "log_sha256": "5403acc77988e62d9520947823bb3c578ea0ffc41f9f900123c04c7d1b14b171",
+      "observed_test_summaries": [
+        25
+      ],
+      "passed": true,
+      "receipt_sha256": "14b6deb5b783cf993bfc90b7c8ec8b1ad24a199b65ee82234a4366a9204bc694",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_phase_read.py",
+        "-v"
+      ],
+      "elapsed_ns": 3385900547,
+      "expected_python_tests": 57,
+      "label": "public-v3-phase-reader",
+      "log_sha256": "a39aea1d000bb1348c1abd193d0e23fc4925edfd55751c1992187d0d04f0d1de",
+      "observed_test_summaries": [
+        57
+      ],
+      "passed": true,
+      "receipt_sha256": "7763cd8abd33bd693c2c4574ed8d1ddd6d0d7766fd8f8937f0104bb35fdc0b63",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_policy_read.py",
+        "-v"
+      ],
+      "elapsed_ns": 2739259404,
+      "expected_python_tests": 7,
+      "label": "public-v3-policy-reader",
+      "log_sha256": "dc885d41f7bf28ad47108d19b54b54d49950267d0db7696df6d21b497edfff91",
+      "observed_test_summaries": [
+        7
+      ],
+      "passed": true,
+      "receipt_sha256": "af6b453fcd28e640fc2642047b0c012499a70b71748e348121df03ba5bd2fd41",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_recent_batch_suite_count.py",
+        "-v"
+      ],
+      "elapsed_ns": 2894401150,
+      "expected_python_tests": 4,
+      "label": "recent-batch-roster",
+      "log_sha256": "123396c2c63c55ce2fc1b397813a73897e613952f7596ae4406ee1ef4c75639c",
+      "observed_test_summaries": [
+        4
+      ],
+      "passed": true,
+      "receipt_sha256": "3efcbd68fd47a573e4c4c7e689bd3c7ee33ad45fa66b162e333d8648e562f375",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "elapsed_ns": 37642387924,
+      "expected_python_tests": 38,
+      "label": "pq-corpus-negatives",
+      "log_sha256": "1bdf7a830750f34b4c1b4837b985376c2a09eabfd37357252e73c938aba293ee",
+      "observed_test_summaries": [
+        38
+      ],
+      "passed": true,
+      "receipt_sha256": "6ad7dc02be2fad004e114c1c4d427dadf8b8106fa9c1d4e82c0349876a50dc32",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/test_applicability.py",
+        "-v"
+      ],
+      "elapsed_ns": 663240500234,
+      "expected_python_tests": 37,
+      "label": "applicability",
+      "log_sha256": "771db9719c417792ddc9e611349f5421fe5c825f2bb06448506c928c006fa5d0",
+      "observed_test_summaries": [
+        37
+      ],
+      "passed": true,
+      "receipt_sha256": "a8ba21045b928c2a4375c0b14e7ae6b56d1cf9328d68921b1869e24c4d38cdeb",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "elapsed_ns": 2673687984,
+      "expected_python_tests": null,
+      "label": "pq-corpus",
+      "log_sha256": "5616eab559a926900512280ed7c4f8ab180550a8ab71cbef145fc40986e735c9",
+      "observed_test_summaries": [],
+      "passed": true,
+      "receipt_sha256": "7fccd15cc64fa12814cd1c43d7d8bb0d1937ae6222d2422b8fa7f3b576a21ef4",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "elapsed_ns": 2687896369,
+      "expected_python_tests": null,
+      "label": "distributed-inventory",
+      "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "observed_test_summaries": [],
+      "passed": true,
+      "receipt_sha256": "984bc17b933af259063724c4b5b04743ce7a4378d11c5c4b24fdc700e15cdbc6",
+      "recorder_exit_code": 0
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "elapsed_ns": 56513976782,
+      "expected_python_tests": null,
+      "label": "repository-and-markdown",
+      "log_sha256": "efd789acf3825f86b64c6a6a1eccd8c35a70d1a16d4ce7af641a16d4f1598287",
+      "observed_test_summaries": [],
+      "passed": true,
+      "receipt_sha256": "4c0942350d7ecdd88e4123d728ea2327938d97589901515f54d530e520beedc4",
+      "recorder_exit_code": 0
+    }
+  ],
+  "schema": "trnm-local-original-command-batch-v1",
+  "source": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "started_utc": "2026-11-06T16:00:09.614572+00:00",
+  "status": "passed"
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "pon-9eda-portable-recompute-v1",
+  "utc": "2026-11-06T16:13:44.260921+00:00",
+  "archive_sha256": "aca304ff315c2fc80b7c8f89c57ddb2179634944405648d97eab7aff8fd1d3aa",
+  "member_count": 75,
+  "carrier_manifest_sha256": "d7fe3772cee67648f9bae985c917e98a9eb44dc666ba25f822b561808af80340",
+  "argv": [
+    "python3",
+    "-B",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/campaign-9eda-recovered/portable-check/9eda-historical-cost/recompute.py",
+    "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/campaign-9eda-recovered/portable-check/recomputed"
+  ],
+  "returncode": 0,
+  "stdout_sha256": "49845002219a6ee818993b8a10fff2200538e1793a1ab4ba33df292df7159b5c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "new_native_execution": false,
+  "original_carrier_modified": false,
+  "results": [
+    {
+      "run": 1,
+      "reader_returncode": 0,
+      "output_sha256": "447f0eb2dbd31f8389f163f8b517b23fccc889a5de93a566e6cbc5e6df0bd5a1",
+      "matches_retained_output": true,
+      "new_native_execution": false
+    },
+    {
+      "run": 2,
+      "reader_returncode": 0,
+      "output_sha256": "87db917fecc103fc1a23102d6bc5813cf3cacc54bbe9d152f55aa8fb54416b5d",
+      "matches_retained_output": true,
+      "new_native_execution": false
+    },
+    {
+      "run": 3,
+      "reader_returncode": 0,
+      "output_sha256": "00939013d1f1dd18040c03dd331bd5f53c14dcd00d567acb93df0e5613ef7e87",
+      "matches_retained_output": true,
+      "new_native_execution": false
+    }
+  ]
+}

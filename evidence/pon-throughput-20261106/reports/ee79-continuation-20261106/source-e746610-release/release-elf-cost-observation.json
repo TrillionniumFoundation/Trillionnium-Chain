@@ -1,0 +1,274 @@
+{
+  "cargo_announcement": "     Running unittests src/lib.rs (/home/qian-qi/chain-ee79-release-e746-v1/target/release/deps/trnm_pon_node-668ee0bc7360e43d)",
+  "cargo_finished_lines": [
+    "    Finished `release` profile [optimized] target(s) in 3m 24s"
+  ],
+  "cost_cases": [
+    {
+      "case": 0,
+      "observations": 8,
+      "pairs": 4,
+      "payload_width": 64,
+      "root": "0fc73ffcf2d4a954066b54b72cf940d662257bf256a8d86dcc912d4193afb6d5",
+      "rows": 256
+    },
+    {
+      "case": 1,
+      "observations": 8,
+      "pairs": 4,
+      "payload_width": 64,
+      "root": "f2b56ae9a9bc55c52d705539ebd72ea367d6e70e68a8698538c48279615d7195",
+      "rows": 4096
+    },
+    {
+      "case": 2,
+      "observations": 8,
+      "pairs": 4,
+      "payload_width": 4093,
+      "root": "88be8d461b31f2579c9eaf624742be0f149b41924b14f2c995861e6803e3dcb1",
+      "rows": 4096
+    },
+    {
+      "case": 3,
+      "observations": 8,
+      "pairs": 4,
+      "payload_width": 64,
+      "root": "1399f0cb8b512653487da056376311dd97e4e71b6490ccbc5400c6ff31bdbdf8",
+      "rows": 16384
+    }
+  ],
+  "cost_file": {
+    "bytes": 6995,
+    "fingerprint": [
+      66306,
+      28079108,
+      33152,
+      6995,
+      1793985538175269053,
+      1793985538175269053
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/retained-delta-cost.jsonl",
+    "sha256": "156005725eec2d1a461b8a398c3f2f8e16de6bbf62ab18d51f26b8492058037a"
+  },
+  "cost_footer": {
+    "completed": true,
+    "observations": 32,
+    "pairs": 16,
+    "scope": "no timing threshold or performance qualification"
+  },
+  "cost_header": {
+    "comparison": "exact eee8db8 full-list reader and streaming root versus current bounded streamed reader/root",
+    "production_activation": false,
+    "schema": "pon-native-retained-delta-cost-v1",
+    "scope": "actual in-memory SQLite ordered read, canonical validation and complete delta root; not Node/state/history/physical I/O/RSS/TPS",
+    "speed_threshold": null,
+    "synthetic_sqlite_rows": true
+  },
+  "cost_validation": {
+    "all_errors_null": true,
+    "all_results_equal": true,
+    "alternating_original_order": true,
+    "cases": 4,
+    "observations": 32,
+    "pairs": 16,
+    "timing_threshold": null
+  },
+  "elf_executed_by_this_observer": false,
+  "lockfile": {
+    "bytes": 40044,
+    "fingerprint": [
+      66306,
+      46956151,
+      33152,
+      40044,
+      1793974694010090045,
+      1793974694010090045
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo/trillionnium/Cargo.lock",
+    "sha256": "d90b2a182b423a2d247539e753beacf8ddc467203459064251dcbf32673b0c83"
+  },
+  "manifest": {
+    "bytes": 2204,
+    "fingerprint": [
+      66306,
+      46956152,
+      33152,
+      2204,
+      1793974694010163041,
+      1793974694010163041
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-ee79/repo/trillionnium/Cargo.toml",
+    "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "native_execution_evidence": "original cargo command log and original summary/PYLOG guards",
+  "native_gate_passed": true,
+  "native_job": "1a1b1db83f0-fc05-7b28",
+  "observed_unix_ns": 1793985809979755906,
+  "original_cargo_argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--release",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "store::native_authenticated::",
+    "--",
+    "--include-ignored",
+    "--show-output",
+    "--test-threads=1"
+  ],
+  "original_cargo_log": {
+    "bytes": 50123,
+    "fingerprint": [
+      66306,
+      28071900,
+      33152,
+      50123,
+      1793985538594262899,
+      1793985538594262899
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/release-authenticated.log",
+    "sha256": "6ab13e836a426d0106630e9ca4a9b42c6f67e0a87b13eed74e47eebb495991f3"
+  },
+  "original_stage": {
+    "bytes": 12686,
+    "fingerprint": [
+      66306,
+      28071875,
+      33152,
+      12686,
+      1793985543475136151,
+      1793985543475136151
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/release-authenticated-stage.json",
+    "sha256": "e35ac0fc95a01a9a6b52043be10c05c5c9beb8f5267be8700ef001f6dad2b28c"
+  },
+  "production_qualified": false,
+  "release_node_elf": {
+    "bytes": 107094248,
+    "fingerprint": [
+      66306,
+      28079159,
+      33216,
+      107094248,
+      1793985527852421305,
+      1793985527859421201
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/target/release/deps/trnm_pon_node-668ee0bc7360e43d",
+    "sha256": "0a9b28e5264926891506ada8e8673bbd55a0a7930f063308b4b29c5a9b8c59d6"
+  },
+  "schema": "trnm-original-release118-elf-cost-observation-v1",
+  "source_after": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/work/chain-throughput-20261106-ee79/repo/scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "e7466106a2a647c8032556273101440384d88b70",
+      "--output",
+      "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-after.json"
+    ],
+    "exit_code": 0,
+    "log": {
+      "bytes": 423,
+      "fingerprint": [
+        66306,
+        28079173,
+        33152,
+        423,
+        1793985809971625777,
+        1793985809971625777
+      ],
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-after.log",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    "receipt": {
+      "bytes": 423,
+      "fingerprint": [
+        66306,
+        28079178,
+        33152,
+        423,
+        1793985809971625777,
+        1793985809971625777
+      ],
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-after.json",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    "source": {
+      "base": null,
+      "candidate": "e7466106a2a647c8032556273101440384d88b70",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+      "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1045782996,
+      "tracked_entries": 10905,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_before": {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/work/chain-throughput-20261106-ee79/repo/scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "e7466106a2a647c8032556273101440384d88b70",
+      "--output",
+      "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-before.json"
+    ],
+    "exit_code": 0,
+    "log": {
+      "bytes": 423,
+      "fingerprint": [
+        66306,
+        28079171,
+        33152,
+        423,
+        1793985809202688519,
+        1793985809202688519
+      ],
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-before.log",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    "receipt": {
+      "bytes": 423,
+      "fingerprint": [
+        66306,
+        28079172,
+        33152,
+        423,
+        1793985809202688519,
+        1793985809202688519
+      ],
+      "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/observation-source-before.json",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    "source": {
+      "base": null,
+      "candidate": "e7466106a2a647c8032556273101440384d88b70",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+      "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1045782996,
+      "tracked_entries": 10905,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+  "tests_executed_by_this_observer": false
+}
