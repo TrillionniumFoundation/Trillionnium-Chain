@@ -25,7 +25,11 @@ with same-call immutable PQ configuration preparation, fresh-row Growth SQL
 program reuse, bounded shared-domain mutation start ordering, and complete
 client-preparation timing with strict native-clock validation. Existing M06
 bounded parallel preparation and deterministic state commit remain the owners;
-current authorization, revocation, nonce, resource and recovery frontiers are
+the explicit r16 policy orders registered public starts while retaining original
+nonblocking local admission. Preserve the superseded r15 local-owner exclusion
+counterexample and its interrupted validation; do not wait under the Node lock
+or refund a durable permission claim to repair ordering.
+Current authorization, revocation, nonce, resource and recovery frontiers are
 not cached. Cell transport remains a separate data plane, with whole-host
 isolation and simultaneous-load acceptance still open. Keep the original
 four-second business and 4,105-block cold-sync gates, all distinct workload

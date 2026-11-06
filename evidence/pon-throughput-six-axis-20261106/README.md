@@ -23,14 +23,23 @@ Historical executions are not executions of this new combination.
 | 5. Large-object transport | Preserve the existing independent Cell data plane and its bounded verified transfer contracts. | Whole-host CPU, storage and network isolation during simultaneous consensus and Cell load remains unqualified. Complete W1 proof validation is unchanged. |
 | 6. Complete costs | Include PQ client pin preparation in the original call duration; reject invalid native clock values in report readers while preserving unknown values. | Inclusive and overlapping process/thread/setup samples are not added into a fictitious total. Missing network/recovery/remote costs remain unknown. |
 
-The changed scheduling contract is explicitly **r15**. Raw r10--r14 and
-arithmetic r13/r14 policy vectors remain readable as historical identities;
-current native clients and Host harnesses select r15 and cannot relabel an old
+The changed scheduling contract is explicitly **r16**. Raw r10--r15 and
+arithmetic r13/r14/r15 policy vectors remain readable as historical identities;
+current native clients and Host harnesses select r16 and cannot relabel an old
 signed cookie as the new schedule. CPU refill/burst, start principal, live worker
 count and each workload's original absolute deadlines retain their values.
-Ordering applies after dequeue/registration. Continuously queued public work
-can keep immediate local miner/operator `begin()` calls refused; this is not
-general fairness across those classes or a four-second service guarantee.
+Ordering applies among public tasks after dequeue/registration. Local
+miner/operator `begin()` retains its original nonblocking admission predicates;
+it does not join the public FIFO or wait while retaining the Node lock. This is
+not general fairness across those classes or a four-second service guarantee.
+
+The earlier r15 candidate at `a134ac90fd3cdf47c6ac237c7abf1af11c7e4db6`
+added a real exclusion: any registered public waiter refused an immediate local
+start, including a continuous-owner path that had already spent a durable
+permission claim. Read-only cross-review found this counterexample before
+promotion. R16 removes that exclusion while preserving public FIFO and original
+CPU/deadline/claim contracts. The r15 source checks and SIGKILL-interrupted
+Clippy attempt remain separate historical observations, not r16 evidence.
 
 PQ client deadline precedence is explicit: if its caller-supplied outer deadline
 has already expired at entry, `PUBLIC_CLIENT_DEADLINE` is returned before public

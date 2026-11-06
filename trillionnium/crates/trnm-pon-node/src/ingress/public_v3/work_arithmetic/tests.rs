@@ -15,11 +15,11 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let policy = policy();
     assert_eq!(
         hex::encode(policy.id()),
-        "0c99d1286902f9f9f51bbee90309d7aab98eca7afc2fd4e5cf6d797e9d4c57d0"
+        "51a4e3431aed749eb24033d577eb996ccc4e156f672e594f27ad673609bd54b3"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "e34457ca9737b4350f9d2480dc5f32801e954a605a02ad3f5c01c9892785ecfa"
+        "b3b7dfc1a8049cdf5cbaf361f3aff7a5315cee6a8e8805c9ed8a3516ef9a1f21"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();
@@ -41,7 +41,7 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let raw_cookie = raw.cookie(&settings, hello, peer).unwrap();
     let arithmetic_cookie = arithmetic.cookie(&settings, hello, peer).unwrap();
     // Correctly signed predecessor cookies remain old namespaces. A new
-    // resource revision cannot silently accept r13 or r14 execution profiles.
+    // resource revision cannot silently accept r13, r14 or r15 execution profiles.
     for (owner, cookie, predecessor) in [
         (
             &raw,
@@ -62,6 +62,16 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
             &arithmetic,
             &arithmetic_cookie,
             "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825",
+        ),
+        (
+            &raw,
+            &raw_cookie,
+            "0c99d1286902f9f9f51bbee90309d7aab98eca7afc2fd4e5cf6d797e9d4c57d0",
+        ),
+        (
+            &arithmetic,
+            &arithmetic_cookie,
+            "e34457ca9737b4350f9d2480dc5f32801e954a605a02ad3f5c01c9892785ecfa",
         ),
     ] {
         let mut old = (*cookie).clone();

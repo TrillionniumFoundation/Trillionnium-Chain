@@ -74,7 +74,7 @@ impl CampaignConfiguration {
 
 fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<Value>) {
     let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
-    if work_profile == support::WorkProfile::RawR15 {
+    if work_profile == support::WorkProfile::RawR16 {
         assert_eq!(server.resource_profile(), support::policy().id());
         assert!(server.arithmetic_facts_software_bytes().is_none());
         return (server, None);
@@ -1409,17 +1409,17 @@ fn phase(
 
 #[test]
 fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR15};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR16};
     let original = json!({"kind":"attack","mode":"from-zero","worker":0});
     let original_bytes = serde_json::to_vec(&original).unwrap();
     let mut raw = original.clone();
-    RawR15.bind_actor_job(&mut raw);
+    RawR16.bind_actor_job(&mut raw);
     assert_eq!(serde_json::to_vec(&raw).unwrap(), original_bytes);
-    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR15));
-    assert_eq!(RawR15.policy_observation(), support::policy_observation());
+    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR16));
+    assert_eq!(RawR16.policy_observation(), support::policy_observation());
     assert_eq!(
-        RawR15.policy_observation()["policy_id"],
-        "0c99d1286902f9f9f51bbee90309d7aab98eca7afc2fd4e5cf6d797e9d4c57d0"
+        RawR16.policy_observation()["policy_id"],
+        "51a4e3431aed749eb24033d577eb996ccc4e156f672e594f27ad673609bd54b3"
     );
     let mut opt_in = original;
     ArithmeticFactsV1.bind_actor_job(&mut opt_in);
@@ -1429,7 +1429,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     );
     assert_eq!(
         opt_in["public_resource_policy"]["policy_id"],
-        "e34457ca9737b4350f9d2480dc5f32801e954a605a02ad3f5c01c9892785ecfa"
+        "b3b7dfc1a8049cdf5cbaf361f3aff7a5315cee6a8e8805c9ed8a3516ef9a1f21"
     );
     let mut malformed = Vec::new();
     for key in ["work_profile", "public_resource_policy"] {
@@ -1444,7 +1444,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     unknown["work_profile"] = json!("raw-r13");
     malformed.push(unknown);
     let mut wrong_policy = opt_in.clone();
-    wrong_policy["public_resource_policy"] = RawR15.policy_observation();
+    wrong_policy["public_resource_policy"] = RawR16.policy_observation();
     malformed.push(wrong_policy);
     let mut wrong_bits = opt_in.clone();
     wrong_bits["public_resource_policy"]["ticket_bits"] = json!(7);
@@ -1462,14 +1462,14 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
 
 #[test]
 fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR15};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR16};
     for backend in [
         StateBackendChoice::LegacyV2,
         StateBackendChoice::AuthenticatedV1,
     ] {
-        let raw = CampaignConfiguration::new(backend, RawR15).unwrap();
+        let raw = CampaignConfiguration::new(backend, RawR16).unwrap();
         assert_eq!(raw.state_backend.label(), backend.label());
-        assert_eq!(raw.work_profile, RawR15);
+        assert_eq!(raw.work_profile, RawR16);
     }
     assert!(matches!(
         CampaignConfiguration::new(StateBackendChoice::LegacyV2, ArithmeticFactsV1),
@@ -1483,7 +1483,7 @@ fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
 
 #[test]
 fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
-    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR15);
+    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR16);
     let (opt_in, arithmetic) = campaign_server(support::WorkProfile::ArithmeticFactsV1);
     assert!(no_arithmetic.is_none());
     assert!(raw.arithmetic_facts_software_bytes().is_none());
@@ -1511,7 +1511,7 @@ fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::RawR15);
+    run_campaign(support::WorkProfile::RawR16);
 }
 
 #[test]
@@ -1814,7 +1814,7 @@ fn separate_process_root_rejection_and_signed_confirmation_supplement() {
     for mode in [None, Some("valid-work-root")] {
         let name = mode.unwrap_or("baseline");
         let configuration =
-            CampaignConfiguration::new(backend, support::WorkProfile::RawR15).unwrap();
+            CampaignConfiguration::new(backend, support::WorkProfile::RawR16).unwrap();
         let result = std::panic::catch_unwind(||phase(&output.join(name),&settings,&seed,&business,mode,0,configuration))
             .unwrap_or_else(|error|json!({"mode":name,"startup_or_campaign_error":error.downcast_ref::<String>()
                 .cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned())}));

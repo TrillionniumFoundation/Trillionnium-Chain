@@ -302,16 +302,18 @@ impl PaidMutationCpuBudget {
     pub(super) fn reserve(&mut self, now: Instant) -> Result<()> {
         self.reserve_start(now, None)
     }
-    // Both queued public starts and immediate local starts use this same
-    // account. An immediate caller cannot jump ahead of an already waiting
-    // public task. Verified completion retains its original higher priority.
+    // FIFO orders only the already-dequeued public starts. Immediate local
+    // callers retain the original nonblocking predicates: several hold the
+    // Node lock and have already spent a durable operation allocation. A
+    // public backlog must not introduce an unconditional local refusal or a
+    // wait while that caller holds the Node. Both paths still use the same
+    // credit, worker ceiling and original verified-completion priority.
     fn reserve_start(&mut self, now: Instant, waiter: Option<u64>) -> Result<()> {
         self.refill(now);
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-        ensure(
-            self.start_waiters.first().copied().filter(|id| *id != 0) == waiter,
-            "PUBLIC_MUTATION_CPU_BUDGET",
-        )?;
+        if let Some(id) = waiter {
+            ensure(self.start_waiters[0] == id, "PUBLIC_MUTATION_CPU_BUDGET")?;
+        }
         ensure(
             self.verified_completions == 0
                 && self.in_flight < MUTATION_CPU_WORKERS
@@ -1074,7 +1076,9 @@ impl ServiceMutationCpuDomain {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
     /// Begin on the actual owner thread, after separate task-purpose authority
-    /// but before expensive Native work. No ledger authority is minted here.
+    /// but before expensive Native work. Retains the original immediate local
+    /// admission conditions even when public starts wait; it never waits while
+    /// an owner holds the Node lock. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
         let stamp = ThreadCpuStamp::start();
         let mut budget = self

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read retained multiprocess observations; never infer confirmations from ACKs.
 
-Historical v1/v2 and the r11 through r15 paid CPU envelope's v3 observations are accepted.
+Historical v1/v2 and the r11 through r16 paid CPU envelope's v3 observations are accepted.
 The separate arithmetic-facts campaign retains its own schema and signed profile;
 reading it cannot qualify raw r13 or arbitrary-key service.
 An explicit observed policy is checked against exact revision vectors. Missing
@@ -876,12 +876,12 @@ def phase_summary(phase, *, interval_outcomes=True):
             base.update(observed_confirmation_rounds=0, unobserved_scheduled_rounds=ROUNDS,
                         confirmation_rounds=[])
         return base
-    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14', 'r15'):
+    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14', 'r15', 'r16'):
         base['completion_work_observation'] = completion_work_observation(
             phase.get('completion_work_observation'))
     else:
         require('completion_work_observation' not in phase,
-                'completion-work observation requires explicit r13, r14 or r15 policy')
+                'completion-work observation requires explicit r13, r14, r15 or r16 policy')
     if arithmetic_profile:
         owner = phase.get('work_arithmetic_owner')
         require(type(owner) is dict and set(owner) == {'schema', 'initial_state', 'slots',
@@ -926,7 +926,7 @@ def phase_summary(phase, *, interval_outcomes=True):
             'monotonic_epoch_is_observer_local')), 'v4 inclusive/local-clock scope required')
     if policy is not None:
         require(schema.endswith(('-v3', '-v4')) is (policy.get('base_resource_revision', policy['resource_revision'])
-                                         in ('r11', 'r12', 'r13', 'r14', 'r15')),
+                                         in ('r11', 'r12', 'r13', 'r14', 'r15', 'r16')),
                 'public policy and observed CPU scope disagree')
     if schema.endswith(('-v3', '-v4')):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True

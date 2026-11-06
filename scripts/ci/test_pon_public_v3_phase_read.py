@@ -839,8 +839,8 @@ class ReaderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'seven ordered'):
             reader.phase_summary(phase)
 
-    def test_r15_completion_scope_retains_exact_r13_r14_and_r15_policy_identities(self):
-        for revision in ('r13', 'r14', 'r15'):
+    def test_completion_scope_retains_exact_r13_through_r16_policy_identities(self):
+        for revision in ('r13', 'r14', 'r15', 'r16'):
             for arithmetic in (False, True):
                 with self.subTest(revision=revision, arithmetic=arithmetic):
                     policy = arithmetic_policy(revision) if arithmetic else observation(revision)

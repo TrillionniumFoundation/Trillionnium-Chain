@@ -1,9 +1,9 @@
 # Public development intake V3 and the native local pool
 
-The current source selects signed resource revision **r15**, described in
+The current source selects signed resource revision **r16**, described in
 [Shared-domain CPU start ordering](#shared-domain-cpu-start-ordering).
-The r10--r14 contracts, vectors and observations below retain their historical
-identities; they do not qualify the current scheduling combination. R15 retains
+The r10--r15 contracts, vectors and observations below retain their historical
+identities; they do not qualify the current scheduling combination. R16 retains
 the preceding paid interval, completion replay and reorganization boundaries.
 
 This is a fresh, explicitly selected development profile. It connects paid guest
@@ -29,32 +29,42 @@ CPU intervals and stream bytes are not energy or physical network measurements.
 
 ## Shared-domain CPU start ordering
 
-R15 retains the original 2,000,000,000 ns burst, 250,000,000 ns/s refill,
+R16 retains the original 2,000,000,000 ns burst, 250,000,000 ns/s refill,
 100,000,000 ns start principal, two mutation workers, verified-W1 completion
 priority and all absolute request deadlines. A listener keeps its original
 dequeue mutex while an already-dequeued mutation registers at the shared CPU
 start gate. At most one such waiter per admitted listener exists; the four-slot
 registry contains monotonic IDs only, with no additional request bodies.
 
-Only the oldest registered live waiter may take an original start reservation.
+Only the oldest registered live public waiter may take a public start reservation.
 Claiming its position and booking that reservation occur under the same budget
 lock. Cancellation, stop, expiry, pre-start error and unwind release ordering
 metadata through RAII; they cannot refund CPU principal or release a different
 owner. Clock uncertainty and exhausted ordering identities fail closed. Work
 and state validation still run after admission under their original owners.
 
-This ordering begins at registration after dequeue, not network arrival. Direct
-local `ServiceMutationCpuDomain::begin()` cannot pass a registered public task;
-a continuously nonempty registry can therefore keep local miner/operator starts
-refused. General fairness across those classes, independent honest service
-under attack and timely business confirmation remain open acceptance gates.
+This ordering begins at public registration after dequeue, not network arrival.
+Direct local `ServiceMutationCpuDomain::begin()` retains its original nonblocking
+admission predicates: live verified-completion priority, worker capacity,
+available credit and a usable clock. A public waiter alone does not refuse an
+otherwise admissible local operation. Local operations do not join this FIFO or
+wait while retaining the Node lock. General fairness across those classes,
+independent honest service under attack and timely business confirmation remain
+open acceptance gates.
 No extra local credit, recovery authority or production activation follows.
 
 The [resource vectors](../../../../config/pon/public-resource-profile-vectors-v1.json)
-retain exact raw r10--r14 and arithmetic r13/r14 identities alongside r15.
-Current native clients and fixed-Host harnesses bind r15 explicitly. Historical
+retain exact raw r10--r15 and arithmetic r13/r14/r15 identities alongside r16.
+Current native clients and fixed-Host harnesses bind r16 explicitly. Historical
 policy IDs are not relabelled and correctly signed predecessor cookies cannot
 authenticate the current schedule.
+
+The superseded r15 candidate required an empty public registry for a local
+start. Cross-review found that a continuing public backlog could thereby refuse
+local continuous-owner operations after their durable permission claim was
+spent. Its source and failed validation observations are retained; r16 removes
+that additional exclusion without waiting under the Node lock or refunding a
+spent claim. R15 is not an accepted deployment or a mixed-class fairness result.
 
 PQ history client construction/total wall timing now begins before immutable
 server-pin preparation, including failures. An outer deadline already expired

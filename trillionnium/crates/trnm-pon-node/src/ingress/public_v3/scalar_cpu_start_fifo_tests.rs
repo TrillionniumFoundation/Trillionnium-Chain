@@ -82,7 +82,6 @@ fn queued_start_claims_are_fifo_under_original_refill_and_worker_ceiling() {
         );
     }
     assert_eq!(account.credit_ns, i128::from(MUTATION_CPU_START_RESERVE_NS));
-    assert!(account.reserve(start + Duration::from_millis(400)).is_err());
     first
         .reserve(&mut account, start + Duration::from_millis(400))
         .unwrap();
@@ -158,14 +157,51 @@ fn fixed_waiter_registry_reuses_only_metadata_slots_and_never_ticket_ids() {
 }
 
 #[test]
-fn direct_begin_cannot_leapfrog_and_waiter_unwind_never_refunds_credit() {
+fn local_begin_keeps_original_affordable_admission_without_reordering_public_waiters() {
     let domain = ServiceMutationCpuDomain::standalone();
     let first = MutationCpuStartWaiter::register(domain.budget.clone()).unwrap();
-    assert_eq!(
-        domain.clone().begin().err().unwrap().to_string(),
-        "PUBLIC_MUTATION_CPU_BUDGET"
-    );
+    let mut second = MutationCpuStartWaiter::register(domain.budget.clone()).unwrap();
+    let order = domain.budget.lock().unwrap().start_waiters;
+    // r15 rejected this actual local start solely because public waiters
+    // existed, although both the credit and a worker slot were available.
+    let local = domain.clone().begin().unwrap();
+    assert_eq!(domain.observe().unwrap().in_flight, 1);
+    {
+        let mut account = domain.budget.lock().unwrap();
+        assert!(account.credit_ns >= i128::from(MUTATION_CPU_START_RESERVE_NS));
+        assert!(account.in_flight < MUTATION_CPU_WORKERS);
+        assert_eq!(account.start_waiters, order);
+        assert!(first.is_head(&account));
+        assert_eq!(
+            second
+                .reserve(&mut account, Instant::now())
+                .unwrap_err()
+                .to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        assert_eq!(account.start_waiters, order);
+        assert_eq!(account.in_flight, 1);
+    }
+    assert!(!local.finish().accounting_unavailable);
+    assert_eq!(domain.budget.lock().unwrap().start_waiters, order);
     assert_eq!(domain.observe().unwrap().in_flight, 0);
+    drop(first);
+    assert!(second.is_head(&domain.budget.lock().unwrap()));
+    drop(second);
+    assert_eq!(waiting(&domain), 0);
+    assert!(
+        domain
+            .observe_actual_flow()
+            .unwrap()
+            .unwrap()
+            .balance_identity_verified
+    );
+}
+
+#[test]
+fn waiter_unwind_never_refunds_credit_or_changes_original_local_start_conditions() {
+    let domain = ServiceMutationCpuDomain::standalone();
+    let first = MutationCpuStartWaiter::register(domain.budget.clone()).unwrap();
     let before = domain.observe_actual_flow().unwrap().unwrap();
     let result = std::panic::catch_unwind(|| {
         let _owned = first;
