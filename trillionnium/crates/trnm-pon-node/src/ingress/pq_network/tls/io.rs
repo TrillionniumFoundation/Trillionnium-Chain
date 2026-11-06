@@ -179,8 +179,15 @@ impl<'a> Channel<'a> {
             "PQ_NETWORK_WIRE_LIMIT",
         )?;
         check_live_request(self.deadline, None)?;
-        self.stream.write_all(&(bytes.len() as u32).to_be_bytes())?;
-        self.stream.write_all(bytes)?;
+        // Coalesce the unchanged length prefix and first payload bytes into
+        // one bounded SSL write. Receive charging and live checks are unchanged.
+        let mut first = [0_u8; 16_384];
+        let prefix = (bytes.len() as u32).to_be_bytes();
+        let copied = bytes.len().min(first.len() - prefix.len());
+        first[..prefix.len()].copy_from_slice(&prefix);
+        first[prefix.len()..prefix.len() + copied].copy_from_slice(&bytes[..copied]);
+        self.stream.write_all(&first[..prefix.len() + copied])?;
+        self.stream.write_all(&bytes[copied..])?;
         check_live_request(self.deadline, None)
     }
 }
