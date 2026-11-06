@@ -1,0 +1,484 @@
+{
+  "schema": "trnm-current-source-gates-summary-v1",
+  "assembled_utc": "2026-11-05T00:27:17.554689+00:00",
+  "source_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+  "source_tree": "c0dc8282e5b2618ffb35061f108bb2fa96e9b348",
+  "status": "SOURCE_GATES_PASSED_QUALIFICATION_HOLD",
+  "commands_requested": 12,
+  "commands_completed": 12,
+  "successful_commands": 12,
+  "failed_commands": 0,
+  "preflight_was_completed_before_other_commands": true,
+  "max_parallel_commands_after_preflight": 2,
+  "common_source_identity": {
+    "base": null,
+    "candidate": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "59f75acd1d4261972b8aaa45e0c36259fcafd45c",
+    "tested_tree": "c0dc8282e5b2618ffb35061f108bb2fa96e9b348",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 944718751,
+    "tracked_entries": 8908,
+    "tracked_worktree_verified": true
+  },
+  "command_receipt_count": 12,
+  "log_receipt_integrity_verified_count": 12,
+  "python_unittest_suites": 5,
+  "python_unittest_cases": 106,
+  "commands": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/preflight.json",
+        "bytes": 2367,
+        "sha256": "e1f02250014b5b8dc7a324e5dfb47d3afe63a382d236b36cd2657f5b639c32e4"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/preflight.log",
+        "bytes": 171,
+        "sha256": "d2a6f9d606cda9c972005e015f5baab3e5a794b3d751b421b9b9237326618269"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 53422213010,
+      "started_utc": "2026-11-05T00:20:00.923638+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "profile-oracle",
+      "argv": [
+        "python3",
+        "evidence/crypto-profile-20261104/recompute_profile_ids.py"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/profile-oracle.json",
+        "bytes": 2405,
+        "sha256": "306bc5304925202716e84aa48dfc4dc929dc47a2ab5517b23ecd06dca9741600"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/profile-oracle.log",
+        "bytes": 2958,
+        "sha256": "b48ce2c9b6ef983b5e395bf86f50b1ab8a4043180f9e2eda24f2a4e9b8b8faf8"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 30213413129,
+      "started_utc": "2026-11-05T00:21:38.427530+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "inventory",
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/inventory.json",
+        "bytes": 2403,
+        "sha256": "84904b38dec02a4c109f5a4c3a932851c53e3f60b9f64e91973fe9cfb2fe2204"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/inventory.log",
+        "bytes": 35,
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 30255619260,
+      "started_utc": "2026-11-05T00:21:38.394883+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "source-pins",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/source-pins.json",
+        "bytes": 2387,
+        "sha256": "afe519b8c58ec063f16f6448cf4a64f4eff32d154a551e043c0706616c9f281b"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/source-pins.log",
+        "bytes": 557,
+        "sha256": "3811b9bed540ac79880d26d556ea390c37db4b3f62e1580c0154d4cec1ab214f"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 20493253240,
+      "started_utc": "2026-11-05T00:22:09.196785+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "claim-guard",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/claim-guard.json",
+        "bytes": 2379,
+        "sha256": "2acf316ba6dbe660f6fd228999ced4ba46712427393ebd70c4f9060cc7d8cee9"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/claim-guard.log",
+        "bytes": 3333,
+        "sha256": "6235b839d36b92351665414a731c9433441f007e727860d0c3bd138e7d731690"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 20527400434,
+      "started_utc": "2026-11-05T00:22:09.169466+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "repository",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/repository.json",
+        "bytes": 2374,
+        "sha256": "c8c261128908e4a6906714154e40905f6c12f7087bcbc53276f8882634e7782e"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/repository.log",
+        "bytes": 307,
+        "sha256": "a1c9faab6332c70c97086c15920853396e5fd544f6e87e51fa4395d20f0293f5"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 233565711736,
+      "started_utc": "2026-11-05T00:22:30.336334+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "ci-contract",
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/ci-contract.json",
+        "bytes": 2375,
+        "sha256": "952b4ec8aa2d46de7adc7db3704ecf6ac0664e0a7542cf6ec8b07f163862ce1d"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/ci-contract.log",
+        "bytes": 180,
+        "sha256": "9e1991fcbac915b303bd1a6b9db2ce04a4094fa15bb6f05e83d57504313bf975"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 24213413356,
+      "started_utc": "2026-11-05T00:22:30.179614+00:00",
+      "unittest_cases": null
+    },
+    {
+      "label": "test-ci-source-integrity",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-ci-source-integrity.json",
+        "bytes": 2475,
+        "sha256": "579b591b71376d53dcdd9f68359b515bae650db2b8744c57ffdeec0a0c26c174"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-ci-source-integrity.log",
+        "bytes": 6054,
+        "sha256": "a86c985140f0255bf9dad4ef474613fc4935b0ff7de75f2da548488f534be778"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 38056844905,
+      "started_utc": "2026-11-05T00:22:54.908888+00:00",
+      "unittest_cases": 34,
+      "unittest_runner_result": "OK",
+      "unittest_runner_duration": "11.538s"
+    },
+    {
+      "label": "test-record-pq-native-command",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_record_pq_native_command.py",
+        "-v"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-record-pq-native-command.json",
+        "bytes": 2485,
+        "sha256": "90b819e14cea5f13b9d94ab2f47dcb119b623e4750007904d873bb1a240be29c"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-record-pq-native-command.log",
+        "bytes": 1250,
+        "sha256": "98e79926d76d8a6738054989b6be354655b542e8a884590472228a0bd32d474d"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 28423471273,
+      "started_utc": "2026-11-05T00:23:33.869841+00:00",
+      "unittest_cases": 4,
+      "unittest_runner_result": "OK",
+      "unittest_runner_duration": "1.814s"
+    },
+    {
+      "label": "test-pq-research-integration",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-research-integration.json",
+        "bytes": 2484,
+        "sha256": "ca5ae61350a772d9737907173294f243002f2d98bf88d233b031f62b2218a468"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-research-integration.log",
+        "bytes": 5706,
+        "sha256": "cbcab4fdc8b7cc7c8911c55d28e3e34d923b9101a253541d8efcfd0ec84166e2"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 112821788288,
+      "started_utc": "2026-11-05T00:24:02.806873+00:00",
+      "unittest_cases": 35,
+      "unittest_runner_result": "OK",
+      "unittest_runner_duration": "90.522s"
+    },
+    {
+      "label": "test-pq-chain-claim-guard",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-chain-claim-guard.json",
+        "bytes": 2477,
+        "sha256": "1c5d36d1624460af294b630bfa1155e9e3ea631868bb1877162e7fbfba64168e"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-chain-claim-guard.log",
+        "bytes": 3007,
+        "sha256": "8fb8032ee17a87c2f62e1d09080de0e475298923eb429a30806bd4b6b52c5498"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 38316411141,
+      "started_utc": "2026-11-05T00:25:56.162272+00:00",
+      "unittest_cases": 22,
+      "unittest_runner_result": "OK",
+      "unittest_runner_duration": "1.357s"
+    },
+    {
+      "label": "test-pq-authority-surface-scan",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_authority_surface_scan.py",
+        "-v"
+      ],
+      "status": "command_succeeded",
+      "exit_code": 0,
+      "receipt": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-authority-surface-scan.json",
+        "bytes": 2487,
+        "sha256": "50e048d065398530d46ffa9ab241f8f8ddb245bb67c7a67abda807d0154801ac"
+      },
+      "log": {
+        "path": "/workspace/scratch/9d99fced0bf1/current-validation/test-pq-authority-surface-scan.log",
+        "bytes": 2034,
+        "sha256": "617d950e87860044b1e908fd02c622586c6c25643d1a4e338f8b0042cd0778a1"
+      },
+      "log_integrity_verified": true,
+      "before_after_identical": true,
+      "full_tracked_bytes_verified_before_and_after": true,
+      "elapsed_ns": 29765748927,
+      "started_utc": "2026-11-05T00:26:24.470156+00:00",
+      "unittest_cases": 11,
+      "unittest_runner_result": "OK",
+      "unittest_runner_duration": "0.308s"
+    }
+  ],
+  "source_pins_observed": {
+    "canonical_default_provider_contract_checked": true,
+    "canonical_pnq2_contract_checked": true,
+    "continuous_npq6_combination_accepted": false,
+    "cryptographic_acceptance": false,
+    "exact_source_blobs": 462,
+    "legacy_qtx1_optional_adapter_contract_checked": true,
+    "native_transfer_account_contract_checked": true,
+    "native_transport_contract_checked": true,
+    "node_activated": false,
+    "production_confidentiality_accepted": false,
+    "schema": "trnm-pq-cross-branch-check-v1",
+    "status": "HOLD_NO_GO",
+    "upstream_heads": 6,
+    "whole_native_authorization_migrated": false
+  },
+  "claim_guard_observed": {
+    "gates": {
+      "authorization": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/live_admission_tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v2.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+          "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/closure.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+          "scripts/ci/pq_authority_surface_scan.py",
+          "scripts/ci/test_pq_authority_surface_scan.py",
+          "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "capacity_and_invalid_input": {
+        "source_paths": [
+          "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "config/pon/post-quantum-transition-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "independent_end_to_end": {
+        "source_paths": [
+          "docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md",
+          "config/pon/pq-cross-branch-corpus-v1.json"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "migration_and_rollback": {
+        "source_paths": [
+          "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+          "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+          "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "scripts/ci/pq_external_rollback_oracle.py",
+          "scripts/ci/test_pq_external_rollback_oracle.py",
+          "docs/security/PQ_EXTERNAL_ROLLBACK_WITNESS_REFERENCE_20261031.md",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness/tests.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs",
+          "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+          "docs/security/PQ_NETWORK_DURABLE_WITNESS_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "proof_pq128": {
+        "source_paths": [
+          "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "docs/security/POST_QUANTUM_TRANSITION_V1.md"
+        ],
+        "status": "UNQUALIFIED"
+      },
+      "quantum_mining_fork_choice": {
+        "source_paths": [
+          "config/pon/devnet-v1.json",
+          "docs/protocol/pon-nakamoto-v1/details/WORK_COST_DAA_BOUNDARIES.md",
+          "scripts/ci/pq_quantum_daa_scenarios.py",
+          "scripts/ci/test_pq_quantum_daa_scenarios.py",
+          "docs/security/PQ_QUANTUM_DAA_SENSITIVITY_20261031.md"
+        ],
+        "status": "UNQUALIFIED"
+      }
+    },
+    "note": "Source/flag refusal only; no independent crypto, quantum cost, WAN, rollback or production evidence.",
+    "pq_128_qualified": false,
+    "production_activation": false,
+    "schema": "trnm-whole-chain-pq-claim-guard-v1",
+    "status": "HOLD",
+    "whole_chain_pq_qualified": false
+  },
+  "limits": [
+    "These are source/CI/Python gate observations only; no Cargo or native test execution is claimed here.",
+    "The 5 explicitly invoked Python suites are counted by their original unittest Ran totals. Expected negative-control FAIL output is not counted as a failed outer suite.",
+    "The unchanged required native roster of 49 is not executed or counted by these gates.",
+    "Source-pins remains HOLD_NO_GO; whole-chain claim guard remains HOLD with all six categories UNQUALIFIED.",
+    "No reuse or reconstruction of lost 885 logs; these are original observations on 59f."
+  ]
+}

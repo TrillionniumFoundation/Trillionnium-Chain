@@ -20,6 +20,12 @@ pub struct PqPublicIdentity {
     key_id: String,
 }
 impl PqPublicIdentity {
+    /// Reuse a validated, operator-selected native key under the distinct
+    /// HistoryV4 signing domains; no incoming key is enrolled here.
+    pub fn from_signing_key(key: PqNativeSigningKey) -> Self {
+        let key_id = hex::encode(key.public_key_id());
+        Self { key, key_id }
+    }
     pub fn from_owned_seed(seed: Zeroizing<[u8; 32]>, expected_key_id: Hash) -> Result<Self> {
         let key = PqNativeSigningKey::from_owned_seed(seed, expected_key_id)
             .map_err(|_| "PUBLIC_CALLER_SIGNATURE")?;

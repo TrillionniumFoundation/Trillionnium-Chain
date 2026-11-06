@@ -215,6 +215,8 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
         "control_id",
         "verifier_parameters",
         "hash_function",
+        "hash_function_sha256",
+        "hash_function_blake2b",
         "claim_digest",
         "seal_first",
         "seal_body",
@@ -239,6 +241,8 @@ fn controls(header: &[u8], bytes: &[u8], out: &Path) -> Result<()> {
             }
             "verifier_parameters" => inner.verifier_parameters = [0u32; 8].into(),
             "hash_function" => inner.hashfn = "invalid-hash-suite".into(),
+            "hash_function_sha256" => inner.hashfn = "sha-256".into(),
+            "hash_function_blake2b" => inner.hashfn = "blake2b".into(),
             "claim_digest" => inner.claim = risc0_zkvm::MaybePruned::Pruned([0u32; 8].into()),
             "seal_first" => inner.seal[0] ^= 1,
             "seal_body" => {
@@ -356,9 +360,11 @@ fn main() -> Result<()> {
         });
         println!(
             "{}",
-            json!({"schema":"TRNM-W1-RECURSION-ONLY-VERIFY1", "sdk":SDK_VERSION,
+            json!({"schema":"TRNM-W1-RECURSION-ONLY-VERIFY2", "sdk":SDK_VERSION,
             "receipt_sha256":sha(&bytes), "receipt_bytes":bytes.len(), "result":result,
             "elapsed_ns":started.elapsed().as_nanos(), "control_id":receipt.control_id.to_string(),
+            "hash_function":receipt.hashfn,
+            "verifier_parameters_digest":receipt.verifier_parameters.to_string(),
             "complete_w1_claim":false,"consensus_admission":false})
         );
         ensure!(
@@ -424,6 +430,7 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use risc0_zkvm::sha::Digestible;
 
     const SAVED_HEADER: &[u8] = include_bytes!(
         "../../../../evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin"
@@ -438,6 +445,65 @@ mod tests {
             "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
         );
         decode(SAVED_RECEIPT).unwrap()
+    }
+
+    #[test]
+    fn frozen_context_contains_only_the_measured_succinct_profile() {
+        let context = profile::context().unwrap();
+        assert!(!context.dev_mode());
+        assert_eq!(context.suites.len(), 1);
+        assert!(context.suites.contains_key(profile::HASH_SUITE));
+        assert!(context.segment_verifier_parameters.is_none());
+        assert!(context.groth16_verifier_parameters.is_none());
+        assert_eq!(
+            context
+                .succinct_verifier_parameters
+                .unwrap()
+                .digest()
+                .to_string(),
+            profile::PARAMETERS
+        );
+    }
+
+    #[test]
+    fn profile_selection_refuses_other_suites_and_parameter_sets() {
+        let original = saved();
+        profile::verify(&original).unwrap();
+        profile::verify_recursion(original.inner.succinct().unwrap()).unwrap();
+        for suite in ["sha-256", "blake2b", "", "Poseidon2"] {
+            let mut receipt = original.clone();
+            let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+                unreachable!()
+            };
+            inner.hashfn = suite.into();
+            assert_eq!(
+                profile::verify(&receipt).unwrap_err().to_string(),
+                "proof hash suite outside frozen profile"
+            );
+            assert_eq!(
+                profile::verify_recursion(receipt.inner.succinct().unwrap())
+                    .unwrap_err()
+                    .to_string(),
+                "proof hash suite outside frozen profile"
+            );
+        }
+        let mut receipt = original;
+        let InnerReceipt::Succinct(ref mut inner) = receipt.inner else {
+            unreachable!()
+        };
+        let mut changed: [u32; 8] = inner.verifier_parameters.into();
+        changed[0] ^= 1;
+        inner.verifier_parameters = changed.into();
+        assert_eq!(
+            profile::verify(&receipt).unwrap_err().to_string(),
+            "receipt verifier parameters outside frozen profile"
+        );
+        assert_eq!(
+            profile::verify_recursion(receipt.inner.succinct().unwrap())
+                .unwrap_err()
+                .to_string(),
+            "receipt verifier parameters outside frozen profile"
+        );
     }
 
     #[test]

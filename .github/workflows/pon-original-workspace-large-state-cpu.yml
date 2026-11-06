@@ -57,6 +57,7 @@ jobs:
         fi
         python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$TRNM_CI_RECEIPT_DIR/source-before.json"
         bash scripts/project-preflight.sh --audit
+        python3 scripts/ci/test_authenticated_suite_count.py
     - name: Install the source-pinned native toolchain
       id: toolchain
       run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy

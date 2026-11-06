@@ -163,6 +163,86 @@ fn plan() -> SubmitRecoveryPlan {
     SubmitRecoveryPlan::new(Duration::from_secs(10)).unwrap()
 }
 
+#[test]
+fn pq_transport_owner_refuses_classical_submit_recovery_before_connect_and_after_reopen() {
+    use ingress::pq_network::PqNetworkPolicy;
+    use trnm_crypto_primitives::pq_auth::PqNativeSigningKey;
+    use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
+    use zeroize::Zeroizing;
+
+    let pq_key = |byte| {
+        // Published disposable fixture seeds, not an independent custody claim.
+        let seed = Zeroizing::new([byte; 32]);
+        let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
+        let id = ml_dsa_65_key_id_from_spki(&spki).unwrap();
+        PqNativeSigningKey::from_owned_seed(seed, id).unwrap()
+    };
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(ingress::now().unwrap() - 200)).unwrap();
+    let network_policy = PqNetworkPolicy::new(
+        &settings,
+        pq_key(71).public_spki(),
+        1,
+        [pq_key(72).public_spki().to_vec()],
+    )
+    .unwrap();
+    // This supported combination is intentionally a classical account ledger
+    // with a PQ-only transport owner. The ledger Settings alone cannot enforce
+    // the durable namespace's refusal of classical outbox/history fallbacks.
+    let mut node =
+        Node::open_with_pq_network(directory.path(), settings.clone(), 1, &network_policy).unwrap();
+    let packet = node
+        .mine(
+            vec![transfer(&settings, 1)],
+            settings.genesis_time() + 2,
+            ingress::now().unwrap(),
+        )
+        .unwrap();
+    assert_eq!(node.active().unwrap().0, packet.id().unwrap());
+    let state_before = node.stats().unwrap();
+    let network_before = node.pq_network_status(&network_policy).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let guest = identity(100);
+    let server_public = identity(101).public_key().to_owned();
+
+    for reopen in [false, true] {
+        if reopen {
+            drop(node);
+            node =
+                Node::open_with_pq_network(directory.path(), settings.clone(), 1, &network_policy)
+                    .unwrap();
+        }
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            PinnedPublicClient {
+                address: listener.local_addr().unwrap(),
+                server_public: &server_public,
+                identity: &guest,
+                policy: policy(),
+            },
+            &packet,
+            plan(),
+        );
+        assert_eq!(outcome.failure.as_deref(), Some("PQ_NETWORK_REQUIRED"));
+        assert!(!outcome.ok && !outcome.submission_outcome_uncertain);
+        assert!(!outcome.membership_observed && !outcome.may_advance_dependency);
+        assert!(outcome.packet.is_none() && outcome.attempts.is_empty());
+        assert!(outcome.acknowledged_packets.is_empty());
+        assert!(outcome.restored_parent_memberships.is_empty());
+        assert_eq!(
+            listener.accept().unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock,
+            "refusal must precede TCP connect, including after cold reopen"
+        );
+        assert_eq!(node.stats().unwrap(), state_before);
+        assert_eq!(
+            node.pq_network_status(&network_policy).unwrap(),
+            network_before
+        );
+    }
+}
+
 fn frame(stream: &mut TcpStream) -> Vec<u8> {
     let mut prefix = [0; 4];
     stream.read_exact(&mut prefix).unwrap();

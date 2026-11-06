@@ -5,14 +5,300 @@ on:
       - trillionnium/**
       - config/pon/pq-cross-branch-corpus-v1.json
       - config/pon/pq-system-required-tests-v1.json
+      - config/pon/pq-native-tls-required-tests-v1.json
+      - config/pon/pq-native-tls-witness-required-tests-v1.json
+      - config/pon/pq-initial-root-material-required-tests-v1.json
       - scripts/ci/record_pq_native_command.py
       - scripts/ci/test_record_pq_native_command.py
       - scripts/ci/verify_ci_source.py
       - scripts/ci/check_required_native_test.py
+      - scripts/ci/check_cpq1_parameter_observation.py
+      - scripts/ci/test_cpq1_parameter_observation.py
       - .github/workflows/pon-pq-system-continuation.yml
 permissions:
   contents: read
 jobs:
+  cpq1-parameters:
+    name: CPQ1 complete candidate observations (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Observe actual CPQ1 APIs and independently recompute every sample
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/cpq1-parameter-observations"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/cpq1-parameter-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          record_host() {
+            python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$1" --output "$out" -- \
+              python3 -c 'import json,os,pathlib,platform; root=pathlib.Path("/sys/fs/cgroup"); names=("cpu.max","memory.max","memory.current","memory.events"); print(json.dumps({"schema":"trnm-cpq1-host-context-v1","platform":platform.platform(),"machine":platform.machine(),"cpu_count":os.cpu_count(),"cpu_affinity":sorted(os.sched_getaffinity(0)),"load_average":os.getloadavg(),"cpu_model":next((line.split(":",1)[1].strip() for line in pathlib.Path("/proc/cpuinfo").read_text().splitlines() if line.startswith("model name")),None),"meminfo":pathlib.Path("/proc/meminfo").read_text(),"cgroup":{name:(root/name).read_text().strip() if (root/name).is_file() else None for name in names},"shared_host":True,"original_hardware_or_wan_qualification":False},sort_keys=True))'
+          }
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label compiler --output "$out" -- rustc +1.95.0 -Vv
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cargo-version --output "$out" -- cargo +1.95.0 -V
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label locked-graph --output "$out" -- \
+            cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label reader-negatives --output "$out" -- \
+            python3 -m unittest discover -s scripts/ci -p test_cpq1_parameter_observation.py -v
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label build --output "$out" -- \
+            cargo +1.95.0 build --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_profile_bench
+          sha256sum "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" > "$out/binary.sha256"
+          record_host host-before
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cpq1 --output "$out" -- \
+            "$CARGO_TARGET_DIR/release/examples/pq_profile_bench" --samples 64
+          record_host host-after
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-readback --output "$out" -- \
+            python3 scripts/ci/check_cpq1_parameter_observation.py "$out/cpq1.log"
+      - name: Retain complete CPQ1 records including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cpq1-parameters-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/cpq1-parameter-observations/
+          if-no-files-found: error
+          retention-days: 14
+  primitive-interoperability:
+    name: ML-DSA independent C implementation (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: chain
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: chain
+      - name: Read the exact independent implementation
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: pq-code-package/mldsa-native
+          ref: 834a90d5e846ffa1e1611bd24e160bb2e9b86d35
+          fetch-depth: 1
+          persist-credentials: false
+          path: upstream-mldsa
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Run independent primitives on the exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/mldsa-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-source-guard --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py \
+            --source "$GITHUB_WORKSPACE/upstream-mldsa"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label oracle-build --output "$out" -- \
+            cargo +1.95.0 build --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_message_oracle
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label tap21-metadata --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --test tuf_tap21
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-authority --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell::pq
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc cell::pq -- --show-output --test-threads=1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api-readback --output "$out" -- \
+            python3 -c 'import json,pathlib,re,sys; text=pathlib.Path(sys.argv[1]).read_text(); names=re.findall(r"^test crates/trnm-data-availability/src/cell/pq\.rs - cell::pq::VerifiedCellPqReleaseV2 \(line 353\) - compile fail \.\.\. ok$",text,re.M); summaries=re.findall(r"^test result: ok\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;",text,re.M); errors=re.findall(r"^error\[(E[0-9]+)\]:",text,re.M); valid=(len(names)==1 and len(summaries)==1 and tuple(map(int,summaries[0][:4]))==(1,0,0,0) and errors==["E0308"] and "CellPqReleaseExpectationV2" in text and "integer" in text and "release_at(300)" in text); print(json.dumps({"result":"PASS" if valid else "FAIL","contract":"cell-current-view-required","executed_tests":len(names),"diagnostic_codes":errors,"scope":"compile-fail-type-boundary-observation"},sort_keys=True)); sys.exit(0 if valid else 1)' "$out/cell-current-api.log"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-c --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py \
+            --source "$GITHUB_WORKSPACE/upstream-mldsa" \
+            --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" \
+            --wycheproof trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json \
+            --build-dir "$out/c-build" --report "$out/differential.json"
+      - name: Require initial-root material controls from the complete release registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          test -d "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/mldsa-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label initial-root-release-registry --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib -- --list
+          python3 - config/pon/pq-initial-root-material-required-tests-v1.json "$out" <<'PY'
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          counts = {"original_release": 37, "initial_root_material": 6, "complete_release": 43}
+          if (not isinstance(manifest, dict)
+                  or manifest.get("schema") != "trnm-pq-initial-root-material-required-tests-v1"
+                  or manifest.get("package") != "trnm-release-bundle"
+                  or manifest.get("harness") != "lib"
+                  or manifest.get("scope") != "immutable-initial-root-public-key-material-only"
+                  or not isinstance(manifest.get("expected_controls"), dict)
+                  or manifest["expected_controls"] != counts
+                  or any(type(value) is not int for value in manifest["expected_controls"].values())
+                  or any(manifest.get(key) is not False for key in (
+                      "authorization_results_cached", "signature_results_cached", "performance_qualified",
+                      "production_activation", "consensus_authority", "whole_chain_quantum_security_qualified"))):
+              raise SystemExit("initial-root required-control manifest invalid")
+          sets = {}
+          for key, count in counts.items():
+              names = manifest.get(key + "_tests")
+              if (not isinstance(names, list) or len(names) != count
+                      or any(not isinstance(name, str) or not re.fullmatch(
+                          r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", name) for name in names)
+                      or len(set(names)) != count):
+                  raise SystemExit("initial-root required-control names invalid")
+              sets[key] = set(names)
+          if (sets["original_release"] & sets["initial_root_material"]
+                  or sets["complete_release"] != sets["original_release"] | sets["initial_root_material"]):
+              raise SystemExit("initial-root required-control partition invalid")
+          root = Path(sys.argv[2])
+          log = (root / "initial-root-release-registry.log").read_text()
+          names = re.findall(r"^([A-Za-z0-9_:]+): test$", log, re.M)
+          summaries = re.findall(r"^([0-9]+) tests, ([0-9]+) benchmarks$", log, re.M)
+          if (len(names) != 43 or len(set(names)) != 43 or set(names) != sets["complete_release"]
+                  or summaries != [("43", "0")]):
+              raise SystemExit("initial-root actual binary registry differs from the complete required 43")
+          (root / "initial-root-required.tsv").write_text("".join(
+              f"initial-root-{index:02d}\t{name}\n"
+              for index, name in enumerate(manifest["initial_root_material_tests"])))
+          print(json.dumps({"scope": "registry-presence-only", "required_controls": counts,
+                            "production_activation": False}, sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label "$label" --output "$out" -- \
+              cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-release-bundle --lib "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$out/$label.log" --test "$selector" > "$out/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$out/initial-root-required.tsv"
+          test "$failed" = 0
+      - name: Retain independent primitive results including failures
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mldsa-independent-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mldsa-interoperability/
+          if-no-files-found: error
+          retention-days: 14
+  tuf-sdk-interoperability:
+    name: TAP21 actual SDK interoperability (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: chain
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: chain
+      - name: Read the exact supported SDK source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: secure-systems-lab/securesystemslib
+          ref: 15064ca640222edba024af9f13191fa5dbad3825
+          fetch-depth: 1
+          persist-credentials: false
+          path: upstream-sslib
+      - name: Install the original pinned compiler
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Compare real SDK and product adapter signatures
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/tuf-sdk-interoperability"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/tuf-sdk-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          bash scripts/project-preflight.sh --audit
+          python3 -m venv "$RUNNER_TEMP/tuf-sdk-env"
+          sdk_python="$RUNNER_TEMP/tuf-sdk-env/bin/python"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-dependencies --output "$out" -- \
+            "$sdk_python" -m pip install --disable-pip-version-check --only-binary=:all: --report "$out/dependencies.json" \
+            cryptography==50.0.2 cffi==2.1.1 pycparser==3.12
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-source-guard --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py \
+            --source "$GITHUB_WORKSPACE/upstream-sslib"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-oracle-build --output "$out" -- \
+            cargo +1.95.0 build --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_message_oracle
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label sdk-interop --output "$out" -- \
+            "$sdk_python" trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py \
+            --source "$GITHUB_WORKSPACE/upstream-sslib" \
+            --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" --report "$out/differential.json"
+      - name: Retain SDK interoperability including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tuf-sdk-${{ matrix.runner }}-${{ matrix.source }}-${{ github.event.pull_request.head.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tuf-sdk-interoperability/
+          if-no-files-found: error
+          retention-days: 14
   native:
     name: PQ network and witness (${{ matrix.runner }}, ${{ matrix.source }})
     strategy:
@@ -126,6 +412,121 @@ jobs:
               failed=1
             fi
           done < "$PQ_OUT/required-tests.tsv"
+          test "$failed" = 0
+      - name: Refuse classical submit recovery for retained PQ network owners
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          selector=pq_transport_owner_refuses_classical_submit_recovery_before_connect_and_after_reopen
+          bash "$PQ_OUT/run-command.sh" public-submit-pq-owner cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_submit_recovery --all-features "$selector" -- --exact --show-output --test-threads=1
+          python3 scripts/ci/check_required_native_test.py "$PQ_OUT/public-submit-pq-owner.log" --test "$selector" > "$PQ_OUT/public-submit-pq-owner-execution.json"
+          bash "$PQ_OUT/run-command.sh" public-submit-recovery cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_submit_recovery --all-features -- --show-output --test-threads=1
+      - name: Require native TLS and ordinary binary controls from actual registries
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=config/pon/pq-native-tls-required-tests-v1.json
+          for scope in lib cli feature-off; do
+            case "$scope" in
+              lib) target=(--lib --all-features) ;;
+              cli) target=(--test pq_tls_cli --all-features) ;;
+              feature-off) target=(--test pq_tls_feature_gate --no-default-features) ;;
+            esac
+            bash "$PQ_OUT/run-command.sh" "tls-$scope-registry" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node "${target[@]}" -- --list
+          done
+          python3 - "$manifest" "$PQ_OUT" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          counts = {'lib': 13, 'cli': 4, 'feature-off': 1}
+          if (not isinstance(manifest, dict)
+                  or manifest.get('schema') != 'trnm-pq-native-tls-required-tests-v1'
+                  or not isinstance(manifest.get('expected_controls'), dict)
+                  or manifest.get('expected_controls') != counts
+                  or any(type(value) is not int for value in manifest['expected_controls'].values())
+                  or not isinstance(manifest.get('scopes'), dict)
+                  or set(manifest.get('scopes', {})) != set(counts)
+                  or any(manifest.get(key) is not False for key in ('production_activation',
+                      'consensus_authority', 'public_wan_accepted', 'whole_chain_quantum_security_qualified'))):
+              raise SystemExit('TLS required-control manifest invalid')
+          root = Path(sys.argv[2])
+          rows = []
+          for scope, count in counts.items():
+              required = manifest['scopes'][scope]
+              if (not isinstance(required, list) or len(required) != count
+                      or any(not isinstance(x, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in required)
+                      or len(set(required)) != count):
+                  raise SystemExit('TLS required-control names invalid')
+              log = (root / f'tls-{scope}-registry.log').read_text()
+              names = re.findall(r'^([A-Za-z0-9_:]+): test$', log, re.M)
+              if len(names) != len(set(names)) or any(names.count(name) != 1 for name in required):
+                  raise SystemExit('TLS required test absent/duplicated in actual binary registry')
+              rows.extend(f'tls-{scope}-{index:02d}\t{scope}\t{name}\n' for index, name in enumerate(required))
+          (root / 'tls-required.tsv').write_text(''.join(rows))
+          print(json.dumps({'scope':'registry-presence-only','required_controls':counts,'production_activation':False},sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label scope selector; do
+            case "$scope" in
+              lib) target=(--lib --all-features) ;;
+              cli) target=(--test pq_tls_cli --all-features) ;;
+              feature-off) target=(--test pq_tls_feature_gate --no-default-features) ;;
+              *) exit 1 ;;
+            esac
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node "${target[@]}" "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/tls-required.tsv"
+          test "$failed" = 0
+      - name: Require the explicit TLS witness CLI controls from the actual binary
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=config/pon/pq-native-tls-witness-required-tests-v1.json
+          bash "$PQ_OUT/run-command.sh" tls-witness-cli-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_witness_cli --all-features -- --list
+          python3 - "$manifest" "$PQ_OUT" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text())
+          if (not isinstance(manifest, dict)
+                  or manifest.get('schema') != 'trnm-pq-native-tls-witness-required-tests-v1'
+                  or manifest.get('harness') != 'pq_tls_witness_cli'
+                  or not isinstance(manifest.get('expected_controls'), dict)
+                  or manifest['expected_controls'] != {'cli': 5}
+                  or type(manifest['expected_controls']['cli']) is not int
+                  or not isinstance(manifest.get('scopes'), dict)
+                  or set(manifest['scopes']) != {'cli'}
+                  or any(manifest.get(key) is not False for key in ('production_activation',
+                      'consensus_authority', 'public_wan_accepted', 'whole_chain_quantum_security_qualified',
+                      'whole_node_rollback_protection'))):
+              raise SystemExit('TLS witness required-control manifest invalid')
+          required = manifest['scopes']['cli']
+          if (not isinstance(required, list) or len(required) != 5
+                  or any(not isinstance(name, str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name) for name in required)
+                  or len(set(required)) != 5):
+              raise SystemExit('TLS witness required-control names invalid')
+          root = Path(sys.argv[2])
+          log = (root / 'tls-witness-cli-registry.log').read_text()
+          names = re.findall(r'^([A-Za-z0-9_:]+): test$', log, re.M)
+          if len(names) != 5 or len(set(names)) != 5 or set(names) != set(required):
+              raise SystemExit('TLS witness actual binary registry differs from the five required controls')
+          (root / 'tls-witness-required.tsv').write_text(''.join(
+              f'tls-witness-cli-{index:02d}\t{name}\n' for index, name in enumerate(required)))
+          print(json.dumps({'scope':'registry-presence-only','required_controls':5,'production_activation':False},sort_keys=True))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_tls_witness_cli --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/tls-witness-required.tsv"
           test "$failed" = 0
       - name: Require original transaction scope controls
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}

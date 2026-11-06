@@ -43,6 +43,13 @@ jobs:
         run: python3 scripts/ci/test_pq_provider_ci.py
       - name: Check original public Host CI ownership and failure controls
         run: python3 scripts/ci/test_from_zero_host_ci.py
+      - name: Install isolated runtime material verifier dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
+          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
+          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Run actual repository-truth checks
         run: bash scripts/ci/ci_job.sh repository-truth
       - name: Verify source remained unchanged
@@ -607,6 +614,14 @@ jobs:
         if: matrix.lane == 'protocol-contract'
         shell: bash
         run: bash scripts/ci/prepare_pq_provider.sh
+      - name: Install isolated runtime material verifier dependency
+        if: matrix.lane == 'repository-truth'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/runtime-release-env"
+          "$RUNNER_TEMP/runtime-release-env/bin/python" -m pip --isolated install --disable-pip-version-check --only-binary=:all: --require-hashes --report "$RUNNER_TEMP/ci-observations/runtime-release-dependencies.json" -r scripts/ci/runtime-release-requirements.txt
+          printf 'TRNM_RUNTIME_RELEASE_PYTHON=%s/runtime-release-env/bin/python\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Execute the same lane on the prospective merge
         run: bash scripts/ci/ci_job.sh "${{ matrix.lane }}"
       - name: Verify merge source remained unchanged

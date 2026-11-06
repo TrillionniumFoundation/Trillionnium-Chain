@@ -1522,3 +1522,6 @@ fn pq_continuous_atomic_renewal_reconciles_actual_task_v5_owner_and_strict_lease
     assert!(result.accounting_record_persisted);
     consumer.close_continuous_checkpoint().unwrap();
 }
+
+#[path = "operator_pq_m15_fixture_tests.rs"]
+mod m15_native_fixture;

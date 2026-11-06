@@ -1,0 +1,200 @@
+{
+  "schema": "hepta-pq4729-native-evidence-v1",
+  "date_utc": "2026-11-04",
+  "repository": "TrillionniumFoundation/hepta-private-ci",
+  "native_execution_scope": "codex-hepta-contracts on Linux GNU x86_64 main host",
+  "original": {
+    "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+    "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+    "tests_run": 198,
+    "passed": 198,
+    "skipped": 0,
+    "binaries": 4
+  },
+  "pinned_composition": {
+    "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+    "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+    "parents": [
+      "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+      "5fa90c21dbcd642ff9101951531c5758c683fdac"
+    ],
+    "tests_run": 198,
+    "passed": 198,
+    "skipped": 0,
+    "binaries": 4
+  },
+  "later_publication_mapping": {
+    "commit": "ef5723af6a04c7c74fa8a32ab34acdfd49913233",
+    "tree": "40ab7c559dc651a1ff3bd8f849a8fcbd6ec03925",
+    "parents": [
+      "383a8c4150f4d620570a138b817f21960370e43f",
+      "5fa90c21dbcd642ff9101951531c5758c683fdac"
+    ],
+    "exact_complete_tree_native_executed": false,
+    "four_original_pr_blob_identities_confirmed": true,
+    "owner_delta": "four macOS-only test-fixture files outside scoped package"
+  },
+  "runs": [
+    {
+      "receipt": "original/contracts-native.json",
+      "raw_log": "original/contracts-native.log",
+      "label": "contracts-native",
+      "argv": [
+        "just",
+        "test",
+        "-p",
+        "codex-hepta-contracts",
+        "--locked"
+      ],
+      "source": {
+        "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+        "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+        "paths": 11221,
+        "bytes": 142454826,
+        "manifest_sha256": "b0c3c6244c433b96dfac0cad331c5d7a35bedcc6bb1facd5ac954066eb591063",
+        "git_diff_exit": 0
+      },
+      "returncode": 0,
+      "seconds": 89.35251579794567,
+      "bytes": 32445,
+      "sha256": "9077808cb47b73e4f4e9ebe911d7c51b02cc9adc642fedbbe67a34c36c956749",
+      "tracked_source_unchanged": true,
+      "native_attempt_not_retry": true
+    },
+    {
+      "receipt": "original/contracts-strict-clippy.json",
+      "raw_log": "original/contracts-strict-clippy.log",
+      "label": "contracts-strict-clippy",
+      "argv": [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-contracts",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source": {
+        "commit": "5fa90c21dbcd642ff9101951531c5758c683fdac",
+        "tree": "c7af3b5564cff487975cabd4ae0161340e864d3e",
+        "paths": 11221,
+        "bytes": 142454826,
+        "manifest_sha256": "b0c3c6244c433b96dfac0cad331c5d7a35bedcc6bb1facd5ac954066eb591063",
+        "git_diff_exit": 0
+      },
+      "returncode": 0,
+      "seconds": 37.10740291501861,
+      "bytes": 3608,
+      "sha256": "9270b9ceb150b2aa587c9c001ad334da01f3e9de049e7f3ffa71af64b8dfb609",
+      "tracked_source_unchanged": true,
+      "native_attempt_not_retry": true
+    },
+    {
+      "receipt": "paired-contracts-native.json",
+      "raw_log": "paired-contracts-native.log",
+      "label": "paired-contracts-native",
+      "argv": [
+        "just",
+        "test",
+        "-p",
+        "codex-hepta-contracts",
+        "--locked"
+      ],
+      "source": {
+        "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+        "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+        "parents": [
+          "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+          "5fa90c21dbcd642ff9101951531c5758c683fdac"
+        ],
+        "local_merge_not_github_merge": true,
+        "checkout_exit": 0,
+        "paths": 11249,
+        "bytes": 142686694,
+        "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+      },
+      "returncode": 0,
+      "seconds": 75.59523173607886,
+      "bytes": 32459,
+      "sha256": "51d9579d8d22843d65fe5838b1f53a4886a91f540d789e3cb3e0ea0ea6fa5dd1",
+      "tracked_source_unchanged": true,
+      "native_attempt_not_retry": true,
+      "source_after": {
+        "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+        "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+        "parents": [
+          "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+          "5fa90c21dbcd642ff9101951531c5758c683fdac"
+        ],
+        "local_merge_not_github_merge": true,
+        "checkout_exit": 0,
+        "paths": 11249,
+        "bytes": 142686694,
+        "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+      }
+    },
+    {
+      "receipt": "paired-contracts-strict-clippy.json",
+      "raw_log": "paired-contracts-strict-clippy.log",
+      "label": "paired-contracts-strict-clippy",
+      "argv": [
+        "just",
+        "clippy",
+        "-p",
+        "codex-hepta-contracts",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "source": {
+        "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+        "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+        "parents": [
+          "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+          "5fa90c21dbcd642ff9101951531c5758c683fdac"
+        ],
+        "local_merge_not_github_merge": true,
+        "checkout_exit": 0,
+        "paths": 11249,
+        "bytes": 142686694,
+        "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+      },
+      "returncode": 0,
+      "seconds": 35.983560919063166,
+      "bytes": 3643,
+      "sha256": "b0cb62af073af1e7ce892c6fb0a52f00ebeae0b96dd745fa113cc9b44275cfd8",
+      "tracked_source_unchanged": true,
+      "native_attempt_not_retry": true,
+      "source_after": {
+        "commit": "2f04ecfde90a92b9c779540a2c1aa39f584d3e41",
+        "tree": "ee77993e4e94b4faf54d661653527605b222b77e",
+        "parents": [
+          "a6d8ce20bf8f5b6991d2dc5ef7313812944db060",
+          "5fa90c21dbcd642ff9101951531c5758c683fdac"
+        ],
+        "local_merge_not_github_merge": true,
+        "checkout_exit": 0,
+        "paths": 11249,
+        "bytes": 142686694,
+        "manifest_sha256": "9ee371904b0a252c2299a5823458597379316a2b3306f48c84878ee16f81106a"
+      }
+    }
+  ],
+  "warnings_preserved": {
+    "scoped_nextest_metadata_warnings_per_run": 14,
+    "clippy_unreachable_disallowed_type_config_warnings_per_run": 3
+  },
+  "limits": {
+    "whole_chain_pq_qualified": false,
+    "all_hepta_authority_consumers_qualified": false,
+    "independent_deployment_wan_migration_qualified": false,
+    "macos_fixture_changes_qualified": false,
+    "arm_or_musl_matrix_qualified": false,
+    "new_business_authority_created": false,
+    "source_or_deployed_state_modified_by_validation": false
+  },
+  "failed_preflight_retained": "paired-preflight-failed.json",
+  "remote_base": "/home/qian-qi/worktrees/hepta-pq4729-validation-20261104"
+}
