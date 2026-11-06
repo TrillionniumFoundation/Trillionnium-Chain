@@ -32,7 +32,7 @@ from experiments.quantum_network_campaign import (  # noqa: E402
     digest, load_json, read_rows, write_rows,
 )
 
-SCHEMA = "trnm-quantum-adversarial-campaign-v1"
+SCHEMA = "trnm-quantum-adversarial-campaign-v2"
 SOURCE_FILES = tuple(dict.fromkeys(NETWORK_SOURCE_FILES + (
     "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
     "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",

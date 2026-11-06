@@ -32,7 +32,7 @@ from w1_marked_domain import (
 )
 from w1_quantum_oracle import FixedTemplate, canonical
 
-SCHEMA = "trnm-w1-literal-domain-campaign-v1"
+SCHEMA = "trnm-w1-literal-domain-campaign-v2"
 # One bounded I/O policy covers the accepted maximum of three 4096-nonce
 # reduced censuses plus three 64-nonce native censuses and their controls.
 # Default runs remain below one MiB. This is a hard cap, never a retry/fallback.

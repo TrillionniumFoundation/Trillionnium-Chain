@@ -11,7 +11,7 @@ import unittest
 from quantum_adversarial_search import (
     MAX_DOMAIN_SIZE, MAX_EXACT_BINOMIAL_SIZE, TrialCosts, batch_success,
     binomial_batch_success, binomial_weights, bounded_throughput_choice,
-    finite_domain_success, sample_marked_count,
+    finite_domain_success, sample_binary_probability, sample_marked_count,
 )
 from quantum_network_sim import NetworkScenario, run_network_scenario
 from experiments.quantum_adversarial_campaign import (
@@ -42,6 +42,26 @@ class TicketWords:
 
 
 class FiniteDomainControls(unittest.TestCase):
+    def test_measurement_sampler_exactly_enumerates_small_dyadic_probabilities(self):
+        for width in range(1, 9):
+            denominator = 1 << width
+            for numerator in range(1, denominator, 2):
+                words = TicketWords(range(denominator))
+                wins = sum(sample_binary_probability(words, numerator / denominator)
+                           for _ in range(denominator))
+                self.assertEqual(wins, numerator)
+                self.assertEqual(words.widths, [width] * denominator)
+
+    def test_measurement_sampler_endpoints_and_invalid_inputs(self):
+        words = TicketWords([])
+        for probability in (0, 0.0, 1, 1.0):
+            self.assertIs(sample_binary_probability(words, probability), bool(probability))
+        self.assertEqual(words.widths, [])
+        for probability in (True, False, -1, 2, 10**1000, -(10**1000),
+                            float("nan"), float("inf"), Fraction(1, 2)):
+            with self.subTest(probability=probability), self.assertRaisesRegex(ValueError, "PROBABILITY"):
+                sample_binary_probability(words, probability)
+
     def test_exact_amplitude_vectors_all_small_marked_counts(self):
         for size in (1, 2, 4, 8, 16):
             for marked in range(size + 1):

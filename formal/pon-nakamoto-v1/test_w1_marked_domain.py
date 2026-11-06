@@ -9,12 +9,13 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE / "experiments"))
 
 import w1_marked_domain_campaign as campaign
-from quantum_adversarial_search import TrialCosts
+from quantum_adversarial_search import TrialCosts, batch_success
 from w1_marked_domain import (
     compare_domains, enumerate_domain, evaluate_nonce, replay_domain,
     simulate_measurements,
@@ -195,6 +196,37 @@ class LiteralDomainTests(unittest.TestCase):
         self.assertEqual({row["domain_sha256"] for row in result["trials"]}, {self.empty_record["domain_sha256"]})
         self.assertFalse(result["independent_ticket_prior_used"])
         self.assertFalse(result["strategy_reads_marked_count"])
+
+    def test_literal_measurements_use_exact_integer_draws_and_real_nonce_sets(self):
+        class Bits:
+            def __init__(self, upper):
+                self.upper, self.widths = upper, []
+
+            def getrandbits(self, width):
+                self.widths.append(width)
+                return (1 << width) - 1 if self.upper else 0
+
+            def choice(self, values):
+                return values[0]
+
+            def random(self):
+                raise AssertionError("53-bit probability sampling must not be used")
+
+        for domain in (self.reduced_record, self.native_record):
+            probability = batch_success(domain["marked_count"] / domain["domain_size"], 0)
+            self.assertGreater(probability, 0)
+            self.assertLess(probability, 1)
+            width = probability.as_integer_ratio()[1].bit_length() - 1
+            for upper in (False, True):
+                bits = Bits(upper)
+                with self.subTest(upper=upper), patch("w1_marked_domain.random.Random", return_value=bits):
+                    result = simulate_measurements((domain,), ((0, 0),), 2, 7, self.costs)
+                self.assertEqual(bits.widths, [width, width])
+                self.assertIs(result["success"], not upper)
+                for measurement in result["trials"][0]["measurements"]:
+                    self.assertIs(domain["outcomes"][measurement["nonce"]]["winner"], not upper)
+                self.assertEqual(result["measurement_sampler"], "exact-dyadic-Bernoulli-of-binary64-probability")
+                self.assertEqual(result["native_blocks_admitted"], 0)
 
     def test_aliasing_one_template_in_input_does_not_refill_it(self):
         result = simulate_measurements((self.empty_record, copy.deepcopy(self.empty_record)),
