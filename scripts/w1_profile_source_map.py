@@ -315,7 +315,7 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
         },
         {
             'id': 'theorem_fulltext_and_constants', 'state': 'UNRESOLVED',
-            'reason': 'No full-text theorem mapping or concrete loss calculation is part of this source map. Its literature annotations describe a manual abstract review, not a new network fetch or instantiated security theorem.',
+            'reason': 'The QROM framework still has only a manual abstract review here, without full-text theorem mapping or concrete reduction losses. The separately identified small-field paper received a full-text review; neither annotation is a new network fetch or an instantiated W1 security theorem.',
         },
         {
             'id': 'hash_instantiation', 'state': 'UNRESOLVED',
@@ -328,6 +328,10 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
         {
             'id': 'conjectures_and_composition', 'state': 'UNRESOLVED',
             'reason': 'The locked component calculator distinguishes conjectured and proven regimes; its 97-bit target comment is not a 59-segment, complete-recursion or quantum bound. Per-layer, adaptive/multi-proof, quantum-query and total composition terms remain unqualified.',
+        },
+        {
+            'id': 'known_capacity_model_obstructions', 'state': 'UNRESOLVED',
+            'reason': 'Up-to-capacity conjectures have known counterexamples. Fenzi-Sanso (2026), Table 2, also evaluates the matching BabyBear/degree-4/rate-1/4/50-query tuple in an information-theoretic toy model at n=2^21. Historical toy-formula reproduction is not an established acceptance bound; applicability to the complete W1 relation and recursion still requires a formal mapping.',
         },
         {
             'id': 'accepted_control_set', 'state': 'UNRESOLVED',
@@ -479,6 +483,26 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
                 'url': 'https://eprint.iacr.org/2025/2046',
                 'title': 'On Reed-Solomon Proximity Gaps Conjectures',
                 'scope': 'Refutes the stated up-to-capacity correlated-agreement / WHIR mutual-correlated-agreement / DEEP-FRI list-decodability conjectures; does not alone refute all FRI or proven decoding regimes.',
+            },
+            'small_field_capacity_obstruction': {
+                'url': 'https://cic.iacr.org/p/3/3/44',
+                'pdf_url': 'https://cic.iacr.org/p/3/3/44/pdf',
+                'doi': '10.62056/akdkmpxqi',
+                'title': 'Small-field hash-based SNARGs are less sound than conjectured',
+                'authors': ['Giacomo Fenzi', 'Antonio Sanso'],
+                'published': '2026-10-26', 'manual_review_as_of': '2026-11-06',
+                'review_basis': 'Manual full-text review of the published paper, especially Corollary 4, Remark 2 and Table 2; this offline tool does not fetch or authenticate the publication.',
+                'table2_parameter_tuple': {
+                    'base_modulus': 2013265921, 'extension_degree': 4,
+                    'rate_numerator': 1, 'rate_denominator': 4, 'queries': 50,
+                    'paper_block_length': 1 << 21,
+                    'conjectured_query_phase_bits_display': 100,
+                    'negative_log2_attack_success_lower_bound_display': 92.5,
+                    'source_location': 'Table 2, PDF page 14; Corollary 4 and Remark 2, PDF page 12',
+                },
+                'scope': 'Corollary 4 concerns Construction 1 with an extension code of a base-field linear code. It lower-bounds information-theoretic adversarial success; 92.5 is neither a security guarantee nor an assigned W1 or quantum security level.',
+                'fri_connection': 'The Lemma 6 attack does not transfer verbatim to the ethSTARK toy protocol. The paper relates FRI-based systems through BSCH+26 Lemma 8.4 and the list-size bounds in Corollaries 2 and 3.',
+                'limits': 'No polynomial-time compiled-SNARG attack or complete W1 attack is established by this review. Do not subtract the table loss from the official 96/99 estimates or replace the retained component equations with 92.5.',
             },
             'prime_field_near_capacity': {
                 'url': 'https://arxiv.org/abs/2604.09724',

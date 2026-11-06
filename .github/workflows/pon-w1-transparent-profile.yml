@@ -17,8 +17,10 @@ on:
       - scripts/ci/**
       - scripts/project-preflight.sh
       - evidence/pon-w1-complete-succinct-20261028/**
+      - evidence/pon-w1-full-v2-20261105/**
       - evidence/pon-w1-verifier-hardening-20261028/**
       - evidence/pon-w1-transparent-profile-20261104/**
+      - evidence/pon-w1-stark-review-20261106/**
       - evidence/pon-w1-statement-v2-20261105/**
       - evidence/pon-w1-qrom-budget-20261105/**
       - config/**
@@ -74,7 +76,7 @@ jobs:
           printf 'W1_PROFILE_OUT=%s\n' "$w1_profile_out" >> "$GITHUB_ENV"
           printf 'CARGO_HOME=%s/cargo-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
           printf 'CARGO_TARGET_DIR=%s/target-w1-transparent-profile-%s-%s-%s\n' "$RUNNER_TEMP" "$SOURCE_KIND" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
-          printf 'Continuous candidate checks and one saved-proof observation only. No new proof, end-to-end benefit, quantum soundness, production or consensus-admission qualification is established.\n' > "$w1_profile_out/SCOPE.txt"
+          printf 'Continuous candidate checks and saved-proof observations only. No new proof, end-to-end benefit, quantum soundness, production or consensus-admission qualification is established.\n' > "$w1_profile_out/SCOPE.txt"
           args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
           if test "$SOURCE_KIND" = prospective-merge; then
             args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
@@ -215,18 +217,96 @@ jobs:
               raise SystemExit('independent v2 verifier must not acquire a guest build dependency')
           PY
           cargo +1.95.0 fmt --manifest-path "$w1_manifest" --all -- --check 2>&1 | tee "$W1_PROFILE_OUT/v2-format.log"
-          cargo +1.95.0 test --locked --release --manifest-path "$w1_manifest" -- --test-threads=1 2>&1 | tee "$W1_PROFILE_OUT/v2-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path "$w1_manifest" -- --format=pretty --test-threads=1 2>&1 | tee "$W1_PROFILE_OUT/v2-tests.log"
           python3 - "$W1_PROFILE_OUT/v2-tests.log" <<'PY'
           from pathlib import Path
           import re, sys
-          rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', Path(sys.argv[1]).read_text(), re.M)
-          if sum(int(passed) for passed, _ in rows) < 2 or any(int(ignored) for _, ignored in rows):
-              raise SystemExit('v2 expected-artifact and historical-proof rejection controls did not execute')
+          text = Path(sys.argv[1]).read_text()
+          expected = {
+              'tests::expected_artifacts_are_exact_and_never_derived_from_receipt',
+              'tests::historical_full_receipt_cannot_satisfy_v2_statement',
+              'tests::saved_full_v2_receipt_verifies_with_independent_artifacts',
+          }
+          rows = re.findall(r'^test ([A-Za-z0-9_:]+) \.\.\. (\S+)$', text, re.M)
+          summaries = re.findall(r'^test result: (.*)$', text, re.M)
+          if (len(rows) != 3 or {name for name, _ in rows} != expected
+                  or any(outcome != 'ok' for _, outcome in rows)
+                  or re.findall(r'^running ([0-9]+) tests$', text, re.M) != ['3']
+                  or len(summaries) != 1 or not re.fullmatch(
+                      r'ok\. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in [0-9]+(?:\.[0-9]+)?s',
+                      summaries[0])):
+              raise SystemExit('all three named v2 controls, including the actual saved proof, must execute without filtering')
           PY
           cargo +1.95.0 clippy --locked --release --manifest-path "$w1_manifest" --all-targets -- -D warnings 2>&1 | tee "$W1_PROFILE_OUT/v2-clippy.log"
           cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest" 2>&1 | tee "$W1_PROFILE_OUT/v2-build.log"
           cp "$CARGO_TARGET_DIR/release/w1-verify-v2" "$W1_PROFILE_OUT/bin/w1-verify-v2"
           sha256sum "$W1_PROFILE_OUT/bin/w1-verify-v2" > "$W1_PROFILE_OUT/v2-binary.sha256"
+      - name: Retain all 58 actual saved-v2 receipt controls
+        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'
+        id: receipt_controls_v2
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_proof_dir="$GITHUB_WORKSPACE/evidence/pon-w1-full-v2-20261105"
+          w1_verifier="$W1_PROFILE_OUT/bin/w1-verify-v2"
+          RAYON_NUM_THREADS=8 python3 scripts/w1_v2_receipt_controls.py \
+            --verifier "$w1_verifier" --receipt "$w1_proof_dir/succinct.bin" \
+            --header "$w1_proof_dir/header.bin" --expected-artifacts "$w1_proof_dir/expected-artifacts.bin" \
+            --out "$W1_PROFILE_OUT/v2-controls" 2>&1 | tee "$W1_PROFILE_OUT/v2-receipt-controls.log"
+          python3 - "$W1_PROFILE_OUT/v2-controls" "$w1_proof_dir" "$w1_verifier" <<'PY' 2>&1 | tee "$W1_PROFILE_OUT/v2-controls-validation.log"
+          from pathlib import Path
+          import json, sys
+          sys.path.insert(0, 'scripts')
+          import w1_v2_receipt_controls as controls
+          out, proof, verifier = map(Path, sys.argv[1:])
+          report = controls.strict_json((out / 'result.json').read_bytes())
+          baseline = {key: (proof / name).read_bytes() for key, name in
+                      (('receipt', 'succinct.bin'), ('header', 'header.bin'), ('artifacts', 'expected-artifacts.bin'))}
+          location = controls.locate_journal(baseline['receipt'], baseline['header'], baseline['artifacts'])
+          plans = controls.plan_controls(baseline['receipt'], location)
+          retained = controls.strict_json((proof / 'controls-result.json').read_bytes())['controls']
+          cases = report['controls']
+          controls.require(len(plans) == len(retained) == len(cases) == 58, 'all 58 original controls are required')
+          observation_fields = {'passed', 'returncode', 'timed_out', 'panic_or_abort_detected',
+                                'stdout_scan_truncated', 'stderr_scan_truncated', 'observed_rejection_layers',
+                                'report_error', 'process', 'case_directory'}
+          controls.require(plans == [{key: value for key, value in row.items() if key not in observation_fields}
+                                     for row in retained], 'original control plan or required rejection text changed')
+          expected = {
+              'schema': 'TRNM-W1-V2-RECEIPT-CONTROLS1', 'profile_id': 'trnm-w1-risc0-3.0.6-poseidon2-join-v2',
+              'total_wall_budget_seconds': 120, 'termination_settlement_adds_acceptance_budget': False,
+              'planned_controls': 58, 'completed_controls': 58, 'positive_controls_passed': 1,
+              'negative_controls_passed': 57, 'unexpected_acceptances': 0, 'panic_or_abort_count': 0,
+              'timeout_count': 0, 'all_controls_passed': True, 'error': None, 'uncompleted_controls': [],
+              'new_proofs_generated': 0, 'additional_work_tickets': 0, 'independent_proof_trials': 1,
+              'quantum_security_qualified': False, 'consensus_admission': False,
+              'parent_eligibility_checked': False, 'production_activation': False,
+              'runner_sha256': controls.sha(Path(controls.__file__)), 'verifier_sha256': controls.sha(verifier),
+          }
+          for key, value in expected.items():
+              controls.require(type(report.get(key)) is type(value) and report[key] == value,
+                               f'v2 controls summary differs: {key}')
+          elapsed = report['elapsed_wall_seconds']
+          controls.require(type(elapsed) in (int, float) and 0 < elapsed < 120, 'common 120-second deadline exceeded')
+          for plan, old, case in zip(plans, retained, cases):
+              for row in (old, case):
+                  controls.require(all(type(row.get(key)) is type(value) and row[key] == value
+                                       for key, value in plan.items()), 'original ordered control or expectation changed')
+              controls.require(case['passed'] is True and case['timed_out'] is False
+                               and case['panic_or_abort_detected'] is False and case['report_error'] is None,
+                               'control did not pass cleanly')
+              code = case['returncode']
+              controls.require(type(code) is int and (code == 0 if plan['expect'] == 'accept' else code > 0),
+                               'control exit differs from expectation')
+              process = case['process']
+              controls.require(process['completion_observed_before_deadline'] is True
+                               and process['termination_reasons'] == [], 'control did not complete before the deadline')
+              layer = plan.get('required_rejection_layer')
+              controls.require(layer is None or case['observed_rejection_layers'] == [layer], 'wrong rejection layer')
+          controls.validate_positive(json.dumps(report['positive_report']), baseline, location)
+          print('All 58 original saved-v2 controls passed; no new proof or qualification is claimed.')
+          PY
       - name: Reproduce the component-budget report with its unqualified boundary
         if: always() && steps.source.outcome == 'success' && steps.hardened.outcome == 'success'
         id: component_budget
@@ -270,7 +350,7 @@ jobs:
           set -euo pipefail
           # The mapper only reads already downloaded locked archives and sources.
           python3 scripts/w1_profile_source_map.py --cargo-home "$CARGO_HOME" --repo-root "$GITHUB_WORKSPACE" --out "$W1_PROFILE_OUT/security-map.json" 2>&1 | tee "$W1_PROFILE_OUT/source-map.log"
-          cmp evidence/pon-w1-transparent-profile-20261104/security-map.json "$W1_PROFILE_OUT/security-map.json" 2>&1 | tee "$W1_PROFILE_OUT/source-map-comparison.log"
+          cmp evidence/pon-w1-stark-review-20261106/security-map.json "$W1_PROFILE_OUT/security-map.json" 2>&1 | tee "$W1_PROFILE_OUT/source-map-comparison.log"
       - name: Observe the compiled profile and its unqualified boundary
         if: always() && steps.source.outcome == 'success' && steps.hardened.outcome == 'success'
         id: profile
@@ -383,6 +463,10 @@ jobs:
           with open(sys.argv[1], 'x', encoding='utf-8') as stream:
               json.dump(report, stream, indent=2, sort_keys=True)
               stream.write('\n')
+          required = ('source', 'toolchain', 'verifier_v2', 'receipt_controls_v2', 'source_after')
+          incomplete = [name for name in required if report['steps'].get(name, {}).get('outcome') != 'success']
+          if incomplete:
+              raise SystemExit('required v2/source observations failed or were skipped: ' + ', '.join(incomplete))
           PY
       - name: Retain source identities, binaries, logs and all failures
         if: always()

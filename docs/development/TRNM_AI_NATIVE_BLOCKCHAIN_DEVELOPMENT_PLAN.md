@@ -7863,3 +7863,25 @@ commit. Preserve the two earlier launcher preparation failures separately;
 neither executed native tests. The new combined source requires its own fixed
 source, actual binaries and the newly added target controls. No prior target,
 PQ, reader replay, Cell or ordinary-model result transfers to this composition.
+
+### 2026-11-06 STARK review and real-v2 CI acceptance control
+
+Continue PQ candidate `5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` without
+changing the proving parameters or admitting a new production path. The
+[dated review](../security/W1_STARK_REVIEW_20261106.md) separates official
+96/99-bit estimates, conjectural component equations, published small-field
+obstructions and the unresolved complete W1/QROM composition. Independent
+arithmetic reconstruction passes 144 parameter combinations and 24 fixed-term
+budget checks; these results validate equation reproduction, not soundness.
+
+The [actual-proof CI repair and retained observations](../../evidence/pon-w1-stark-review-20261106/README.md)
+demonstrate that the old two-test v2 suite accepted an always-reject mutation.
+A named saved-proof/full-native-replay test kills that mutation. CI now requires
+all three exact tests and the unchanged original 58 actual receipt controls,
+including their rejection layers, original 120-second total budget and source
+identities. A new dated source map preserves whole-file equality checks and
+leaves historical evidence untouched. No new proof is generated, no Groth16
+outer layer is introduced, and all complete-proof/PQ, ordinary-node, benefit,
+public-service and production-activation holds remain in force. Obtain an
+external cryptographic review and instantiate the complete quantum error budget
+before strengthening any chain-level security statement.
