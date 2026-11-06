@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Record bounded commands against this task's frozen Git source."""
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+import time
+
+ROOT = Path('/workspace/scratch/3311c78ade40/chain')
+OUT = Path('/workspace/scratch/3311c78ade40/validation')
+OUT.mkdir(exist_ok=True)
+label, timeout, *command = sys.argv[1:]
+assert label.replace('-', '').replace('_', '').isalnum() and command
+timeout = int(timeout)
+assert 1 <= timeout <= 1800
+receipt_path, log_path = OUT / (label + '.json'), OUT / (label + '.log')
+if receipt_path.exists() or log_path.exists():
+    raise SystemExit('Observation already exists; do not overwrite it')
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT, text=True).strip()
+
+source, tree = git('rev-parse', 'HEAD'), git('rev-parse', 'HEAD^{tree}')
+before = git('status', '--porcelain', '--untracked-files=all')
+assert not before, 'Freeze a clean source before recording final validation'
+started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+tick = time.monotonic()
+env = dict(os.environ)
+env['PYTHONDONTWRITEBYTECODE'] = '1'
+launch_error, timed_out = None, False
+with log_path.open('xb') as log:
+    try:
+        child = subprocess.Popen(command, cwd=ROOT, env=env, stdout=log,
+                                 stderr=subprocess.STDOUT, start_new_session=True)
+        try:
+            code = child.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            os.killpg(child.pid, signal.SIGKILL)
+            code = child.wait()
+    except OSError as error:
+        launch_error, code = str(error), 127
+        log.write((launch_error + '\n').encode())
+receipt = {
+    'schema': 'trnm-local-command-receipt-v1', 'label': label,
+    'command': command, 'cwd': str(ROOT), 'source_commit': source, 'source_tree': tree,
+    'source_clean_before': not before,
+    'source_unchanged_after': source == git('rev-parse', 'HEAD')
+        and not git('status', '--porcelain', '--untracked-files=all'),
+    'started_utc': started,
+    'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'wall_seconds': time.monotonic() - tick,
+    'exit_code': code, 'launch_error': launch_error, 'timed_out': timed_out,
+    'timeout_seconds': timeout, 'python_version': sys.version,
+    'log_file': log_path.name, 'log_bytes': log_path.stat().st_size,
+    'log_sha256': hashlib.sha256(log_path.read_bytes()).hexdigest(),
+    'selected_environment': {'PYTHONDONTWRITEBYTECODE': '1'},
+    'independent_acceptance': False, 'production_activation': False,
+}
+with receipt_path.open('x') as output:
+    json.dump(receipt, output, sort_keys=True, indent=2)
+    output.write('\n')
+print(json.dumps(receipt, sort_keys=True))
+raise SystemExit(code if code >= 0 else 128 - code)

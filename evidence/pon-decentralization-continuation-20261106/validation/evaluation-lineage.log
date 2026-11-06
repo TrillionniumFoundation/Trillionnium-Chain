@@ -1,0 +1,22 @@
+test_all_reveal_orders_have_same_complete_score_and_no_magic_reward (__main__.PublicLifecycleTests.test_all_reveal_orders_have_same_complete_score_and_no_magic_reward) ... ok
+test_appeal_records_evidence_and_never_silently_changes_result (__main__.PublicLifecycleTests.test_appeal_records_evidence_and_never_silently_changes_result) ... ok
+test_author_and_unadmitted_keys_cannot_evaluate (__main__.PublicLifecycleTests.test_author_and_unadmitted_keys_cannot_evaluate) ... ok
+test_deadline_phase_boundaries_and_height_rewind_reject (__main__.PublicLifecycleTests.test_deadline_phase_boundaries_and_height_rewind_reject) ... ok
+test_forged_identical_or_cross_signer_conflict_is_not_evidence (__main__.PublicLifecycleTests.test_forged_identical_or_cross_signer_conflict_is_not_evidence) ... ok
+test_late_signed_conflict_cannot_rewrite_closed_result (__main__.PublicLifecycleTests.test_late_signed_conflict_cannot_rewrite_closed_result) ... ok
+test_missing_candidate_and_duplicate_closed_calls_are_explicit (__main__.PublicLifecycleTests.test_missing_candidate_and_duplicate_closed_calls_are_explicit) ... ok
+test_missing_reveal_explicitly_aborts_no_synthetic_timeout_vote (__main__.PublicLifecycleTests.test_missing_reveal_explicitly_aborts_no_synthetic_timeout_vote) ... ok
+test_mutable_downloaded_roster_cannot_replace_expected_owner_root (__main__.PublicLifecycleTests.test_mutable_downloaded_roster_cannot_replace_expected_owner_root) ... ok
+test_next_round_freeze_enforces_signed_fault_and_known_lineage_alias_exclusion (__main__.PublicLifecycleTests.test_next_round_freeze_enforces_signed_fault_and_known_lineage_alias_exclusion) ... ok
+test_other_round_parent_task_and_numeric_aliases_reject (__main__.PublicLifecycleTests.test_other_round_parent_task_and_numeric_aliases_reject) ... ok
+test_owner_admitted_same_lineage_alias_cannot_be_counted_as_two_evaluators (__main__.PublicLifecycleTests.test_owner_admitted_same_lineage_alias_cannot_be_counted_as_two_evaluators) ... ok
+test_reveal_before_commit_or_changed_salt_score_does_not_match (__main__.PublicLifecycleTests.test_reveal_before_commit_or_changed_salt_score_does_not_match) ... ok
+test_signed_commit_equivocation_is_saved_and_current_roster_not_rewritten (__main__.PublicLifecycleTests.test_signed_commit_equivocation_is_saved_and_current_roster_not_rewritten) ... ok
+test_signed_reveal_conflict_is_verifiable_without_trusting_report_value (__main__.PublicLifecycleTests.test_signed_reveal_conflict_is_verifiable_without_trusting_report_value) ... ok
+test_successor_cannot_replay_past_phases_after_actual_predecessor_close_and_observation (__main__.PublicLifecycleTests.test_successor_cannot_replay_past_phases_after_actual_predecessor_close_and_observation) ... ok
+test_zero_reveal_remains_zero_and_not_adoption (__main__.PublicLifecycleTests.test_zero_reveal_remains_zero_and_not_adoption) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.071s
+
+OK

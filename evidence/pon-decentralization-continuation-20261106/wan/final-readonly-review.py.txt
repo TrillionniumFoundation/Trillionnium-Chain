@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Reproduce a bounded independent review on one clean, exact source commit.
+
+This is an audit helper, not runtime or deployment authority. It reads the
+repository and writes only its explicitly selected create-only scratch receipt.
+Earlier working-tree observations are not relabeled by this execution.
+"""
+import argparse
+import copy
+import datetime
+import hashlib
+import json
+import pathlib
+import random
+import subprocess
+import sys
+import types
+
+sys.dont_write_bytecode = True
+BASELINE = "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa"
+SEED = 742004
+
+
+def sha(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def differential(root, current):
+    source = subprocess.check_output([
+        "git", "--no-replace-objects", "show", BASELINE + ":scripts/pon_decentralization_audit.py"], cwd=root)
+    legacy = types.ModuleType("legacy_decentralization_review")
+    legacy.__file__ = str(root / "scripts/pon_decentralization_audit.py")
+    exec(compile(source, "legacy_decentralization_review", "exec"), legacy.__dict__)
+    rng = random.Random(SEED)
+    context = {"chain_source_sha256": "1" * 64, "profile_sha256": "2" * 64}
+    comparisons = quorums = rejections = 0
+    for trial in range(750):
+        nc, ns = rng.randrange(1, 10), rng.randrange(0, 30)
+        evidence = [dict(sha256=sha(f"e-{trial}-{i}".encode()),
+            valid_from_unix_ms=rng.choice([0, 0, 0, 50]),
+            valid_until_unix_ms=rng.choice([1000, 1000, 900, 600]),
+            status=rng.choice(["current"] * 6 + ["unknown", "revoked"])) for i in range(nc + 4)]
+        controllers = [dict(id=f"c{i}", parents=rng.sample(
+            [f"c{j}" for j in range(nc) if j != i], rng.randrange(min(2, nc - 1) + 1)),
+            evidence_sha256=evidence[i]["sha256"]) for i in range(nc)]
+        aliases = [dict(left=f"c{i}", right=f"c{j}", evidence_sha256=rng.choice(evidence)["sha256"])
+            for i, j in rng.sample([(i, j) for i in range(nc) for j in range(i + 1, nc)],
+                                  rng.randrange(min(4, nc * (nc - 1) // 2) + 1))]
+        subjects = [dict(id=f"s{i}", controller=rng.choice([None] + [f"c{j}" for j in range(nc)]),
+            key_sha256=rng.choice([None] * 3 + [sha(f"key-{j}".encode()) for j in range(16)]),
+            evidence_sha256=rng.choice([None] + [e["sha256"] for e in evidence])) for i in range(ns)]
+        registry = dict(schema="trnm-control-registry-v1", context=dict(context),
+            valid_from_unix_ms=0, valid_until_unix_ms=1000,
+            subjects_sha256=current.canonical_sha256(subjects), controllers=controllers,
+            aliases=aliases, subjects=subjects, evidence=evidence)
+        kwargs = dict(expected_sha256=current.canonical_sha256(registry), expected_context=context,
+            start_unix_ms=rng.choice([0, 25, 100]), end_unix_ms=rng.choice([600, 900, 1000, 1100]))
+        old, new = legacy.ControlMap(registry, **kwargs), current.ControlMap(registry, **kwargs)
+        identities = [s["id"] for s in subjects]
+        for subject in identities:
+            for method in ("group_for", "declared_group_for"):
+                assert getattr(old, method)(subject) == getattr(new, method)(subject), (trial, method, subject)
+                comparisons += 1
+        for first in identities:
+            for second in identities:
+                assert old.related(first, second) == new.related(first, second), (trial, first, second)
+                comparisons += 1
+        assert old.summarize(identities) == new.summarize(identities), trial
+        for record in evidence:
+            assert old.reference(record["sha256"]) == new.reference(record["sha256"]), (trial, "reference")
+            comparisons += 1
+        for _ in range(10):
+            roster = rng.sample(identities, rng.randrange(len(identities) + 1))
+            authors = rng.sample(identities, rng.randrange(len(identities) + 1))
+            total = max(1, len(roster) + rng.randrange(0, 4))
+            threshold = rng.randrange(1, total + 1)
+            options = dict(total_key_slots=total, authors_complete=rng.choice([True, False]))
+            results = []
+            for control in (old, new):
+                try:
+                    results.append(("return", control.quorum(roster, threshold, authors, **options)))
+                except Exception as error:
+                    results.append(("raise", type(error).__name__, str(error)))
+            assert results[0] == results[1], (trial, roster, authors, results)
+            quorums += 1
+            rejections += results[0][0] == "raise"
+        snapshot = [new.group_for(s) for s in identities]
+        for item in registry["evidence"]:
+            item["status"] = "revoked"
+        for item in registry["subjects"]:
+            item["controller"] = None
+        assert snapshot == [new.group_for(s) for s in identities], trial
+        assert snapshot == [old.group_for(s) for s in identities], trial
+    return dict(seed=SEED, registries=750, query_comparisons=comparisons,
+        quorum_comparisons=quorums, matching_rejections=rejections,
+        matching_returns=quorums - rejections, all_equal=True,
+        baseline_commit=BASELINE, baseline_source_sha256=sha(source))
+
+
+def wan_bounds(W, fixture_v4, seal):
+    manifest, rows = fixture_v4(64)
+    for row in rows:
+        if row["cohort"] == "replica_repair":
+            row["result"]["complete_replica_operators"] = [f"o{i}" for i in range(64)]
+    new = W.evaluate(manifest, rows)
+    old_manifest = copy.deepcopy(manifest)
+    old_manifest["schema"] = "trnm-wan-preregistration-v3"
+    old = W.evaluate(old_manifest, rows)
+    assert new["all_cohort_arithmetic_slos_met"] and old["all_cohort_arithmetic_slos_met"]
+    for previous, current in zip(old["cohorts"], new["cohorts"]):
+        for key in ("scheduled", "recorded", "outcomes", "reported_resources", "resource_limits_met",
+                    "timely_successful", "accounting_complete", "operator_cohort_schedule_span_ms"):
+            assert previous[key] == current[key], key
+    assert new["operator_joint_control_failure_domain_count"] == 64
+    assert all(item["joint_control_failure_domain_count"] == 64
+               and len(item["matched_operator_subset"]) == 64 for item in new["repair_joint_results"])
+    try:
+        W.evaluate(*fixture_v4(65))
+    except ValueError as error:
+        rejected = str(error)
+    else:
+        raise AssertionError("65 operators accepted")
+    edges = [(g, d) for g in range(31) for d in (g, g + 1)] + [(31, 0), (0, 0)]
+    for index, (group, domain) in enumerate(edges):
+        manifest["control_registry"]["subjects"][index]["controller"] = f"controller{group}"
+        manifest["operators"][index]["failure_domain"] = f"zone{domain}"
+    seal(manifest)
+    controls = W.WanJointControlContext(manifest)
+    matching = controls.joint_replica_report(list(controls.operators))
+    assert matching["joint_control_failure_domain_count"] == 32
+    return dict(max_operator_fixture=dict(operators=64, scheduled=new["scheduled"], recorded=new["recorded"],
+        joint_count=new["operator_joint_control_failure_domain_count"], repair_diagnostics=len(new["repair_joint_results"]),
+        serialized_report_bytes=len(json.dumps(new).encode()), original_v3_denominators_costs_outcomes_identical=True,
+        external_independence_verified=new["external_independence_verified"],
+        physical_replica_independence_verified=new["physical_replica_independence_verified"]),
+        operator_65_rejected=rejected, alternating_path_matching=matching["joint_control_failure_domain_count"])
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=pathlib.Path, required=True)
+    parser.add_argument("--expected-head", required=True)
+    parser.add_argument("--output", type=pathlib.Path, required=True)
+    args = parser.parse_args()
+    root = args.root.resolve()
+    sys.path[:0] = [str(root / "scripts"), str(root / "scripts/ci")]
+    import pon_decentralization_audit as D
+    import pon_decentralization_evidence as E
+    import pon_wan_evidence as W
+    from test_pon_wan_control_domains import fixture_v4, seal
+    from verify_ci_source import verify
+    started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    source_before = verify("head", args.expected_head, root=root)
+    files = ["scripts/pon_decentralization_audit.py", "scripts/pon_decentralization_evidence.py",
+        "scripts/pon_wan_evidence.py", "scripts/ci/test_pon_wan_control_domains.py",
+        "scripts/ci/test_pon_wan_evidence.py", "scripts/ci/verify_ci_source.py",
+        "config/pon/decentralization-audit-v1.json"]
+    hashes_before = {path: sha((root / path).read_bytes()) for path in files}
+    core, wan = differential(root, D), wan_bounds(W, fixture_v4, seal)
+    E.check_installed_policy()
+    hashes_after = {path: sha((root / path).read_bytes()) for path in files}
+    source_after = verify("head", args.expected_head, root=root)
+    assert hashes_before == hashes_after and source_before == source_after
+    report = dict(scope="Fresh read-only internal review on the exact committed source; no deployment or independent acceptance",
+        status="PASS", argv=sys.argv, started_at_utc=started,
+        completed_at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        reviewer_script_sha256=sha(pathlib.Path(__file__).read_bytes()),
+        source_before=source_before, source_after=source_after,
+        reviewed_file_sha256_before=hashes_before, reviewed_file_sha256_after=hashes_after,
+        control_map_differential=core, wan_v4_bounds=wan,
+        installed_material_reader_policy_checked=True,
+        manual_material_reader_review="Empty input does not receive byte-completeness credit; current is a declared-window condition separate from matched bytes; all authentication, deployment and independence flags remain false.",
+        external_independence_accepted=False, production_activation=False)
+    raw = (json.dumps(report, sort_keys=True, indent=2) + "\n").encode()
+    with args.output.open("xb") as target:
+        target.write(raw)
+    print(raw.decode(), end="")
+
+
+if __name__ == "__main__":
+    main()

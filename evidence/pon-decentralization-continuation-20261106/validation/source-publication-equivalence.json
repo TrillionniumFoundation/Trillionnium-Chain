@@ -1,0 +1,17 @@
+{
+  "branch_update_expected_old": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+  "commit_identities_are_distinct": true,
+  "execution_receipts_relabelled": false,
+  "fetched_published_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+  "force": false,
+  "independent_acceptance": false,
+  "measured_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+  "measured_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+  "native_qualification": false,
+  "production_activation": false,
+  "published_commit": "22a1fe67c247072eface8625a93e23ed01974a51",
+  "published_commit_preimage_verified": true,
+  "published_parent": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+  "schema": "trnm-publication-tree-equivalence-v1",
+  "tree_equal": true
+}

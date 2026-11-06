@@ -1,0 +1,9 @@
+test_actual_conflicts_recount_and_hash_appeal_is_record_only (__main__.NativeEvaluationQuorumReferenceTests.test_actual_conflicts_recount_and_hash_appeal_is_record_only) ... ok
+test_exact_retained_vectors_recompute_without_native_output (__main__.NativeEvaluationQuorumReferenceTests.test_exact_retained_vectors_recompute_without_native_output) ... ok
+test_one_missing_is_tolerated_but_never_becomes_a_vote (__main__.NativeEvaluationQuorumReferenceTests.test_one_missing_is_tolerated_but_never_becomes_a_vote) ... ok
+test_plan_commits_disqualification_without_shrinking_threshold (__main__.NativeEvaluationQuorumReferenceTests.test_plan_commits_disqualification_without_shrinking_threshold) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.062s
+
+OK

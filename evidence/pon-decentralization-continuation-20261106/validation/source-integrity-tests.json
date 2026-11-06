@@ -1,0 +1,30 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/3311c78ade40/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T14:59:37.977389+00:00",
+  "independent_acceptance": false,
+  "label": "source-integrity-tests",
+  "launch_error": null,
+  "log_bytes": 6898,
+  "log_file": "source-integrity-tests.log",
+  "log_sha256": "d15fdec847b4b4afdf82eea731c13056909b17dce430a813fd0c2f1d3e41074b",
+  "production_activation": false,
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "source_clean_before": true,
+  "source_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+  "source_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:59:34.641627+00:00",
+  "timed_out": false,
+  "timeout_seconds": 240,
+  "wall_seconds": 3.335763345000487
+}

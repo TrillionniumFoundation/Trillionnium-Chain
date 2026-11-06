@@ -1,0 +1,15 @@
+{
+  "new_native_execution": false,
+  "paths": {
+    "rust-toolchain.toml": {
+      "baseline_git_object": "8770b1d875864c5356dc4abad904b69ec484817f",
+      "equal": true,
+      "published_git_object": "8770b1d875864c5356dc4abad904b69ec484817f"
+    },
+    "trillionnium": {
+      "baseline_git_object": "1f5c10b641eb3168d460b684a0147ed5ae76d958",
+      "equal": true,
+      "published_git_object": "1f5c10b641eb3168d460b684a0147ed5ae76d958"
+    }
+  }
+}

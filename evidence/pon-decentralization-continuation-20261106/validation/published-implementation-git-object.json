@@ -1,0 +1,35 @@
+{
+  "sha": "22a1fe67c247072eface8625a93e23ed01974a51",
+  "node_id": "C_kwDOTty1_doAKDIyYTFmZTY3YzI0NzA3MmVmYWNlODYyNWE5M2UyM2VkMDE5NzRhNTE",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/22a1fe67c247072eface8625a93e23ed01974a51",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/22a1fe67c247072eface8625a93e23ed01974a51",
+  "author": {
+    "name": "Franksudoman",
+    "email": "273670192+Franksudoman@users.noreply.github.com",
+    "date": "2026-11-06T15:03:01Z"
+  },
+  "committer": {
+    "name": "Franksudoman",
+    "email": "273670192+Franksudoman@users.noreply.github.com",
+    "date": "2026-11-06T15:03:01Z"
+  },
+  "tree": {
+    "sha": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/eb93b36df0da51816a05cd4cc1a113e679bcfbdd"
+  },
+  "message": "fix(audit): bind evidence bytes and require joint WAN domains in V4\n\nSource tree matches locally measured e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d. Retain missing deployment evidence and native-validation limits.",
+  "parents": [
+    {
+      "sha": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

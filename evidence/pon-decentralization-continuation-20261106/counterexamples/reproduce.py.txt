@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Reproduce declaration-reader defects; these inputs are synthetic only."""
+import argparse
+import copy
+import hashlib
+import importlib.util
+import json
+import pathlib
+import subprocess
+import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--source-root", required=True, type=pathlib.Path)
+parser.add_argument("--output-root", required=True, type=pathlib.Path)
+args = parser.parse_args()
+args.output_root.mkdir(parents=True, exist_ok=False)
+source = args.source_root / "scripts/pon_decentralization_audit.py"
+spec = importlib.util.spec_from_file_location("control_reader_reproduction", source)
+D = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(D)
+
+def save(name, value):
+    raw = (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
+    (args.output_root / name).write_bytes(raw)
+    return {"path": name, "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
+
+fixture = json.loads((args.source_root / "scripts/ci/fixtures/pon_decentralization_v1.json").read_bytes())
+summary = {
+    "scope": "synthetic declaration accounting only; no deployed or independent administration",
+    "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=args.source_root, text=True).strip(),
+    "source_file_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+    "cases": [], "quorum_costs": [],
+}
+for case in ("unresolved_producers", "unknown_unit_zero", "unknown_unit_positive", "known_unit_zero"):
+    value = copy.deepcopy(fixture)
+    if case == "unresolved_producers":
+        subjects = set(value["audit"]["work_production"]["subjects"])
+        for row in value["registry"]["subjects"]:
+            if row["id"] in subjects:
+                row["controller"] = None
+        value["registry"]["subjects_sha256"] = D.canonical_sha256(value["registry"]["subjects"])
+        value["audit"]["control_registry_sha256"] = D.canonical_sha256(value["registry"])
+        axis = "work_production"
+    else:
+        for resource in value["audit"]["resources"].values():
+            resource.update(inventory_complete=True, unknown_units=0)
+            if case.endswith("zero"):
+                resource.update(allocations=[], total_units=0)
+            else:
+                resource["total_units"] = sum(row["units"] for row in resource["allocations"])
+            if case.startswith("unknown_unit"):
+                resource["unit"] = "unknown"
+        axis = "resources"
+    input_ref = save(case + "-input.json", value)
+    report = D.evaluate(value["audit"], value["registry"])
+    report_ref = save(case + "-report.json", report)
+    summary["cases"].append({
+        "case": case, "input": input_ref, "report": report_ref,
+        "findings": [row for row in report["findings"] if row["axis"] == axis],
+        "status": report["status"],
+    })
+
+start, end = 1_800_000_000_000, 1_800_000_000_000 + 72 * 3600 * 1000
+context = {"chain_source_sha256": "1" * 64, "profile_sha256": "2" * 64}
+for count in (128, 256, 512):
+    registry = dict(schema="trnm-control-registry-v1", context=context,
+                    valid_from_unix_ms=start, valid_until_unix_ms=end,
+                    subjects_sha256="0" * 64, controllers=[], aliases=[], subjects=[], evidence=[])
+    for index in range(count):
+        evidence = hashlib.sha256(f"synthetic evidence:{index}".encode()).hexdigest()
+        registry["evidence"].append(dict(sha256=evidence, valid_from_unix_ms=start,
+                                         valid_until_unix_ms=end, status="current"))
+        registry["controllers"].append(dict(id=f"controller-{index}",
+                                            parents=[] if index == 0 else ["controller-0"],
+                                            evidence_sha256=evidence))
+        registry["subjects"].append(dict(id=f"subject-{index}", controller=f"controller-{index}",
+                                         key_sha256=hashlib.sha256(f"synthetic key:{index}".encode()).hexdigest(),
+                                         evidence_sha256=evidence))
+    registry["subjects_sha256"] = D.canonical_sha256(registry["subjects"])
+    input_ref = save(f"quorum-{count}-registry.json", registry)
+    control = D.ControlMap(registry, expected_sha256=D.canonical_sha256(registry),
+                           expected_context=context, start_unix_ms=start, end_unix_ms=end)
+    reference = control.reference
+    calls = [0]
+    def counted(*pos, **kw):
+        calls[0] += 1
+        return reference(*pos, **kw)
+    control.reference = counted
+    begin = time.monotonic()
+    report = control.quorum([row["id"] for row in registry["subjects"]], count // 2)
+    elapsed = time.monotonic() - begin
+    report_ref = save(f"quorum-{count}-report.json", report)
+    summary["quorum_costs"].append(dict(n=count, input=input_ref, report=report_ref,
+                                        registry_canonical_bytes=len(D.canonical_bytes(registry)),
+                                        reference_calls=calls[0], quorum_wall_seconds=elapsed))
+save("summary.json", summary)
+print(json.dumps(summary, indent=2, sort_keys=True))

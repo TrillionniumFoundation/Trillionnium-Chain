@@ -1,0 +1,6 @@
+tree eb93b36df0da51816a05cd4cc1a113e679bcfbdd
+parent 73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa
+author Codex <codex@openai.com> 1793977118 +0800
+committer Codex <codex@openai.com> 1793977118 +0800
+
+fix(audit): bind evidence bytes and require joint WAN domains in V4

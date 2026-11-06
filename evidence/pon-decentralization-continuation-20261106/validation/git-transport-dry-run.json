@@ -1,0 +1,14 @@
+{
+  "command": [
+    "git",
+    "push",
+    "--dry-run",
+    "--porcelain",
+    "origin",
+    "HEAD:refs/heads/fix/chain-control-domain-evidence-20261106"
+  ],
+  "exit_code": 128,
+  "mutating_push": false,
+  "stderr": "fatal: could not read Username for 'https://github.com': terminal prompts disabled\n",
+  "stdout": ""
+}

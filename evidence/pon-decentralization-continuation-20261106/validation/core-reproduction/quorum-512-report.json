@@ -1,0 +1,21 @@
+{
+  "author_control_unresolved": false,
+  "author_related_subjects": [],
+  "author_separated_candidate_group_count": 1,
+  "author_separated_candidate_key_count": 512,
+  "author_separated_candidate_key_threshold_met": true,
+  "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+  "declared_group_key_weights": {
+    "controller-0": 512
+  },
+  "identified_unique_keys": 512,
+  "independent_administration_verified": false,
+  "key_threshold": 256,
+  "known_groups_sufficient_to_approve": 1,
+  "known_groups_sufficient_to_block": 1,
+  "minimum_approving_groups": 1,
+  "minimum_blocking_groups": 1,
+  "total_key_slots": 512,
+  "unidentified_key_slots": 0,
+  "unresolved_control_key_slots": 0
+}

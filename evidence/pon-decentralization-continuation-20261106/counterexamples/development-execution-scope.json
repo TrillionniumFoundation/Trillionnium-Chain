@@ -1,0 +1,19 @@
+{
+  "after": {
+    "base_commit": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+    "note": "Uncommitted development execution. The summary source_commit is the base Git HEAD, not an assertion that modified code executed at that commit.",
+    "source_clean": false,
+    "source_file_sha256": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390"
+  },
+  "before": {
+    "source_clean": true,
+    "source_commit": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+    "source_file_sha256": "a93e3f92afc5683b32400d5bca0c757fb5f0b1e85ca2625a52945e8ed6a2d850"
+  },
+  "patch": {
+    "bytes": 30040,
+    "path": "control-core.patch",
+    "sha256": "2ff1b0b5c6f5fe0372dee5930e925b0264428aab20aa3c357ff9baf4426d875f"
+  },
+  "scope": "synthetic component controls only"
+}
