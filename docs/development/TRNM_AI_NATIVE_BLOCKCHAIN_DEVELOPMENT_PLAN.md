@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Six-axis throughput continuation, 2026-11-06 America/New_York:** Compose
+the current integration `513e92dfc27044ef3e0c9d62e7ae504fa5bea38f` with the
+complete #736 source/evidence at `9eda0ada15be1702269e08e527917568c710f4d3`.
+Preserve its bounded history-suffix and fresh Host-limit semantics. Continue
+with same-call immutable PQ configuration preparation, fresh-row Growth SQL
+program reuse, bounded shared-domain mutation start ordering, and complete
+client-preparation timing with strict native-clock validation. Existing M06
+bounded parallel preparation and deterministic state commit remain the owners;
+current authorization, revocation, nonce, resource and recovery frontiers are
+not cached. Cell transport remains a separate data plane, with whole-host
+isolation and simultaneous-load acceptance still open. Keep the original
+four-second business and 4,105-block cold-sync gates, all distinct workload
+identities and every prior failed or unknown observation. The
+[source and validation record](../../evidence/pon-throughput-six-axis-20261106/README.md)
+does not promote component tests to production throughput or activation.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

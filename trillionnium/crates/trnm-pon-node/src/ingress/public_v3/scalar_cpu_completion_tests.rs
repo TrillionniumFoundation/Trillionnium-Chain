@@ -68,6 +68,67 @@ fn complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once() {
 }
 
 #[test]
+fn shared_fifo_waiter_preserves_actual_w1_completion_priority_until_settlement() {
+    use super::super::{
+        MutationCpuMeasurement, PaidMutationCpuPermit, PublicMetrics, PublicPolicy, PublicServer,
+    };
+    use crate::ingress::DevelopmentIdentity;
+    let (_directory, _settings, packet) = packet();
+    let domain = ServiceMutationCpuDomain::standalone();
+    let completion = domain.begin().unwrap();
+    bind(&completion, Duration::from_secs(5));
+    qualify(&completion, &packet);
+    let server = PublicServer::with_continuous_domain(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([86; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        &domain,
+    )
+    .unwrap();
+    let metrics = Mutex::new(PublicMetrics::default());
+    thread::scope(|scope| {
+        let queued = scope.spawn(|| {
+            let permit = PaidMutationCpuPermit::acquire_before(
+                &server,
+                &metrics,
+                Instant::now() + Duration::from_secs(5),
+                &AtomicBool::new(false),
+                &AtomicBool::new(false),
+            )
+            .unwrap();
+            permit.finish(&MutationCpuMeasurement::default(), &server, &metrics)
+        });
+        let deadline = Instant::now() + Duration::from_secs(3);
+        while domain.budget.lock().unwrap().start_waiters[0] == 0 {
+            assert!(Instant::now() < deadline);
+            thread::sleep(Duration::from_millis(1));
+        }
+        assert_eq!(domain.budget.lock().unwrap().verified_completions, 1);
+        assert_eq!(domain.observe().unwrap().in_flight, 1);
+        assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 0);
+        assert_eq!(
+            domain.begin().err().unwrap().to_string(),
+            "PUBLIC_MUTATION_CPU_BUDGET"
+        );
+        assert!(!completion.finish().accounting_unavailable);
+        assert!(queued.join().unwrap().is_some());
+    });
+    assert_eq!(domain.observe().unwrap().in_flight, 0);
+    assert_eq!(domain.budget.lock().unwrap().verified_completions, 0);
+    assert_eq!(
+        domain.budget.lock().unwrap().start_waiters,
+        [0; MUTATION_CPU_START_WAITERS]
+    );
+    assert_eq!(metrics.lock().unwrap().mutation_cpu_reservations, 1);
+    assert!(
+        domain
+            .observe_actual_flow()
+            .unwrap()
+            .unwrap()
+            .balance_identity_verified
+    );
+}
+
+#[test]
 fn actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity() {
     let (_directory, _settings, packet) = packet();
     let domain = ServiceMutationCpuDomain {

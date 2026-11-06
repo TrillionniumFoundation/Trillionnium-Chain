@@ -45,6 +45,8 @@ pub(crate) use work_checked::GrowthWorkCheckedPacket;
 
 pub(crate) const DDL: &str = "CREATE TABLE archive_nodes(id BLOB PRIMARY KEY,data BLOB NOT NULL);\nCREATE TABLE growth_states(block BLOB PRIMARY KEY,data BLOB NOT NULL);";
 const MAX_RECORD_BYTES: usize = 524_288;
+const GROWTH_HEADER_SQL: &str =
+    "SELECT substr(packet,1,?),substr(packet,-32,32),length(packet) FROM blocks WHERE id=?";
 
 pub(super) struct Epoch {
     version: u64,
@@ -557,11 +559,15 @@ impl Node {
     }
     fn growth_header(&self, id: Hash) -> Result<GrowthHeader> {
         let width = 4 + trnm_protocol::pon_growth::GROWTH_HEADER_BYTES;
-        let (prefix, trace, length): (Vec<u8>, Vec<u8>, usize) = self.db.query_row(
-            "SELECT substr(packet,1,?),substr(packet,-32,32),length(packet) FROM blocks WHERE id=?",
-            params![width, id.as_slice()],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
-        )?;
+        // Retain only the SQLite program. Each ancestor still binds its own
+        // exact id and reads the current prefix, trace and packet length under
+        // the caller's original snapshot/epoch checks; no header verdict is kept.
+        let (prefix, trace, length): (Vec<u8>, Vec<u8>, usize) = self
+            .db
+            .prepare_cached(GROWTH_HEADER_SQL)?
+            .query_row(params![width, id.as_slice()], |r| {
+                Ok((r.get(0)?, r.get(1)?, r.get(2)?))
+            })?;
         ensure(
             prefix.len() == width
                 && prefix[..4] == *b"PNP2"

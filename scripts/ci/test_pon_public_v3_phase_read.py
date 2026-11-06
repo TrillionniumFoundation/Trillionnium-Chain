@@ -98,6 +98,16 @@ def attribution_phase(submissions, history, attacks, records):
     }
 
 
+def historical_report():
+    phases = [attribution_phase([], [], [], [record()]) for _ in reader.MODES]
+    for phase, mode in zip(phases, reader.MODES):
+        phase['mode'] = mode
+    return dict(schema='native-public-v3-separate-process-campaign-v2',
+        state_backend='authenticated-v1', finite_experiment_criteria_met=False,
+        economics_complete=False, best_observed_cold_legal_method=None,
+        preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
+
+
 def completion_observation():
     return dict(schema='public-v3-live-owner-completion-work-v1',
         identity_domain='public-v3-complete-work-identity-v1', identity_capacity=4096,
@@ -139,7 +149,7 @@ def arithmetic_work(reused=False, completed=True):
             publication='none' if reused else 'product') if completed else None))
 
 
-def arithmetic_report():
+def arithmetic_report(revision='r13'):
     """Exact native producer shape, with synthetic unknown/failed measurements."""
     phases = [attribution_phase([], [], [], [
         {**record(), 'work_arithmetic': arithmetic_work()},
@@ -147,7 +157,7 @@ def arithmetic_report():
         {**record(), 'work_arithmetic': arithmetic_work(completed=False)}, record()])
         for _ in reader.MODES]
     for phase, mode in zip(phases, reader.MODES):
-        phase.update(mode=mode, public_resource_policy=arithmetic_policy(),
+        phase.update(mode=mode, public_resource_policy=arithmetic_policy(revision),
             work_profile='arithmetic-facts-v1', completion_work_observation=completion_observation(),
             work_arithmetic_owner=dict(schema='public-v3-campaign-arithmetic-owner-v1',
                 initial_state='fresh-empty-by-construction', slots=64,
@@ -161,7 +171,7 @@ def arithmetic_report():
     return dict(schema=reader.ARITHMETIC_REPORT_SCHEMA,
         state_backend='authenticated-v1', work_profile='arithmetic-facts-v1',
         original_r13_campaign_qualified=False, adversarial_key_churn_service_qualified=False,
-        public_resource_policy=arithmetic_policy(), finite_experiment_criteria_met=False,
+        public_resource_policy=arithmetic_policy(revision), finite_experiment_criteria_met=False,
         economics_complete=False, best_observed_cold_legal_method=None,
         preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
 
@@ -177,6 +187,50 @@ def diagnostic_record():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_phase_process_and_setup_clocks_preserve_native_widths_and_unknowns(self):
+        for field, bits in (
+            ('whole_parent_phase_cpu_ns', 64), ('whole_parent_phase_wall_ns', 128),
+            ('receiver_and_verifier_setup_cpu_ns', 64),
+            ('receiver_and_verifier_setup_wall_ns', 128),
+        ):
+            for value in (None, 0, 1, (1 << bits) - 1):
+                with self.subTest(field=field, value=value):
+                    phase = attribution_phase([], [], [], [record()])
+                    phase[field] = value
+                    original = copy.deepcopy(phase)
+                    result = reader.phase_summary(phase)
+                    self.assertEqual(result[field], value)
+                    self.assertEqual(phase, original)
+                    self.assertFalse(result['native_phase_criteria_met'])
+            for value in (True, False, -1, 0.0, 1.5, '0', [], {}, 1 << bits):
+                with self.subTest(field=field, invalid=value):
+                    phase = attribution_phase([], [], [], [record()])
+                    phase[field] = value
+                    with self.assertRaisesRegex(ValueError, f'optional u{bits} clock'):
+                        reader.phase_summary(phase)
+
+    def test_preparation_clocks_validate_without_changing_retained_derivations(self):
+        for field, bits in (('cpu_ns', 64), ('wall_ns', 128)):
+            for value in (None, 0, 1, (1 << bits) - 1):
+                with self.subTest(field=field, value=value):
+                    report = historical_report()
+                    report['preparation'][field] = value
+                    original = copy.deepcopy(report)
+                    current = reader.analyze(report)
+                    self.assertEqual(current[f'honest_preparation_{field}'], value)
+                    self.assertEqual(report, original)
+                    self.assertFalse(current['native_finite_experiment_criteria_met'])
+                    for version in (1, 2, 3):
+                        retained = reader.analyze_for_retained_schema(report,
+                            f'pon-public-v3-multiprocess-phase-derivation-v{version}')
+                        self.assertEqual(retained[f'honest_preparation_{field}'], value)
+            for value in (True, False, -1, 0.0, 1.5, '0', [], {}, 1 << bits):
+                with self.subTest(field=field, invalid=value):
+                    report = historical_report()
+                    report['preparation'][field] = value
+                    with self.assertRaisesRegex(ValueError, f'optional u{bits} clock'):
+                        reader.analyze(report)
+
     @staticmethod
     def wait_slot(duration, *, accepted=True, completed=True, code=None):
         return dict(started_ns=0, ended_ns=duration, wall_ns=duration,
@@ -784,6 +838,50 @@ class ReaderTests(unittest.TestCase):
         phase['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v3'
         with self.assertRaisesRegex(ValueError, 'seven ordered'):
             reader.phase_summary(phase)
+
+    def test_r15_completion_scope_retains_exact_r13_r14_and_r15_policy_identities(self):
+        for revision in ('r13', 'r14', 'r15'):
+            for arithmetic in (False, True):
+                with self.subTest(revision=revision, arithmetic=arithmetic):
+                    policy = arithmetic_policy(revision) if arithmetic else observation(revision)
+                    report = arithmetic_report(revision) if arithmetic else historical_report()
+                    if not arithmetic:
+                        report['public_resource_policy'] = policy
+                        for phase in report['phases']:
+                            phase.update(public_resource_policy=policy,
+                                completion_work_observation=completion_observation())
+                            phase['receiver_observation'].update(
+                                schema='public-v3-local-request-resource-observation-v3',
+                                cpu_includes_reactor_authentication_or_response_signing=True,
+                                cpu_includes_reactor_authentication=False,
+                                dispatch_cpu_includes_paid_body_decode=True,
+                                dispatch_cpu_includes_response_signing=True)
+                    before = copy.deepcopy(report)
+                    result = reader.analyze(report)
+                    self.assertEqual(report, before)
+                    expected_revision = revision + ('-arithmetic-facts-v1' if arithmetic else '')
+                    policies = [p['public_resource_policy'] for p in result['phases']]
+                    if arithmetic:
+                        policies.append(result['public_resource_policy'])
+                    else:
+                        self.assertNotIn('public_resource_policy', result)
+                    for identified in policies:
+                        self.assertEqual(identified['policy_id'], policy['policy_id'])
+                        self.assertEqual(identified['resource_revision'], expected_revision)
+                    self.assertEqual([p['completion_work_observation'] for p in result['phases']],
+                                     [completion_observation()] * 3)
+                    self.assertEqual([p['confirmed_rounds'] for p in result['phases']], [0, 0, 0])
+                    self.assertFalse(result['native_finite_experiment_criteria_met'])
+                    self.assertIsNone(result['honest_preparation_cpu_ns'])
+                    self.assertEqual(result['schema'], 'pon-public-v3-multiprocess-phase-derivation-v3')
+                    wrong_scope = copy.deepcopy(report)
+                    wrong_scope['phases'][0]['receiver_observation']['schema'] = (
+                        'public-v3-local-request-resource-observation-v2')
+                    with self.assertRaisesRegex(ValueError, 'policy and observed CPU scope disagree'):
+                        reader.analyze(wrong_scope)
+                    del report['phases'][0]['completion_work_observation']
+                    with self.assertRaisesRegex(ValueError, 'completion-work observation'):
+                        reader.analyze(report)
 
     def test_r14_policy_preserves_failures_and_cannot_relabel_r13_phases(self):
         report = arithmetic_report()

@@ -4,6 +4,9 @@ use crate::pon_executor::{self, BlockExecution, ExecutionControl};
 mod fixture;
 use fixture::{Key, Witness};
 
+#[path = "checked_configuration_tests.rs"]
+mod checked_configuration;
+
 fn setup() -> (Config, State, Hash, Key, Key) {
     let a = Key::public_test_seed(101);
     let b = Key::public_test_seed(102);
