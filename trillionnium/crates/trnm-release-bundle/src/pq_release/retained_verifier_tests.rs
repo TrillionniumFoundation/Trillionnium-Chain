@@ -51,15 +51,15 @@ fn retained_verifiers_require_current_role_membership_and_exact_spki() {
 
     // White-box faults check the private retained-key invariant. No production
     // API exposes the root or this map for mutation after complete validation.
-    let saved = a.verifiers.remove(&id).unwrap();
+    let saved = Arc::get_mut(&mut a.verifiers).unwrap().remove(&id).unwrap();
     assert_eq!(a.accept(&m, &valid, 20), Err(PqReleaseErrorV1::InvalidKey));
     let (other_id, other_spki) = f.root.offline_root.keys.first_key_value().unwrap();
-    a.verifiers.insert(
+    Arc::get_mut(&mut a.verifiers).unwrap().insert(
         id,
         PqNativeVerifier::from_pinned_spki(other_spki, *other_id).unwrap(),
     );
     assert_eq!(a.accept(&m, &valid, 20), Err(PqReleaseErrorV1::InvalidKey));
-    a.verifiers.insert(id, saved);
+    Arc::get_mut(&mut a.verifiers).unwrap().insert(id, saved);
     a.root
         .roles
         .get_mut(&role)
