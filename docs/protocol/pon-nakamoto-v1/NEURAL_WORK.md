@@ -18,6 +18,43 @@ made-up score or a claim that old fine-tuning itself secures a new parent block.
 Model quality and local authority are separate proofs. New learned output enters later
 transactions, never the current header's post-state calculation.
 
+### Repeated work, model knowledge and compensation
+
+For fixed canonical A and B, every accepted challenge decodes to the same AB.
+The challenge-dependent transcript supplies the defined work statement; it does
+not create another training example, parameter update or distinct useful output.
+A new nonce, block, signer, report wrapper or branch does not establish novelty.
+The [shared-material experiment](../../development/specs/pon/SHARED_CELL_WORK_V1.md)
+and [unique-output observer](../../../formal/pon-nakamoto-v1/work_utility.py)
+retain repeated attempts and their reported costs without multiplying distinct
+application output. The observer does not authenticate semantic roots, real demand,
+unreported costs or independent sample count.
+
+Correct W1 execution does not prove cheapest legal work, fresh training, lawful
+data, an uncontaminated evaluation or improvement of the complete deployed model.
+These decisions have separate consumers:
+
+| Decision | Actual boundary | What remains outside that boundary |
+| --- | --- | --- |
+| Work and chain selection | Complete W1 statement verification and required-target chainwork | General/structured-instance cost bounds, hardware advantage and public service qualification |
+| Completed research or service fee | Original prepaid Task/Quota, completed effect, recorded resources and exact native payment readback | Scientific gain, independent demand and new mining work |
+| Model improvement reward | Original evaluation, composition, release and allocation owners | Independent future benefit and ordinary Hepta adoption still require their own evidence |
+
+The [native M12 bridge](../../development/specs/pon/NATIVE_BUDGET_ADAPTER_V1.md)
+can observe a completed `NoGain` training/evaluation/service contract's already
+executed fee. It cannot use `NoGain` for Release/Contribution or Reward/Mining.
+Invalid, unknown and cancelled observations remain immutable and ineligible.
+The native funding regression compares paid and unpaid sibling blocks at the
+same target and retains identical chainwork; payment volume is not extra work.
+
+The [controlled settlement reader](details/EVALUATION_BUNDLE.md) now rechecks
+every committed partition before using evaluation scores, retains the verified
+input bytes, and binds its partial model-work certificate to that exact model
+and consumer input. These checks close local evidence-consumption gaps. They do
+not establish which data actually entered training, data rights, semantic
+decontamination, evaluator independence or net benefit of a full model release.
+The historical no-adoption and cost failures remain their original observations.
+
 ## What remains unqualified
 
 The candidate uses full recomputation and is not succinct. Measured cheap forged

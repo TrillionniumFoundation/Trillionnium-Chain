@@ -17,6 +17,35 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Work, knowledge and settlement evidence, 2026-11-06 America/New_York:**
+Compose the existing #717 work-value candidate `6dd21c7b` with the current #688
+integration `513e92df`, preserving both histories and current source pins. Keep
+prepaid completed research/service fees separate from model-improvement rewards
+and target-derived chainwork. Extend the existing M12 negative matrix to cover
+the newly permitted Task/Contribution source explicitly; failed, unknown and
+cancelled observations cannot be rewritten to obtain payment eligibility.
+
+Repair the existing controlled settlement consumer instead of adding a new
+reward owner: replay every committed partition's actual rows and cross-partition
+ID/group/content separation, retain the exact model/evaluation/input bytes,
+and require the partial model-work certificate to match the frozen model and
+consumer challenge before opening the experimental ledger. This fresh-ledger
+harness refuses nonzero parent releases and evaluation rounds other than 1,
+instead of silently settling later contexts as an initial release. The inference
+worker hashes the same model bytes it loaded. A fixed external bundle digest remains
+necessary and does not itself certify a well-separated dataset. Register the
+new input-substitution controls in the existing protocol CI job.
+
+These are local evidence and payment-boundary repairs. Their positive fixtures
+are mechanical controls, not newly trained model benefit. Full training-data
+provenance/rights, semantic decontamination, independently held future windows,
+complete-model cost/negative-transfer acceptance, ordinary Hepta adoption and
+cheapest legal work remain separate gates. Retain the historical no-adoption,
+zero model reward, work-cost failures and public-service HOLD outcomes. The
+[source-bound reproduction record](../../evidence/pon-work-knowledge-boundary-20261106/README.md)
+distinguishes original failure observations, new executions and their build
+profiles; no activation or consensus byte is changed.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
@@ -171,6 +200,20 @@ unknown costs, including actual CPU for all 435 rejected pressure requests.
 Later integrations contain additional production changes and do not inherit
 these frozen-source results. Combined configuration, original hosted and
 independent acceptance remain HOLD; no result is promoted to activation.
+
+**Service/research value separation, 2026-11-05 America/New_York:** Continue the
+existing #688 candidate through `2a8fee974b41fab6e2c4e662dcce1807fcd19bdd`,
+preserving its concurrent Growth epoch and timestamp repairs.
+The [M12 owner adapter](specs/pon/NATIVE_BUDGET_ADAPTER_V1.md) distinguishes
+commissioned training/evaluation and ordinary serving fees from release
+improvement rewards. A completed `NoGain` contract may record an already
+executed native fee; invalid/unknown/cancelled work and release/mining rewards
+do not inherit that permission. Prepaid source/subject/operation binding,
+conservation and non-rewinding effect history remain mandatory. The
+[value observation channels](../protocol/pon-nakamoto-v1/ECONOMICS.md) separately
+retain timely use, planned research and positive-gain use; none authenticates
+independent future benefit or adds chainwork. Independent model adoption,
+funded production operation and external acceptance remain open.
 
 **Schema readback preparation, 2026-11-05:** Reuse only the SQLite program for
 same-transaction catalog SELECTs, retaining fresh result rows, both freshly
@@ -7383,3 +7426,18 @@ These are component checks, not all-workspace unit-test or original-resource
 acceptance. The separate Hepta V13 publication is
 `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
 HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.
+
+### 2026-11-05 Work-value candidate PQ roster backport
+
+The work-value candidate retains all 52 original required PQ controls. Its four
+hosted head/prospective-merge lanes stopped before selector execution because the
+workflow still asserted 49 while the unchanged manifest declared and contained
+52. The existing integrated PQ successor #723 at
+254033da23faf10f24a62249f40ce2ddb542645a already corrects this assertion. This
+narrow backport reuses that correction, without importing the successor's other
+changes. Seven parser regressions execute the actual workflow selector writer,
+including the retained stale-49 failure and rejection of truncated, duplicate,
+child-harness, malformed-selector and promoted-qualification inputs. This is a
+selector-generation repair, not a new native experiment or a security result.
+Original failed hosted observations remain failed. Native execution on the
+backport is pending; no old Rust or cost receipt is relabeled as a new result.

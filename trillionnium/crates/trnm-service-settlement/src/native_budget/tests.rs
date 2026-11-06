@@ -135,13 +135,31 @@ fn setup(
     NativeBudgetPolicyV1,
     NativeBudgetClaimV1,
 ) {
+    setup_with_source(lane, source(lane, 40))
+}
+fn setup_with_source(
+    lane: NativeBudgetLaneV1,
+    source: NativeFundingSourceV1,
+) -> (
+    tempfile::TempDir,
+    NativeBudgetStoreV1,
+    SyntheticOwner,
+    NativeBudgetPolicyV1,
+    NativeBudgetClaimV1,
+) {
     let directory = tempfile::tempdir().unwrap();
     let mut store =
         NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
             .unwrap();
     let mut owner = SyntheticOwner::new();
-    let source = source(lane, 40);
-    owner.rows.insert(source, native_row(lane));
+    owner.rows.insert(
+        source,
+        native_row(if matches!(source, NativeFundingSourceV1::Task(_)) {
+            NativeBudgetLaneV1::Evaluation
+        } else {
+            lane
+        }),
+    );
     let policy = NativeBudgetPolicyV1 {
         budget: [50; 32],
         source,
@@ -178,6 +196,227 @@ fn setup(
         resource_reservation: resources(lane, 4),
     };
     (directory, store, owner, policy, claim)
+}
+
+#[test]
+fn no_gain_contract_fee_requires_completed_effect_and_exact_native_payment() {
+    for (lane, source) in [
+        (
+            NativeBudgetLaneV1::Contribution,
+            NativeFundingSourceV1::Task([40; 32]),
+        ),
+        (
+            NativeBudgetLaneV1::Evaluation,
+            NativeFundingSourceV1::Task([40; 32]),
+        ),
+        (
+            NativeBudgetLaneV1::Serving,
+            NativeFundingSourceV1::Quota([40; 32]),
+        ),
+    ] {
+        let (directory, mut store, mut owner, policy, claim) = setup_with_source(lane, source);
+        store.reserve(&mut owner, claim.clone()).unwrap();
+        store
+            .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+            .unwrap();
+        store
+            .record_resources(
+                claim.claim,
+                NativeResourceOutcomeV1::NoGain,
+                Some(resources(lane, 3)),
+            )
+            .unwrap();
+        let before = store.report().unwrap();
+        assert!(store
+            .record_native_payment(&mut owner, claim.claim, [83; 32])
+            .is_err());
+        assert_eq!(store.report().unwrap(), before);
+        owner.advance(12);
+        let payment = NativePaymentObservationV1 {
+            anchor: owner.anchor,
+            source: policy.source,
+            subject: claim.subject,
+            beneficiary: claim.beneficiary,
+            operation: [83; 32],
+            gross_escrow_debit: claim.monetary_reservation,
+            beneficiary_credit: claim.monetary_reservation
+                - u64::from(lane == NativeBudgetLaneV1::Serving),
+        };
+        owner.payment = Some(payment.clone());
+        assert!(
+            store
+                .record_native_payment(&mut owner, claim.claim, payment.operation)
+                .is_err(),
+            "NoGain without a completed local result must not qualify"
+        );
+        assert_eq!(store.report().unwrap(), before);
+        store
+            .complete_effect(claim.claim, [80; 32], [82; 32])
+            .unwrap();
+        let completed = store.report().unwrap();
+        let mut wrong = payment.clone();
+        wrong.source = NativeFundingSourceV1::Release([40; 32]);
+        owner.payment = Some(wrong);
+        assert!(store
+            .record_native_payment(&mut owner, claim.claim, payment.operation)
+            .is_err());
+        assert_eq!(store.report().unwrap(), completed);
+        owner.payment = Some(payment.clone());
+        assert_eq!(
+            store
+                .record_native_payment(&mut owner, claim.claim, payment.operation)
+                .unwrap(),
+            NativeBudgetReplayV1::New
+        );
+        let report = store.report().unwrap();
+        assert_eq!(
+            report["budgets"][0]["historically_observed_native_gross_debit"],
+            claim.monetary_reservation
+        );
+        assert_eq!(report["authorizes_native_payment"], false);
+        assert_eq!(
+            store
+                .record_native_payment(&mut owner, claim.claim, payment.operation)
+                .unwrap(),
+            NativeBudgetReplayV1::Done
+        );
+        assert_eq!(store.report().unwrap(), report);
+        let mut duplicate = claim;
+        duplicate.claim = [61; 32];
+        assert!(store.reserve(&mut owner, duplicate).is_err());
+        drop(store);
+        assert_eq!(
+            NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
+                .unwrap()
+                .report()
+                .unwrap(),
+            report
+        );
+    }
+}
+
+#[test]
+fn no_gain_cannot_unlock_rewards_or_reclassify_failed_contracts() {
+    // Contribution has two different funding meanings. Cover the newly
+    // permitted commissioned Task explicitly as well as the model Release;
+    // a lane-only fixture selects Release and misses the research-fee path.
+    for (source, lane, completed_no_gain_fee) in [
+        (
+            NativeFundingSourceV1::Reward([40; 32]),
+            NativeBudgetLaneV1::Mining,
+            false,
+        ),
+        (
+            NativeFundingSourceV1::Release([40; 32]),
+            NativeBudgetLaneV1::Contribution,
+            false,
+        ),
+        (
+            NativeFundingSourceV1::Task([40; 32]),
+            NativeBudgetLaneV1::Contribution,
+            true,
+        ),
+        (
+            NativeFundingSourceV1::Task([40; 32]),
+            NativeBudgetLaneV1::Evaluation,
+            true,
+        ),
+        (
+            NativeFundingSourceV1::Task([40; 32]),
+            NativeBudgetLaneV1::Storage,
+            false,
+        ),
+        (
+            NativeFundingSourceV1::Task([40; 32]),
+            NativeBudgetLaneV1::Repair,
+            false,
+        ),
+        (
+            NativeFundingSourceV1::Quota([40; 32]),
+            NativeBudgetLaneV1::Serving,
+            true,
+        ),
+    ] {
+        for outcome in [
+            NativeResourceOutcomeV1::NoGain,
+            NativeResourceOutcomeV1::Invalid,
+            NativeResourceOutcomeV1::Unknown,
+            NativeResourceOutcomeV1::Cancelled,
+        ] {
+            if outcome == NativeResourceOutcomeV1::NoGain && completed_no_gain_fee {
+                continue;
+            }
+            let (_directory, mut store, mut owner, policy, claim) = setup_with_source(lane, source);
+            store.reserve(&mut owner, claim.clone()).unwrap();
+            store
+                .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+                .unwrap();
+            store
+                .complete_effect(claim.claim, [80; 32], [82; 32])
+                .unwrap();
+            store
+                .record_resources(
+                    claim.claim,
+                    outcome,
+                    (outcome != NativeResourceOutcomeV1::Unknown).then(|| resources(lane, 3)),
+                )
+                .unwrap();
+            owner.advance(12);
+            let operation = if lane == NativeBudgetLaneV1::Mining {
+                claim.subject
+            } else {
+                [83; 32]
+            };
+            owner.payment = Some(NativePaymentObservationV1 {
+                anchor: owner.anchor,
+                source: policy.source,
+                subject: claim.subject,
+                beneficiary: claim.beneficiary,
+                operation,
+                gross_escrow_debit: claim.monetary_reservation,
+                beneficiary_credit: claim.monetary_reservation,
+            });
+            let before = store.report().unwrap();
+            assert!(
+                store
+                    .record_native_payment(&mut owner, claim.claim, operation)
+                    .is_err(),
+                "{source:?} / {lane:?} / {outcome:?} unexpectedly qualified"
+            );
+            assert_eq!(store.report().unwrap(), before);
+            if matches!(
+                outcome,
+                NativeResourceOutcomeV1::Invalid
+                    | NativeResourceOutcomeV1::Unknown
+                    | NativeResourceOutcomeV1::Cancelled
+            ) {
+                let original_charge = if outcome == NativeResourceOutcomeV1::Unknown {
+                    claim.resource_reservation.clone()
+                } else {
+                    resources(lane, 3)
+                };
+                for replacement in [
+                    NativeResourceOutcomeV1::NoGain,
+                    NativeResourceOutcomeV1::Positive,
+                ] {
+                    // Keep the exact charged resources, including Unknown's
+                    // full reservation, so refusal specifically checks changing
+                    // the retained outcome rather than a measurement mismatch.
+                    let refusal = store
+                        .record_resources(claim.claim, replacement, Some(original_charge.clone()))
+                        .unwrap_err();
+                    assert_eq!(
+                        refusal.to_string(),
+                        "BUDGET_RESOURCE_REPLAY_MISMATCH",
+                        "{source:?} / {lane:?}: {outcome:?} -> {replacement:?}"
+                    );
+                    // The report contains the exact journal sequence and root;
+                    // neither rejection can rewrite the original observation.
+                    assert_eq!(store.report().unwrap(), before);
+                }
+            }
+        }
+    }
 }
 
 #[test]

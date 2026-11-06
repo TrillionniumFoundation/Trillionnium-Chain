@@ -12,6 +12,37 @@ Service payments compensate approved inference, evaluation, storage and composit
 work. A contributor can earn model rewards without mining or hosting; an author going
 offline must not remove public parameters or require all inference to call that author.
 
+Separate three application values at their actual owners:
+
+| Value | Required observation | Compensation boundary |
+| --- | --- | --- |
+| Immediate service | A correct result used by the original request before its frozen deadline | Its prepaid service contract; no model-improvement claim |
+| Research | A correctly completed experiment under the previously approved plan, including a negative result | Its separately commissioned task fee; no adoption reward for no gain |
+| Model adoption | The frozen candidate wins the declared independent future-window comparison after applicable costs and regressions | Only the original finite improvement allocation, after its own acceptance gate |
+
+The existing [M12 owner adapter](../../development/specs/pon/NATIVE_BUDGET_ADAPTER_V1.md)
+distinguishes `Task/Contribution` commissioned training from
+`Release/Contribution` improvement allocation. A local `NoGain` observation can
+record an already executed contracted training, evaluation or serving fee;
+it cannot unlock a release/mining reward. Invalid, unknown and cancelled work
+does not become a completed contract through this rule.
+
+The [usefulness observer](../../../formal/pon-nakamoto-v1/work_utility.py) V2
+retains separate on-time service, completed-research and legacy positive-gain-use
+channels. Service clock/window and research-plan identities must be bound before
+the corresponding observed attempt. Its new schema/event domain distinguishes
+these observations from V1. The original owner must still authenticate the
+actual chronology, approval, clocks and evidence. Legacy fields containing
+`adoption` describe observed positive-gain output use; they do not confer model
+adoption or reward authority. Repeated nodes/outputs remain repeated work;
+the observer reports distinct task content and leaves independent sample count
+unknown rather than equating node count with learning sample size.
+
+Neither signatures nor funding prove social value or independent controllers.
+Self-traffic remains bounded by its actual prepaid escrow and exact operation
+identities. Service and research payments do not multiply target-derived
+chainwork, and they cannot substitute for independent model-improvement evidence.
+
 Genesis/profile must define the asset, atomic unit, finite emission/supply rule,
 block-subsidy schedule, maturity, fee allocation, treasury/model/service budgets,
 rounding, dust, vesting and maximum liabilities. The reproducible experimental profile fixes valueless test units, subsidy1000,

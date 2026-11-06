@@ -197,6 +197,33 @@ def verify_bundle(raw, expected_digest, *, expected_parent=None):
     return bundle
 
 
+def verify_partition_set(bundle, partitions):
+    """Check all committed rows and their exact cross-partition separation.
+
+    The caller first verifies the bundle against its independently retained
+    digest. This check covers the supplied, committed rows; it cannot establish
+    actual training exposure, data rights, independent custody or semantic
+    decontamination of differently encoded source content.
+    """
+    require(isinstance(bundle, dict) and isinstance(bundle.get('partitions'), dict), 'PARTITION_SET')
+    manifests = bundle['partitions']
+    require({'train', 'calibration'} < set(manifests) and
+            set(manifests) <= {'train', 'calibration', 'evaluation', 'evaluation_a', 'evaluation_b', 'consumer'}, 'PARTITIONS')
+    require(isinstance(partitions, dict) and set(partitions) == set(manifests), 'PARTITION_SET')
+    seen_ids, seen_groups, seen_contents = set(), set(), set()
+    for name in sorted(manifests):
+        rows = partitions[name]
+        manifest = partition_manifest(rows)
+        require(canonical(manifest) == canonical(manifests[name]), 'PARTITION_TASKS')
+        ids = {row['id'] for row in rows}
+        groups = set(manifest['groups'])
+        contents = {row['source_content_sha256'] for row in rows}
+        require(not (seen_ids & ids or seen_groups & groups or seen_contents & contents), 'PARTITION_OVERLAP')
+        seen_ids |= ids
+        seen_groups |= groups
+        seen_contents |= contents
+
+
 def verify_calibration(bundle, rows):
     require(partition_manifest(rows)==bundle['partitions']['calibration'],'CALIBRATION_TASKS')
     predictions={name:predict_rows(value,rows)for name,value in bundle['controls'].items()}
