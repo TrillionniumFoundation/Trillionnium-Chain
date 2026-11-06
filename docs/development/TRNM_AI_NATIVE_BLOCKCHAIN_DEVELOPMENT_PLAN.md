@@ -8033,3 +8033,14 @@ The old frozen EBD delivery is retained as history; the current outer report,
 qualification and nine-pair source map describe this ca4 composition.
 Whole-chain PQ, final-use/recovery custody, public WAN, finality, quantum work
 and production acceptance remain HOLD. The PR remains Draft.
+
+
+## 2026-11-06 follow-up: ordinary TLS witness owner integration (validation pending)
+
+- The source preserves the complete histories of evidence publication 790980db11c502a19248a2f3325f261b91b52558 and witness owner 4c76b342021deb7155a3c0ce915ff250fc7e23d0. The earlier ca4, f85 and ebd reports remain historical observations with their original source identities.
+- The automatic clean merge is independently checked as a three-way JSON union against f85: the ca4-side four changed pins and the witness-side ten disjoint changed pins/five added paths are retained, for 597 pinned blobs and 516 required paths. No complete parent corpus is substituted for the union.
+- Qualification on the eventual canonical committed source is PENDING: retain the twenty finite ca4 source/dependency/material commands and their original semantics, the isolated packaging 26.3 hash-pinned installation report, all six locked graphs and formatting. Report the actual current-source test counts rather than transferring ca4 counts.
+- Native qualification is PENDING: the witness CLI manifest requires five exact controls and an actual compiled registry of exactly those five names; retain the original TLS thirteen library, four ordinary-CLI and one feature-off controls and each original reader. Bind current Cargo-advertised harness and ordinary Node executables, whole-source before/after, process-group cleanup and strict whole-workspace/all-targets/all-features Clippy.
+- Use Rust 1.95.0, the previously fixed OpenSSL 3.5.9 provider with fresh identity checks, a separate target, two build jobs, disabled incremental compilation, single-threaded tests and the original optimization/debug/assertion/overflow settings and 1500-second command ceilings. No provider rebuild, old full-Node/65536 rerun, authentication-cost rerun or campaign is authorized by this phase.
+- Preserve the f85 incomplete desktop library, the original ebd 13-pass/1-fail native supplement and all failed or blocked readers. The ebd authentication cost has 67 original cumulative-CPU-budget refusals; no budget, sample or historical disposition is relaxed or replaced.
+- This is the ordinary native-PQ TLS external-witness owner scope, not complete Node/account/History/Cell rollback protection, production activation, public-WAN acceptance, consensus authority or whole-chain quantum-security qualification. None of those claims is activated by a successful source check or archive checksum.

@@ -142,11 +142,15 @@ cannot prove the absence of a newer authorization or retirement event.
 The PNQ2 witness has a different binding, wire contract and protected root from
 the M03 complete-journal authority. [Node constructors](../../trillionnium/crates/trnm-pon-node/src/store/pq_network.rs)
 explicitly distinguish creation from existing-state reopen and select the
-incompatible `PqWitnessV4` namespace. The current `pq-tls-serve` CLI instead uses
-`open_with_pq_network`; it does not select a witness. The TLS library can carry
-a witness-backed Node, but ordinary CLI wiring still needs protected writer and
-witness identities, bounded connection establishment, explicit provisioning and
-reopen policy, and a real separately retained service/recovery checkpoint.
+incompatible `PqWitnessV4` namespace. The legacy V1 `pq-tls-serve` configuration
+uses `open_with_pq_network` and does not select a witness. The explicit
+[V2 configuration](PQ_TLS_WITNESS_CLI_V2.md) connects the ordinary loopback TLS
+command to these constructors with pinned witness/writer identities, a protected
+private-writer input, bounded nonblocking Unix connection and a required
+`create` or `open_existing` mode. It never initializes a witness registration,
+infers a mode from failure or falls back to the legacy backend. This source
+connection still requires native observations, independent service provisioning,
+protected custody and a separately retained recovery checkpoint.
 
 The current tree provides `DurableWitness` as a component and test service, not
 a deployed independent daemon or custody arrangement. Its fresh Current reply
@@ -188,8 +192,10 @@ These are current owner/journal and custody-window checks, not new network
 credentials, a PQ governance root or an independent rollback witness.
 
 The target does not change the public-submit recovery guard, M15 current-use
-kernel or local TLS certificate implementation. Their missing PQ recovery,
-actual installer/activation consumer and ordinary-CLI witness connections remain
-open. The composed Cell, storage/replay and preparation controls need new native
+kernel or local TLS certificate implementation. Missing PQ parent recovery and
+the actual M15 installer/activation consumer remain implementation gaps. The
+explicit TLS CLI V2 witness connection described above is a separate source
+addition; independent witness deployment and custody remain unqualified. The
+composed Cell, storage/replay and preparation controls need new native
 observations on the combined source; either parent's reports retain their own
 source, binary and resource limits.
