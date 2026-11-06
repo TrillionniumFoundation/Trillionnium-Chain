@@ -2,7 +2,9 @@
 import hashlib
 import json
 import socket
+import subprocess
 import sys
+import tempfile
 import types
 import unittest
 from pathlib import Path
@@ -149,6 +151,50 @@ class NeuralReadSourceSetTests(unittest.TestCase):
             worker._verify_runtime_ready(self.args)
         self.args.runtime_import_guard = installed
         worker._verify_runtime_ready(self.args)
+
+
+
+class NeuralReadBootstrapTests(unittest.TestCase):
+    """Direct API rejection controls; successful model bootstrap is a separate gate."""
+
+    def child(self, arguments, isolated):
+        script = ("import sys, types; sys.path.insert(0, " +
+                  repr(str(Path(worker.__file__).resolve().parent)) +
+                  "); import llm_neural_read_worker as w; " +
+                  "w.bootstrap_runtime_v2(types.SimpleNamespace(**" + repr(arguments) + "))")
+        flags = ['-I', '-S', '-B'] if isolated else ['-B']
+        return subprocess.run([sys.executable, *flags, '-c', script],
+                              capture_output=True, text=True, timeout=5)
+
+    def test_explicit_bootstrap_requires_isolation_before_reading_inputs(self):
+        result = self.child({}, isolated=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('NEURAL_READ_ISOLATED_ENTRY', result.stderr)
+
+    def test_explicit_bootstrap_preserves_helper_and_snapshot_pin_rejections(self):
+        repository = Path(worker.__file__).resolve().parents[1]
+        pins = {str(repository / relative): contract.file_digest(repository / relative)[0]
+                for relative in NeuralReadSourceSetTests.HOST_SOURCE_PATHS}
+        helper = str(Path(worker.__file__).resolve().with_name('llm_python_runtime_contract.py'))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            snapshot = root / 'snapshot.json'
+            snapshot.write_bytes(b'{}')
+            for changed_helper in (True, False):
+                supplied = dict(pins)
+                if changed_helper:
+                    supplied[helper] = '00' * 32
+                source_pins = root / ('bad-helper.json' if changed_helper else 'good-helper.json')
+                raw = json.dumps(supplied, sort_keys=True).encode()
+                source_pins.write_bytes(raw)
+                arguments = dict(source_pins=str(source_pins),
+                                 source_pins_sha256=hashlib.sha256(raw).hexdigest(),
+                                 runtime_snapshot=str(snapshot),
+                                 runtime_snapshot_sha256='00' * 32)
+                result = self.child(arguments, isolated=True)
+                self.assertNotEqual(result.returncode, 0)
+                expected = 'NEURAL_READ_HELPER_PIN' if changed_helper else 'NEURAL_RUNTIME_SNAPSHOT_BYTES'
+                self.assertIn(expected, result.stderr)
 
 
 if __name__ == '__main__':

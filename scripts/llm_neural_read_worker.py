@@ -227,24 +227,14 @@ def serve(args):
     runtime.require(result['outcome'] == 'success', 'NEURAL_READ_WORKER_FAILED')
 
 
-def main():
+def bootstrap_runtime_v2(args):
+    """Apply the ordinary v2 runtime boundary to four explicit pinned inputs.
+
+    Callers supply source_pins, source_pins_sha256, runtime_snapshot and
+    runtime_snapshot_sha256. This preserves all entry and byte checks; callers
+    retain their own umask, argument handling and subsequent operation checks.
+    """
     global python_runtime, inherited, runtime
-    os.umask(0o077)
-    parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest='command', required=True)
-    runner = commands.add_parser('serve')
-    for name in ('materials', 'parent', 'parent-sha256', 'actions', 'actions-sha256', 'output'):
-        runner.add_argument('--'+name, required=True)
-    runner.add_argument('--threads', type=int, default=4)
-    child = commands.add_parser('_worker')
-    for name in ('materials', 'output', 'plan', 'plan-sha256'):
-        child.add_argument('--'+name, required=True)
-    for command in (runner, child):
-        command.add_argument('--runtime-snapshot', required=True)
-        command.add_argument('--runtime-snapshot-sha256', required=True)
-        command.add_argument('--source-pins', required=True)
-        command.add_argument('--source-pins-sha256', required=True)
-    args = parser.parse_args()
     require(sys.flags.isolated == 1 and sys.flags.no_site == 1, 'NEURAL_READ_ISOLATED_ENTRY')
     raw = bootstrap_bytes(args.source_pins, 128 * 1024)
     require(0 < len(raw) <= 128 * 1024 and hashlib.sha256(raw).hexdigest() == args.source_pins_sha256,
@@ -263,6 +253,26 @@ def main():
     _install_runtime_guard(args, pins)
     import llm_runtime_pilot as runtime
     import llm_inherited_runtime as inherited
+
+
+def main():
+    os.umask(0o077)
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest='command', required=True)
+    runner = commands.add_parser('serve')
+    for name in ('materials', 'parent', 'parent-sha256', 'actions', 'actions-sha256', 'output'):
+        runner.add_argument('--'+name, required=True)
+    runner.add_argument('--threads', type=int, default=4)
+    child = commands.add_parser('_worker')
+    for name in ('materials', 'output', 'plan', 'plan-sha256'):
+        child.add_argument('--'+name, required=True)
+    for command in (runner, child):
+        command.add_argument('--runtime-snapshot', required=True)
+        command.add_argument('--runtime-snapshot-sha256', required=True)
+        command.add_argument('--source-pins', required=True)
+        command.add_argument('--source-pins-sha256', required=True)
+    args = parser.parse_args()
+    bootstrap_runtime_v2(args)
     worker(args) if args.command == '_worker' else serve(args)
 
 
