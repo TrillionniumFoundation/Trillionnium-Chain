@@ -25,6 +25,8 @@ on:
       - scripts/ci/read_native_cache_observation.py
       - scripts/ci/test_read_native_cache_observation.py
       - scripts/ci/test_recent_batch_suite_count.py
+      - scripts/ci/test_authenticated_suite_count.py
+      - evidence/authenticated-suite-count-20261106/**
       - evidence/recent-batch-suite-count-20261106/**
       - .github/workflows/pon-recent-batch-acceptance.yml
 permissions:
@@ -162,6 +164,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/ci/test_authenticated_suite_count.py
           for suite in store::native_authenticated:: store::native_ancestry_commit_tests::; do
             name="${suite//:/_}"
             options=()
@@ -171,7 +174,7 @@ jobs:
             cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$suite" -- "${options[@]}" --show-output --test-threads=1 2>&1 | tee "$OUT/$name.log"
             grep -E '^test result: ok\. [1-9][0-9]* passed; 0 failed;' "$OUT/$name.log"
             if test "$suite" = store::native_authenticated::; then
-              grep -E '^test result: ok\. 91 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
+              grep -E '^test result: ok\. 97 passed; 0 failed; 0 ignored;' "$OUT/$name.log"
               # Inspect this invocation once; retain all existing executions.
               python3 - "$OUT/$name.log" <<'PYLOG'
           import re, sys
@@ -188,10 +191,10 @@ jobs:
               'store::native_authenticated::current_accounts_tests::cold_full_validation_projection_abba_observation_without_timing_gate',
           }
           observed_current = {name for name in names if name.startswith('store::native_authenticated::current_accounts_tests::')}
-          if (len(names) != 91 or len(set(names)) != 91 or len(post_write) != 23
+          if (len(names) != 97 or len(set(names)) != 97 or len(post_write) != 25
                   or observed_current != current_accounts
-                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 91 passed; 0 failed; 0 ignored;')):
-              raise SystemExit('current authenticated module requires 68 non-post-write and 23 post-write executions, including all five current-account controls, in one log')
+                  or len(summaries) != 1 or not summaries[0].startswith('test result: ok. 97 passed; 0 failed; 0 ignored;')):
+              raise SystemExit('current authenticated module requires 72 non-post-write and 25 post-write executions, including all five current-account controls, in one log')
           PYLOG
             fi
           done
