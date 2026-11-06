@@ -1339,6 +1339,8 @@ fn run() -> Result<Value> {
     let command = raw.next().ok_or(
         "command: status|mine|submit|packet-status|export|confirm|sync|serve|push|head|history",
     )?;
+    #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+    let pq_parent_plan = pq_tls_cli::parent::capture_create(&command, command_started)?;
     let mut args = BTreeMap::new();
     while let Some(key) = raw.next() {
         let value = if matches!(
@@ -1371,6 +1373,15 @@ fn run() -> Result<Value> {
         return Err(
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
+    }
+    if matches!(
+        command.as_str(),
+        "pq-parent-tls-serve" | "pq-parent-create" | "pq-parent-resume"
+    ) {
+        #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+        return pq_tls_cli::parent::run(&command, &args, pq_parent_plan);
+        #[cfg(not(all(target_os = "linux", feature = "pq-native-openssl")))]
+        return Err("PQ_PARENT_LINUX_NATIVE_OPENSSL_REQUIRED".into());
     }
     if command == "pq-tls-serve" {
         #[cfg(all(unix, feature = "pq-native-openssl"))]
