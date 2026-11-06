@@ -317,7 +317,11 @@ fn actual_npq6_call_cap_reservation_survives_cold_open_without_native_dispatch()
         .unwrap();
     assert_eq!(first.failure.as_deref(), Some("SUBMIT_RECOVERY_CALL_LIMIT"));
     assert_eq!(first.reserved_calls, Some(1));
-    assert_eq!(first.pending.as_ref().unwrap().reserved_attempts, 0);
+    assert!(first.pending.is_none());
+    let retained = metadata(&campaign);
+    assert_eq!(retained["reads"], 1);
+    assert!(retained["operations"].as_array().unwrap().is_empty());
+    assert_eq!(retained["binding"]["initial"], 1);
     assert!(native_rows(&first).is_empty() && !first.submission_outcome_uncertain);
     let before = std::fs::read(campaign.join("journal")).unwrap();
     harness.reopen();
