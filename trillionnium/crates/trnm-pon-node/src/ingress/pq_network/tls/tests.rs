@@ -1,11 +1,10 @@
+use super::super::tls_fixtures as fixtures;
 use super::*;
+use fixtures::Fixture;
 use std::{
     io::{Read, Write},
     thread,
 };
-#[path = "fixtures.rs"]
-mod fixtures;
-use fixtures::Fixture;
 
 fn start(
     node: Node,

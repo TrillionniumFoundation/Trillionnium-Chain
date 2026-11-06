@@ -1,9 +1,5 @@
 use super::*;
-use crate::ingress::pq_network::{
-    canonical_tests::key,
-    tls::{serve_pq_tls13, PqTlsClient, PqTlsIdentity, PqTlsServer},
-    PqServer, PqTlsPins,
-};
+use crate::ingress::pq_network::{canonical_tests::key, tls::serve_pq_tls13, tls_fixtures, PqServer};
 use crate::{Node, Settings};
 use rusqlite::hooks::{AuthAction, AuthContext, Authorization};
 use std::{
@@ -12,12 +8,6 @@ use std::{
     sync::{Arc, Mutex},
     thread,
 };
-
-// The existing real ML-DSA CA/identity fixture is shared without changing its
-// original TLS tests or production dependencies.
-#[path = "../tls/fixtures.rs"]
-#[allow(dead_code)]
-mod tls_fixtures;
 
 fn setup() -> (Settings, Arc<PqNetworkPolicy>) {
     let settings = Settings::development(Some(crate::ingress::now().unwrap() - 100)).unwrap();
