@@ -57,6 +57,10 @@ impl Node {
         workers: usize,
         policy: &PqNetworkPolicy,
     ) -> Result<Self> {
+        ensure(
+            policy.tls_endpoint_pins().is_none(),
+            "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",
+        )?;
         ensure(policy.matches(&settings), "PQ_NETWORK_CONTEXT")?;
         ensure(
             !super::owner_marker_present(path)?,
@@ -148,6 +152,11 @@ impl Node {
     }
 
     pub(crate) fn check_pq_network_policy(&self, policy: &PqNetworkPolicy) -> Result<()> {
+        ensure(
+            policy.tls_endpoint_pins().is_none()
+                || (self.state_backend == StateBackend::PqWitnessV4 && self.pq_witness.is_some()),
+            "PQ_TLS_ENDPOINT_WITNESS_REQUIRED",
+        )?;
         self.namespace()?;
         self.storage_context()?;
         ensure(
