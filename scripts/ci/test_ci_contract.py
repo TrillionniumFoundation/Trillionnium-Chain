@@ -678,6 +678,20 @@ class CiContractTests(unittest.TestCase):
         changed = original.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
         self.rejected(path, original, changed)
 
+    def test_six_workpackage_readers_execute_once_in_repository_truth(self):
+        path = 'scripts/ci/ci_job.sh'
+        for name in ('test_six_workpackage_native_rosters.py',
+                     'test_w1_full_v2_disposition.py',
+                     'test_pon_w1_preparation_strategy_reader_v4.py'):
+            command = '    python3 scripts/ci/' + name + '\n'
+            for replacement in ('', command * 2, '    true # skipped six-workpackage reader\n'):
+                with self.subTest(name=name, replacement=replacement):
+                    self.rejected(path, command, replacement)
+            original = (self.root / path).read_text()
+            changed = original.replace(command, '').replace('  protocol-contract)\n',
+                                                            '  protocol-contract)\n' + command)
+            self.rejected(path, original, changed)
+
     def test_rejection_comparison_output_uses_actual_job_environment(self):
         workflow = (self.root / '.github/workflows/trnm-required-baseline.yml').read_text()
         job = workflow.split('  cross-arch-cost-consistency:\n', 1)[1].split('\n  prospective-merge:', 1)[0]

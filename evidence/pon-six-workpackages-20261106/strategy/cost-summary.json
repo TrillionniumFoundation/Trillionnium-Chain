@@ -1,0 +1,1861 @@
+{
+  "adaptive_best_of_samples_policy_executed": false,
+  "arm_measurement": "NOT_RUN",
+  "batching_measured": false,
+  "binary_unchanged": true,
+  "cheapest_legal_strategy_lower_bound_established": false,
+  "cost_grid_counts": {
+    "actual_searches": 28032,
+    "actual_setup_calls": 1152,
+    "attempts": 464320,
+    "exhausted_searches": 0,
+    "proof_materializations": 246176,
+    "serialized_proof_bytes": 12108905088,
+    "target_hits": 28032
+  },
+  "cost_grid_misses": 436288,
+  "cost_grid_strategy_paid_totals": {
+    "dense-eager-full-limb": {
+      "actual_searches": 7008,
+      "actual_setup_calls": 288,
+      "attempts": 116080,
+      "exhausted_searches": 0,
+      "native_legal_accept_calls": 14016,
+      "native_negative_product_refusals": 14016,
+      "producer_cpu_ns": 43227770814,
+      "producer_wall_ns": 43387211337,
+      "proof_materializations": 116080,
+      "separate_evidence_cpu_ns": 509259609,
+      "separate_mutation_cpu_ns": 90175525,
+      "separate_verifier_cpu_ns": 17642367750,
+      "serialized_proof_bytes": 5709743040,
+      "setup_cpu_ns": 98380076,
+      "target_hits": 7008
+    },
+    "dense-lazy-full-limb": {
+      "actual_searches": 7008,
+      "actual_setup_calls": 288,
+      "attempts": 116080,
+      "exhausted_searches": 0,
+      "native_legal_accept_calls": 14016,
+      "native_negative_product_refusals": 14016,
+      "producer_cpu_ns": 42291755026,
+      "producer_wall_ns": 42506520236,
+      "proof_materializations": 7008,
+      "separate_evidence_cpu_ns": 705304992,
+      "separate_mutation_cpu_ns": 110452353,
+      "separate_verifier_cpu_ns": 18156367447,
+      "serialized_proof_bytes": 344709504,
+      "setup_cpu_ns": 92770867,
+      "target_hits": 7008
+    },
+    "sparse-eager-full-limb": {
+      "actual_searches": 7008,
+      "actual_setup_calls": 288,
+      "attempts": 116080,
+      "exhausted_searches": 0,
+      "native_legal_accept_calls": 14016,
+      "native_negative_product_refusals": 14016,
+      "producer_cpu_ns": 44521567042,
+      "producer_wall_ns": 44684948353,
+      "proof_materializations": 116080,
+      "separate_evidence_cpu_ns": 525018527,
+      "separate_mutation_cpu_ns": 75825418,
+      "separate_verifier_cpu_ns": 17887064592,
+      "serialized_proof_bytes": 5709743040,
+      "setup_cpu_ns": 64460696,
+      "target_hits": 7008
+    },
+    "sparse-lazy-full-limb": {
+      "actual_searches": 7008,
+      "actual_setup_calls": 288,
+      "attempts": 116080,
+      "exhausted_searches": 0,
+      "native_legal_accept_calls": 14016,
+      "native_negative_product_refusals": 14016,
+      "producer_cpu_ns": 42146359974,
+      "producer_wall_ns": 42220288507,
+      "proof_materializations": 7008,
+      "separate_evidence_cpu_ns": 496547330,
+      "separate_mutation_cpu_ns": 64118336,
+      "separate_verifier_cpu_ns": 17995908774,
+      "serialized_proof_bytes": 344709504,
+      "setup_cpu_ns": 61912878,
+      "target_hits": 7008
+    }
+  },
+  "cross_horizon_statistical_pooling": false,
+  "cross_run_cache_attack_measured": false,
+  "derived_input_sha256": {
+    "full-rank-field-control-t2/readback.json": "cffc66f5c29236cadda52c785470b5735a987c0502057c54add37729732d4a0c",
+    "full-rank-field-control-t3/readback.json": "8423fc570a77cea771807f3370ea7b2dea2a9cc9b02b4c07d3b5793f5d47c0e8",
+    "full-rank-field-t0-h1/readback.json": "c57108a58ce3efb5443aa7031f6de9492af24f328b536b96e6ebe2389fe12633",
+    "full-rank-field-t0-h64/readback.json": "d3f1fed0b899d9c03e41065936851725f995f9e62bc6115cc203cd1e28abdc44",
+    "full-rank-field-t0-h8/readback.json": "526d3572cc6269faf51270df690d6c81964c83dc6f7c324c834ad3b2d3e41926",
+    "full-rank-field-t1-h1/readback.json": "de2ca709b5536836fb4920e7da8a3f6839c204df07e4fba9f4793284e9d417ec",
+    "full-rank-field-t1-h64/readback.json": "d745d517c5ea15962e06dd062ab68a68cc119a51ebffe1258ed35735819619bf",
+    "full-rank-field-t1-h8/readback.json": "da93c99a0a54369629861d6e282575a8d596291932dd5d9adc734e30c9006cee",
+    "grid-readback.json": "bf1568bfde94b699fee8b3fcb2d17ed87e6ad3029413c80a523386ff798e8941",
+    "manifest.json": "c538abe9c7d3c76bb96ccffc1061d14a222224b1aeba675f4db41dfc4a04918a",
+    "maximum-field-control-t2/readback.json": "3c84d5516b0b5daa1f36d8975d1126de0236ff54355de7e6da85fbc8a8e736f0",
+    "maximum-field-control-t3/readback.json": "ae91cce40ee1d54c7fd8a8b92d6233576991aa9b3d894196be45ae69da8ef128",
+    "maximum-field-t0-h1/readback.json": "02484da6c157a3b7b5f51b8150f1d8eac22b519380ed80f55218a461b7e1351e",
+    "maximum-field-t0-h64/readback.json": "9b4cff2179b480903891c9d74cd28039e1a8c5db9d9f944d1f1fb105f7efb17e",
+    "maximum-field-t0-h8/readback.json": "9ec3c4d134a59eb80e9d259ffe9f9e0991ceb62430b3ed8a23a7d90e8cfcf593",
+    "maximum-field-t1-h1/readback.json": "4d9dc543bab76ecb3fc093df2d36d2c6f9b694766c8e2cc6c215fd9752c55525",
+    "maximum-field-t1-h64/readback.json": "2fd0cfccce553e7d21c31c47e364342b646ae1fce08822761b0e696315087d88",
+    "maximum-field-t1-h8/readback.json": "fb1bc9621ecc8f207164b7d187ec04d6eeaa4353cc5fda3d4af0a9e0b0eb32ff",
+    "rank-one-control-t2/readback.json": "c47a2d6e009dc5567668a6de2c998d165597c62fe7b57cafbc42767c85ee4eae",
+    "rank-one-control-t3/readback.json": "f5d9163336fb8654a54fc56314e93b56a51065d25e553fd649239800a6bb60c8",
+    "rank-one-t0-h1/readback.json": "a7b8d33b0b370f9967110b5ccffd891235a853e66ae3a6446975b99f26cb67ae",
+    "rank-one-t0-h64/readback.json": "07e8532255ae7a1d265c2f8ea905d51702a792062e477f5f8334ae6ff9e13a75",
+    "rank-one-t0-h8/readback.json": "3625182201f10ecd895eaae7fb3594db6538ebea485b726c4deca831b65f0890",
+    "rank-one-t1-h1/readback.json": "75a95ef3bd89970ebdad664c8fa9f22a5952b002b05f978aa4807018d6e8de68",
+    "rank-one-t1-h64/readback.json": "706a1cf651864795c31a63723f2a0305603d01e10b4e879531daee07ef59a27d",
+    "rank-one-t1-h8/readback.json": "77d7f29ba6808c9d117396c8b0cc5f942df234a6c4a1b2c4c5bce8b8e1487fa6",
+    "sparse-diagonal-control-t2/readback.json": "e34348e7cee24a440c655515dbd6f426ae6df6d499a6784a1320f08c36329e6e",
+    "sparse-diagonal-control-t3/readback.json": "184d617c51523da531e14f781d2ef7f53460d03e194eda12e1de21269defb170",
+    "sparse-diagonal-t0-h1/readback.json": "35b4420b16dbcb3594340ecf4a1249a7a070a3d3b3477c972fd0c3733d423488",
+    "sparse-diagonal-t0-h64/readback.json": "3df58e3004d0079da0ade69968cb828e55c365db4d391abec66d5047fe806f16",
+    "sparse-diagonal-t0-h8/readback.json": "14f110cc3a92b3b9a74a350f8660866695471ba323b32eb2f7e80b1bfd1b7d66",
+    "sparse-diagonal-t1-h1/readback.json": "cf5b9241f7dd8c1e7a1d509cc4c83da372f85a96907774cd7789257ba1fe6ce7",
+    "sparse-diagonal-t1-h64/readback.json": "4c43527e264b9492cf67aca28aa8e9e8783e5c2ec862388b743b65afb5db1441",
+    "sparse-diagonal-t1-h8/readback.json": "bddaec15b5e34144f7060a3dfbf87cabc9515e3d78fdb0fd8beddd42225de9cb",
+    "sparse-field-control-t2/readback.json": "dda5f6e57b4f0aa02e5ebd2bbc93ac926dce5244b71dd5b161a8f1b99aeb0a1c",
+    "sparse-field-control-t3/readback.json": "c12bb8b90900c43ed5b0583d26982965c0679a70a831e899a9e6db86193b9590",
+    "sparse-field-t0-h1/readback.json": "5f8369d51b555858b0428d392ad23d0ae3ec7fbdd24f6998b40cce29521ba6cd",
+    "sparse-field-t0-h64/readback.json": "7739be23c8ce86593bcc4ebe4bf1c103a6531a56ea441bed7c868f28f6e1c970",
+    "sparse-field-t0-h8/readback.json": "e5711d307d5301cd00fbe522ebc6e8aab5c2f07f65f1a5fd4fd9896bc9616651",
+    "sparse-field-t1-h1/readback.json": "662c32ac07dc7ed52f2a9c07818c4db723ed55ccd366a19905a62ee2881974da",
+    "sparse-field-t1-h64/readback.json": "15ca56b2e63aeaed8db24b4cca2d3d0d7cb282961ab5f5e96097a38d8c174231",
+    "sparse-field-t1-h8/readback.json": "b3828aa9adec68c3371b732a010144ff83ea7c5e73177cd09fbcf7749fc64555",
+    "zero-control-t2/readback.json": "32cd9bf2cbc1e33f4b702053eb237f464357bded0e346de4639882a961395c1c",
+    "zero-control-t3/readback.json": "2ad50a27121b7d637a3b49d59f6b699aa4c3ef1b23a8a28e4e9538b896db6034",
+    "zero-t0-h1/readback.json": "35276c91dab452389b2fb95843444dfc5ca3cca2df27225f184dc739a85c88c9",
+    "zero-t0-h64/readback.json": "9e34f7a694d1636e5db616b9bccf46bdfa7420a16c686e58044a55da2ff0714b",
+    "zero-t0-h8/readback.json": "968ba4d606b7f6fb727b1fd31686ca018ad1e44e827940d5306859c0bd9f5006",
+    "zero-t1-h1/readback.json": "6cf92e39055b5b366f12f52e1f521fe7f59b26cd3a91168f44382ef2702aa74c",
+    "zero-t1-h64/readback.json": "2402906c47735cc965c4000239807b46b2ebaf100beaf2528d6519494216d42a",
+    "zero-t1-h8/readback.json": "2aac1be51c450a9a01f3b9398c85eb7c3a88466e53543636546e75b7c7cd6166"
+  },
+  "external_ordinary_hepta_material_executed": false,
+  "full_low_rank_implementation_measured": false,
+  "gpu_measurement": "NOT_RUN",
+  "outer_native_process_totals": {
+    "exhaustion-control": {
+      "commands": 6,
+      "cpu_and_rss_scope": "direct native process Linux wait4; not aggregate host resource or public-service qualification",
+      "failed_processes": 0,
+      "max_single_process_peak_rss_bytes": 19832832,
+      "system_cpu_seconds": 0.006678,
+      "timed_out": 0,
+      "total_cpu_seconds": 0.26630000000000004,
+      "user_cpu_seconds": 0.259622,
+      "wall_seconds": 0.31102761199872475
+    },
+    "first-hit-control": {
+      "commands": 6,
+      "cpu_and_rss_scope": "direct native process Linux wait4; not aggregate host resource or public-service qualification",
+      "failed_processes": 0,
+      "max_single_process_peak_rss_bytes": 19832832,
+      "system_cpu_seconds": 0.016935,
+      "timed_out": 0,
+      "total_cpu_seconds": 0.712819,
+      "user_cpu_seconds": 0.695884,
+      "wall_seconds": 0.7770693189886515
+    },
+    "search-cost": {
+      "commands": 36,
+      "cpu_and_rss_scope": "direct native process Linux wait4; not aggregate host resource or public-service qualification",
+      "failed_processes": 0,
+      "max_single_process_peak_rss_bytes": 19832832,
+      "system_cpu_seconds": 7.819792999999999,
+      "timed_out": 0,
+      "total_cpu_seconds": 266.49629600000003,
+      "user_cpu_seconds": 258.676503,
+      "wall_seconds": 267.94611596001414
+    }
+  },
+  "per_shard_observed_rankings": [
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 15,
+          "cpu_ns": 6089812,
+          "setup_cpu_ns": 1672934,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 15,
+          "cpu_ns": 6234048,
+          "setup_cpu_ns": 1811137,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 15,
+          "cpu_ns": 6269198,
+          "setup_cpu_ns": 1672361,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 15,
+          "cpu_ns": 8187590,
+          "setup_cpu_ns": 1803386,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 6269198,
+        "numerator": 8187590
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 6089812,
+        "numerator": 6234048
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 143,
+          "cpu_ns": 55632122,
+          "setup_cpu_ns": 3278268,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 143,
+          "cpu_ns": 59431102,
+          "setup_cpu_ns": 3408571,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 143,
+          "cpu_ns": 60214726,
+          "setup_cpu_ns": 3963354,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 143,
+          "cpu_ns": 71095924,
+          "setup_cpu_ns": 3417142,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 71095924,
+        "numerator": 60214726
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 59431102,
+        "numerator": 55632122
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1055,
+          "cpu_ns": 406310420,
+          "setup_cpu_ns": 2775681,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1055,
+          "cpu_ns": 431738712,
+          "setup_cpu_ns": 4586880,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1055,
+          "cpu_ns": 471021759,
+          "setup_cpu_ns": 6988569,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1055,
+          "cpu_ns": 478617288,
+          "setup_cpu_ns": 3920761,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 471021759,
+        "numerator": 478617288
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 406310420,
+        "numerator": 431738712
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 304,
+          "cpu_ns": 108427268,
+          "setup_cpu_ns": 1902434,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 304,
+          "cpu_ns": 112368950,
+          "setup_cpu_ns": 1774014,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 304,
+          "cpu_ns": 114403887,
+          "setup_cpu_ns": 3306293,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 304,
+          "cpu_ns": 123049272,
+          "setup_cpu_ns": 2001496,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 108427268,
+        "numerator": 123049272
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 112368950,
+        "numerator": 114403887
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1941,
+          "cpu_ns": 727429994,
+          "setup_cpu_ns": 2834119,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1941,
+          "cpu_ns": 759468742,
+          "setup_cpu_ns": 2932104,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1941,
+          "cpu_ns": 762154717,
+          "setup_cpu_ns": 3940150,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1941,
+          "cpu_ns": 829747613,
+          "setup_cpu_ns": 3444645,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 762154717,
+        "numerator": 759468742
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 727429994,
+        "numerator": 829747613
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 16167,
+          "cpu_ns": 5413194292,
+          "setup_cpu_ns": 2868046,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16167,
+          "cpu_ns": 5476383421,
+          "setup_cpu_ns": 2527453,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16167,
+          "cpu_ns": 5710011511,
+          "setup_cpu_ns": 2573451,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16167,
+          "cpu_ns": 6063730087,
+          "setup_cpu_ns": 2646698,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "full-rank-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 5413194292,
+        "numerator": 6063730087
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 5710011511,
+        "numerator": 5476383421
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 14,
+          "cpu_ns": 4992281,
+          "setup_cpu_ns": 143993,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 14,
+          "cpu_ns": 5084388,
+          "setup_cpu_ns": 155632,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 14,
+          "cpu_ns": 6568340,
+          "setup_cpu_ns": 1830228,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 14,
+          "cpu_ns": 7338385,
+          "setup_cpu_ns": 2095142,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 6568340,
+        "numerator": 5084388
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 7338385,
+        "numerator": 4992281
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 121,
+          "cpu_ns": 61348449,
+          "setup_cpu_ns": 322416,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 121,
+          "cpu_ns": 62200484,
+          "setup_cpu_ns": 3442042,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 121,
+          "cpu_ns": 65822821,
+          "setup_cpu_ns": 613259,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 121,
+          "cpu_ns": 88385205,
+          "setup_cpu_ns": 3945981,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 88385205,
+        "numerator": 65822821
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 62200484,
+        "numerator": 61348449
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1028,
+          "cpu_ns": 348432183,
+          "setup_cpu_ns": 185083,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1028,
+          "cpu_ns": 389983765,
+          "setup_cpu_ns": 259345,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1028,
+          "cpu_ns": 409754847,
+          "setup_cpu_ns": 1932537,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1028,
+          "cpu_ns": 519348565,
+          "setup_cpu_ns": 3428390,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 519348565,
+        "numerator": 348432183
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 409754847,
+        "numerator": 389983765
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 162,
+          "cpu_ns": 51474578,
+          "setup_cpu_ns": 147358,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 162,
+          "cpu_ns": 51719284,
+          "setup_cpu_ns": 147500,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 162,
+          "cpu_ns": 51855446,
+          "setup_cpu_ns": 1793152,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 162,
+          "cpu_ns": 53141442,
+          "setup_cpu_ns": 2027912,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 51855446,
+        "numerator": 51474578
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 53141442,
+        "numerator": 51719284
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1665,
+          "cpu_ns": 583336398,
+          "setup_cpu_ns": 679338,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1665,
+          "cpu_ns": 603429792,
+          "setup_cpu_ns": 920327,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1665,
+          "cpu_ns": 637415653,
+          "setup_cpu_ns": 2852213,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1665,
+          "cpu_ns": 651287705,
+          "setup_cpu_ns": 2335217,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 651287705,
+        "numerator": 583336398
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 637415653,
+        "numerator": 603429792
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 16003,
+          "cpu_ns": 5608890436,
+          "setup_cpu_ns": 2587161,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16003,
+          "cpu_ns": 5782101208,
+          "setup_cpu_ns": 352654,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16003,
+          "cpu_ns": 6289514846,
+          "setup_cpu_ns": 2739807,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16003,
+          "cpu_ns": 6934250184,
+          "setup_cpu_ns": 4071765,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "zero",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 6934250184,
+        "numerator": 6289514846
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 5608890436,
+        "numerator": 5782101208
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 17,
+          "cpu_ns": 9764115,
+          "setup_cpu_ns": 2637946,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 9791006,
+          "setup_cpu_ns": 2662754,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 10043562,
+          "setup_cpu_ns": 2961056,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 10254240,
+          "setup_cpu_ns": 3039832,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 9791006,
+        "numerator": 10043562
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 9764115,
+        "numerator": 10254240
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 124,
+          "cpu_ns": 49730682,
+          "setup_cpu_ns": 2304920,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 124,
+          "cpu_ns": 50237503,
+          "setup_cpu_ns": 2375075,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 124,
+          "cpu_ns": 50854458,
+          "setup_cpu_ns": 2426573,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 124,
+          "cpu_ns": 51998047,
+          "setup_cpu_ns": 2509787,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 50237503,
+        "numerator": 51998047
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 49730682,
+        "numerator": 50854458
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 978,
+          "cpu_ns": 367133133,
+          "setup_cpu_ns": 2750603,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 978,
+          "cpu_ns": 379755780,
+          "setup_cpu_ns": 2313846,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 978,
+          "cpu_ns": 398299542,
+          "setup_cpu_ns": 2646588,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 978,
+          "cpu_ns": 430919258,
+          "setup_cpu_ns": 2539841,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 379755780,
+        "numerator": 430919258
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 398299542,
+        "numerator": 367133133
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 216,
+          "cpu_ns": 77330383,
+          "setup_cpu_ns": 2710063,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 216,
+          "cpu_ns": 77516828,
+          "setup_cpu_ns": 2529336,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 216,
+          "cpu_ns": 78054073,
+          "setup_cpu_ns": 2315906,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 216,
+          "cpu_ns": 82511565,
+          "setup_cpu_ns": 2105065,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 78054073,
+        "numerator": 77330383
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 82511565,
+        "numerator": 77516828
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 2172,
+          "cpu_ns": 809442521,
+          "setup_cpu_ns": 2463967,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 2172,
+          "cpu_ns": 812690005,
+          "setup_cpu_ns": 2559440,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 2172,
+          "cpu_ns": 833780208,
+          "setup_cpu_ns": 2161889,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 2172,
+          "cpu_ns": 874429971,
+          "setup_cpu_ns": 2528675,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 833780208,
+        "numerator": 874429971
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 812690005,
+        "numerator": 809442521
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 16810,
+          "cpu_ns": 6076471022,
+          "setup_cpu_ns": 2367233,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16810,
+          "cpu_ns": 6167946066,
+          "setup_cpu_ns": 2580422,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16810,
+          "cpu_ns": 6372683982,
+          "setup_cpu_ns": 2232152,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16810,
+          "cpu_ns": 6538583911,
+          "setup_cpu_ns": 3600324,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "rank-one",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 6076471022,
+        "numerator": 6372683982
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 6538583911,
+        "numerator": 6167946066
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 23,
+          "cpu_ns": 8764351,
+          "setup_cpu_ns": 204042,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 23,
+          "cpu_ns": 8813014,
+          "setup_cpu_ns": 201662,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 23,
+          "cpu_ns": 10834415,
+          "setup_cpu_ns": 2154197,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 23,
+          "cpu_ns": 10851810,
+          "setup_cpu_ns": 2217492,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 10834415,
+        "numerator": 8813014
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 10851810,
+        "numerator": 8764351
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 127,
+          "cpu_ns": 50203243,
+          "setup_cpu_ns": 289180,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 127,
+          "cpu_ns": 52156798,
+          "setup_cpu_ns": 238393,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 127,
+          "cpu_ns": 53820532,
+          "setup_cpu_ns": 2701111,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 127,
+          "cpu_ns": 73752764,
+          "setup_cpu_ns": 4277191,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 73752764,
+        "numerator": 52156798
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 53820532,
+        "numerator": 50203243
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1059,
+          "cpu_ns": 400372015,
+          "setup_cpu_ns": 276932,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1059,
+          "cpu_ns": 420214444,
+          "setup_cpu_ns": 2597086,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1059,
+          "cpu_ns": 424934123,
+          "setup_cpu_ns": 2183011,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1059,
+          "cpu_ns": 444327669,
+          "setup_cpu_ns": 722272,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 420214444,
+        "numerator": 444327669
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 424934123,
+        "numerator": 400372015
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 169,
+          "cpu_ns": 59007836,
+          "setup_cpu_ns": 245915,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 169,
+          "cpu_ns": 59595619,
+          "setup_cpu_ns": 2135731,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 169,
+          "cpu_ns": 60570414,
+          "setup_cpu_ns": 2329678,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 169,
+          "cpu_ns": 63071680,
+          "setup_cpu_ns": 179975,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 60570414,
+        "numerator": 59007836
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 59595619,
+        "numerator": 63071680
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1689,
+          "cpu_ns": 572986454,
+          "setup_cpu_ns": 260387,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1689,
+          "cpu_ns": 581826471,
+          "setup_cpu_ns": 1910275,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1689,
+          "cpu_ns": 597005530,
+          "setup_cpu_ns": 462167,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1689,
+          "cpu_ns": 606668396,
+          "setup_cpu_ns": 2620049,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 606668396,
+        "numerator": 597005530
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 581826471,
+        "numerator": 572986454
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 15855,
+          "cpu_ns": 5723976079,
+          "setup_cpu_ns": 3456151,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15855,
+          "cpu_ns": 5794044904,
+          "setup_cpu_ns": 696995,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15855,
+          "cpu_ns": 5958817386,
+          "setup_cpu_ns": 2029312,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15855,
+          "cpu_ns": 6257958166,
+          "setup_cpu_ns": 1120232,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "sparse-diagonal",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 5958817386,
+        "numerator": 6257958166
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 5723976079,
+        "numerator": 5794044904
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 29,
+          "cpu_ns": 14206790,
+          "setup_cpu_ns": 2114879,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 29,
+          "cpu_ns": 14762106,
+          "setup_cpu_ns": 2882480,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 29,
+          "cpu_ns": 20420467,
+          "setup_cpu_ns": 1449461,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 29,
+          "cpu_ns": 27599855,
+          "setup_cpu_ns": 4075971,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 27599855,
+        "numerator": 14206790
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 14762106,
+        "numerator": 20420467
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 148,
+          "cpu_ns": 52405822,
+          "setup_cpu_ns": 262050,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 148,
+          "cpu_ns": 57741333,
+          "setup_cpu_ns": 2408507,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 148,
+          "cpu_ns": 59076698,
+          "setup_cpu_ns": 290841,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 148,
+          "cpu_ns": 66030043,
+          "setup_cpu_ns": 2008681,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 66030043,
+        "numerator": 59076698
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 57741333,
+        "numerator": 52405822
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1018,
+          "cpu_ns": 396085784,
+          "setup_cpu_ns": 2489466,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1018,
+          "cpu_ns": 416101274,
+          "setup_cpu_ns": 269669,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1018,
+          "cpu_ns": 428647625,
+          "setup_cpu_ns": 3506956,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1018,
+          "cpu_ns": 524022522,
+          "setup_cpu_ns": 367064,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 428647625,
+        "numerator": 416101274
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 396085784,
+        "numerator": 524022522
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 221,
+          "cpu_ns": 80185155,
+          "setup_cpu_ns": 227827,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 221,
+          "cpu_ns": 81774152,
+          "setup_cpu_ns": 2574752,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 221,
+          "cpu_ns": 81847843,
+          "setup_cpu_ns": 2275588,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 221,
+          "cpu_ns": 84151045,
+          "setup_cpu_ns": 258514,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 81774152,
+        "numerator": 80185155
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 81847843,
+        "numerator": 84151045
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1686,
+          "cpu_ns": 651524380,
+          "setup_cpu_ns": 1314892,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1686,
+          "cpu_ns": 661246844,
+          "setup_cpu_ns": 2951150,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1686,
+          "cpu_ns": 744319757,
+          "setup_cpu_ns": 4313075,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1686,
+          "cpu_ns": 767336961,
+          "setup_cpu_ns": 6367635,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 661246844,
+        "numerator": 767336961
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 744319757,
+        "numerator": 651524380
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 15322,
+          "cpu_ns": 5239606932,
+          "setup_cpu_ns": 2178027,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15322,
+          "cpu_ns": 5455281155,
+          "setup_cpu_ns": 2086498,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15322,
+          "cpu_ns": 5496093595,
+          "setup_cpu_ns": 1171730,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 15322,
+          "cpu_ns": 5694606724,
+          "setup_cpu_ns": 1116588,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "sparse-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 5239606932,
+        "numerator": 5694606724
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 5455281155,
+        "numerator": 5496093595
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 17,
+          "cpu_ns": 8088748,
+          "setup_cpu_ns": 2223551,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 8259582,
+          "setup_cpu_ns": 2217654,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 10034697,
+          "setup_cpu_ns": 2116873,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 17,
+          "cpu_ns": 10868034,
+          "setup_cpu_ns": 4055112,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 8259582,
+        "numerator": 10034697
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 10868034,
+        "numerator": 8088748
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 132,
+          "cpu_ns": 49837981,
+          "setup_cpu_ns": 2088651,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 132,
+          "cpu_ns": 52972042,
+          "setup_cpu_ns": 2443516,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 132,
+          "cpu_ns": 53606461,
+          "setup_cpu_ns": 2308289,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 132,
+          "cpu_ns": 56188056,
+          "setup_cpu_ns": 3087703,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 49837981,
+        "numerator": 53606461
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 56188056,
+        "numerator": 52972042
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1068,
+          "cpu_ns": 409122484,
+          "setup_cpu_ns": 3008485,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1068,
+          "cpu_ns": 413545145,
+          "setup_cpu_ns": 2317120,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1068,
+          "cpu_ns": 473383214,
+          "setup_cpu_ns": 2949339,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 1068,
+          "cpu_ns": 536603220,
+          "setup_cpu_ns": 2838085,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 0
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 413545145,
+        "numerator": 473383214
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 536603220,
+        "numerator": 409122484
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 215,
+          "cpu_ns": 70530481,
+          "setup_cpu_ns": 1882143,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 215,
+          "cpu_ns": 76367156,
+          "setup_cpu_ns": 2012558,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 215,
+          "cpu_ns": 77224589,
+          "setup_cpu_ns": 2069715,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 8
+        },
+        {
+          "attempts": 215,
+          "cpu_ns": 77594954,
+          "setup_cpu_ns": 1847924,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 8
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 1,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 76367156,
+        "numerator": 70530481
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 77224589,
+        "numerator": 77594954
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 1585,
+          "cpu_ns": 511315246,
+          "setup_cpu_ns": 2041522,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1585,
+          "cpu_ns": 530204705,
+          "setup_cpu_ns": 1875525,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1585,
+          "cpu_ns": 548561236,
+          "setup_cpu_ns": 2225533,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 64
+        },
+        {
+          "attempts": 1585,
+          "cpu_ns": 579901018,
+          "setup_cpu_ns": 6431148,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 64
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 8,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 511315246,
+        "numerator": 548561236
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 530204705,
+        "numerator": 579901018
+      }
+    },
+    {
+      "ranking_by_all_eight_samples_cpu": [
+        {
+          "attempts": 16782,
+          "cpu_ns": 5783660954,
+          "setup_cpu_ns": 1955282,
+          "strategy": "dense-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16782,
+          "cpu_ns": 6009758422,
+          "setup_cpu_ns": 2335388,
+          "strategy": "sparse-lazy-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16782,
+          "cpu_ns": 6020734239,
+          "setup_cpu_ns": 2009383,
+          "strategy": "dense-eager-full-limb",
+          "target_hits": 512
+        },
+        {
+          "attempts": 16782,
+          "cpu_ns": 6260330216,
+          "setup_cpu_ns": 2330589,
+          "strategy": "sparse-eager-full-limb",
+          "target_hits": 512
+        }
+      ],
+      "selection": {
+        "class": "maximum-field",
+        "purpose": "search-cost",
+        "reuse_winners": 64,
+        "target_index": 1
+      },
+      "sparse_eager_over_dense_eager": {
+        "denominator": 6020734239,
+        "numerator": 6260330216
+      },
+      "sparse_lazy_over_dense_lazy": {
+        "denominator": 5783660954,
+        "numerator": 6009758422
+      }
+    }
+  ],
+  "qualification_status": "HOLD",
+  "rankings_selected_after_observation": true,
+  "record_consistency": "PASS",
+  "schema": "pon-w1-preparation-v4-derived-paid-denominators",
+  "security_assumptions": [
+    "fixed canonical PNW1 relation and FullLimb implementation used by all four cells",
+    "fixed deterministic primitive challenges are not live parent or task eligibility",
+    "uniform-ticket probabilities 1/2 and 1/32 are assumptions, not established lower bounds",
+    "source and software clocks recorded locally, no independent source/hardware/energy attestation"
+  ],
+  "separate_controls": {
+    "actual_searches": 384,
+    "actual_setup_calls": 384,
+    "attempts": 768,
+    "commands": 12,
+    "exhausted_searches": 192,
+    "expected_outcomes_observed": 12,
+    "producer_cpu_ns": 360015900,
+    "proof_materializations": 480,
+    "serialized_proof_bytes": 23610240,
+    "target_hits": 192
+  },
+  "source_unchanged": true,
+  "unique_search_streams_after_strategy_horizon_deduplication": 6144
+}

@@ -1,0 +1,949 @@
+{
+  "base_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+  "binary_path": "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+  "binary_sha256": "9bf4706966ece8bb5762ef8afe333f076f8c2c160a4917261ad0d81911027beb",
+  "build_binary_path": "/workspace/scratch/62902f6722b7/target/release/examples/pon_w1_preparation_strategy_v4",
+  "free_disk_floor_bytes": 536870912,
+  "host": {
+    "affinity_cpu_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "arm_measurement": "NOT_RUN",
+    "cgroup_cpu_max": "800000 100000",
+    "cgroup_membership": "0::/",
+    "cgroup_memory_max": "8589934592",
+    "clock_source": "native thread CPU plus monotonic wall; outer Linux wait4",
+    "gpu_measurement": "NOT_RUN",
+    "independent_hardware_qualified": false,
+    "machine": "x86_64",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "public_service_contract_exercised": false
+  },
+  "per_command_seconds": 300,
+  "planned_commands": [
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "zero",
+      "name": "zero-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "zero",
+      "name": "zero-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "zero",
+      "name": "zero-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "zero",
+      "name": "zero-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "zero",
+      "name": "zero-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "zero",
+      "name": "zero-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t0-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t0-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "0",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t0-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 0
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t1-h1",
+      "purpose": "search-cost",
+      "reuse_winners": 1,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "8"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t1-h8",
+      "purpose": "search-cost",
+      "reuse_winners": 8,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "1",
+        "--reuse-winners",
+        "64"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-t1-h64",
+      "purpose": "search-cost",
+      "reuse_winners": 64,
+      "target_index": 1
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "full-rank-field",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "full-rank-field",
+      "name": "full-rank-field-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "zero",
+      "name": "zero-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "zero",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "zero",
+      "name": "zero-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "rank-one",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "rank-one",
+      "name": "rank-one-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-diagonal",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-diagonal",
+      "name": "sparse-diagonal-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "sparse-field",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "sparse-field",
+      "name": "sparse-field-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "2",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-control-t2",
+      "purpose": "exhaustion-control",
+      "reuse_winners": 1,
+      "target_index": 2
+    },
+    {
+      "argv": [
+        "/workspace/scratch/62902f6722b7/chain-work/evidence/pon-six-workpackages-20261106/strategy/v4-cpu-1/pinned-native",
+        "--preparation-strategy-v4",
+        "--class",
+        "maximum-field",
+        "--target-index",
+        "3",
+        "--reuse-winners",
+        "1"
+      ],
+      "material": "maximum-field",
+      "name": "maximum-field-control-t3",
+      "purpose": "first-hit-control",
+      "reuse_winners": 1,
+      "target_index": 3
+    }
+  ],
+  "reproducible_build_attestation": false,
+  "source_scope": "explicit sampler/reader and complete crypto/protocol Rust sources plus manifests/lock; no whole-workspace build attestation",
+  "source_sha256": {
+    "config/pon/work-security-acceptance-v1.json": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f",
+    "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py": "bbb65dcbb16b0ccd944c054291526df3668e5ab0567c0b38437fba371254cebf",
+    "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py": "251abbabdca0eabf1d1e280b06ab51cd95589d0758702e95a96f11cd8948074d",
+    "scripts/pon_w1_cost_matrix_reader.py": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+    "scripts/pon_w1_preparation_strategy_reader_v4.py": "b4314bcf354dc24a7a2a4c8381ead3811010db4470bedaeaf4c8b75e7ab2682d",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "3f06e812783fc7fa5037ecfb4550a58edea0ef68675b4062115e4b06088d6b24",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs": "0d091365566386c60d90cd69ef040aff0500bd396a7f94e70410b4aed72e9fd9",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs": "1efb46c8d663829688a60084031186795ceaf4837e2167f417a27f159afc611d",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs": "aed36ea1d2dc71b8b1f5c70af4781a937c00998dabb6d9848c049761411faaa4",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs": "9ac01ea460ec3e8c2280500c390faf918a93a73debc0a66ad55e0cd53c3519ab",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs": "c82c7a6c91cac154b4f229c8b318ca1778fd5d04eebc9de6dca23893cff49493",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs": "effc44636750350986a24ee494a4f9e2c1886083d6cdd2b92085ebb23eae28f9",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs": "657ba21f36ca6b2efd229b1c0a019bbc59236a5c96e0b293d3d1a3d5fea5d1bb",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs": "19f4aab9534761342378a70631c52891d24c1ad82d0670f9f3254afeb52e36e5",
+    "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "4f4984ff8d902e9f52c4568438dbb2b2a88e2d07d70e46ed8cb06a00240e4c9f",
+    "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs": "3081b617eefd9277540c11b0468865b54ee97c473e438b93a5087cd847e3ddd0",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "732f85082c7125d4c3ef6299a5ce3b5b657399df95f88b5498aa338abfa3c655",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "93d708c2eac3684af0a397e6b51de452c4857048c23c26ced8d0601b8819fcea",
+    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0",
+    "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f",
+    "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3",
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs": "da2d906d90f5f1a7ed80eff3368305a7275c52bcd80a6a9a4cbfd507901a2a2f",
+    "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs": "8ad9579c1b96f319c46bd63acc4d1838e5b39609474bb8e1ecdc14192efc74bd",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs": "95ef26992da9126e328007375bce91e94be8647705828a1975cbd03afa1dbfc8",
+    "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "329f9d9a3cd0d55963c56c74600188f4a7fd8f263dcfb2555bc36cb6f75065e0",
+    "trillionnium/crates/trnm-protocol/Cargo.toml": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc",
+    "trillionnium/crates/trnm-protocol/examples/pon_wire.rs": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad",
+    "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305",
+    "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38",
+    "trillionnium/crates/trnm-protocol/src/lib.rs": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+    "trillionnium/crates/trnm-protocol/src/pon_growth.rs": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f",
+    "trillionnium/crates/trnm-protocol/src/pon_state.rs": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb",
+    "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb",
+    "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647",
+    "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+    "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb",
+    "trillionnium/crates/trnm-protocol/src/pq_transaction.rs": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719",
+    "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4",
+    "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379",
+    "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs": "4056f533271873d6b8a4d1ea5aefa99f10ea4a8bf2d7fd8df2aff2410878aecd",
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs": "c02f0dc67d6ae82e823729c224d945dbf228cd8eaeca877d7821520efb763873",
+    "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs": "d1d0d0e3909768035d4f9770ab94407ad871931cdd44dcd10e16118cac579eb6",
+    "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs": "e6a79653acace6efc30ba289c0624fb3581f90d1267c4e8a427a44e2b41ea9f8",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs": "ec4b8732e4fa8dc151cad9679845213e3d47d7099d3feb4db885de1e5f55706d",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa",
+    "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+  },
+  "tracked_or_untracked_working_changes": true
+}

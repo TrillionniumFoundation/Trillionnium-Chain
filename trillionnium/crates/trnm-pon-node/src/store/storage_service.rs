@@ -15,8 +15,8 @@ use trnm_data_availability::cell::{
 };
 use trnm_protocol::pon_wire::{hash, Hash};
 use trnm_service_settlement::native_budget::{
-    NativeBudgetClaimV1, NativeBudgetPolicyV1, NativeBudgetReplayV1, NativeBudgetResourcesV1,
-    NativeBudgetStoreV1, NativeFundingSourceV1,
+    NativeBudgetClaimV1, NativeBudgetEffectCheckV1, NativeBudgetPolicyV1, NativeBudgetReplayV1,
+    NativeBudgetResourcesV1, NativeBudgetStoreV1, NativeFundingSourceV1,
 };
 
 mod release;
@@ -205,6 +205,23 @@ impl Node {
             "NATIVE_CELL_STORAGE_BINDING",
         )?;
         storage_deadline(deadline)?;
+        // Exact M12 retries intentionally do not reacquire funding. Bind even
+        // those readbacks to this journal's current native owner before any
+        // local mutation. A missing orphaned source may reconcile an existing
+        // effect, but a foreign context or stale owner may not complete it.
+        budgets
+            .check_effects(
+                self,
+                &[NativeBudgetEffectCheckV1 {
+                    policy: &policy,
+                    claim: &claim,
+                    operation: contract.operation,
+                    effect,
+                    window: Some((contract.retain_from_height, contract.retain_until_height)),
+                }],
+            )
+            .map_err(owner_error)?;
+        storage_deadline(deadline)?;
         budgets
             .open_budget(self, policy.clone())
             .map_err(owner_error)?;
@@ -301,6 +318,21 @@ impl Node {
                     if download_bytes >= contract.manifest.size() && attempts >= 1),
             "NATIVE_CELL_REPAIR_BINDING",
         )?;
+        cpu.check().map_err(owner_error)?;
+        // Pending/Done repairs remain target-only reconciliation. Their exact
+        // identities do not waive the original native owner's context/epoch.
+        budgets
+            .check_effects(
+                self,
+                &[NativeBudgetEffectCheckV1 {
+                    policy: &policy,
+                    claim: &claim,
+                    operation: repair_operation,
+                    effect,
+                    window: Some((contract.retain_from_height, contract.retain_until_height)),
+                }],
+            )
+            .map_err(owner_error)?;
         cpu.check().map_err(owner_error)?;
         budgets
             .open_budget(self, policy.clone())
