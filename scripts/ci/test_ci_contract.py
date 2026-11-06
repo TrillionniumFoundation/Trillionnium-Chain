@@ -159,6 +159,7 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
                 ('pon_commitment/full_root_arithmetic_tests.rs', 'pon_commitment::full_root_arithmetic_tests'),
                 ('pon_commitment/unchanged_snapshot_tests.rs', 'pon_commitment::unchanged_snapshot_tests'),
                 ('pon_executor/root_arithmetic_tests.rs', 'pon_executor::root_arithmetic_tests'),
+                ('pon_executor/pq_accounts_v2/parallel_preparation_tests.rs', 'pon_executor::pq_accounts_v2::parallel_preparation_tests'),
             )),
             'node': ('trnm-pon-node', (
                 ('account_archive_prototype/native_root_digest_tests.rs', 'account_archive_prototype::native_root_digest::tests'),
@@ -173,6 +174,7 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
                 ('store/observed_history/tests.rs', 'store::observed_history::tests'),
                 ('ingress/public_v3/intake/shared_readiness_tests.rs', 'ingress::public_v3::intake::shared_readiness_tests'),
                 ('host_kernel_parent_resource_tests.rs', 'host_kernel_parent::kernel_parent::resource_tests'),
+                ('ingress/pq_network/parallel_execution_tests.rs', 'ingress::pq_network::parallel_execution_tests'),
             )),
         }
 
@@ -223,16 +225,18 @@ class WorkflowSelectorBuilderTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
         self.assertEqual(len(selected.splitlines()), report['selected_count'])
-        for group_name, prefix in (
-            ('postwrite-readback', 'store::native_authenticated::post_write_readback::tests::'),
-            ('postwrite-history', 'store::native_authenticated::post_write_readback::history_tests::'),
-            ('host-parent-relative', 'host_kernel_parent::kernel_parent::relative_tests::'),
-            ('header-material', 'store::observed_history::tests::'),
-            ('shared-ready', 'ingress::public_v3::intake::shared_readiness_tests::'),
-            ('host-resource', 'host_kernel_parent::kernel_parent::resource_tests::'),
-            ('shared-ready-live', 'ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'),
+        for crate, group_name, prefix in (
+            ('node', 'postwrite-readback', 'store::native_authenticated::post_write_readback::tests::'),
+            ('node', 'postwrite-history', 'store::native_authenticated::post_write_readback::history_tests::'),
+            ('node', 'host-parent-relative', 'host_kernel_parent::kernel_parent::relative_tests::'),
+            ('node', 'header-material', 'store::observed_history::tests::'),
+            ('node', 'shared-ready', 'ingress::public_v3::intake::shared_readiness_tests::'),
+            ('node', 'host-resource', 'host_kernel_parent::kernel_parent::resource_tests::'),
+            ('node', 'shared-ready-live', 'ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants'),
+            ('m06', 'pq-parallel-preparation', 'pon_executor::pq_accounts_v2::parallel_preparation_tests::'),
+            ('node', 'pq-parallel-admission', 'ingress::pq_network::parallel_execution_tests::'),
         ):
-            expected = sorted(name for name in self.registries['node']
+            expected = sorted(name for name in self.registries[crate]
                               if name.startswith(prefix) and name not in self.ignored_names)
             group = next(group for group in report['groups'] if group['group'] == group_name)
             self.assertEqual(sorted(group['tests']), expected)

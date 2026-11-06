@@ -384,6 +384,8 @@ jobs:
         exact("node", "shared-ready-live", [
             "ingress::public_v3::intake_domain_tests::shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants",
         ])
+        prefix("m06", "pq-parallel-preparation", "pon_executor::pq_accounts_v2::parallel_preparation_tests::", 3)
+        prefix("node", "pq-parallel-admission", "ingress::pq_network::parallel_execution_tests::", 1)
         assert len({(crate, test) for crate, group, test in selected}) == len(selected)
         (root / "selected-tests.tsv").write_text("".join(f"{crate}\t{group}\t{test}\n" for crate, group, test in selected))
         print(json.dumps({"result": "PASS", "scope": "exact libtest registry selection only; no execution verdict and not the complete runtime suite",

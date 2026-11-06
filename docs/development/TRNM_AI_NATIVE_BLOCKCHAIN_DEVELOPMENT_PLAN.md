@@ -8107,3 +8107,53 @@ applicability run is incomplete. Execute fresh source-bound checks on the
 new committed candidate and archive their actual outputs separately. The
 four-second/six-confirmation service target and every resource, authority,
 revocation, external-frontier and failure-denominator gate remain unchanged.
+
+### 2026-11-06 measured history reuse and actual PQ worker controls
+
+Exact `0bca28ebf59058b6aba9db5eb956c4479556e9ee` passes all 114 selected
+native controls, including the nine new history Record-binding cases and the
+repaired boundary-packet oracle. Its original P1 cost output measures all
+SQLite progress ticks, including scope fences: 1,882 to 1,818 for the empty
+genesis fixture and 1,990 to 1,818 for the height-three/two-delta fixture.
+These are reductions of repeated work within one qualified connection scope;
+they do not establish faster first-history traversal, first activation,
+Host checkpoint processing or complete business confirmation.
+
+That source also passes all three locked graphs, complete formatting, strict
+Clippy, the original full no-run build and documentation tests. Its first full
+workspace runtime attempt fails because a temporary journal is below the
+pre-existing group-writable `/home/qq/work` ancestor. Preserve the original
+failure. A separate full runtime retry uses a new private temporary directory
+directly below the existing safe home ancestor, with unchanged journal checks
+and unchanged permissions on existing directories. Its result must be read
+from its own terminal receipt; a running retry does not qualify the source.
+
+The ordinary PQ M06 owner already runs bounded signature preparation with
+1/2/4/8 workers and applies state serially. The retained one-transaction PQ
+control cannot demonstrate multiple actual workers. Add three M06 controls
+using eight real ML-DSA transactions, actual thread identities and worker
+lifetimes, forced reverse preparation completion, dependent funding/nonces,
+canonical error precedence, cancellation/panic/partial-spawn joins and the
+unchanged 64-verification limit. Add one Node control for canonical application,
+seven durable chain tables, actual PNQ2 socket submission and exact replay,
+and serial cold reopening. Socket accounting retains its existing meaning;
+these controls do not measure physical CPU overlap, change public operation
+permissions, or convert an acknowledgement into confirmation.
+
+Require all **118 selected workspace controls**, while retaining all **21
+history / 118 authenticated controls** and the original historical registries.
+The two new modules are test-only; production worker count, defaults, queue
+limits, profiles and budgets are unchanged. Bind the new modules, current
+roster readers and generated source inventory in the same source corpus.
+Formatting and review of a candidate are not native execution evidence.
+
+The independent Cell owner already transfers and verifies large material
+outside ordinary Node admission, activation and recovery. Remaining critical
+paths are explicit: native model/evidence operations still keep their small
+complete models in M06 state; the fixed W1 proof remains in the checked packet;
+and the explicitly selected operator-checkpoint profile reopens and hashes its
+checkpoint material, up to 512 MiB, before replay/open. That profile-specific
+cold check is not an ordinary per-admission fetch. Its current material,
+identity, authorization and resource checks cannot be discarded on an earlier
+constructor's success. Cell transfer quotas do not yet prove CPU, disk or
+network isolation under simultaneous public consensus load.

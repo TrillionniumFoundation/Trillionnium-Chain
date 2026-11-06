@@ -89,10 +89,11 @@ def registry_fixtures():
 def source_registry_fixtures():
     """Keep actual registry bytes separate from synthetic current declarations."""
     result = registry_fixtures()
-    names = [name for group in source_fixture_extensions().values() for name in group]
-    assert len(names) == len(set(names)) == 54
-    assert all(name + ': test\n' not in result['node'] for name in names)
-    result['node'] += ''.join(name + ': test\n' for name in names)
+    for crate, count in (('node', 55), ('m06', 3)):
+        names = [name for group in source_fixture_extensions(crate).values() for name in group]
+        assert len(names) == len(set(names)) == count
+        assert all(name + ': test\n' not in result[crate] for name in names)
+        result[crate] += ''.join(name + ': test\n' for name in names)
     return result
 
 
@@ -192,10 +193,10 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
         result, selected = workspace_registry_check(registries)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report['selected_count'], 114)
-        self.assertEqual(len(selected.splitlines()), 114)
-        self.assertEqual(len(set(selected.splitlines())), 114)
-        extensions = source_fixture_extensions()
+        self.assertEqual(report['selected_count'], 118)
+        self.assertEqual(len(selected.splitlines()), 118)
+        self.assertEqual(len(set(selected.splitlines())), 118)
+        extensions = {**source_fixture_extensions(), **source_fixture_extensions('m06')}
         self.assertEqual({group['group']: group['expected_count'] for group in report['groups']
                           if group['group'] not in extensions}, {
             'full-root-arithmetic': 5, 'unchanged-canonical-map': 6, 'account-root-digest': 3,
@@ -257,13 +258,14 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
 
     def test_every_source_fixture_group_is_required_without_promoting_historical_execution(self):
         registries = source_registry_fixtures()
-        for group, names in source_fixture_extensions().items():
-            with self.subTest(group=group):
-                changed = dict(registries)
-                changed['node'] = changed['node'].replace(names[0] + ': test\n', '', 1)
-                result, selected = workspace_registry_check(changed)
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIsNone(selected)
+        for crate in ('node', 'm06'):
+            for group, names in source_fixture_extensions(crate).items():
+                with self.subTest(crate=crate, group=group):
+                    changed = dict(registries)
+                    changed[crate] = changed[crate].replace(names[0] + ': test\n', '', 1)
+                    result, selected = workspace_registry_check(changed)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIsNone(selected)
 
     def test_original_build_and_execution_contract_remains_required(self):
         text = WORKSPACE_WORKFLOW.read_text()

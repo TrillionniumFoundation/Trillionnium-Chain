@@ -983,3 +983,6 @@ pub(crate) mod canonical_tests;
 
 #[cfg(test)]
 mod live_admission_tests;
+
+#[cfg(test)]
+mod parallel_execution_tests;
