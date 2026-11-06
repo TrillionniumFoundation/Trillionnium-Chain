@@ -17,6 +17,23 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**PQ migration and recovery continuation, 2026-11-06 America/New_York:**
+Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`.
+Connect the actual admitted source checkpoint and complete inventory to the
+existing M06 migration anchor under an independently pinned prior PQ registry.
+Retain all account nonce/balance and supported task/reward obligations, and refuse
+unsupported source rights without projecting them away. An explicitly restricted
+source fixture exercises NPQ6 claims and both storage backends; it cannot qualify
+ordinary running-network migration, source finality or source retirement.
+Fence checkpoint listener ownership independently of the journal before changing
+any socket path. Retain the public regressions on the original source and execute
+the complete repaired checkpoint package. Exercise full local-journal rollback
+against a fresh checkpoint actually retained on another configured machine,
+including the coherent-old-world counterexample and unavailable-pin refusal.
+The exercise has synthetic checkpoint contents and does not qualify whole-Node
+effects, production custody, independent administration or physical power loss.
+Preserve all prior failures and keep whole-chain/production acceptance false.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

@@ -365,6 +365,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -400,6 +407,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -411,6 +425,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs"
         )),
     ),
     (
@@ -5892,6 +5913,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/pq_migration_handoff_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/pq_migration_handoff_tests.rs"
         )),
     ),
     (

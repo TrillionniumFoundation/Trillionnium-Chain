@@ -56,6 +56,28 @@ The filesystem, executing owner and independent retention service remain trusted
 within their declared domains. This is not protection against a malicious kernel,
 device that fabricates reads or simultaneous rollback of every fresh authority.
 
+### The service endpoint has its own owner
+
+Journal admission alone must not authorize replacing a different live checkpoint
+service. Startup validates the private socket parent before any pathname mutation
+and holds a separate exclusive `socket-owner-v1` lease. Its bounded versioned
+record identifies the socket it created; only that exact stale socket can be
+removed after its lease is obtained. An unleased socket, replaced lease or
+unrecognized record requires offline reconciliation rather than implicit adoption.
+The parent, lease and socket identities are rechecked after reading each request,
+before any journal operation. This closes local endpoint displacement; it does not
+make the listener lease an independent freshness source.
+
+The `checkpoint_fault_domain_probe` example uses the real journal owner with
+explicit synthetic checkpoint fields. It creates a complete old namespace and a
+newer journal, and accepts an externally supplied pin for recovery. A two-machine
+exercise must actually retain the fresh export on the second machine and read it
+back after restoring the first machine's complete old namespace. The matching old
+local pin remains an essential counterexample: restoring it with the old world
+can pass internal checks. Missing independent input must refuse; a same-count,
+different-root history must also refuse. The example alone supplies neither
+independent retention nor whole-Node, production custody or power-loss evidence.
+
 ### Meaning of the checkpoint
 
 The journal proves that its recorded expected/target transitions form its retained

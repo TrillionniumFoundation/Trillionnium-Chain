@@ -35,6 +35,21 @@ V6 是新 genesis 上的明确协议选择。已有余额迁移需要独立固�
 不能独自证明新 PQ 密钥的合法归属。本候选不把 fresh-genesis 构造器称为在用主网的
 自动高度激活或已完成资产迁移。
 
+### 从已接纳源检查点交接到迁移 anchor
+
+`Node::prepare_pq_migration_checkpoint` 在同一个 SQLite 只读快照中读取实际保留的
+header、packet、trace 和完整已核验 State，同时生成原盘点报告与 M06 的
+`TrustedMigrationAnchor`。调用方必须另外传入非零且精确匹配的既有 PQ 注册表承诺；
+入口不从新提交的经典签名推导账户归属，也不将源数据库里的值自动提升为外部信任根。
+源 pins 仍由独立决策固定，返回值不证明该检查点的终局、当前性或先验绑定建立时间。
+
+迁移控制使用创建存储之前明确定义的受限源 genesis，真实接纳转账和任务 escrow，
+检查账户 balance/nonce、task/reward 义务，随后构造 NPQ6 目的节点并执行双 PQ CLAIM
+与冷重开。普通和 authenticated 两种存储后端都必须验收。经典请求、错误 prior signer、
+旧 nonce 和重复领取均应拒绝。普通源链的 `work:*` 等未获完整保留规则的状态仍返回
+`PQ2_UNSUPPORTED_SOURCE_STATE`，零余额也不能使这些权利被丢弃。因此这项交接补上了
+运行代码之间的入口，但运行中网络完整迁移、源资产锁定/退休和真实故障域验收仍为 HOLD。
+
 | 授权关系 | 实际执行入口 | 约束 |
 | --- | --- | --- |
 | 账户注册、转账、轮换、迁移领取 | 原 M06 `pq_accounts_v2` | 当前状态解析密钥；轮换双方签名；稳定账户地址；旧代次不可支出 |
