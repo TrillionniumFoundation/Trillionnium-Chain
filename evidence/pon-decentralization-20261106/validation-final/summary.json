@@ -1,0 +1,114 @@
+{
+  "command_receipts": [
+    {
+      "exit_code": 0,
+      "label": "boundary-tests",
+      "receipt": "boundary-tests.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "ci-contract-tests",
+      "receipt": "ci-contract-tests.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "core-tests",
+      "receipt": "core-tests.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "current-assessment",
+      "receipt": "current-assessment.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "evaluation-lineage",
+      "receipt": "evaluation-lineage.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "preflight",
+      "receipt": "preflight.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "quorum-oracle",
+      "receipt": "quorum-oracle.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "repository-contract",
+      "receipt": "repository-contract.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "rust-source-identity",
+      "receipt": "rust-source-identity.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-after",
+      "receipt": "source-after.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-before",
+      "receipt": "source-before.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-integrity-tests",
+      "receipt": "source-integrity-tests.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "wan-legacy-tests",
+      "receipt": "wan-legacy-tests.json"
+    },
+    {
+      "exit_code": 0,
+      "label": "wan-v3-tests",
+      "receipt": "wan-v3-tests.json"
+    }
+  ],
+  "current_assessment_exactly_reproduced": true,
+  "full_workspace_unit_tests": "NOT_EXECUTED in this task",
+  "hosted_ci": "NOT_OBSERVED in these local execution receipts",
+  "independent_acceptance": false,
+  "measured_local_commit": "41e433a79548082f6eb4d9926f309153a16960d9",
+  "measured_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "native_quorum": "UNQUALIFIED; original incomplete log and exit-127 unavailable-toolchain retry retained in ../validation",
+  "permissionless_utility_accepted": false,
+  "production_activation": false,
+  "published_source_commit": "881768da89bae8d65277fc4da1963539c5e05e3c",
+  "published_source_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "python_suite_counts": {
+    "boundary-tests": 16,
+    "ci-contract-tests": 104,
+    "core-tests": 61,
+    "evaluation-lineage": 17,
+    "quorum-oracle": 4,
+    "source-integrity-tests": 43,
+    "wan-legacy-tests": 25,
+    "wan-v3-tests": 18
+  },
+  "raw_source_before_after_equal": true,
+  "raw_source_tracked_bytes": 1027001857,
+  "raw_source_tracked_entries": 10729,
+  "repository_contract": {
+    "activation": false,
+    "head": "41e433a79548082f6eb4d9926f309153a16960d9",
+    "local_links": 3468,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1165,
+    "source_state": "committed-clean",
+    "tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+    "workspace_packages": 26
+  },
+  "rust_source_unchanged_from_first_frozen_commit": true,
+  "schema": "trnm-decentralization-final-validation-v1",
+  "status": "HOLD",
+  "strict_clippy": "INCOMPLETE; original 8ae7093 attempts both exit 101/SIGKILL, retained in ../validation; no new execution or pass inferred"
+}

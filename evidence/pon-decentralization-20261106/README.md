@@ -159,6 +159,49 @@ inventing a controller or changing thresholds. The preceding test results
 remain bound to `8ae7093`; any follow-up execution must have its own source
 and command receipts.
 
+## Final frozen implementation validation
+
+The identity-reuse fix was frozen as local commit
+`41e433a79548082f6eb4d9926f309153a16960d9`, tree
+`1781f15299d9d221caa65491ee8a674bfa68fbff`. The
+[final validation summary](validation-final/summary.json) retains 14 actual
+completed command receipts on that clean source. Publication commit
+`881768da89bae8d65277fc4da1963539c5e05e3c` has the exact same tree; the
+[fetched-tree comparison](validation-final/source-publication-equivalence.json)
+keeps commit metadata separate from source byte equality. The
+[local commit preimage](validation-final/measured-source-commit.txt) preserves
+the measured Git identity. This section and its final logs are added in an
+evidence-only child, which does not change the tested implementation.
+
+| Re-executed scope on `41e433a` | Observed result |
+| --- | --- |
+| Common-control/five-axis core, including six identity-reuse controls | 61 passed |
+| WAN V3 control domains | 18 passed |
+| WAN V1/V2 regression suite | 25 passed |
+| Complete CI contract | 104 passed |
+| Raw-source integrity counterexamples | 43 passed |
+| Project boundary | 16 passed |
+| Public evaluation lifecycle reference | 17 passed |
+| Independent quorum reference oracle, implemented in Python | 4 passed |
+| Source-only assessment reproduction | Exact current-report bytes matched; `HOLD`, 23 findings, three unidentified key slots, threshold two |
+| Repository/Markdown contracts | Passed: 3,468 local links, 1,165 Rust files, 26 packages and 25 normal dependency edges |
+| Raw tracked-source checks before/after | Passed with identical reports: 10,729 entries and 1,027,001,857 bytes |
+
+All 14 final command receipts retain a clean initial source and unchanged final
+source, exact command, exit code and original log digest. The identity-reuse
+controls include unknown owners sharing a public key across roles/evaluation,
+alternate routes for one role, a repeated subject without a fingerprint, and
+unrelated unknown identities that must not be merged. The prior quorum,
+denominator and acceptance calculations remain unchanged.
+
+The [Rust source comparison](validation-final/rust-source-identity.json)
+confirms that the complete `trillionnium` subtree and Rust toolchain inputs did
+not change after `8ae7093`. Earlier formatting and metadata results retain that
+execution identity. No new native execution or Clippy success is inferred;
+both original SIGKILL failures, the incomplete native attempt and the unavailable
+toolchain retry remain visible above. Full workspace unit tests, hosted CI and
+all external qualification remain unclosed by these local checks.
+
 ## External gates
 
 The package has not acquired independently administered evaluator, provider,

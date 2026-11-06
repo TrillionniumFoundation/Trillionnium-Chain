@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "-c",
+    "import subprocess,json; a=\"8ae7093fc6380cef063b061ed8d7fe79749acc17\"; b=\"41e433a79548082f6eb4d9926f309153a16960d9\"; trees={s:subprocess.check_output([\"git\",\"rev-parse\",s+\":trillionnium\"],text=True).strip() for s in (a,b)}; assert len(set(trees.values()))==1; subprocess.run([\"git\",\"diff\",\"--exit-code\",a,b,\"--\",\"trillionnium\",\".cargo\",\"rust-toolchain\",\"rust-toolchain.toml\"],check=True); print(json.dumps({\"rust_subtrees\":trees,\"exactly_unchanged\":True,\"native_tests_executed\":False,\"clippy_pass_inferred\":False},sort_keys=True))"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T14:16:58.493051+00:00",
+  "independent_acceptance": false,
+  "label": "rust-source-identity",
+  "log_bytes": 286,
+  "log_file": "rust-source-identity.log",
+  "log_sha256": "6c486719523bd96fee75d94f237fe8b1ce433d5c36ed068092144676b0206285",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "41e433a79548082f6eb4d9926f309153a16960d9",
+  "source_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:16:58.410883+00:00",
+  "wall_seconds": 0.08217005000005884
+}

@@ -1,0 +1,23 @@
+test_alias_of_forbidden_source_is_excluded_with_three_other_groups (__main__.ControlDomains.test_alias_of_forbidden_source_is_excluded_with_three_other_groups) ... ok
+test_bound_context_does_not_retain_mutable_caller_mappings (__main__.ControlDomains.test_bound_context_does_not_retain_mutable_caller_mappings) ... ok
+test_cli_emits_bound_v3_report_with_real_failure_exit (__main__.ControlDomains.test_cli_emits_bound_v3_report_with_real_failure_exit) ... ok
+test_common_parent_and_reused_subject_cannot_increase_domain_count (__main__.ControlDomains.test_common_parent_and_reused_subject_cannot_increase_domain_count) ... ok
+test_controller_evidence_expiring_midcampaign_gets_no_credit (__main__.ControlDomains.test_controller_evidence_expiring_midcampaign_gets_no_credit) ... ok
+test_distinct_node_admin_ip_labels_do_not_hide_common_control (__main__.ControlDomains.test_distinct_node_admin_ip_labels_do_not_hide_common_control) ... ok
+test_distinct_synthetic_declarations_never_grant_external_acceptance (__main__.ControlDomains.test_distinct_synthetic_declarations_never_grant_external_acceptance) ... ok
+test_duplicate_physical_key_under_different_subjects_is_still_common_control (__main__.ControlDomains.test_duplicate_physical_key_under_different_subjects_is_still_common_control) ... ok
+test_failure_domains_are_still_a_separate_floor (__main__.ControlDomains.test_failure_domains_are_still_a_separate_floor) ... ok
+test_foreign_context_rejects_even_when_attacker_rehashes_registry (__main__.ControlDomains.test_foreign_context_rejects_even_when_attacker_rehashes_registry) ... ok
+test_original_late_missing_failure_resource_denominators_remain (__main__.ControlDomains.test_original_late_missing_failure_resource_denominators_remain) ... ok
+test_registry_and_subject_roster_commitments_are_both_required (__main__.ControlDomains.test_registry_and_subject_roster_commitments_are_both_required) ... ok
+test_stale_alias_is_not_an_escape_from_known_common_control (__main__.ControlDomains.test_stale_alias_is_not_an_escape_from_known_common_control) ... ok
+test_two_source_ids_under_one_controller_cannot_meet_two_group_floor (__main__.ControlDomains.test_two_source_ids_under_one_controller_cannot_meet_two_group_floor) ... ok
+test_unknown_extra_or_missing_operator_subject_binding_rejects (__main__.ControlDomains.test_unknown_extra_or_missing_operator_subject_binding_rejects) ... ok
+test_unknown_forbidden_origin_cannot_be_asserted_unrelated (__main__.ControlDomains.test_unknown_forbidden_origin_cannot_be_asserted_unrelated) ... ok
+test_user_supplied_acceptance_flags_and_unknown_v3_fields_reject (__main__.ControlDomains.test_user_supplied_acceptance_flags_and_unknown_v3_fields_reject) ... ok
+test_v2_retains_original_declaration_semantics (__main__.ControlDomains.test_v2_retains_original_declaration_semantics) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.169s
+
+OK
