@@ -7863,3 +7863,38 @@ commit. Preserve the two earlier launcher preparation failures separately;
 neither executed native tests. The new combined source requires its own fixed
 source, actual binaries and the newly added target controls. No prior target,
 PQ, reader replay, Cell or ordinary-model result transfers to this composition.
+
+
+### 2026-11-06 preserve the original full-library timeout and repair expiry accounting
+
+The independent desktop batch on fixed source `f85fea4e` reached its original
+1,500-second command ceiling during the 65,536-key continuity control. The
+parent full-library process ended with SIGTERM/exit -15 and its process group
+was fully reaped. It never emitted the parent 1,191-test result or failure
+panic. Three nested one-test summaries are not an aggregate library result.
+The retained paid-pending `FAILED` progress row has an unknown assertion cause;
+neither a later exact pass nor static analysis may erase or reinterpret it.
+The batch continues its independent original gates without extending budgets.
+
+Independent source review found a separate expiry-observation gap. A reactor
+stage can cross its original deadline after the outer scan, then refuse in the
+inner pending/cookie check. The existing generic error path closes the request
+but does not add the expiry counters. Keep its exact terminal error, pending
+closure, generic/phase counters and connection removal. Add conservative expiry
+observations only for the precise deadline/cookie error after the original
+connection deadline. A monotonic stop takes precedence for deadline errors;
+a late error-handler timestamp must not turn an earlier shutdown into expiry.
+EOF, cancellation and other errors keep their original classification. This
+change renews no deadline and changes no credential, wire/profile, allowance,
+worker, body/lane allocation, work start or authorization decision.
+
+Retain the original real-socket paid-pending control byte-for-byte. Four added
+controls use actual sockets, accepted-connection ownership, pending/cookie
+refusals, terminal observation and removal/Drop to check supported expiry,
+early shutdown, EOF and cancellation, unchanged deadlines, one pending close,
+released connection slots and absence of body/work effects. Their source needs
+its own actual native execution and strict source/Clippy evidence. The optional
+behavior-preserving helper-extraction red design is unexecuted and is not the
+original f85 source. No current native pass is implied by preparing the patch.
+Earlier f85 component and CI results retain their exact source identities.
+Original service confirmation and all whole-chain PQ/production gates stay HOLD.
