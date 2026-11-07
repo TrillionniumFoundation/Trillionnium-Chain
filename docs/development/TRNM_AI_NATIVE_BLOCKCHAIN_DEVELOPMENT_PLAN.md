@@ -38,6 +38,10 @@ new consensus rule or lifts these distinct gates.
 The [multimodal evidence](../../evidence/pon-useful-cell-multimodal-v3-20261107/README.md)
 retains the finite controls and complete proof material without promoting
 generated arithmetic labels into task-quality evidence.
+The [native evidence](../../evidence/pon-native-cell-v1-20261107/README.md)
+retains full owner inputs, claims and verified-parent packets plus fresh-process
+historical replay. The separate private Hepta owner path does not consume this
+public native proof; proof-to-owner composition remains an explicit open gate.
 
 **Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate from

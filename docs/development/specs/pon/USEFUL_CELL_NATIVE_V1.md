@@ -86,6 +86,12 @@ after-model and state, while continuing to report that no owner checkpoint was
 committed. These are finite correctness controls, not independent quality or
 real production adoption observations.
 
+The [retained native record](../../../../evidence/pon-native-cell-v1-20261107/README.md)
+contains the final 12-test run, complete owner/claim/packet materials, 55 distinct
+W1 proofs and six fresh-process historical replays. It retains failed setup and
+Clippy observations and does not combine the separate private Hepta owner path
+into a public-proof-to-FinalUse claim.
+
 Implementation and controls:
 
 - [Native relation and Node entry](../../../../trillionnium/crates/trnm-pon-node/src/cell_native_v1.rs)
