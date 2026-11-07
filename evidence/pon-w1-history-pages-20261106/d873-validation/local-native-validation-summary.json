@@ -1,0 +1,1339 @@
+{
+  "schema": "local-frozen-native-validation-summary-v1",
+  "generated_utc": "2026-11-07T01:16:58.007377+00:00",
+  "repository": "/workspace/scratch/a66f84888260/chain-integration",
+  "source_identity": {
+    "commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+    "tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+    "parents": [
+      "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+      "a3e9002cd12ef90d62f8b252cad570e72dab6fa3"
+    ],
+    "status_porcelain": "",
+    "source_blobs": {
+      "trillionnium/Cargo.toml": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "trillionnium/Cargo.lock": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e",
+      "tests/fuzz/Cargo.toml": "a55d73741e6971601f1f3df6dec9b19a924d9a8e",
+      "tests/fuzz/Cargo.lock": "6af28eb8c0debfa095df2b19c320eaeefa95f8c1",
+      "trillionnium/crates/trnm-pon-node/src/store.rs": "22ba74f76e2616f72c7cc436fcde7acf3f6d1286",
+      "trillionnium/crates/trnm-pon-node/src/store/public_history.rs": "4e2cd748bd791c907156ac0eb6496a44fd6e241c",
+      "trillionnium/crates/trnm-pon-node/src/store/read_query_cache_tests.rs": "dfe260a7e0dec22c0ec5cb3dc26a12db233a37ab",
+      "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": "6dd4ff46ba34b4f53e146668f0ad7e9048c8a151",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "f6de94e93892592a8008b0a30ae74bad59d71585",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "e27ca4dcb9759cd7e580d16684960c04d3250020",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "99d71af257ee5fdbc60517c7b6fc83140bb467f3",
+      "trillionnium/crates/trnm-pon-node/src/peer_polling.rs": "15c4e478b77bdde52ef1bdef544c6e1efc4e59d8",
+      "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "2a3ccb8025e9969e2a146cc5aa7ba6987c062443",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "ce3c578746e3be7409b4609f0da5a06a22a5a1b8",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs": "c50b2d32099f9ddb1d193199c19555a05a09f504",
+      "trillionnium/crates/trnm-sqlite-io-boundary/build.rs": "c410244cd1052606eea772828c4832a04047a8c6"
+    }
+  },
+  "source_bindings_verified_for_all_phases": true,
+  "worktree_clean_after_all_validation": true,
+  "phases": [
+    {
+      "phase": "strict-clippy",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-strict-clippy.result.json",
+      "result_manifest_sha256": "50238402db228ea8eff42941787e3912aea5714c2fca282a2bbdd72b5856adde",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "strict Clippy, original default dev profile",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "-j",
+        "1",
+        "--message-format=json-render-diagnostics",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 125.931,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-strict-clippy.stdout.jsonl",
+          "sha256": "acf98ae756e97fdecdc42ef9a76cd027daafa819ca46bd49f9c494bb9a31973d"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-strict-clippy.stderr.log",
+          "sha256": "6daf3ddbe2222fb692c970707a2f68a744535fc5be9f3d7de85589de729ac7f6"
+        }
+      }
+    },
+    {
+      "phase": "release-six-build",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-release-six-build.result.json",
+      "result_manifest_sha256": "70df6fc4220b5a2738a5f61c6236b5ba070c9d57613637c704d5ea717a9f740f",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "original Cargo release profile",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--release",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_submit_recovery",
+        "--test",
+        "pinned_peer_polling",
+        "--test",
+        "public_v3_from_zero",
+        "--test",
+        "public_v3_multiprocess",
+        "--test",
+        "public_v3_service_campaign",
+        "--test",
+        "mining_service_budget",
+        "--no-run",
+        "-j",
+        "1",
+        "--message-format=json-render-diagnostics"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 263.041,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-release-six-build.stdout.jsonl",
+          "sha256": "6063bcfe27df53cd76c54c2dbf3eee0b001cda3a81782830413be03515890dd5"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-release-six-build.stderr.log",
+          "sha256": "90734f60988d13d623006a05757d7fdb0bbdff4905dc09dd21b6cdb8f907d7ac"
+        }
+      }
+    },
+    {
+      "phase": "release-regressions",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions.result.json",
+      "result_manifest_sha256": "3ddc224be112cf01263c61efb034ffa470615f25277403812d6db8d37df8c450",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "original Cargo release profile",
+      "totals": {
+        "selected_count": 29,
+        "passed": 29,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0
+      },
+      "unique_selected_count": 29,
+      "unique_passed_count": 29,
+      "unique_ignored_count": 0,
+      "actual_execution_seconds": 22.375,
+      "intentional_duplicate": null,
+      "groups": [
+        {
+          "index": 1,
+          "target": "public_submit_recovery",
+          "filter": "",
+          "exact": false,
+          "selected_count": 26,
+          "selected_tests": [
+            "actual_absolute_epoch_call_cap_and_current_clock_fail_closed",
+            "actual_budget_absence_at_one_submit_limit_keeps_refusal_without_wait_or_ack",
+            "actual_budget_absence_with_two_call_cap_stops_without_another_submit",
+            "actual_caps_context_and_mutated_same_id_refuse_without_relabeling_duplicates",
+            "actual_cli_bad_combinations_and_limits_precede_store_creation",
+            "actual_cli_default_reply_is_unchanged_and_opt_in_reports_duplicate_membership",
+            "actual_cpu_unavailable_permanent_refusal_and_wrong_signature_never_trigger_membership",
+            "actual_eof_before_admission_keeps_same_packet_and_all_failed_attempts",
+            "actual_eof_recovery_keeps_short_pause_instead_of_budget_wait_schedule",
+            "actual_equal_work_duplicate_ack_and_heavier_fork_do_not_advance_dependencies",
+            "actual_lost_ack_with_stored_successors_verifies_complete_and_partial_v3_pages",
+            "actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack",
+            "actual_membership_readiness_does_not_replace_installed_confirmation",
+            "actual_missing_parent_is_restored_before_child_and_reopens_byte_exact",
+            "actual_native_admission_without_response_at_deadline_is_uncertain_and_not_retried",
+            "actual_nonpreemptive_local_full_root_late_return_is_not_reported_on_time",
+            "actual_repeated_exact_eof_stops_after_three_identical_submits",
+            "actual_signed_cpu_budget_absent_membership_retries_same_bytes_within_original_limits",
+            "actual_signed_cpu_budget_different_branch_and_changed_generation_do_not_advance",
+            "actual_signed_cpu_budget_inactive_equal_work_and_forged_history_do_not_advance",
+            "actual_signed_cpu_budget_read_and_retry_obey_original_call_cap_and_epoch",
+            "actual_signed_cpu_budget_refusal_resolves_known_membership_without_an_ack",
+            "actual_signed_cpu_budget_without_membership_retains_all_three_refusals",
+            "actual_signed_eof_and_context_labels_cannot_acquire_local_phase_retry_identity",
+            "actual_signed_history_tail_cursor_and_completion_forgery_do_not_advance",
+            "actual_two_signed_budget_absences_spread_attempts_and_keep_real_final_ack"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/release/deps/public_submit_recovery-df613e80d5b26b92",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "aa2ddb2f7452a40d679374242ec2d0bff6c945a9358955d6a72e68e6854d8898",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-01.log",
+          "returncode": 0,
+          "elapsed_seconds": 15.752,
+          "log_sha256": "88c9479a5777bfd077a8871dddb7c262f55457d2e90c6e08e017fcc5dbd0f8b5",
+          "harness_result": "ok",
+          "passed": 26,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 2,
+          "target": "pinned_peer_polling",
+          "filter": "",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_admission"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/release/deps/pinned_peer_polling-8252fa450c22ae89",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "c94c2e479fcc084cbe08de735dfcd61badc0489c33209e4bdcc8c9d8c570c526",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-02.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.326,
+          "log_sha256": "9d3511ea24dbc462599ea7a97e88b9f2be87fc88e5b69e63a4a57e46be0fa82b",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 3,
+          "target": "public_v3_multiprocess",
+          "filter": "arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+            "arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "805c204f2ca26b7c5e88586d4321b644ae386e45e9a2f13cd1c294c03ab37073",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-03.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.002,
+          "log_sha256": "2bd9e4386c57cbff173d0ef6feb35748d4420c12b7c478e38f9da68ace37dc08",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 24,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 4,
+          "target": "public_v3_service_campaign",
+          "filter": "network_only_business::network_only_business_confirmations_survive_rotating_false_work",
+          "exact": true,
+          "selected_count": 1,
+          "selected_tests": [
+            "network_only_business::network_only_business_confirmations_survive_rotating_false_work"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/release/deps/public_v3_service_campaign-72fb3fd372ab6aa8",
+            "network_only_business::network_only_business_confirmations_survive_rotating_false_work",
+            "--exact",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "88906623e7028e96342a9a04849f91308cfab1e4c3682da933ba4c2dc4ac59a1",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04.log",
+          "receipt_output_directory": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04-receipts",
+          "receipt_environment": {
+            "TRNM_CI_RECEIPT_DIR": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04-receipts"
+          },
+          "returncode": 0,
+          "elapsed_seconds": 6.295,
+          "log_sha256": "dc5c534c84d36324f0390ed305879fe71932ef38065006b0a3dba88751784f11",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "json_receipts": [
+            {
+              "path": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04-receipts/network-only-business/report.json",
+              "bytes": 10145807,
+              "sha256": "392e196ac81226d7684eb2abaa0bf8fbd2dcf6b1dca96367ffaa270c55ee0683"
+            }
+          ],
+          "complete_success": true
+        }
+      ]
+    },
+    {
+      "phase": "debug0-library-build",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-library-build.result.json",
+      "result_manifest_sha256": "2fde1a0e2b7df76d5a7d091169c5238846367dad270fd5ffd2b0b9e26d9b6b33",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "explicit test/dev debug0 component functionality only",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "-j",
+        "1",
+        "--message-format=json-render-diagnostics"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 487.875,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-library-build.stdout.jsonl",
+          "sha256": "ace4f3034a5c8f7891eca1a577f26806bf802f04592db70f0622e3c697d15f74"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-library-build.stderr.log",
+          "sha256": "55abdecb66451972138ac541aa756147518af0ee98036f2c9ad122a6beeb09fd"
+        }
+      }
+    },
+    {
+      "phase": "debug0-components",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components.result.json",
+      "result_manifest_sha256": "629de35b38495cc2b5aae812bec03be753e00ed901aeb52bf34b3a6d53b7a326",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "explicit test/dev debug0 component functionality only",
+      "totals": {
+        "selected_count": 79,
+        "passed": 77,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0
+      },
+      "unique_selected_count": 78,
+      "unique_passed_count": 76,
+      "unique_ignored_count": 2,
+      "actual_execution_seconds": 33.649,
+      "intentional_duplicate": "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
+      "groups": [
+        {
+          "index": 1,
+          "target": "trnm_pon_node",
+          "filter": "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
+          "exact": true,
+          "selected_count": 1,
+          "selected_tests": [
+            "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
+            "--exact",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-01.log",
+          "returncode": 0,
+          "elapsed_seconds": 2.559,
+          "log_sha256": "e3b2914649c59e6fd289b67d4e3ef712a57c46e34812bac5bda3ba63ec94eff6",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1169,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 2,
+          "target": "trnm_pon_node",
+          "filter": "public_history_page_",
+          "exact": false,
+          "selected_count": 3,
+          "selected_tests": [
+            "ancestry_index::tests::public_history_page_budget_exhaustion_never_renews_for_the_second_packet",
+            "ancestry_index::tests::public_history_page_rechecks_current_jump_rows_after_a_successful_packet",
+            "ancestry_index::tests::public_history_page_sql_is_cumulative_including_each_length_and_body"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "public_history_page_",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-02.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.38,
+          "log_sha256": "02a5cc125cb96192f174f3d94c2ed7ebcf69ffd032322a189d73a44729efaceb",
+          "harness_result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1167,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 3,
+          "target": "trnm_pon_node",
+          "filter": "public_history_batch_",
+          "exact": false,
+          "selected_count": 6,
+          "selected_tests": [
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_byte_boundary_returns_one_without_skipping_a_valid_candidate",
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_cumulative_sql_boundary_and_later_cancellation_publish_no_partial_error",
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_second_and_last_damage_refuse_the_entire_page",
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_seven_packets_replay_independently_before_depth_six",
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_sixteen_packet_cap_keeps_exact_cursor_tip_and_v2_singleton",
+            "ingress::public_v3::history_response::tests::batch::public_history_batch_total_bytes_bound_real_bodies_and_the_signed_response"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "public_history_batch_",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-03.log",
+          "returncode": 0,
+          "elapsed_seconds": 1.334,
+          "log_sha256": "f1b09527952d16ef7c0a152de3cb967e66962bc3f1b5b5455bc6b57ffd1f30df",
+          "harness_result": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1164,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 4,
+          "target": "trnm_pon_node",
+          "filter": "public_history_formatting_",
+          "exact": false,
+          "selected_count": 3,
+          "selected_tests": [
+            "ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline",
+            "ingress::public_v3::history_response::tests::public_history_formatting_matches_bytes_cursors_and_fresh_foreign_damage",
+            "ingress::public_v3::history_response::tests::public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "public_history_formatting_",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-04.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.144,
+          "log_sha256": "e14f74aa99a380b0a4b96a6f6cf22833f62234e24647fbfadd8cb361d8ca8fca",
+          "harness_result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1167,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 5,
+          "target": "trnm_pon_node",
+          "filter": "store::public_reader::tests::",
+          "exact": false,
+          "selected_count": 10,
+          "selected_tests": [
+            "store::public_reader::tests::readonly_history_allows_real_writer_commit_without_releasing_writer_authority",
+            "store::public_reader::tests::readonly_history_cancel_drops_lease_and_namespace_changes_refuse",
+            "store::public_reader::tests::readonly_history_detects_foreign_write_restore_and_same_owner_raw_damage",
+            "store::public_reader::tests::readonly_history_one_cumulative_budget_has_exact_limit_and_no_partial_result",
+            "store::public_reader::tests::readonly_history_original_cursor_errors_and_used_fact_damage_keep_origin",
+            "store::public_reader::tests::readonly_history_refuses_reorganization_epoch_before_page_publication",
+            "store::public_reader::tests::readonly_history_same_generation_owner_epoch_damage_stops_without_wrapping_cancel",
+            "store::public_reader::tests::readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_normal_reads",
+            "store::public_reader::tests::readonly_history_snapshot_keeps_original_page_and_cold_reopen",
+            "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "store::public_reader::tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-05.log",
+          "returncode": 0,
+          "elapsed_seconds": 2.628,
+          "log_sha256": "7e72f593c17c0a62b8603ebccd9fc236393ccba8098040f15fbb43ebb364f3d9",
+          "harness_result": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered_out": 1160,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [
+            "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+          ],
+          "complete_success": true
+        },
+        {
+          "index": 6,
+          "target": "trnm_pon_node",
+          "filter": "peer_polling::tests::",
+          "exact": false,
+          "selected_count": 17,
+          "selected_tests": [
+            "peer_polling::tests::actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries",
+            "peer_polling::tests::actual_valid_work_with_false_ledger_state_cannot_advance_cursor_or_owner",
+            "peer_polling::tests::call_and_global_page_budgets_round_robin_are_hard_finite",
+            "peer_polling::tests::config_file_refuses_symlink_fifo_hardlink_writable_and_oversized",
+            "peer_polling::tests::config_has_exact_context_finite_limits_and_no_discovery",
+            "peer_polling::tests::malformed_pages_fail_before_packet_allocation_and_do_not_claim_progress",
+            "peer_polling::tests::multi_packet_count_and_total_hex_are_bounded_before_decoding_any_packet",
+            "peer_polling::tests::multi_packet_false_tail_retains_durable_prefix_without_page_or_target_completion",
+            "peer_polling::tests::multi_packet_page_checks_every_parent_and_stops_at_the_fixed_target",
+            "peer_polling::tests::normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does",
+            "peer_polling::tests::oversized_failure_is_explicitly_retained_with_digest_and_utf8_boundary",
+            "peer_polling::tests::pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork",
+            "peer_polling::tests::pinned_peer_requires_the_existing_service_domain_before_full_work",
+            "peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text",
+            "peer_polling::tests::real_native_fixed_tip_disconnect_one_initial_cursor_fallback_and_heavier_fork",
+            "peer_polling::tests::transport_unknown_block_malformed_and_post_progress_cursor_never_fallback",
+            "peer_polling::tests::typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "peer_polling::tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-06.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.493,
+          "log_sha256": "57bea83488dd7229a1e7225ad25f5d97634296748fab461356c35fe53ed9c6ef",
+          "harness_result": "ok",
+          "passed": 17,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1153,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 7,
+          "target": "trnm_pon_node",
+          "filter": "work_arithmetic::tests::",
+          "exact": false,
+          "selected_count": 5,
+          "selected_tests": [
+            "ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet",
+            "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges",
+            "ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit",
+            "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown",
+            "ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "work_arithmetic::tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-07.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.114,
+          "log_sha256": "e6ba4cce37af824115e009ba48bf4752d468d8e797ea0f5d9c6d32e7eaee1700",
+          "harness_result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1165,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 8,
+          "target": "trnm_pon_node",
+          "filter": "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-08.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.003,
+          "log_sha256": "fa80a22682357cbac73556a65f15a5134c584b473c50cbb5416b2dfe6f2b041c",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1169,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 9,
+          "target": "trnm_pon_node",
+          "filter": "resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "ingress::public_v3::tests::resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-09.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.009,
+          "log_sha256": "a432e5593d4121d7da7d5c93c5d7b280ac64456490b08314f696c500198ebfa6",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1169,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 10,
+          "target": "trnm_pon_node",
+          "filter": "scalar_cpu::metered_fact_network_tests::",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "scalar_cpu::metered_fact_network_tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-10.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.227,
+          "log_sha256": "fd81ce8606f6aedf500a111dfaee851d15f484e965093d8cd72dfc92636ee40a",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1169,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        },
+        {
+          "index": 11,
+          "target": "trnm_pon_node",
+          "filter": "ingress::history_import::tests::",
+          "exact": false,
+          "selected_count": 30,
+          "selected_tests": [
+            "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+            "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+            "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+            "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+            "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+            "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+            "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+            "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+            "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+            "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+            "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+            "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+            "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+            "ingress::history_import::tests::history_kill_cut_child",
+            "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
+            "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+            "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+            "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+            "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+            "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+            "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+            "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+            "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+            "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+            "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+            "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+            "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+            "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+            "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+            "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "ingress::history_import::tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-11.log",
+          "returncode": 0,
+          "elapsed_seconds": 25.574,
+          "log_sha256": "82a304da8a6a83a587ed0851033a84f56efba01e04bb7dcfc90413c8675d08df",
+          "harness_result": "ok",
+          "passed": 29,
+          "failed": 0,
+          "ignored": 1,
+          "measured": 0,
+          "filtered_out": 1140,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [
+            "ingress::history_import::tests::history_kill_cut_child"
+          ],
+          "complete_success": true
+        },
+        {
+          "index": 12,
+          "target": "trnm_pon_node",
+          "filter": "store::read_query_cache_tests::",
+          "exact": false,
+          "selected_count": 1,
+          "selected_tests": [
+            "store::read_query_cache_tests::warmed_queries_recheck_actual_writes_rollback_schema_and_cold_state"
+          ],
+          "command": [
+            "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+            "store::read_query_cache_tests::",
+            "--test-threads=1",
+            "--nocapture"
+          ],
+          "binary_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+          "binary_profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": true,
+            "overflow_checks": true,
+            "test": true
+          },
+          "log": "/workspace/scratch/a66f84888260/integration-validation/d873-debug0-components-12.log",
+          "returncode": 0,
+          "elapsed_seconds": 0.184,
+          "log_sha256": "37bb7431c10a9ee56f2eee2e32a26b537f286c59b96f286a246b704c56a85134",
+          "harness_result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 1169,
+          "count_matches_selection": true,
+          "has_actual_execution": true,
+          "ignored_tests": [],
+          "complete_success": true
+        }
+      ]
+    },
+    {
+      "phase": "metadata-workspace",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-workspace.result.json",
+      "result_manifest_sha256": "a93b8781c39426bb10b9bdd70f63c18e3c9becdb5175beba24397b9dcac3c53f",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "read-only dependency graph / format verification; no compilation",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.22,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-workspace.stdout.jsonl",
+          "sha256": "b5617516e06d9821de2a68ae10ce1b0eff6b55a744f658c2cb00fddba614597d"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-workspace.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "metadata_summary": {
+        "workspace_members": 26,
+        "packages": 180,
+        "resolve_nodes": 180,
+        "full_dependencies_included": true
+      }
+    },
+    {
+      "phase": "metadata-fuzz",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-fuzz.result.json",
+      "result_manifest_sha256": "536e05ed460a9b5781dcd63e17d8bd391e5f1b67dd2a586abcf981eb9add1330",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "read-only dependency graph / format verification; no compilation",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.1,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-fuzz.stdout.jsonl",
+          "sha256": "14e412dfd3cba704b2c94b4a4ee3847475a41c58af5874cf8db96f309e86abaf"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-metadata-fuzz.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "metadata_summary": {
+        "workspace_members": 1,
+        "packages": 147,
+        "resolve_nodes": 147,
+        "full_dependencies_included": true
+      }
+    },
+    {
+      "phase": "fmt-check",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-fmt-check.result.json",
+      "result_manifest_sha256": "a3249e0bb6c573724a3fd46e516a98ff13f9627bbb88a4f0fee0ce6db92d9db0",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "read-only dependency graph / format verification; no compilation",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 11.919,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-fmt-check.stdout.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-fmt-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "phase": "fuzz-fmt-check",
+      "result_manifest": "/workspace/scratch/a66f84888260/integration-validation/d873-fuzz-fmt-check.result.json",
+      "result_manifest_sha256": "60a4db785434e5d13347561b77a7642fac58e913315828e89970fa26877e0470",
+      "complete_success": true,
+      "source_unchanged": true,
+      "profile_scope": "read-only dependency graph / format verification; no compilation",
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 11.436,
+      "environment_overrides": {
+        "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+        "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TERM_COLOR": "never",
+        "PATH_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin"
+      },
+      "logs": {
+        "stdout_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-fuzz-fmt-check.stdout.jsonl",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr_log": {
+          "path": "/workspace/scratch/a66f84888260/integration-validation/d873-fuzz-fmt-check.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "binary_identities": [
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/public_submit_recovery-df613e80d5b26b92",
+      "bytes": 10556648,
+      "sha256": "aa2ddb2f7452a40d679374242ec2d0bff6c945a9358955d6a72e68e6854d8898",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "public_submit_recovery",
+      "final_sha256": "aa2ddb2f7452a40d679374242ec2d0bff6c945a9358955d6a72e68e6854d8898",
+      "final_bytes": 10556648
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/trnm-pon-node",
+      "bytes": 14485984,
+      "sha256": "576a96d0dbd832a0329e2c51fcb9e626059010cfdf00249764da1363df176a51",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "default"
+      ],
+      "target": "trnm-pon-node",
+      "final_sha256": "576a96d0dbd832a0329e2c51fcb9e626059010cfdf00249764da1363df176a51",
+      "final_bytes": 14485984
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+      "bytes": 11753088,
+      "sha256": "805c204f2ca26b7c5e88586d4321b644ae386e45e9a2f13cd1c294c03ab37073",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "public_v3_multiprocess",
+      "final_sha256": "805c204f2ca26b7c5e88586d4321b644ae386e45e9a2f13cd1c294c03ab37073",
+      "final_bytes": 11753088
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/public_v3_service_campaign-72fb3fd372ab6aa8",
+      "bytes": 10353360,
+      "sha256": "88906623e7028e96342a9a04849f91308cfab1e4c3682da933ba4c2dc4ac59a1",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "public_v3_service_campaign",
+      "final_sha256": "88906623e7028e96342a9a04849f91308cfab1e4c3682da933ba4c2dc4ac59a1",
+      "final_bytes": 10353360
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/mining_service_budget-28a9d5703e65bc67",
+      "bytes": 8289248,
+      "sha256": "fab8c3c51b34924c5b26904eb6f3aa2992c92725366f1ebceff49467a69e4e31",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "mining_service_budget",
+      "final_sha256": "fab8c3c51b34924c5b26904eb6f3aa2992c92725366f1ebceff49467a69e4e31",
+      "final_bytes": 8289248
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+      "bytes": 10958800,
+      "sha256": "aec52b171874758f931027e1eecb99cebdd2634dbeb3404edb50e9b5faa68e3c",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "public_v3_from_zero",
+      "final_sha256": "aec52b171874758f931027e1eecb99cebdd2634dbeb3404edb50e9b5faa68e3c",
+      "final_bytes": 10958800
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/release/deps/pinned_peer_polling-8252fa450c22ae89",
+      "bytes": 10470696,
+      "sha256": "c94c2e479fcc084cbe08de735dfcd61badc0489c33209e4bdcc8c9d8c570c526",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "pinned_peer_polling",
+      "final_sha256": "c94c2e479fcc084cbe08de735dfcd61badc0489c33209e4bdcc8c9d8c570c526",
+      "final_bytes": 10470696
+    },
+    {
+      "path": "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-41437b25e53ba5e0",
+      "bytes": 90694176,
+      "sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "target": "trnm_pon_node",
+      "final_sha256": "b1bbc1d04d5e4837964a66f3d45d783c46e961fcd3cbe6eb3dc0baa791bc4398",
+      "final_bytes": 90694176
+    }
+  ],
+  "release_regression_totals": {
+    "selected_count": 29,
+    "passed": 29,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0
+  },
+  "component_totals_with_intentional_duplicate": {
+    "selected_count": 79,
+    "passed": 77,
+    "failed": 0,
+    "ignored": 2,
+    "measured": 0
+  },
+  "component_unique_totals": {
+    "selected": 78,
+    "passed": 76,
+    "failed": 0,
+    "ignored": 2
+  },
+  "deliberately_repeated_fixed_tip_test": "ingress::history_import::tests::history_page_cannot_decode_past_fixed_tip_before_native_admission",
+  "ignored_tests": [
+    "ingress::history_import::tests::history_kill_cut_child",
+    "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+  ],
+  "network_business_readback": {
+    "path": "/workspace/scratch/a66f84888260/integration-validation/d873-network-business-readback.json",
+    "sha256": "9335c107efaba5fc61e7da224b6452fed435dffc3336af2c8028514ae715507d",
+    "receipt": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04-receipts/network-only-business/report.json",
+    "receipt_sha256": "392e196ac81226d7684eb2abaa0bf8fbd2dcf6b1dca96367ffaa270c55ee0683",
+    "policy": "09c3b50a335d9071c26842e98a54bd4b12c9bbd08c5f409dff1f9771fa2923bd",
+    "workers": 4,
+    "attack_window_ns": 6000000000,
+    "native_verified_confirmed_transactions": 24,
+    "confirmation_groups": [
+      {
+        "included_height": 1,
+        "depth": 8,
+        "work_delta": 16,
+        "required_work_delta": 12,
+        "transactions": 8
+      },
+      {
+        "included_height": 2,
+        "depth": 7,
+        "work_delta": 14,
+        "required_work_delta": 12,
+        "transactions": 8
+      },
+      {
+        "included_height": 3,
+        "depth": 6,
+        "work_delta": 12,
+        "required_work_delta": 12,
+        "transactions": 8
+      }
+    ],
+    "confirmation_timing_scope": "consumer.confirmations is checked after attacker join and service.finish; no absolute deadline covers the entire chain",
+    "confirmations_within_attack_window_established": false,
+    "legacy_report_scope_preserved": "bounded same-process loopback public TCP load; original r10 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN",
+    "actual_policy_identity_scope": "current r16 exact signed policy hash; legacy r10 scope prose is not used to identify this candidate"
+  },
+  "fixed_host_qualified": false,
+  "original_four_second_business_gate_pass_established": false,
+  "scope_limits": [
+    "Original release profile: six integration targets compiled; only the 29 explicitly listed regression tests executed locally.",
+    "The multiprocess execution here is the profile-binding regression, not the original independent native service campaign.",
+    "Component library uses explicit CARGO_PROFILE_DEV_DEBUG=0 and CARGO_PROFILE_TEST_DEBUG=0; the actual node test binary has opt_level 3, debuginfo 0, debug assertions true, and overflow checks true.",
+    "The new fixed-tip test ran once by exact selector and again inside history_import; unique coverage excludes this repetition.",
+    "Six-second attack window with four workers; confirmations checked after attacker join and service shutdown; no whole-chain six-second confirmation deadline was established.",
+    "The original quarter-CPU, 2 GiB, no-swap, 256-PID, sixteen-worker, four-second Host qualification is not provided by these local results.",
+    "Prior release-library SIGKILL failures and missing-Host runtime refusals were not retried or removed; no release-library build was attempted for d873.",
+    "No frozen repository source was edited during validation; all validation scripts, logs, manifests, and receipts are outside the worktrees."
+  ],
+  "retained_e28_worktree_final_identity": {
+    "path": "/workspace/scratch/a66f84888260/chain",
+    "commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+    "tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+    "status_porcelain": ""
+  },
+  "disk_free_bytes_after_validation": 4094668800,
+  "complete_success": true
+}

@@ -1,0 +1,238 @@
+{
+  "schema": "trnm-readonly-scheduling-options-v1",
+  "date_utc": "2026-11-07",
+  "repository": "/workspace/scratch/a66f84888260/chain-integration",
+  "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "source_tracked_clean_at_audit": true,
+  "audit_scope": "Focused source audit of public V3 authentication, paid queue/CPU domain boundaries, and original four-second/native attack and independent-client construction.",
+  "source_modified": false,
+  "tests_executed_by_audit": false,
+  "benchmarks_executed_by_audit": false,
+  "original_four_second_qualification": false,
+  "conclusion": {
+    "status": "no_evidence_supported_minimal_scheduling_fix_identified",
+    "text_zh": "当前源码和已定位失败不足以支持把同 principal 限流或服务 fair queue 作为保留原门槛、错误与经济语义的最小修复。关闭此具体无证据路线；不宣称全局公平调度在理论上不可能，也不排除未来独立测量发现有限的间接收益。",
+    "no_global_fairness_impossibility_claim": true,
+    "no_measured_speedup_claim": true,
+    "gate_or_resource_changes_proposed": false
+  },
+  "identity_findings": {
+    "actual_transport_keys_are_distinct": true,
+    "honest_submit_fixture_seed": 73,
+    "honest_history_fixture_seed": 74,
+    "honest_head_fixture_seed": 72,
+    "server_pin_fixture_seed": 71,
+    "attack_fixture_seeds": {
+      "minimum": 80,
+      "maximum": 229,
+      "distinct_possible": 150
+    },
+    "four_second_rotation": "80 + ((attempt + worker * 37) % 150)",
+    "native_rotation": "80 + ((worker * 37 + calls.len()) % 150)",
+    "key_creation": "DevelopmentIdentity::from_secret_hex(hex::encode([seed; 32])); fixture keys are generated locally.",
+    "principal_boundary": "The verified public key proves caller possession. The inspected admission path supplies no Sybil-resistant association of multiple caller keys with one economic actor and no authenticated honest role.",
+    "caution": "Do not claim these actual fixtures share a transport principal; they deliberately use different key ranges. Do not substitute packet miner/account fields for the authenticated transport principal.",
+    "evidence": [
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "locations": [
+          "identity",
+          "Client::call_before",
+          "signed_confirmation_phase_with_builder"
+        ],
+        "lines": "36; 190-250; 1285-1466"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "locations": [
+          "attack_actor",
+          "honest Submit/History and local import loop"
+        ],
+        "lines": "632-750; 995-1110"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+        "locations": [
+          "identity",
+          "call_with_work_profile"
+        ],
+        "lines": "114-116; 243-280"
+      }
+    ]
+  },
+  "authentication_findings": {
+    "order": [
+      "Read a complete solution and protect its intake lease",
+      "Validate original cookie and solution framing",
+      "Verify ticket winner",
+      "Verify caller signature",
+      "Reserve spent cookie exactly once",
+      "Enter original pending grant order",
+      "Acquire original lane/body permits and enqueue paid task"
+    ],
+    "pre_auth_limit_risk": "A limit keyed only by a Hello-declared caller before proof of possession would allow attribution of unauthenticated traffic to another public key.",
+    "post_auth_limit_boundary": "A per-key limit after authentication can bound one key only; rotation among self-generated keys does not supply actor-level fairness. Adding a new refusal or credit partition is not already part of the original error/economic policy.",
+    "evidence": [
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "locations": [
+          "Stage::Solution",
+          "Stage::WaitGrant"
+        ],
+        "lines": "2685-2765"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs",
+        "locations": [
+          "PublicServer::verify_caller"
+        ],
+        "lines": "252-275"
+      }
+    ]
+  },
+  "existing_service_scheduling": {
+    "pending_order": "Four logical ready FIFO heads: challenge/read, challenge/mutation, grant/read, grant/mutation. Partial prefixes and unsolved cookies have no ready order.",
+    "queue_limits": {
+      "mutation_channel": 2,
+      "read_channel": 2,
+      "mutation_workers": 2,
+      "read_workers": 1
+    },
+    "grant_limits": {
+      "mutation": 8,
+      "read": 8
+    },
+    "full_queue_behavior": "Retain the already paid task in its bounded connection; no new queue or deadline. Retry with original work and total deadlines.",
+    "cpu_wait_behavior": "Keep FIFO dequeue ownership while awaiting the original shared account refill, holding neither Node, CPU account mutex, reactor, nor the separate read queue.",
+    "verified_completion_behavior": "Existing full-W1 completion priority blocks new probe starts while pending; already-running unverified work may consume only its original start quantum. Settlement remains in the original shared account.",
+    "cpu_account": {
+      "warm_burst_ns": 2000000000,
+      "refill_ns_per_second": 250000000,
+      "start_reserve_ns": 100000000,
+      "mutation_workers": 2,
+      "nature": "Arc<Mutex<PaidMutationCpuBudget>> with measured owner/scoped-worker thread CPU; an accounting handle, not a kernel CPU reservation or host-wide process scheduler."
+    },
+    "inference": "The proposed read/mutation separation and FIFO reservation fixes are already present. No omitted actor-level fair scheduler or starvation bug was identified in this narrow audit.",
+    "evidence": [
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "locations": [
+          "PendingHeads::collect",
+          "enqueue_paid_task",
+          "PaidMutationCpuPermit::acquire_before",
+          "serve_public_protected_v3 worker construction"
+        ],
+        "lines": "1270-1309; 1565-1598; 160-240; 2144-2250"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+        "locations": [
+          "MUTATION_CPU_* constants",
+          "LiveRequestCpu live charging/completion fence",
+          "ServiceMutationCpuDomain"
+        ],
+        "lines": "17-20; 753-788; 954-977"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "locations": [
+          "PublicPolicy profile identity"
+        ],
+        "lines": "436"
+      }
+    ]
+  },
+  "scheduling_scope_gap": {
+    "independent_verifier": {
+      "source_fact": "Both campaigns create an independent verifier Node and invoke receive_public_page_from_before_observed and verifier.confirmation locally after successful History network return.",
+      "cpu_domain_fact": "A standalone remote-History importer obtains its own Node-bound COLD ServiceMutationCpuDomain. cold_remote_history_epoch constructs a new Arc; the service receiver remains bound to the server's original Arc.",
+      "consequence": "The verifier's W1, execution/admission, activation and final confirmation are outside the service paid request queues. Reordering those queues does not schedule this local replay."
+    },
+    "attacker_local_work": {
+      "four_second_fresh": "fresh_builder performs search_from_zero, allocation/encoding and packet digest on the attacker thread before Client::call_before.",
+      "common_transport": "Client-side solution search and caller signing occur in the caller's execution context before the service paid task exists.",
+      "native": "attack_actor is a separate process and calls the same public client function. Its local CPU is not charged or scheduled by the service Arc.",
+      "consequence": "Holding or reordering server tasks is not a host-wide CPU allocation mechanism for attacker construction/ticket/signature processes or the independent verifier."
+    },
+    "limited_inference": "Service-side scheduling could alter some server CPU usage indirectly, but this audit found neither a preserved-semantic fairness argument nor measurement demonstrating that such a change resolves the observed original business deadline.",
+    "evidence": [
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+        "locations": [
+          "separate independent-client Node",
+          "local importer and confirmation"
+        ],
+        "lines": "1285-1286; 1434-1515"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+        "locations": [
+          "fresh_builder"
+        ],
+        "lines": "5-45"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "locations": [
+          "attack_actor",
+          "local independent import/confirmation"
+        ],
+        "lines": "632-750; 1038-1085"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "locations": [
+          "client SolutionSearch and signing"
+        ],
+        "lines": "3340-3375"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+        "locations": [
+          "bind_public_service_cpu_domain",
+          "remote_history_cpu_domain"
+        ],
+        "lines": "422-478; 532-564"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "locations": [
+          "scoped_observed"
+        ],
+        "lines": "130-155"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+        "locations": [
+          "cold_remote_history_epoch"
+        ],
+        "lines": "968-972"
+      }
+    ]
+  },
+  "options_disposition": [
+    {
+      "option": "Per-caller-key limit or fair queue after authentication",
+      "disposition": "Not justified as current minimal fix",
+      "reason": "Actual caller keys are distinct and attacker-controlled/rotating; key fairness is not actor fairness, and this queue excludes the identified local replay/attacker work.",
+      "preservation_boundary": "No new limit, refusal, account partition, queue capacity, worker or deadline is authorized by this audit."
+    },
+    {
+      "option": "Priority based on fixture key, known attack packet, or claimed miner",
+      "disposition": "Excluded",
+      "reason": "No general authenticated honest role; fixture discrimination cannot establish the original public workload criterion."
+    },
+    {
+      "option": "Change host/cgroup/process priority or share/replace the independent client's budget",
+      "disposition": "Outside current smallest service scheduling fix",
+      "reason": "These introduce host-wide authority or different accounting/independence semantics; no equivalence or performance proof was established."
+    }
+  ],
+  "preserved_constraints": [
+    "Original four-second, 16-worker, quarter-CPU, 2 GiB, no-swap and 256-PID gate unchanged",
+    "Original native campaign and deadlines unchanged",
+    "All original authentication, W1, Host, admission/execution and confirmation checks unchanged",
+    "No attack-specific bypass, identity preference, deadline extension, added credit, worker or queue",
+    "No source edit, compilation, benchmark or new qualification claim"
+  ]
+}

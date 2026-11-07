@@ -1,0 +1,1902 @@
+{
+  "schema": "d873-required-and-recent-read-only-snapshot-v1",
+  "recorded_at_utc": "2026-11-07 01:43:12 UTC",
+  "observation_note": "One metadata and one jobs read per specified run; four failed job logs read once. This is the final snapshot for this review, not a claim that the four still-running Rust shards finished.",
+  "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+  "prospective_merge": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+  "ordered_prospective_parents": [
+    "a3e9002cd12ef90d62f8b252cad570e72dab6fa3",
+    "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  ],
+  "base_scope": "PR #753 targets the #688 integration branch; this is not a main prospective qualification.",
+  "runs": [
+    {
+      "run_id": 42320842015,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015",
+      "name": "trnm-required-baseline",
+      "workflow_path": ".github/workflows/trnm-required-baseline.yml",
+      "head_sha": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-07T00:52:21Z",
+      "updated_at": "2026-11-07T01:24:51Z",
+      "jobs_fetched_once": true,
+      "job_count": 19,
+      "counts": {
+        "success": 11,
+        "failure": 4,
+        "in_progress": 4
+      },
+      "jobs": [
+        {
+          "job_id": 128244737679,
+          "name": "cross-arch-cost (arm64)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737679",
+          "status": "completed",
+          "conclusion": "failure",
+          "successful_step_count": 15,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 7,
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244737812,
+          "name": "repository-truth",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737812",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 11,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244737854,
+          "name": "fuzz-smoke",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737854",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 11,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244737934,
+          "name": "protocol-contract",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737934",
+          "status": "completed",
+          "conclusion": "failure",
+          "successful_step_count": 11,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 8,
+              "name": "Run actual protocol-contract checks",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244737940,
+          "name": "external-evidence-contract",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737940",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 10,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244737963,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737963",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 12,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 8,
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244737974,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737974",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 12,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 8,
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738018,
+          "name": "prospective-merge (external-evidence-contract)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738018",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 10,
+          "source_steps": [
+            {
+              "number": 2,
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 5,
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738022,
+          "name": "rust-baseline shard (runtime)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738022",
+          "status": "in_progress",
+          "conclusion": null,
+          "successful_step_count": 8,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 12,
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 24,
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244738026,
+          "name": "prospective-merge (protocol-contract)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738026",
+          "status": "completed",
+          "conclusion": "failure",
+          "successful_step_count": 11,
+          "source_steps": [
+            {
+              "number": 2,
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244738047,
+          "name": "prospective-merge (fuzz-smoke)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738047",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 11,
+          "source_steps": [
+            {
+              "number": 2,
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 6,
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 9,
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738056,
+          "name": "rust-baseline shard (quality)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738056",
+          "status": "in_progress",
+          "conclusion": null,
+          "successful_step_count": 8,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 12,
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 24,
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244738062,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738062",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 12,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 8,
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738082,
+          "name": "cross-arch-cost (x64)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738082",
+          "status": "completed",
+          "conclusion": "failure",
+          "successful_step_count": 15,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 7,
+              "name": "Execute native release setup and repeated-search costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Execute native zero-matrix locality costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Execute native one-zero rank-one locality costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute native legal and late-rejection verifier costs",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738118,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738118",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 12,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 8,
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244738121,
+          "name": "prospective Rust shard (quality)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738121",
+          "status": "in_progress",
+          "conclusion": null,
+          "successful_step_count": 8,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 12,
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 24,
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244738211,
+          "name": "prospective Rust shard (runtime)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738211",
+          "status": "in_progress",
+          "conclusion": null,
+          "successful_step_count": 8,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 9,
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 11,
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 12,
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "number": 24,
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null
+            }
+          ],
+          "completed_native_and_correctness_steps": []
+        },
+        {
+          "job_id": 128244738251,
+          "name": "prospective-merge (repository-truth)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738251",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 10,
+          "source_steps": [
+            {
+              "number": 2,
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 3,
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 5,
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 6,
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 7,
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 8,
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 10,
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128251899306,
+          "name": "cross-arch-cost-consistency",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128251899306",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 13,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Check actual streams and source identity without a speed threshold",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 6,
+              "name": "Check zero-matrix streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 7,
+              "name": "Check one-zero rank-one streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Check fixed maintenance streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 42320842014,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842014",
+      "name": "PoN recent batch exact-source acceptance",
+      "workflow_path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "head_sha": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+      "event": "pull_request",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-07T00:52:21Z",
+      "updated_at": "2026-11-07T01:16:24Z",
+      "jobs_fetched_once": true,
+      "job_count": 4,
+      "counts": {
+        "success": 4,
+        "failure": 0,
+        "in_progress": 0
+      },
+      "jobs": [
+        {
+          "job_id": 128244736947,
+          "name": "recent batch (ubuntu-24.04, prospective-merge)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842014/job/128244736947",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 31,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify exact source, ordered actual main merge and full repository boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Check committed formatting without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 28,
+              "name": "Recheck unchanged exact source and hash all native logs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 29,
+              "name": "Bind complete native cache observations to the unchanged tested source",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 4,
+              "name": "Execute conditional query accounting and anytime-bound counterexamples",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Require bounded ordinary record copies and complete history controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute complete original error-boundary suite and all new controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute all original authenticated owner controls and five snapshot regressions",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Retain authenticated record, ancestry and cold recovery coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Require all five statement-reuse controls and complete-call observations separately",
+              "conclusion": "success"
+            },
+            {
+              "number": 14,
+              "name": "Require every cached block, parent, commitment and snapshot owner control",
+              "conclusion": "success"
+            },
+            {
+              "number": 15,
+              "name": "Require live public owner mutation, admission rollback and cold reopen controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 16,
+              "name": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+              "conclusion": "success"
+            },
+            {
+              "number": 17,
+              "name": "Reject empty nullable BLOB corruption through original native owners",
+              "conclusion": "success"
+            },
+            {
+              "number": 18,
+              "name": "Keep settings-selected task observations and original legacy readback",
+              "conclusion": "success"
+            },
+            {
+              "number": 19,
+              "name": "Preserve operator packet authorization and complete stored digests",
+              "conclusion": "success"
+            },
+            {
+              "number": 20,
+              "name": "Bound initialization intent reads and reject path substitutions",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 22,
+              "name": "Preserve pending confirmation ownership and joined shutdown on failures",
+              "conclusion": "success"
+            },
+            {
+              "number": 23,
+              "name": "Execute real pipeline boundaries without claiming saturation throughput",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Require non-committing proof reads and actual nonce snapshot callers",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Execute public TCP business confirmation under rotating false work",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Check complete native target lint",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244737233,
+          "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842014/job/128244737233",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 31,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify exact source, ordered actual main merge and full repository boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Check committed formatting without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 28,
+              "name": "Recheck unchanged exact source and hash all native logs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 29,
+              "name": "Bind complete native cache observations to the unchanged tested source",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 4,
+              "name": "Execute conditional query accounting and anytime-bound counterexamples",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Require bounded ordinary record copies and complete history controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute complete original error-boundary suite and all new controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute all original authenticated owner controls and five snapshot regressions",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Retain authenticated record, ancestry and cold recovery coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Require all five statement-reuse controls and complete-call observations separately",
+              "conclusion": "success"
+            },
+            {
+              "number": 14,
+              "name": "Require every cached block, parent, commitment and snapshot owner control",
+              "conclusion": "success"
+            },
+            {
+              "number": 15,
+              "name": "Require live public owner mutation, admission rollback and cold reopen controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 16,
+              "name": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+              "conclusion": "success"
+            },
+            {
+              "number": 17,
+              "name": "Reject empty nullable BLOB corruption through original native owners",
+              "conclusion": "success"
+            },
+            {
+              "number": 18,
+              "name": "Keep settings-selected task observations and original legacy readback",
+              "conclusion": "success"
+            },
+            {
+              "number": 19,
+              "name": "Preserve operator packet authorization and complete stored digests",
+              "conclusion": "success"
+            },
+            {
+              "number": 20,
+              "name": "Bound initialization intent reads and reject path substitutions",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 22,
+              "name": "Preserve pending confirmation ownership and joined shutdown on failures",
+              "conclusion": "success"
+            },
+            {
+              "number": 23,
+              "name": "Execute real pipeline boundaries without claiming saturation throughput",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Require non-committing proof reads and actual nonce snapshot callers",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Execute public TCP business confirmation under rotating false work",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Check complete native target lint",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244737367,
+          "name": "recent batch (ubuntu-24.04-arm, head)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842014/job/128244737367",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 31,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify exact source, ordered actual main merge and full repository boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Check committed formatting without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "number": 28,
+              "name": "Recheck unchanged exact source and hash all native logs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 29,
+              "name": "Bind complete native cache observations to the unchanged tested source",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "skipped"
+            }
+          ],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 4,
+              "name": "Execute conditional query accounting and anytime-bound counterexamples",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Require bounded ordinary record copies and complete history controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute complete original error-boundary suite and all new controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute all original authenticated owner controls and five snapshot regressions",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Retain authenticated record, ancestry and cold recovery coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Require all five statement-reuse controls and complete-call observations separately",
+              "conclusion": "success"
+            },
+            {
+              "number": 14,
+              "name": "Require every cached block, parent, commitment and snapshot owner control",
+              "conclusion": "success"
+            },
+            {
+              "number": 15,
+              "name": "Require live public owner mutation, admission rollback and cold reopen controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 16,
+              "name": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+              "conclusion": "success"
+            },
+            {
+              "number": 17,
+              "name": "Reject empty nullable BLOB corruption through original native owners",
+              "conclusion": "success"
+            },
+            {
+              "number": 18,
+              "name": "Keep settings-selected task observations and original legacy readback",
+              "conclusion": "success"
+            },
+            {
+              "number": 19,
+              "name": "Preserve operator packet authorization and complete stored digests",
+              "conclusion": "success"
+            },
+            {
+              "number": 20,
+              "name": "Bound initialization intent reads and reject path substitutions",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 22,
+              "name": "Preserve pending confirmation ownership and joined shutdown on failures",
+              "conclusion": "success"
+            },
+            {
+              "number": 23,
+              "name": "Execute real pipeline boundaries without claiming saturation throughput",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Require non-committing proof reads and actual nonce snapshot callers",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Execute public TCP business confirmation under rotating false work",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Check complete native target lint",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "job_id": 128244737603,
+          "name": "recent batch (ubuntu-24.04, head)",
+          "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842014/job/128244737603",
+          "status": "completed",
+          "conclusion": "success",
+          "successful_step_count": 32,
+          "source_steps": [
+            {
+              "number": 3,
+              "name": "Verify exact source, ordered actual main merge and full repository boundary",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 8,
+              "name": "Check committed formatting without rewriting source",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 27,
+              "name": "Retain reproducible source and native replay executable",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 28,
+              "name": "Recheck unchanged exact source and hash all native logs",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "number": 29,
+              "name": "Bind complete native cache observations to the unchanged tested source",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ],
+          "non_success_steps": [],
+          "completed_native_and_correctness_steps": [
+            {
+              "number": 4,
+              "name": "Execute conditional query accounting and anytime-bound counterexamples",
+              "conclusion": "success"
+            },
+            {
+              "number": 5,
+              "name": "Reject incomplete, ambiguous or incorrectly bound cache observations",
+              "conclusion": "success"
+            },
+            {
+              "number": 9,
+              "name": "Require bounded ordinary record copies and complete history controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 10,
+              "name": "Execute complete original error-boundary suite and all new controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 11,
+              "name": "Execute all original authenticated owner controls and five snapshot regressions",
+              "conclusion": "success"
+            },
+            {
+              "number": 12,
+              "name": "Retain authenticated record, ancestry and cold recovery coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 13,
+              "name": "Require all five statement-reuse controls and complete-call observations separately",
+              "conclusion": "success"
+            },
+            {
+              "number": 14,
+              "name": "Require every cached block, parent, commitment and snapshot owner control",
+              "conclusion": "success"
+            },
+            {
+              "number": 15,
+              "name": "Require live public owner mutation, admission rollback and cold reopen controls",
+              "conclusion": "success"
+            },
+            {
+              "number": 16,
+              "name": "Require fixed-BLOB allocation bounds with original errors and rollback semantics",
+              "conclusion": "success"
+            },
+            {
+              "number": 17,
+              "name": "Reject empty nullable BLOB corruption through original native owners",
+              "conclusion": "success"
+            },
+            {
+              "number": 18,
+              "name": "Keep settings-selected task observations and original legacy readback",
+              "conclusion": "success"
+            },
+            {
+              "number": 19,
+              "name": "Preserve operator packet authorization and complete stored digests",
+              "conclusion": "success"
+            },
+            {
+              "number": 20,
+              "name": "Bound initialization intent reads and reject path substitutions",
+              "conclusion": "success"
+            },
+            {
+              "number": 21,
+              "name": "Preserve original source-preserving migration coverage",
+              "conclusion": "success"
+            },
+            {
+              "number": 22,
+              "name": "Preserve pending confirmation ownership and joined shutdown on failures",
+              "conclusion": "success"
+            },
+            {
+              "number": 23,
+              "name": "Execute real pipeline boundaries without claiming saturation throughput",
+              "conclusion": "success"
+            },
+            {
+              "number": 24,
+              "name": "Require non-committing proof reads and actual nonce snapshot callers",
+              "conclusion": "success"
+            },
+            {
+              "number": 25,
+              "name": "Execute public TCP business confirmation under rotating false work",
+              "conclusion": "success"
+            },
+            {
+              "number": 26,
+              "name": "Check complete native target lint",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "job_id": 128244737679,
+      "log_chars": 151020,
+      "controller": [
+        {
+          "log_line": 1122,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_from_zero_native.py",
+            "--out",
+            "/home/runner/work/_temp/ci-observations/from-zero-native"
+          ],
+          "passed": false,
+          "failure": null,
+          "systemd_run_exit": 1,
+          "final_host_errors": [],
+          "preparation": {
+            "completed": true,
+            "failure_type": null,
+            "source_error": null,
+            "build_exit_code": 0,
+            "binary_sha256": "bc1d2ad65a9bbeaa8155b1b4e1a619cbaba99d23d1ba1d94db1b2dc589e39c75",
+            "source_before": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "line": 1123,
+          "text": "2026-11-07T01:11:10.1043740Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "full_job_log": "hosted-d873/secondary-128244737679.log",
+      "classification": "Original Host wrapper reports business/child-process failure. Exact child assertion is not retained in this job log.",
+      "build_or_source_identity_failure_observed": false,
+      "native_correctness_passed": null,
+      "cause_specific_assertion": null
+    },
+    {
+      "job_id": 128244737934,
+      "log_chars": 149050,
+      "controller": [
+        {
+          "log_line": 1063,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_from_zero_native.py",
+            "--out",
+            "/home/runner/work/_temp/ci-observations/from-zero-native"
+          ],
+          "passed": false,
+          "failure": null,
+          "systemd_run_exit": 1,
+          "final_host_errors": [],
+          "preparation": {
+            "completed": true,
+            "failure_type": null,
+            "source_error": null,
+            "build_exit_code": 0,
+            "binary_sha256": "35fcd76807cf274a009d77430dbc34dc3b7b013b88d6f80a6eba049d6f5ba8c5",
+            "source_before": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "line": 1064,
+          "text": "2026-11-07T01:13:12.0438275Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "full_job_log": "hosted-d873/secondary-128244737934.log",
+      "classification": "Original Host wrapper reports business/child-process failure. Exact child assertion is not retained in this job log.",
+      "build_or_source_identity_failure_observed": false,
+      "native_correctness_passed": null,
+      "cause_specific_assertion": null
+    },
+    {
+      "job_id": 128244738026,
+      "log_chars": 151371,
+      "controller": [
+        {
+          "log_line": 1073,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_from_zero_native.py",
+            "--out",
+            "/home/runner/work/_temp/ci-observations/from-zero-native"
+          ],
+          "passed": false,
+          "failure": null,
+          "systemd_run_exit": 1,
+          "final_host_errors": [],
+          "preparation": {
+            "completed": true,
+            "failure_type": null,
+            "source_error": null,
+            "build_exit_code": 0,
+            "binary_sha256": "a05eb296c83b5d28d699a5bc075608b01a8b4779860360957a1fd6cfc72abea5",
+            "source_before": {
+              "base": null,
+              "candidate": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": null,
+              "candidate": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "line": 1074,
+          "text": "2026-11-07T01:15:41.7290302Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "full_job_log": "hosted-d873/secondary-128244738026.log",
+      "classification": "Original Host wrapper reports business/child-process failure. Exact child assertion is not retained in this job log.",
+      "build_or_source_identity_failure_observed": false,
+      "native_correctness_passed": null,
+      "cause_specific_assertion": null
+    },
+    {
+      "job_id": 128244738082,
+      "log_chars": 151178,
+      "controller": [
+        {
+          "log_line": 1126,
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "command_argv": [
+            "python3",
+            "scripts/ci/run_from_zero_native.py",
+            "--out",
+            "/home/runner/work/_temp/ci-observations/from-zero-native"
+          ],
+          "passed": false,
+          "failure": null,
+          "systemd_run_exit": 1,
+          "final_host_errors": [],
+          "preparation": {
+            "completed": true,
+            "failure_type": null,
+            "source_error": null,
+            "build_exit_code": 0,
+            "binary_sha256": "a2b289ead4a8501cfa0f7ec834f4f7ef5dad0f7a0c7514086f586ab410a81c3b",
+            "source_before": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            },
+            "source_after": {
+              "base": null,
+              "candidate": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "kind": "head",
+              "prospective_merge": null,
+              "schema": "trnm-ci-source-v1",
+              "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+              "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+              "tests_executed_by_identity_check": false,
+              "tracked_bytes": 1027410170,
+              "tracked_entries": 10737,
+              "tracked_worktree_verified": true
+            }
+          }
+        }
+      ],
+      "errors": [
+        {
+          "line": 1127,
+          "text": "2026-11-07T01:15:19.4832314Z ##[error]Process completed with exit code 1."
+        }
+      ],
+      "full_job_log": "hosted-d873/secondary-128244738082.log",
+      "classification": "Original Host wrapper reports business/child-process failure. Exact child assertion is not retained in this job log.",
+      "build_or_source_identity_failure_observed": false,
+      "native_correctness_passed": null,
+      "cause_specific_assertion": null
+    }
+  ],
+  "assessment": {
+    "recent_batch_four_jobs_success": true,
+    "new_source_identity_or_compile_failure_observed": false,
+    "new_native_correctness_failure_proven_by_this_snapshot": false,
+    "native_correctness_fully_passed": null,
+    "causal_new_regression_determined": null,
+    "limitations": [
+      "All four failed jobs report original run_from_zero_native.py child exit 1 after build exit 0; controller failure, preparation source_error and final Host errors are empty/null.",
+      "The exact child assertion/report is not in these job logs; a wrapper failure cannot establish either a new correctness defect or correctness success.",
+      "Four required Rust runtime/quality head/prospective jobs were still running. They were not polled again.",
+      "Recent-batch success does not close the separate original four-second service or three-run native business gates."
+    ]
+  },
+  "tests_executed_by_this_review": false,
+  "remote_mutations": false,
+  "new_jobs_or_reruns": false,
+  "qualification": false
+}

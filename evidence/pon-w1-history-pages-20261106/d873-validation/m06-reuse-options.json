@@ -1,0 +1,616 @@
+{
+  "schema": "d873-m06-state-reuse-read-only-review-v1",
+  "source": {
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+    "tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+    "worktree": "/workspace/scratch/a66f84888260/chain-integration",
+    "git_files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "git_blob": "22ba74f76e2616f72c7cc436fcde7acf3f6d1286",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "git_blob": "e99453b1abe6ce589f003be199b5553241cba398",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "git_blob": "62681ceee4ca2ae9b63d3d51dda886a375ac7a26",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+        "git_blob": "2a15589ffae6e585d2c675d6388eb75a34a0a109",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_scoped_readback.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "git_blob": "ddc4e1d317ce962e453a1f08db7f608e43a8e152",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        "git_blob": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+        "git_blob": "b1daca95ea800ed45ac5fc01063e9814134f8f92",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+        "git_blob": "f86116c0fcaac0dcb44427c0f6faf92fc6a5f378",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "git_blob": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+        "git_blob": "dc1e968a55cfc5cba02683f90f4a9c7abd687766",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+        "git_blob": "4c4fe7aae2a194ef0d2d920c5f3e447ceb7197ba",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+        "git_blob": "fe84e7e93ca593473cf9a69b1bd47745cc014194",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        "git_blob": "caad5478bb950eeeb990e66f743b7d640db8fecb",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        "worktree_matches_fixed_commit": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+        "git_blob": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+        "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/d87357de197db5ff750d08c96d52432e5d22a0b4/trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+        "worktree_matches_fixed_commit": true
+      }
+    ],
+    "clean_at_completed_source_review": true,
+    "function_anchors": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "functions": {
+          "check_active_before_commit_with_readback": 2843,
+          "state_at_with_readback": 3700,
+          "check_admission_parent": 4142,
+          "persist_admission_execution": 4840,
+          "atomic_with_readback": 5657,
+          "activate_with_fault_and_progress": 5802,
+          "resume_intent_with_progress": 6103,
+          "confirmations_with_progress": 6358
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+        "functions": {
+          "verify_state_with_readback": 674,
+          "verify_history_with_readback": 817,
+          "publish_with_readback": 918
+        }
+      },
+      {
+        "path": "trillionnium/crates/trnm-sqlite-io-boundary/src/transaction_scope.rs",
+        "functions": {
+          "same_write_snapshot": 83
+        }
+      }
+    ]
+  },
+  "call_decomposition": {
+    "kind": "Source-derived decomposition consistent with retained aggregate counters and actual retained account Root relationships; not a per-invocation runtime trace.",
+    "phase_shape": {
+      "run": 1,
+      "mode": "baseline",
+      "duration_seconds": 30,
+      "attack_workers": 0,
+      "seed_height": 4,
+      "first_complete_page_packets": 7,
+      "packet_heights": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "activation_count": 1,
+      "activate_only_on_complete_fixed_tip": true
+    },
+    "verify_state_per_admission": [
+      {
+        "ordinal": 1,
+        "path": "check_admission_parent -> state_at(parent)",
+        "graph": "Ordinary current parent graph before execution."
+      },
+      {
+        "ordinal": 2,
+        "path": "publish_with_readback -> verify_state(parent,before)",
+        "graph": "Fresh current parent after original transaction writes; earlier admission authority is not reused across writes."
+      },
+      {
+        "ordinal": 3,
+        "path": "publish_with_readback -> verify_state(child,after)",
+        "graph": "First full child graph in a fresh post-write scope."
+      },
+      {
+        "ordinal": 4,
+        "path": "publish_with_readback -> verify_history(child) -> verify_state(genesis)",
+        "graph": "First genesis graph in this scope."
+      },
+      {
+        "ordinal": 5,
+        "path": "persist_admission_execution tail -> state_at(parent)",
+        "graph": "First admission: scoped partial graph; next six: existing exact full Root hit."
+      },
+      {
+        "ordinal": 6,
+        "path": "persist_admission_execution tail -> state_at(child)",
+        "graph": "Existing exact child Root hit."
+      },
+      {
+        "ordinal": 7,
+        "path": "check_active_before_commit -> verify_state(active)",
+        "graph": "Current active height-4 graph. Partial results are not promoted to whole-Root receipts."
+      },
+      {
+        "ordinal": 8,
+        "path": "check_active_before_commit -> verify_history(active) -> verify_state(genesis)",
+        "graph": "Existing exact genesis Root hit."
+      }
+    ],
+    "verify_state": {
+      "admissions": {
+        "operations": 7,
+        "calls_each": 8,
+        "calls": 56
+      },
+      "activation": {
+        "original_intent_transactions": 1,
+        "attach_transactions": 7,
+        "final_publish_transactions": 1,
+        "calls_each": 3,
+        "calls": 27
+      },
+      "final_confirmation": {
+        "read_active_calls": 1,
+        "calls": 1
+      },
+      "formula": "7 * 8 + (1 + 7 + 1) * 3 + 1 = 84",
+      "derived_total": 84,
+      "observed_total": 84
+    },
+    "account_graph": {
+      "admissions": {
+        "first": 6,
+        "later_each": 5,
+        "later_count": 6,
+        "calls": 36,
+        "existing_whole_root_graph_hits": 20
+      },
+      "activation": {
+        "original_intent": 2,
+        "each_attach": 3,
+        "attach_count": 7,
+        "final_publish": 2,
+        "calls": 25,
+        "existing_whole_root_graph_hits": 2
+      },
+      "final_confirmation": 1,
+      "formula": "(6 + 6 * 5) + (2 + 7 * 3 + 2) + 1 = 62",
+      "derived_total": 62,
+      "observed_total": 62,
+      "caution": "Calls differ in size and may use the bounded subtree frontier. Genesis has four accounts; these are not 62 full 1,028-account traversals."
+    },
+    "state_at": {
+      "calls_per_admission": 3,
+      "admissions": 7,
+      "derived_total": 21,
+      "observed_total": 21
+    }
+  },
+  "existing_reuse": [
+    {
+      "mechanism": "CheckedAdmissionParent",
+      "boundary": "Private same-owner data_version/total_changes epoch. Original second cancellation boundary and current parent/clock validation remain; epoch changes force fresh validation."
+    },
+    {
+      "mechanism": "Authenticated snapshots",
+      "boundary": "Every authenticated block already persists its canonical snapshot; state_at does not rebuild these packets' entire chain from genesis."
+    },
+    {
+      "mechanism": "PostWriteReadback",
+      "boundary": "Borrowed original Connection and original TransactionScope, captured before callbacks/writes and qualified after the final record/account write. At most child, genesis, verified child-parent and actual active roles. Fresh record, complete State, account projection and schema/namespace/owner checks remain on graph hits."
+    },
+    {
+      "mechanism": "Bounded account frontier",
+      "boundary": "Sixteen depth-4 subtree receipts from an actual completed graph. Exact node/path/digest binding and logical count/balance accounting. Partial traversal never nominates or mints a whole-Root receipt."
+    },
+    {
+      "mechanism": "Pure arithmetic exact-byte caches",
+      "boundary": "Current record/delta/node bytes still read. Observed account-node decode exact hits are 67,874 of 68,002 calls; 128 original decodes."
+    },
+    {
+      "mechanism": "Detached admission plus original writer fence",
+      "boundary": "Existing lease bounds detached storage/capacity, not database authority. Namespace, database/owner identity, current epoch and final BEGIN IMMEDIATE fence remain mandatory."
+    }
+  ],
+  "candidate_options": [
+    {
+      "option": "Reuse pre-M06 parent graph through persistence",
+      "decision": "not_proven_equivalent",
+      "reason": "Crosses actual writes and the admission-to-writer gap. Existing same-epoch parent reuse already handles the demonstrated safe no-write case; current validation still detects foreign writes, triggers and changed state.",
+      "measured_benefit": null
+    },
+    {
+      "option": "Reuse account Root across seven admissions or nine activation transactions",
+      "decision": "reject_without_new_proof",
+      "reason": "Crosses original transaction and write epochs. Root equality and a detached lease do not prove current stored graph availability, unchanged schema or retained original writer ownership.",
+      "measured_benefit": null
+    },
+    {
+      "option": "Promote partial graph to a whole-Root receipt",
+      "decision": "not_a_semantics_preserving_cleanup",
+      "reason": "Existing frontier negative control explicitly prevents promotion and repeated-partial authority expansion; a new proof and controls would be required.",
+      "measured_benefit": null
+    },
+    {
+      "option": "Collapse activation transactions or activate intermediate packets",
+      "decision": "reject_for_this_scope",
+      "reason": "Changes durable intent steps, cancellation/fault recovery cuts and final fixed-tip activation semantics.",
+      "measured_benefit": null
+    },
+    {
+      "option": "Add another pure account-node decode cache",
+      "decision": "no_evidence_of_material_remaining_opportunity",
+      "reason": "The retained phase already records 99.812% exact decode hits. This does not justify removing current reads or progress checks.",
+      "measured_benefit": null
+    },
+    {
+      "option": "Deduplicate ancestor record reads",
+      "decision": "insufficient_equivalence_evidence",
+      "reason": "Current callback/error ordering and fresh record validation remain material; no safe narrow replacement or measured benefit was established.",
+      "measured_benefit": null
+    }
+  ],
+  "negative_controls": {
+    "read_from_fixed_source_only": true,
+    "executed_by_this_review": false,
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+        "test_names": [
+          "admission_parent_reads_once_per_root_refusal_without_cross_request_cache",
+          "admission_parent_keeps_second_boundary_cancellation_and_error_identity",
+          "admission_parent_foreign_sql_change_forces_original_fresh_state_validation",
+          "admission_parent_reuse_matches_reference_execution_on_inactive_parent_and_reopen"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+        "test_names": [
+          "foreign_write_and_restore_cannot_reuse_original_database_epoch",
+          "final_sqlite_writer_fence_rejects_write_and_restore_after_last_context_check",
+          "original_transaction_readback_rejects_trigger_corruption_and_rolls_back",
+          "legal_concurrent_append_revalidates_parent_and_preserves_competing_branch",
+          "held_parent_continuation_checks_original_owner_epoch_and_current_clock"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+        "test_names": [
+          "different_current_records_share_only_the_exact_account_graph_in_one_writer",
+          "current_complete_state_remains_mandatory_on_a_graph_hit",
+          "no_row_writes_and_reversed_ddl_disable_reuse_without_resetting_the_scope",
+          "actual_stored_graph_damage_is_reread_after_a_receipt",
+          "first_graph_callback_write_cannot_mint_a_result_or_reenable_it",
+          "original_transaction_owner_refuses_commit_begin_and_savepoint_aba",
+          "changed_schema_or_namespace_never_creates_a_new_scope",
+          "consumed_active_reader_refuses_a_last_callback_write",
+          "original_cancellation_before_and_after_a_match_is_preserved",
+          "actual_original_writer_excludes_an_independent_database_writer",
+          "cached_catalog_statement_reads_current_ddl_and_unversioned_catalog_rows",
+          "warm_catalog_statement_never_hides_temp_objects_or_database_attachments"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/fence_tests.rs",
+        "test_names": [
+          "four_original_roles_are_bounded_and_a_fifth_root_never_becomes_a_receipt",
+          "trusted_reset_exposes_preexisting_catalog_and_prepared_vm_divergence",
+          "final_callback_after_a_first_match_falls_back_to_the_actual_original_graph"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/frontier_tests.rs",
+        "test_names": [
+          "real_different_roots_use_bounded_subtrees_without_promoting_partial_results",
+          "reencoded_frontier_child_ids_cannot_hide_missing_nodes_or_wrong_side_edges",
+          "partial_cancellation_and_no_row_writes_keep_original_boundaries_and_sticky_fences",
+          "final_callback_deletion_and_later_outer_write_cannot_use_partial_availability"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_readback_tests.rs",
+        "test_names": [
+          "real_reorg_tail_keeps_rows_events_fault_recovery_and_cold_reopen",
+          "non_genesis_common_ancestor_keeps_every_cut_and_publication_on_cold_reopen",
+          "final_callback_writes_fail_with_or_without_a_consumed_graph_hit",
+          "prehit_write_cannot_restamp_and_callback_errors_keep_original_precedence",
+          "original_write_lock_blocks_foreign_writer_and_no_scope_survives_commit"
+        ]
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs",
+        "test_names": [
+          "direct_append_keeps_complete_rows_events_state_and_cold_reopen",
+          "direct_append_cancellation_at_each_callback_leaves_no_partial_publication"
+        ]
+      }
+    ]
+  },
+  "preserved_constraints": {
+    "host_limits": {
+      "cpu.max": "25000 100000",
+      "cpu.max.burst": "0",
+      "memory.max": "2147483648",
+      "memory.swap.max": "0",
+      "pids.max": "256"
+    },
+    "all_original_progress_cancellation_and_cpu_boundaries": true,
+    "fresh_current_complete_state_and_stored_graph_checks": true,
+    "foreign_write_rollback_trigger_and_schema_refusals": true,
+    "no_cross_epoch_authorization_cache": true,
+    "no_host_sampling_reduction": true,
+    "no_ack_as_confirmation": true
+  },
+  "conclusion": {
+    "proven_ready_small_reuse_change": null,
+    "measured_benefit": null,
+    "reason": "Existing reuse covers the demonstrated same-epoch and same-transaction cases. This read-only review found no additional narrow graph/state deduplication with demonstrated equivalence under all original boundaries."
+  },
+  "original_gate_status": {
+    "qualification": false,
+    "gate_passed": false,
+    "four_second_16_worker_service": "Failed for head and #753 prospective merge; independent confirmation absent under pressure.",
+    "three_run_native_campaign": "All three original runs and all nine phase criteria failed; retained deadline failures are not compilation failures.",
+    "distinct_windows": "Four-second service and thirty-second native phases remain distinct acceptance gates.",
+    "source_summary_path": "/workspace/scratch/a66f84888260/hosted-d873/original-gates-d873-summary.json",
+    "source_summary_sha256": "92c3464478615e2076dbe219f3db26d5ece00b57e0654cfb4f97ea79124a4a2c"
+  },
+  "tests_executed": false,
+  "experiments_executed": false,
+  "benchmarks_executed": false,
+  "new_remote_jobs_or_reruns": false,
+  "production_source_modified": false,
+  "qualification": false,
+  "archived_at_utc": "2026-11-07T01:49:00.205368+00:00",
+  "evidence": {
+    "native_run": 42320841936,
+    "native_job": 128244736749,
+    "artifact_id": 13552933660,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320841936/job/128244736749",
+    "retained_binary_sha256": "4bb386830f6db35f51331dd10c5e14272f063f5556067b283e6d8e744c846521",
+    "retained_aggregation": {
+      "path": "/workspace/scratch/a66f84888260/hosted-d873/latency-diagnosis/retained-failure-latency.json",
+      "sha256": "d583aeb9b007dd44e3040f17edc73e6115ecca9462733d5b83da8adf6f145148",
+      "json_pointer": "/native_phases/0/native_owner_deltas/client",
+      "scope": "after-minus-before; setup counters excluded; nested stages are not additive"
+    },
+    "raw_phase": {
+      "path": "/workspace/scratch/a66f84888260/hosted-d873/native-artifact/run-1-raw/baseline.json",
+      "sha256": "cef908fc8b5726f033aa62df741d861e5dc80702b9226ea5c4ddd4a0712fb0e2",
+      "run": 1,
+      "mode": "baseline",
+      "duration_seconds": 30,
+      "attack_workers": 0,
+      "state_backend": "authenticated-v1"
+    },
+    "retained_database": {
+      "path": "/workspace/scratch/a66f84888260/hosted-d873/native-artifact/run-1-raw/baseline/independent-client/native.sqlite",
+      "review_open_mode": "mode=ro&immutable=1",
+      "query": "SELECT b.height,n.data FROM blocks b JOIN native_state_commitments n ON n.block=b.id ORDER BY b.height",
+      "observed_heights": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "genesis_accounts": 4,
+      "height_4_accounts": 1028,
+      "height_4_balance": 39693824,
+      "heights_5_through_11_accounts": 1028,
+      "heights_5_through_11_balance": 39693525,
+      "full_accounts_root_heights_5_through_11_equal": true,
+      "full_accounts_root_height_4_differs": true,
+      "basis": "Complete retained accounts Root objects compared in the completed read-only review, not only digest or count."
+    },
+    "observed_client_stage_deltas": {
+      "verify_state": {
+        "calls": 84,
+        "cpu_known_calls": 84,
+        "cpu_ns": 4156915123,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 18415574122
+      },
+      "account_graph": {
+        "calls": 62,
+        "cpu_known_calls": 62,
+        "cpu_ns": 4037006084,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 18063540641
+      },
+      "publish": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 1819424559,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 8177806878
+      },
+      "state_at": {
+        "calls": 21,
+        "cpu_known_calls": 21,
+        "cpu_ns": 991359674,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 4400481682
+      },
+      "execute": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 14194139,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 90366625
+      },
+      "admission": {
+        "calls": 7,
+        "cpu_known_calls": 7,
+        "cpu_ns": 3462497488,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 15329183884
+      },
+      "activation": {
+        "calls": 1,
+        "cpu_known_calls": 1,
+        "cpu_ns": 1448055489,
+        "cpu_unknown_calls": 0,
+        "unwinding_calls": 0,
+        "wall_ns": 6482691054
+      }
+    },
+    "observed_account_node_decode_arithmetic": {
+      "borrow_conflicts": 0,
+      "bounded_probe_refusals": 108,
+      "calls": 68002,
+      "exact_hits": 67874,
+      "original_decodes": 128,
+      "retained": 20
+    },
+    "observed_sql_commit_api": {
+      "admission_persistence": {
+        "calls_abandoned": 0,
+        "calls_failed": 0,
+        "calls_returned": 7,
+        "calls_started": 7,
+        "calls_succeeded": 7,
+        "calls_unwinding": 0,
+        "cpu_known_calls": 7,
+        "cpu_ns": 7754463,
+        "cpu_ns_known_sum": 7754463,
+        "cpu_unknown_calls": 0,
+        "wall_ns": 14022433,
+        "wall_unknown_calls": 0
+      },
+      "atomic": {
+        "calls_abandoned": 0,
+        "calls_failed": 0,
+        "calls_returned": 0,
+        "calls_started": 0,
+        "calls_succeeded": 0,
+        "calls_unwinding": 0,
+        "cpu_known_calls": 0,
+        "cpu_ns": 0,
+        "cpu_ns_known_sum": 0,
+        "cpu_unknown_calls": 0,
+        "wall_ns": 0,
+        "wall_unknown_calls": 0
+      },
+      "reorg_step": {
+        "calls_abandoned": 0,
+        "calls_failed": 0,
+        "calls_returned": 9,
+        "calls_started": 9,
+        "calls_succeeded": 9,
+        "calls_unwinding": 0,
+        "cpu_known_calls": 9,
+        "cpu_ns": 1615030,
+        "cpu_ns_known_sum": 1615030,
+        "cpu_unknown_calls": 0,
+        "wall_ns": 83087515,
+        "wall_unknown_calls": 0
+      },
+      "reorg_termination": {
+        "calls_abandoned": 0,
+        "calls_failed": 0,
+        "calls_returned": 0,
+        "calls_started": 0,
+        "calls_succeeded": 0,
+        "calls_unwinding": 0,
+        "cpu_known_calls": 0,
+        "cpu_ns": 0,
+        "cpu_ns_known_sum": 0,
+        "cpu_unknown_calls": 0,
+        "wall_ns": 0,
+        "wall_unknown_calls": 0
+      }
+    },
+    "complete_first_page_host_checkpoint": {
+      "calls_accepted": 83053,
+      "calls_completed": 83053,
+      "calls_rejected": 0,
+      "calls_started": 83053,
+      "calls_unfinished": 0,
+      "cpu_clock_unknown_calls": 0,
+      "first_started_ns": 266225,
+      "last_ended_ns": 24171495213,
+      "last_error_code": null,
+      "phase": "checkpoint",
+      "thread_cpu_ns": 4556754013,
+      "wall_clock_unknown_calls": 0,
+      "wall_ns": 6024595078
+    },
+    "whole_phase_host_checkpoint_totals": {
+      "observations": 2,
+      "calls_started": 83447,
+      "calls_completed": 83447,
+      "calls_accepted": 83447,
+      "calls_rejected": 0,
+      "thread_cpu_ns": 4578482245,
+      "wall_ns": 6046295062,
+      "cpu_clock_unknown_calls": 0,
+      "calls_unfinished": 0,
+      "mean_cpu_ns_per_completed_call": 54866.94842235191
+    },
+    "nested_intervals_are_not_additive": true,
+    "cpu_scope": "Calling client thread only; scoped worker CPU excluded. Host checkpoints are nested in native replay and graph stages."
+  }
+}

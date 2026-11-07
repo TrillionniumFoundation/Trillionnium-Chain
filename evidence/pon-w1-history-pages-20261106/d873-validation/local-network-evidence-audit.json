@@ -1,0 +1,204 @@
+{
+  "schema": "d873-local-network-independent-read-only-audit-v1",
+  "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "source_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+  "audited_source_blobs": {
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs": "165fb1d6e40bca65326eeac30ef84f5da5824558",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "22ba74f76e2616f72c7cc436fcde7acf3f6d1286",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "aab6239a3e094c25d2319c5c16f1974a2ba67ca3",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "989ac5f08b8e4f707cda613617fd5245eb6a6463",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "f6de94e93892592a8008b0a30ae74bad59d71585",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs": "20d040f84c0d33f71a035f730265aea6722a5c82",
+    "trillionnium/crates/trnm-protocol/src/pon_wire.rs": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+    "config/pon/devnet-v1.json": "a60f403b2f0e7343aed61170ca2aef875a787790"
+  },
+  "source_before_after_equal": true,
+  "tested_binary_before_after_equal": true,
+  "network_binary_sha256": "88906623e7028e96342a9a04849f91308cfab1e4c3682da933ba4c2dc4ac59a1",
+  "report_path": "/workspace/scratch/a66f84888260/integration-validation/d873-release-regressions-04-receipts/network-only-business/report.json",
+  "report_bytes": 10145807,
+  "report_sha256": "392e196ac81226d7684eb2abaa0bf8fbd2dcf6b1dca96367ffaa270c55ee0683",
+  "native_confirmation_verdict": "24 unique transactions confirmed by the separate native consumer after decoding, W1/M06 admission and activation of all nine TCP-downloaded packets; submit ACKs and Head alone do not supply confirmation.",
+  "confirmation_call": "public_v3_service_campaign.rs: consumer.confirmations after attack-thread joins and service.finish",
+  "native_confirmed_transactions": 24,
+  "ancestry_checked": 9,
+  "distinct_bodies_checked": 3,
+  "confirmations_by_business_block": [
+    {
+      "included_height": 1,
+      "included_block": "a8de0792173ff6d31aaeac59963302d3bdc8c8ef075780cd92df070a886ad97c",
+      "observed_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "depth": 8,
+      "work_delta": 16,
+      "required_work_delta": 12,
+      "transactions": [
+        "6878ebe95748ac7450dff0e67a86a483ce0fdd80cf5f180e190804e33669284f",
+        "49e1a40c3283977ec56588052e0454cb244c659ecd5aa529fff3c79f7a90f225",
+        "8853d059b0d70ce2641b5c01459229e914bbf58529881ae6f2f0fa035a9d98d6",
+        "b1caa05da8c9bb563cfd80204eca66683b9989378b7a102fe9278212abebd4e9",
+        "3e1d6fbacf3fca3be2097eb33931994de7f9051b3ea78d71597850b871801743",
+        "b48aab239147f7cf548dea501172b7fe09743eda0bf197bc9d0197d51a0bbdbb",
+        "4ffcde3d28c4c01b576f9078cd9453f95fa1dbe2b2dd134e1e6d03f354e8b5c8",
+        "2fdc2622f373a77f6a745176013c470bd86bce601062cd5ae61ff1c228e41108"
+      ]
+    },
+    {
+      "included_height": 2,
+      "included_block": "e3b257f40b125013f18486a4aa697a188b3c3d41b7c61c0e6bb34b1182148275",
+      "observed_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "depth": 7,
+      "work_delta": 14,
+      "required_work_delta": 12,
+      "transactions": [
+        "159e8dc45d7f212e8745762fdae5a919b916897a111d2038e32ebc7c0dc24429",
+        "9f973682f59322ec492a39ba7442f331a20cf276623f685640f2b15583ea3a9b",
+        "3e1ddd2650a8cf33d025e3c80b20675efa71cb77bc56c886e77b87548867b2bb",
+        "5c5bbf4152b1246b055b879d5eefdccf75670f7d984502dbea47247bfe2e9368",
+        "d7bf9bdbf49eeeda7657423ddde1871d88b5339cfea9d08f9a3734f7fd5f8418",
+        "0da194b39e1d67b4fb2e083531f4d5da8c7366a233159616791b61eaf2efdc5c",
+        "34c1f914bcdb3a78f93a96dc6fc0b723f015b550be182a712b6036a9cb8f639c",
+        "4b3a94ad2fc3ca2cbe501972b0c364d4a80ad96d150fa83de73d03abba38ae31"
+      ]
+    },
+    {
+      "included_height": 3,
+      "included_block": "56224fd65930c48b4d588b5335a01665e8d0482b0fdac7cb8b43ce6a16c8932e",
+      "observed_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "depth": 6,
+      "work_delta": 12,
+      "required_work_delta": 12,
+      "transactions": [
+        "a1ccd6e7019da18556e87985175575d65ef6bfb7f3c531a5f01facdb1e175053",
+        "58ab3f47c5633c368e3fdd3c5df9063dd665ac7042c700ad6ff770bcfea904de",
+        "7f3d9a2196fea8937c096c5c6b057649049ac80855d085ebb1971e66a4c3d189",
+        "6612adfacc270ede8189f60597217b824498835916b70fea10906a5e33767bf4",
+        "2b6e330ff0c6a9b53f04198b682ee8e2b6ca4e5e8166fad465aad20aab5da42f",
+        "c706a363ce765a1085ef28617c36f53a4ef123797f2fcef729c672b4dcd8a0a7",
+        "e2b0d633c2ed6dd78a04e35d65e537f6b5939fc56d31c819232f1f44b044e6d7",
+        "e3b47a913222517dca9db776b7dbd0fbafbc5ad34642a60188c736f652c3be57"
+      ]
+    }
+  ],
+  "confirmation_membership_depth_and_work_recomputed_from_retained_packets": true,
+  "chain_packet_and_record_bytes_equal_across_producer_receiver_consumer": true,
+  "databases": {
+    "producer": {
+      "native_blocks_excluding_genesis": 9,
+      "active_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "active_generation": 9,
+      "active_slot": 0,
+      "active_kv_rows": 16,
+      "active_kv_sha256": "dd8de0f99411ac81a9393c9d2a3a773e6521656fbbb7c5dcfe91774ea1b64d08"
+    },
+    "receiver": {
+      "native_blocks_excluding_genesis": 9,
+      "active_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "active_generation": 9,
+      "active_slot": 0,
+      "active_kv_rows": 16,
+      "active_kv_sha256": "dd8de0f99411ac81a9393c9d2a3a773e6521656fbbb7c5dcfe91774ea1b64d08"
+    },
+    "consumer": {
+      "native_blocks_excluding_genesis": 9,
+      "active_tip": "dc29a1ee3d47b5830212c94cc791ab8b0d76da9482878591032b8765e6e1cb1c",
+      "active_generation": 9,
+      "active_slot": 0,
+      "active_kv_rows": 16,
+      "active_kv_sha256": "dd8de0f99411ac81a9393c9d2a3a773e6521656fbbb7c5dcfe91774ea1b64d08"
+    }
+  },
+  "full_active_kv_equal": true,
+  "clean_receiver_reopen_equal": true,
+  "reopen_scope": "source performs drop(receiver), same-process Node::open_with_authenticated_state, then complete read_active equality; audit independently reads retained SQLite read-only, not a new native replay or crash/power-loss test.",
+  "attack_workers": 4,
+  "attack_calls_per_worker": [
+    195,
+    194,
+    196,
+    195
+  ],
+  "total_false_calls": 780,
+  "overlapping_false_calls": 57,
+  "overlap_definition": {
+    "start_ns": 39359530,
+    "end_ns": 363254134,
+    "interval": "first honest network call start through final History network call end; excludes subsequent consumer replay/confirmation tail"
+  },
+  "all_false_calls_returned_WORK_Transcript": true,
+  "false_full_work_records": 780,
+  "false_packet_admission_execution_commit_started": false,
+  "attack_block_ids": [
+    "d8de16170f130c0684e63faab4320c88ff370b6a9c62a668b6ac8357624180c1",
+    "e80018ead897b020c33627940bfdae9c6fa801c80f7bc8fa6fd13db7e75c7ecd",
+    "50bc2410df3375c62a755eec62931043c4142b0452f8b6b2e2beacd21048ceaa",
+    "9ea86e6c5f99d9d7e68862f07f5a2913f7a5135c5d88b9a7715c945b489cac9f"
+  ],
+  "attack_blocks_absent_from_retained_chains": true,
+  "service_work_started": 789,
+  "service_work_finished": 789,
+  "service_work_failed": 780,
+  "service_completed_submit": 9,
+  "service_completed_read": 2,
+  "observer_records": 791,
+  "observer_coverage_complete": true,
+  "service_shutdown_reservations_and_cpu_inflight_zero": true,
+  "actual_policy_revision": "r16",
+  "actual_policy_id": "09c3b50a335d9071c26842e98a54bd4b12c9bbd08c5f409dff1f9771fa2923bd",
+  "policy_recomputed_from_exact_source_length_framing": true,
+  "policy_ticket_bits": 8,
+  "policy_call_lifetime_ms": 2000,
+  "legacy_scope_text": "bounded same-process loopback public TCP load; original r10 resource policy; reference-acquired false traces and rotating keys; distinct native consumer reexecutes downloaded history; prebuilt blocks/logical timestamps; not independent operators, physical cost lower bound, remote exhaustion guarantee, saturated TPS or WAN",
+  "legacy_scope_r10_text_is_stale": true,
+  "attack_window_ns": 6000000000,
+  "window_controls_only_attack_call_initiation": true,
+  "confirmation_generated_after_attack_join_and_service_finish": true,
+  "has_end_to_end_six_second_confirmation_gate": false,
+  "confirmation_monotonic_completion_timestamp_retained": false,
+  "honest_network_completion_ns": 363254134,
+  "initial_service_cpu_credit_ns": 2000000000,
+  "fixed_host_environment_qualified": false,
+  "scope": "same-process loopback, prebuilt blocks/logical timestamps, six-second attack initiation window, four workers; no fixed quarter-CPU/no-swap/PID-256 qualification",
+  "release_regression_groups": [
+    {
+      "target": "public_submit_recovery",
+      "filter": "",
+      "passed": 26,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "88c9479a5777bfd077a8871dddb7c262f55457d2e90c6e08e017fcc5dbd0f8b5"
+    },
+    {
+      "target": "pinned_peer_polling",
+      "filter": "",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "9d3511ea24dbc462599ea7a97e88b9f2be87fc88e5b69e63a4a57e46be0fa82b"
+    },
+    {
+      "target": "public_v3_multiprocess",
+      "filter": "arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "2bd9e4386c57cbff173d0ef6feb35748d4420c12b7c478e38f9da68ace37dc08"
+    },
+    {
+      "target": "public_v3_service_campaign",
+      "filter": "network_only_business::network_only_business_confirmations_survive_rotating_false_work",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "dc5c534c84d36324f0390ed305879fe71932ef38065006b0a3dba88751784f11"
+    }
+  ],
+  "release_regression_total_passed": 29,
+  "release_regression_total_failed": 0,
+  "release_regression_total_ignored": 0,
+  "release_29_count_is_not_history_import_unit_suite": true,
+  "tests_executed_by_audit": false,
+  "original_four_second_qualification": false,
+  "production_activation": false,
+  "work_profile_qualified": false,
+  "resource_fairness_qualified": false
+}

@@ -1,0 +1,224 @@
+{
+  "schema": "d873-host-fresh-read-read-only-options-v1",
+  "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "host_checker_blob": "7089e961965af9209f2d588061c8526c5acba161",
+  "source_file": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+  "evidence_file": "/workspace/scratch/a66f84888260/hosted-d873/fresh-head-business-extraction.json",
+  "evidence_sha256": "2d30e056a62096ea322db7ac3f8dd902bfd636b691fc8a400de1e07eeb736dea",
+  "measurements_from_existing_artifact": [
+    {
+      "case": "original",
+      "mode": "attack-free-baseline",
+      "checkpoint_count": 8817,
+      "checkpoint_cpu_ns": 479314012,
+      "mean_checkpoint_cpu_ns": 54362.482930702055,
+      "replay_cpu_ns": 528882193,
+      "checkpoint_fraction_of_replay_cpu": 0.9062774628148617,
+      "history_packets": 7,
+      "replay_accepted": true,
+      "replay_error": null
+    },
+    {
+      "case": "original",
+      "mode": "from-zero-pressure",
+      "checkpoint_count": 973,
+      "checkpoint_cpu_ns": 63464689,
+      "mean_checkpoint_cpu_ns": 65225.7852004111,
+      "replay_cpu_ns": 69411592,
+      "checkpoint_fraction_of_replay_cpu": 0.9143240656402175,
+      "history_packets": 7,
+      "replay_accepted": false,
+      "replay_error": "PUBLIC_REQUEST_DEADLINE"
+    },
+    {
+      "case": "fresh",
+      "mode": "attack-free-baseline",
+      "checkpoint_count": 8817,
+      "checkpoint_cpu_ns": 478712138,
+      "mean_checkpoint_cpu_ns": 54294.22002948849,
+      "replay_cpu_ns": 530264136,
+      "checkpoint_fraction_of_replay_cpu": 0.9027805304939575,
+      "history_packets": 7,
+      "replay_accepted": true,
+      "replay_error": null
+    },
+    {
+      "case": "fresh",
+      "mode": "from-zero-pressure",
+      "checkpoint_count": 766,
+      "checkpoint_cpu_ns": 47706375,
+      "mean_checkpoint_cpu_ns": 62279.86292428199,
+      "replay_cpu_ns": 52990035,
+      "checkpoint_fraction_of_replay_cpu": 0.9002895544416983,
+      "history_packets": 7,
+      "replay_accepted": false,
+      "replay_error": "PUBLIC_REQUEST_DEADLINE"
+    }
+  ],
+  "conclusion": "No demonstrated material optimization found that preserves all original progress boundaries, complete fresh pathname/boot/current-thread-membership/limits reads and original error priority. Absolute immutable CStr spelling is an implementable small experiment; descriptor-relative shortcuts are not established equivalent.",
+  "per_successful_check": {
+    "ordered_observations": [
+      "fresh boot_id complete text and comparison",
+      "fresh parent symlink_metadata: directory/root owner/non-group-or-other-write/dev+ino",
+      "fresh current calling-thread cgroup complete text and membership",
+      "fresh cpu.max complete read",
+      "fresh cpu.max.burst complete read",
+      "fresh memory.max complete read",
+      "fresh memory.swap.max complete read",
+      "fresh pids.max complete read",
+      "parse all five only after all five successful reads, then compare expected Limits"
+    ],
+    "minimum_fresh_file_opens": 7,
+    "minimum_reads_including_true_EOF": 14,
+    "minimum_closes": 7,
+    "minimum_parent_stat_syscalls": 1,
+    "normal_success_filesystem_syscall_lower_bound": 29,
+    "baseline_8817_check_filesystem_syscall_lower_bound": 255693,
+    "syscall_count_kind": "derived from exact source on ordinary nonempty short files, not a measured strace result; EINTR, fragmented reads, fallback or long context can add calls; observer CPU clock calls excluded"
+  },
+  "allocation_review": {
+    "successful_short_context_uses_borrowed_Cow": true,
+    "five_limit_buffers_on_stack": true,
+    "per_check_parent_join": false,
+    "per_check_immutable_parent_relative_rebuild": false,
+    "rust_1_95_short_path_CString_heap_allocations": 0,
+    "actual_open_path_lengths": [
+      {
+        "path": "/proc/sys/kernel/random/boot_id",
+        "bytes": 31
+      },
+      {
+        "path": "/proc/thread-self/cgroup",
+        "bytes": 24
+      },
+      {
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/cpu.max",
+        "bytes": 42
+      },
+      {
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst",
+        "bytes": 48
+      },
+      {
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/memory.max",
+        "bytes": 45
+      },
+      {
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max",
+        "bytes": 50
+      },
+      {
+        "path": "/sys/fs/cgroup/trnmponpublic.slice/pids.max",
+        "bytes": 43
+      }
+    ],
+    "parent_metadata_path_bytes": 34,
+    "remaining_heap_paths": "Long context above 256 bytes retains original complete-read fallback; errors may allocate. Resolver and resource_sample have one-time/phase-boundary work, not the 8817-check loop."
+  },
+  "safe_small_candidate": {
+    "name": "immutable absolute CStr spellings, fresh same libc open64 each time",
+    "production_sketch": "Keep the existing parent metadata implementation. Prebuild only immutable absolute path bytes for boot, thread-self membership and five limits. A small open helper must mirror std open64 O_RDONLY|O_CLOEXEC, mode argument, EINTR handling, owned-fd conversion and exactly one close; pass resulting File through the unchanged read-to-EOF functions and unchanged error mapping.",
+    "preserves_current_path_resolution": true,
+    "preserves_current_thread_self_resolution": true,
+    "retained_descriptors": 0,
+    "retained_file_contents_or_authorization_verdicts": 0,
+    "original_error_order_must_remain": true,
+    "do_not_add_O_NOFOLLOW_to_limit_opens": true,
+    "removed_heap_allocations_per_normal_check": 0,
+    "removed_filesystem_syscalls_per_check": 0,
+    "removed_short_path_conversions_per_check": 7,
+    "path_bytes_no_longer_copied_per_check": 283,
+    "path_bytes_no_longer_copied_over_baseline": 2495211,
+    "measured_speedup": null,
+    "performance_interpretation": "Only short copy/NUL validation and thin user-space wrapper work can be removed. No evidence supports a large speedup or Host gate success.",
+    "sensitivity_not_measurement": {
+      "assumed_saved_ns_per_conversion": 100,
+      "resulting_baseline_cpu_saving_ns": 6171900,
+      "resulting_fraction_of_observed_host_cpu": 0.01287652738180331,
+      "saved_ns_per_conversion_required_for_100ms_cpu": 1620.2466015327532
+    }
+  },
+  "unproven_or_rejected_shortcuts": [
+    {
+      "mechanism": "Held parent directory FD with dev/inode fences",
+      "counterexample": "A persistent new bind-mount view can retain the same underlying parent dev/inode while different child mounts expose changed limit files. Relative openat continues through the old held mount view; full absolute opens see the new view. Fresh limits relative to an old dirfd are not fresh current absolute-path observations.",
+      "status": "Do not reuse the 630cd5ee mechanism as an established equivalent."
+    },
+    {
+      "mechanism": "Held or per-check parent FD plus fresh absolute parent statx mount-ID before/after five reads",
+      "counterexample": "A mount-ID comparison can catch a persistent parent mount replacement at the fence if supported and checked correctly. It does not attest ancestor search permissions during each child read: revoke ancestor execute/ACL permission after the initial fence, perform relative opens, restore before the final fence. Absolute original opens during that interval fail, while relative opens bypass those ancestors. A persistent revocation caught only by the final parent fence can also change the original I/O error ordering/class. The original checker itself is sequential, not an atomic snapshot; adding a blind interval is not equivalent.",
+      "status": "Equivalence unproved; cannot merge as optimization. Closing with a full absolute permission/path traversal per file forfeits the intended prefix-walk saving and adds operations."
+    },
+    {
+      "mechanism": "Open fresh parent directory once per verify, then openat children",
+      "counterexample": "It avoids cross-check descriptor reuse but freezes the prefix within the check, so intermediate mount/ancestor permission/name changes still differ from five full absolute opens. It also adds parent open/fstat/close in place of one lstat/statx.",
+      "status": "Unproved, and syscall count can increase."
+    },
+    {
+      "mechanism": "Omit second read after a short read / stop at newline / use known pseudo-file size",
+      "counterexample": "Original contract explicitly requires true EOF and retains fragmented reads, EINTR, late I/O failure, complete UTF-8 validation, and 128-byte overflow rejection. A short read is not EOF.",
+      "status": "Not allowed."
+    },
+    {
+      "mechanism": "Cache boot ID result, membership FD, limit descriptors/values or manually reuse one TID pathname",
+      "counterexample": "Misses changed current proc/mount/permission view or a different calling worker. Explicit TID spellings also require proof against procfs PID-namespace changes; /proc/thread-self currently resolves the actual caller afresh.",
+      "status": "Not allowed under stated boundary."
+    },
+    {
+      "mechanism": "Batch through io_uring or cached-only openat2",
+      "counterexample": "Not an established semantics-preserving reduction: ordered read/parse failures and caller-thread membership must remain exact; async workers may change thread-self resolution, extra workers/resource policy need analysis, and ordinary opens already attempt cached VFS traversal.",
+      "status": "No demonstrated benefit or equivalence; not an immediate implementation option."
+    }
+  ],
+  "recommended_measurement_before_changes": [
+    "Use an isolated candidate; leave frozen d873 and its original four-second tests unchanged. Preserve exact compiler/profile/source/binary identity and measure the baseline and CStr candidate in the same actual fixed Host on each architecture.",
+    "First confirm the derived syscall mix with a separate short strace diagnostic. Traced results are for attribution only, not timing/qualification evidence.",
+    "Run a separate read-only component ABBA comparison with fixed call counts (at least the observed 8817 checks per sample) and aggregate thread user/system CPU plus wall time. Keep initial resolver work separate from the hot verify loop. Avoid per-file timing instrumentation in the original business qualification run.",
+    "Retain all existing complete-read/replacement/EINTR/UTF-8/128-byte/IO-before-parse controls against the actual new helper. Retain current thread membership and real Host revocation controls. Do not discard failed or slower samples.",
+    "Only a measured material reduction under those controls justifies implementing it as a performance fix; then rerun the original fixed Host four-second/16-worker independent replay and confirmation gate. Component CPU changes cannot qualify that business gate."
+  ],
+  "source_edits_performed": false,
+  "new_tests_or_benchmarks_executed_by_review": false,
+  "speedup_demonstrated": false,
+  "original_four_second_qualification": false,
+  "primary_sources": [
+    {
+      "url": "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/helpers/small_c_string.rs",
+      "relevant_functions": [
+        "run_path_with_cstr",
+        "run_with_cstr",
+        "run_with_cstr_stack"
+      ],
+      "finding": "Paths shorter than 384 bytes use MaybeUninit stack storage, copy only the path, append NUL, and validate CStr; they do not allocate a CString."
+    },
+    {
+      "url": "https://github.com/rust-lang/rust/blob/1.95.0/library/std/src/sys/fs/unix.rs",
+      "relevant_functions": [
+        "File::open",
+        "File::open_c",
+        "lstat"
+      ],
+      "finding": "File opens perform the path conversion, then libc open64 with O_CLOEXEC and EINTR retry. Linux GNU lstat uses statx when available, otherwise lstat64."
+    },
+    {
+      "url": "https://github.com/torvalds/linux/blob/v6.8/fs/namei.c",
+      "relevant_functions": [
+        "path_init",
+        "link_path_walk",
+        "may_lookup",
+        "inode_permission",
+        "may_open"
+      ],
+      "finding": "An absolute name starts from the current root; a relative dirfd starts from the held file f_path. Ancestor lookup permission checks occur during pathname traversal, not by a mount-ID comparison."
+    },
+    {
+      "url": "https://github.com/torvalds/linux/blob/v6.8/fs/open.c",
+      "relevant_functions": [
+        "do_sys_openat2",
+        "openat",
+        "openat2"
+      ],
+      "finding": "Each normal open allocates and installs a fresh file description after current pathname resolution; the v6.8 source is semantic reference, not a claim about the exact hosted kernel build or performance."
+    }
+  ]
+}

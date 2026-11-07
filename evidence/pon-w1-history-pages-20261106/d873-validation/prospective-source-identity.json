@@ -1,0 +1,20 @@
+{
+  "schema": "w1-stacked-pr-source-identity-v1",
+  "observed_utc": "2026-11-07 01:02:03 UTC",
+  "pr_number": 753,
+  "pr_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/753",
+  "head": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "base": "a3e9002cd12ef90d62f8b252cad570e72dab6fa3",
+  "base_branch": "fix/chain-six-axis-performance-20261103",
+  "base_is_main": false,
+  "draft": true,
+  "mergeable": true,
+  "merge_commit": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+  "merge_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+  "ordered_merge_parents": [
+    "a3e9002cd12ef90d62f8b252cad570e72dab6fa3",
+    "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  ],
+  "expected_candidate_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+  "qualification": false
+}

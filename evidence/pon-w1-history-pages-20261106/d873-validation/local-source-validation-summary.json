@@ -1,0 +1,73 @@
+[
+  {
+    "name": "committed-repository",
+    "command": [
+      "python3",
+      "scripts/ci/check_repository.py"
+    ],
+    "exit_code": 0,
+    "seconds": 43.35,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-source-negative",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "exit_code": 0,
+    "seconds": 2.891,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-pq-negative",
+    "command": [
+      "python3",
+      "scripts/ci/test_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "seconds": 21.968,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-fresh-runner-controls",
+    "command": [
+      "python3",
+      "scripts/ci/test_run_w1_fresh_service_v1.py"
+    ],
+    "exit_code": 0,
+    "seconds": 1.112,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-ci-contract",
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "seconds": 8.276,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-pq-closure",
+    "command": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.147,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  },
+  {
+    "name": "committed-distributed-inventory",
+    "command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.065,
+    "source_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4"
+  }
+]
