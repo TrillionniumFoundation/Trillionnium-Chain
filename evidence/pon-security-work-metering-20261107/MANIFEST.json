@@ -1,14 +1,14 @@
 {
   "files": [
     {
-      "bytes": 11855,
+      "bytes": 13477,
       "path": "README.md",
-      "sha256": "0beeb05884fb0af52e79cd95b6a642e7e8a1ce6cf79ef0b5310f66edcb269921"
+      "sha256": "86a338e89dc5bb9f366fd087c88d9db0ccb86f00fa4d9ea6b4e2d84ff84a8ce0"
     },
     {
-      "bytes": 3018,
+      "bytes": 3723,
       "path": "acceptance.json",
-      "sha256": "b6ee06ab6f7395e7d6d0cbad2601f04bac26fd739d01c071ef01246595ccb124"
+      "sha256": "dd308e865baba6cb7da887925bf367b2b1c6dae62b4c7a2c3c19d1f638955846"
     },
     {
       "bytes": 342,
@@ -134,6 +134,56 @@
       "bytes": 210154,
       "path": "native-validation-source-v1.tar.gz",
       "sha256": "a693cb2d829d978865b1f8ff53f31f1306959df9968ae3adf26ce5ec2c5c82b5"
+    },
+    {
+      "bytes": 512,
+      "path": "native-validation-source-v2/capture-integrity.json",
+      "sha256": "d0a1f2ada868937fddbd8503e3f70b397885d990d4984f0a6a19d62a9ba5f943"
+    },
+    {
+      "bytes": 26723,
+      "path": "native-validation-source-v2/commands.json",
+      "sha256": "63a5e195b87e764f06e81666982ec07aebb829a23db21d4833261308fc1ced0a"
+    },
+    {
+      "bytes": 13152,
+      "path": "native-validation-source-v2/review.json",
+      "sha256": "d2ed48f40fabacf32e56f2453c528092c960a76096e4ce51238c752ce37c8f90"
+    },
+    {
+      "bytes": 1104,
+      "path": "native-validation-source-v2/runner-bindings.json",
+      "sha256": "9b424da0cbd9d38bc1ea478f20efcdff2b53af8660842c388b7b6fc9d06144a0"
+    },
+    {
+      "bytes": 570,
+      "path": "native-validation-source-v2/source-after.json",
+      "sha256": "2df435ce0da5097213b42b554911dba02f9ac889a0dc84709f9ce31467623161"
+    },
+    {
+      "bytes": 570,
+      "path": "native-validation-source-v2/source-before.json",
+      "sha256": "2df435ce0da5097213b42b554911dba02f9ac889a0dc84709f9ce31467623161"
+    },
+    {
+      "bytes": 35,
+      "path": "native-validation-source-v2/source-inventory.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 996,
+      "path": "native-validation-source-v2/source-inventory.result.json",
+      "sha256": "d5b8af9944cdbee919e527c1b870b6c492388954329b1425215678d84ac824ff"
+    },
+    {
+      "bytes": 2618,
+      "path": "native-validation-source-v2/summary.json",
+      "sha256": "df5ad10092a33534533d142652ec1a9ba86b9de989dd6136d0c14d83368538d7"
+    },
+    {
+      "bytes": 212011,
+      "path": "native-validation-source-v2.tar.gz",
+      "sha256": "e4f4bcf5883a3190ec1a90fabc7d7b113c7fd038a102a1c5194ac7e9ba858ec0"
     },
     {
       "bytes": 40326,

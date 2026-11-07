@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/home/qian-qi/work/chain-profile-metering-20261107-89df/venv/bin/python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "command_sha256": "ed0a5a9d3d547062b26d2936e42e78e164a39f99694a005380f0d065b29d391a",
+  "effective_cargo_home": "/home/qian-qi/work/chain-profile-metering-20261107-89df/cargo-workspace",
+  "elapsed_seconds": 0.051939876982942224,
+  "ended_utc": "2026-11-07T18:06:03.469855+00:00",
+  "environment_overrides": {},
+  "exit_code": 0,
+  "label": "source-inventory",
+  "log": "source-inventory.log",
+  "log_bytes": 35,
+  "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+  "ordinal": 21,
+  "original_gate": true,
+  "owned_process_group_cleanup": "SIGKILL",
+  "pid": 2879794,
+  "prior_fresh_floor_gate": true,
+  "process_group": 2879794,
+  "process_started": true,
+  "started_utc": "2026-11-07T18:06:03.417910+00:00",
+  "status": "PASS",
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

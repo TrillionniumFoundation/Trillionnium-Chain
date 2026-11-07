@@ -145,6 +145,37 @@ Its [summary](native-validation-source-v1/summary.json) and
 [24 command records](native-validation-source-v1/commands.json) are also
 available separately. The capture's members were read back and SHA256-checked.
 
+The corrected source, `ed2ed1ba614edb913b22b43b49bc3c7c43a0201f`, tree
+`f272a84a69b034889413ab901793dffe1a5b591b`, then passed **all 24 original
+gates**, with zero failed, unstarted or timed-out commands. Its complete
+10,970-entry worktree (1,045,516,388 bytes) matched the committed source before
+and after execution. The [successful capture](native-validation-source-v2.tar.gz),
+[summary](native-validation-source-v2/summary.json),
+[command receipts](native-validation-source-v2/commands.json) and
+[test-count review](native-validation-source-v2/review.json) identify that exact
+source; this publication adds the recorded evidence without changing its
+implementation or configuration.
+
+| Executed test group | Passed | Failed / skipped / ignored |
+| --- | ---: | --- |
+| Grouped Python and actual native integration | 210 | 0 |
+| Conditional query bound | 21 | 0 |
+| Fresh query floor | 27 | 0 |
+| Resource transfer | 15 | 0 |
+| Negative source-integrity controls | 43 | 0 |
+| CI contract controls | 103 | 0 |
+| Rust crypto, all targets and features | 243 | 0 |
+| Native header binding | 1 | 0 |
+| Native fresh admission | 14 | 0 |
+| Native verification authority | 18 | 0 |
+
+The 100 focused tests above are included in grouped discovery, not an additional
+100 cases. Offline locked workspace and fuzz dependency graphs, formatting,
+workspace Clippy with all targets/features and `-D warnings`, inventory,
+repository/Markdown links and whitespace all passed. This is the retained
+24-gate validation scope; it does not claim that the entire workspace's unit
+test inventory or a new public service campaign was executed.
+
 The existing `test_grouped*.py` CI discovery already includes every new test
 module. No workflow, required gate or source-integrity check is weakened.
 
