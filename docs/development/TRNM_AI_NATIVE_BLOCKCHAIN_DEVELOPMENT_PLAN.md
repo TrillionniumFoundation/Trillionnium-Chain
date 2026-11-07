@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Stateful useful-Cell computation, 2026-11-07 America/New_York:** Continue
+the existing #688 candidate with the separately named
+[V2 reference relation](specs/pon/USEFUL_CELL_RELATION_V2.md). Replay actual
+source preprocessing, feature/expert masks, all five W1 products, recurrent
+memory, sampling state, STOP/abstention/tool proposals and an optional exact
+masked/clipped momentum update. Bind actual intermediate values to one task
+and reject independently valid segments from another task. Separate historical
+parent/protocol-time verification from current-clock verification; neither
+pure result grants owner authority. Integrate consumer expected context with
+the existing Hepta guarded generation journal, CURRENT and FinalUse boundaries,
+not a second operation/checkpoint store. Preserve V1 source and semantics.
+The finite integer source-router profile is not ordinary multimodal Hepta,
+a native Node work entry, a succinct proof, a training-quality result or work
+hardness qualification. Existing service, History, recovery and PQ gates remain
+independent and their failed evidence remains retained.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
