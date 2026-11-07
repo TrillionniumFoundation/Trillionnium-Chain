@@ -266,6 +266,20 @@ def native_durable_schema(root):
         # schema-affecting literal is also checked, byte for byte, with value().
         normalize = lambda text: re.sub(r'\s+','',rust_code(text))
         require(normalize(actual) == normalize(expected),message)
+    def closed_header(text, kind, name, expected):
+        code = rust_code(text)
+        found = [m for m in re.finditer(r'\b'+kind+r'\s+'+re.escape(name)+r'\b',code)
+                 if direct(code,m.start())]
+        message = 'durable backend selected header '+name
+        require(len(found) == 1,message)
+        match = found[0]
+        # Current supported items have no attributes or modifiers. In
+        # particular, a cfg-disabled declaration cannot authorize extraction.
+        prefix = code[:match.start()].rstrip()
+        require(not prefix or prefix[-1] in '{};',message)
+        end = code.find('{',match.end())
+        require(end >= 0,message)
+        layout(text[match.start():end],expected,message)
     def value(text, prefix):
         matches = list(re.finditer(prefix,rust_code(text)))
         require(len(matches) == 1, 'durable schema literal prefix')
@@ -404,7 +418,41 @@ def native_durable_schema(root):
                     # must match the complete pre-PQ owner contract verbatim.
                     expected = expected.replace('pq_network: None,','')
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
-            selected = rust_code(body(node,'fn','open_selected'))
+            selected_body = body(node,'fn','open_selected')
+            split_selected = re.search(r'\b(?:SelectedOpen|open_selected_mode)\b',code) is not None
+            if split_selected:
+                # Existing-owner open is a new closed source contract. Check
+                # the complete ordinary delegation before following its schema
+                # bindings; never retry the old body after a malformed split.
+                layout(body(source,'enum','SelectedOpen'), '''
+                    InitializeOrRecover { growth_observation_only: bool },
+                    ExistingPqOwner,
+                ''', 'durable backend selected modes')
+                layout(selected_body, '''Self::open_selected_mode(
+                    path, settings, workers, hook, owners, state_backend,
+                    SelectedOpen::InitializeOrRecover { growth_observation_only, },
+                )''', 'durable backend selected delegation')
+                selected_body = body(node,'fn','open_selected_mode')
+                selected_code = rust_code(selected_body)
+                mode = re.search(r'\blet\s*\(\s*growth_observation_only\s*,\s*existing_owner_only\s*\)\s*=\s*match\s+selection\s*\{',selected_code)
+                require(mode is not None and direct(selected_code,mode.start()),
+                        'durable backend selected mode binding')
+                mode_end = rust_group_end(selected_code,selected_code.index('{',mode.start()))
+                require(mode_end is not None, 'durable backend selected mode binding')
+                layout(selected_body[mode.start():mode_end], '''
+                    let (growth_observation_only, existing_owner_only) = match selection {
+                        SelectedOpen::InitializeOrRecover { growth_observation_only, }
+                            => (growth_observation_only, false),
+                        SelectedOpen::ExistingPqOwner => (false, true),
+                    }
+                ''', 'durable backend selected mode binding')
+                mode_remaining = selected_code[:mode.start()]+selected_code[mode_end:]
+                mode_names = r'\b(?:selection|growth_observation_only|existing_owner_only)\b'
+                require(not re.search(r'\blet\s+[^;=]*'+mode_names+r'[^;=]*=',mode_remaining)
+                        and not re.search(mode_names+r'\s*=(?!=)',mode_remaining)
+                        and not re.search(r'&\s*mut\s*\(*\s*'+mode_names,mode_remaining),
+                        'durable backend selected mode rebound')
+            selected = rust_code(selected_body)
             bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
@@ -415,6 +463,27 @@ def native_durable_schema(root):
                     and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)
                     and not re.search(r'&\s*mut\s*\(*\s*'+names,remaining),
                     'durable backend selected schema rebound')
+            if split_selected:
+                closed_header(source,'enum','SelectedOpen','enum SelectedOpen')
+                closed_header(source,'impl','Node','impl Node')
+                closed_header(node,'fn','open_selected', '''fn open_selected(
+                    path: &Path, settings: Settings, workers: usize,
+                    hook: Option<&mut Hook<'_>>, owners: NativeOwners,
+                    state_backend: StateBackend, growth_observation_only: bool,
+                ) -> Result<Self>''')
+                closed_header(node,'fn','open_selected_mode', '''fn open_selected_mode(
+                    path: &Path, settings: Settings, workers: usize,
+                    mut hook: Option<&mut Hook<'_>>, owners: NativeOwners,
+                    state_backend: StateBackend, selection: SelectedOpen,
+                ) -> Result<Self>''')
+                # Bind the complete reviewed implementation, including literal
+                # bytes. The local binding checks above cannot prove arbitrary
+                # Rust control flow: an early return into another opener can
+                # leave every recognized schema assignment intact. New bodies
+                # require explicit review; no historical fallback is allowed.
+                require(sha(selected_body.encode()) ==
+                        '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
+                        'durable backend selected implementation')
         else:
             matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)
                        if code[match.start():match.start()+4] == 'hash']

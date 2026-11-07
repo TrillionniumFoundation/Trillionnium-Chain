@@ -440,6 +440,24 @@ jobs:
             fi
           done
           test "$failed" = 0
+      - name: Execute anchored NPQ6 migration and source-preservation controls
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for selector in \
+            npq6_anchored_claim_preserves_obligations_rotates_and_cold_reopens \
+            npq6_migration_requires_both_claim_signatures_and_the_selected_domain \
+            admitted_legacy_checkpoint_cannot_drop_unhandled_work_state_for_migration; do
+            label="npq6-migration-$selector"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test pq_application_migration_v6 "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          test "$failed" = 0
       - name: Refuse classical submit recovery for retained PQ network owners
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         shell: bash

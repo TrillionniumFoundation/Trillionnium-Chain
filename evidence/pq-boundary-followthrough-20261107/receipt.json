@@ -1,0 +1,285 @@
+{
+  "schema": "trnm-pq-boundary-followthrough-observation-v1",
+  "status": "component-controls-passed-whole-system-hold",
+  "implementation": {
+    "head": "a5065327a3079430c6d15e6f8f4d08dbd91c9ab2",
+    "tree": "e08ca38f2be308d28ac94eeecadac27198c0a3bc",
+    "status": ""
+  },
+  "base_commit": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+  "migration_native": {
+    "source": {
+      "head": "4fe4543c54a356b5710d3968f6e6b12aeaf2de6f",
+      "tree": "cdd35b3ab13ad85103e3595a802f4747d4c652c7",
+      "status": ""
+    },
+    "tests_passed": 3,
+    "tests_failed": 0,
+    "tests_ignored": 0,
+    "exit_code": 0,
+    "seconds": 5.9340199360012775,
+    "test_executable": {
+      "path": "/workspace/scratch/13c7239fbcac/target/debug/deps/pq_application_migration_v6-cf4db99dd2cbf232",
+      "sha256": "13aa232902090f81f3971901b4ce99b2a657f03dbef4f1c441a93dc35104cd6b",
+      "bytes": 204481616,
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "pq_application_migration_v6",
+        "src_path": "/workspace/scratch/13c7239fbcac/chain/trillionnium/crates/trnm-pon-node/tests/pq_application_migration_v6.rs",
+        "edition": "2021",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "features": [
+        "default"
+      ],
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 2,
+        "debug_assertions": true,
+        "overflow_checks": true,
+        "test": true
+      }
+    },
+    "sqlite_loader_observation": [
+      [
+        "TRNM_SQLITE3_UNQUALIFIED_REASON",
+        "normal Cargo loader directory set incomplete"
+      ]
+    ],
+    "scope": "real RustCrypto NPQ6 library/Node owner integration; not an NPQ6 ordinary CLI feature qualification"
+  },
+  "reader_publication": {
+    "source": {
+      "head": "a5065327a3079430c6d15e6f8f4d08dbd91c9ab2",
+      "tree": "e08ca38f2be308d28ac94eeecadac27198c0a3bc",
+      "status": ""
+    },
+    "tests_passed": 71,
+    "commands": [
+      {
+        "label": "schema-publication",
+        "argv": [
+          "python3",
+          "scripts/ci/test_public_readiness_evidence.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "seconds": 371.8254769369996,
+        "log_sha256": "2a0d789fb2c99ca82f537174c2ad143a4a62ae817ee337c00a71eafbb557a3a3"
+      },
+      {
+        "label": "ci-contract-publication",
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_contract.py"
+        ],
+        "exit_code": 0,
+        "seconds": 10.914550090001285,
+        "log_sha256": "fc0381e03468935346959a5ea0998023585de57705f0752e6b1f2d50ae6a15d7"
+      },
+      {
+        "label": "pq-contract-publication",
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "exit_code": 0,
+        "seconds": 0.8133376670011785,
+        "log_sha256": "2f6090b6fff063317228b6caaa4f2f464c3bfcfd5551b95e7f71600619c15eeb"
+      }
+    ],
+    "gnu_time_sha256": "3b11dec50514a8473e9f6efa7a34d584d0657538c09988f61b72d38ad4991a10"
+  },
+  "quality": {
+    "head": "4fe4543c54a356b5710d3968f6e6b12aeaf2de6f",
+    "commands": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "exit_code": 0,
+        "seconds": 0.13827333500012173
+      },
+      {
+        "argv": [
+          "/workspace/scratch/bf693a71b444/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "fmt",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "seconds": 13.454115470001852
+      },
+      {
+        "argv": [
+          "/workspace/scratch/bf693a71b444/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "pq_application_migration_v6",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "seconds": 38.73805560400069
+      }
+    ]
+  },
+  "source_contract_controls_passed": 38,
+  "ci_contract_controls_passed": 104,
+  "retained_failures": {
+    "original_reader": "ordinary schema extraction failed before the split-opener fix",
+    "adversarial_reader": "nine extractor mutations accepted before reviewed implementation closure; no full-artifact acceptance bypass established",
+    "intermediate_suite": "70 tests: 67 passed, three errors because /usr/bin/time was absent; final runs explicitly selected the observed real GNU time executable",
+    "first_migration_build": "exit 101: two private Config::limit calls in new integration tests; no native tests executed; repaired through public parameter access"
+  },
+  "acceptance": {
+    "whole_chain_quantum_security_qualified": false,
+    "live_legacy_chain_migrated": false,
+    "whole_directory_rollback_resistant": false,
+    "production_confidentiality_accepted": false,
+    "native_execution_authenticated": false,
+    "physical_power_loss": false,
+    "independent_accepted": false,
+    "production_activation": false
+  },
+  "retained_files": {
+    "schema-baseline-red.log": {
+      "path": "runs/schema-baseline-red.log.gz",
+      "bytes": 1518,
+      "sha256": "60770dc9fb64ebd6a472d82543697f4114b88e9fd5fab7071694337b44cd33eb",
+      "gzip_sha256": "d59f5e3be5e78ea5f547cfa55c5ee79c9cb6bfd0737924222a2deb5cdb440bb5"
+    },
+    "schema-focused-green.log": {
+      "path": "runs/schema-focused-green.log.gz",
+      "bytes": 3939,
+      "sha256": "9b95c4a9dc6723c0dc5a3dd545f35299a52c0ab424fba491afc6b5fa9fdefdec",
+      "gzip_sha256": "8ea8c8826d3f8d2f8ebf955a94450f5f56d3d4ac7572b1afd470c0f6bb767178"
+    },
+    "schema-full-green.log": {
+      "path": "runs/schema-full-green.log.gz",
+      "bytes": 16842,
+      "sha256": "99bab844110855d7f35256dacc03af3db72995953cab11c26c5872299fcd56a9",
+      "gzip_sha256": "8d107347b175dff8f3f9a90ee74e582be961b2f3d3c583817e61bea2b05cf7a7"
+    },
+    "schema-review-red.log": {
+      "path": "runs/schema-review-red.log.gz",
+      "bytes": 9338,
+      "sha256": "36d730a3073865c7e1f961b05ff870bc910c8fb3bb4e33e6bcb73585a9cab7a7",
+      "gzip_sha256": "df997622c96dd13b470fd7f27665044cd2bf852230b7c335f1fd19cbeb1a0a67"
+    },
+    "schema-review-green.log": {
+      "path": "runs/schema-review-green.log.gz",
+      "bytes": 457,
+      "sha256": "72900a314fddb5525cd3de692b01b74c43d10523856bfc573e26b8facdee8cf6",
+      "gzip_sha256": "4aeec281a8bd6a6232b59f703e2820a254ce958f514937f19801a481dc5a76ca"
+    },
+    "schema-full-final.log": {
+      "path": "runs/schema-full-final.log.gz",
+      "bytes": 12236,
+      "sha256": "c70329832d4f20e52ace65007d5993fe71571673e709d1330797b773ee4fac75",
+      "gzip_sha256": "cbf28a62899827b505fe641451a6e676c930c570cf54d691097edc97c32da67a"
+    },
+    "schema-publication.log": {
+      "path": "runs/schema-publication.log.gz",
+      "bytes": 12236,
+      "sha256": "2a0d789fb2c99ca82f537174c2ad143a4a62ae817ee337c00a71eafbb557a3a3",
+      "gzip_sha256": "743c789d32a82520af25e3e44aa2d6c92f6fe91be08d90da55735c20d168be5e"
+    },
+    "ci-contract-publication.log": {
+      "path": "runs/ci-contract-publication.log.gz",
+      "bytes": 17339,
+      "sha256": "fc0381e03468935346959a5ea0998023585de57705f0752e6b1f2d50ae6a15d7",
+      "gzip_sha256": "41bf26a5df1639fcd0413caf75f2b722a2204a82c00afde428e1ad7bc2bcbe6d"
+    },
+    "pq-contract-publication.log": {
+      "path": "runs/pq-contract-publication.log.gz",
+      "bytes": 557,
+      "sha256": "2f6090b6fff063317228b6caaa4f2f464c3bfcfd5551b95e7f71600619c15eeb",
+      "gzip_sha256": "16dcf760b4e697388415fba62341c57f7fad2aabe735d7859d49aa7a6d2ea72d"
+    },
+    "publication-checks.json": {
+      "path": "runs/publication-checks.json.gz",
+      "bytes": 1375,
+      "sha256": "7b854e26346032c8372b63e118f7a769bafab5d42868b970dbc6fc6905d748f7",
+      "gzip_sha256": "52bda4158d1ca7787967019b462c64a7d98f7ebca69a142f7e2d317e85f33f25"
+    },
+    "migration-native-01.log": {
+      "path": "runs/migration-native-01.log.gz",
+      "bytes": 118162,
+      "sha256": "86b45c61eac4cbcf6ce2ee916569c56265fb8765e89085066a3131f7650da76e",
+      "gzip_sha256": "90dcbdf49d960da87f49f81212f2b71d9723b7bff3936258b519851040af1ace"
+    },
+    "migration-native-01.json": {
+      "path": "runs/migration-native-01.json.gz",
+      "bytes": 2979,
+      "sha256": "771c5fb3b9867ed4b24203105c3151077ba762a003f7a9d10f531066f6e26220",
+      "gzip_sha256": "8f972ec2d2435212fbe3a1af6aa83b1870b22ab75923511e67abf2277b1a81be"
+    },
+    "migration-native-02.log": {
+      "path": "runs/migration-native-02.log.gz",
+      "bytes": 108756,
+      "sha256": "2860a38768371b837f9c959d35ad3bcfa40be133046c1bda3135b70cbec2355a",
+      "gzip_sha256": "f9472ab4c36bebae3d28dcc8b5f723b7e980b0c93b883dfb78bcee19a49bb984"
+    },
+    "migration-native-02.json": {
+      "path": "runs/migration-native-02.json.gz",
+      "bytes": 3517,
+      "sha256": "74c86decf67903e1e0170af1c0401fb24bfb4a52d18ac240c85b7c4b6efb09b1",
+      "gzip_sha256": "d1b91d83bdd5a6b6f1c4be8ee54cdb489dbdfcdadfc8c740a3de7e3e76b95235"
+    },
+    "migration-quality-01.log": {
+      "path": "runs/migration-quality-01.log.gz",
+      "bytes": 3454,
+      "sha256": "f8cde0bcce93865eb28df2b77915f64dc83e26dd1626d52297307ba80da7d135",
+      "gzip_sha256": "50595200ca2f68dc053912b43723b77777b281da4dd5016266dc01ecd01b0774"
+    },
+    "migration-quality-01.json": {
+      "path": "runs/migration-quality-01.json.gz",
+      "bytes": 1036,
+      "sha256": "dd5b961111d02c82a3551b0ec78232a0af1a96cb755c679abc3a6b51ea8ced19",
+      "gzip_sha256": "91b80727728049986c25d00573544daf2f4b3969a8303964d147898b5294726c"
+    },
+    "root-integrity.json": {
+      "path": "runs/root-integrity.json.gz",
+      "bytes": 2138,
+      "sha256": "ec9bf0ee3021232c5d8aefbc5b23a871cd0ce913def127654d84ef6417bed7ac",
+      "gzip_sha256": "b5b7d86ed8f5fb972bcd1883aaf88270e4190cb99c00980d7a951a15e1c14262"
+    },
+    "root-integrity-03.log": {
+      "path": "runs/root-integrity-03.log.gz",
+      "bytes": 307,
+      "sha256": "084d57c1b583d9a641d051586452a487eb8ec7b86cd9be1b30aa2f90156ee9fc",
+      "gzip_sha256": "ef0f4f65a90f87630e635b4217e744b7f90a900eeb058c1224427041f31399b5"
+    },
+    "root-integrity-06.log": {
+      "path": "runs/root-integrity-06.log.gz",
+      "bytes": 138,
+      "sha256": "105cb6690b29abaf077a119f24c2ccd1114897388ee13239c7d458c478053e2e",
+      "gzip_sha256": "0c51d6705491eecf5054ab63a6e4a05ba2169cc91d355ee4a3c38f6549b5ad41"
+    },
+    "gnu-time-observer.json": {
+      "path": "runs/gnu-time-observer.json.gz",
+      "bytes": 658,
+      "sha256": "b37bf91122b19ed208a20e4c8982cf8dbdceed5942ef34325a0313770482de3f",
+      "gzip_sha256": "24d26f371c5712c7f32400958b8799dce0eb768e887ec77e616ea7ee57efcac8"
+    }
+  }
+}
