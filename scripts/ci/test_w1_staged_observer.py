@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -460,11 +461,79 @@ class CoordinatorFailureTests(unittest.TestCase):
             self.assertEqual(coordinator.main(self.invocation(temp, "import time;time.sleep(60)", .2)), 1)
             result = json.loads((temp / "result/result.json").read_text())
             self.assertFalse(result["complete_proof_claim"])
-            self.assertEqual(result["stages"][0]["stage"], "prepare-full-execution")
-            self.assertTrue(result["stages"][0]["result"]["timed_out"])
+            self.assertFalse(result["end_to_end_observation_complete"])
+            # Hashing, declaration fsync and disk checks spend this same .2s.
+            # A loaded runner may correctly refuse preparation before spawning.
+            if result["stages"]:
+                self.assertEqual(len(result["stages"]), 1)
+                self.assertEqual(result["stages"][0]["stage"], "prepare-full-execution")
+                self.assertTrue(result["stages"][0]["result"]["timed_out"])
+                self.assertFalse(result["stages"][0]["result"]["stage_process_complete"])
+            else:
+                self.assertEqual(result["error"],
+                                 "ValueError: declared cumulative wall budget exhausted")
+                self.assertGreaterEqual(result["new_controller_wall_seconds"], .2)
+                self.assertFalse((temp / "result/prepare-full-execution").exists())
             self.assertLess(result["new_controller_wall_seconds"], 2)
             self.assertEqual(result["proof_randomness_tickets"], 0)
             self.assertIsNone(result["post_find_publish_seconds"])
+
+    def test_initialization_exhaustion_never_starts_preparation(self):
+        # Control only the coordinator clock, not the actual process monitor's
+        # clock. Real hashes and files remain checked; no proof success is faked.
+        now = [100.0]
+        clock = SimpleNamespace(monotonic=lambda: now[0], time_ns=time.time_ns)
+        real_sha = coordinator.sha
+
+        def charged_hash(path):
+            value = real_sha(path)
+            now[0] += .25
+            return value
+
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
+            temp = Path(temp)
+            with patch.object(coordinator, "time", clock), \
+                    patch.object(coordinator, "sha", side_effect=charged_hash), \
+                    patch.object(coordinator, "measure") as measure:
+                self.assertEqual(coordinator.main(self.invocation(temp, "raise SystemExit(7)", .2)), 1)
+            measure.assert_not_called()
+            result = json.loads((temp / "result/result.json").read_text())
+            self.assertEqual(result["stages"], [])
+            self.assertEqual(result["error"], "ValueError: declared cumulative wall budget exhausted")
+            self.assertEqual(result["deadline_monotonic"], 100.2)
+            self.assertFalse(result["complete_proof_claim"])
+            self.assertFalse(result["end_to_end_observation_complete"])
+
+    def test_preparation_receives_original_deadline_after_initialization_cost(self):
+        now = [100.0]
+        clock = SimpleNamespace(monotonic=lambda: now[0], time_ns=time.time_ns)
+        real_sha = coordinator.sha
+
+        def charged_hash(path):
+            value = real_sha(path)
+            now[0] += .025
+            return value
+
+        def failed_measure(command, output, seconds, *, deadline):
+            self.assertEqual(output.name, "prepare-full-execution")
+            self.assertEqual(seconds, 180)
+            self.assertEqual(deadline, 100.2)
+            self.assertGreater(now[0], 100.0)
+            self.assertLess(deadline - now[0], .2)
+            # Exercise failure only, without a synthetic successful backend.
+            raise ValueError("control-only preparation refused")
+
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
+            temp = Path(temp)
+            with patch.object(coordinator, "time", clock), \
+                    patch.object(coordinator, "sha", side_effect=charged_hash), \
+                    patch.object(coordinator, "measure", side_effect=failed_measure) as measure:
+                self.assertEqual(coordinator.main(self.invocation(temp, "raise SystemExit(7)", .2)), 1)
+            measure.assert_called_once()
+            result = json.loads((temp / "result/result.json").read_text())
+            self.assertEqual(result["error"], "ValueError: control-only preparation refused")
+            self.assertFalse(result["complete_proof_claim"])
+            self.assertFalse(result["end_to_end_observation_complete"])
 
     def test_same_prior_observation_is_not_counted_twice(self):
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
