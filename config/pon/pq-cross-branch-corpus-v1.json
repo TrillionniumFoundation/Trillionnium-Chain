@@ -144,7 +144,7 @@
     ".github/workflows/pon-legacy-reorg-cost-20261104.yml": "822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49",
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "516ca1abb0dfeb6c52b3a99efc8f041390d78223",
     ".github/workflows/pon-pq-system-continuation.yml": "f6b862182b361eefef62a553f59c3e79e90e1868",
-    ".github/workflows/pon-recent-batch-acceptance.yml": "c7cef34077a54258d936d505451fc1483e13149f",
+    ".github/workflows/pon-recent-batch-acceptance.yml": "3468dab27c330c086ac8b05f59675d7afe88445a",
     ".github/workflows/pon-w1-work-security.yml": "c9ab642e0f23194b32a7b283107d215deb534c7a",
     ".github/workflows/trnm-required-baseline.yml": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",

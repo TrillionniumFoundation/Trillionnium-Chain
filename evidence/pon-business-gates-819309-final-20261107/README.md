@@ -167,3 +167,11 @@ The [History / SQL / COW addendum](candidate/history-sql-cow-addendum-v1/README.
 [ADDITIONAL_COPY.json](ADDITIONAL_COPY.json) retains the separate v2/preparation copy manifest. [FINAL_ADDITIONS.json](FINAL_ADDITIONS.json) binds the final v3, static review and original copy/check receipts. The initial 1,527-file count belongs only to RETAINED_COPY.json, not to the sum of these later independent additions.
 
 Earlier [d26 and combined-source evidence](../pon-business-gates-readback-20261107/README.md), the failed 93277 controls, old resource failures and the missing historical artifact remain intact. Locator/read, observer and packaging errors are identified separately from native failures. Original four-second, sixteen-worker, 4,105-import and cold-activation requirements stay open until actual new-source results establish otherwise.
+
+## 8. First frozen candidate source-control failure retained
+
+Candidate fa6388d06195711b5d72217b2b7f10b03756e886 (tree 4bb21bcd9a931eac6d56aa4ef472a97f435444f9) completed its single original seventeen-suite invocation. All **666/666 named methods passed**, but the overall source-control attempt failed because the separate PQ integration checker rejected the workflow source binding. Complete source-before/source-after matched. No native build or body ran on this candidate.
+
+The [entire original source attempt](candidate/source-attempt-fa6388d06195711b5d72217b2b7f10b03756e886/summary.json), original error log and authoritative failed/exit-1 terminal remain intact. [WORKFLOW_BINDING_FIX.json](WORKFLOW_BINDING_FIX.json) records the concrete correction: the workflow's internal store.rs pin had been updated, but the corpus still named the workflow's previous Git blob. All 576 existing manifest entries were compared with the frozen candidate tree: 575 matched, one differed, none was missing.
+
+The follow-up changes only that corpus field to actual workflow blob 3468dab27c330c086ac8b05f59675d7afe88445a. It does not change the workflow, checker, production Rust, test budget or original failure. The follow-up commit requires its own complete source-control invocation and the declared native validation; the failed candidate's 666 method passes are not an overall green result.

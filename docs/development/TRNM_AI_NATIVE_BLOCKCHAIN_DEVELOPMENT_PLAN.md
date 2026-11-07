@@ -1,5 +1,8 @@
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
+> Frozen candidate fa6388d completed 666/666 named controls but its overall source check failed on one stale workflow blob binding. The full failed attempt and source-before/after are retained in [the final evidence record](../../evidence/pon-business-gates-819309-final-20261107/README.md#8-first-frozen-candidate-source-control-failure-retained). The follow-up fixes that one corpus pin without changing the checker, workflow or production Rust. Native validation starts only on the corrected frozen commit; original business gates remain HOLD.
+
+
 > Final 819 evidence readback: all 14 core lanes and 20/20 original W1 artifacts are independently retained and verified (24 native manifests, 632 campaigns). Transport v1/v2 failures and Range v3 recovery remain separate. Business qualification is still HOLD. The ordinary Legacy final admission-root candidate requires its own frozen-source 666 controls and 16 library plus one independent History exact run; no earlier result certifies this candidate. See [complete final evidence](../../evidence/pon-business-gates-819309-final-20261107/README.md).
 
 The [complete 819 record](../../evidence/pon-business-gates-819309-final-20261107/README.md)

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "git",
+    "--no-replace-objects",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:51:06.615269+00:00",
+  "exit_code": 0,
+  "log": "logs/git-diff-check.log",
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "name": "git-diff-check",
+  "pid": 1866439,
+  "start_utc": "2026-11-07T21:51:06.592991+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 22321672
+}
