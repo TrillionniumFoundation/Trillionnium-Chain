@@ -360,7 +360,11 @@ fn admit_packet(
                     &mut |_| check(),
                     &execution,
                     || Ok(clock),
-                    observation,
+                    super::SubmitDispatchContext {
+                        observation,
+                        termination_cpu: Some(&progress),
+                        ..super::SubmitDispatchContext::default()
+                    },
                 )?;
                 drop(guard);
                 id

@@ -44,8 +44,8 @@ def workflow_guards():
 def check(log, old=False, historical=False):
     pattern, code = workflow_guards()
     if historical or old:
-        pattern = pattern.replace('118 passed', '97 passed')
-        code = (code.replace('118 passed', '97 passed').replace('!= 118', '!= 97')
+        pattern = pattern.replace('123 passed', '97 passed')
+        code = (code.replace('123 passed', '97 passed').replace('!= 123', '!= 97')
                 .replace('or observed_history != history', 'or observed_history != set()'))
     if old:
         pattern = pattern.replace('97 passed', '91 passed')
@@ -70,10 +70,10 @@ def source_fixture_log(job):
     """Synthetic positive reader input, not retained output from any process."""
     historical = fixture(job)
     names = source_fixture_history()
-    assert len(names) == len(set(names)) == 21
+    assert len(names) == len(set(names)) == 26
     assert all(name not in historical for name in names)
     return ('SOURCE-ONLY SYNTHETIC READER FIXTURE; NOT NATIVE EXECUTION\n'
-            + historical.replace('97 passed', '118 passed').replace('running 97 tests', 'running 118 tests')
+            + historical.replace('97 passed', '123 passed').replace('running 97 tests', 'running 123 tests')
             + ''.join(f'test {name} ... ok\n' for name in names))
 
 
@@ -89,7 +89,7 @@ def registry_fixtures():
 def source_registry_fixtures():
     """Keep actual registry bytes separate from synthetic current declarations."""
     result = registry_fixtures()
-    for crate, count in (('node', 55), ('m06', 3)):
+    for crate, count in (('node', 60), ('m06', 3)):
         names = [name for group in source_fixture_extensions(crate).values() for name in group]
         assert len(names) == len(set(names)) == count
         assert all(name + ': test\n' not in result[crate] for name in names)
@@ -131,7 +131,7 @@ class AuthenticatedSuiteCount(unittest.TestCase):
         files += list((store / 'native_authenticated').rglob('*.rs'))
         source = [name for path in files for name in re.findall(
             r'#\[test\]\s*(?:#\[[^\]]+\]\s*)*fn (\w+)\(', path.read_text())]
-        self.assertEqual(len(source), 118)
+        self.assertEqual(len(source), 123)
         for job in JOBS:
             names = re.findall(r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', fixture(job), re.M)
             self.assertEqual(len(names), 97)
@@ -140,6 +140,32 @@ class AuthenticatedSuiteCount(unittest.TestCase):
                                            for name in names + source_fixture_history()])
             self.assertEqual(sum('::post_write_readback::tests::' in name for name in names), 25)
             self.assertEqual(sum('::current_accounts_tests::' in name for name in names), 5)
+
+    def test_previous_118_names_cannot_claim_current_123_executions(self):
+        # This is an explicitly synthetic reader input, never rewritten evidence.
+        current = source_fixture_log(JOBS[0])
+        state_names = [name for name in source_fixture_history()
+                       if '::record_binding::state_binding::' in name]
+        self.assertEqual(len(state_names), 5)
+        previous = current
+        for name in state_names:
+            line = f'test {name} ... ok\n'
+            self.assertEqual(previous.count(line), 1)
+            previous = previous.replace(line, '', 1)
+        previous = previous.replace('123 passed', '118 passed').replace(
+            'running 123 tests', 'running 118 tests')
+        self.assertEqual(len(re.findall(
+            r'^test (store::native_authenticated::\w[\w:]*) \.\.\. ok$', previous, re.M)), 118)
+        self.assertEqual(check(previous), (False, False))
+        # A current-looking summary cannot supply the five absent executions.
+        forged = previous.replace('118 passed', '123 passed').replace(
+            'running 118 tests', 'running 123 tests')
+        self.assertEqual(check(forged), (True, False))
+        for name in state_names:
+            with self.subTest(missing=name):
+                changed = current.replace(f'test {name} ... ok\n',
+                                          f'test {name}_substituted ... ok\n', 1)
+                self.assertEqual(check(changed), (True, False))
 
     def test_missing_duplicate_wrong_group_and_current_identity_rejected(self):
         log = source_fixture_log(JOBS[0])
@@ -163,8 +189,8 @@ class AuthenticatedSuiteCount(unittest.TestCase):
         self.assertEqual(check(log.replace(summary, ''), historical=True), (False, False))
         self.assertFalse(check(log + summary + '\n', historical=True)[1])
         log = source_fixture_log(JOBS[0])
-        for old, new in [('118 passed', '97 passed'), ('118 passed', '117 passed'),
-                         ('118 passed', '119 passed'), ('0 failed', '1 failed'),
+        for old, new in [('123 passed', '97 passed'), ('123 passed', '122 passed'),
+                         ('123 passed', '124 passed'), ('0 failed', '1 failed'),
                          ('0 ignored', '1 ignored'), ('result: ok.', 'result: FAILED.')]:
             with self.subTest(new=new):
                 self.assertEqual(check(log.replace(old, new)), (False, False))
@@ -187,15 +213,15 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
         registries = registry_fixtures()
         result, selected = workspace_registry_check(registries)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('postwrite-history: expected 21 actual registered controls, got 0', result.stderr)
+        self.assertIn('postwrite-history: expected 26 actual registered controls, got 0', result.stderr)
         self.assertIsNone(selected)
         registries = source_registry_fixtures()
         result, selected = workspace_registry_check(registries)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report['selected_count'], 118)
-        self.assertEqual(len(selected.splitlines()), 118)
-        self.assertEqual(len(set(selected.splitlines())), 118)
+        self.assertEqual(report['selected_count'], 123)
+        self.assertEqual(len(selected.splitlines()), 123)
+        self.assertEqual(len(set(selected.splitlines())), 123)
         extensions = {**source_fixture_extensions(), **source_fixture_extensions('m06')}
         self.assertEqual({group['group']: group['expected_count'] for group in report['groups']
                           if group['group'] not in extensions}, {

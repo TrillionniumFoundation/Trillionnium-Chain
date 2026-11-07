@@ -51,7 +51,7 @@ def source_fixture_extensions(crate='node'):
     source_root = ROOT / 'trillionnium/crates' / package / 'src'
     specifications = (
         ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
-         'store::native_authenticated::post_write_readback::history_tests', 21),
+         'store::native_authenticated::post_write_readback::history_tests', 26),
         ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
          'host_kernel_parent::kernel_parent::relative_tests', 8),
         ('header-material', 'store/observed_history/tests.rs',
@@ -107,7 +107,7 @@ class NativeRosterTests(unittest.TestCase):
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
         cls.source_fixture_extensions = {}
         cls.source_fixture_registries = dict(cls.registries)
-        for crate, expected in (('node', 55), ('m06', 3)):
+        for crate, expected in (('node', 60), ('m06', 3)):
             extensions = source_fixture_extensions(crate)
             if cls.source_fixture_extensions.keys() & extensions.keys():
                 raise ValueError('source fixture group has more than one crate owner')
@@ -162,7 +162,7 @@ class NativeRosterTests(unittest.TestCase):
         # Historical libtest evidence cannot claim registration of newer controls.
         result, selected = self.run_workspace()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('postwrite-history: expected 21 actual registered controls, got 0', result.stderr)
+        self.assertIn('postwrite-history: expected 26 actual registered controls, got 0', result.stderr)
         self.assertIsNone(selected)
         result, selected = self.run_workspace(node=self.source_fixture_node, m06=self.source_fixture_m06)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -178,7 +178,7 @@ class NativeRosterTests(unittest.TestCase):
             extension = next(row for row in report['groups'] if row['group'] == name)
             self.assertCountEqual(extension['tests'], tests)
             self.assertEqual(extension['expected_count'], len(tests))
-        self.assertEqual(report['selected_count'], 118)
+        self.assertEqual(report['selected_count'], 123)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()
@@ -190,6 +190,35 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIn('reorg-tail', selected)
         self.assertIn('current-sql-root', selected)
         self.assertIn('prepared-current-history', selected)
+
+    def test_previous_118_registry_cannot_claim_current_state_binding_roster(self):
+        # Only a separate synthetic registry loses these five declarations.
+        # The historical ZIP, its native registries and original failure stay intact.
+        names = [name for name in self.source_fixture_extensions['postwrite-history']
+                 if '::record_binding::state_binding::' in name]
+        self.assertEqual(len(names), 5)
+        previous = self.source_fixture_node
+        for name in names:
+            line = name + ': test\n'
+            self.assertEqual(previous.count(line), 1)
+            previous = previous.replace(line, '', 1)
+        current_selector = (
+            'prefix("node", "postwrite-history", '
+            '"store::native_authenticated::post_write_readback::history_tests::", 26)')
+        current_script = workspace_script()
+        self.assertEqual(current_script.count(current_selector), 1)
+        previous_script = current_script.replace(
+            current_selector, current_selector.replace(', 26)', ', 21)'))
+        old, old_selected = self.run_workspace(
+            script=previous_script, node=previous, m06=self.source_fixture_m06)
+        self.assertEqual(old.returncode, 0, old.stderr)
+        self.assertEqual(json.loads(old.stdout)['selected_count'], 118)
+        self.assertEqual(len(old_selected.splitlines()), 118)
+        result, selected = self.run_workspace(node=previous, m06=self.source_fixture_m06)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('postwrite-history: expected 26 actual registered controls, got 21',
+                      result.stderr)
+        self.assertIsNone(selected)
 
     def test_missing_extra_and_duplicate_native_registration_refused(self):
         node = self.source_fixture_node
