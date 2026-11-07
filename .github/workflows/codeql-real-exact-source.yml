@@ -90,6 +90,16 @@ jobs:
                   raise SystemExit(f'CODEQL_SARIF_INVALID:{path.name}')
           print(f'CODEQL_SARIF_FILES={len(files)} CODEQL_LANGUAGE=${{ matrix.language }}')
           PY
+      - name: Retain post-analysis worktree observations
+        if: always() && steps.codeql.outcome != 'skipped'
+        shell: bash
+        run: |
+          set -euo pipefail
+          identity="$RUNNER_TEMP/codeql-identity/${{ matrix.language }}/${{ matrix.source }}"
+          mkdir -p "$identity"
+          git --no-replace-objects status --porcelain=v1 -z --untracked-files=all --ignore-submodules=none > "$identity/worktree-status.z"
+          git --no-replace-objects diff --no-ext-diff --no-textconv --name-status -z HEAD > "$identity/worktree-diff-names.z"
+          git --no-replace-objects diff --no-ext-diff --no-textconv --stat HEAD > "$identity/worktree-diff-stat.txt"
       - name: Verify analyzed source stayed unchanged
         if: always() && steps.codeql.outcome != 'skipped'
         shell: bash
