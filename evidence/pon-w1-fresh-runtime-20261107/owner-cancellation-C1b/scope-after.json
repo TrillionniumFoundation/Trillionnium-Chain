@@ -1,0 +1,69 @@
+{
+  "all_historical_descendants_reaped": null,
+  "all_listed_original_identities_not_live": true,
+  "all_named_original_cgroups_absent_or_recursively_empty": true,
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "complete_historical_resource_ownership_proved": false,
+  "named_cgroup_observations": [
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b80aa46c-12894-d18.service",
+      "state": "ABSENT"
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b80aa46c-12894-d18.service/trnm-w1-generation-ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+      "state": "ABSENT"
+    },
+    {
+      "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b80d2416-12894-d1e.service",
+      "state": "ABSENT"
+    }
+  ],
+  "native_transactions_submitted": 0,
+  "new_generation_dispatches": 0,
+  "observed_monotonic_ns": 1167025510026130,
+  "original_database_opened_or_modified": false,
+  "original_deadline_ns": 1167336972674704,
+  "original_operation": "ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e",
+  "pid_identity_observations": [
+    {
+      "original": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1904644,
+        "start_ticks": 116673508
+      },
+      "state": "ABSENT"
+    },
+    {
+      "original": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1905265,
+        "start_ticks": 116674977
+      },
+      "state": "ABSENT"
+    },
+    {
+      "original": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1905277,
+        "start_ticks": 116675109
+      },
+      "state": "ABSENT"
+    },
+    {
+      "original": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 1914740,
+        "start_ticks": 116690507
+      },
+      "state": "ABSENT"
+    }
+  ],
+  "provider_payment_authorized": false,
+  "raw_terminal_receipt": {
+    "bytes": 2963,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/owner-cancel-observation-02/cold-job-receipt.json",
+    "sha256": "086b96104c28a6df5cf305f6d0ea569b2418724df048ae5bfa2e72ee05dcbaf5"
+  },
+  "schema": "TRNM-W1-CANCEL-CLOSED-SCOPE-OBSERVATION1",
+  "scope": "read-only current birth identities and named original cgroups after both actual outer jobs reached terminal; no historical wait/reap or billing inference"
+}

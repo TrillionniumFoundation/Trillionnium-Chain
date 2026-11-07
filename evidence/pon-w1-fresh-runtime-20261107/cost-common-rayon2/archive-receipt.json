@@ -1,0 +1,19 @@
+{
+  "archive": {
+    "bytes": 125120,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/cost-common-rayon2/raw.tar.gz",
+    "sha256": "299900afbae0e1849bc79d0122e34b065d324bb5e1119a2b49a346d9b595f6fb"
+  },
+  "component": "cost-common-rayon2",
+  "every_member_readback_verified": true,
+  "excluded_files": 0,
+  "index": {
+    "bytes": 204244,
+    "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-fresh-runtime-01/evidence/pon-w1-fresh-runtime-20261107/cost-common-rayon2/raw-index.json",
+    "sha256": "cf5d0d28fcc24b5fef382060efc924dbeb3182e88b313035b9d32462fe3a7c0b"
+  },
+  "members": 547,
+  "no_payload_executed": true,
+  "raw_bytes": 1665493,
+  "schema": "TRNM-W1-PUBLIC-COMPONENT-ARCHIVE1"
+}

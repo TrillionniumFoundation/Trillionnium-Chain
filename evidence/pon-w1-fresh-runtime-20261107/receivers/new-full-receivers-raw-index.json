@@ -1,0 +1,476 @@
+{
+  "exclusions": [],
+  "new_proofs_generated_by_receiver": 0,
+  "records": [
+    {
+      "bytes": 4475,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/crosshost-tools-02/rog-receiver-launch.py",
+      "relative": "crosshost-tools-02/rog-receiver-launch.py",
+      "sha256": "c435ec8357861952eea6f6a1cdda6ae822baf198d8baef47cb608191d6522c20"
+    },
+    {
+      "bytes": 10446,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/crosshost-tools-02/rog-terminal-readback.py",
+      "relative": "crosshost-tools-02/rog-terminal-readback.py",
+      "sha256": "a2c7d84cbf69b9ec668290aeccef0498365dce17c3d34f0b05fdcfacc96ff5b0"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-5f48e486de80b4e8aa48e191",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-5f48e486de80b4e8aa48e191",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-6ce79825e6ed45f23cabbe56",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-6ce79825e6ed45f23cabbe56",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-6f72414898b4aee477d7cf09",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-6f72414898b4aee477d7cf09",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-bd51df9a3ff9612a65daf496",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-bd51df9a3ff9612a65daf496",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-e332b033b08953c88b170c2d",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/.hepta-lock-e332b033b08953c88b170c2d",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 318,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/header.bin",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 1101,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/request.json",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/request.json",
+      "sha256": "1b0110b5714e8660436067311ef2cd7ef3a47b826aa7f0fbde7ba6a4e41b24fb"
+    },
+    {
+      "bytes": 257014,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/succinct.bin",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/succinct.bin",
+      "sha256": "585808f32353a272c310595fa31b33f1ba160add53490c1673bf7fa6c6bc2e57"
+    },
+    {
+      "bytes": 858,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/winner-intent.json",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/winner-intent.json",
+      "sha256": "e5e749764706780a645cd630dfc907bd0362711a5505893ed5cabadcd188c67f"
+    },
+    {
+      "bytes": 1067,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-inbox-01/winner-result.json",
+      "relative": "independent-receiver-01/new-funded-balanced-inbox-01/winner-result.json",
+      "sha256": "93eaa2f08367708b9239e467e5575a4dd6b47c5a8bbdf2713746e5e63d92cab5"
+    },
+    {
+      "bytes": 2770,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-launch-01.json",
+      "relative": "independent-receiver-01/new-funded-balanced-launch-01.json",
+      "sha256": "afd09ffc04d0bd02ec765f3f2cd94fab74ab5a45e79bcaadbe207f5ddfbf9ce4"
+    },
+    {
+      "bytes": 15330,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/ack.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/ack.json",
+      "sha256": "6d9dedb469db693e7c47bcd79b43071c9b000555274cec46054cf4865797d0a4"
+    },
+    {
+      "bytes": 4048,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/intent.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/intent.json",
+      "sha256": "05df7f0f8a12d66221c05878eb72d1adbbae806f13a94aba58aa7927338435af"
+    },
+    {
+      "bytes": 2233,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/declaration.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/declaration.json",
+      "sha256": "f2c579ecf87d0b2a4a5e5ec8cf3ef50b6e3b33fa2a1d2e6b008852f07bbbde04"
+    },
+    {
+      "bytes": 542,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/process-samples.jsonl",
+      "sha256": "89e380d230864dbc8d17178717e6600ea7dcfbac1488b8534bc77985fedfd5aa"
+    },
+    {
+      "bytes": 3859,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/result.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/result.json",
+      "sha256": "294596891c20c4f6ae1944d69f43ef3213b5a6fe9a3ae6794d8fc71d33e640e3"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/stderr.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 201,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/stdout.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-independent-receiver/stdout.log",
+      "sha256": "9499e76bb50a367e2ba68c1dcd4e689c6ec00155aeffd7934450d3a3958072ad"
+    },
+    {
+      "bytes": 1556,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/declaration.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/declaration.json",
+      "sha256": "6d855502e9f91a485fa05ae9bb87461a009233740ce685647745a88fd0066765"
+    },
+    {
+      "bytes": 542,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/process-samples.jsonl",
+      "sha256": "e041e5fcac9b75019d82d3829d65ac5b1bffab71b0b870434b2d027c1fa394c1"
+    },
+    {
+      "bytes": 3184,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/result.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/result.json",
+      "sha256": "f683abba8e38d5788c798098cef348d5b2a082ebbf3f0dfe8f78cba1b637eb66"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/stderr.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/stdout.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-after/stdout.log",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 1557,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/declaration.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/declaration.json",
+      "sha256": "7f25be788d63a6c3fad5dcb5d9c67d4f987a4fdfd14a0c0ff5fe344622d3ae8a"
+    },
+    {
+      "bytes": 1629,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/process-samples.jsonl",
+      "sha256": "4ff16e3417db9a06906909cb6df690946926930c3aadf291122ded9895b86078"
+    },
+    {
+      "bytes": 3188,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/result.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/result.json",
+      "sha256": "3dd9c093ca851a27ac709c950e3483cad6b63151ad8bc302fe5fb016bd70d142"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/stderr.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/stdout.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/measure-source-before/stdout.log",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 6814,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/ack.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/ack.json",
+      "sha256": "e2ab5342c7d4599ed6d0c7ead8a291a3677af716118361fd0694ed96b9d2a40e"
+    },
+    {
+      "bytes": 1334,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/intent.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/intent.json",
+      "sha256": "185d4ccdcacdb0fda5a33ffc42c0845a834ddc4eb87ef085970f0af88b534ac5"
+    },
+    {
+      "bytes": 1588,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/declaration.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/declaration.json",
+      "sha256": "484b2e58d9429d261b32f9498af44bec99452eebea6e97eac280a573b0bb4d79"
+    },
+    {
+      "bytes": 535,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/process-samples.jsonl",
+      "sha256": "02352c592c0eeb63c2052b7d5bdc8be0590743c0133dd9488334f23783312823"
+    },
+    {
+      "bytes": 3205,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/result.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/result.json",
+      "sha256": "83973805306fd218f73469079cf16a20cf82082964cc3fb3b5bbfa34cea04667"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/stderr.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 921,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/stdout.log",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/receiver/verify/stdout.log",
+      "sha256": "3bab10390de6de218fc949014941394ec5d1628098d3fa651e8f6df5a3e32952"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/source-after.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-receive-01/source-before.json",
+      "relative": "independent-receiver-01/new-funded-balanced-receive-01/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 6845,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-funded-balanced-terminal-readback-01.json",
+      "relative": "independent-receiver-01/new-funded-balanced-terminal-readback-01.json",
+      "sha256": "96f8b8f5691f157af3b439ec2e7717849d62100f37e24e483d54d6b14eaa2dcb"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-5f48e486de80b4e8aa48e191",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-5f48e486de80b4e8aa48e191",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-6ce79825e6ed45f23cabbe56",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-6ce79825e6ed45f23cabbe56",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-6f72414898b4aee477d7cf09",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-6f72414898b4aee477d7cf09",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-bd51df9a3ff9612a65daf496",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-bd51df9a3ff9612a65daf496",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-e332b033b08953c88b170c2d",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/.hepta-lock-e332b033b08953c88b170c2d",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 318,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/header.bin",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 1105,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/request.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/request.json",
+      "sha256": "75b6d85dd1b34f34ef2ce52b1a58f36a5523c4b6e6a81873ee526e036e83dee4"
+    },
+    {
+      "bytes": 257014,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/succinct.bin",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/succinct.bin",
+      "sha256": "033586595c7c203acc48b48e16d969b1376a833244fa82f3b64edfdcc35033c2"
+    },
+    {
+      "bytes": 858,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/winner-intent.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/winner-intent.json",
+      "sha256": "c8bff97973302713511268c853afb7a8491c72f5cde590a4d0977968963ba203"
+    },
+    {
+      "bytes": 1067,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-inbox-01/winner-result.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-inbox-01/winner-result.json",
+      "sha256": "4fcd30695a2b20242f41dac0745aa6bbe71bc8eeb73df40119923c88cae825df"
+    },
+    {
+      "bytes": 2786,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-launch-01.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-launch-01.json",
+      "sha256": "53ed0c63c32e32e33e0fa211208076f5f3c71e72c37a00617d086a369780f4cf"
+    },
+    {
+      "bytes": 15429,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/ack.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/ack.json",
+      "sha256": "e6be6148b80243a4bbd1fcb2c213d29d9318f8828f08608fa0b968ccca4cdd4e"
+    },
+    {
+      "bytes": 4080,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/intent.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/intent.json",
+      "sha256": "1bc6d82cf6efa937a41322dd3e3da56dbfcfe99da5e5006094808eb5b21aa587"
+    },
+    {
+      "bytes": 2249,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/declaration.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/declaration.json",
+      "sha256": "ed5e1d9a785bf8cb65278049d777c9c0dfcf89e56bb9f73442a33b48e135cacf"
+    },
+    {
+      "bytes": 715,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/process-samples.jsonl",
+      "sha256": "54507781d5ee1186f77e3d8f9e92bb179c91b1f8dbed9333ff74cc9de9b0818c"
+    },
+    {
+      "bytes": 4379,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/result.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/result.json",
+      "sha256": "b7fbbac0d1f782ace38bf5775f45e65577464ef5426b5c829f391ca0a3660514"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/stderr.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 201,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/stdout.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-independent-receiver/stdout.log",
+      "sha256": "9499e76bb50a367e2ba68c1dcd4e689c6ec00155aeffd7934450d3a3958072ad"
+    },
+    {
+      "bytes": 1562,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/declaration.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/declaration.json",
+      "sha256": "9beec697a4332aeb1d90426f4968fb7bd1a816318105fd69deeeb94ae1456e79"
+    },
+    {
+      "bytes": 541,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/process-samples.jsonl",
+      "sha256": "60988d4c32f0a6a340df794de40df8881f2c97a76cda3e52863f756e258aec3c"
+    },
+    {
+      "bytes": 3192,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/result.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/result.json",
+      "sha256": "8d0c53f29682351bb6b4889ba2e514b4496ee819eb1840c95783f9b7e5f86ed4"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/stderr.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/stdout.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-after/stdout.log",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 1563,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/declaration.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/declaration.json",
+      "sha256": "a91f6393e392c1ef6244cb4bbc8fba43724e613aa14f9aa1c627b26ca2c8390b"
+    },
+    {
+      "bytes": 1629,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/process-samples.jsonl",
+      "sha256": "1d5d3429802a0070939ac9b90bba6dac67671c9f0e837abdc6f86027901815ae"
+    },
+    {
+      "bytes": 3203,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/result.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/result.json",
+      "sha256": "c7a4c2953008d5ea1c4ae7f0325aefc13bd102139776c002d841965c813067a1"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/stderr.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/stdout.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/measure-source-before/stdout.log",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 6839,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/ack.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/ack.json",
+      "sha256": "76e065c6d4fc4da6c506f9ad86ba127deb1a1b5c481f7be570d44100ab04e196"
+    },
+    {
+      "bytes": 1336,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/intent.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/intent.json",
+      "sha256": "c85c4f2f7205e87221640689cd7ebd87d06796651cb11c35c704121e236a23d2"
+    },
+    {
+      "bytes": 1598,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/declaration.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/declaration.json",
+      "sha256": "a047d78f1935f39e54026e85330b51c9c87aea51a6dd341a449606d815923d53"
+    },
+    {
+      "bytes": 535,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/process-samples.jsonl",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/process-samples.jsonl",
+      "sha256": "6188b07851a4ebef57e3b801bce5b286ce244ee3a95a47fc71b170bba175fc30"
+    },
+    {
+      "bytes": 3228,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/result.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/result.json",
+      "sha256": "c031a4a3de19a74633a532cdc258010b9a9ce2284606e9ce7b7c059b1876ac46"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/stderr.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 921,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/stdout.log",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/receiver/verify/stdout.log",
+      "sha256": "e40bbca4bb9b037ff6956471ed56ab0070e1a33de82d3dbc7ccb804ed491f4cb"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/source-after.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/source-after.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 423,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-receive-01/source-before.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-receive-01/source-before.json",
+      "sha256": "e2e1d88b8bb08d6da57361287d3f76df9f78299fb5a44b45d3bdb0ea61c08556"
+    },
+    {
+      "bytes": 6897,
+      "path": "/home/qian-qi/work/chain-w1-funded-owner-20261107-r01/independent-receiver-01/new-sequential-unfunded-terminal-readback-01.json",
+      "relative": "independent-receiver-01/new-sequential-unfunded-terminal-readback-01.json",
+      "sha256": "1eafba6c1f259363a409ef96a3bcaa35c01a94553cc0af1d1263950b9a1d3527"
+    }
+  ],
+  "schema": "TRNM-W1-ROG-NEW-RECEIVER-RAW-INDEX1",
+  "scope": "Both new full receipt receiver inbox, receive outputs, actual launch records, terminal readback; prior A verifier qualification is retained in separate original archive."
+}

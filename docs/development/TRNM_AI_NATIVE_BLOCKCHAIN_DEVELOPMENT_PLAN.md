@@ -7747,3 +7747,21 @@ C1 提交 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11` 的五角色开发资格已
 六个 owned 文件的 desktop 候选短控已实际完成：target 13、owned runtime reader 7、owner helper 7，合计 27 项通过、0 skip、0 full proof。控制覆盖真实 339 文件 pins 的大请求、既有 preflight/dispatch/replay 路径中的有限非 proof 子进程、精确容量边界及有界读取、严格 JSON 与原身份替换拒绝。旧 68,909-byte 请求只作只读回归；新 target 的源码 pin 检查仍拒绝其旧执行身份，没有重派。候选 manifest SHA256 为 `befc16bb6c00b676356daa17a8fbea3bc839ca62e0ffb8e7157c4e06edb7f0f7`，原失败资金读回 SHA256 为 `93374756a3ca5e5e9b5ff18ec641a3c2304c1a8a64579c57179d2c089604de16`。
 
 本条记录形成时，新提交的完整精确资格和新的实际昂贵取消/独立冷恢复尚未完成。原业务的 4 秒、0.25 CPU、2 GiB 预算及完整密码学安全资格仍未通过；新的 600 秒研究试验不会替代这些门槛。
+
+
+### 2026-11-07：W1 两份 fresh 证明、ROG 原钟接收与真实 owner 取消终态（C2 证据收口）
+
+本轮测量源码分开固定为 A `d3037ca5dfb6f301757c159b7888dca9b0317be0`、取消集成 C1 `cb557c5e59b00ba7c6b1d40f78fbe51031a26f11`、请求容量修复 C1b `0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf`。完整原件、源资格、最终 receipt、成本及状态审计收口到 [W1 fresh runtime 证据](../../evidence/pon-w1-fresh-runtime-20261107/README.md) 与 [机器可读结论](../../evidence/pon-w1-fresh-runtime-20261107/summary.json)。当前提交只追加本计划和该新 evidence 目录；runtime、Cargo graph/lock、CI 与 corpus 保持 C1b 的字节。
+
+- 两组固定输入各完成 1 份 fresh 完整证明；每份均为 43 个新 segment、43 次 lift、42 次 join、0 递归 checkpoint 复用。分段／平衡的 pipeline 为 6,044.373854 秒，顺序为 5,939.121782 秒；本对样本前者慢 105.252072 秒。各配置 8 CPU／8 GiB，但共享主机、不同 CPU 集合与 worker 计划，不能据此宣称因果加速或总体 p99。
+- 本地独立验证及新 ROG receiver 均完成。原父时钟的 winner→完整远端返回包为 6,648.759587／6,658.476311 秒，仍分别距原始 deadline 有 542.217424／533.531039 秒。未跨主机相减时钟，未延长 proof deadline；该时间包含调度、传输和取回，不是部署 WAN 或中奖区块 Node admission 资格。
+- 共同 Rayon=2、2 CPU／8 GiB 的新 ABBA 实际 80 行全部完成；两份 receipt 的 proof/native 内层验证中位数比为 13.063490／13.430828，receipt/native payload 字节比均为 5.191573。每份只有 20 次 proof 重复验证，p99 是样本最大值；这些不是新增生成样本。内层验证与载荷体积未优于 native，部署传输收益未建立。
+- 原业务 4 秒／0.25 CPU／2 GiB 实测退出 124，没有完整 proof 或 ACK；总观察 7.402 秒含终止清理。原业务 hostile 输入、唯一确认交易与 6 次确认全流程仍未执行，宽研究窗口不替代原预算。
+- 昂贵完整生成确已接入 NativeTask Reserve 和 M12 Prepare→Intent→BindJob，并完成独立完整验证；该原操作仍 Pending，NativeTask Reserved／1,000、GPU UNKNOWN、资源 cap 保留、provider 未付款。没有把完整 proof 通过转换为自动资金许可。
+- 原 C1 真实取消试验在分发前因 68,909 字节请求（canonical 66,550）超过旧 64 KiB 而 exit 101，原操作、原 deadline、Prepare/Intent/Reserve 和全 cap 保留。C1b 采用显式 128 KiB 原始 UTF-8 容量与共享严格有界解析；27 项候选测试及精确已提交源码资格均通过，V2 canonical/hash/stored domains 未改变。
+- C1b 新 operation `ebe3c586d634730e7464f2e3661aea37f6ed7402c0d74f1a695224510d2e2f5e` 真实启动固定 r0vm 后接受 owner 取消。原 target terminal/cancelled、sticky veto、不可重派，子 cgroup 递归为空；主 job 和新进程 cold job 均实际 exit 0、输出完整持久，各通过 1 个精确入口。Cold 沿同一 statement/operation/原 deadline，0 新生成、0 target cancel 请求、0 native 交易。后读回列出的 4 个 PID birth identity 与 3 个原 scope 均 ABSENT；完整历史全部后代 wait/reap 与资源计费仍 UNKNOWN。
+- 独立私有副本审计核到 M12 Prepare/Intent/BindJob/Cancel 各 1 条、完整序号与哈希链绑定、没有 Verified/Settlement/Payment，cap 不释放。实际请求完整保留 339 pins，raw 68,944／canonical 66,585 字节，确实走通旧容量以上的新路径。原 Cancel packet 在 canonical height 2 一次包含、nonce 0→1→2；本金退回 1,000，Cancel 账户净增 709，全程净变 −710。291/419 是费用相关算术残差，未独立解码 fee 字段；未实际重发旧 wire，也未把本金退款当成 provider 付款或资源 credit。
+- C1b 精确源码四门为 67 条成功命令和 770 项实际测试方法结果，聚合另有 4 条只读检查；CI 471 项含 mandatory 104。短控中 3 个 heavy 入口明确 ignored，真实取消和 cold 另行单独执行。旧 A/C1 qualified ELF 及失败原件保留；复制缓存如实标记非独立 cleanroom build，guest 未重编。
+- 公开包只含最终证明、源绑定输入、列明的小型原件、审计与 SHA 清单；四库私有页及完整私有 dump 不公开。准备／采集／辅助观察和包内成员数检查失败均保留，修正不重跑资金操作或证明。Kaggle CUDA 探针成功但 build-only 请求正常 guard 拒绝、Colab 原绑定/释放冲突及后续只读状态均维持原记录，0 GPU W1 proof。
+
+四门仍分别保留部署 HOLD：中奖 W1 的真实网络 Node admission、完整历史资源归属、昂贵任务重组/超时全路径与正向一次性 provider 付款、原业务预算、总体生成尾延迟、验证/传输部署收益及完整密码学/PQ/语义/DA/模型效用条件未完成。最终发布提交的精确资格由独立外部 attestation 引用实际被测 commit；事后资格结果不写回并改变该被测提交。没有部署、激活、force push、自审批准或受保护主分支绕过。
