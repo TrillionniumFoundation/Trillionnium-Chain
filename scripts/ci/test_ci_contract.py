@@ -1462,6 +1462,7 @@ class W1PostwinLaneTests(unittest.TestCase):
             'python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"',
             'python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"',
             'python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"',
             'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"',
             'python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"',
             'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"',
@@ -1503,7 +1504,9 @@ class W1PostwinLaneTests(unittest.TestCase):
             ('("cancellation-handoff", 22)', '("cancellation-handoff", 0)'),
             ('("coordinator-contract", 20)', '("coordinator-contract", 1)'),
             ('("provider-contract", 11)', '("provider-contract", 8)'),
-            ('("generation-target", 4)', '("generation-target", 0)'),
+            ('("generation-target", 7)', '("generation-target", 0)'),
+            ('("generation-target", 7)', '("generation-target", 4)'),
+            ('("owner-cancellation", 5)', '("owner-cancellation", 0)'),
             ('("source-builder", 8)', '("source-builder", 0)'),
             ('("owned-runtime-reader", 5)', '("owned-runtime-reader", 0)'),
             ('("kaggle-worker-contract", 12)', '("kaggle-worker-contract", 0)'),
@@ -1599,6 +1602,8 @@ class W1PostwinLaneTests(unittest.TestCase):
             ("  contents: read", "  contents: write"),
             ("  cancel-in-progress: false", "  cancel-in-progress: true"),
             ("      - evidence/pon-w1-full-v2-20261105/**\n", ""),
+            ("      - scripts/w1_owner_cancellation_v1.py\n", ""),
+            ("      - scripts/test_w1_owner_cancellation_v1.py\n", ""),
         ):
             self.assertIn(before, self.workflow)
             with self.subTest(before=before):

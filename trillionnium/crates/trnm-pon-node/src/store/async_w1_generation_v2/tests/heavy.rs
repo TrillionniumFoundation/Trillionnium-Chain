@@ -515,6 +515,10 @@ impl OwnedGenerationRuntimeV2 for LocalRuntime {
 }
 
 fn execute(config_path: &Path) -> Result<()> {
+    execute_mode(config_path, false)
+}
+
+fn execute_mode(config_path: &Path, owner_cancel: bool) -> Result<()> {
     let raw = bytes(config_path, 131072)?;
     let c: Value = serde_json::from_slice(&raw).map_err(owner_error)?;
     check(
@@ -531,6 +535,19 @@ fn execute(config_path: &Path) -> Result<()> {
     )?;
     let out = PathBuf::from(text(&c, "out")?);
     let (node_path, reserve_nonce) = research_funding(&c, &out)?;
+    if owner_cancel {
+        cancellation::Plan::parse(&c)?;
+        check(
+            !node_path.exists() && reserve_nonce == 1,
+            "CANCEL_FRESH_RESEARCH_NODE_REQUIRED",
+        )?;
+        pin(&c["owner_cancel_runtime"])?;
+    } else {
+        check(
+            c.get("owner_cancellation").is_none(),
+            "CANCEL_REQUIRES_EXPLICIT_IGNORED_ENTRY",
+        )?;
+    }
     check(
         out.is_absolute() && !out.exists(),
         "HEAVY_FRESH_EXTERNAL_OUTPUT_REQUIRED",
@@ -735,6 +752,25 @@ fn execute(config_path: &Path) -> Result<()> {
     )?;
     // The actual expensive process is launched only after both real native
     // Reserve and the M12 durable Intent above. There is no verifier fixture.
+    if owner_cancel {
+        return cancellation::run(cancellation::Run {
+            config_path: config_path.into(),
+            config: c,
+            config_hash,
+            out,
+            node,
+            store,
+            runtime,
+            configuration: cfg,
+            node_path,
+            task,
+            id,
+            statement,
+            reserve_tip,
+            reserve_nonce,
+            request_path,
+        });
+    }
     let generated = phase(
         config_path,
         &c,
@@ -909,4 +945,28 @@ fn funded_fresh_full_w1_generation() {
         "explicit absolute TRNM_W1_FUNDED_CONFIG is required; there is no fixture or skip fallback",
     ));
     execute(&path).expect("funded full-W1 research operation failed; retain original evidence and reconcile, never redispatch");
+}
+
+mod cancellation;
+
+#[test]
+#[ignore = "explicit owner cancellation of a real expensive W1 worker; requires a new research Node and original operation"]
+fn funded_fresh_full_w1_generation_owner_cancel_after_segment_start() {
+    let path = PathBuf::from(
+        std::env::var_os("TRNM_W1_FUNDED_CONFIG").expect("explicit absolute config required"),
+    );
+    execute_mode(&path, true).expect("owner cancellation observation incomplete; preserve all original effects and reconcile only");
+}
+
+#[test]
+#[ignore = "read-only cold reconciliation of an existing owner-cancel attempt; never dispatches generation or cancellation"]
+fn funded_w1_owner_cancellation_cold_reconcile() {
+    let path =
+        PathBuf::from(std::env::var_os("TRNM_W1_FUNDED_CONFIG").expect("original config required"));
+    let out = PathBuf::from(
+        std::env::var_os("TRNM_W1_CANCEL_RECONCILE_OUT")
+            .expect("new external observation directory required"),
+    );
+    cancellation::cold_reconcile(&path, &out)
+        .expect("cold observation incomplete; original intent stays retained, never redispatch");
 }

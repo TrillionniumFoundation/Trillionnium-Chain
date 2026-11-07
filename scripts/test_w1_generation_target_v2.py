@@ -161,6 +161,57 @@ class TargetTests(unittest.TestCase):
                 target.request_check(r, r["target_instance"])
             self.assertFalse((root / "invocations").exists())
 
+    def test_recursive_population_cannot_hide_behind_empty_direct_members(self):
+        # Files model kernel readback, not a claim of actual cgroup execution.
+        with tempfile.TemporaryDirectory() as temporary:
+            group = Path(temporary)
+            (group / "cgroup.procs").write_text("")
+            (group / "cgroup.events").write_text("populated 1\nfrozen 0\n")
+            nested = group / "nested"
+            nested.mkdir()
+            (nested / "cgroup.procs").write_text("12345\n")
+            observed = target.cgroup_observation(group)
+            self.assertEqual(observed["members"], [12345])
+            self.assertFalse(observed["recursive_empty"])
+            self.assertIsNone(observed["all_descendants_reaped"])
+            (nested / "cgroup.procs").write_text("")
+            self.assertFalse(target.cgroup_observation(group)["recursive_empty"])
+            (group / "cgroup.events").write_text("populated 0\nfrozen 0\n")
+            self.assertTrue(target.cgroup_observation(group)["recursive_empty"])
+
+    def test_missing_hierarchical_events_and_replaced_identity_remain_unknown(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            group = Path(temporary)
+            (group / "cgroup.procs").write_text("")
+            with self.assertRaises(FileNotFoundError):
+                target.cgroup_observation(group)
+            (group / "cgroup.events").write_text("populated 0\npopulated 0\n")
+            with self.assertRaisesRegex(ValueError, "duplicate"):
+                target.cgroup_observation(group)
+            (group / "cgroup.events").write_text("populated 0\n")
+            identity = target.cgroup_identity(group)
+            identity["inode"] += 1
+            with self.assertRaisesRegex(ValueError, "identity changed"):
+                target.cgroup_observation(group, identity)
+
+    def test_tree_change_during_observation_cannot_be_complete(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            group = Path(temporary)
+            (group / "cgroup.procs").write_text("")
+            (group / "cgroup.events").write_text("populated 0\n")
+            original = target.cgroup_identity
+            count = 0
+            def changed(path):
+                nonlocal count
+                count += 1
+                result = original(path)
+                if count >= 3:
+                    result["inode"] += 1
+                return result
+            with patch.object(target, "cgroup_identity", side_effect=changed):
+                with self.assertRaisesRegex(ValueError, "tree changed"):
+                    target.cgroup_observation(group)
+
 
 if __name__ == "__main__":
     unittest.main()

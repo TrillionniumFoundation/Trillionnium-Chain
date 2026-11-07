@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import signal
 import sqlite3
+import stat
 import subprocess
 import sys
 import time
@@ -205,10 +206,55 @@ def dispatch(args):
     return public_readback(c, r["operation"], args.target)
 
 
-def cgroup_members(path):
+def cgroup_identity(path):
+    value = Path(path).lstat()
+    check(stat.S_ISDIR(value.st_mode), "original child cgroup is not a directory")
+    return {"device": value.st_dev, "inode": value.st_ino}
+
+
+def cgroup_observation(path, expected_identity=None):
+    """Observe the whole child subtree; a direct procs list is insufficient.
+
+    Missing files, a changed tree or a replaced original cgroup are errors, not
+    empty observations. This establishes a bounded current no-live-task fact;
+    it does not establish that every orphaned descendant has been wait/reaped.
+    """
     if path is None:
         return None
-    return [int(x) for x in (path / "cgroup.procs").read_text().split()]
+    path = Path(path)
+    original = cgroup_identity(path)
+    check(expected_identity is None or original == expected_identity, "original child cgroup identity changed")
+
+    def tree():
+        groups = [path]
+        for group in groups:
+            groups.extend(sorted((p for p in group.iterdir() if stat.S_ISDIR(p.lstat().st_mode)), key=str))
+            check(len(groups) <= 128, "child cgroup subtree bound")
+        return {str(p): cgroup_identity(p) for p in groups}
+
+    before = tree()
+    members = []
+    for group in before:
+        rows = [int(x) for x in (Path(group) / "cgroup.procs").read_text().split()]
+        check(all(pid > 0 for pid in rows) and len(rows) <= 4096, "child cgroup process bound")
+        members.extend(rows)
+    check(len(members) == len(set(members)), "child cgroup membership changed during observation")
+    events = {}
+    for line in (path / "cgroup.events").read_text().splitlines():
+        key, value = line.split()
+        check(key not in events, "duplicate cgroup event counter")
+        events[key] = int(value)
+    check(events.get("populated") in (0, 1), "hierarchical cgroup population unknown")
+    check(before == tree() and cgroup_identity(path) == original, "child cgroup tree changed during observation")
+    return {"schema": "TRNM-W1-OWNED-CGROUP-OBSERVATION1", "path": str(path), "identity": original, "groups": before,
+            "members": sorted(members), "events": events, "observation_complete": True,
+            "recursive_empty": not members and events["populated"] == 0,
+            "all_descendants_reaped": None}
+
+
+def cgroup_members(path):
+    observed = cgroup_observation(path)
+    return None if observed is None else observed["members"]
 
 
 def worker(args):
@@ -227,6 +273,8 @@ def worker(args):
     job = root / args.operation
     child = None
     group = None
+    group_identity = None
+    direct_child_reaped = False
     child_identity = None
     cause = None
     error = None
@@ -239,6 +287,7 @@ def worker(args):
         if r["containment"] == "cgroup-v2":
             group = Path(r["cgroup_parent"]).resolve() / ("trnm-w1-generation-" + args.operation)
             group.mkdir(exist_ok=False)
+            group_identity = cgroup_identity(group)
             if r.get("memory_max_bytes") is not None:
                 check(type(r["memory_max_bytes"]) is int and r["memory_max_bytes"] > 0, "memory limit")
                 (group / "memory.max").write_text(str(r["memory_max_bytes"]))
@@ -268,12 +317,13 @@ def worker(args):
                     cleanup_until = now + r["cleanup_grace_ns"]
                 if cause is not None:
                     if group is not None and (group / "cgroup.kill").is_file():
+                        check(cgroup_identity(group) == group_identity, "refuse kill of replaced child cgroup")
                         (group / "cgroup.kill").write_text("1")
                     elif child.poll() is None and child_identity and same_process(child_identity):
                         os.killpg(child.pid, signal.SIGKILL)
                 code = child.poll()
-                members = cgroup_members(group)
-                if code is not None and (members == [] or group is None):
+                observed_group = cgroup_observation(group, group_identity)
+                if code is not None and (group is None or observed_group["recursive_empty"]):
                     break
                 if cleanup_until is not None and now >= cleanup_until:
                     cause = "termination-unknown"
@@ -282,6 +332,7 @@ def worker(args):
                 time.sleep(0.05)
             if child.poll() is not None:
                 child.wait()
+                direct_child_reaped = True
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         cause = cause or "supervisor-error"
@@ -289,20 +340,23 @@ def worker(args):
         # bounded by the same cleanup grace; the result below retains UNKNOWN.
         if group is not None and (group / "cgroup.kill").is_file():
             try:
+                check(cgroup_identity(group) == group_identity, "refuse kill of replaced child cgroup")
                 (group / "cgroup.kill").write_text("1")
-            except OSError:
+            except (OSError, ValueError):
                 pass
         if child is not None and child.poll() is None and child_identity and same_process(child_identity):
             try:
                 os.killpg(child.pid, signal.SIGKILL)
                 child.wait(timeout=r["cleanup_grace_ns"] / 1e9)
+                direct_child_reaped = True
             except (OSError, subprocess.TimeoutExpired):
                 cause = "termination-unknown"
     finished = time.monotonic_ns()
     try:
-        members = cgroup_members(group)
-    except OSError:
-        members = None
+        observed_group = cgroup_observation(group, group_identity)
+    except (OSError, ValueError):
+        observed_group = None
+    members = None if observed_group is None else observed_group["members"]
     resources = {"cpu_stat": None, "memory_peak_bytes": None, "gpu_ns": None}
     if group is not None:
         try:
@@ -312,7 +366,11 @@ def worker(args):
             pass
     exit_code = None if child is None else child.poll()
     cancellation = read_operation(c, args.operation)["cancel"]
-    owned_terminal = group is not None and members == [] and exit_code is not None
+    if child is not None and exit_code is not None and not direct_child_reaped:
+        child.wait()
+        direct_child_reaped = True
+    owned_terminal = (observed_group is not None and observed_group["recursive_empty"]
+                      and exit_code is not None and direct_child_reaped)
     ok = cause is None and not cancellation and exit_code == 0 and finished < deadline
     result = {"schema": NAMESPACE + "/result", "operation": args.operation,
               "provider_job": actual_job, "child_identity": child_identity, "request_sha256": row["request_sha256"],
@@ -321,6 +379,8 @@ def worker(args):
               "exit_code": exit_code, "cause": cause, "error": error,
               "sticky_cancel": cancellation, "process_containment": r["containment"],
               "cgroup_members_after_cleanup": members, "all_owned_processes_terminal": owned_terminal,
+              "child_cgroup_observation": observed_group, "direct_child_reaped": direct_child_reaped,
+              "all_descendants_reaped": None,
               "resources": resources, "command_success": ok,
               "generation_qualification": "requires-full-independent-verifier-and-fresh-pipeline-closure",
               "resource_qualification": "unknown" if resources["gpu_ns"] is None else "requires-owner-validation",

@@ -66,6 +66,7 @@ case "${1:?required job}" in
       python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"
       python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"
       python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"
+      python3 -m unittest discover -s scripts -p test_w1_owner_cancellation_v1.py -v 2>&1 | tee "$w1_contract_out/owner-cancellation.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"
       python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"
       python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"
@@ -75,7 +76,8 @@ from pathlib import Path
 import re, sys
 root = Path(sys.argv[1])
 expected = (("cancellation-handoff", 22), ("coordinator-contract", 20),
-            ("provider-contract", 11), ("generation-target", 4), ("source-builder", 8),
+            ("provider-contract", 11), ("generation-target", 7), ("owner-cancellation", 5),
+            ("source-builder", 8),
             ("owned-runtime-reader", 5), ("kaggle-worker-contract", 12), ("winner-identity", 4))
 for name, count in expected:
     text = (root / (name + ".log")).read_text()

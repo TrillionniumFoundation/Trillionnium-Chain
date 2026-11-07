@@ -7719,3 +7719,17 @@ original business/security gates. Same-host equal quotas alone do not remove
 cache, bandwidth or background-load interference. Fresh full executions, funded
 expensive-generation observations and later remote receipt handoffs must each
 supply their own original operation, process, clock and complete artifact evidence.
+
+## 2026-11-07：W1 显式 owner 撤销与原操作冷恢复候选
+
+在独立 integration 工作树接入昂贵 generation 的显式研究 owner 撤销。原完整入口维持原成功条件；新增精确 ignored 入口仅在固定 runner 的首个真实 prove 命令及固定 r0vm 子进程被观察为存活后，按“持久 owner 请求 → 既有 M12 cancel 与原状态读回 → 一次原 target cancel → 原 operation reconciliation”处理。Provider 失败不构成 owner 授权；已有撤销只核对，TooLate／Unknown 不授权新的 target 操作。
+
+Target 终态必须观察绑定 inode/device 的完整 child cgroup 子树与层级 populated=0，直接 cgroup.procs 为空不足以成立。直接 child wait、递归无存活任务和全部后代均已 wait/reaped 分开记录；后者及 GPU 计量仍未知，M12 完整 resource cap 不释放，provider payment 不被授权。
+
+显式 cancel-reserved 仅用于新建研究 Node：精确 owner-signed NativeTask tag 3 wire、packet、nonce 与 operation 在唯一提交前持久化。冷入口先核已有 dispatch intent 及完整绑定，只观察同一 provider job 与同一 native wire 的当前 canonical 状态，不重签、不换 nonce、不重新派发。原本地撤销历史不随链 reorg 回滚。M12 既有 API 不能证明同 reason 并发 Replay 本次新追加事件，因此结果为 CancellationObserved，new_event_proven=false；不冒称 AcceptedNew。
+
+候选第三轮实际通过 Node 15 项（新增 6 项，3 个重型／cold 入口仍 ignored）、M12 原 10 项、Python target 7 项与 owner helper 5 项，以及两 crate 的 strict Clippy、自有 Rust fmt 和实际 Cargo artifact 发现。前两轮的真实编译失败及 14/15 测试失败原件保留；reorg 控制已改为构造更长有效 fork，不削弱节点 canonical 权威。Python mandatory 合同由 86 增至 94，新增源路径通过原 inventory／corpus 机制注册。
+
+此条仅记录代码与候选控制进展。新的提交仍须完成精确 committed-source 资格，随后才运行独立新 Node、原 operation、新 600 秒研究 deadline 下的真实昂贵取消及进程重启后的冷核对。当前没有据此宣称该重型试验、生产 owner 服务、原业务预算或完整密码学安全资格通过。
+
+冻结 source A d3037ca5dfb6f301757c159b7888dca9b0317be0 的两条完整 fresh pipeline 保持原源码、各自原 7200 秒研究 deadline、原 target 与资源；此刻仍在递归阶段，其终态与本候选资格分开记录。A 上一条原配额窄探测已实际以 DEADLINE_EXHAUSTED／124 退出：4 秒、0.25 CPU、2 GiB，native winner 成立但无完整证明／receiver ACK；该样本不替代 16 hostile／6 confirmations 的完整业务矩阵，也不把含清场的 7.402288287 秒称为证明生成时间。

@@ -22,6 +22,8 @@ on:
       - scripts/test_kaggle_generation_contract_v2.py
       - scripts/w1_generation_target_v2.py
       - scripts/test_w1_generation_target_v2.py
+      - scripts/w1_owner_cancellation_v1.py
+      - scripts/test_w1_owner_cancellation_v1.py
       - scripts/w1_owned_generation_runtime_v2.py
       - scripts/test_w1_owned_generation_runtime_v2.py
       - evidence/pon-w1-full-v2-20261105/**
