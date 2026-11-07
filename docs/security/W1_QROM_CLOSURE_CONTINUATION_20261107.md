@@ -341,8 +341,8 @@ rejection; the original disk cold-replay test is unchanged.
 The [independent mechanism probe](../../evidence/pon-w1-qrom-closure-20261107/root-role-decode-probe/summary.json)
 reproduces the old error from the exact old declarations and confirms that
 the revised decoder round-trips bytes produced by the old serializer. This
-small probe and independent source review are not substitutes for the full
-crate regressions on the new committed candidate.
+small probe and independent source review are distinct from the actual native
+release-owner regressions on committed source A recorded below.
 
 The sealed-copy failure has a different explanation. The [native syscall
 probes](../../evidence/pon-w1-qrom-closure-20261107/native-7150-sealed-fields/test-correction.json) observe that a denied write can still change `mtime` and `ctime` on
@@ -366,3 +366,62 @@ The new source-bound native regression results must be recorded separately
 from both the original 7150 failure and its isolated diagnostics. No successful
 targeted follow-up can certify the unfinished full workspace or discharge the
 separate PQ authorization, complete-proof and quantum-work obligations.
+
+## 8. Committed source A and final evidence continuation
+
+The subsequent source candidate is
+`1e4bffc371bcdc53aabc621b6b6cb2485ab36f53` (A), with tree
+`23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0`. The
+[final scoped summary](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-final-summary.json)
+and [packet manifest](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-final-manifest.json)
+bind its actual observations. They preserve the earlier 7150 failures and
+1a14 hosted results as separate historical records.
+
+The [native A module run](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/native-summary.json)
+did **not** pass: the release-owner harness completed with 40 passed,
+one failed and one ignored. All [seven root and eight sealed tests](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-native/key-fifteen-completion.json)
+actually passed, including cold replay, canonical/duplicate role decoding and
+the unchanged production identity guards. The one failed service-window test
+passed in [one isolated same-binary diagnostic](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-service-diagnostic/diagnostic-summary.json);
+that observation does not erase the module failure or establish its timing
+cause. The [independent source/log review](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-source-review/service-window-source-review.json)
+retains the trusted-time rejection and the unknown scheduling explanation.
+No window or production guard was relaxed. Formatting, strict workspace
+Clippy, the three v2 tests, fixed release/receipt/native replay and recorded
+rejection controls passed. The A full workspace was not rerun. Its 2,805
+selected native source/fixture identities matched before and after; complete
+tracked-worktree and complete supply-chain qualifications remain false.
+
+A fresh, independent [desktop Python execution](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-python/report.json)
+passes 314 W1 tests, 147 CI-contract/source-integrity tests and 38 PQ integration
+tests, each with its complete named verbose log, exact count and exit zero.
+These are 499 distinct observations; the 105 closure controls are included
+in the 314. The 2,830 selected files and 52,119,220 bytes match A before and
+after. During an earlier executor interruption the prior cloud raw package
+had not been transferred; this packet retains the fresh desktop run and
+does not relabel it as the original cloud execution.
+
+The original Python report remains immutable with
+`repository_link_check_pending=true` and `all_requested_checks_passed=false`.
+A [separate initial repository check](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/initial-report.json)
+failed on a missing historical link target. Five missing pinned evidence
+scripts were restored as exact A blobs before the fresh Python run.
+Subsequently, 124 linked historical targets (18,864,814 bytes) were restored
+and the [new independent repository check](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-repository/restored-report.json)
+passed: 3,717 local links, 26 workspace packages and 1,275 Rust files.
+Its later 11,036 materialized tracked entries / 1,017,004,928 bytes match A
+before and after, and every original Python-scope row remains unchanged.
+This later snapshot does not expand the earlier 499-test coverage. The
+remaining 359 historical evidence omissions keep whole-source qualification
+false. Original missing-file failures, API identities, restoration records
+and both repository runs are retained.
+
+The final B continuation changes only the sole development plan, this report,
+the closure evidence README and new records under the same evidence directory.
+All A production source, configuration, scripts, formal files and fixed W1
+fixtures retain their bytes. B does not claim a new native run; its own hosted
+source/completion results must be read after publication and cannot be
+borrowed from 1a14. The original fifteen-obligation disposition is unchanged.
+Complete QROM soundness, PQ authorization, quantum work/chain weight and
+production acceptance remain independent **HOLD** decisions; project error,
+lifetime query budget and unconditional security bits remain uninstantiated.

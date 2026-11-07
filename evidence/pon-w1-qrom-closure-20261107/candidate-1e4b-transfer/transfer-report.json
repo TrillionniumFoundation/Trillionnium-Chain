@@ -1,0 +1,519 @@
+{
+  "GitHub_push_performed": false,
+  "bytes": 2348492,
+  "candidate": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "client_check_note": "The tool returns written as a byte count; first four successful immutable write receipts were rechecked as written == size, not boolean. No successful part was overwritten or repeated.",
+  "completed_utc": "2026-11-07T14:43:48.604621+00:00",
+  "create_only_O_EXCL": true,
+  "git_read_only_checks": [
+    {
+      "exit_code": 0,
+      "label": "verify",
+      "stderr_sha256": "a7828a3b168e691f4bd2439148c7566e2ff8961300f00b077ea1d9b6ac554f0d",
+      "stdout_sha256": "e69c530adada9a7b3c4af6fd1d9a4fff821a92411e4860d517102b3e50d8bad0"
+    },
+    {
+      "exit_code": 0,
+      "label": "heads",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "dcc80cebda34987aaf62c420879ca68f2a5e6e0dbbb1686a9420edda9e3e5e43"
+    }
+  ],
+  "native_clone_modified": false,
+  "part_count": 36,
+  "parts": [
+    {
+      "bytes": 65536,
+      "filename": "part-00000000.bin",
+      "offset": 0,
+      "result": {
+        "mode": 384,
+        "sha256": "40b32f5ed7f149eda9f4b3069860371290747dd7a0d0bb8cf2412fdb5d14ba15",
+        "size": 65536,
+        "version": "2050:51512546:65536:1794062375049433469:1794062375598741181",
+        "written": 65536
+      },
+      "sha256": "40b32f5ed7f149eda9f4b3069860371290747dd7a0d0bb8cf2412fdb5d14ba15"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00065536.bin",
+      "offset": 65536,
+      "result": {
+        "mode": 384,
+        "sha256": "bf950c480188f0cf7649851d797100e2c5d24fc2800ecfaf30757d300a61f631",
+        "size": 65536,
+        "version": "2050:51512543:65536:1794062369163617677:1794062369179014764",
+        "written": 65536
+      },
+      "sha256": "bf950c480188f0cf7649851d797100e2c5d24fc2800ecfaf30757d300a61f631"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00131072.bin",
+      "offset": 131072,
+      "result": {
+        "mode": 384,
+        "sha256": "f012681dd21b5481b75255e49a3bc15e6ca32dc03c378a92f02d254563f97f60",
+        "size": 65536,
+        "version": "2050:51512541:65536:1794062364165070899:1794062364169229138",
+        "written": 65536
+      },
+      "sha256": "f012681dd21b5481b75255e49a3bc15e6ca32dc03c378a92f02d254563f97f60"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00196608.bin",
+      "offset": 196608,
+      "result": {
+        "mode": 384,
+        "sha256": "d7120c271d1f6b90b9c3770f68e10c613296cf59521c0835db43eb9ddbf668c0",
+        "size": 65536,
+        "version": "2050:51512498:65536:1794062358439445537:1794062358455474586",
+        "written": 65536
+      },
+      "sha256": "d7120c271d1f6b90b9c3770f68e10c613296cf59521c0835db43eb9ddbf668c0"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00262144.bin",
+      "offset": 262144,
+      "result": {
+        "mode": 384,
+        "sha256": "fa9ae5a349884b3b272a9323d51704784a5bcf720a3162f38865beba2e88731d",
+        "size": 65536,
+        "version": "2050:51528336:65536:1794062462816449877:1794062462832140994",
+        "written": 65536
+      },
+      "sha256": "fa9ae5a349884b3b272a9323d51704784a5bcf720a3162f38865beba2e88731d"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00327680.bin",
+      "offset": 327680,
+      "result": {
+        "mode": 384,
+        "sha256": "adaca6f78583a629f33c05124321a64625893903d98dac5710ee7dc20016fbb8",
+        "size": 65536,
+        "version": "2050:51520323:65536:1794062453288748383:1794062453343522566",
+        "written": 65536
+      },
+      "sha256": "adaca6f78583a629f33c05124321a64625893903d98dac5710ee7dc20016fbb8"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00393216.bin",
+      "offset": 393216,
+      "result": {
+        "mode": 384,
+        "sha256": "31cda3633e957b57d609ee190dfd87bc576d58e798bb4e57582567f3c5b081e6",
+        "size": 65536,
+        "version": "2050:51529636:65536:1794062495618774197:1794062495633839356",
+        "written": 65536
+      },
+      "sha256": "31cda3633e957b57d609ee190dfd87bc576d58e798bb4e57582567f3c5b081e6"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00458752.bin",
+      "offset": 458752,
+      "result": {
+        "mode": 384,
+        "sha256": "d24b56b662d6125ca5ee15bcb0af7bc26ac4fc744fc50418b57ef6e69590281e",
+        "size": 65536,
+        "version": "2050:51520306:65536:1794062434442030113:1794062434445289548",
+        "written": 65536
+      },
+      "sha256": "d24b56b662d6125ca5ee15bcb0af7bc26ac4fc744fc50418b57ef6e69590281e"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00524288.bin",
+      "offset": 524288,
+      "result": {
+        "mode": 384,
+        "sha256": "75cca970bbd52cf863b222c938a49be85510f32980009a5a33daabd7895bb3da",
+        "size": 65536,
+        "version": "2050:51529624:65536:1794062483017483691:1794062483027336468",
+        "written": 65536
+      },
+      "sha256": "75cca970bbd52cf863b222c938a49be85510f32980009a5a33daabd7895bb3da"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00589824.bin",
+      "offset": 589824,
+      "result": {
+        "mode": 384,
+        "sha256": "2f4e4a830f83e7ae87ca00612e099843f7e64d117190ea0982060f2bd91c10fd",
+        "size": 65536,
+        "version": "2050:51530519:65536:1794062502966496855:1794062502992550940",
+        "written": 65536
+      },
+      "sha256": "2f4e4a830f83e7ae87ca00612e099843f7e64d117190ea0982060f2bd91c10fd"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00655360.bin",
+      "offset": 655360,
+      "result": {
+        "mode": 384,
+        "sha256": "1bf11a948fb62079945d999a29819862a2739d45e1f141d14b4da1401654d4f5",
+        "size": 65536,
+        "version": "2050:51512907:65536:1794062453803060898:1794062453819503369",
+        "written": 65536
+      },
+      "sha256": "1bf11a948fb62079945d999a29819862a2739d45e1f141d14b4da1401654d4f5"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00720896.bin",
+      "offset": 720896,
+      "result": {
+        "mode": 384,
+        "sha256": "ae69d828cf577fbc16c5338993a22d67f08ef58878e248d7c4fbeb9c6bb014f3",
+        "size": 65536,
+        "version": "2050:51529621:65536:1794062470655273056:1794062470704826152",
+        "written": 65536
+      },
+      "sha256": "ae69d828cf577fbc16c5338993a22d67f08ef58878e248d7c4fbeb9c6bb014f3"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00786432.bin",
+      "offset": 786432,
+      "result": {
+        "mode": 384,
+        "sha256": "39fce1cb2a0ff202984156d36a4600a93b9e25eda0f9f0d2d11b1defa38bb395",
+        "size": 65536,
+        "version": "2050:51529640:65536:1794062491889529685:1794062491893986428",
+        "written": 65536
+      },
+      "sha256": "39fce1cb2a0ff202984156d36a4600a93b9e25eda0f9f0d2d11b1defa38bb395"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00851968.bin",
+      "offset": 851968,
+      "result": {
+        "mode": 384,
+        "sha256": "5f0a09606776adccb33888d1645923ab78aab4b8fed3b39e3f02095369aa1623",
+        "size": 65536,
+        "version": "2050:51529628:65536:1794062483558830588:1794062483591314148",
+        "written": 65536
+      },
+      "sha256": "5f0a09606776adccb33888d1645923ab78aab4b8fed3b39e3f02095369aa1623"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00917504.bin",
+      "offset": 917504,
+      "result": {
+        "mode": 384,
+        "sha256": "e01bf846004b6bb4a484324b32c83185c195129cfcdb1e8ee0a802bbe5004de3",
+        "size": 65536,
+        "version": "2050:51529632:65536:1794062491339029798:1794062491343008125",
+        "written": 65536
+      },
+      "sha256": "e01bf846004b6bb4a484324b32c83185c195129cfcdb1e8ee0a802bbe5004de3"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-00983040.bin",
+      "offset": 983040,
+      "result": {
+        "mode": 384,
+        "sha256": "64b6badf998ee2aefe27ff3bfd0399cc07ed30eddd47b4adb9d8586631131586",
+        "size": 65536,
+        "version": "2050:51529650:65536:1794062496206103737:1794062496221816263",
+        "written": 65536
+      },
+      "sha256": "64b6badf998ee2aefe27ff3bfd0399cc07ed30eddd47b4adb9d8586631131586"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01048576.bin",
+      "offset": 1048576,
+      "result": {
+        "mode": 384,
+        "sha256": "c94bc060a144755270250743bee33dfd9eade6e088247e603c3de2db3f72713b",
+        "size": 65536,
+        "version": "2050:51564326:65536:1794062506489943885:1794062506496414065",
+        "written": 65536
+      },
+      "sha256": "c94bc060a144755270250743bee33dfd9eade6e088247e603c3de2db3f72713b"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01114112.bin",
+      "offset": 1114112,
+      "result": {
+        "mode": 384,
+        "sha256": "98605e578fa798a6ea3ca247439f89ff43ddb62fe02719a9e6a26d545c0d6386",
+        "size": 65536,
+        "version": "2050:51529653:65536:1794062500593772867:1794062500609644197",
+        "written": 65536
+      },
+      "sha256": "98605e578fa798a6ea3ca247439f89ff43ddb62fe02719a9e6a26d545c0d6386"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01179648.bin",
+      "offset": 1179648,
+      "result": {
+        "mode": 384,
+        "sha256": "bdc1b9365ec9003d0a9d4f8aad2fa7480b59bde08a2079fd13ef019a3da61b2a",
+        "size": 65536,
+        "version": "2050:51534067:65536:1794062528655268245:1794062528736551879",
+        "written": 65536
+      },
+      "sha256": "bdc1b9365ec9003d0a9d4f8aad2fa7480b59bde08a2079fd13ef019a3da61b2a"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01245184.bin",
+      "offset": 1245184,
+      "result": {
+        "mode": 384,
+        "sha256": "c20c9ef04e5f5459bff560974d4ce032921095bda946df87448e2140f3964803",
+        "size": 65536,
+        "version": "2050:51564490:65536:1794062512492595075:1794062512509179845",
+        "written": 65536
+      },
+      "sha256": "c20c9ef04e5f5459bff560974d4ce032921095bda946df87448e2140f3964803"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01310720.bin",
+      "offset": 1310720,
+      "result": {
+        "mode": 384,
+        "sha256": "0bf63020bcf7f375946c5efdaf961d35192d0f362f1cd0a8dc8b4cf77e38ccc9",
+        "size": 65536,
+        "version": "2050:51534063:65536:1794062519072890718:1794062519087924536",
+        "written": 65536
+      },
+      "sha256": "0bf63020bcf7f375946c5efdaf961d35192d0f362f1cd0a8dc8b4cf77e38ccc9"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01376256.bin",
+      "offset": 1376256,
+      "result": {
+        "mode": 384,
+        "sha256": "c862fd1fec923d88cef9393fe5e8fefbbc45d347fc23ced897200de892351141",
+        "size": 65536,
+        "version": "2050:51534071:65536:1794062538350779355:1794062538355182459",
+        "written": 65536
+      },
+      "sha256": "c862fd1fec923d88cef9393fe5e8fefbbc45d347fc23ced897200de892351141"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01441792.bin",
+      "offset": 1441792,
+      "result": {
+        "mode": 384,
+        "sha256": "bb53a85f360ecc2977c86eabef0806d5d655f8103e1ae418564ed828e7bcbe45",
+        "size": 65536,
+        "version": "2050:51534075:65536:1794062546366019865:1794062546450873110",
+        "written": 65536
+      },
+      "sha256": "bb53a85f360ecc2977c86eabef0806d5d655f8103e1ae418564ed828e7bcbe45"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01507328.bin",
+      "offset": 1507328,
+      "result": {
+        "mode": 384,
+        "sha256": "94096683f290aef29ef390dbd5952b73f5459cb322c0ac09fc073e06fa9c6d89",
+        "size": 65536,
+        "version": "2050:51534073:65536:1794062540446333695:1794062540450102272",
+        "written": 65536
+      },
+      "sha256": "94096683f290aef29ef390dbd5952b73f5459cb322c0ac09fc073e06fa9c6d89"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01572864.bin",
+      "offset": 1572864,
+      "result": {
+        "mode": 384,
+        "sha256": "989733f788683c2a542969c7f22a789f62826cfc1513854925db61dd8b021ea5",
+        "size": 65536,
+        "version": "2050:51534081:65536:1794062555337010111:1794062555341535019",
+        "written": 65536
+      },
+      "sha256": "989733f788683c2a542969c7f22a789f62826cfc1513854925db61dd8b021ea5"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01638400.bin",
+      "offset": 1638400,
+      "result": {
+        "mode": 384,
+        "sha256": "fa6a57c980ce62fe810f007f4a13b391181d2f863a3d6a90d9fd58aef39a7c8a",
+        "size": 65536,
+        "version": "2050:51534065:65536:1794062525122682962:1794062525138690592",
+        "written": 65536
+      },
+      "sha256": "fa6a57c980ce62fe810f007f4a13b391181d2f863a3d6a90d9fd58aef39a7c8a"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01703936.bin",
+      "offset": 1703936,
+      "result": {
+        "mode": 384,
+        "sha256": "4223c69cfffe7f6004bfbe3f87a531ff998bc3510eed32d16f65fd054908891d",
+        "size": 65536,
+        "version": "2050:51534069:65536:1794062534788012952:1794062534808318443",
+        "written": 65536
+      },
+      "sha256": "4223c69cfffe7f6004bfbe3f87a531ff998bc3510eed32d16f65fd054908891d"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01769472.bin",
+      "offset": 1769472,
+      "result": {
+        "mode": 384,
+        "sha256": "64fa0fc6e7246eae96dbffad21cfc25bd65e294ce731e5c63fb8911d33c6257b",
+        "size": 65536,
+        "version": "2050:51534079:65536:1794062550249783412:1794062550322725664",
+        "written": 65536
+      },
+      "sha256": "64fa0fc6e7246eae96dbffad21cfc25bd65e294ce731e5c63fb8911d33c6257b"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01835008.bin",
+      "offset": 1835008,
+      "result": {
+        "mode": 384,
+        "sha256": "500a684a660598319e57fa779354f4772a5bc264364049dc19dee01925069aa8",
+        "size": 65536,
+        "version": "2050:51534085:65536:1794062559739368403:1794062559743368252",
+        "written": 65536
+      },
+      "sha256": "500a684a660598319e57fa779354f4772a5bc264364049dc19dee01925069aa8"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01900544.bin",
+      "offset": 1900544,
+      "result": {
+        "mode": 384,
+        "sha256": "cae0eaa11bd2af6e2bf185283edc10037719f8fcfafd60fe96802cfd0ceeebfd",
+        "size": 65536,
+        "version": "2050:51534077:65536:1794062554146147138:1794062554152580133",
+        "written": 65536
+      },
+      "sha256": "cae0eaa11bd2af6e2bf185283edc10037719f8fcfafd60fe96802cfd0ceeebfd"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-01966080.bin",
+      "offset": 1966080,
+      "result": {
+        "mode": 384,
+        "sha256": "155ede7243212172dd953ffae5c1accd83cce5e6d0c363a50a4aae212e2ced88",
+        "size": 65536,
+        "version": "2050:51534087:65536:1794062563649503387:1794062563655220393",
+        "written": 65536
+      },
+      "sha256": "155ede7243212172dd953ffae5c1accd83cce5e6d0c363a50a4aae212e2ced88"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-02031616.bin",
+      "offset": 2031616,
+      "result": {
+        "mode": 384,
+        "sha256": "5fddc1500a44ffa98830ce25008f8edd0cf597fedf8cadcf7c2bf1168dec9a23",
+        "size": 65536,
+        "version": "2050:51534090:65536:1794062567208245207:1794062567224085776",
+        "written": 65536
+      },
+      "sha256": "5fddc1500a44ffa98830ce25008f8edd0cf597fedf8cadcf7c2bf1168dec9a23"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-02097152.bin",
+      "offset": 2097152,
+      "result": {
+        "mode": 384,
+        "sha256": "35409e6f8942ae6a54ba21a49f5dc491b749811da69055fa41afad0617a33a60",
+        "size": 65536,
+        "version": "2050:51534083:65536:1794062558024987926:1794062558028433173",
+        "written": 65536
+      },
+      "sha256": "35409e6f8942ae6a54ba21a49f5dc491b749811da69055fa41afad0617a33a60"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-02162688.bin",
+      "offset": 2162688,
+      "result": {
+        "mode": 384,
+        "sha256": "384d5ccf6c29d7bdbbe165fdc3e22962d60b18b3e8c24d8904bb6752e7ed7b02",
+        "size": 65536,
+        "version": "2050:51557157:65536:1794062573878237249:1794062573895834829",
+        "written": 65536
+      },
+      "sha256": "384d5ccf6c29d7bdbbe165fdc3e22962d60b18b3e8c24d8904bb6752e7ed7b02"
+    },
+    {
+      "bytes": 65536,
+      "filename": "part-02228224.bin",
+      "offset": 2228224,
+      "result": {
+        "mode": 384,
+        "sha256": "e8f528a5d66afde514a88fab2fdd02c2f8c051abb7be03e69dfa25cc20234fb8",
+        "size": 65536,
+        "version": "2050:51557155:65536:1794062571146238367:1794062571149938000",
+        "written": 65536
+      },
+      "sha256": "e8f528a5d66afde514a88fab2fdd02c2f8c051abb7be03e69dfa25cc20234fb8"
+    },
+    {
+      "bytes": 54732,
+      "filename": "part-02293760.bin",
+      "offset": 2293760,
+      "result": {
+        "mode": 384,
+        "sha256": "2cc5488e924db0c0b3c75452f65fc32c8b5f4fc129a4c5c5c75aeed57d760784",
+        "size": 54732,
+        "version": "2050:51557187:54732:1794062577709567700:1794062577713691641",
+        "written": 54732
+      },
+      "sha256": "2cc5488e924db0c0b3c75452f65fc32c8b5f4fc129a4c5c5c75aeed57d760784"
+    }
+  ],
+  "prior_upload_failures": [
+    {
+      "content": [
+        {
+          "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "type": "text"
+        }
+      ],
+      "isError": true
+    },
+    {
+      "content": [
+        {
+          "text": "tool call error: tool call failed for `codex_apps/h.binary_upload`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out",
+          "type": "text"
+        }
+      ],
+      "isError": true
+    }
+  ],
+  "publication_fetch_performed": false,
+  "requires": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "schema": "TRNM-W1-CANDIDATE-A-TRANSFER1",
+  "sha256": "65835d8b22e2a506ace76a4adcae377499580ed72a0ad91ee7362f836a2a5084",
+  "target": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_native_fixes_1e4bffc371bc.bundle"
+}

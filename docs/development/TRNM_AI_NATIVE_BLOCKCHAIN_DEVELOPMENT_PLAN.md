@@ -8368,3 +8368,37 @@ The unchanged guard validates all 688 exact blobs and retains HOLD_NO_GO with
 cryptographic acceptance false. The unchanged generated-inventory checker
 also passes. Original pin failure, exact old/new identities, native syscall
 field probes and the correction of the sealed test's assumption are retained.
+
+### 2026-11-07 W1 committed-source regression and evidence completion
+
+The corrected source candidate is
+`1e4bffc371bcdc53aabc621b6b6cb2485ab36f53` (A), tree
+`23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0`. Its
+[scoped final packet](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-final-summary.json)
+retains the actual native release-owner outcome: 40 passed, one failed and
+one ignored. The seven root and eight sealed tests all pass, including the
+repaired cold replay and unchanged production identity checks. One isolated
+same-A/same-binary service-window test passes without replacing the module
+failure; the exact timing cause remains unknown. Strict Clippy and the fixed
+v2 verification/replay controls pass. The A full workspace was not rerun, and
+selected native source identity is not complete tracked-worktree validation.
+
+Fresh desktop Python execution passes 314 + 147 + 38 = 499 distinct tests,
+with complete verbose logs and A source/fixture identity before and after.
+The 105 closure names are already included in 314. The original cloud raw
+packet had not been transferred during an executor interruption; the fresh
+desktop observations are independently retained. The original repository
+missing-link failure and Python report's pending fields remain immutable.
+After restoring 124 linked historical targets as exact A blobs, the separate
+repository check passes; its larger later materialized-file snapshot does not
+retroactively expand the 499-test scope. Historical evidence omissions remain
+explicit and whole-source qualification remains false.
+
+The final B continuation is limited to these three existing Markdown records
+and new closure evidence. It preserves every A production/configuration,
+script, formal and fixed-fixture byte, and does not claim to have rerun native
+tests on B. Its hosted head/merge results require fresh readback. All fifteen
+original theoretical/deployment obligations, the three independent PQ
+authorization/proof/quantum-work acceptance lines, and production activation
+remain HOLD. Original failures and the reviewed time and identity guards are
+retained without weakening.

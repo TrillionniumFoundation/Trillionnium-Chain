@@ -161,3 +161,45 @@ PQ signatures protect authorization; complete proofs protect a specified
 computation relation; quantum-work analysis protects the correspondence
 between resources and chain weight. The complete decisions for these three
 lines remain independent and unqualified here.
+
+## Committed source A and final B evidence packet
+
+The [final summary](candidate-1e4b-final-summary.json) binds the observations
+below to source A, `1e4bffc371bcdc53aabc621b6b6cb2485ab36f53`, tree
+`23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0`. The
+[packet manifest](candidate-1e4b-final-manifest.json) records every new file
+and the three changed Markdown records. Existing historical records and the
+fifteen-item obligation disposition retain their original bytes.
+
+| Record | Scope |
+| --- | --- |
+| [Native A summary](candidate-1e4b-native/native-summary.json), [complete archive](candidate-1e4b-native/observations.tar.gz) | 33 recorded stages; release-owner module 40 passed, 1 failed, 1 ignored; narrow gate false |
+| [Critical fifteen](candidate-1e4b-native/key-fifteen-completion.json) | Seven root and eight sealed cases actually pass within the unsuccessful module run |
+| [Unique service diagnostic](candidate-1e4b-service-diagnostic/diagnostic-summary.json), [raw archive](candidate-1e4b-service-diagnostic/observations.tar.gz) | One same-A/same-binary isolated pass; original module failure and unknown timing cause preserved |
+| [Independent service-window review](candidate-1e4b-source-review/service-window-source-review.json) | Exact A source and raw native/diagnostic log review |
+| [Fresh Python report](candidate-1e4b-python/report.json), [full raw archive](candidate-1e4b-python/observations.tar.gz), [member manifest](candidate-1e4b-python/manifest.json) | 314 + 147 + 38 distinct named tests, with 2,830 selected A files / 52,119,220 bytes before and after |
+| [Original repository failure](candidate-1e4b-repository/initial-report.json), [later successful check](candidate-1e4b-repository/restored-report.json), [complete raw archive](candidate-1e4b-repository/observations.tar.gz) | Original exit 2 retained; later exact-A repository/link check exits 0 |
+| [Exact link restoration](candidate-1e4b-repository/link-restoration.json) | 124 existing A targets / 18,864,814 bytes; no source rewrite |
+| [Initial preparation and five source-pin recoveries](candidate-1e4b-preparation/manifest.json), [raw archive](candidate-1e4b-preparation/observations.tar.gz) | Original missing-source/full-source failures, exact Git blob/API identities and subsequent source-pin success |
+| [A transfer](candidate-1e4b-transfer/transfer-report.json) | Original two large-request timeouts, verified create-only parts and complete bundle hash |
+
+A's formatting, strict Clippy and fixed v2 verification/replay controls pass.
+The A full workspace was not rerun, and native selected identity covers
+2,805 files rather than the complete tracked worktree. The ignored native
+consumer case is not counted as a pass. The failed service test's one isolated
+pass does not turn the module or its narrow controller green.
+
+The fresh Python report intentionally still says its repository check was
+pending. Its later independent repository record passes 3,717 local links,
+26 workspace packages and 1,275 Rust files after exact-blob restoration. The
+later 11,036 materialized entries / 1,017,004,928 bytes retain all original
+2,830 Python-scope rows; 359 historical evidence omissions still prevent a
+whole-source certificate. Neither later restored targets nor the separate
+hosted 81/105 rosters are added to the 499-test count.
+
+B changes only the sole plan, continuation report, this README and newly added
+closure evidence. The native/Python observations remain labeled tested A;
+fresh B hosted source/completion results must be collected after publication.
+This packet supplies no new theorem, compiler proof, quantum resource bound
+or production permission. All three complete acceptance lines remain HOLD,
+and all fifteen full obligations remain unclosed.
