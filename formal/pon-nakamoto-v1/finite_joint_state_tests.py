@@ -449,6 +449,12 @@ class ReplayAndEvidenceTests(unittest.TestCase):
             self.assertEqual(len(summary["examples"]), 5)
             self.assertEqual(len(summary["negative_controls"]), 4)
             self.assertEqual(len(summary["source_bindings"]), 4)
+            self.assertTrue(summary["source_files_equal_at_start_and_end"])
+            self.assertFalse(summary["loaded_module_execution_attested"])
+            self.assertEqual(state.read_json(directory / "source-bindings-start.json"),
+                             summary["source_bindings"])
+            self.assertEqual(state.read_json(directory / "source-bindings-end.json"),
+                             summary["source_bindings"])
             self.assertFalse(summary["actual_quantum_hardware_executed"])
             self.assertFalse(summary["production_qualified"])
             for name in state.example_certificates():
@@ -456,9 +462,43 @@ class ReplayAndEvidenceTests(unittest.TestCase):
                 report = state.read_json(directory / (name + ".report.json"))
                 state.recheck_report(document, report)
             manifest = state.read_json(directory / "manifest.json")
-            self.assertEqual(len(manifest["files"]), 15)
+            self.assertEqual(len(manifest["files"]), 17)
             with self.assertRaises(FileExistsError):
                 state.retain_evidence(directory)
+
+    def test_actual_source_file_change_between_endpoint_reads_retains_refusal(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            copied_sources = []
+            for source in state._source_paths():
+                copy = root / source.name
+                copy.write_bytes(source.read_bytes())
+                copied_sources.append(copy)
+            original_examples = state.example_certificates
+
+            def change_disk_bytes_then_generate():
+                # Change real bytes in a private copy after the first hashes.
+                # Neither the digest function nor its returned values is mocked.
+                path = copied_sources[0]
+                path.write_bytes(path.read_bytes() + b"\n# concurrent source change\n")
+                return original_examples()
+
+            directory = root / "source-change-attempt"
+            with patch.object(state, "_source_paths", return_value=tuple(copied_sources)):
+                with patch.object(state, "example_certificates", side_effect=change_disk_bytes_then_generate):
+                    with self.assertRaisesRegex(state.StateCertificateError,
+                                                "SOURCE_BINDINGS_CHANGED_DURING_EVIDENCE"):
+                        state.retain_evidence(directory)
+            before = state.read_json(directory / "source-bindings-start.json")
+            after = state.read_json(directory / "source-bindings-end.json")
+            self.assertNotEqual(before[0]["sha256"], after[0]["sha256"])
+            self.assertEqual(before[1:], after[1:])
+            failed = state.read_json(directory / "failed-attempt.json")
+            self.assertEqual(failed["result"], "FAIL")
+            self.assertEqual(failed["stage"], "source-bindings-end")
+            self.assertEqual(failed["error"], "SOURCE_BINDINGS_CHANGED_DURING_EVIDENCE")
+            self.assertFalse((directory / "summary.json").exists())
+            self.assertFalse((directory / "manifest.json").exists())
 
     def test_failed_evidence_attempt_is_retained_without_pass_summary(self):
         with tempfile.TemporaryDirectory() as raw:

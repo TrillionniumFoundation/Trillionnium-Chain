@@ -455,12 +455,26 @@ def _measurement_success(document: dict, measurement: tuple[Matrix, ...],
     return value
 
 
+def _source_paths() -> tuple[Path, ...]:
+    here = Path(__file__).resolve().parent
+    return (here / "finite_joint_state_certificate.py", here / "finite_joint_state_tests.py",
+            here / "FINITE_JOINT_STATE_CERTIFICATE_V1.md", here / "mandatory_units_query.py")
+
+
+def _source_bindings() -> list[dict]:
+    return [{"path": "formal/pon-nakamoto-v1/" + path.name,
+             "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for path in _source_paths()]
+
+
 def retain_evidence(directory: Path) -> dict:
     """Retain complete examples, recomputed reports and actual refusal codes."""
     directory.mkdir(parents=True, exist_ok=False)
     started = datetime.now(timezone.utc).isoformat()
     stage = "initializing"
     try:
+        stage = "source-bindings-start"
+        sources_at_start = _source_bindings()
+        write_new(directory / "source-bindings-start.json", sources_at_start)
         models = example_certificates()
         plus = ((F(1, 2), F(1, 2)), (F(1, 2), F(1, 2)))
         minus = ((F(1, 2), F(-1, 2)), (F(-1, 2), F(1, 2)))
@@ -510,15 +524,16 @@ def retain_evidence(directory: Path) -> dict:
                 refusals.append({"name": name, "refusal": str(error)})
             else:
                 raise StateCertificateError("NEGATIVE_CONTROL_ACCEPTED")
-        stage = "source-bindings"
-        here = Path(__file__).resolve().parent
-        paths = (here / "finite_joint_state_certificate.py", here / "finite_joint_state_tests.py",
-                 here / "FINITE_JOINT_STATE_CERTIFICATE_V1.md", here / "mandatory_units_query.py")
-        sources = [{"path": "formal/pon-nakamoto-v1/" + path.name,
-                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for path in paths]
+        stage = "source-bindings-end"
+        sources_at_end = _source_bindings()
+        write_new(directory / "source-bindings-end.json", sources_at_end)
+        need(sources_at_end == sources_at_start, "SOURCE_BINDINGS_CHANGED_DURING_EVIDENCE")
         summary = {"schema": "pon-finite-cq-state-evidence-v1", "started_at_utc": started,
                    "result": "PASS", "scope": "exact-explicit-finite-mathematical-models",
-                   "examples": outcomes, "negative_controls": refusals, "source_bindings": sources,
+                   "examples": outcomes, "negative_controls": refusals,
+                   "source_bindings": sources_at_start,
+                   "source_files_equal_at_start_and_end": True,
+                   "loaded_module_execution_attested": False,
                    "actual_quantum_hardware_executed": False, **UNATTESTED}
         write_new(directory / "summary.json", summary)
         manifest = [{"name": path.name, "bytes": path.stat().st_size,

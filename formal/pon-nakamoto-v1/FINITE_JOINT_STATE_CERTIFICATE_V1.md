@@ -380,7 +380,16 @@ python3 formal/pon-nakamoto-v1/finite_joint_state_certificate.py \
 The evidence directory must be new. It contains complete certificates,
 recomputed reports, original rejected certificate inputs and their actual
 refusal codes, exact zero-query measurement results, relevant source hashes,
-and a file-by-file manifest. If an attempted check fails, its written inputs
+and a file-by-file manifest. The four relevant source files are hashed before
+example construction and again after all checks. Both endpoint lists are
+retained; unequal lists reject with `SOURCE_BINDINGS_CHANGED_DURING_EVIDENCE`
+and cannot produce a PASS summary or manifest. A negative test changes real
+bytes in a private source copy between these reads and checks the retained
+failure. Endpoint equality does not attest which module bytes were loaded,
+exclude an undetected change-and-restore between reads, or authenticate
+execution. `loaded_module_execution_attested` therefore remains false.
+
+If an attempted check fails, its written inputs
 and a `failed-attempt.json` remain; it does not receive a PASS summary. It
 never falls back to a native fixture, a synthetic execution receipt, a new
 oracle prior, or a weaker hidden qualification.
