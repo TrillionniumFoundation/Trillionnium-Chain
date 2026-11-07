@@ -243,7 +243,7 @@ fn actual_paid_pinned_v3_follows_qualified_native_chain_and_reuses_only_durable_
     assert_eq!(report.rpc_attempts, 10);
     assert_eq!(report.ok_replies, 9);
     assert_eq!(report.rejected_replies, 1);
-    assert_eq!(report.history_pages, 7);
+    assert_eq!(report.history_pages, 2); // three-block chain and four-block fork pages
     assert_eq!(report.verified_new_packets, 6);
     assert_eq!(report.peers[0].initial_anchor_fallbacks, 1);
     assert_eq!(report.peers[0].failures, 1);

@@ -61,6 +61,19 @@ class InlineSourcePinTests(unittest.TestCase):
     def test_actual_workflow_guards_bind_current_bytes(self):
         self.assertGreater(check_inline_source_pins(ROOT), 0)
 
+    def test_recent_workflow_pins_extracted_public_history_body_and_trigger(self):
+        text = (ROOT / '.github/workflows/pon-recent-batch-acceptance.yml').read_text()
+        # Moving a previously pinned method into a module must not leave its
+        # executable body outside this workflow's literal source selectors.
+        for source in ('trillionnium/crates/trnm-pon-node/src/store.rs',
+                       'trillionnium/crates/trnm-pon-node/src/store/public_history.rs'):
+            with self.subTest(source=source):
+                self.assertIn(f'      - {source}\n', text)
+                prefix = f'          test "$(git hash-object {source})" = '
+                guards = [line for line in text.splitlines() if line.startswith(prefix)]
+                self.assertEqual(len(guards), 1)
+                self.assertRegex(guards[0][len(prefix):], r'^[0-9a-f]{40}$')
+
     def test_stale_missing_and_bypassed_literal_guards_are_rejected(self):
         with tempfile.TemporaryDirectory(prefix='trnm-inline-source-') as directory:
             root = Path(directory)

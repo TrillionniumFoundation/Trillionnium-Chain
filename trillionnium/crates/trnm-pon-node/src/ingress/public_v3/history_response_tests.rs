@@ -54,10 +54,16 @@ fn fixture() -> Fixture {
     }
 }
 
-// The previous held-owner formatter, with the original settings-selected codec
-// and bound. This reference performs the same actual indexed read from Node.
+// Held-owner formatting with the original settings-selected codec. This
+// reference performs the same bounded indexed page read from Node.
 fn held_page(node: &Node, tip: Hash, after: Hash) -> Result<Value> {
-    let packets = node.public_history_packet(tip, after, MAX_HISTORY_STEPS, &mut |_| Ok(()))?;
+    let packets = node.public_history_page(
+        tip,
+        after,
+        MAX_HISTORY_STEPS,
+        MAX_PAGE_HEX_BYTES / 2,
+        &mut |_| Ok(()),
+    )?;
     let next = packets
         .last()
         .map(|packet| packet.id().map(hex::encode))
@@ -220,7 +226,7 @@ fn public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg() {
     assert_eq!(reader.join().unwrap().unwrap(), expected);
     assert_eq!(dispatch(&f.owner, f.main[2], f.main[0]).unwrap(), expected);
     let fork_page = dispatch(&f.owner, f.fork[3], f.fork[0]).unwrap();
-    assert_eq!(fork_page["next"], hex::encode(f.fork[1]));
+    assert_eq!(fork_page["next"], hex::encode(f.fork[3]));
     assert_ne!(fork_page["next"], expected["next"]);
 }
 
@@ -228,7 +234,8 @@ fn public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg() {
 fn public_history_formatting_checks_original_cancel_stop_and_deadline() {
     let f = fixture();
     let before = f.owner.lock().unwrap().read_active().unwrap();
-    for target in 1..=3 {
+    // Two packets: before formatting, after each encoding and final Page.
+    for target in 1..=4 {
         for cancel in [true, false] {
             let stopped = AtomicBool::new(false);
             let cancelled = AtomicBool::new(false);
@@ -285,3 +292,6 @@ fn public_history_formatting_checks_original_cancel_stop_and_deadline() {
     assert_eq!(f.owner.lock().unwrap().read_active().unwrap(), before);
     assert!(dispatch(&f.owner, f.main[2], f.main[0]).is_ok());
 }
+
+#[path = "history_response_batch_tests.rs"]
+mod batch;

@@ -33,8 +33,10 @@ signal; it creates no second database owner. Operator configuration pins
 1–8 numeric socket addresses and Ed25519 server public keys. It never scans,
 resolves DNS, follows peer advertisements or authorizes source/evaluator
 identities. Transport uses only the existing paid and signed
-`public-protected-development-v3` Head and one-packet History operations.
-There is no new wire or consensus namespace and no public discovery or
+`public-protected-development-v3` Head and bounded History operations. The
+explicit r16 resource digest permits up to sixteen consecutive packets under
+the existing aggregate page-byte and SQL limits. There is no new wire or
+consensus namespace and no public discovery or
 eclipse-resistance claim.
 
 ## Exact local configuration
@@ -86,13 +88,18 @@ History calls both consume the global RPC budget and pay V3 tickets.
    last completed native tip, or genesis for a fresh runtime. New Head values
    cannot redirect an unfinished cursor.
 3. History must have the exact nine `pon-native-history-v1` fields, exact
-   network/parameters/genesis/target/after, at most one packet, at most 1 MiB
-   raw packet represented by canonical lowercase even-length hex, and the
-   packet's exact `parent == after`. `next` must equal the decoded packet ID;
+   network/parameters/genesis/target/after, at most sixteen packets, at most
+   1 MiB per raw packet and 2,096,128 total hexadecimal bytes. Every packet
+   uses canonical lowercase even-length hex and extends the preceding decoded
+   ID, starting at `after`. `next` must equal the final decoded packet ID;
    `complete` must equal `next == fixed_target`. An empty page is legal only
    at `after == fixed_target`, with that exact next and complete true.
-   Collection and hex bounds are checked before serde string copying or
-   packet-byte expansion.
+   Collection and total hex bounds are checked before serde string copying or
+   packet-byte expansion. The whole page's links and cursors are checked before
+   native admission. Each packet then pays for full original W1/M06 admission
+   under the same runtime deadline; only the last packet can activate the fixed
+   target. A failed suffix retains already admitted packet facts and their
+   counters, but does not advance the page cursor or completed-page count.
 4. Transport failures, malformed/cross-context pages, unknown blocks and
    native admission failures retain the target and cursor, retain a failure
    event and wait until the next bounded cycle. A signed business refusal

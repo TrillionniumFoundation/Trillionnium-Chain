@@ -190,6 +190,13 @@ enum Interruption {
     ForkAfterHistory(Vec<Packet>, Arc<Mutex<Node>>),
     BudgetAfterNativeAckThenForgedHistory,
     ForgeHistory,
+    AlterHistory(HistoryTamper),
+}
+#[derive(Clone, Copy, Debug)]
+enum HistoryTamper {
+    TailBytes,
+    NextCursor,
+    Completion,
 }
 
 // This scripted test peer owns the real server development signing key. The
@@ -410,6 +417,9 @@ impl Proxy {
                             intervention = Some(Interruption::ForgeHistory);
                             reply = signed_refusal(&cookie[4..], "PUBLIC_MUTATION_CPU_BUDGET", 101);
                         }
+                        Some(Interruption::AlterHistory(change)) => {
+                            intervention = Some(Interruption::AlterHistory(change));
+                        }
                         Some(Interruption::BeforeHelloAdmission) => unreachable!(),
                         Some(Interruption::BeforeEverySubmit) => unreachable!(),
                         Some(Interruption::BudgetBeforeNativeOnce)
@@ -435,6 +445,36 @@ impl Proxy {
                     let mut bytes = hex::decode(page["packets"][0].as_str().unwrap()).unwrap();
                     bytes[420] ^= 1; // Full stored proof bytes, not a cursor/height hint.
                     page["packets"][0] = json!(hex::encode(bytes));
+                    reply = scripted_response(&cookie[4..], true, page, 101);
+                }
+                if parsed["op"] == 3 && matches!(intervention, Some(Interruption::AlterHistory(_)))
+                {
+                    let Some(Interruption::AlterHistory(change)) = intervention.take() else {
+                        unreachable!();
+                    };
+                    assert_eq!(parsed_reply["ok"], true);
+                    let mut page = parsed_reply["value"].clone();
+                    let count = page["packets"].as_array().unwrap().len();
+                    assert!(count > 1);
+                    match change {
+                        HistoryTamper::TailBytes => {
+                            let mut bytes =
+                                hex::decode(page["packets"][count - 1].as_str().unwrap()).unwrap();
+                            bytes[420] ^= 1;
+                            page["packets"][count - 1] = json!(hex::encode(bytes));
+                        }
+                        HistoryTamper::NextCursor => {
+                            assert_ne!(page["next"], page["after"]);
+                            page["next"] = page["after"].clone();
+                        }
+                        HistoryTamper::Completion => {
+                            assert_eq!(page["complete"], true);
+                            page["complete"] = json!(false);
+                        }
+                    }
+                    // Keep the exact first packet, cookie and server signature
+                    // valid. Tail/context validation must reject this response.
+                    assert_eq!(page["packets"][0], parsed_reply["value"]["packets"][0]);
                     reply = scripted_response(&cookie[4..], true, page, 101);
                 }
                 caller.write_all(&reply).unwrap();
@@ -627,6 +667,139 @@ fn actual_lost_native_ack_is_resolved_by_full_membership_without_fabricated_ack(
             .count(),
         1
     );
+    assert_eq!(
+        server.node.lock().unwrap().read_active().unwrap().2,
+        node.read_active().unwrap().2
+    );
+}
+
+#[test]
+fn actual_lost_ack_with_stored_successors_verifies_complete_and_partial_v3_pages() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 17);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    for packet in &packets {
+        submit_scripted_packet(&server.node, packet);
+    }
+    let head = server.node.lock().unwrap().active().unwrap();
+    assert_eq!(head.0, packets[16].id().unwrap());
+    let guest = identity(125);
+    for (first, end, complete) in [(0, 16, false), (15, 17, true)] {
+        let proxy = Proxy::start(server.address, Interruption::AfterNativeAck);
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            client(proxy.address, &server, &guest),
+            &packets[first],
+            plan(),
+        );
+        assert!(outcome.ok, "{outcome:?}");
+        assert!(outcome.membership_observed && outcome.may_advance_dependency);
+        assert!(outcome.submission_outcome_uncertain && outcome.acknowledged_packets.is_empty());
+        assert_eq!(outcome.formal_confirmation_observed, None);
+        assert!(!outcome.resource_fairness_qualified && !outcome.remote_persistence_proved);
+        assert_eq!(outcome.budget_ns, 10_000_000_000);
+        assert!(outcome.total_elapsed_ns < outcome.budget_ns);
+        assert_eq!(outcome.observed_head, Some(hex::encode(head.0)));
+        assert_eq!(outcome.observed_generation, Some(head.1));
+        assert_eq!(
+            outcome
+                .attempts
+                .iter()
+                .map(|attempt| attempt.operation)
+                .collect::<Vec<_>>(),
+            ["submit", "head", "history", "head"]
+        );
+        assert_eq!(
+            outcome.attempts[0].client_error.as_deref(),
+            Some("FRAME_EOF")
+        );
+        assert_eq!(
+            outcome.attempts[0].metrics.failed_stage,
+            Some(PublicClientStage::SolutionBodyResponse)
+        );
+        assert!(outcome.attempts[0].retryable_transport_eof);
+        let history = &outcome.attempts[2].authenticated_reply.as_ref().unwrap()["value"];
+        let expected: Vec<_> = packets[first..end]
+            .iter()
+            .map(|packet| hex::encode(packet.encode().unwrap()))
+            .collect();
+        assert_eq!(history["packets"], json!(expected));
+        assert_eq!(history["tip"], hex::encode(head.0));
+        assert_eq!(history["after"], hex::encode(packets[first].header.parent));
+        assert_eq!(history["next"], hex::encode(packets[end - 1].id().unwrap()));
+        assert_eq!(history["complete"], complete);
+        assert_eq!(server.node.lock().unwrap().active().unwrap(), head);
+    }
+    assert_eq!(
+        server.node.lock().unwrap().read_active().unwrap().2,
+        node.read_active().unwrap().2
+    );
+}
+
+#[test]
+fn actual_signed_history_tail_cursor_and_completion_forgery_do_not_advance() {
+    let dir = tempfile::tempdir().unwrap();
+    let (node, packets, settings) = producer(&dir.path().join("producer"), 3);
+    let server = Server::start(&dir.path().join("receiver"), &settings);
+    for packet in &packets {
+        submit_scripted_packet(&server.node, packet);
+    }
+    let head = server.node.lock().unwrap().active().unwrap();
+    let expected: Vec<_> = packets
+        .iter()
+        .map(|packet| hex::encode(packet.encode().unwrap()))
+        .collect();
+    let guest = identity(126);
+    for (change, failure) in [
+        (HistoryTamper::TailBytes, "SUBMIT_RECOVERY_HISTORY_BYTES"),
+        (HistoryTamper::NextCursor, "SUBMIT_RECOVERY_HISTORY_CONTEXT"),
+        (HistoryTamper::Completion, "SUBMIT_RECOVERY_HISTORY_CONTEXT"),
+    ] {
+        let proxy = Proxy::start(server.address, Interruption::AlterHistory(change));
+        let outcome = submit_with_verified_parent_recovery(
+            &node,
+            client(proxy.address, &server, &guest),
+            &packets[0],
+            plan(),
+        );
+        assert!(!outcome.ok, "{change:?}: {outcome:?}");
+        assert_eq!(outcome.failure.as_deref(), Some(failure), "{change:?}");
+        assert!(!outcome.membership_observed && !outcome.may_advance_dependency);
+        assert_eq!(outcome.formal_confirmation_observed, None);
+        assert_eq!(
+            outcome.acknowledged_packets,
+            vec![hex::encode(packets[0].id().unwrap())]
+        );
+        assert!(!outcome.submission_outcome_uncertain);
+        assert_eq!(outcome.budget_ns, 10_000_000_000);
+        assert_eq!(outcome.attempts.len(), 3);
+        assert_eq!(outcome.attempts[2].operation, "history");
+        assert!(outcome.attempts[2].client_error.is_none());
+        let authenticated = outcome.attempts[2].authenticated_reply.as_ref().unwrap();
+        assert_eq!(authenticated["ok"], true);
+        let history = &authenticated["value"];
+        assert_eq!(history["packets"].as_array().unwrap().len(), 3);
+        assert_eq!(history["packets"][0], expected[0]);
+        match change {
+            HistoryTamper::TailBytes => {
+                assert_eq!(history["packets"][1], expected[1]);
+                assert_ne!(history["packets"][2], expected[2]);
+                assert_eq!(history["next"], hex::encode(head.0));
+                assert_eq!(history["complete"], true);
+            }
+            HistoryTamper::NextCursor => {
+                assert_eq!(history["packets"], json!(expected));
+                assert_eq!(history["next"], hex::encode(settings.genesis()));
+                assert_eq!(history["complete"], true);
+            }
+            HistoryTamper::Completion => {
+                assert_eq!(history["packets"], json!(expected));
+                assert_eq!(history["next"], hex::encode(head.0));
+                assert_eq!(history["complete"], false);
+            }
+        }
+        assert_eq!(server.node.lock().unwrap().active().unwrap(), head);
+    }
     assert_eq!(
         server.node.lock().unwrap().read_active().unwrap().2,
         node.read_active().unwrap().2

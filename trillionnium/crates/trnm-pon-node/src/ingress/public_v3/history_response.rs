@@ -8,6 +8,11 @@ use std::sync::Mutex;
 use trnm_mvcc_fee::pon_executor::pq_accounts_v2;
 use trnm_protocol::{pon_wire::Hash, pq_native_accounts_v2::AccountProfile};
 
+// Preserve the independent importer's original total hex allowance and its
+// 1024-byte Page framing reserve. The V3 signed response keeps its own original
+// MAX_RESPONSE fence after formatting/signing. Neither ceiling grows per packet.
+const MAX_PAGE_HEX_BYTES: usize = crate::ingress::MAX_FRAME - 1024;
+
 struct EncodingContext {
     schema: &'static str,
     network: Hash,
@@ -71,10 +76,11 @@ pub(super) fn read(
             let owner = lock_owner(node, &mut checked_progress)?;
             return owner.finish_public_history_snapshot(read, &mut checked_progress);
         }
-        let packets = owner.public_history_packet(
+        let packets = owner.public_history_page(
             tip_id,
             after_id,
             MAX_HISTORY_STEPS,
+            MAX_PAGE_HEX_BYTES / 2,
             &mut checked_progress,
         )?;
         let next = packets
@@ -90,13 +96,16 @@ pub(super) fn read(
     // or activation authority.
     // Keep the same original deadline/stop/CPU callback and cumulative SQL count.
     progress(used)?;
-    let mut encoded = Vec::new();
+    let mut encoded = Vec::with_capacity(packets.len());
+    let mut hex_bytes = 0_usize;
     for packet in packets {
         let raw = context.encode(&packet)?;
+        let length = raw.len().checked_mul(2).ok_or("PUBLIC_HISTORY_BYTES")?;
+        hex_bytes = hex_bytes
+            .checked_add(length)
+            .ok_or("PUBLIC_HISTORY_BYTES")?;
         ensure(
-            raw.len()
-                .checked_mul(2)
-                .is_some_and(|length| length <= 2 * MAX_PACKET),
+            length <= 2 * MAX_PACKET && hex_bytes <= MAX_PAGE_HEX_BYTES,
             "PUBLIC_HISTORY_BYTES",
         )?;
         encoded.push(hex::encode(raw));

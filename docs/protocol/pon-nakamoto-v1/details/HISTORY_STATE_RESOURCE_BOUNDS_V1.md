@@ -135,12 +135,13 @@ number of distinct queried inclusion blocks. The current costs remain:
 | Actual state read/root | O(N) decoding plus the checked root implementation | Protocol maximum65,536 keys; callback every256 rows; no incremental authority cache. |
 | Full confirmation batch | Actual state check, ceil(H/64) header SELECTs, H checked headers and Q full inclusion bodies | At most256 confirmation queries per batch; complete clock scan remains O(H). |
 | Ordinary native History page | ceil(H/64) actual parent-record SELECTs, all H edge checks, then complete returned bodies | At most16 retained page IDs and no H-ID temporary file; time remains O(H), with the original256-edge callback positions. |
-| Public one-packet History | Bounded local binary-lifting lookups and one full packet | Existing1,024-statement budget; see [ancestry index](NATIVE_ANCESTRY_INDEX.md). |
+| Public V2 single-packet / V3 r16 bounded History | Complete local binary-lifting lookups and bounded full packet bodies | One cumulative1,024-statement budget; V3 at most16 packets and2,096,128 total hex bytes; see [ancestry index](NATIVE_ANCESTRY_INDEX.md). |
 | Ordinary append | D changed KV writes, actual state/root validation | No full KV copy on the ordinary append path; it still scans actual state. |
 | Reorganization/recovery | Verified deltas, snapshots and exact roots | No fixed global branch/history/disk-size bound or constant-time recovery claim. |
 | Pool prefix checks | One actual parent and mandatory prologue per operation; M06 applies each newly accepted transaction once | [Pool lifecycle](LOCAL_MEMPOOL_LIFECYCLE.md#same-block-incremental-m06-prefix) preserves complete M05 checks, full roots/output state and independent batch validation; no end-to-end linear-time claim. |
 
-Production public V3 History retains the complete held-owner algorithm. The
+Production public V3 History retains complete held-owner current reads for each
+packet in its bounded page and formats owned results after releasing the mutex. The
 operation-local reader described below is private cfg(test) research: its
 complete-operation regression prevents enabling it as a production optimization.
 State, Head, pool and History still need separately justified read-side

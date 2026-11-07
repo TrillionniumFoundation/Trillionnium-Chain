@@ -1,0 +1,7 @@
+    Finished `release` profile [optimized] target(s) in 0.21s
+  Executable tests/mining_service_budget.rs (/workspace/scratch/a66f84888260/build/release/deps/mining_service_budget-28a9d5703e65bc67)
+  Executable tests/pinned_peer_polling.rs (/workspace/scratch/a66f84888260/build/release/deps/pinned_peer_polling-8252fa450c22ae89)
+  Executable tests/public_submit_recovery.rs (/workspace/scratch/a66f84888260/build/release/deps/public_submit_recovery-df613e80d5b26b92)
+  Executable tests/public_v3_from_zero.rs (/workspace/scratch/a66f84888260/build/release/deps/public_v3_from_zero-ff17be0917ddd87e)
+  Executable tests/public_v3_multiprocess.rs (/workspace/scratch/a66f84888260/build/release/deps/public_v3_multiprocess-7f61597ebed162d6)
+  Executable tests/public_v3_service_campaign.rs (/workspace/scratch/a66f84888260/build/release/deps/public_v3_service_campaign-72fb3fd372ab6aa8)

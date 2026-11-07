@@ -1,0 +1,13 @@
+test_arithmetic_metadata_or_vectors_cannot_be_repinned (test_pon_public_v3_policy_read.PolicyReaderTests.test_arithmetic_metadata_or_vectors_cannot_be_repinned) ... ok
+test_changed_contract_vector_or_resource_limits_fail_closed (test_pon_public_v3_policy_read.PolicyReaderTests.test_changed_contract_vector_or_resource_limits_fail_closed) ... ok
+test_current_rust_contract_and_independent_config_are_byte_identical (test_pon_public_v3_policy_read.PolicyReaderTests.test_current_rust_contract_and_independent_config_are_byte_identical) ... ok
+test_historical_arithmetic_cannot_be_omitted_or_relabelled (test_pon_public_v3_policy_read.PolicyReaderTests.test_historical_arithmetic_cannot_be_omitted_or_relabelled) ... ok
+test_independent_r10_through_r14_and_r16_vectors_recompute_exactly (test_pon_public_v3_policy_read.PolicyReaderTests.test_independent_r10_through_r14_and_r16_vectors_recompute_exactly) ... ok
+test_r16_only_changes_the_history_contract_and_does_not_alias_r15 (test_pon_public_v3_policy_read.PolicyReaderTests.test_r16_only_changes_the_history_contract_and_does_not_alias_r15) ... ok
+test_separate_arithmetic_vectors_bind_exact_source_contract_and_base (test_pon_public_v3_policy_read.PolicyReaderTests.test_separate_arithmetic_vectors_bind_exact_source_contract_and_base) ... ok
+test_wrong_parameters_unknown_digest_and_claimed_revision_refuse (test_pon_public_v3_policy_read.PolicyReaderTests.test_wrong_parameters_unknown_digest_and_claimed_revision_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.031s
+
+OK

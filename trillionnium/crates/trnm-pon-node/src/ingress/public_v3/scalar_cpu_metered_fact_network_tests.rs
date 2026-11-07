@@ -213,14 +213,26 @@ fn two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight(
             )
             .unwrap();
             assert!(reply.ok, "{}", reply.value);
+            assert_eq!(reply.value["tip"], hex::encode(tip));
+            assert_eq!(reply.value["after"], hex::encode(after));
             let packets = reply.value["packets"].as_array().unwrap();
-            assert_eq!(packets.len(), 1);
+            assert!((1..=16).contains(&packets.len()));
+            assert!(
+                packets
+                    .iter()
+                    .map(|packet| packet.as_str().unwrap().len())
+                    .sum::<usize>()
+                    <= 2_096_128
+            );
             for bytes in packets {
                 let packet =
                     crate::Packet::decode(&hex::decode(bytes.as_str().unwrap()).unwrap()).unwrap();
+                assert_eq!(packet.header.parent, after);
                 after = client.admit(&packet, now).unwrap();
                 client.activate(after).unwrap();
             }
+            assert_eq!(reply.value["next"], hex::encode(after));
+            assert_eq!(reply.value["complete"], after == tip);
             pages += 1;
             assert!(pages <= 7);
         }
@@ -247,7 +259,7 @@ fn two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight(
             server.join().unwrap().unwrap();
         }
         assert_eq!(domain.budget.lock().unwrap().in_flight, 0);
-        println!("METERED_FACT_NETWORK listeners=2 honest_confirmed_transactions=8 native_blocks=7 downloaded_pages=7 concurrent_bad_requests=1 bad_rejected=true shared_domains=1 independent_client=true saturation_claim=false");
+        println!("METERED_FACT_NETWORK listeners=2 honest_confirmed_transactions=8 native_blocks=7 downloaded_pages={pages} concurrent_bad_requests=1 bad_rejected=true shared_domains=1 independent_client=true saturation_claim=false");
     });
     let state = client.read_active().unwrap();
     drop(client);

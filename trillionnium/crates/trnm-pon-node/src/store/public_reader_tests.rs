@@ -726,10 +726,21 @@ fn readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_norm
         owner.lock().unwrap().public_history_test_snapshot = snapshot;
         let reply = call(&history, 84);
         assert!(reply.ok, "{}", reply.value);
-        assert_eq!(
-            reply.value,
-            old_page(&owner.lock().unwrap(), ids[17], ids[0])
-        );
+        let node = owner.lock().unwrap();
+        let mut expected = old_page(&node, ids[17], ids[0]);
+        if !snapshot {
+            // The production V3 profile now batches up to sixteen original
+            // reads. The explicit snapshot control retains its original one
+            // packet research contract and all its separate currentness fences.
+            let packets = ids[..16]
+                .iter()
+                .map(|after| old_page(&node, ids[17], *after)["packets"][0].clone())
+                .collect::<Vec<_>>();
+            expected["packets"] = json!(packets);
+            expected["next"] = json!(hex::encode(ids[16]));
+            expected["complete"] = json!(false);
+        }
+        assert_eq!(reply.value, expected);
     }
     let reply = call(
         &Request::Submit {

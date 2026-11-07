@@ -472,8 +472,74 @@ fn exact_row_count(
 pub(crate) struct Lookup {
     pub next: Option<Hash>,
     pub height: u64,
+    pub tip_height: u64,
     pub sql_lookups: u64,
 }
+
+/// One public page's SQL account, including every packet-length and body read.
+/// Each lookup observes the original current rows again. Only the arithmetic
+/// allowance survives between packets; no ancestry verdict is reused.
+pub(crate) struct PublicHistoryPageBudget<'a>(Budget<'a>);
+
+impl<'a> PublicHistoryPageBudget<'a> {
+    pub(crate) fn new(
+        maximum_sql: u64,
+        progress: &'a mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<Self> {
+        ensure(
+            (3..=READ_SQL_BUDGET).contains(&maximum_sql),
+            "ANCESTRY_INDEX_BUDGET",
+        )?;
+        Ok(Self(Budget {
+            used: 0,
+            maximum: maximum_sql,
+            progress,
+            origin: BudgetOrigin::PublicHistoryRequest,
+            #[cfg(test)]
+            reads: None,
+        }))
+    }
+
+    pub(crate) fn next(
+        &mut self,
+        db: &Connection,
+        ctx: Context,
+        tip: Hash,
+        after: Hash,
+    ) -> Result<Lookup> {
+        if self.0.maximum - self.0.used < 2 {
+            return Err(Error::public_history_budget());
+        }
+        // Keep the original two reserved SQL slots for this candidate's
+        // pre-allocation length check and bounded body read. Restore capacity,
+        // never used credit, even when the native lookup refuses the request.
+        let maximum = self.0.maximum;
+        self.0.maximum -= 2;
+        let lookup = next_with_budget(db, ctx, tip, after, &mut self.0);
+        self.0.maximum = maximum;
+        lookup
+    }
+
+    pub(crate) fn charge_packet_read(&mut self) -> Result<()> {
+        self.0.charge()
+    }
+
+    pub(crate) fn can_read_next(&self, remaining_height: u64) -> bool {
+        let Some(distance) = remaining_height.checked_sub(1) else {
+            return false;
+        };
+        // Each set bit visits one checked jump: at most three basic rows,
+        // each with one jump and two two-query metadata reads (15 SQL).
+        // Tip, cursor and candidate metadata cost at most six, then the
+        // original length/body pair costs two. This conservative bound only
+        // decides whether to end a partial page BEFORE starting another read.
+        // Actual current rows still charge the one account and may refuse;
+        // neither budget errors nor corruption are caught as pagination.
+        let maximum = 8 + 15 * u64::from(distance.count_ones());
+        maximum <= self.0.maximum - self.0.used
+    }
+}
+
 fn ascend(
     db: &Connection,
     ctx: Context,
@@ -617,12 +683,23 @@ fn next_with_mode(
         #[cfg(test)]
         reads: mode.reads,
     };
-    let target = metadata(db, ctx, tip, &mut budget)?;
-    let cursor = metadata(db, ctx, after, &mut budget)?;
+    next_with_budget(db, ctx, tip, after, &mut budget)
+}
+
+fn next_with_budget(
+    db: &Connection,
+    ctx: Context,
+    tip: Hash,
+    after: Hash,
+    budget: &mut Budget<'_>,
+) -> Result<Lookup> {
+    let target = metadata(db, ctx, tip, budget)?;
+    let cursor = metadata(db, ctx, after, budget)?;
     if tip == after {
         return Ok(Lookup {
             next: None,
             height: cursor.height,
+            tip_height: target.height,
             sql_lookups: budget.used,
         });
     }
@@ -631,8 +708,8 @@ fn next_with_mode(
         .checked_sub(cursor.height)
         .filter(|n| *n > 0)
         .ok_or("CURSOR")?;
-    let candidate = ascend(db, ctx, tip, difference - 1, &mut budget)?;
-    let candidate_metadata = metadata(db, ctx, candidate, &mut budget)?;
+    let candidate = ascend(db, ctx, tip, difference - 1, budget)?;
+    let candidate_metadata = metadata(db, ctx, candidate, budget)?;
     ensure(
         candidate_metadata.height == cursor.height + 1 && candidate_metadata.parent == Some(after),
         "CURSOR",
@@ -640,6 +717,7 @@ fn next_with_mode(
     Ok(Lookup {
         next: Some(candidate),
         height: candidate_metadata.height,
+        tip_height: target.height,
         sql_lookups: budget.used,
     })
 }
@@ -896,6 +974,119 @@ mod tests {
         assert_eq!(corrupt.to_string(), "ANCESTRY_INDEX_SEAL");
         assert!(corrupt.requires_owner_stop());
     }
+
+    #[test]
+    fn public_history_page_sql_is_cumulative_including_each_length_and_body() {
+        for height in [17, 257] {
+            let (db, ctx) = fixture();
+            let ids = chain(&db, ctx, height);
+            let tip = *ids.last().unwrap();
+            let mut observations = Vec::new();
+            let expected_sql = {
+                let mut progress = |used| {
+                    observations.push(used);
+                    Ok(())
+                };
+                let mut budget =
+                    PublicHistoryPageBudget::new(READ_SQL_BUDGET, &mut progress).unwrap();
+                let mut after = ctx.genesis;
+                let mut expected_sql = 0;
+                let mut count = 0;
+                while count < 16 {
+                    let original =
+                        next_public_request(&db, ctx, tip, after, READ_SQL_BUDGET, &mut |_| Ok(()))
+                            .unwrap();
+                    let lookup = budget.next(&db, ctx, tip, after).unwrap();
+                    assert_eq!(lookup.next, original.next);
+                    assert_eq!(lookup.height, original.height);
+                    assert_eq!(lookup.tip_height, height);
+                    expected_sql += original.sql_lookups;
+                    assert_eq!(lookup.sql_lookups, expected_sql);
+                    budget.charge_packet_read().unwrap();
+                    budget.charge_packet_read().unwrap();
+                    expected_sql += 2;
+                    assert_eq!(budget.0.used, expected_sql);
+                    count += 1;
+                    after = lookup.next.unwrap();
+                    if !budget.can_read_next(height - count) {
+                        break;
+                    }
+                }
+                assert_eq!(after, ids[count as usize]);
+                assert!(expected_sql <= READ_SQL_BUDGET);
+                if height == 17 {
+                    assert_eq!(count, 16);
+                } else {
+                    assert!((2..16).contains(&count));
+                    assert!(!budget.can_read_next(height - count));
+                }
+                expected_sql
+            };
+            assert_eq!(observations, (1..=expected_sql).collect::<Vec<_>>());
+        }
+    }
+
+    #[test]
+    fn public_history_page_budget_exhaustion_never_renews_for_the_second_packet() {
+        let (db, ctx) = fixture();
+        let ids = chain(&db, ctx, 9);
+        let first = next_public_request(&db, ctx, ids[9], ids[0], 1024, &mut |_| Ok(())).unwrap();
+        let second = next_public_request(&db, ctx, ids[9], ids[1], 1024, &mut |_| Ok(())).unwrap();
+        let first_cost = first.sql_lookups + 2;
+        let limit = first_cost + second.sql_lookups + 2 - 1;
+        let mut observations = Vec::new();
+        let used = {
+            let mut progress = |used| {
+                observations.push(used);
+                Ok(())
+            };
+            let mut budget = PublicHistoryPageBudget::new(limit, &mut progress).unwrap();
+            assert_eq!(
+                budget.next(&db, ctx, ids[9], ids[0]).unwrap().next,
+                Some(ids[1])
+            );
+            budget.charge_packet_read().unwrap();
+            budget.charge_packet_read().unwrap();
+            assert_eq!(budget.0.used, first_cost);
+            assert!(!budget.can_read_next(8));
+            // Even a caller that ignores the conservative partial-page boundary
+            // cannot renew the native account by starting another candidate.
+            let error = budget.next(&db, ctx, ids[9], ids[1]).unwrap_err();
+            assert_eq!(error.to_string(), "ANCESTRY_INDEX_BUDGET");
+            assert!(!error.requires_owner_stop());
+            assert!(budget.0.used <= limit - 2);
+            budget.0.used
+        };
+        assert_eq!(observations, (1..=used).collect::<Vec<_>>());
+        assert!(PublicHistoryPageBudget::new(2, &mut |_| Ok(()))
+            .err()
+            .unwrap()
+            .requires_owner_stop());
+    }
+
+    #[test]
+    fn public_history_page_rechecks_current_jump_rows_after_a_successful_packet() {
+        let (db, ctx) = fixture();
+        let ids = chain(&db, ctx, 9);
+        let mut progress = |_| Ok(());
+        let mut budget = PublicHistoryPageBudget::new(READ_SQL_BUDGET, &mut progress).unwrap();
+        assert_eq!(
+            budget.next(&db, ctx, ids[9], ids[0]).unwrap().next,
+            Some(ids[1])
+        );
+        budget.charge_packet_read().unwrap();
+        budget.charge_packet_read().unwrap();
+        assert!(budget.can_read_next(8));
+        db.execute(
+            "UPDATE ancestry_jump SET seal=? WHERE block=? AND level=2",
+            params![[0_u8; 32].as_slice(), ids[9].as_slice()],
+        )
+        .unwrap();
+        let error = budget.next(&db, ctx, ids[9], ids[1]).unwrap_err();
+        assert_eq!(error.to_string(), "ANCESTRY_INDEX_SEAL");
+        assert!(error.requires_owner_stop());
+    }
+
     #[test]
     fn random_row_corruption_and_visible_resealed_structure_are_refused() {
         for mode in ["seal", "missing", "structure", "parent"] {

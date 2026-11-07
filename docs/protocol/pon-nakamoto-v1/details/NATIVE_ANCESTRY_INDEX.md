@@ -1,6 +1,7 @@
 # Native local derived ancestry index
 
-`trnm-pon-node::ancestry_index` accelerates the public one-packet History path.
+`trnm-pon-node::ancestry_index` accelerates the public History paths: the retained
+V2 single-packet interface and explicitly versioned V3 bounded pages.
 The table is a local derivative of already admitted packet headers. It does not
 change PNH1, accumulated chainwork, task eligibility, checkpoint trust or the
 receiving Node's full packet verifier. Public readiness, scientific hardness,
@@ -57,13 +58,26 @@ number of indexed row lookups is `O(log(height))`, rather than a repeated linear
 suffix scan. Each SQLite indexed point query has its own database-size cost; this
 statement budget is not an exact CPU, filesystem-read or RSS bound.
 
-Production public V3 retains the original complete held-owner Page lookup.
+Production public V3 r16 uses `Node::public_history_page` to repeat these complete
+current lookups under the same Node owner. Up to sixteen consecutive packets
+share one cumulative 1,024-statement budget, including every length/body pair,
+and at most 2,096,128 total hexadecimal payload bytes. A conservative remaining
+lookup bound may end a partial page before starting the next candidate. Once a
+candidate is inspected, corruption, cancellation or budget errors remain errors;
+they cannot become successful truncation. An inspected candidate that exceeds
+the remaining page bytes is fully decoded and bound before being left for the
+next page. `next` is the last returned ID, and `complete` requires the fixed tip.
+Current reads remain under the original owner; this is not a new transaction
+snapshot or cross-request ancestry cache. Owned response formatting happens
+after releasing the writer mutex. V2 and local single-packet readers retain their
+original interface and behavior.
+
 Only genuine charged public-request exhaustion selects the private
 `ANCESTRY_INDEX_BUDGET`/Capacity request origin and keeps a healthy owner running.
 Invalid trusted maxima, progress callback errors, corrupt read facts and ordinary
 owner admission/recovery budgets retain their original stopping policy. The
-statement allowance and query/error order are unchanged; no cached result or SQL
-prepared-statement optimization is enabled by this continuation.
+statement allowance and each candidate's query/error order are unchanged; no
+cached validation result is introduced by paging.
 
 An explicit cfg(test) research reader records that same lookup's exact raw facts
 outside the writer mutex and publishes only after current owner/source/epoch,

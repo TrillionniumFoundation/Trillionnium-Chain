@@ -815,6 +815,57 @@ class ReaderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'completion-work observation'):
             reader.analyze(report)
 
+    def test_r16_policy_preserves_failures_and_cannot_relabel_r14_phases(self):
+        # Synthetic reader controls only. A new profile is not new native evidence.
+        for arithmetic in (False, True):
+            with self.subTest(arithmetic=arithmetic):
+                report = arithmetic_report()
+                policy = arithmetic_policy if arithmetic else observation
+                if not arithmetic:
+                    report['schema'] = 'native-public-v3-separate-process-campaign-v2'
+                    del report['work_profile']
+                    for phase in report['phases']:
+                        del phase['work_profile']
+                        del phase['work_arithmetic_owner']
+                        for row in phase['receiver_observation']['records']:
+                            row.pop('work_arithmetic', None)
+                report['public_resource_policy'] = policy('r14')
+                for phase in report['phases']:
+                    phase['public_resource_policy'] = policy('r14')
+                historical = copy.deepcopy(report)
+                historical_result = reader.analyze(historical)
+                expected_historical = 'r14-arithmetic-facts-v1' if arithmetic else 'r14'
+                self.assertEqual([p['public_resource_policy']['resource_revision']
+                                  for p in historical_result['phases']], [expected_historical] * 3)
+                if arithmetic:
+                    self.assertEqual(historical_result['public_resource_policy']['resource_revision'],
+                                     expected_historical)
+                report['public_resource_policy'] = policy('r16')
+                with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
+                    reader.analyze(report)
+                for phase in report['phases']:
+                    phase['public_resource_policy'] = policy('r16')
+                result = reader.analyze(report)
+                expected_current = 'r16-arithmetic-facts-v1' if arithmetic else 'r16'
+                if arithmetic:
+                    self.assertEqual(result['public_resource_policy']['resource_revision'],
+                                     expected_current)
+                self.assertEqual([p['public_resource_policy']['resource_revision']
+                                  for p in result['phases']], [expected_current] * 3)
+                self.assertEqual([p['confirmed_rounds'] for p in result['phases']], [0, 0, 0])
+                self.assertFalse(result['native_finite_experiment_criteria_met'])
+                self.assertFalse(result['scope']['production_qualification'])
+                self.assertIsNone(result['honest_preparation_cpu_ns'])
+                self.assertEqual(reader.analyze(historical), historical_result)
+                wrong_scope = copy.deepcopy(report)
+                wrong_scope['phases'][0]['receiver_observation']['schema'] = \
+                    'public-v3-local-request-resource-observation-v2'
+                with self.assertRaisesRegex(ValueError, 'policy and observed CPU scope disagree'):
+                    reader.analyze(wrong_scope)
+                del report['phases'][0]['completion_work_observation']
+                with self.assertRaisesRegex(ValueError, 'completion-work observation'):
+                    reader.analyze(report)
+
     def test_original_native_raw_report_remains_historical_and_cannot_claim_arithmetic(self):
         path = Path(__file__).resolve().parents[2] / 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json'
         original = 'c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233'

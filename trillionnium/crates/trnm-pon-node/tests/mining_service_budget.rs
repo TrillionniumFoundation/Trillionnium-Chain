@@ -265,7 +265,26 @@ fn mining_runtime_ends_before_service_and_fresh_native_follower_confirms_last_ch
         catchup_end,
     );
     assert_eq!(history["ok"], true);
-    assert_eq!(history["value"]["packets"].as_array().unwrap().len(), 1);
+    let page = &history["value"];
+    let rows = page["packets"].as_array().unwrap();
+    assert!((1..=16).contains(&rows.len()));
+    assert!(
+        rows.iter()
+            .map(|row| row.as_str().unwrap().len())
+            .sum::<usize>()
+            <= 2_096_128
+    );
+    assert_eq!(page["tip"], tip);
+    assert_eq!(page["after"], hex::encode(settings.genesis()));
+    let mut page_cursor = settings.genesis();
+    for row in rows {
+        let packet =
+            trnm_pon_node::Packet::decode(&hex::decode(row.as_str().unwrap()).unwrap()).unwrap();
+        assert_eq!(packet.header.parent, page_cursor);
+        page_cursor = packet.id().unwrap();
+    }
+    assert_eq!(page["next"], hex::encode(page_cursor));
+    assert_eq!(page["complete"], hex::encode(page_cursor) == tip);
     let caught_up = while_serving(
         client("sync").args(["--tip", tip, "--pages", "32"]),
         &mut service,

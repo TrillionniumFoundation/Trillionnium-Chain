@@ -638,7 +638,8 @@ mod network_only_business {
                     return Err("NETWORK_ONLY_HEAD".into());
                 }
                 let mut after = hex::encode(settings.genesis());
-                for expected_packet in &packets {
+                let mut received = 0;
+                while received < packets.len() {
                     let (page, mut row) = call(
                         address,
                         &settings,
@@ -652,7 +653,8 @@ mod network_only_business {
                     row["kind"] = json!("history");
                     honest_rows.push(row);
                     let page = page.ok_or("NETWORK_ONLY_HISTORY")?;
-                    if page["tip"] != tip
+                    if page["schema"] != "pon-native-history-v1"
+                        || page["tip"] != tip
                         || page["after"] != after
                         || page["network"] != hex::encode(settings.network())
                         || page["parameters"] != hex::encode(settings.parameters())
@@ -661,22 +663,36 @@ mod network_only_business {
                         return Err("NETWORK_ONLY_CONTEXT".into());
                     }
                     let rows = page["packets"].as_array().ok_or("NETWORK_ONLY_PAGE")?;
-                    if rows.len() != 1 {
+                    if rows.is_empty() || rows.len() > 16 || rows.len() > packets.len() - received {
                         return Err("NETWORK_ONLY_PAGE".into());
                     }
-                    let raw = hex::decode(rows[0].as_str().ok_or("NETWORK_ONLY_PACKET")?)
-                        .map_err(|_| "NETWORK_ONLY_PACKET")?;
-                    // No direct producer-to-consumer copy supplies authority.
-                    let packet = Packet::decode(&raw)?;
-                    let id = consumer.admit(&packet, ingress::now()?)?;
-                    consumer.activate_observed(id, ingress::now()?)?;
-                    if raw != expected_packet.encode()?
-                        || page["next"] != hex::encode(id)
-                        || page["complete"] != (hex::encode(id) == tip)
-                    {
+                    let mut total_hex = 0usize;
+                    for row in rows {
+                        let text = row.as_str().ok_or("NETWORK_ONLY_PACKET")?;
+                        total_hex = total_hex
+                            .checked_add(text.len())
+                            .ok_or("NETWORK_ONLY_PAGE")?;
+                        if total_hex > 2_096_128 {
+                            return Err("NETWORK_ONLY_PAGE".into());
+                        }
+                        let raw = hex::decode(text).map_err(|_| "NETWORK_ONLY_PACKET")?;
+                        // Every received packet still undergoes complete native
+                        // admission and activation. The prebuilt sequence is an
+                        // equality oracle, never a producer-to-consumer import.
+                        let packet = Packet::decode(&raw)?;
+                        if raw != packets[received].encode()?
+                            || hex::encode(packet.header.parent) != after
+                        {
+                            return Err("NETWORK_ONLY_HISTORY_BYTES".into());
+                        }
+                        let id = consumer.admit(&packet, ingress::now()?)?;
+                        consumer.activate_observed(id, ingress::now()?)?;
+                        after = hex::encode(id);
+                        received += 1;
+                    }
+                    if page["next"] != after || page["complete"] != (after == tip) {
                         return Err("NETWORK_ONLY_HISTORY_BYTES".into());
                     }
-                    after = hex::encode(id);
                 }
                 Ok(())
             })();
