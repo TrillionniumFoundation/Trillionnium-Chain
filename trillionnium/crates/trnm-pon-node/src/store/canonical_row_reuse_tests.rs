@@ -2,6 +2,7 @@
 //! the oracle. Malformed-schema probes do not qualify a service schema.
 use super::*;
 use rusqlite::types::Value as SqlValue;
+use serde_json::json;
 
 fn fixture() -> (tempfile::TempDir, Node) {
     let directory = tempfile::tempdir().unwrap();
