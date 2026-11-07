@@ -2,10 +2,10 @@
   "file_count": 73,
   "files": [
     {
-      "bytes": 24700,
+      "bytes": 24748,
       "mode": "0o644",
       "path": "README.md",
-      "sha256": "3a2753c42db38ab93f706ff9f6fafdc2b9c4041ecdf0db3ad7e810a94c67ee96"
+      "sha256": "5824ed0aa84836645b1e4e40fc4d1c476142cf8d0c97726d931c52401513adf3"
     },
     {
       "bytes": 9006,
@@ -441,7 +441,7 @@
     }
   ],
   "manifest_excludes_itself": true,
-  "payload_bytes": 6079285,
+  "payload_bytes": 6079333,
   "schema": "pon-resource-transfer-evidence-manifest-v0",
   "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
   "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10"

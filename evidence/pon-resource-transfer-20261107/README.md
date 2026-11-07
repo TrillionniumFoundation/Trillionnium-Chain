@@ -331,7 +331,8 @@ Campaign 的 report 编码前 wall 区间为 1.229068286 秒，native 子进程�
 [可移植独立审计](rog/key-records/readiness-capture-v1/preparation/owner-independent-audit-v2.json)
 完成 **325／325 检查**，核对了原始帧、SQLite、2 个 capsule
 签名、30 个 receiver 签名及 30 个 owner response 签名，并额外绑定最终
-验证 summary、源码、build log、runner artifact 与环境资格记录。
+验证 summary、源码、build log 与 runner artifact。环境资格由独立的
+SQLite qualification review 另行核验。
 审计本身新增 384 chain steps、6 seeds 及 37,008 MAC + 48 adds，不能并入
 之前 owner 的 K 后声称仍只花 704 steps；扩大到整个会计时间范围时必须计入。
 这里的 325 项是独立核对条件，不冒充 325 个 unit tests 或独立运营方。
