@@ -1,0 +1,119 @@
+{
+  "schema": "trnm-offline-pinned-readers-v1",
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "created_at": "2026-11-07T15:19:17.231900+00:00",
+  "file_count": 6,
+  "files": [
+    {
+      "path": "config/pon/devnet-v1.json",
+      "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/a60f403b2f0e7343aed61170ca2aef875a787790"
+      ],
+      "exit_code": 0,
+      "response_sha256": "f39dd814f6068a8ac14153bfcfb8a7c2240ef299aeceaeac3a6c194f126565b4",
+      "verified": true,
+      "size": 1964,
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    {
+      "path": "config/pon/evaluation-round-v1.json",
+      "git_blob": "23b0861700b07067cdc54e02081e6d4487450f6b",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/23b0861700b07067cdc54e02081e6d4487450f6b"
+      ],
+      "exit_code": 0,
+      "response_sha256": "c061f12d08b8baa31fd306cfe1408e98d3aca275a7b953afc2f3c5e88aff0cbb",
+      "verified": true,
+      "size": 890,
+      "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33"
+    },
+    {
+      "path": "config/pon/ledger-v1.json",
+      "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/f7d8dba05cd0267b716834d76774a7ce94a1276b"
+      ],
+      "exit_code": 0,
+      "response_sha256": "60b83d934a04207cbe8c0161788f3afb6c35543053cddc5c8679a38e5645d2a4",
+      "verified": true,
+      "size": 7793,
+      "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+    },
+    {
+      "path": "config/pon/model-family-v1.json",
+      "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+      ],
+      "exit_code": 0,
+      "response_sha256": "eb33789629a363cfa0cd8756f2e8d46e18398635b621dce141f12dbb058a6e74",
+      "verified": true,
+      "size": 1383,
+      "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+    },
+    {
+      "path": "config/pon/work-profile-v1.json",
+      "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/54e43139d3691b62f76f9e8976e1d2a974e8524b"
+      ],
+      "exit_code": 0,
+      "response_sha256": "b6784adec56ee4893473a8f20d78c9f811e3f4c122d6487ce93fafb8bedd78de",
+      "verified": true,
+      "size": 1596,
+      "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+    },
+    {
+      "path": "scripts/ci/tool-versions.env",
+      "git_blob": "6b7d4459a5e8ae69ac6ad36a0376443138e7b474",
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "--hostname",
+        "github.com",
+        "--method",
+        "GET",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/6b7d4459a5e8ae69ac6ad36a0376443138e7b474"
+      ],
+      "exit_code": 0,
+      "response_sha256": "b4a9ce15e43bef706a96a9457df7b30eb0caaa697f0eefb79a0058110f505bf2",
+      "verified": true,
+      "size": 185,
+      "sha256": "b752f1fc81cdd1b4a2ca852e30f1597b27c08af13cef9259d066dbae825d1408"
+    }
+  ],
+  "all_verified": true,
+  "full_source_verified": false,
+  "native_gate_validated": false
+}

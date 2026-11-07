@@ -1,0 +1,15 @@
+{
+  "name": "process-sample-after",
+  "argv": [
+    "/usr/bin/ps",
+    "-eo",
+    "pid,ppid,comm,etimes,pcpu,pmem",
+    "--sort=-pcpu"
+  ],
+  "started_unix_ns": 1794070470461552301,
+  "ended_unix_ns": 1794070470518173616,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/component-205ae38/process-sample-after.log",
+  "log_bytes": 44850,
+  "log_sha256": "bec7fbee88a50206a9842dc0613497616a6aa6c5131522d6a7e053e42bb98e51"
+}

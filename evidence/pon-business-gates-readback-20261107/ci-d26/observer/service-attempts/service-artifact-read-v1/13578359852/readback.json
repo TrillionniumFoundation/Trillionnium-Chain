@@ -1,0 +1,1631 @@
+{
+  "artifact_id": 13578359852,
+  "metadata": {
+    "id": 13578359852,
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODM1OTg1Mg==",
+    "name": "priority-ubuntu-24.04-prospective-merge-service-model-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+    "size_in_bytes": 8006598,
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578359852",
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578359852/zip",
+    "expired": false,
+    "digest": "sha256:60dfe6224be8dfef98680b878b8305bfcd3ea763c5dd538157ec98d9647f6d80",
+    "created_at": "2026-11-07T15:04:13Z",
+    "updated_at": "2026-11-07T15:04:13Z",
+    "expires_at": "2026-12-07T15:04:12Z",
+    "workflow_run": {
+      "id": 42383368690,
+      "repository_id": 1323087357,
+      "head_repository_id": 1323087357,
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89"
+    }
+  },
+  "errors": [
+    "ValueError: native source-after log"
+  ],
+  "native_gate_validated": false,
+  "download": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578359852/zip"
+    ],
+    "exit_code": 0,
+    "bytes": 8006598,
+    "sha256": "60dfe6224be8dfef98680b878b8305bfcd3ea763c5dd538157ec98d9647f6d80"
+  },
+  "archive_inventory": [
+    {
+      "name": "actual-cpu-depletion/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "actual-cpu-depletion/producer/native.sqlite",
+      "bytes": 294912,
+      "compressed_bytes": 16880
+    },
+    {
+      "name": "actual-cpu-depletion/receiver/native.sqlite",
+      "bytes": 294912,
+      "compressed_bytes": 17201
+    },
+    {
+      "name": "actual-cpu-depletion/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "actual-cpu-depletion/report.json",
+      "bytes": 113852,
+      "compressed_bytes": 3935
+    },
+    {
+      "name": "actual-cpu-depletion.log",
+      "bytes": 821,
+      "compressed_bytes": 389
+    },
+    {
+      "name": "daa-adversarial-schedule.log",
+      "bytes": 654,
+      "compressed_bytes": 333
+    },
+    {
+      "name": "debug-from-zero/producer/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13066
+    },
+    {
+      "name": "debug-from-zero/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "debug-from-zero/receiver/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13384
+    },
+    {
+      "name": "debug-from-zero/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "debug-from-zero/report.json",
+      "bytes": 3477080,
+      "compressed_bytes": 71989
+    },
+    {
+      "name": "debug-from-zero/sustained/producer/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13067
+    },
+    {
+      "name": "debug-from-zero/sustained/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "debug-from-zero/sustained/receiver/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13385
+    },
+    {
+      "name": "debug-from-zero/sustained/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "debug-from-zero/sustained/report.json",
+      "bytes": 19791855,
+      "compressed_bytes": 777488
+    },
+    {
+      "name": "debug-pressure.log",
+      "bytes": 5254,
+      "compressed_bytes": 1483
+    },
+    {
+      "name": "final-sample-selectors.log",
+      "bytes": 519,
+      "compressed_bytes": 213
+    },
+    {
+      "name": "from-zero-native/build/process.json",
+      "bytes": 893,
+      "compressed_bytes": 498
+    },
+    {
+      "name": "from-zero-native/build/stderr",
+      "bytes": 62,
+      "compressed_bytes": 64
+    },
+    {
+      "name": "from-zero-native/build/stdout",
+      "bytes": 108243,
+      "compressed_bytes": 7738
+    },
+    {
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 878,
+      "compressed_bytes": 514
+    },
+    {
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/confirmation/baseline/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "compressed_bytes": 136
+    },
+    {
+      "name": "from-zero-native/confirmation/baseline/independent-client/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33622
+    },
+    {
+      "name": "from-zero-native/confirmation/baseline/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772
+    },
+    {
+      "name": "from-zero-native/confirmation/baseline/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/confirmation/pressure/independent-client/native.sqlite",
+      "bytes": 393216,
+      "compressed_bytes": 24384
+    },
+    {
+      "name": "from-zero-native/confirmation/pressure/independent-client/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/confirmation/pressure/receiver/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33772
+    },
+    {
+      "name": "from-zero-native/confirmation/producer/native.sqlite",
+      "bytes": 499712,
+      "compressed_bytes": 33470
+    },
+    {
+      "name": "from-zero-native/confirmation/pressure/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/confirmation/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/confirmation/report.json",
+      "bytes": 12559305,
+      "compressed_bytes": 517602
+    },
+    {
+      "name": "from-zero-native/format-check/process.json",
+      "bytes": 791,
+      "compressed_bytes": 413
+    },
+    {
+      "name": "from-zero-native/format-check/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/format-check/stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/format-copy/process.json",
+      "bytes": 826,
+      "compressed_bytes": 448
+    },
+    {
+      "name": "from-zero-native/format-copy/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/format-copy/stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/format-copy-source/examples/support/w1_from_zero.rs",
+      "bytes": 1035,
+      "compressed_bytes": 563
+    },
+    {
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs",
+      "bytes": 11911,
+      "compressed_bytes": 3812
+    },
+    {
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs",
+      "bytes": 79067,
+      "compressed_bytes": 18284
+    },
+    {
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 889,
+      "compressed_bytes": 520
+    },
+    {
+      "name": "from-zero-native/formatted.rs",
+      "bytes": 79067,
+      "compressed_bytes": 18284
+    },
+    {
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3361,
+      "compressed_bytes": 1348
+    },
+    {
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 890,
+      "compressed_bytes": 520
+    },
+    {
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "compressed_bytes": 141
+    },
+    {
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 903,
+      "compressed_bytes": 533
+    },
+    {
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 921,
+      "compressed_bytes": 402
+    },
+    {
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 941,
+      "compressed_bytes": 560
+    },
+    {
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/manifest.json",
+      "bytes": 73007,
+      "compressed_bytes": 11050
+    },
+    {
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 413,
+      "compressed_bytes": 269
+    },
+    {
+      "name": "from-zero-native/native/producer/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13056
+    },
+    {
+      "name": "from-zero-native/native/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/native/receiver/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13374
+    },
+    {
+      "name": "from-zero-native/native/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/native/report.json",
+      "bytes": 3477092,
+      "compressed_bytes": 71958
+    },
+    {
+      "name": "from-zero-native/native/sustained/producer/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13067
+    },
+    {
+      "name": "from-zero-native/native/sustained/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/native/sustained/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native/native/sustained/receiver/native.sqlite",
+      "bytes": 245760,
+      "compressed_bytes": 13385
+    },
+    {
+      "name": "from-zero-native/native/sustained/report.json",
+      "bytes": 19993534,
+      "compressed_bytes": 786475
+    },
+    {
+      "name": "from-zero-native/public_v3_from_zero",
+      "bytes": 10966328,
+      "compressed_bytes": 4421921
+    },
+    {
+      "name": "from-zero-native-host/actual-systemd-parent-after.log",
+      "bytes": 200,
+      "compressed_bytes": 145
+    },
+    {
+      "name": "from-zero-native-host/actual-systemd-parent.log",
+      "bytes": 200,
+      "compressed_bytes": 145
+    },
+    {
+      "name": "from-zero-native-host/before-provision.json",
+      "bytes": 2795,
+      "compressed_bytes": 708
+    },
+    {
+      "name": "from-zero-native-host/after-provision.json",
+      "bytes": 1628,
+      "compressed_bytes": 790
+    },
+    {
+      "name": "from-zero-native-host/child-final-load-state.log",
+      "bytes": 10,
+      "compressed_bytes": 12
+    },
+    {
+      "name": "from-zero-native-host/child-load-state.log",
+      "bytes": 10,
+      "compressed_bytes": 12
+    },
+    {
+      "name": "from-zero-native-host/controller-result.json",
+      "bytes": 7644,
+      "compressed_bytes": 1986
+    },
+    {
+      "name": "from-zero-native-host/child-result.json",
+      "bytes": 339,
+      "compressed_bytes": 220
+    },
+    {
+      "name": "from-zero-native-host/inside-after.json",
+      "bytes": 1700,
+      "compressed_bytes": 812
+    },
+    {
+      "name": "from-zero-native-host/inside-before.json",
+      "bytes": 1686,
+      "compressed_bytes": 806
+    },
+    {
+      "name": "from-zero-native-host/install-reviewed-unit.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native-host/outside-after.json",
+      "bytes": 1662,
+      "compressed_bytes": 831
+    },
+    {
+      "name": "from-zero-native-host/parent-properties.log",
+      "bytes": 146,
+      "compressed_bytes": 111
+    },
+    {
+      "name": "from-zero-native-host/prepare-build/process.json",
+      "bytes": 920,
+      "compressed_bytes": 518
+    },
+    {
+      "name": "from-zero-native-host/prepare-build/stderr",
+      "bytes": 6896,
+      "compressed_bytes": 1517
+    },
+    {
+      "name": "from-zero-native-host/prepare-build/stdout",
+      "bytes": 108363,
+      "compressed_bytes": 7793
+    },
+    {
+      "name": "from-zero-native-host/prepare-build.json",
+      "bytes": 3405,
+      "compressed_bytes": 1226
+    },
+    {
+      "name": "from-zero-native-host/seal-parent-directory.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native-host/start-fixed-parent.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native-host/seal-parent-receipt.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native-host/systemd-reload.log",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "from-zero-native-host/systemd-run.log",
+      "bytes": 6863,
+      "compressed_bytes": 1394
+    },
+    {
+      "name": "model-consumer-context.log",
+      "bytes": 2737,
+      "compressed_bytes": 617
+    },
+    {
+      "name": "from-zero-native-host/unprovisioned-parent.json",
+      "bytes": 229,
+      "compressed_bytes": 139
+    },
+    {
+      "name": "model-generation-context.log",
+      "bytes": 1500,
+      "compressed_bytes": 368
+    },
+    {
+      "name": "model-generation-sequence.log",
+      "bytes": 1292,
+      "compressed_bytes": 353
+    },
+    {
+      "name": "model-regressions.log",
+      "bytes": 5794,
+      "compressed_bytes": 1577
+    },
+    {
+      "name": "model-window-original.log",
+      "bytes": 9749,
+      "compressed_bytes": 1850
+    },
+    {
+      "name": "observation-actual_opt_in_capture_and_default_output_keep_the_same_public_context.log",
+      "bytes": 626,
+      "compressed_bytes": 332
+    },
+    {
+      "name": "observation-cli/capacity-boundary/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum-head.argv.json",
+      "bytes": 532,
+      "compressed_bytes": 278
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum-head.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum-head.stdout",
+      "bytes": 824,
+      "compressed_bytes": 425
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum-head.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.json",
+      "bytes": 7852,
+      "compressed_bytes": 1957
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.argv.json",
+      "bytes": 764,
+      "compressed_bytes": 278
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.stdout",
+      "bytes": 4169,
+      "compressed_bytes": 1506
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4924
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/maximum.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/capacity-boundary/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one-head.argv.json",
+      "bytes": 542,
+      "compressed_bytes": 283
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one-head.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one-head.stdout",
+      "bytes": 826,
+      "compressed_bytes": 425
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one-head.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.argv.json",
+      "bytes": 783,
+      "compressed_bytes": 283
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.json",
+      "bytes": 7850,
+      "compressed_bytes": 1955
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.stdout",
+      "bytes": 4169,
+      "compressed_bytes": 1506
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4924
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/capacity-boundary/previous-plus-one.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 116
+    },
+    {
+      "name": "observation-cli/capacity-boundary/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/io-failure/added-link",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/io-failure/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/io-failure/honest-head.argv.json",
+      "bytes": 517,
+      "compressed_bytes": 272
+    },
+    {
+      "name": "observation-cli/io-failure/honest-head.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/io-failure/honest-head.stdout",
+      "bytes": 826,
+      "compressed_bytes": 424
+    },
+    {
+      "name": "observation-cli/io-failure/honest-head.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/io-failure/owner.argv.json",
+      "bytes": 691,
+      "compressed_bytes": 260
+    },
+    {
+      "name": "observation-cli/io-failure/owner.stderr",
+      "bytes": 192,
+      "compressed_bytes": 129
+    },
+    {
+      "name": "observation-cli/io-failure/owner.json",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/io-failure/owner.stdout",
+      "bytes": 1579,
+      "compressed_bytes": 747
+    },
+    {
+      "name": "observation-cli/io-failure/owner.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4926
+    },
+    {
+      "name": "observation-cli/io-failure/owner.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/io-failure/owner.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 116
+    },
+    {
+      "name": "observation-cli/io-failure/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/io-failure/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/miner-failure/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.argv.json",
+      "bytes": 746,
+      "compressed_bytes": 280
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.json",
+      "bytes": 2311,
+      "compressed_bytes": 1118
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.stderr",
+      "bytes": 268,
+      "compressed_bytes": 224
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.stdout",
+      "bytes": 1578,
+      "compressed_bytes": 752
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.store/native.sqlite",
+      "bytes": 196608,
+      "compressed_bytes": 9434
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/miner-failure/owner.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 116
+    },
+    {
+      "name": "observation-cli/miner-failure/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/miner-failure/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/normal/default-head.argv.json",
+      "bytes": 510,
+      "compressed_bytes": 272
+    },
+    {
+      "name": "observation-cli/normal/default-head.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/default-head.stdout",
+      "bytes": 826,
+      "compressed_bytes": 424
+    },
+    {
+      "name": "observation-cli/normal/default-head.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/normal/default.argv.json",
+      "bytes": 564,
+      "compressed_bytes": 241
+    },
+    {
+      "name": "observation-cli/normal/default.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/default.stdout",
+      "bytes": 4169,
+      "compressed_bytes": 1502
+    },
+    {
+      "name": "observation-cli/normal/default.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4928
+    },
+    {
+      "name": "observation-cli/normal/default.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/default.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 115
+    },
+    {
+      "name": "observation-cli/normal/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/normal/observed-head.argv.json",
+      "bytes": 511,
+      "compressed_bytes": 267
+    },
+    {
+      "name": "observation-cli/normal/observed-head.stdout",
+      "bytes": 825,
+      "compressed_bytes": 424
+    },
+    {
+      "name": "observation-cli/normal/observed-head.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/observed-head.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 112
+    },
+    {
+      "name": "observation-cli/normal/observed.argv.json",
+      "bytes": 681,
+      "compressed_bytes": 257
+    },
+    {
+      "name": "observation-cli/normal/observed.json",
+      "bytes": 7850,
+      "compressed_bytes": 1961
+    },
+    {
+      "name": "observation-cli/normal/observed.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/observed.stdout",
+      "bytes": 4169,
+      "compressed_bytes": 1499
+    },
+    {
+      "name": "observation-cli/normal/observed.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4928
+    },
+    {
+      "name": "observation-cli/normal/observed.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/normal/observed.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 115
+    },
+    {
+      "name": "observation-cli/normal/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/normal/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.argv.json",
+      "bytes": 730,
+      "compressed_bytes": 269
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.json",
+      "bytes": 7852,
+      "compressed_bytes": 1956
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.stdout",
+      "bytes": 4169,
+      "compressed_bytes": 1509
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.store/native.sqlite",
+      "bytes": 147456,
+      "compressed_bytes": 4928
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/capacity-one.wait.json",
+      "bytes": 132,
+      "compressed_bytes": 116
+    },
+    {
+      "name": "observation-cli/partial/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/partial/head-one.argv.json",
+      "bytes": 508,
+      "compressed_bytes": 268
+    },
+    {
+      "name": "observation-cli/partial/head-one.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/head-one.stdout",
+      "bytes": 826,
+      "compressed_bytes": 426
+    },
+    {
+      "name": "observation-cli/partial/head-one.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/partial/head-two.argv.json",
+      "bytes": 508,
+      "compressed_bytes": 269
+    },
+    {
+      "name": "observation-cli/partial/head-two.stdout",
+      "bytes": 823,
+      "compressed_bytes": 424
+    },
+    {
+      "name": "observation-cli/partial/head-two.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/head-two.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/partial/killed.argv.json",
+      "bytes": 681,
+      "compressed_bytes": 259
+    },
+    {
+      "name": "observation-cli/partial/killed.json",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/killed.stderr",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/killed.stdout",
+      "bytes": 1579,
+      "compressed_bytes": 747
+    },
+    {
+      "name": "observation-cli/partial/killed.store/native.sqlite",
+      "bytes": 4096,
+      "compressed_bytes": 71
+    },
+    {
+      "name": "observation-cli/partial/killed.store/native.sqlite-wal",
+      "bytes": 156592,
+      "compressed_bytes": 5579
+    },
+    {
+      "name": "observation-cli/partial/killed.store/native.sqlite-shm",
+      "bytes": 32768,
+      "compressed_bytes": 356
+    },
+    {
+      "name": "observation-cli/partial/killed.store/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/partial/killed.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/partial/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/partial/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/refusals/bad-capacity.argv.json",
+      "bytes": 468,
+      "compressed_bytes": 204
+    },
+    {
+      "name": "observation-cli/refusals/bad-capacity.stderr",
+      "bytes": 39,
+      "compressed_bytes": 41
+    },
+    {
+      "name": "observation-cli/refusals/bad-capacity.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/capacity-alone.argv.json",
+      "bytes": 347,
+      "compressed_bytes": 191
+    },
+    {
+      "name": "observation-cli/refusals/bad-capacity.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/refusals/capacity-alone.stderr",
+      "bytes": 36,
+      "compressed_bytes": 38
+    },
+    {
+      "name": "observation-cli/refusals/capacity-alone.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/capacity-alone.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/directory.argv.json",
+      "bytes": 419,
+      "compressed_bytes": 191
+    },
+    {
+      "name": "observation-cli/refusals/directory.stderr",
+      "bytes": 32,
+      "compressed_bytes": 34
+    },
+    {
+      "name": "observation-cli/refusals/directory.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/directory.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/existing",
+      "bytes": 14,
+      "compressed_bytes": 16
+    },
+    {
+      "name": "observation-cli/refusals/existing.argv.json",
+      "bytes": 417,
+      "compressed_bytes": 190
+    },
+    {
+      "name": "observation-cli/refusals/existing.stderr",
+      "bytes": 32,
+      "compressed_bytes": 34
+    },
+    {
+      "name": "observation-cli/refusals/existing.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/existing.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/refusals/guest.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/refusals/legacy.argv.json",
+      "bytes": 331,
+      "compressed_bytes": 158
+    },
+    {
+      "name": "observation-cli/refusals/legacy.stderr",
+      "bytes": 48,
+      "compressed_bytes": 50
+    },
+    {
+      "name": "observation-cli/refusals/legacy.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/legacy.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/no-explicit.argv.json",
+      "bytes": 397,
+      "compressed_bytes": 187
+    },
+    {
+      "name": "observation-cli/refusals/no-explicit.stderr",
+      "bytes": 48,
+      "compressed_bytes": 50
+    },
+    {
+      "name": "observation-cli/refusals/no-explicit.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/no-explicit.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/other-command.argv.json",
+      "bytes": 338,
+      "compressed_bytes": 165
+    },
+    {
+      "name": "observation-cli/refusals/other-command.stderr",
+      "bytes": 44,
+      "compressed_bytes": 46
+    },
+    {
+      "name": "observation-cli/refusals/other-command.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/other-command.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 112
+    },
+    {
+      "name": "observation-cli/refusals/pool.json",
+      "bytes": 230,
+      "compressed_bytes": 164
+    },
+    {
+      "name": "observation-cli/refusals/server.dev-key",
+      "bytes": 64,
+      "compressed_bytes": 7
+    },
+    {
+      "name": "observation-cli/refusals/symlink",
+      "bytes": 14,
+      "compressed_bytes": 16
+    },
+    {
+      "name": "observation-cli/refusals/symlink.argv.json",
+      "bytes": 415,
+      "compressed_bytes": 191
+    },
+    {
+      "name": "observation-cli/refusals/symlink.stderr",
+      "bytes": 32,
+      "compressed_bytes": 34
+    },
+    {
+      "name": "observation-cli/refusals/symlink.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/symlink.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/too-many.argv.json",
+      "bytes": 463,
+      "compressed_bytes": 207
+    },
+    {
+      "name": "observation-cli/refusals/too-many.stderr",
+      "bytes": 28,
+      "compressed_bytes": 30
+    },
+    {
+      "name": "observation-cli/refusals/too-many.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/too-many.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-cli/refusals/v2.argv.json",
+      "bytes": 410,
+      "compressed_bytes": 190
+    },
+    {
+      "name": "observation-cli/refusals/v2.stderr",
+      "bytes": 48,
+      "compressed_bytes": 50
+    },
+    {
+      "name": "observation-cli/refusals/v2.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/v2.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 113
+    },
+    {
+      "name": "observation-cli/refusals/zero.argv.json",
+      "bytes": 451,
+      "compressed_bytes": 202
+    },
+    {
+      "name": "observation-cli/refusals/zero.stderr",
+      "bytes": 28,
+      "compressed_bytes": 30
+    },
+    {
+      "name": "observation-cli/refusals/zero.stdout",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "observation-cli/refusals/zero.wait.json",
+      "bytes": 130,
+      "compressed_bytes": 114
+    },
+    {
+      "name": "observation-configured_capacity_crosses_previous_limit_and_keeps_exact_current_maximum.log",
+      "bytes": 510,
+      "compressed_bytes": 282
+    },
+    {
+      "name": "observation-joined_miner_failure_still_exports_facts_before_error_propagation.log",
+      "bytes": 492,
+      "compressed_bytes": 276
+    },
+    {
+      "name": "observation-option_and_create_new_nofollow_refusals_precede_node_open.log",
+      "bytes": 476,
+      "compressed_bytes": 270
+    },
+    {
+      "name": "observation-post_join_output_failure_preserves_service_facts_and_native_store.log",
+      "bytes": 492,
+      "compressed_bytes": 274
+    },
+    {
+      "name": "observation-retention_loss_is_explicit_and_pre_join_kill_does_not_publish_completion.log",
+      "bytes": 506,
+      "compressed_bytes": 279
+    },
+    {
+      "name": "packet-history-cost/owner/native.sqlite",
+      "bytes": 2232320,
+      "compressed_bytes": 303786
+    },
+    {
+      "name": "packet-history-cost/owner/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "packet-history-cost/packet-history-cost.jsonl",
+      "bytes": 797417,
+      "compressed_bytes": 71663
+    },
+    {
+      "name": "packet-history-cost/pages/case-1.packets",
+      "bytes": 792205,
+      "compressed_bytes": 55354
+    },
+    {
+      "name": "packet-history-cost/pages/case-0.packets",
+      "bytes": 706789,
+      "compressed_bytes": 155065
+    },
+    {
+      "name": "packet-history-cost/pages/case-2.packets",
+      "bytes": 13,
+      "compressed_bytes": 13
+    },
+    {
+      "name": "packet-history-cost.log",
+      "bytes": 797995,
+      "compressed_bytes": 72008
+    },
+    {
+      "name": "packet_encoding_tests__bounded_packet_reservation_preserves_bytes_and_first_error.log",
+      "bytes": 628,
+      "compressed_bytes": 332
+    },
+    {
+      "name": "public-fixture-parent.json",
+      "bytes": 3322,
+      "compressed_bytes": 1276
+    },
+    {
+      "name": "push-source-context.json",
+      "bytes": 2356,
+      "compressed_bytes": 830
+    },
+    {
+      "name": "reserve-selectors.log",
+      "bytes": 1243,
+      "compressed_bytes": 340
+    },
+    {
+      "name": "resource-controls.log",
+      "bytes": 782136,
+      "compressed_bytes": 52219
+    },
+    {
+      "name": "source.json",
+      "bytes": 512,
+      "compressed_bytes": 288
+    },
+    {
+      "name": "store__authenticated_replay_tests__authenticated_replay_ack_rechecks_old_gap_and_pending_bytes_after_reservation.log",
+      "bytes": 563,
+      "compressed_bytes": 293
+    },
+    {
+      "name": "store__authenticated_replay_tests__authenticated_replay_checks_are_operation_local_and_reopen_recovers_full_history.log",
+      "bytes": 569,
+      "compressed_bytes": 293
+    },
+    {
+      "name": "store__authenticated_replay_tests__authenticated_replay_signed_socket_whole_request_history_cost_observation.log",
+      "bytes": 2842,
+      "compressed_bytes": 797
+    },
+    {
+      "name": "store__authenticated_replay_tests__authenticated_replay_retired_digest_and_cold_gap_still_refuse.log",
+      "bytes": 531,
+      "compressed_bytes": 281
+    },
+    {
+      "name": "store__history_page__tests__packet_reservation_history_keeps_cancel_errors_and_reopen.log",
+      "bytes": 509,
+      "compressed_bytes": 282
+    },
+    {
+      "name": "valid-work-root-rejection/acquisition.json",
+      "bytes": 1301,
+      "compressed_bytes": 696
+    },
+    {
+      "name": "valid-work-root-rejection/fixture.json",
+      "bytes": 207096,
+      "compressed_bytes": 35570
+    },
+    {
+      "name": "valid-work-root-rejection/legal-after-reopen.json",
+      "bytes": 14476,
+      "compressed_bytes": 3853
+    },
+    {
+      "name": "valid-work-root-rejection/producer/native.sqlite",
+      "bytes": 241664,
+      "compressed_bytes": 30829
+    },
+    {
+      "name": "valid-work-root-rejection/producer/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "valid-work-root-rejection/producer-setup.json",
+      "bytes": 232,
+      "compressed_bytes": 176
+    },
+    {
+      "name": "valid-work-root-rejection/receiver/native.sqlite",
+      "bytes": 241664,
+      "compressed_bytes": 31097
+    },
+    {
+      "name": "valid-work-root-rejection/receiver/owner.lock",
+      "bytes": 0,
+      "compressed_bytes": 2
+    },
+    {
+      "name": "valid-work-root-rejection/rejections.json",
+      "bytes": 33582,
+      "compressed_bytes": 5306
+    },
+    {
+      "name": "valid-work-root-rejection/report.json",
+      "bytes": 51037,
+      "compressed_bytes": 7979
+    },
+    {
+      "name": "valid-work-root-rejection.log",
+      "bytes": 595,
+      "compressed_bytes": 322
+    }
+  ],
+  "selected_files": {
+    "actual-cpu-depletion/report.json": {
+      "bytes": 113852,
+      "sha256": "643e78726ef61a6bf449f3da023b563bc59783bbd8e4f7ad885c3fb4f4b4e57d"
+    },
+    "debug-from-zero/report.json": {
+      "bytes": 3477080,
+      "sha256": "15e7e874b89d79c8d9f0a4c8dc2529539c3615fea16a815468ed5459ff6f5581"
+    },
+    "debug-from-zero/sustained/report.json": {
+      "bytes": 19791855,
+      "sha256": "9f9c4f0d88a558ba8420b960a5c5d611f412e361cd08ab5e7267d0b0ab5a20fc"
+    },
+    "from-zero-native/build/stderr": {
+      "bytes": 62,
+      "sha256": "09f2b93c4bce5bfb43dca18ca8d9c1dca2831c7d2ffb73b00b96f8f73a607f86"
+    },
+    "from-zero-native/build/stdout": {
+      "bytes": 108243,
+      "sha256": "5c32ad2a67588c512ef7cd67f0ecd4e3eab0e56d1036e0c38dfa0f81d48ed5d1"
+    },
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout": {
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5"
+    },
+    "from-zero-native/confirmation/report.json": {
+      "bytes": 12559305,
+      "sha256": "cd10ebe4c1d4f39ba4809d1e5fd85c0c73a533ff1fcb23bbe1bee4683047b192"
+    },
+    "from-zero-native/format-check/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/format-check/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/format-copy/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/format-copy/stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout": {
+      "bytes": 3361,
+      "sha256": "d3d1fc2227e5b292948e3ae3925e3f5552b91849ee8db5599eaecd13ee6bd4ca"
+    },
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout": {
+      "bytes": 195,
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548"
+    },
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout": {
+      "bytes": 921,
+      "sha256": "9806f06aed502d4fa55c5c8224317f96d9f24402713c4b9ab352737809920e1b"
+    },
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "from-zero-native/manifest.json": {
+      "bytes": 73007,
+      "sha256": "b5267d7b84ea89c7d90333d67a8040ac9b8e1528d42b3f155a3e503ec7500b51"
+    },
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout": {
+      "bytes": 413,
+      "sha256": "500620ccd15f0190489e388b7e5fa232802e86e024a8436f35e6a8acda85d338"
+    },
+    "from-zero-native/native/report.json": {
+      "bytes": 3477092,
+      "sha256": "6f36c5217fed55d8f1693bcd8dee6fea283285b278205f0784436b1e27871454"
+    },
+    "from-zero-native/native/sustained/report.json": {
+      "bytes": 19993534,
+      "sha256": "dbe27224d0a9b2e56459bf5025f2be41553cd55c1d093d972e5f85d8e665c2a6"
+    },
+    "from-zero-native-host/before-provision.json": {
+      "bytes": 2795,
+      "sha256": "86e54185d2842a78497e2986f64e2316343634133971de478590bf27047a3035"
+    },
+    "from-zero-native-host/after-provision.json": {
+      "bytes": 1628,
+      "sha256": "de0055e8aa9e088fc2cd7a3525710700fbd26661197d167fbd899ddbf4a0291a"
+    },
+    "from-zero-native-host/controller-result.json": {
+      "bytes": 7644,
+      "sha256": "fc9a8e5d189e2cd35f94d1c272db78bfb449f748d89b6fd44656b85a44774ec5"
+    },
+    "from-zero-native-host/child-result.json": {
+      "bytes": 339,
+      "sha256": "65506802659d241946c0d8e17f0926e5cc25715a2f4a73c695fe84db934b6d03"
+    },
+    "from-zero-native-host/inside-after.json": {
+      "bytes": 1700,
+      "sha256": "1ee902a0a2ee9d7748ba522cb1b75102faa5a05071457ade094e9c917e8ada3d"
+    },
+    "from-zero-native-host/inside-before.json": {
+      "bytes": 1686,
+      "sha256": "0538a875a7fb75da8fd5117ea165c61bdfd509b5764ff38656222e266562befd"
+    },
+    "from-zero-native-host/outside-after.json": {
+      "bytes": 1662,
+      "sha256": "779c67fc469869a06befc94256a38f000239ac6b3e9151d2cfe661e94dc68197"
+    },
+    "from-zero-native-host/prepare-build/process.json": {
+      "bytes": 920,
+      "sha256": "c79d9c0fb42e774ce72220faad8c4690bf0b5b2712f6ebf57c918b7a29502dbe"
+    },
+    "from-zero-native-host/prepare-build/stderr": {
+      "bytes": 6896,
+      "sha256": "fd0915bd8e38d90909a7d52d1f0fe159f1b6724c7c05854aeb07c2b1f01eba27"
+    },
+    "from-zero-native-host/prepare-build/stdout": {
+      "bytes": 108363,
+      "sha256": "ed610939712d47947fda6cd62736255bdd3095f67068e37f631737e6c17d3d33"
+    },
+    "from-zero-native-host/prepare-build.json": {
+      "bytes": 3405,
+      "sha256": "e463cfd1dcd4a48e072b8ba20d668244dc9057e53e4a65509dde78fedb41bf63"
+    },
+    "from-zero-native-host/unprovisioned-parent.json": {
+      "bytes": 229,
+      "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+    },
+    "push-source-context.json": {
+      "bytes": 2356,
+      "sha256": "c9e5f0978e07a2eff3d2fd65fcf02bba9c524fbc0fc6a7a0780892ae12f6fda3"
+    },
+    "source.json": {
+      "bytes": 512,
+      "sha256": "c8e153632d905fd608093cc8b787ccd0d8dcd0a2026601288d585cbf5e9de18c"
+    },
+    "valid-work-root-rejection/report.json": {
+      "bytes": 51037,
+      "sha256": "ffe84c73b2f367ee80931b6fbf4e3dc4456ee10b091c0e2a5ad44be21cf93a01"
+    }
+  },
+  "manifest_file_hashes_verified": 50,
+  "job_id": 128435695024,
+  "job_status": "completed",
+  "job_conclusion": "failure",
+  "job_log": {
+    "argv": [
+      "/usr/bin/gh",
+      "api",
+      "--hostname",
+      "github.com",
+      "--method",
+      "GET",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128435695024/logs"
+    ],
+    "exit_code": 0,
+    "bytes": 1854520,
+    "sha256": "10d85764a688e49e291ab6820a4eca414a43f88a4a3e044e4e4f9252a1c44b1a"
+  },
+  "finished_utc": "2026-11-07T15:20:46.426202+00:00"
+}

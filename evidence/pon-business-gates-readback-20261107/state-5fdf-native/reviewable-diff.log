@@ -1,0 +1,59 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 0c60d4cd7..77392a64b 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -607,7 +607,7 @@
+     "trillionnium/crates/trnm-pon-node/src/store/append_readback_tests.rs": "d82f5368baa7e0a2f4d906fdf3ffb3dee525d7aa",
+     "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs": "6f563556fe47a1bb6d780e166355b4f1473c811b",
+     "trillionnium/crates/trnm-pon-node/src/store/authenticated_pending_activation.rs": "93f14af5f15018c4cf05269ce63e369411b2f555",
+-    "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs": "22082b7f0d87040096c8de16579f96c23b7f9a64",
++    "trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs": "21af1126dcab93a88fd50dcb6d2a2649b018ec3b",
+     "trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs": "5a881abe6b660933f31f4c16b66e1f1f42daf5cd",
+     "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs": "02673f72fac1d5d919a9604be876d4e93efd7cfe",
+     "trillionnium/crates/trnm-pon-node/src/store/evaluation_observation.rs": "97524b5ea81b5a0c40fcb9b7ae9eeb988a75773e",
+diff --git a/trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs b/trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs
+index 22082b7f0..21af1126d 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs
+@@ -113,7 +113,6 @@ fn same_bytes_keep_current_sql_types_grammar_limits_and_error_priority() {
+     );
+     for wrong in [
+         SqlValue::Text("\"AA\"".into()),
+-        SqlValue::Null,
+         SqlValue::Integer(0),
+         SqlValue::Real(0.0),
+         SqlValue::Blob(Vec::new()),
+@@ -151,6 +150,33 @@ fn same_bytes_keep_current_sql_types_grammar_limits_and_error_priority() {
+         .unwrap();
+     parity(&node);
+     assert_eq!(observed(&node, false, None).0.unwrap_err().0, "STATE_BYTES");
++
++    // The intact schema rejects SQL NULL before either decoder is entered.
++    // Exercise that decoder refusal on a separate deliberately damaged table;
++    // this does not qualify the altered schema for admission or publication.
++    let (_null_directory, null_node) = fixture();
++    null_node
++        .db
++        .execute_batch(
++            "DROP TABLE kv;
++             CREATE TABLE kv(slot INTEGER NOT NULL,key TEXT NOT NULL,value BLOB,PRIMARY KEY(slot,key));",
++        )
++        .unwrap();
++    replace_rows(
++        &null_node,
++        &[SqlValue::Blob(b"\"AA\"".to_vec()), SqlValue::Null],
++    );
++    let null_type = null_node
++        .db
++        .query_row(
++            "SELECT value FROM kv WHERE slot=? AND key='cell:000001'",
++            [null_node.slot().unwrap()],
++            |row| Ok(row.get_ref(0)?.data_type()),
++        )
++        .unwrap();
++    assert_eq!(null_type, rusqlite::types::Type::Null);
++    parity(&null_node);
++    assert!(observed(&null_node, false, None).0.is_err());
+ }
+ 
+ #[test]

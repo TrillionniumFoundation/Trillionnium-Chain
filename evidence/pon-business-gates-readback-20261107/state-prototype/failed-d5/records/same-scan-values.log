@@ -1,0 +1,90 @@
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-mempool)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-throughput-local-admin-20261107/work-state-cell-619/trillionnium/crates/trnm-pon-node)
+error: cannot find macro `json` in this scope
+   --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:259:21
+    |
+259 |                     json!({
+    |                     ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:72:17
+   |
+72 |         let b = json!({"different": true});
+   |                 ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:69:9
+   |
+69 |         json!("x".repeat(4080)),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:68:9
+   |
+68 |         json!({"a": [true, null], "b": "same"}),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:67:9
+   |
+67 |         json!([1, "x", null]),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:66:9
+   |
+66 |         json!([]),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:65:9
+   |
+65 |         json!("quote \" slash \\ control \n \u{0} \u{7f} 汉字"),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:64:9
+   |
+64 |         json!(""),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:62:9
+   |
+62 |         json!(u64::MAX),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:61:9
+   |
+61 |         json!(-1),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:60:9
+   |
+60 |         json!(0),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:59:9
+   |
+59 |         json!(false),
+   |         ^^^^
+
+error: cannot find macro `json` in this scope
+  --> crates/trnm-pon-node/src/store/canonical_row_reuse_tests.rs:58:9
+   |
+58 |         json!(true),
+   |         ^^^^
+
+error: could not compile `trnm-pon-node` (lib test) due to 13 previous errors

@@ -1,0 +1,27 @@
+{
+  "name": "test-01",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::public_v3::canonical_packet::tests::borrowed_complete_packet_codec_matches_owned_for_valid_and_malformed_boundaries",
+    "--",
+    "--exact",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "started_unix_ns": 1794068716472187921,
+  "ended_unix_ns": 1794068925416822140,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/test-01.log",
+  "log_bytes": 1159,
+  "log_sha256": "ef50d5f74fc33c074c7b1ab52e56e2ea0b83b6ed5dab67eba8cf0b2c315a3176"
+}

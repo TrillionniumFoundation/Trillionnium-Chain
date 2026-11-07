@@ -1,0 +1,74 @@
+{
+  "schema": "actual-executed-native-binaries-v1",
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+  "observed_unix": 1794066589.4730566,
+  "records": [
+    {
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208)",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+      "bytes": 78064248,
+      "sha256": "b8e65265f02c784f0ee54cf4becdf9d379cdb86b0b9d270e7c8ea057aa2810bf",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.log",
+      "log_sha256": "15b4a44a2dcbdcaed3c2a8c07fabb884de5577d9daac5b039505b8d1ecb202d5",
+      "command_status": "command_failed",
+      "preserved_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/failed-node-test-binary"
+    },
+    {
+      "cargo_running_line": "     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_crypto_primitives-197f7f0e692ec227)",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_crypto_primitives-197f7f0e692ec227",
+      "bytes": 14905032,
+      "sha256": "739572fe2462f550fab7d0eef86671339ccce20513df4c92e180a9025f397da1",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/records/crypto-allfeatures.log",
+      "log_sha256": "5728adcaf829fbac478c42f9437bd2dc8f2cd97ec87d15b56d2ed2c0811c540b",
+      "command_status": "command_succeeded"
+    },
+    {
+      "cargo_running_line": "     Running tests/pq_openssl_native.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/pq_openssl_native-6492d491473430e5)",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/pq_openssl_native-6492d491473430e5",
+      "bytes": 8940200,
+      "sha256": "71ae94dd12e4e83844b540da72807bb3cfc95bcd0969481beaa9195874fc8b33",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/records/crypto-allfeatures.log",
+      "log_sha256": "5728adcaf829fbac478c42f9437bd2dc8f2cd97ec87d15b56d2ed2c0811c540b",
+      "command_status": "command_succeeded"
+    },
+    {
+      "cargo_running_line": "     Running tests/qualified_task_lifecycle_v2.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/qualified_task_lifecycle_v2-d830414b1bed6962)",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/qualified_task_lifecycle_v2-d830414b1bed6962",
+      "bytes": 1542368,
+      "sha256": "bfc3a4269157f0e6ca8b70d7dc16265815c020522af281b758fce522c0234291",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/records/crypto-allfeatures.log",
+      "log_sha256": "5728adcaf829fbac478c42f9437bd2dc8f2cd97ec87d15b56d2ed2c0811c540b",
+      "command_status": "command_succeeded"
+    },
+    {
+      "cargo_running_line": "     Running tests/qualified_work_task.rs (/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/qualified_work_task-83ed3456b722cf3a)",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/qualified_work_task-83ed3456b722cf3a",
+      "bytes": 1618696,
+      "sha256": "7265e5f395f13166236e77112312046fcffa0593bed416c08cec08336aa6c4b9",
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/records/crypto-allfeatures.log",
+      "log_sha256": "5728adcaf829fbac478c42f9437bd2dc8f2cd97ec87d15b56d2ed2c0811c540b",
+      "command_status": "command_succeeded"
+    }
+  ],
+  "doc_tests": [
+    {
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/records/crypto-allfeatures.log",
+      "summary": [
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s",
+        ""
+      ],
+      "binary_path_exposed_by_original_log": false,
+      "binary_sha256": null
+    }
+  ],
+  "selection": "only executable paths from original Cargo Running lines; no glob selection, rebuild or rerun",
+  "final_source_receipt": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/remaining/source-after.json",
+  "final_source_receipt_sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa",
+  "cloud_controls_archive": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/cloud-controls-d26-20261107.tar.gz",
+    "bytes": 86640,
+    "sha256": "436d20a214fd66591a3abe7f5dfe1eef8164997237af979132c27315e82f17ff"
+  },
+  "qualification": false
+}

@@ -1,0 +1,225 @@
+{
+  "schema": "trnm-d26-late-observer-v1",
+  "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "captured_utc": "2026-11-07T16:55:38.960847+00:00",
+  "fixed_v2_manifest_sha256": "91c7527b23e32262db6f5cbccf0066aff796d1efd525fa638df5ee851851ca67",
+  "fixed_v2_unchanged": true,
+  "native_reruns": 0,
+  "github_writes": 0,
+  "additional_downloads_started": 0,
+  "download_job": "1a1b6c68e87-12894-6ad",
+  "range_job": "1a1b6d51e4c-12894-72a",
+  "job_exit0_scope": "Observer completed while retaining per-artifact failures; not a qualification of all artifacts or native work.",
+  "retry_attempts": 9,
+  "successful_source_and_manifest_reads": 3,
+  "digest_mismatch_count": 4,
+  "digest_mismatch_ids": [
+    13578719689,
+    13578752856,
+    13578807518,
+    13578922475
+  ],
+  "GET_timeout_count": 2,
+  "GET_timeout_ids": [
+    13578524978,
+    13579071557
+  ],
+  "attempts": [
+    {
+      "artifact_id": 13578524978,
+      "name": "w1-legal-factorial-head-arm64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578524978/zip']' timed out after 599.9999851579778 seconds"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13578524978/readback.json",
+        "bytes": 1585,
+        "sha256": "e711e8c50a74e7cd0c38c7c15ed3e7d89220b2be70b97957ce63f5f1d68e09d1",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578524978/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578524978/download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578524978/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578719689,
+      "name": "w1-legal-factorial-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13578719689/readback.json",
+        "bytes": 1530,
+        "sha256": "a67df86fe3656d9f4873a86213974e09260a4d10fb0d8a4a823c21c769a210ba",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578719689/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578719689/download.stderr",
+        "bytes": 72,
+        "sha256": "b9595dc9d1ae5a59d5a33ca36bfb7dd8e036696b058c9b1e099cd0df0adcf93b",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578719689/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578752856,
+      "name": "w1-legal-strategy-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13578752856/readback.json",
+        "bytes": 1536,
+        "sha256": "2408ad9bd8ec8101aa739338e69c45a02aaec6976f3db21b32232a140ec2b6d4",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578752856/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578752856/download.stderr",
+        "bytes": 772,
+        "sha256": "d681a26d1f5a50974785339a7bb654725e5d0c08021a2aa0be1a2321c00f1d1c",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578752856/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578807518,
+      "name": "w1-rank-batch-v5-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13578807518/readback.json",
+        "bytes": 1537,
+        "sha256": "a057bd3d22418b6d7543c5c3f3ccd6f3251b370f618ba48b4d168588b2aee5ba",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578807518/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578807518/download.stderr",
+        "bytes": 144,
+        "sha256": "96ad2f8e984867e846f4ca8df75475a59ef480b64823b4cb00f305bcfa1c5430",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578807518/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578842636,
+      "name": "w1-legal-strategy-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "errors": [],
+      "source_bound": true,
+      "readback": {
+        "path": "download/13578842636/readback.json",
+        "bytes": 20682,
+        "sha256": "1a7a146535704584fc91c5918163c81df6f2a3f352dfb3772eeae60d41847ba5",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578842636/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578842636/download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578842636/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578922475,
+      "name": "w1-legal-strategy-prospective-merge-arm64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "errors": [
+        "ValueError: ZIP metadata digest mismatch"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13578922475/readback.json",
+        "bytes": 1544,
+        "sha256": "b243ac3483052ede3a07d3623386bba60f707fcc2334368c2e6798daeb8fa468",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578922475/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578922475/download.stderr",
+        "bytes": 75,
+        "sha256": "7bc985fdb43083d3c35a030f767d54f83103c33042cb5b509ef0e3a0c7a189de",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578922475/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13578947026,
+      "name": "w1-false-trace-head-x64-d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89-1",
+      "errors": [],
+      "source_bound": true,
+      "readback": {
+        "path": "download/13578947026/readback.json",
+        "bytes": 11194,
+        "sha256": "4cfee1c4f957c5c6456b640bfaabf19036f093a771d0e1f022ed44767b1c657b",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578947026/readback.json"
+      },
+      "stderr": {
+        "path": "download/13578947026/download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13578947026/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13579025854,
+      "name": "w1-rank-batch-v5-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "errors": [],
+      "source_bound": true,
+      "readback": {
+        "path": "download/13579025854/readback.json",
+        "bytes": 43468,
+        "sha256": "1d8fc434854c3a79eb15c98c408655365a09c8517199f344410b395ffa6bd2b6",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579025854/readback.json"
+      },
+      "stderr": {
+        "path": "download/13579025854/download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579025854/download.stderr"
+      }
+    },
+    {
+      "artifact_id": 13579071557,
+      "name": "w1-legal-strategy-v2-prospective-merge-x64-7805f1445aec6a31152b50c3d28f5eb6db63305c-1",
+      "errors": [
+        "TimeoutExpired: Command '['/usr/bin/gh', 'api', '--hostname', 'github.com', '--method', 'GET', 'repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579071557/zip']' timed out after 599.9999658360612 seconds"
+      ],
+      "source_bound": false,
+      "readback": {
+        "path": "download/13579071557/readback.json",
+        "bytes": 1598,
+        "sha256": "a87b6cc147d3146e383a384898e1d7b08f1341a7e12cc1e1c4253f0d5952ec5a",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579071557/readback.json"
+      },
+      "stderr": {
+        "path": "download/13579071557/download.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-component-artifact-retry-v2/13579071557/download.stderr"
+      }
+    }
+  ],
+  "range_complete_archive": {
+    "artifact_id": 13579071557,
+    "bytes": 140617119,
+    "sha256": "878bb7120c04dd9e10c0159df975c92995187c88940322c02e24917654cf4fbd",
+    "requests": 8,
+    "archive_digest_verified": true,
+    "source_and_manifest_followup": "NOT_RUN; unchanged fixed-v2 UNKNOWN",
+    "receipt": {
+      "path": "range/range-recovery-receipt.json",
+      "bytes": 7761,
+      "sha256": "47c16df80ee9872fb51a07ca421f0ebd6db3848852e79eecc99d22aff145a111",
+      "source": "/home/qian-qi/throughput-ci-observation-20261107/20261107T151751Z-d26e047dedfc-35b656b0/w1-range-recovery-v2/13579071557/range-recovery-receipt.json"
+    }
+  },
+  "unresolved_digest_mismatch_cause": "UNKNOWN; no cause inferred or successful substitute used",
+  "fixed_v2_component_readback": {
+    "verified": 14,
+    "UNKNOWN": 6,
+    "total": 20
+  },
+  "native_gate_validated": false,
+  "large_ZIPs_included": false
+}

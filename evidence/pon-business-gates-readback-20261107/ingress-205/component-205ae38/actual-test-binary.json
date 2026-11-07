@@ -1,0 +1,8 @@
+{
+  "schema": "ingress-component-actual-binary-binding-v1",
+  "paths_observed_in_cargo_log": [
+    "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208"
+  ],
+  "planned_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/target/debug/deps/trnm_pon_node-3d075b189916f208",
+  "exact_single_path_match": true
+}

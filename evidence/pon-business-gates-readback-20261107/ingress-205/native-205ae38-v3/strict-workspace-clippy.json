@@ -1,0 +1,24 @@
+{
+  "name": "strict-workspace-clippy",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "started_unix_ns": 1794069007868909782,
+  "ended_unix_ns": 1794069065502989934,
+  "exit_code": 0,
+  "log": "/home/qian-qi/chain-throughput-local-admin-20261107/review-ingress-canonical-d26/native-205ae38-v3/strict-workspace-clippy.log",
+  "log_bytes": 1236,
+  "log_sha256": "93b448e7e3e7f30453daf584986e00c5547c708d74d8d40e22f6415f1fd34f54"
+}

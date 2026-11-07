@@ -1,0 +1,32 @@
+{
+  "observed_unix": 1794065948.6116076,
+  "commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+  "test": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+  "source_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/records/node-lib-allfeatures.log",
+  "section_log": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/native-d26/monitoring/npq6-second-failure.log",
+  "section_bytes": 832,
+  "section_sha256": "7aa8d9852d00803f992035d80585bfa961699af31145e11e30fb00cd107a3d44",
+  "panics": [
+    {
+      "section_line": 3,
+      "context": [
+        "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... TRNM_PQ_FIXTURE_CLEANUP {\"child_cleanup_error\":null,\"child_exit_observed\":true,\"child_exit_success\":true,\"cleanup_complete\":true,\"primary_error_preserved\":true,\"worker_cleanup_error\":null,\"worker_join_observed\":true}",
+        "",
+        "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (620145) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:637:6:",
+        "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }",
+        "FAILED"
+      ]
+    }
+  ],
+  "status_lines": [
+    "FAILED"
+  ],
+  "tail": [
+    "test store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart ... TRNM_PQ_FIXTURE_CLEANUP {\"child_cleanup_error\":null,\"child_exit_observed\":true,\"child_exit_success\":true,\"cleanup_complete\":true,\"primary_error_preserved\":true,\"worker_cleanup_error\":null,\"worker_join_observed\":true}",
+    "",
+    "thread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (620145) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:637:6:",
+    "called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection reset by peer (os error 104)\", source: Some(Os { code: 104, kind: ConnectionReset, message: \"Connection reset by peer\" }), request_history_budget: false }",
+    "FAILED"
+  ],
+  "qualification": false
+}

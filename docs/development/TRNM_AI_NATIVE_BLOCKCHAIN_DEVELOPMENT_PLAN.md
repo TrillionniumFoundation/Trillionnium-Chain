@@ -17,6 +17,47 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
+The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
+records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,
+resolver-observed main `dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`
+and ordered-parent merge `7805f1445aec6a31152b50c3d28f5eb6db63305c`.
+Both workflows used those same identities: 37 jobs ended 22 success / 15 failure;
+34 native lanes ended 20 success / 14 failure. All 136 source-control steps
+passed, without converting any business failure into success.
+
+All four original 4-second/16-worker service lanes and both fresh-challenge jobs
+still failed confirmation under the original Host budgets. Every cohort retained
+7/7 successful honest submissions but only 0/1 pressure confirmations.
+All four State lanes passed six named controls and 40 main migration tests each;
+the two one-test FIFO subprocess summaries are not extra main tests.
+History x64 H/M returned 3,917/4,105 imports before the original server lifetime
+expired. ARM H/M returned 4,104/4,105, stored all 4,105 packets, and cancelled
+activation at cursors 3,916 / 3,923. All four confirmer active states remained
+genesis. Rows, RPC returns and activated state remain separate obligations.
+
+Preserve local d26's 1,161 pass / three failure / 31 ignored result. Two later
+one-attempt PQ passes do not erase its failures. The 619 lexical-scope lint fix
+has exact native and strict-Clippy evidence, including the rejected zero-test
+selector. The 205 borrowed-packet component passed 22 exact tests and strict
+Clippy; its 768-trial observation retained 384 expected codec errors and about
+13% component CPU savings. The 5fdf adjacent-Cell scan memo passed seven exact
+tests and strict Clippy plus four predeclared criteria across 128 ABBA trials.
+Its original >8 MiB test nevertheless failed the paid-CPU gate at
+3,376,700,755 ns. Original History offers little adjacent-value reuse.
+Neither component establishes service TPS, complete touched-set state or COW.
+
+CodeQL execution passed with Rust 568 findings, Python two, an internal Rust
+extraction error and 19 extraction warnings retained. Historical artifact
+`11531476198` remains unavailable/UNKNOWN; its cause is not inferred.
+Preserve acc2's concurrent Cell work and all original failures. Final combined
+202 formal tests, 103 CI contract controls, 12 native Cell tests, retained
+readers, exact source/graph checks, native/Clippy suites and the real H/M
+business matrix remain pending. Later remote changes require their own review.
+Publication uses the user-designated ProfHepta administrator through the
+HeptaRuntime local GitHub channel, preserving the existing integration branch
+and normal protections; no local result authorizes runtime activation.
+
 **Finite multimodal computation and native Cell consumers, 2026-11-07:**
 Continue the same integration candidate with two separately named profiles.
 The [multimodal V3 relation](specs/pon/USEFUL_CELL_MULTIMODAL_V3.md) reexecutes raw

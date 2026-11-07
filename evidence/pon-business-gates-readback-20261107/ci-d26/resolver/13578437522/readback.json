@@ -1,0 +1,93 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "--hostname",
+    "github.com",
+    "--method",
+    "GET",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522/zip"
+  ],
+  "artifact": {
+    "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522/zip",
+    "created_at": "2026-11-07T14:49:42Z",
+    "digest": "sha256:1b9a6dcaa65a5b849b8be457684658eaaac78630f47ff25e7249150b23bff17f",
+    "expired": false,
+    "expires_at": "2026-12-07T14:49:41Z",
+    "id": 13578437522,
+    "name": "integration-push-source-42383368504-1",
+    "node_id": "MDg6QXJ0aWZhY3QxMzU3ODQzNzUyMg==",
+    "size_in_bytes": 1362,
+    "updated_at": "2026-11-07T14:49:42Z",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13578437522",
+    "workflow_run": {
+      "head_branch": "fix/chain-six-axis-performance-20261103",
+      "head_repository_id": 1323087357,
+      "head_sha": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "id": 42383368504,
+      "repository_id": 1323087357
+    }
+  },
+  "context": {
+    "base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "base_ref": "refs/heads/main",
+    "event": {
+      "after": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "before": "96e1eede091153199894532c91430bfc0f8e4572",
+      "name": "push",
+      "payload_sha256": "1e34936a1701acc827d820836c76bd89f43ffa28090c0253823885f704abbce9",
+      "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+      "repository": "TrillionniumFoundation/Trillionnium-Chain",
+      "repository_id": 1323087357,
+      "run_attempt": "1",
+      "run_id": "42383368504"
+    },
+    "git_version": "git version 2.56.0",
+    "head": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+    "is_github_pr_merge": false,
+    "merge": "7805f1445aec6a31152b50c3d28f5eb6db63305c",
+    "merge_format": "canonical-git-merge-tree-ordered-base-head-v1",
+    "merge_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+    "production_activation": false,
+    "resolved_utc": "2026-11-07T14:49:38.498614+00:00",
+    "schema": "trnm-integration-push-source-v1",
+    "source_head": {
+      "base": null,
+      "candidate": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89",
+      "tested_tree": "cef3563653b982a8043326ad4b53a4b93ab63906",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1031001045,
+      "tracked_entries": 11017,
+      "tracked_worktree_verified": true
+    }
+  },
+  "context_sha256": "6317b32ed2ccea1fbbea00e3abab7ba6d53f150e95cbc0a09deaa964ca1c7971",
+  "download_bytes": 1362,
+  "download_sha256": "1b9a6dcaa65a5b849b8be457684658eaaac78630f47ff25e7249150b23bff17f",
+  "errors": [],
+  "exit_code": 0,
+  "finished_utc": "2026-11-07T14:56:51.991226+00:00",
+  "members": {
+    "context.json": {
+      "bytes": 1452,
+      "sha256": "df98c70210029ee7905f66aff223e8c6ea94f0987a64ee9498f1129c6d9ef038"
+    },
+    "controls.log": {
+      "bytes": 112,
+      "sha256": "680eeef672906db986843eec826c6353e17488bf1b26c3130d375fa41fe0ea84"
+    },
+    "source-after-controls.json": {
+      "bytes": 423,
+      "sha256": "dbd4c9fbc23a80aafaed46488e04afb1170edccdc150f7592e9af434175b55aa"
+    }
+  },
+  "merge_worker_verification": "pending native lane materialization/source receipts",
+  "metadata_digest": "sha256:1b9a6dcaa65a5b849b8be457684658eaaac78630f47ff25e7249150b23bff17f",
+  "native_gate_validated": false,
+  "resolver_receipts_bound": true,
+  "started_utc": "2026-11-07T14:56:40.832925+00:00"
+}

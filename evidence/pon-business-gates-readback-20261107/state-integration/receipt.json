@@ -1,0 +1,177 @@
+{
+  "base": "9b70db69b5a7a7cdd0b73b273f189211d507dfe2",
+  "incoming": "5fdf7c236bd0f63a2f544ec006a427d786e6b235",
+  "commands": [
+    {
+      "label": "preflight",
+      "argv": [
+        "/usr/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/preflight.log",
+      "bytes": 170,
+      "sha256": "f877f84b261303fe763f6713410fa0220116d57de1d311e83f1e6ce4e5f8a59b"
+    },
+    {
+      "label": "merge",
+      "argv": [
+        "/usr/bin/git",
+        "merge",
+        "--no-ff",
+        "--no-commit",
+        "5fdf7c236bd0f63a2f544ec006a427d786e6b235"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/merge.log",
+      "bytes": 110,
+      "sha256": "aa4e130a984f1f124f99fc51014163bca6ec89e790c027b0db1b873518b952ee"
+    },
+    {
+      "label": "inventory-refresh",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/inventory-refresh.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "source-corpus",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/source-corpus.log",
+      "bytes": 557,
+      "sha256": "f94dc7085912c8d3a78af882de5bcff6c86cfc5bbe4a7bb4646cfaaa82dc61c2"
+    },
+    {
+      "label": "inventory-check",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/inventory-check.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "ci-contract",
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/ci-contract.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "label": "format-check",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/format-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "stage-metadata",
+      "argv": [
+        "/usr/bin/git",
+        "add",
+        "--",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/stage-metadata.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "diff-check",
+      "argv": [
+        "/usr/bin/git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/diff-check.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "commit",
+      "argv": [
+        "/usr/bin/git",
+        "-c",
+        "user.name=ProfHepta",
+        "-c",
+        "user.email=102159240+ProfHepta@users.noreply.github.com",
+        "commit",
+        "-m",
+        "merge: preserve canonical row decoding in current integration candidate"
+      ],
+      "exit_code": 0,
+      "log": "/home/qian-qi/chain-throughput-local-admin-20261107/integration-state-5fdf-20261107/commit.log",
+      "bytes": 124,
+      "sha256": "97a3d7107b3861157717d185629e0197c24edd97eb4f7c2c6af3627857111f0d"
+    }
+  ],
+  "pushed": false,
+  "business_gate_pass_claimed": false,
+  "metadata_conflicts": [],
+  "pin_updates": [
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "old": "849067f57748d512cdd778e9aefc9eeb75a55de3",
+      "new": "82d45ae3136971ef1872868144480c40eda6ee2d"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "old": "0e0b9bd31c4317d4acbd5cbabae08ce063b3c764",
+      "new": "d8803b26fd4c8a3f6726863ed77970acbb973ada"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "old": "bdae52ac10868f11cbf3764213a5a9c636a3fd57",
+      "new": "f5b37eed463b4058e573e85d1550f2b0d72de164"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old": "cb6fb0948cbbeb9c6a20fe9c24c884a92ab9e920",
+      "new": "2965d5126c8bc3036803ed8d61757239535e4eeb"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "old": "aab6239a3e094c25d2319c5c16f1974a2ba67ca3",
+      "new": "f0bf0792e4b25d01fa0a7bb0071cc88773895125"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "old": "13ed1b33668335970ffbf98099bb4ee7757dab80",
+      "new": "7b10e0a9aa6a6a32800ec8e2a866dec98fdd828a"
+    }
+  ],
+  "pinned_blob_count": 575,
+  "head": "d116e8382d4f24047b73c894edf32d244fed1b2c",
+  "tree": "43d33b8cca8aedd9693a5d813e490eea0c9d025c",
+  "author": "ProfHepta",
+  "production_sources_equal_measured_components": true
+}

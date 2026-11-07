@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-same-scan-adoption-contract-v1",
+  "declared_before_measurement": true,
+  "component": "complete SQL slot read and State materialization; each scan starts with no memo; not disk-cold",
+  "samples": "8 ABBA rounds per each of 4 fixed cases, no discarded failure or sample",
+  "conditions": [
+    "all semantic parity and existing storage/cancellation controls pass",
+    "median candidate/reference thread CPU in small_all_miss <=1.05",
+    "median candidate/reference thread CPU in large_all_miss <=1.05",
+    "median candidate/reference thread CPU in large_adjacent <=0.90"
+  ],
+  "report_also": [
+    "every raw sample",
+    "wall median and p95",
+    "CPU p95",
+    "all errors"
+  ],
+  "gate_parameters_changed": false,
+  "business_qualification": false
+}
