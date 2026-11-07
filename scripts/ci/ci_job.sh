@@ -24,6 +24,7 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v
     python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
     python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
+    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v

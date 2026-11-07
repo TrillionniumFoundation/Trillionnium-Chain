@@ -149,6 +149,7 @@ WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v',
     'python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v',
     'python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v',
+    'python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v',
 )
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'

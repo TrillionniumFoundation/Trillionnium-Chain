@@ -277,3 +277,22 @@ confirmation risk remain separate unproved obligations.
 python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
 python3 formal/pon-nakamoto-v1/finite_joint_state_certificate.py --evidence-dir /tmp/new-finite-joint-state
 ```
+
+## Complete finite execution-event coverage
+
+[EC1](CERTIFICATE_EVENT_COVERAGE_V1.md) derives all confirmed starts and every
+later recorded observation or replayed selection cut from every leaf's raw
+execution. Allocations must cover exactly that complete catalogue and its
+failure leaves before the existing predictable risk bank is applied under the
+same declared joint law. Exact recorded prefixes must agree inside each history
+cell; future-outcome labels alone cannot create a cheaper conditional start.
+
+The controls expose an omitted second confirmation, an omitted failure leaf,
+temporary removal followed by restoration between observations, and identical
+inventory/progress marginals with different joint failure risks. No actual
+network probability law, physical filtration, unrecorded event or extension
+beyond the declared horizon is authenticated.
+
+```bash
+python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
+```
