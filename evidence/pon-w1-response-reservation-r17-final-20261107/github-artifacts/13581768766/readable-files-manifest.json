@@ -1,0 +1,152 @@
+[
+  {
+    "path": "history-native/build.stderr",
+    "bytes": 6872,
+    "sha256": "06c62ca1d2e2e574f3083655e34d4f4303134dab6fe61235a400dcd6ff9276c8"
+  },
+  {
+    "path": "history-native/execution-start.json",
+    "bytes": 76,
+    "sha256": "b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d"
+  },
+  {
+    "path": "history-native/history-resources.txt",
+    "bytes": 971,
+    "sha256": "725036a74a698a34582cdd1039e3258bfc89f102c9a9e56ba87fb7f3774992d8"
+  },
+  {
+    "path": "history-native/history.log",
+    "bytes": 11500,
+    "sha256": "0f7e09fd43c6e41b25f6e5513387cbc47691d05f95b246df3cb8fb838bf13d9e"
+  },
+  {
+    "path": "history-native/long-history/config.json",
+    "bytes": 632,
+    "sha256": "502b3d6eaba31adce4f70c78d7996a2208c6bb56401d31cbd0257eca2136d7f1"
+  },
+  {
+    "path": "history-native/long-history/source.json",
+    "bytes": 514,
+    "sha256": "2d31937870bf0cdd70c5d9e9870706771f20a65c800feacf8eef2bfd4f58663b"
+  },
+  {
+    "path": "history-native/long-history/summary.json",
+    "bytes": 245,
+    "sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb"
+  },
+  {
+    "path": "history-native/manifest.json",
+    "bytes": 4885,
+    "sha256": "c84668c0bca8885eaf349d8a0161b88d13812511fc5065e723922239859e63fd"
+  },
+  {
+    "path": "history-native/preparation.json",
+    "bytes": 3472,
+    "sha256": "4474a5fd779ada990c269ff042e88851b3c1915b58dc833afd60c5448e281314"
+  },
+  {
+    "path": "history-native-host/actual-systemd-parent-after.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+  },
+  {
+    "path": "history-native-host/actual-systemd-parent.log",
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3"
+  },
+  {
+    "path": "history-native-host/after-provision.json",
+    "bytes": 1628,
+    "sha256": "c685afbf866db9317e175116a93bc31f2032c3b13793d2d6e58c85ac5cc70168"
+  },
+  {
+    "path": "history-native-host/before-provision.json",
+    "bytes": 2795,
+    "sha256": "7c9cba0d8c23b54a51ee427f4738a7548cb1a574258ae5e33042dfba6e23327f"
+  },
+  {
+    "path": "history-native-host/child-final-load-state.log",
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  {
+    "path": "history-native-host/child-load-state.log",
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76"
+  },
+  {
+    "path": "history-native-host/child-result.json",
+    "bytes": 335,
+    "sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a"
+  },
+  {
+    "path": "history-native-host/controller-result.json",
+    "bytes": 7729,
+    "sha256": "0d9a4bbe286dd98de5ae9fdb5289ac2ea137d590296ca6a322fce18f0c2ea38e"
+  },
+  {
+    "path": "history-native-host/inside-after.json",
+    "bytes": 1711,
+    "sha256": "2b15283094973345364fd81adc5f8aa8cccd523fe4b8c038d2cb8b42bc249506"
+  },
+  {
+    "path": "history-native-host/inside-before.json",
+    "bytes": 1686,
+    "sha256": "5afee8dc942910f7f7fc0c5a966f893929afb845c3a84c6dd7e5deeee9b10456"
+  },
+  {
+    "path": "history-native-host/install-reviewed-unit.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "history-native-host/outside-after.json",
+    "bytes": 1673,
+    "sha256": "e3bf2c1b1dcdbce523bf8e6ce0b1943bc2c52b6bdc23482b6c3793e23298c5f0"
+  },
+  {
+    "path": "history-native-host/parent-properties.log",
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343"
+  },
+  {
+    "path": "history-native-host/seal-parent-directory.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "history-native-host/seal-parent-receipt.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "history-native-host/start-fixed-parent.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "history-native-host/systemd-reload.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "history-native-host/systemd-run.log",
+    "bytes": 643,
+    "sha256": "452e2f047520b328fa428f114b5e253639380f63e0e6fcf51632ea6f408e716e"
+  },
+  {
+    "path": "history-native-host/unprovisioned-parent.json",
+    "bytes": 229,
+    "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22"
+  },
+  {
+    "path": "public-fixture-parent.json",
+    "bytes": 3221,
+    "sha256": "8065ebc0b110dc233df97f4d762bb7db63dc1bd3759e1fb8e49bf7a5a3f6f72a"
+  },
+  {
+    "path": "source.json",
+    "bytes": 423,
+    "sha256": "971045a00765dd43927dc3eb27f635941bc6485b653934475284aac524e5ad94"
+  }
+]

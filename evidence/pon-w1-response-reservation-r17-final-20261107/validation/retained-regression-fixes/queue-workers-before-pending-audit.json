@@ -1,0 +1,49 @@
+{
+  "scope": "Three eight-request fixtures only, based on the captured f97 slice plus the first applied patch (reported 06a995 source). No remote modification, production budget/deadline changes, Cargo, or Rust test execution.",
+  "failure_evidence": "Original CI has wait_metric timeout only; no failure-time metrics snapshot. The unique wait in eight_paid_submits identifies the original full-queue predicate. Transient pending peak of six is a source-derived scheduling explanation, not an observed counter value.",
+  "base_first_patch_sha256": "863873e3741a78ea1e05f9891a32bd703b550a601b81471d8365252ca2cf066b",
+  "base_reconstructed_slice_sha256": "20ca76c60783255a9d1f490bad76ef3a87ee4fda47abe962cc43e997df37ac1d",
+  "patch_sha256": "55c19d5be77d55e50c7fca1a86af5e4352c72de36f6f58a8cfb61fa899b343f4",
+  "changed_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "changed_test_functions": [
+    "disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+    "trailing_input_after_complete_body_cancels_without_starting_work",
+    "eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline"
+  ],
+  "all_other_captured_functions_unchanged": true,
+  "three_request_fixture_unchanged": true,
+  "original_assertion_invocations_preserved_verbatim": 182,
+  "original_wait_metric_invocations_preserved_verbatim": 12,
+  "new_wait_metric_gates": 3,
+  "new_gate": "tasks_enqueued == 3 && tasks_dequeued == 3 && mutation_cpu_reservations == 2",
+  "original_duration_expressions_preserved_verbatim": true,
+  "original_connection_grant_bounds_preserved": true,
+  "original_peak_pending_enqueue_equals_four_preserved": true,
+  "apply_checks": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-workers-before-pending.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-workers-before-pending.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "applied_copy_matches_expected": true,
+  "apply_check_scope": "Captured source slice padded to original file line offsets; not a full repository checkout or execution proof."
+}

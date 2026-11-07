@@ -1,0 +1,11 @@
+[
+  "cargo",
+  "+1.95.0",
+  "metadata",
+  "--manifest-path",
+  "tests/fuzz/Cargo.toml",
+  "--locked",
+  "--offline",
+  "--format-version",
+  "1"
+]

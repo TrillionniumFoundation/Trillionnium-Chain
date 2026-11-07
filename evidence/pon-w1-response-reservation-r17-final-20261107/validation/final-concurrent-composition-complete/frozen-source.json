@@ -1,0 +1,14 @@
+{
+  "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "tree": "977db7f413da494051d84ed3eecd1eb0522dfd12",
+  "parents": [
+    "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+    "04bbc81e4aad9b29fef29385d3262297e2cb17df"
+  ],
+  "non_documentation_tracked_tree_equal_to_2f": true,
+  "non_documentation_tracked_tree_sha256": "ffbb2ba34f7e4f6d7d4c96da36337b6b0065ca8e7f9da1a3995c352119ee57cb",
+  "tracked_source_or_cargo_changed": false,
+  "whole_raw_whitespace_diagnostic_exit": 2,
+  "authored_source_document_whitespace_exit": 0,
+  "unchanged_upstream_blobs_verified": 173
+}

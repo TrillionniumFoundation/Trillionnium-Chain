@@ -1,0 +1,18 @@
+{
+  "head": "68c664332e340591e629c4db0f611f11e33135f1",
+  "tree": "e9abf07334b97a1d9862ccc3f49350956c2decf1",
+  "provider_receipt_sha256": "80b3b85e50869e96e58fa0848fd1200c5bf8d2b408ff641da204814b6807fd97",
+  "environment": {
+    "CARGO_HOME": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "2",
+    "RUST_TEST_THREADS": "1",
+    "OPENSSL_DIR": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/chain-w1-ingress-r17-20261107/provider-runtime/trnm-pq-provider-3.5.9.lq0uAtbU/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "4467365b708d585d6d01da86ae47d43f096bc61454ebc24fb099544f52ca028d",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "host_qualification_claimed": false
+}

@@ -1,0 +1,59 @@
+{
+  "scope": "Four test fixture ordering changes only. No production edits, budget/deadline changes, Cargo, or Rust test execution. Apply check uses a captured source slice padded to original line offsets, not a full repository checkout.",
+  "source_slice_start_line": 4100,
+  "source_slice_sha256": "80745acb23d09d2fe68cf13ebbbed10329ab39fccac0c6dfa3f3b5952147d9e2",
+  "patch_sha256": "863873e3741a78ea1e05f9891a32bd703b550a601b81471d8365252ca2cf066b",
+  "changed_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "test_functions_unchanged": true,
+  "assertion_invocations_preserved_verbatim": 182,
+  "wait_metric_invocations_preserved_verbatim": 12,
+  "duration_expressions_preserved_verbatim": true,
+  "bounded_connection_and_grant_counts_preserved": true,
+  "changes": [
+    {
+      "kind": "shared_body_phase_split",
+      "connections": 3,
+      "indent": 8
+    },
+    {
+      "kind": "shared_body_phase_split",
+      "connections": 8,
+      "indent": 8
+    },
+    {
+      "kind": "shared_body_phase_split",
+      "connections": 8,
+      "indent": 12
+    },
+    {
+      "kind": "distinct_bodies_phase_split",
+      "connections": "MAX_MUTATING_GRANTS (8)"
+    }
+  ],
+  "apply_checks": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-authenticate-before-bodies.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-authenticate-before-bodies.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "applied_copy_matches_expected": true
+}

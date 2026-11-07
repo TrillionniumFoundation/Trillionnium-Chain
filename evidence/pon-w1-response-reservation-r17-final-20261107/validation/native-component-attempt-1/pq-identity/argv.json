@@ -1,0 +1,6 @@
+[
+  "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+  "ingress::public_v3::pq_identity::tests::",
+  "--test-threads=1",
+  "--nocapture"
+]

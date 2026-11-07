@@ -1,0 +1,40 @@
+{
+  "path": "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+  "bytes": 431643904,
+  "sha256": "66004afc6ffbd38a4bb847e7220a12d3711e9e18bc73aa8313643288043901ae",
+  "compiler_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-pon-node#0.1.0",
+    "manifest_path": "/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "edition": "2021",
+      "doc": true,
+      "doctest": true,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": true
+    },
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334"
+    ],
+    "executable": "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+    "fresh": false
+  }
+}

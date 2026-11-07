@@ -1,0 +1,64 @@
+{
+  "schema": "w1-r17-f97-cargo-validation-v1",
+  "head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "results": [
+    {
+      "name": "workspace-default",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.8664926530327648,
+      "packages": 175,
+      "workspace_members": 26
+    },
+    {
+      "name": "workspace-all-features",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.31569094001315534,
+      "packages": 180,
+      "workspace_members": 26
+    },
+    {
+      "name": "fuzz-fetch-locked",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 20.917792515130714,
+      "packages": 147,
+      "workspace_members": 1
+    },
+    {
+      "name": "fuzz-offline-recheck",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.16535797179676592
+    },
+    {
+      "name": "primitive-rejection-cache",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.41569840000011027,
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0,
+      "expected_test_count": 11,
+      "accepted_component_result": true
+    },
+    {
+      "name": "strict-workspace-clippy",
+      "exit_code": 101,
+      "timed_out": false,
+      "elapsed_seconds": 130.9020392508246
+    }
+  ],
+  "lockfiles_before": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "lockfiles_after": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "source_unchanged": true,
+  "all_checks_pass": false,
+  "original_host_acceptance": false
+}

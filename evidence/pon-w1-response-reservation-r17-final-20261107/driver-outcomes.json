@@ -1,0 +1,282 @@
+{
+  "schema": "r17-retained-evidence-driver-outcomes-v1",
+  "native_test_results_are_separate": true,
+  "records": [
+    {
+      "job_id": "1a1b6fb4e78-12894-85e",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794071743473,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b6fb4e78-12894-85e",
+        "launch_nonce": "f5f17c4bbf40edfbada1d5c1cde0cecb",
+        "log_bytes": {
+          "stderr": {
+            "seen": 860,
+            "stored": 860
+          },
+          "stdout": {
+            "seen": 0,
+            "stored": 0
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 24, in <module>\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 619, in result_iterator\n    yield _result_or_cancel(fs.pop())\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 317, in _result_or_cancel\n    return fut.result(timeout)\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 456, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/usr/lib/python3.12/concurrent/futures/thread.py\", line 58, in run\n    result = self.fn(*self.args, **self.kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<stdin>\", line 10, in fetch\nAssertionError\n",
+      "stdout_end_offset": 0,
+      "stderr_end_offset": 860,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    },
+    {
+      "job_id": "1a1b7199c7d-12894-915",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794073288448,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b7199c7d-12894-915",
+        "launch_nonce": "365bab59aed1ac4c002d68e8d301971f",
+        "log_bytes": {
+          "stderr": {
+            "seen": 594,
+            "stored": 594
+          },
+          "stdout": {
+            "seen": 172,
+            "stored": 172
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-ingress-reconcile-20261107\", \"remote_policy_mutated\": false}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 32, in <module>\n  File \"<stdin>\", line 10, in copy\n  File \"/usr/lib/python3.12/pathlib.py\", line 1021, in read_bytes\n    with self.open(mode='rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/qian-qi/chain-w1-ingress-r17-20261107/validation/campaign-review/run-1-phase-readback.json'\n",
+      "stdout_end_offset": 172,
+      "stderr_end_offset": 594,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    },
+    {
+      "job_id": "1a1b71cbb13-12894-92b",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794073488578,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b71cbb13-12894-92b",
+        "launch_nonce": "c6e5423b33a41eee98859c52b49db6ec",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 393,
+            "stored": 393
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-ingress-reconcile-20261107\", \"remote_policy_mutated\": false}\n{\"files\": 1135, \"added_files\": 298, \"stored_bytes\": 328208116, \"largest_stored_bytes\": 72740746, \"manifest_sha256\": \"8242992abcfa7f1bae431e01625baa26dcee90f2ed40f3e9711647c6a790f696\", \"all_payload_hashes_verified\": true}\n",
+      "stderr": "",
+      "stdout_end_offset": 393,
+      "stderr_end_offset": 0,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    },
+    {
+      "job_id": "1a1b725687d-12894-95e",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794074047049,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b725687d-12894-95e",
+        "launch_nonce": "1d2f141475b9645a988774bd9dd58b1e",
+        "log_bytes": {
+          "stderr": {
+            "seen": 88,
+            "stored": 88
+          },
+          "stdout": {
+            "seen": 171,
+            "stored": 171
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-ingress-integrated-20261107\", \"remote_policy_mutated\": false}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 7, in <module>\nAssertionError\n",
+      "stdout_end_offset": 171,
+      "stderr_end_offset": 88,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    },
+    {
+      "job_id": "1a1b7267ff9-12894-963",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794074131869,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 1,
+        "job_id": "1a1b7267ff9-12894-963",
+        "launch_nonce": "9a7300d30eb98d48cb564fdf50c83b08",
+        "log_bytes": {
+          "stderr": {
+            "seen": 427,
+            "stored": 427
+          },
+          "stdout": {
+            "seen": 171,
+            "stored": 171
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "failed",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-ingress-integrated-20261107\", \"remote_policy_mutated\": false}\n",
+      "stderr": "切换到一个新分支 'evidence/chain-w1-ingress-r17-20261107'\nproject boundary failed: not an allowed development branch\nTraceback (most recent call last):\n  File \"<stdin>\", line 17, in <module>\n  File \"/usr/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['bash', 'scripts/project-preflight.sh']' returned non-zero exit status 2.\n",
+      "stdout_end_offset": 171,
+      "stderr_end_offset": 427,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    },
+    {
+      "job_id": "1a1b72a2322-12894-970",
+      "host": "desktop",
+      "authoritative_status": {
+        "at_unix_ms": 1794074377235,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b72a2322-12894-970",
+        "launch_nonce": "71103507198cbae65d14289bd4b5c981",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1025,
+            "stored": 1025
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-w1-ingress-reconcile-20261107\", \"remote_policy_mutated\": false}\n{\"result\": \"PASS\", \"mode\": \"--audit\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"evidence/chain-w1-ingress-r17-20261107\", \"remote_policy_mutated\": false}\n{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"docs/chain-w1-ingress-r17-evidence-20261107\", \"remote_policy_mutated\": false}\n{\"schema\": \"r17-evidence-worktree-preparation-v1\", \"branch\": \"docs/chain-w1-ingress-r17-evidence-20261107\", \"source_head\": \"2f66491d06453d9b5c9a1783f9441fb1d07619a3\", \"previous_local_integration_branch_head_preserved\": \"68c664332e340591e629c4db0f611f11e33135f1\", \"raw_evidence_files\": 1135, \"raw_payload_bytes\": 328208116, \"prior_unpublished_name_refused_by_original_policy\": \"evidence/chain-w1-ingress-r17-20261107\", \"policy_modified\": false, \"source_pr_modified\": false, \"committed\": false, \"pushed\": false}\n",
+      "stderr": "",
+      "stdout_end_offset": 1025,
+      "stderr_end_offset": 0,
+      "scope": "Recorded process tool result; no native acceptance inferred from evidence-reader success."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+[
+  "python3",
+  "-B",
+  "scripts/ci/verify_ci_source.py",
+  "--kind",
+  "head",
+  "--expected-head",
+  "436ffaefca83292cecef149663d3bdc5a92e5764",
+  "--output",
+  "../validation/native-retained-repair-attempt-2/source-after.json"
+]

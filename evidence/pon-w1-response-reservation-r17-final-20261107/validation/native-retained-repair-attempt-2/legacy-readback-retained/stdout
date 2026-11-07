@@ -1,0 +1,13 @@
+
+running 7 tests
+test store::legacy_admission_readback::tests::legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows ... ok
+test store::legacy_admission_readback::tests::legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources ... ok
+test store::legacy_admission_readback::tests::legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes ... ok
+test store::legacy_admission_readback::tests::legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication ... legacy_admission_before_durable_commit_callbacks=[(1, 22, 22), (2, 23, 28), (64, 333, 648), (127, 648, 1278), (128, 648, 648), (129, 18, 18)]
+ok
+test store::legacy_admission_readback::tests::legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback ... ok
+test store::legacy_admission_readback::tests::legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use ... ok
+test store::legacy_admission_readback::tests::legacy_pair_selection_excludes_authenticated_and_growth_state_relations ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 1229 filtered out; finished in 214.25s
+

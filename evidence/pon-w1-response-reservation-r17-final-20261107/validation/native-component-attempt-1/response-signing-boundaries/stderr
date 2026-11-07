@@ -1,0 +1,6 @@
+
+thread 'ingress::public_v3::response_signing_boundary_tests::tcp_cancellation_keeps_real_response_signing_interval_until_worker_returns' (464556) panicked at crates/trnm-pon-node/src/ingress/public_v3/response_signing_boundary_tests.rs:515:17:
+assertion `left == right` failed
+  left: None
+ right: Some("work")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

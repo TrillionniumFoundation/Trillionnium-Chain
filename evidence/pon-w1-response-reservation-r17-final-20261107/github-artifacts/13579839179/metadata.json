@@ -1,0 +1,20 @@
+{
+  "id": 13579839179,
+  "node_id": "MDg6QXJ0aWZhY3QxMzU3OTgzOTE3OQ==",
+  "name": "w1-fresh-service-prospective-merge-6cd7b65b6c766e75c9fcaef8983a537922569be4-1",
+  "size_in_bytes": 5633096,
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579839179",
+  "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13579839179/zip",
+  "expired": false,
+  "digest": "sha256:8e55ae9b9cf67728bc50f78c02390ebeb7f133b7a853aac0db38cc21f2698e18",
+  "created_at": "2026-11-07T15:56:07Z",
+  "updated_at": "2026-11-07T15:56:07Z",
+  "expires_at": "2026-12-07T15:56:05Z",
+  "workflow_run": {
+    "id": 42388392549,
+    "repository_id": 1323087357,
+    "head_repository_id": 1323087357,
+    "head_branch": "fix/chain-w1-ingress-integrated-20261107",
+    "head_sha": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c"
+  }
+}

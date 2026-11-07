@@ -1,0 +1,11 @@
+{
+  "utc": "2026-11-07T16:59:32.529457+00:00",
+  "job_id": "1a1b6ee1f38-12894-7ff",
+  "remote_job_directory_exists": false,
+  "intended_first_output_directory_exists": false,
+  "systemctl_exit": 0,
+  "systemctl_stdout": "ExecMainPID=0\nExecMainCode=0\nExecMainStatus=0\nLoadState=not-found\nActiveState=inactive\n",
+  "systemctl_stderr": "",
+  "original_runtime_ack": "launch_unknown",
+  "original_execution_replayed": false
+}

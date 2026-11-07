@@ -1,0 +1,668 @@
+{
+  "schema": "w1-r17-qualification-summary-v1",
+  "source": {
+    "kind": "checked_out_head",
+    "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+    "tree": "977db7f413da494051d84ed3eecd1eb0522dfd12",
+    "parents": [
+      "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+      "04bbc81e4aad9b29fef29385d3262297e2cb17df"
+    ],
+    "non_documentation_tracked_tree_equal_to_2f": true,
+    "non_documentation_tracked_tree_sha256": "ffbb2ba34f7e4f6d7d4c96da36337b6b0065ca8e7f9da1a3995c352119ee57cb",
+    "tracked_source_or_cargo_changed": false,
+    "whole_raw_whitespace_diagnostic_exit": 2,
+    "authored_source_document_whitespace_exit": 0,
+    "unchanged_upstream_blobs_verified": 173,
+    "published": {
+      "schema": "r17-normal-source-publication-v1",
+      "observed_utc": "2026-11-07T18:32:55.584622+00:00",
+      "actor": "ProfHepta",
+      "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "previous_remote_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+      "branch": "fix/chain-w1-ingress-integrated-20261107",
+      "pr": 780,
+      "base_ref": "fix/chain-six-axis-performance-20261103",
+      "rest_base_snapshot_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+      "reviewed_live_base_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+      "draft": true,
+      "push_exit_code": 0,
+      "remote_head_verified": true,
+      "force_push": false,
+      "main_written": false,
+      "approval_or_activation": false,
+      "component_validation_passed": true,
+      "original_resource_acceptance": false
+    }
+  },
+  "disposition": "HOLD_NO_GO",
+  "component_validation": {
+    "native": {
+      "schema": "w1-r17-retained-regression-repair-native-v1",
+      "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "results": [
+        {
+          "name": "compile",
+          "exit_code": 0,
+          "elapsed_seconds": 0.21466910699382424,
+          "timed_out": false
+        },
+        {
+          "name": "public-v3-all-retained",
+          "exit_code": 0,
+          "elapsed_seconds": 50.644054054049775,
+          "timed_out": false,
+          "listed": 250,
+          "passed": 249,
+          "failed": 0,
+          "ignored": 1,
+          "accepted_component_result": true
+        },
+        {
+          "name": "legacy-readback-retained",
+          "exit_code": 0,
+          "elapsed_seconds": 199.7782476840075,
+          "timed_out": false,
+          "listed": 7,
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0,
+          "accepted_component_result": true
+        },
+        {
+          "name": "strict-workspace-clippy",
+          "exit_code": 0,
+          "elapsed_seconds": 0.5662178068887442,
+          "timed_out": false
+        },
+        {
+          "name": "source-after",
+          "exit_code": 0,
+          "elapsed_seconds": 2.5216567600145936,
+          "timed_out": false
+        }
+      ],
+      "lockfiles_before": {
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+      },
+      "lockfiles_after": {
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+      },
+      "source_unchanged": true,
+      "all_checks_pass": true,
+      "original_host_acceptance": false
+    },
+    "source_controls": {
+      "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "checks": [
+        {
+          "name": "test_ci_contract.py",
+          "exit_code": 0,
+          "elapsed_seconds": 16.205623083980754
+        },
+        {
+          "name": "test_ci_source_integrity.py",
+          "exit_code": 0,
+          "elapsed_seconds": 4.77694510598667
+        },
+        {
+          "name": "test_pq_research_integration.py",
+          "exit_code": 0,
+          "elapsed_seconds": 64.38711145101115
+        },
+        {
+          "name": "test_pon_public_v3_policy_read.py",
+          "exit_code": 0,
+          "elapsed_seconds": 0.21539735700935125
+        },
+        {
+          "name": "test_pon_public_v3_phase_read.py",
+          "exit_code": 0,
+          "elapsed_seconds": 1.117921814089641
+        },
+        {
+          "name": "source-after",
+          "exit_code": 0
+        }
+      ],
+      "all_checks_pass": true,
+      "tests_do_not_grant_native_acceptance": true
+    },
+    "locked_graphs": {
+      "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "all_checks_pass": true,
+      "locks_before": {
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+      },
+      "locks_after": {
+        "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+      },
+      "results": [
+        {
+          "name": "default",
+          "argv": [
+            "cargo",
+            "+1.95.0",
+            "metadata",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--format-version",
+            "1",
+            "--locked",
+            "--offline"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.916724617825821,
+          "packages": 175,
+          "resolve_nodes": 175
+        },
+        {
+          "name": "all-features",
+          "argv": [
+            "cargo",
+            "+1.95.0",
+            "metadata",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "--format-version",
+            "1",
+            "--locked",
+            "--offline",
+            "--all-features"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.36600074800662696,
+          "packages": 180,
+          "resolve_nodes": 180
+        },
+        {
+          "name": "fuzz",
+          "argv": [
+            "cargo",
+            "+1.95.0",
+            "metadata",
+            "--manifest-path",
+            "tests/fuzz/Cargo.toml",
+            "--format-version",
+            "1",
+            "--locked",
+            "--offline"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.3157045829575509,
+          "packages": 147,
+          "resolve_nodes": 147
+        }
+      ],
+      "scope": "Exact locked native/default, all-feature and fuzz dependency graphs; no runtime acceptance."
+    },
+    "does_not_grant_original_host_acceptance": true
+  },
+  "original_fixed_host": {
+    "tested_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+    "prospective_merge": {
+      "baseline_confirmations": {
+        "success": 1,
+        "offered": 1
+      },
+      "pressure_confirmations": {
+        "success": 0,
+        "offered": 1
+      },
+      "honest_submit_ack": {
+        "success": 7,
+        "observed": 7
+      }
+    },
+    "shared_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4",
+    "cpu_quota_us": 25000,
+    "cpu_period_us": 100000,
+    "memory_max_bytes": 2147483648,
+    "swap_max_bytes": 0,
+    "pids_max": 256,
+    "cpu_burst_us": 0,
+    "service_deadline_seconds": 4,
+    "hostile": 16,
+    "head": {
+      "baseline_confirmations": {
+        "success": 1,
+        "offered": 1
+      },
+      "pressure_confirmations": {
+        "success": 0,
+        "offered": 1
+      },
+      "honest_submit_ack": {
+        "success": 7,
+        "observed": 7
+      }
+    },
+    "disposition": "EXECUTED_FAILED",
+    "local_original_host_acceptance": false
+  },
+  "campaigns": {
+    "executed": 3,
+    "phase_hostile_counts": [
+      0,
+      24,
+      24
+    ],
+    "phase_seconds": 30,
+    "process_exit_codes": [
+      101,
+      101,
+      101
+    ],
+    "phase_criteria_passed": 0,
+    "phase_criteria_total": 9,
+    "confirmations": {
+      "planned": 27,
+      "timely": 3,
+      "observed_not_timely_confirmed": 9,
+      "unobserved": 15,
+      "baseline": {
+        "planned": 9,
+        "timely": 3,
+        "observed_not_timely_confirmed": 3,
+        "unobserved": 3
+      },
+      "from_zero": {
+        "planned": 9,
+        "timely": 0,
+        "observed_not_timely_confirmed": 3,
+        "unobserved": 6
+      },
+      "late_product": {
+        "planned": 9,
+        "timely": 0,
+        "observed_not_timely_confirmed": 3,
+        "unobserved": 6
+      }
+    },
+    "all_offered_finite_tail": {
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "successful_only_scheduled_latency": {
+      "count": 3,
+      "p95_seconds": 22.703333176,
+      "p99_seconds": 22.703333176,
+      "max_seconds": 22.703333176
+    },
+    "honest_submit_ack": {
+      "success": 84,
+      "observed": 84
+    },
+    "history_calls": {
+      "observed": 65,
+      "network_success": 64,
+      "native_import_accepted": 56,
+      "native_import_deadline_failure": 8,
+      "no_import_stage_observation": 1
+    },
+    "budget_samples": {
+      "total": 3967,
+      "depleted_observations": 0,
+      "projected_start_ineligible": 520,
+      "ineligible_samples_with_two_live_owners": 520,
+      "minimum_stored_credit_ns": 1782441336,
+      "original_start_reserve_ns": 100000000,
+      "atomic_composite_snapshot": false,
+      "continuous_depletion_exclusion_proven": false
+    },
+    "paid_depletion_criterion_met": false,
+    "disposition": "EXECUTED_FAILED",
+    "tested_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+    "tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4",
+    "source_kind": "head"
+  },
+  "history": {
+    "blocks": 4105,
+    "all_original_lanes_started": true,
+    "lanes": [
+      {
+        "architecture": "x64",
+        "source": "head",
+        "successful_import_returns": 4028,
+        "exit_code": 101,
+        "failure": "original_1800_second_server_lifetime_then_connection_refused",
+        "tested_commit": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+        "tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+      },
+      {
+        "architecture": "x64",
+        "source": "prospective_merge",
+        "successful_import_returns": 2792,
+        "exit_code": 101,
+        "failure": "original_1800_second_server_lifetime_then_connection_refused",
+        "tested_commit": "6cd7b65b6c766e75c9fcaef8983a537922569be4",
+        "tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+      },
+      {
+        "architecture": "ARM",
+        "source": "head",
+        "successful_import_returns": 4104,
+        "exit_code": 101,
+        "failure": "final_import_original_approximately_30_second_deadline",
+        "tested_commit": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+        "tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+      },
+      {
+        "architecture": "ARM",
+        "source": "prospective_merge",
+        "successful_import_returns": 4104,
+        "exit_code": 101,
+        "failure": "final_import_original_approximately_30_second_deadline",
+        "tested_commit": "6cd7b65b6c766e75c9fcaef8983a537922569be4",
+        "tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+      }
+    ],
+    "durable_activation_established": false,
+    "cold_reopen_and_corrupt_index_sequence_qualified": false,
+    "logical_header_spacing_seconds": 10,
+    "real_time_long_duration_qualification": false,
+    "disposition": "EXECUTED_FAILED",
+    "tested_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+    "tested_prospective_merge": "6cd7b65b6c766e75c9fcaef8983a537922569be4",
+    "shared_tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+  },
+  "other_gates": {
+    "native_state_full_capacity": {
+      "original_lanes_passed": 4,
+      "original_lanes_total": 4,
+      "original_host_wrapper": false,
+      "proves_pn1_identity_capacity_churn": false,
+      "tested_source_heads": [
+        "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+        "6cd7b65b6c766e75c9fcaef8983a537922569be4"
+      ],
+      "shared_tested_tree": "fb08f394499cc5847d0e47986bfc97ea2767fed4"
+    },
+    "pn1_identity_capacity_churn": "NOT_QUALIFIED",
+    "independent_wan": "NOT_QUALIFIED",
+    "anonymous_fairness": "NOT_ESTABLISHED",
+    "effective_work_lower_bound": "NOT_ESTABLISHED",
+    "single_node_economic_break_even": "NOT_ESTABLISHED"
+  },
+  "evidence_contract": {
+    "failed_observations_retained": true,
+    "original_github_zip_bytes_unchanged": true,
+    "no_test_threshold_relaxed": true,
+    "no_service_result_reclassified_as_consensus_invalidity": true,
+    "new_ci_must_be_read_from_its_own_head_bound_receipts": true
+  },
+  "new_ci_initial_snapshot": {
+    "observed_utc": "2026-11-07T18:35:29.810765+00:00",
+    "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+    "pr": 780,
+    "base_ref": "fix/chain-six-axis-performance-20261103",
+    "base_snapshot_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+    "draft": true,
+    "runs": [
+      {
+        "id": 42401831712,
+        "name": "PoN fixed Host ROOT F0 diagnostic",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831712"
+      },
+      {
+        "id": 42401832011,
+        "name": "PoN recent batch exact-source acceptance",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832011"
+      },
+      {
+        "id": 42401831619,
+        "name": "PoN original large-state CPU acceptance",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831619"
+      },
+      {
+        "id": 42401831985,
+        "name": "PoN branch encoding exact-source acceptance",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831985"
+      },
+      {
+        "id": 42401831625,
+        "name": "trnm-required-baseline",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625"
+      },
+      {
+        "id": 42401831654,
+        "name": "PoN owned process cleanup",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831654"
+      },
+      {
+        "id": 42401831791,
+        "name": "CodeQL exact-source analysis export",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831791"
+      },
+      {
+        "id": 42401832002,
+        "name": "PoN original native campaign",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832002"
+      },
+      {
+        "id": 42401831664,
+        "name": "PoN PQ network and rollback witness",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831664"
+      },
+      {
+        "id": 42401831771,
+        "name": "PoN W1 work security observations",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771"
+      },
+      {
+        "id": 42401831752,
+        "name": "CodeQL exact-source analysis and SARIF retention",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831752"
+      },
+      {
+        "id": 42401831701,
+        "name": "Release finality reference and native baseline",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831701"
+      },
+      {
+        "id": 42401831787,
+        "name": "PoN priority acceptance",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831787"
+      },
+      {
+        "id": 42401831723,
+        "name": "PoN W1 transparent candidate observations",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831723"
+      },
+      {
+        "id": 42401831852,
+        "name": "PoN baseline diagnostic readback",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831852"
+      },
+      {
+        "id": 42401831798,
+        "name": "PoN original workspace test-profile CPU acceptance",
+        "event": "pull_request",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831798"
+      }
+    ],
+    "check_suites": [
+      {
+        "id": 114875588983,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589013,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589071,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589094,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589195,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589210,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589238,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589308,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589354,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589399,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589407,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589413,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589534,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589872,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589883,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      },
+      {
+        "id": 114875589896,
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+        "app_slug": "github-actions"
+      }
+    ],
+    "new_ci_qualification_granted": false
+  }
+}

@@ -1,0 +1,74 @@
+96:    BeforeReplay,
+189:    relation_only(expand_with_progress(
+208:        progress(VerificationProgress::Noise { label, counter })
+226:    match mul_with_progress(a, b, rows, inner, cols, &mut no_cancellation) {
+241:        progress(VerificationProgress::MatrixRow { row: i })?;
+301:    relation_only(evaluate_transcript_with_progress(
+316:    let el = expand_with_progress(challenge, 0, N * R, progress)?;
+317:    let er = expand_with_progress(challenge, 1, R * N, progress)?;
+318:    let fl = expand_with_progress(challenge, 2, N * R, progress)?;
+319:    let fr = expand_with_progress(challenge, 3, R * N, progress)?;
+320:    let e = mul_with_progress(&el, &er, N, R, N, progress).map_err(VerificationError::Cancelled)?;
+321:    let f = mul_with_progress(&fl, &fr, N, R, N, progress).map_err(VerificationError::Cancelled)?;
+339:                progress(VerificationProgress::TranscriptTile {
+378:    match finish_product_with_progress(a, evaluated, &mut no_cancellation) {
+388:    progress(VerificationProgress::BeforeProduct)?;
+391:    let left = mul_with_progress(a, &evaluated.fl, N, N, R, progress)?;
+392:    let correction1 = mul_with_progress(&left, &evaluated.fr, N, R, N, progress)?;
+393:    let right = mul_with_progress(&evaluated.er, &evaluated.bp, R, N, N, progress)?;
+394:    let correction2 = mul_with_progress(&evaluated.el, &right, N, R, N, progress)?;
+429:    relation_only(verify_with_progress(
+465:    relation_only(verify_transposed_with_progress(
+501:    relation_only(verify_limb_with_progress(
+536:    relation_only(verify_full_limb_with_progress(
+571:    relation_only(verify_column_limb_with_progress(
+606:    relation_only(verify_reference_with_progress(
+786:    progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
+789:            evaluate_transcript_with_progress(challenge, a, b, progress)?,
+821:            finish_product_with_progress(a, evaluated, progress)
+827:                finish_transposed_with_progress(a, evaluated, progress)
+845:    progress(VerificationProgress::BeforeVerifiedWork).map_err(VerificationError::Cancelled)?;
+869:    match transposed_mul_with_progress(a, b, rows, inner, cols, &mut no_cancellation) {
+917:        progress(VerificationProgress::MatrixRow { row: i })?;
+978:    let el = expand_with_progress(challenge, 0, N * R, progress)?;
+979:    let er = expand_with_progress(challenge, 1, R * N, progress)?;
+980:    let fl = expand_with_progress(challenge, 2, N * R, progress)?;
+981:    let fr = expand_with_progress(challenge, 3, R * N, progress)?;
+1012:                progress(VerificationProgress::TranscriptTile {
+1149:        progress(VerificationProgress::MatrixRow { row: i })?;
+1180:    progress(VerificationProgress::BeforeProduct)?;
+1219:    BeforeReplay,
+1264:        match self.prove_with_progress(challenge, |_| Ok::<_, std::convert::Infallible>(())) {
+1279:        progress(PreparedGenerationProgress::BeforeReplay)
+1282:            expand_with_progress(challenge, label, N * R, &mut |point| {
+1286:                progress(PreparedGenerationProgress::Noise { label, counter })
+1297:        let e = transposed_mul_with_progress(&el, &er, N, R, N, &mut |point| {
+1301:            progress(PreparedGenerationProgress::NoiseRow { operand: 0, row })
+1310:        let f = transposed_mul_with_progress(&fl, &fr, N, R, N, &mut |point| {
+1314:            progress(PreparedGenerationProgress::NoiseRow { operand: 1, row })
+1337:                    progress(PreparedGenerationProgress::TranscriptTile {
+1359:        progress(PreparedGenerationProgress::BeforeProof)
+1395:                verify_with_progress(challenge, expected_task, target, &proof, &mut |_| {
+1425:            let result = verify_with_progress(challenge, task, [255; 32], &bytes, &mut |_| {
+1767:        let fast = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+1774:            verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+1783:            verify_transposed_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+1791:        let limb = verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+1800:            verify_column_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+1812:                    VerificationProgress::BeforeReplay
+1838:                verify_with_progress(challenge, task, [255; 32], &proof, &mut stop).unwrap_err();
+1842:                verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+1857:                verify_transposed_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+1871:                verify_limb_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+1885:                verify_column_limb_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+1923:                let expected = mul_with_progress(&a, &b, rows, inner, cols, &mut |point| {
+2125:            verify_reference_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2132:            verify_full_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2142:                verify_full_limb_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2627:        let cancelled = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2686:        let controlled = verify_with_progress(challenge, task, [255; 32], &proof, &mut |_| {
+2710:                verify_with_progress(challenge, task, [255; 32], bad, &mut |_| Ok::<(), &str>(()))
+2724:        let error = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2747:            let error = verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {
+2782:                verify_with_progress(challenge, expected_task, target, bytes, &mut deny)
+2789:            verify_with_progress(challenge, task, [255; 32], &proof, &mut |point| {

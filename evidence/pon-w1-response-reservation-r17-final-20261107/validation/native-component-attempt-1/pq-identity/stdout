@@ -1,0 +1,18 @@
+
+running 13 tests
+test ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_native_application_account_packet_uses_the_same_paid_history_owner ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_original_listener_reads_real_owner_and_classical_clients_cannot_downgrade ... ok
+test ingress::public_v3::pq_identity::tests::pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused ... ok
+test ingress::public_v3::pq_identity::tests::pq_only_account_profile_rejects_classical_public_v3_client_before_connection ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_cancellation_between_encoding_and_signing_stops_new_work ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_expiry_stop_and_cancel_do_not_start_signing ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_controlled_known_debt_prevents_continuous_clean_close ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_measured_lifetime_overrun_denies_signature_and_fences_epoch ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_owns_both_slots_and_signs_once_on_its_actual_thread ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_owns_final_attempt_and_bytes_without_second_admission ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_refuses_each_original_lifetime_limit_before_crypto ... ok
+test ingress::public_v3::pq_identity::tests::pq_response_reservation_unknown_finish_or_unwind_never_refunds_principal ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 1212 filtered out; finished in 6.31s
+

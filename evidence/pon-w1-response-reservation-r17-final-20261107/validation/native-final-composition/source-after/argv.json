@@ -1,0 +1,11 @@
+[
+  "python3",
+  "-B",
+  "scripts/ci/verify_ci_source.py",
+  "--kind",
+  "head",
+  "--expected-head",
+  "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "--output",
+  "../validation/native-final-composition/source-after.json"
+]

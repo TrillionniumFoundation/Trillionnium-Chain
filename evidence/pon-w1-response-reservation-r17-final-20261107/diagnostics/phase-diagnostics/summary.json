@@ -1,0 +1,212 @@
+[
+  {
+    "artifact_id": 13580342341,
+    "variant": "original",
+    "mode": "attack-free-baseline",
+    "confirmed_transactions": 1,
+    "client_confirmation_latency_ns": 2404079869,
+    "finite_business_target_met": true,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": true,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 64
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 7
+    },
+    "verification_errors": [],
+    "independent_replay_cpu_ns": 430151697,
+    "independent_replay_wall_ns": 2265635481
+  },
+  {
+    "artifact_id": 13580342341,
+    "variant": "original",
+    "mode": "from-zero-pressure",
+    "confirmed_transactions": 0,
+    "client_confirmation_latency_ns": null,
+    "finite_business_target_met": false,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": false,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 42,
+      "error:IO: Resource temporarily unavailable (os error 11)": 1
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 5
+    },
+    "verification_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "independent_replay_cpu_ns": 278707609,
+    "independent_replay_wall_ns": 2884495722
+  },
+  {
+    "artifact_id": 13580342341,
+    "variant": "fresh",
+    "mode": "attack-free-baseline",
+    "confirmed_transactions": 1,
+    "client_confirmation_latency_ns": 2392002609,
+    "finite_business_target_met": true,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": true,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 67
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 7
+    },
+    "verification_errors": [],
+    "independent_replay_cpu_ns": 419048280,
+    "independent_replay_wall_ns": 2194009822
+  },
+  {
+    "artifact_id": 13580342341,
+    "variant": "fresh",
+    "mode": "from-zero-pressure",
+    "confirmed_transactions": 0,
+    "client_confirmation_latency_ns": null,
+    "finite_business_target_met": false,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": false,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 25,
+      "error:IO: Resource temporarily unavailable (os error 11)": 1
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 4
+    },
+    "verification_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "independent_replay_cpu_ns": 188132939,
+    "independent_replay_wall_ns": 2591361641
+  },
+  {
+    "artifact_id": 13579839179,
+    "variant": "original",
+    "mode": "attack-free-baseline",
+    "confirmed_transactions": 1,
+    "client_confirmation_latency_ns": 2694895655,
+    "finite_business_target_met": true,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": true,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 62
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 7
+    },
+    "verification_errors": [],
+    "independent_replay_cpu_ns": 475944888,
+    "independent_replay_wall_ns": 2486420626
+  },
+  {
+    "artifact_id": 13579839179,
+    "variant": "original",
+    "mode": "from-zero-pressure",
+    "confirmed_transactions": 0,
+    "client_confirmation_latency_ns": null,
+    "finite_business_target_met": false,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": false,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 29
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 3,
+      "error:FRAME_DEADLINE": 1
+    },
+    "verification_errors": [],
+    "independent_replay_cpu_ns": 213641791,
+    "independent_replay_wall_ns": 2685361893
+  },
+  {
+    "artifact_id": 13579839179,
+    "variant": "fresh",
+    "mode": "attack-free-baseline",
+    "confirmed_transactions": 1,
+    "client_confirmation_latency_ns": 2778508562,
+    "finite_business_target_met": true,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": true,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 59
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 7
+    },
+    "verification_errors": [],
+    "independent_replay_cpu_ns": 475194367,
+    "independent_replay_wall_ns": 2552212384
+  },
+  {
+    "artifact_id": 13579839179,
+    "variant": "fresh",
+    "mode": "from-zero-pressure",
+    "confirmed_transactions": 0,
+    "client_confirmation_latency_ns": null,
+    "finite_business_target_met": false,
+    "invariant_target_met": true,
+    "accounting_closed": true,
+    "no_attack_accepted": true,
+    "full_native_state_equal": false,
+    "receiver_matches_valid_honest_prefix": true,
+    "head_outcomes": {
+      "ok:None": 22,
+      "error:IO: Resource temporarily unavailable (os error 11)": 1
+    },
+    "submission_outcomes": {
+      "ok:None": 7
+    },
+    "history_outcomes": {
+      "ok:None": 2
+    },
+    "verification_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "independent_replay_cpu_ns": 131136204,
+    "independent_replay_wall_ns": 2096193334
+  }
+]

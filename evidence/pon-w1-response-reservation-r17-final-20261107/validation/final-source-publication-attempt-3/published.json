@@ -1,0 +1,20 @@
+{
+  "schema": "r17-normal-source-publication-v1",
+  "observed_utc": "2026-11-07T18:32:55.584622+00:00",
+  "actor": "ProfHepta",
+  "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "previous_remote_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "branch": "fix/chain-w1-ingress-integrated-20261107",
+  "pr": 780,
+  "base_ref": "fix/chain-six-axis-performance-20261103",
+  "rest_base_snapshot_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+  "reviewed_live_base_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+  "draft": true,
+  "push_exit_code": 0,
+  "remote_head_verified": true,
+  "force_push": false,
+  "main_written": false,
+  "approval_or_activation": false,
+  "component_validation_passed": true,
+  "original_resource_acceptance": false
+}

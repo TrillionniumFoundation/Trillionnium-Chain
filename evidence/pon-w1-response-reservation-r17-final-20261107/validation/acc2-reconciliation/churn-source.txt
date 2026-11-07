@@ -1,0 +1,40 @@
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:163:three full 0/24/24-actor campaigns, full History and the capacity/churn supplement
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:208:load, attacker bandwidth/CPU/identity churn, scheduling, network assumptions,
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:267:transactions per run. It did not execute this capacity/churn supplement.
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:425:distinct-nonce churn. The generic phase's `finite_phase_criteria_met` remains
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:482:No full campaign is run for this component. Nonce/body churn can miss every
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:547:does not prove that a new honest public miner can obtain service during identity churn.
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:551:identity churn policy, bounded queues, CPU scheduling, network loss/delay and independent
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:633:this does not solve fastest valid producer shortcuts, identity churn, slow-connection
+docs/protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md:665:activation. Sustained identity-churn delivery through the future authenticated public
+trillionnium/crates/trnm-pon-node/src/operator_mining_policy_tests.rs:194:    for (first, count) in [(0, 1), (u64::MAX, 2), (1, 4097)] {
+trillionnium/crates/trnm-pon-node/src/store.rs:3032:             CASE WHEN typeof(value)='blob' THEN substr(value,1,4097) ELSE value END,
+trillionnium/crates/trnm-pon-node/src/store.rs:8089:                    4097_u64,
+trillionnium/crates/trnm-pon-node/src/mining.rs:1068:        for attempts in [0, 4097, u64::MAX] {
+scripts/ci/test_w1_security_budget.py:89:        for po2, queries in ((12, 50), (25, 50), (18, 0), (18, 4097), (True, 50), (18, True)):
+scripts/ci/test_llm_cell_provider_ready.py:61:        for data, error in ((b'{"schema":', RuntimeError), (b"x" * 4097, ValueError)):
+scripts/ci/test_public_v3_service_campaign.py:88:            lambda r:r['phases'][0]['false_transcript_fixture'].__setitem__('ticket_trials',4097),
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:287:/// have different nonces. Key churn and expected bad signatures remain in the log.
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:345:        ("sixteen-key-churn", 2 * MAX_VERIFIERS, false),
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache.rs:91:        // A malformed/unverified caller cannot churn the retained keys. An
+scripts/ci/test_shared_material_security_v1.py:114:            candidate = candidates[1 if path == 'churn-other' else 0]
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:261: CASE WHEN typeof(before)='blob' AND length(before)>4096 THEN substr(before,1,4097) ELSE before END AS before,
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:262: CASE WHEN typeof(after)='blob' AND length(after)>4096 THEN substr(after,1,4097) ELSE after END AS after,
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:1467:        db.execute("UPDATE deltas SET after=?", [vec![b'x'; 4097]])
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:1766:        assert_eq!((returned, original), (4097, 1024 * 1024));
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:2289:            SqlValue::Blob(vec![b'x'; 4097]),
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs:2302:                        SqlValue::Blob(bytes[..4097].to_vec())
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs:268:        "UPDATE deltas SET after=zeroblob(4097) WHERE block=?",
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic/tests.rs:79:        ("z".into(), json!("x".repeat(4097))),
+trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs:501:    fn initial_root_survives_unactivated_branch_roots_without_whole_tree_churn() {
+scripts/ci/test_work_cost_report.py:76:        self.reject(lambda r: r['samples'][0].update(honest_attempts=4097))
+scripts/ci/run_public_fixture_native.py:97:        raw = stream.read(4097)
+trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs:576:            height: 4097,
+trillionnium/crates/trnm-pon-node/src/store/evaluation_round_observation.rs:590:            confirmed_phase(&plan, 128, Some(4097), &candidate).unwrap(),
+scripts/ci/run_shared_material_security_v1.py:30:PATHS = ('cold', 'warm', 'churn-other', 'after-churn', 'after-owner-recreation')
+scripts/ci/test_pon_public_v3_phase_read.py:179:                adversarial_key_churn_service_qualified=False))
+scripts/ci/test_pon_public_v3_phase_read.py:186:        original_r13_campaign_qualified=False, adversarial_key_churn_service_qualified=False,
+scripts/ci/test_pon_public_v3_phase_read.py:1096:        self.assertFalse(value['scope']['adversarial_key_churn_service_qualified'])
+scripts/ci/test_pon_public_v3_phase_read.py:1120:            lambda r: r.update(adversarial_key_churn_service_qualified=True),
+scripts/ci/test_pon_public_v3_phase_read.py:1127:            lambda r: r['phases'][0]['work_arithmetic_owner'].update(adversarial_key_churn_service_qualified=True),
+scripts/ci/test_pon_public_v3_phase_read.py:1271:                       {'retained_identities': 4097}, {'live_completions': 3},

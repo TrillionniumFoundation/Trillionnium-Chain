@@ -1,0 +1,6 @@
+[
+  "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+  "resource_revision_r17_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+  "--test-threads=1",
+  "--nocapture"
+]

@@ -1,0 +1,57 @@
+{
+  "schema": "w1-r17-retained-regression-repair-native-v1",
+  "head": "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+  "results": [
+    {
+      "name": "compile",
+      "exit_code": 0,
+      "elapsed_seconds": 545.8845085208304,
+      "timed_out": false
+    },
+    {
+      "name": "public-v3-all-retained",
+      "exit_code": 0,
+      "elapsed_seconds": 52.04349400289357,
+      "timed_out": false,
+      "listed": 250,
+      "passed": 249,
+      "failed": 0,
+      "ignored": 1,
+      "accepted_component_result": true
+    },
+    {
+      "name": "legacy-readback-retained",
+      "exit_code": 0,
+      "elapsed_seconds": 228.25883217784576,
+      "timed_out": false,
+      "listed": 7,
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0,
+      "accepted_component_result": true
+    },
+    {
+      "name": "strict-workspace-clippy",
+      "exit_code": 0,
+      "elapsed_seconds": 48.84659697301686,
+      "timed_out": false
+    },
+    {
+      "name": "source-after",
+      "exit_code": 0,
+      "elapsed_seconds": 6.281426720088348,
+      "timed_out": false
+    }
+  ],
+  "lockfiles_before": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "lockfiles_after": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "source_unchanged": true,
+  "all_checks_pass": true,
+  "original_host_acceptance": false
+}

@@ -1,0 +1,14 @@
+1056: 2026-11-07T15:55:05.8008552Z ##[endgroup]
+1057: 2026-11-07T16:43:17.8480170Z {"cleanup": "already-collected", "command_argv": ["python3", "scripts/ci/run_history_native.py", "--out", "/home/runner/work/_temp/priority-observations/history-native"], "consensus_or_model_authority": false, "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain", "failure": null, "final_host_errors": [], "final_parent_lease": {"consensus_or_model_authority": false, "creator_service": "trnm-from-zero-42388392598-1-native-priorities-4509.service", "current_service": "trnm-from-zero-42388392598-1-native-priorities-4509.service", "host_readiness_only": true, "parent_identity": {"boot_id": "0d5c705a-f077-46d7-b141-51c80dd83679", "installed_unit_sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "limits": {"cpu.max": "25000 100000", "cpu.max.burst": "0", "memory.max": "2147483648", "memory.swap.max": "0", "pids.max": "256"}, "parent": {"canonical_path": "/sys/fs/cgroup/trnmponpublic.slice", "device": 33, "directory": true, "gid": 0, "inode": 6942, "mode": 493, "symlink": false, "uid": 0}, "unit_file": {"ctime_ns": 1794066907914072966, "device": 31, "inode": 1464, "mtime_ns": 1794066907914072966, "path": "/run/systemd/system/trnmponpublic.slice", "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622", "size_bytes": 325}}, "schema": "trnm-ci-public-fixture-parent-binding-v1", "seal_file": {"ctime_ns": 1794066909148175401, "device": 31, "inode": 1510, "mtime_ns": 1794066909148175401, "path": "/run/trnm-public-fixture-42388392598-1-native-priorities/parent.json", "sha256": "8065ebc0b110dc233df97f4d762bb7db63dc1bd3759e1fb8e49bf7a5a3f6f72a", "size_bytes": 3221}, "seal_sha256": "8065ebc0b110dc233df97f4d762bb7db63dc1bd3759e1fb8e49bf7a5a3f6f72a"}, "gid": 1001, "host_readiness_only": true, "parent_ [full raw retained]
+1058: 2026-11-07T16:43:17.8574393Z ##[error]Process completed with exit code 1.
+1059: 2026-11-07T16:43:17.8631363Z ##[group]Run set -euo pipefail
+1060: 2026-11-07T16:43:17.8631674Z [36;1mset -euo pipefail[0m
+1061: 2026-11-07T16:43:17.8631969Z [36;1margs=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")[0m
+1062: 2026-11-07T16:43:17.8632342Z [36;1mif [ "$SOURCE_KIND" = prospective-merge ]; then[0m
+1063: 2026-11-07T16:43:17.8632756Z [36;1m  args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")[0m
+1064: 2026-11-07T16:43:17.8633117Z [36;1mfi[0m
+1065: 2026-11-07T16:43:17.8633347Z [36;1mpython3 scripts/ci/verify_ci_source.py "${args[@]}"[0m
+1066: 2026-11-07T16:43:17.8665303Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+1067: 2026-11-07T16:43:17.8665606Z env:
+1068: 2026-11-07T16:43:17.8665758Z   CI: true
+1069: 2026-11-07T16:43:17.8666161Z   CARGO_INCREMENTAL: 0

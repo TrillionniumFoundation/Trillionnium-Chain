@@ -1,0 +1,29 @@
+trillionnium/crates/trnm-pon-node/src/ingress.rs:742:struct AdmissionHost<'a> {
+trillionnium/crates/trnm-pon-node/src/operator_continuous_cpu.rs:35:    pub(crate) fn checkpoint(&self) -> crate::Result<()> {
+trillionnium/crates/trnm-pon-node/src/operator_continuous_cpu.rs:128:    pub(crate) fn checkpoint_handle(&self) -> Result<ContinuousCheckpoint> {
+trillionnium/crates/trnm-pon-node/src/operator_continuous_cpu.rs:235:    pub(crate) fn checkpoint_handle(&self) -> ContinuousCheckpoint {
+trillionnium/crates/trnm-pon-node/src/main.rs:1140:fn checkpoint_operator_inputs(
+trillionnium/crates/trnm-pon-node/src/main.rs:1164:fn checkpoint_operator_command(command: &str, args: &BTreeMap<String, String>) -> Result<Value> {
+trillionnium/crates/trnm-pon-node/src/main.rs:2343:                    let _host_guard = host_public_guard::Guard::acquire()?;
+trillionnium/crates/trnm-pon-node/src/main.rs:2390:                        "host_process_slot":_host_guard.slot,
+trillionnium/crates/trnm-pon-node/src/account_archive_prototype/multiproof.rs:446:    pub fn checkpoint(&self) -> Hash {
+trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs:1215:pub struct HostKernelBudget;
+trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs:541:    pub fn checkpoint(&self) -> Hash {
+trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs:594:    pub fn checkpoint(&self) -> Hash {
+trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs:695:    pub fn checkpoint(&self, id: Hash) -> Result<Checkpoint> {
+trillionnium/crates/trnm-pon-node/src/operator_continuous_history.rs:2121:    pub(crate) fn checkpoint(&self, actual_live_ns: u64) -> Result<()> {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:29:pub struct HistoryHostObservation {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:247:struct HostGuard<'a> {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:256:impl<'a> HostGuard<'a> {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:300:impl Drop for HostGuard<'_> {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:362:    let guard = observer.map(|observer| HostGuard::new(observer, phase));
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:447:        let mut guard = HostGuard::new(&observer, HistoryHostPhase::Final);
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:812:    pub(super) fn checkpoint(&self) -> Result<()> {
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:856:    pub(super) fn checkpoint(&self) -> Result<()> {
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1116:    pub fn checkpoint(&self) -> Result<()> {
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1235:    pub fn checkpoint(&self) -> Result<()> {
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs:1365:    pub fn checkpoint_handle(&self) -> ServiceMutationCpuCheckpoint {
+trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs:59:pub(crate) fn checkpoint(db: &Connection) -> Result<Checkpoint> {
+trillionnium/crates/trnm-pon-node/src/store/pinned_account_query.rs:24:    pub fn checkpoint(&self) -> &Checkpoint {
+trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1142:    pub(super) fn checkpoint(&mut self) -> Option<u64> {
+trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs:93:    pub fn checkpoint(&self) -> Result<ContinuousScopeCheckpoint> {

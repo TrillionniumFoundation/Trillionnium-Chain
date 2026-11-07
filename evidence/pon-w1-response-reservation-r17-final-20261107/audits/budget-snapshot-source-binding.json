@@ -1,0 +1,49 @@
+{
+  "schema": "r17-original-budget-observation-source-binding-v1",
+  "original_report_source": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "current_head": "436ffaefca83292cecef149663d3bdc5a92e5764",
+  "bindings": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+      "f97_blob": "cd2ce4d182c42aec6ef294988b121e8672f20ebb",
+      "current_blob": "cd2ce4d182c42aec6ef294988b121e8672f20ebb",
+      "sha256": "119db116ded1b577cb5d268710a55cfa9a89decb056cbdd5de14939c49474df2",
+      "unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+      "f97_blob": "452a7c10265ecc337943832589e71ce80d0eff14",
+      "current_blob": "452a7c10265ecc337943832589e71ce80d0eff14",
+      "sha256": "22ba99066afa5afee448e180d33d9b2b5ad6fb6bf7e46ecc42206df2dd7ccb11",
+      "unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "f97_blob": "6fec05c08fe7ce90bbac63deaaee369370f4478f",
+      "current_blob": "6fec05c08fe7ce90bbac63deaaee369370f4478f",
+      "sha256": "452559f802dd12113c52ea15265ab265e7a708f300f38e093d27835c46df14db",
+      "unchanged": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs",
+      "f97_blob": "70bcc1ba0554e0853f2dd7b28df860cd9090ff7d",
+      "current_blob": "70bcc1ba0554e0853f2dd7b28df860cd9090ff7d",
+      "sha256": "35493711d3d5a87d169a7e5c80b8e8badc3dbaaaf6a43b8f5624a9f96e6e31b9",
+      "unchanged": true
+    }
+  ],
+  "fragments": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "start_line": 1485,
+      "end_line": 1631,
+      "text": "    pub refill_ns_per_second: u64,\n    pub start_reserve_ns: u64,\n    pub worker_limit: usize,\n}\nimpl ServiceMutationCpuDomain {\n    /// Observe the stored watermark balance without advancing its time or\n    /// modifying the shared epoch. A later reserve always rechecks everything.\n    pub fn observe(&self) -> Result<ServiceMutationCpuObservation> {\n        let budget = self\n            .budget\n            .lock()\n            .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;\n        Ok(ServiceMutationCpuObservation {\n            schema: \"public-v3-local-stored-cpu-budget-v1\",\n            stored_credit_ns: budget.credit_ns,\n            in_flight: budget.in_flight,\n            accounting_unavailable: budget.unavailable,\n            burst_ns: MUTATION_CPU_BURST_NS,\n            refill_ns_per_second: MUTATION_CPU_REFILL_NS_PER_SECOND,\n            start_reserve_ns: MUTATION_CPU_START_RESERVE_NS,\n            worker_limit: MUTATION_CPU_WORKERS,\n        })\n    }\n    /// Independent optional diagnostic object. The original observe() struct,\n    /// JSON/schema and old evidence readers remain unchanged. No refill occurs.\n    /// None retains unknown overflow, unaccounted CPU or a failed exact identity;\n    /// it grants no reservation and never disables the original service policy.\n    pub fn observe_actual_flow(&self) -> Result<Option<ServiceMutationCpuFlowObservation>> {\n        let budget = self\n            .budget\n            .lock()\n            .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;\n        Ok((!budget.unavailable)\n            .then(|| {\n                budget.flow.as_ref().and_then(|flow| {\n                    flow.snapshot(\n                        budget.credit_ns,\n                        budget.in_flight,\n                        budget.termination_reserved_ns,\n                    )\n                })\n            })\n            .flatten())\n    }\n    /// Read the original owner's watermark age and a non-authoritative refill\n    /// projection under the same lock. Unknown remains None; no epoch advances.\n    pub fn observe_credit_freshness(\n        &self,\n    ) -> Result<Option<ServiceMutationCpuFreshnessObservation>> {\n        let budget = self\n            .budget\n            .lock()\n            .map_err(|_| \"PUBLIC_MUTATION_CPU_UNAVAILABLE\")?;\n        Ok(budget.credit_freshness_at(Instant::now()))\n    }\n}\n\n#[cfg(test)]\nmod request_owned_reserve_tests {\n    use super::*;\n\n    fn budget_with_credit(credit: u64) -> (PaidMutationCpuBudget, Instant) {\n        let mut budget = PaidMutationCpuBudget::new();\n        budget.credit_ns = i128::from(credit);\n        let now = budget.updated;\n        (budget, now)\n    }\n\n    #[cfg(target_os = \"linux\")]\n    #[test]\n    fn owned_start_quantum_pays_termination_without_extra_free_credit() {\n        let domain = ServiceMutationCpuDomain::standalone();\n        let operation = domain.begin().unwrap();\n        {\n            let mut budget = domain.budget.lock().unwrap();\n            // Boundary arithmetic fixture: exactly the already purchased\n            // quantum remains. This is not a measured depletion campaign.\n            budget.credit_ns = 0;\n            budget.updated = Instant::now() + Duration::from_secs(30);\n            budget.flow = None;\n        }\n        let cleanup = operation\n            .checkpoint_handle()\n            .reserve_reorg_termination()\n            .unwrap();\n        assert_eq!(\n            domain.budget.lock().unwrap().termination_reserved_ns,\n            REORG_TERMINATION_RESERVE_NS\n        );\n        assert!(domain.begin().is_err());\n        drop(cleanup);\n        let receipt = operation.finish();\n        assert!(!receipt.accounting_unavailable);\n        let budget = domain.budget.lock().unwrap();\n        assert_eq!(budget.in_flight, 0);\n        assert_eq!(budget.termination_reserved_ns, 0);\n        assert_eq!(\n            budget.credit_ns,\n            i128::from(MUTATION_CPU_START_RESERVE_NS) - i128::from(receipt.total_cpu_ns.unwrap())\n        );\n    }\n\n    #[cfg(target_os = \"linux\")]\n    #[test]\n    fn termination_cannot_borrow_another_live_owners_start_quantum() {\n        let domain = ServiceMutationCpuDomain::standalone();\n        let first = domain.begin().unwrap();\n        let second = domain.begin().unwrap();\n        let original_credit = -i128::from(MUTATION_CPU_START_RESERVE_NS)\n            + i128::from(REORG_TERMINATION_RESERVE_NS / 2);\n        {\n            let mut budget = domain.budget.lock().unwrap();\n            // Freeze only this boundary fixture's refill. One other original\n            // principal is present, but cannot fund this owner's cleanup.\n            budget.credit_ns = original_credit;\n            budget.updated = Instant::now() + Duration::from_secs(30);\n            budget.flow = None;\n        }\n        assert!(first\n            .checkpoint_handle()\n            .reserve_reorg_termination()\n            .err()\n            .unwrap()\n            .is(crate::ErrorCode::PublicMutationCpuBudget));\n        assert_eq!(domain.budget.lock().unwrap().termination_reserved_ns, 0);\n        let first = first.finish();\n        let second = second.finish();\n        assert!(!first.accounting_unavailable && !second.accounting_unavailable);\n        let budget = domain.budget.lock().unwrap();\n        assert_eq!(budget.in_flight, 0);\n        assert_eq!(budget.termination_reserved_ns, 0);\n        assert_eq!(\n            budget.credit_ns,\n            original_credit + 2 * i128::from(MUTATION_CPU_START_RESERVE_NS)\n                - i128::from(first.total_cpu_ns.unwrap())\n                - i128::from(second.total_cpu_ns.unwrap())\n        );\n    }\n\n    #[test]\n    fn owned_quantum_remains_credited_when_request_crosses_its_first_quantum() {\n        let reserve = MUTATION_CPU_START_RESERVE_NS;\n        let initial = reserve + reserve / 2;\n        let (mut budget, now) = budget_with_credit(initial);\n        budget.reserve(now).unwrap();\n        for total in [reserve / 2, reserve, reserve + reserve / 4, initial] {\n            let paid = initial as i128 - reserve as i128 - budget.credit_ns;\n"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs",
+      "start_line": 245,
+      "end_line": 269,
+      "text": "}\n\n#[test]\nfn public_freshness_read_is_optional_and_preserves_original_schema_and_flow() {\n    let domain = ServiceMutationCpuDomain::standalone();\n    let before = domain.observe().unwrap();\n    let flow = domain.observe_actual_flow().unwrap();\n    let freshness = domain.observe_credit_freshness().unwrap().unwrap();\n    assert_eq!(freshness.actual_flow, flow.clone().unwrap());\n    assert_eq!(domain.observe().unwrap(), before);\n    assert_eq!(domain.observe_actual_flow().unwrap(), flow);\n    assert_eq!(\n        serde_json::to_value(before)\n            .unwrap()\n            .as_object()\n            .unwrap()\n            .len(),\n        8\n    );\n    assert_eq!(freshness.projected_credited_refill_ns, 0);\n    assert_eq!(\n        freshness.projected_paid_credit_ns,\n        i128::from(MUTATION_CPU_BURST_NS)\n    );\n}\n"
+    }
+  ]
+}

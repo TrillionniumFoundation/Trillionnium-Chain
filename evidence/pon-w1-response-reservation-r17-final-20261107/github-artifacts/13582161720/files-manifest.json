@@ -1,0 +1,42 @@
+[
+  {
+    "path": "capacity.log",
+    "bytes": 25213,
+    "sha256": "47af14f85b7aebc02a0d383fb7d520a6788ff7e7d8f5ae93ff2b94a8803c9724"
+  },
+  {
+    "path": "large-state-authenticated_large_parent_original_schedule_supplementary_denominator.log",
+    "bytes": 36525,
+    "sha256": "e471d6154f4996c3a8a6702423abe62363c2a5db71376f58b6f6c82b5de70f13"
+  },
+  {
+    "path": "large-state-admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner.log",
+    "bytes": 77322,
+    "sha256": "030de10775975d832cf531722f97f0324f05b8279d9827a420d58f1fc018cd50"
+  },
+  {
+    "path": "migration.log",
+    "bytes": 6773,
+    "sha256": "ca9727bfe252c9048be5b32cbf4fd764dab8c6bb0458d6779f80ad9fd829b468"
+  },
+  {
+    "path": "source.json",
+    "bytes": 423,
+    "sha256": "971045a00765dd43927dc3eb27f635941bc6485b653934475284aac524e5ad94"
+  },
+  {
+    "path": "state-monetary_ranges_preserve_nonmonetary_cleanup_and_refuse_raw_m06_projection_omission.log",
+    "bytes": 655,
+    "sha256": "f593dc6adb9540f1e52fc31bfaa4a65c952491e81811afc1ca9c9767365d64be"
+  },
+  {
+    "path": "state-test_every_reorg_process_cut_and_admission_gap_recovers_once.log",
+    "bytes": 954,
+    "sha256": "9507ac29251d2656811c249f003abe86ded8f5942dd9a7c272b249d9a83a2508"
+  },
+  {
+    "path": "state-test_packet_status_non_tip_height_and_512_bit_work_match_one_active_ancestry.log",
+    "bytes": 487,
+    "sha256": "f18233a76bac143b49319f1cf3a364a9b2ac1b739089d1ff3ef81542820338c1"
+  }
+]

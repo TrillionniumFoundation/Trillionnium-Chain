@@ -1,0 +1,11 @@
+[
+  "cargo",
+  "+1.95.0",
+  "metadata",
+  "--manifest-path",
+  "trillionnium/Cargo.toml",
+  "--locked",
+  "--format-version",
+  "1",
+  "--offline"
+]

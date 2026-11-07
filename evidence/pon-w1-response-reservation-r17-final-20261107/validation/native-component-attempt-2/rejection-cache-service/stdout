@@ -1,0 +1,9 @@
+
+running 4 tests
+test ingress::public_v3::work_rejection::tests::absent_or_unfinished_rejection_observation_never_claims_a_cache_hit ... ok
+test ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays ... ok
+test ingress::public_v3::work_rejection::tests::ordinary_default_preserves_cpu_owner_explicit_settings_and_other_profiles ... ok
+test ingress::public_v3::work_rejection::tests::warmed_refusal_keeps_original_cancellation_context_and_cpu_reservation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1232 filtered out; finished in 1.64s
+

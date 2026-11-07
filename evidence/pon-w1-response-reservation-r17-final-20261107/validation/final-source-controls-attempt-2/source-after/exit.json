@@ -1,0 +1,17 @@
+{
+  "name": "source-after",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "68c664332e340591e629c4db0f611f11e33135f1",
+    "--output",
+    "/home/qian-qi/chain-w1-ingress-r17-20261107/validation/final-source-controls-attempt-2/source-after.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 2.6714175050146878,
+  "timed_out": false
+}

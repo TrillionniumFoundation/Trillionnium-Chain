@@ -1,0 +1,42 @@
+{
+  "source": "68c664332e340591e629c4db0f611f11e33135f1",
+  "results": [
+    {
+      "name": "workspace-default",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.21479641017504036,
+      "packages": 175,
+      "workspace_members": 26
+    },
+    {
+      "name": "workspace-all-features",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.21499813511036336,
+      "packages": 180,
+      "workspace_members": 26
+    },
+    {
+      "name": "fuzz",
+      "exit_code": 101,
+      "timed_out": false,
+      "elapsed_seconds": 0.11451827082782984
+    },
+    {
+      "name": "primitive-rejection-cache",
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 106.7976915568579,
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0,
+      "accepted_component_result": true
+    }
+  ],
+  "workspace_lock_before": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+  "workspace_lock_after": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+  "source_unchanged": true,
+  "worktree_status": "",
+  "original_host_acceptance": false
+}

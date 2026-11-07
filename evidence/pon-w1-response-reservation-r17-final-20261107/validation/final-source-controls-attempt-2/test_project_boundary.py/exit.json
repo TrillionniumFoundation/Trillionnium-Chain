@@ -1,0 +1,11 @@
+{
+  "name": "test_project_boundary.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_project_boundary.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 10.842352368170395,
+  "timed_out": false
+}

@@ -1,0 +1,12 @@
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-mempool)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-transport)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-current-base/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11m 15s

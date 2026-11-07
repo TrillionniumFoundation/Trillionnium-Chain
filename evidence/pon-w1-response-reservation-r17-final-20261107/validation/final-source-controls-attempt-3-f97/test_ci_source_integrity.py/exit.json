@@ -1,0 +1,11 @@
+{
+  "name": "test_ci_source_integrity.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 4.927615629974753,
+  "timed_out": false
+}

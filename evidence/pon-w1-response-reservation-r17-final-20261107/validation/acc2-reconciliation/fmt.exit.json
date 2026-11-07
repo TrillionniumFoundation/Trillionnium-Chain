@@ -1,0 +1,1 @@
+{"argv": ["cargo", "+1.95.0", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"], "exit_code": 0}

@@ -1,0 +1,12 @@
+{
+  "name": "distributed-inventory",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.11547217704355717,
+  "timed_out": false
+}

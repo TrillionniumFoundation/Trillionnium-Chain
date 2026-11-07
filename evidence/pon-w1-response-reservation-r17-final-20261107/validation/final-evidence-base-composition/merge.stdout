@@ -1,0 +1,344 @@
+更新 2f66491d0..40194538c
+Fast-forward
+ .../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md  |    16 +
+ .../development/specs/pon/USEFUL_CELL_NATIVE_V1.md |    14 +-
+ .../ARCHIVES.json                                  |    30 +
+ .../INTEGRITY.json                                 |    93 +
+ .../MANIFEST.json                                  |   831 +
+ .../PACKAGE.sha256                                 |   166 +
+ .../README.md                                      |   195 +
+ .../RECOVERY.json                                  |  1251 +
+ .../REVIEW.json                                    |   122 +
+ .../ci/archive-origin.json                         |     7 +
+ .../ci/concurrent-ci-acc2ec24-v1.json              |   115 +
+ .../ci/concurrent-ci-acc2ec24-v1.tar.gz            |   Bin 0 -> 1803594 bytes
+ .../ci/summary.json                                |   101 +
+ .../cache-availability-before-checkout.json        |   403 +
+ .../fresh-checks/fresh-acc2-ci-contract.stderr     |     0
+ .../fresh-checks/fresh-acc2-ci-contract.stdout     |     1 +
+ .../fresh-acc2-repository-links.stderr             |     0
+ .../fresh-acc2-repository-links.stdout             |     1 +
+ .../fresh-checks/fresh-acc2-source-after.stderr    |     0
+ .../fresh-checks/fresh-acc2-source-after.stdout    |    13 +
+ .../fresh-checks/fresh-acc2-source-before.stderr   |     0
+ .../fresh-checks/fresh-acc2-source-before.stdout   |    13 +
+ .../fresh-checks/head-before.stderr                |     0
+ .../fresh-checks/head-before.stdout                |     1 +
+ .../fresh-checks/materialized-raw-source.json      | 77502 +++++++++++++++++++
+ .../fresh-checks/result.json                       |    41 +
+ .../fresh-checks/select-development-branch.stderr  |     1 +
+ .../fresh-checks/select-development-branch.stdout  |     0
+ .../fresh-checks/source-audit-preflight.stderr     |     0
+ .../fresh-checks/source-audit-preflight.stdout     |     1 +
+ .../fresh-checks/source-preflight.stderr           |     0
+ .../fresh-checks/source-preflight.stdout           |     1 +
+ .../fresh-checks/status-before.stderr              |     0
+ .../fresh-checks/status-before.stdout              |     0
+ .../fresh-checks/steps.json                        |   129 +
+ .../fresh-checks/target-tree.stderr                |     0
+ .../fresh-checks/target-tree.stdout                |   Bin 0 -> 1512148 bytes
+ .../fresh-checks/tree-before.stderr                |     0
+ .../fresh-checks/tree-before.stdout                |     1 +
+ .../native/a4-a5-byte-continuity.json              |   216 +
+ .../native/archive-origin.json                     |    19 +
+ .../native/concurrent-native-acc2-evidence.tar.gz  |   Bin 0 -> 679432 bytes
+ .../native/download-verification.json              |    15 +
+ .../native/retained-validation.json                |  1337 +
+ .../publication/fetch-current.stderr               |     0
+ .../publication/fetch-current.stdout               |     0
+ .../publication/fetched-current.stderr             |     0
+ .../publication/fetched-current.stdout             |     1 +
+ .../publication/github-after.stderr                |     0
+ .../publication/github-after.stdout                |     1 +
+ .../publication/github-before.stderr               |     0
+ .../publication/github-before.stdout               |     1 +
+ .../publication/github-commit-tree.stderr          |     0
+ .../publication/github-commit-tree.stdout          |     1 +
+ .../publication/head.stderr                        |     0
+ .../publication/head.stdout                        |     1 +
+ .../publication/preserve-current-ancestry.stderr   |     0
+ .../publication/preserve-current-ancestry.stdout   |     0
+ .../publication/principal.stderr                   |     0
+ .../publication/principal.stdout                   |     1 +
+ .../publication/push-permission.stderr             |     0
+ .../publication/push-permission.stdout             |     1 +
+ .../publication/push.stderr                        |     4 +
+ .../publication/push.stdout                        |     3 +
+ .../publication/receipt.json                       |    15 +
+ .../publication/status.stderr                      |     0
+ .../publication/status.stdout                      |     0
+ .../publication/steps.json                         |   148 +
+ .../publication/tree.stderr                        |     0
+ .../publication/tree.stdout                        |     1 +
+ .../recovery-diagnostics/cache-object-audit.json   |  3350 +
+ .../recovery-diagnostics/cache-probe.json          |    11 +
+ .../cache-v2-attempt/base-head.stderr              |     0
+ .../cache-v2-attempt/base-head.stdout              |     1 +
+ .../cache-v2-attempt/base-status.stderr            |     0
+ .../cache-v2-attempt/base-status.stdout            |     0
+ .../cache-v2-attempt/base-tree.stderr              |     0
+ .../cache-v2-attempt/base-tree.stdout              |     1 +
+ .../cache-availability-before-checkout.json        |  1763 +
+ .../cache-v2-attempt/cache-coverage.stderr         |     1 +
+ .../cache-v2-attempt/cache-object-dir-0.stderr     |     0
+ .../cache-v2-attempt/cache-object-dir-0.stdout     |     1 +
+ .../cache-v2-attempt/cache-object-dir-1.stderr     |     0
+ .../cache-v2-attempt/cache-object-dir-1.stdout     |     1 +
+ .../cache-v2-attempt/cache-origin-0.stderr         |     0
+ .../cache-v2-attempt/cache-origin-0.stdout         |     1 +
+ .../cache-v2-attempt/cache-origin-1.stderr         |     0
+ .../cache-v2-attempt/cache-origin-1.stdout         |     1 +
+ .../cache-v2-attempt/checkout-head.stderr          |     0
+ .../cache-v2-attempt/checkout-head.stdout          |     1 +
+ .../cache-v2-attempt/checkout-preflight.stderr     |     1 +
+ .../cache-v2-attempt/checkout-preflight.stdout     |     0
+ .../cache-v2-attempt/checkout-status.stderr        |     0
+ .../cache-v2-attempt/checkout-status.stdout        |     0
+ .../cache-v2-attempt/checkout-tree.stderr          |     0
+ .../cache-v2-attempt/checkout-tree.stdout          |     1 +
+ .../cache-v2-attempt/clone-cached-worktree.stderr  |     1 +
+ .../cache-v2-attempt/clone-cached-worktree.stdout  |     0
+ .../cache-v2-attempt/select-acc2.stderr            |     1 +
+ .../cache-v2-attempt/select-acc2.stdout            |     0
+ .../cache-v2-attempt/source-preflight.stderr       |     0
+ .../cache-v2-attempt/source-preflight.stdout       |     1 +
+ .../recovery-runtime/cache-v2-attempt/steps.json   |   189 +
+ .../cache-v2-attempt/target-tree.stderr            |     0
+ .../cache-v2-attempt/target-tree.stdout            |   Bin 0 -> 1512148 bytes
+ .../cache-v3-attempt/base-head.stderr              |     0
+ .../cache-v3-attempt/base-head.stdout              |     1 +
+ .../cache-v3-attempt/base-status.stderr            |     0
+ .../cache-v3-attempt/base-status.stdout            |     0
+ .../cache-v3-attempt/base-tree.stderr              |     0
+ .../cache-v3-attempt/base-tree.stdout              |     1 +
+ .../cache-availability-before-checkout.json        |   403 +
+ .../cache-v3-attempt/cache-coverage.stderr         |     1 +
+ .../cache-v3-attempt/cache-object-dir-0.stderr     |     0
+ .../cache-v3-attempt/cache-object-dir-0.stdout     |     1 +
+ .../cache-v3-attempt/cache-object-dir-1.stderr     |     0
+ .../cache-v3-attempt/cache-object-dir-1.stdout     |     1 +
+ .../cache-v3-attempt/cache-origin-0.stderr         |     0
+ .../cache-v3-attempt/cache-origin-0.stdout         |     1 +
+ .../cache-v3-attempt/cache-origin-1.stderr         |     0
+ .../cache-v3-attempt/cache-origin-1.stdout         |     1 +
+ .../cache-v3-attempt/checkout-head.stderr          |     0
+ .../cache-v3-attempt/checkout-head.stdout          |     1 +
+ .../cache-v3-attempt/checkout-preflight.stderr     |     1 +
+ .../cache-v3-attempt/checkout-preflight.stdout     |     0
+ .../cache-v3-attempt/checkout-status.stderr        |     0
+ .../cache-v3-attempt/checkout-status.stdout        |     0
+ .../cache-v3-attempt/checkout-tree.stderr          |     0
+ .../cache-v3-attempt/checkout-tree.stdout          |     1 +
+ .../cache-v3-attempt/clone-cached-worktree.stderr  |     1 +
+ .../cache-v3-attempt/clone-cached-worktree.stdout  |     0
+ .../cache-v3-attempt/select-acc2.stderr            |     1 +
+ .../cache-v3-attempt/select-acc2.stdout            |     0
+ .../cache-v3-attempt/source-preflight.stderr       |     0
+ .../cache-v3-attempt/source-preflight.stdout       |     1 +
+ .../recovery-runtime/cache-v3-attempt/steps.json   |   189 +
+ .../cache-v3-attempt/target-tree.stderr            |     0
+ .../cache-v3-attempt/target-tree.stdout            |   Bin 0 -> 1512148 bytes
+ .../recovery-runtime/jobs/cache-v2-launch.json     |    34 +
+ .../recovery-runtime/jobs/cache-v2-output.json     |    20 +
+ .../recovery-runtime/jobs/cache-v2-status.json     |    37 +
+ .../recovery-runtime/jobs/cache-v3-launch.json     |    34 +
+ .../recovery-runtime/jobs/cache-v3-output.json     |    20 +
+ .../recovery-runtime/jobs/cache-v3-status.json     |    37 +
+ .../recovery-runtime/jobs/complete-v3-launch.json  |    34 +
+ .../recovery-runtime/jobs/complete-v3-output.json  |    20 +
+ .../recovery-runtime/jobs/complete-v3-status.json  |    37 +
+ .../recovery-runtime/jobs/final-pack-metadata.json |    77 +
+ .../recovery-runtime/jobs/network-launch.json      |    35 +
+ .../recovery-runtime/jobs/network-output.json      |    20 +
+ .../jobs/network-progress-sample-1.json            |    20 +
+ .../jobs/network-progress-sample-2.json            |    20 +
+ .../recovery-runtime/jobs/network-status.json      |    37 +
+ .../recovery-runtime/jobs/summary.json             |    46 +
+ .../network-attempt/base-head.stderr               |     0
+ .../network-attempt/base-head.stdout               |     1 +
+ .../network-attempt/base-status.stderr             |     0
+ .../network-attempt/base-status.stdout             |     0
+ .../network-attempt/base-tree.stderr               |     0
+ .../network-attempt/base-tree.stdout               |     1 +
+ .../network-attempt/clone-full-worktree.stderr     |     1 +
+ .../network-attempt/clone-full-worktree.stdout     |     0
+ .../network-attempt/origin-url.stderr              |     0
+ .../network-attempt/origin-url.stdout              |     1 +
+ .../network-attempt/select-acc2.stderr             |     6 +
+ .../network-attempt/select-acc2.stdout             |     0
+ .../network-attempt/source-preflight.stderr        |     0
+ .../network-attempt/source-preflight.stdout        |     1 +
+ .../recovery-runtime/network-attempt/steps.json    |    93 +
+ .../PACKAGE.sha256                                 |     2 +-
+ .../pon-cell-integration-v1-20261107/README.md     |    13 +-
+ .../pon-native-cell-v1-20261107/PACKAGE.sha256     |     4 +-
+ evidence/pon-native-cell-v1-20261107/README.md     |    16 +-
+ .../pon-native-cell-v1-20261107/REPRODUCTION.md    |    13 +-
+ 174 files changed, 89408 insertions(+), 17 deletions(-)
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/ARCHIVES.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/INTEGRITY.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/MANIFEST.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/PACKAGE.sha256
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/README.md
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/RECOVERY.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/REVIEW.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/ci/archive-origin.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.tar.gz
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/ci/summary.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/cache-availability-before-checkout.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-ci-contract.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-ci-contract.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-repository-links.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-repository-links.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-after.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-after.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-before.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-before.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/head-before.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/head-before.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/materialized-raw-source.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/result.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/select-development-branch.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/select-development-branch.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-audit-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-audit-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/status-before.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/status-before.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/steps.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/target-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/target-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/tree-before.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/tree-before.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/native/a4-a5-byte-continuity.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/native/archive-origin.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/native/concurrent-native-acc2-evidence.tar.gz
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/native/download-verification.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/native/retained-validation.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/fetch-current.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/fetch-current.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/fetched-current.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/fetched-current.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-after.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-after.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-before.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-before.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-commit-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/github-commit-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/preserve-current-ancestry.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/preserve-current-ancestry.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/principal.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/principal.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/push-permission.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/push-permission.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/push.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/push.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/receipt.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/steps.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/publication/tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-diagnostics/cache-object-audit.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-diagnostics/cache-probe.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-availability-before-checkout.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-coverage.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-0.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-0.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-1.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-1.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-0.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-0.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-1.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-1.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/clone-cached-worktree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/clone-cached-worktree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/select-acc2.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/select-acc2.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/source-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/source-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/steps.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/target-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/target-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-availability-before-checkout.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-coverage.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-0.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-0.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-1.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-1.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-0.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-0.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-1.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-1.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/clone-cached-worktree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/clone-cached-worktree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/select-acc2.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/select-acc2.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/source-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/source-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/steps.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/target-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/target-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-launch.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-output.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-status.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-launch.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-output.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-status.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-launch.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-output.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-status.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/final-pack-metadata.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-launch.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-output.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-progress-sample-1.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-progress-sample-2.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-status.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/summary.json
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-head.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-head.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-status.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-status.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-tree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-tree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/clone-full-worktree.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/clone-full-worktree.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/origin-url.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/origin-url.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/select-acc2.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/select-acc2.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/source-preflight.stderr
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/source-preflight.stdout
+ create mode 100644 evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/steps.json

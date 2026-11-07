@@ -1,0 +1,16 @@
+{
+  "head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "previous_remote_head": "68c664332e340591e629c4db0f611f11e33135f1",
+  "after_remote_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "account": "ProfHepta",
+  "branch": "fix/chain-w1-ingress-integrated-20261107",
+  "push_exit": 0,
+  "pr": 780,
+  "pr_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "pr_base": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "mergeable": true,
+  "mergeable_state": "unstable",
+  "force_push": false,
+  "main_updated": false,
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/780"
+}

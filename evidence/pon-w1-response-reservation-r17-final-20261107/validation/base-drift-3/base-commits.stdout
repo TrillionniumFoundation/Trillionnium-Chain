@@ -1,0 +1,10 @@
+acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030 merge: preserve concurrent admission and history continuation with complete Cell consumers
+644a6c04450804f0ea3575beef7c964bf7a1da6b test(pon): retain merged Cell source gates, original replay and all integration observations
+313f8e9cb38354fc046eb009f43f48d7ef428a4f test(pon): retain full native Cell claims, parent history and fresh-process verification
+1dcd925badfef079b4d75604480463672f0b4895 merge: preserve concurrent throughput work with complete Cell consumers
+a9838e2dce53882b84ea7409777b826152323efe test(ci): require multimodal and native Cell controls and retain qualification boundaries
+b1d390d8112216db1030a24973be075876c6a366 feat(pon): verify stateful Cell in native Node against independent owner and parent context
+f6a3d05217ac15c7f43a8f2d6cacc27d01d8b6f7 feat(pon): execute finite multimodal Cell V3 with complete dense proofs
+09524fa469e8d989e983ae1a1100d5932ba6a9ee feat(pon): compose complete Cell V2 with concurrent throughput candidate
+d5c93eeff4fc7baf644eedced436dd7ee51685c7 test(pon): retain complete Cell V2 replay, counterexamples, and exact-source gates
+837ab80d2b0454a3b226d13ac270f9496f8d7f96 feat(pon): replay bounded stateful Cell V2 with independent context and source guards

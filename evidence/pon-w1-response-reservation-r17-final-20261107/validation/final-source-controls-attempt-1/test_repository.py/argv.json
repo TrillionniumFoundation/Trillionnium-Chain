@@ -1,0 +1,5 @@
+[
+  "python3",
+  "-B",
+  "scripts/ci/test_repository.py"
+]

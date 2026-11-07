@@ -1,0 +1,177 @@
+1672: 2026-11-07T16:02:59.0010624Z test ingress::public_v3::tests::cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill ... ok
+1673: 2026-11-07T16:02:59.2561886Z test ingress::public_v3::tests::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt ... ok
+1674: 2026-11-07T16:03:01.2909630Z test ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work ... FAILED
+1675: 2026-11-07T16:03:01.2926072Z test ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases ... ok
+1676: 2026-11-07T16:03:01.3865351Z test ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission ... ok
+1677: 2026-11-07T16:03:03.4352901Z test ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline ... FAILED
+1678: 2026-11-07T16:03:03.4665571Z test ingress::public_v3::tests::failed_output_closes_only_that_connection_and_later_honest_request_succeeds ... ok
+1679: 2026-11-07T16:03:03.4770985Z test ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu ... ok
+1680: 2026-11-07T16:03:03.4771689Z test ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes ... ok
+1681: 2026-11-07T16:03:03.4847423Z test ingress::public_v3::tests::fixed_preface_checks_all_bounds_before_paid_body_allocation ... ok
+1682: 2026-11-07T16:03:03.4848095Z test ingress::public_v3::tests::hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors ... ok
+1683: 2026-11-07T16:03:07.5400877Z test ingress::public_v3::tests::honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry ... ok
+1684: 2026-11-07T16:03:07.5544993Z test ingress::public_v3::tests::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads ... ok
+1685: 2026-11-07T16:03:07.5545688Z test ingress::public_v3::tests::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice ... ok
+1686: 2026-11-07T16:03:07.5547211Z test ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock ... ok
+1710: 2026-11-07T16:03:16.8852795Z test ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline ... ok
+1711: 2026-11-07T16:03:16.8856073Z test ingress::public_v3::tests::spent_cache_never_evicts_live_tokens_when_full ... ok
+1712: 2026-11-07T16:03:18.9210865Z test ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work ... FAILED
+1713: 2026-11-07T16:03:18.9225174Z test ingress::public_v3::tests::v2_magic_profile_and_signature_domains_are_rejected_exactly ... ok
+1714: 2026-11-07T16:03:18.9227041Z test ingress::public_v3::tests::w1_negative_cache_explicit_settings_are_bounded_before_service_startup ... ok
+1715: 2026-11-07T16:03:19.1770909Z test ingress::public_v3::tests::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts ... ok
+1716: 2026-11-07T16:03:21.2123002Z test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... FAILED
+1717: 2026-11-07T16:03:22.5535409Z test ingress::public_v3::unpaid_pressure_tests::real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_one_business ... ok
+1718: 2026-11-07T16:03:22.6444845Z test ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet ... ok
+1719: 2026-11-07T16:03:22.6466019Z test ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges ... ok
+1720: 2026-11-07T16:03:22.6467148Z test ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit ... ok
+1721: 2026-11-07T16:03:22.6468809Z test ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown ... ok
+1722: 2026-11-07T16:03:22.6705506Z test ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context ... ok
+1723: 2026-11-07T16:03:22.6706597Z test ingress::public_v3::work_rejection::tests::absent_or_unfinished_rejection_observation_never_claims_a_cache_hit ... ok
+1724: 2026-11-07T16:03:22.7630799Z test ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays ... ok
+1725: 2026-11-07T16:03:22.7830635Z test ingress::public_v3::work_rejection::tests::ordinary_default_preserves_cpu_owner_explicit_settings_and_other_profiles ... ok
+1730: 2026-11-07T16:03:22.7979742Z ---- ingress::public_v3::authentication_cpu::tests::panic_keeps_original_reserve_and_fences_later_authentication stdout ----
+1731: 2026-11-07T16:03:22.7980168Z 
+1732: 2026-11-07T16:03:22.7980770Z thread 'ingress::public_v3::authentication_cpu::tests::panic_keeps_original_reserve_and_fences_later_authentication' (7358) panicked at crates/trnm-pon-node/src/ingress/public_v3/authentication_cpu.rs:794:17:
+1733: 2026-11-07T16:03:22.7981508Z controlled authentication unwind
+1734: 2026-11-07T16:03:22.7981852Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+1735: 2026-11-07T16:03:22.7982130Z 
+1736: 2026-11-07T16:03:22.7982476Z ---- ingress::public_v3::authentication_cpu::tests::response_reservation_never_bypasses_existing_unknown_or_unwind stdout ----
+1737: 2026-11-07T16:03:22.8023629Z 
+1738: 2026-11-07T16:03:22.8024332Z thread 'ingress::public_v3::authentication_cpu::tests::response_reservation_never_bypasses_existing_unknown_or_unwind' (7363) panicked at crates/trnm-pon-node/src/ingress/public_v3/authentication_cpu.rs:570:21:
+1739: 2026-11-07T16:03:22.8024848Z controlled native unwind before response crypto
+1740: 2026-11-07T16:03:22.8024968Z 
+1741: 2026-11-07T16:03:22.8025154Z ---- ingress::public_v3::intake::tests::pressure_registry_poison_and_wrong_original_pool_fail_closed stdout ----
+1742: 2026-11-07T16:03:22.8025459Z 
+1743: 2026-11-07T16:03:22.8025615Z thread '<unnamed>' (7520) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:343:13:
+1744: 2026-11-07T16:03:22.8025862Z test-only lease poison
+1745: 2026-11-07T16:03:22.8025942Z 
+1746: 2026-11-07T16:03:22.8026109Z ---- ingress::public_v3::intake::tests::unavailable_challenge_lock_does_not_create_another_budget stdout ----
+1747: 2026-11-07T16:03:22.8026323Z 
+1748: 2026-11-07T16:03:22.8026470Z thread '<unnamed>' (7523) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:473:13:
+1749: 2026-11-07T16:03:22.8026710Z test-only lock poison
+1750: 2026-11-07T16:03:22.8026790Z 
+1751: 2026-11-07T16:03:22.8026987Z ---- ingress::public_v3::intake_domain_tests::actual_two_listeners_use_shared_connection_slots_and_release_on_stop stdout ----
+1752: 2026-11-07T16:03:22.8027494Z SHARED_INTAKE_SOCKET listeners=2 controlled_reservations=64 over_capacity_reads_refused=2 reads_after_release=2 final_pools_zero=true network_saturation_test=false
+1753: 2026-11-07T16:03:22.8028057Z 
+1754: 2026-11-07T16:03:22.8028467Z ---- ingress::public_v3::intake_domain_tests::all_public_v3_library_wrappers_reject_external_socket_before_binding_owner_or_workers stdout ----
+1755: 2026-11-07T16:03:22.8029163Z EXPORTED_V3_KERNEL_PARENT wrappers=3 rejected=3 early_owner_binding=0 worker_reservations=0 guest_requests=0
+1756: 2026-11-07T16:03:22.8029525Z 
+1757: 2026-11-07T16:03:22.8029851Z ---- ingress::public_v3::intake_domain_tests::one_node_cannot_spawn_a_fifth_worker_queue_service_from_the_same_domain stdout ----
+1775: 2026-11-07T16:03:22.8038249Z ---- ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch stdout ----
+1776: 2026-11-07T16:03:22.8038673Z 
+1777: 2026-11-07T16:03:22.8045449Z thread 'ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch' (7572) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:467:49:
+1778: 2026-11-07T16:03:22.8046296Z incomplete authentication CPU interval
+1779: 2026-11-07T16:03:22.8046479Z 
+1780: 2026-11-07T16:03:22.8046829Z ---- ingress::public_v3::pq_identity::tests::pq_response_reservation_unknown_finish_or_unwind_never_refunds_principal stdout ----
+1781: 2026-11-07T16:03:22.8047253Z 
+1782: 2026-11-07T16:03:22.8047879Z thread 'ingress::public_v3::pq_identity::tests::pq_response_reservation_unknown_finish_or_unwind_never_refunds_principal' (7593) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:139:17:
+1783: 2026-11-07T16:03:22.8048690Z controlled native unwind before PQ response
+1784: 2026-11-07T16:03:22.8048877Z 
+1785: 2026-11-07T16:03:22.8049281Z ---- ingress::public_v3::pq_identity::verifier_cache::tests::held_or_poisoned_material_lock_never_waits_or_skips_full_charged_verification stdout ----
+1786: 2026-11-07T16:03:22.8049770Z 
+1787: 2026-11-07T16:03:22.8050465Z thread 'ingress::public_v3::pq_identity::verifier_cache::tests::held_or_poisoned_material_lock_never_waits_or_skips_full_charged_verification' (7594) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:270:9:
+1788: 2026-11-07T16:03:22.8051385Z only the optional mathematical material is poisoned
+1789: 2026-11-07T16:03:22.8051595Z 
+1790: 2026-11-07T16:03:22.8051986Z ---- ingress::public_v3::request_observation::tests::coverage_rejects_a_poisoned_record_even_when_retained_records_are_complete stdout ----
+1791: 2026-11-07T16:03:22.8052452Z 
+1792: 2026-11-07T16:03:22.8052750Z thread '<unnamed>' (7605) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1892:13:
+1793: 2026-11-07T16:03:22.8053227Z injected observation writer failure
+1794: 2026-11-07T16:03:22.8053395Z 
+1795: 2026-11-07T16:03:22.8053768Z ---- ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown stdout ----
+1796: 2026-11-07T16:03:22.8054516Z 
+1797: 2026-11-07T16:03:22.8055251Z thread 'ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown' (7632) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1478:13:
+1798: 2026-11-07T16:03:22.8056049Z observation must retain unfinished admission
+1799: 2026-11-07T16:03:22.8056230Z 
+1800: 2026-11-07T16:03:22.8056646Z ---- ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity stdout ----
+1801: 2026-11-07T16:03:22.8061413Z verified completion actual W1 replays=239 cpu_ns=249929162 flow={"schema":"public-v3-local-actual-cpu-flow-v1","initial_credit_ns":0,"credited_refill_ns":251655386,"discarded_refill_ns":0,"booked_reservation_ns":0,"live_debited_cpu_ns":251015833,"settlement_residual_cpu_ns":1382,"settled_full_cpu_ns":251017215,"unsettled_known_live_cpu_ns":0,"paid_cpu_debit_ns":251017215,"settlement_discard_ns":0,"remaining_paid_credit_ns":638171,"balance_identity_verified":true,"stored_credit_ns":638171,"live_owners":0}
+1802: 2026-11-07T16:03:22.8063065Z 
+1803: 2026-11-07T16:03:22.8063448Z ---- ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit stdout ----
+1804: 2026-11-07T16:03:22.8065495Z {"flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":133509365,"discarded_refill_ns":0,"initial_credit_ns":0,"live_debited_cpu_ns":133524940,"live_owners":0,"paid_cpu_debit_ns":133526533,"remaining_paid_credit_ns":-17168,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":133526533,"settlement_discard_ns":0,"settlement_residual_cpu_ns":1593,"stored_credit_ns":-17168,"unsettled_known_live_cpu_ns":0},"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":133524940,"live_refused":false,"owner_cpu_ns":133526533,"residual_cpu_ns":1593,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":133526533},"schema":"history-resource-cancellation-real-refill-v1"}
+1805: 2026-11-07T16:03:22.8066928Z 
+1806: 2026-11-07T16:03:22.8067150Z ---- ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority stdout ----
+1818: 2026-11-07T16:03:22.8070637Z ---- ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history stdout ----
+1819: 2026-11-07T16:03:22.8070881Z 
+1820: 2026-11-07T16:03:22.8071257Z thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (7743) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:
+1821: 2026-11-07T16:03:22.8071867Z assertion `left == right` failed: injected W1 callback unwind
+1822: 2026-11-07T16:03:22.8072050Z   left: 1
+1823: 2026-11-07T16:03:22.8072152Z  right: 0
+1824: 2026-11-07T16:03:22.8072210Z 
+1825: 2026-11-07T16:03:22.8072404Z ---- ingress::public_v3::scalar_cpu::tests::repeated_real_scopes_and_worker_panic_join_before_single_settlement stdout ----
+1826: 2026-11-07T16:03:22.8072642Z 
+1827: 2026-11-07T16:03:22.8072811Z thread '<unnamed>' (7769) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:
+1828: 2026-11-07T16:03:22.8073080Z controlled actual worker unwind
+1829: 2026-11-07T16:03:22.8073173Z 
+1830: 2026-11-07T16:03:22.8073408Z ---- ingress::public_v3::shared_cpu_domain_source_tests::process_cold_real_w1_cpu_depletion_preserves_read_and_recovers_honest_admission stdout ----
+1831: 2026-11-07T16:03:22.8074520Z {"cpu_refusals":1,"honest_read_and_native_submit_recovered":true,"independently_verified_state":true,"meter_after_real_depletion_ns":-3804,"original_cpu_meter_start_ns":0,"paid_thread_cpu_ns":133427734,"production_activation":false,"replayed_actual_W1_invalid_proofs":157,"schema":"original-W1-paid-CPU-real-depletion-lab-v1","wan_and_sybil_qualified":false}
+1832: 2026-11-07T16:03:22.8075190Z 
+1833: 2026-11-07T16:03:22.8075381Z ---- ingress::public_v3::tests::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt stdout ----
+1834: 2026-11-07T16:03:22.8080569Z r5 postclockfailure=false metrics={"classical_authentication_cpu":{"schema":"public-v3-classical-authentication-cpu-v2","attempts":18,"authenticated_input_bytes":1224,"known_thread_cpu_ns":559927,"known_intervals":18,"unknown_intervals":0,"in_flight":0,"pending_response_signatures":0,"response_reservations":6,"unused_response_reservations":0,"stored_credit_ns":1999982945,"unavailable":false,"interval_is_additive_to_mutation_cpu":false,"grants_host_cpu_allowance":false},"pq_authentication_cpu":null,"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":0,"mutation_cpu_charged_ns":4583698,"mutation_full_work_cpu_ns":1122985,"mutation_dispatch_excluding_work_cpu_ns":3460713,"mutation_body_decode_cpu_ns":121902,"mutation_response_cpu_ns":43435,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":0,"mutation_cpu_debt_ns_after_shutdown":9991954330,"mutation_cpu_unavailable_after_shutdown":false,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6685390,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6416801,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6385386,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":1123142,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"com [diagnostic line abbreviated; full raw log retained]
+1835: 2026-11-07T16:03:22.8093718Z r5 postclockfailure=true metrics={"classical_authentication_cpu":{"schema":"public-v3-classical-authentication-cpu-v2","attempts":18,"authenticated_input_bytes":1224,"known_thread_cpu_ns":509657,"known_intervals":18,"unknown_intervals":0,"in_flight":0,"pending_response_signatures":0,"response_reservations":6,"unused_response_reservations":0,"stored_credit_ns":1999982765,"unavailable":false,"interval_is_additive_to_mutation_cpu":false,"grants_host_cpu_allowance":false},"pq_authentication_cpu":null,"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":1,"mutation_cpu_charged_ns":0,"mutation_full_work_cpu_ns":0,"mutation_dispatch_excluding_work_cpu_ns":0,"mutation_body_decode_cpu_ns":0,"mutation_response_cpu_ns":0,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":1903997770,"mutation_cpu_debt_ns_after_shutdown":0,"mutation_cpu_unavailable_after_shutdown":true,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6611521,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6399755,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6341016,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":1426703,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"completed_pool_status":0,"pool_s [diagnostic line abbreviated; full raw log retained]
+1836: 2026-11-07T16:03:22.8110272Z r5 postclockfailure=false metrics={"classical_authentication_cpu":{"schema":"public-v3-classical-authentication-cpu-v2","attempts":18,"authenticated_input_bytes":1224,"known_thread_cpu_ns":490553,"known_intervals":18,"unknown_intervals":0,"in_flight":0,"pending_response_signatures":0,"response_reservations":6,"unused_response_reservations":0,"stored_credit_ns":1999975173,"unavailable":false,"interval_is_additive_to_mutation_cpu":false,"grants_host_cpu_allowance":false},"pq_authentication_cpu":null,"mutation_cpu_reservations":1,"mutation_cpu_refusals":3,"mutation_cpu_clock_failures":1,"mutation_cpu_charged_ns":0,"mutation_full_work_cpu_ns":0,"mutation_dispatch_excluding_work_cpu_ns":0,"mutation_body_decode_cpu_ns":0,"mutation_response_cpu_ns":0,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_credit_ns_after_shutdown":1904336600,"mutation_cpu_debt_ns_after_shutdown":0,"mutation_cpu_unavailable_after_shutdown":true,"accepted_connections":6,"capacity_refusals":0,"unpaid_pressure_cancel_requests":0,"unpaid_pressure_connections_closed":0,"preface_refusals":0,"challenge_budget_refusals":0,"pending_challenge_entered":6,"pending_challenge_granted":6,"pending_challenge_closed":0,"pending_challenge_wait_ns":6687102,"peak_pending_challenge":1,"issued_challenges":6,"ticket_refusals":0,"signature_refusals":0,"pq_authentication_attempts":0,"pq_authentication_bytes":0,"pq_authentication_thread_cpu_ns":0,"pq_authentication_unavailable":false,"spent_capacity_refusals":0,"paid_body_capacity_refusals":0,"lane_capacity_refusals":0,"pending_grant_entered":6,"pending_grant_granted":6,"pending_grant_closed":0,"pending_grant_wait_ns":6417800,"peak_pending_grant":1,"disconnected_await_requests":0,"tasks_skipped_before_dispatch":0,"abandoned_tasks":0,"tasks_enqueued":6,"tasks_dequeued":6,"replay_refusals":0,"queue_refusals":0,"queue_backpressure_events":0,"enqueued_after_backpressure":0,"queue_wait_ns":6374508,"peak_pending_enqueue":1,"disconnected_before_enqueue":0,"parse_refusals":0,"work_started":1,"work_finished":1,"work_failed":0,"work_ns":1427675,"executor_refusals":3,"completed_submit":1,"completed_pool_submit":0,"completed_pool_status":0,"pool_ [diagnostic line abbreviated; full raw log retained]
+1838: 2026-11-07T16:03:22.8118935Z ---- ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu stdout ----
+1839: 2026-11-07T16:03:22.8119294Z 
+1840: 2026-11-07T16:03:22.8119516Z thread 'pon-exec-0' (7881) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6547:41:
+1841: 2026-11-07T16:03:22.8119890Z genuine test worker unwind
+1842: 2026-11-07T16:03:22.8120027Z 
+1843: 2026-11-07T16:03:22.8120315Z ---- ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock stdout ----
+1844: 2026-11-07T16:03:22.8120684Z 
+1845: 2026-11-07T16:03:22.8120929Z thread '<unnamed>' (7904) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5843:13:
+1846: 2026-11-07T16:03:22.8121309Z controlled request registry poison
+1847: 2026-11-07T16:03:22.8121461Z 
+1848: 2026-11-07T16:03:22.8121708Z ---- ingress::public_v3::tests::r4_typed_full_and_poison_keep_lane_body_reservations_atomic stdout ----
+1849: 2026-11-07T16:03:22.8122029Z 
+1850: 2026-11-07T16:03:22.8122237Z thread '<unnamed>' (7975) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:7062:13:
+1851: 2026-11-07T16:03:22.8122589Z controlled poison
+1852: 2026-11-07T16:03:22.8122697Z 
+1853: 2026-11-07T16:03:22.8123039Z ---- ingress::public_v3::tests::shutdown_joins_all_workers_and_releases_queued_permits_before_returning_first_error stdout ----
+1854: 2026-11-07T16:03:22.8123434Z 
+1855: 2026-11-07T16:03:22.8123645Z thread '<unnamed>' (7987) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5438:29:
+1856: 2026-11-07T16:03:22.8124108Z later scoped worker failure
+1857: 2026-11-07T16:03:22.8124261Z 
+1858: 2026-11-07T16:03:22.8124464Z thread '<unnamed>' (7989) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5431:29:
+1859: 2026-11-07T16:03:22.8124836Z first scoped worker failure
+1860: 2026-11-07T16:03:22.8124967Z 
+1861: 2026-11-07T16:03:22.8125345Z ---- ingress::public_v3::unpaid_pressure_tests::real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_one_business stdout ----
+1862: 2026-11-07T16:03:24.7681969Z UNPAID_PRESSURE_NATIVE {"arbitrary_anonymous_flood_fairness":false,"controlled_administrator_count":1,"cpu_domain_actual_flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":27239088,"discarded_refill_ns":151017282,"initial_credit_ns":2000000000,"live_debited_cpu_ns":39044746,"live_owners":0,"paid_cpu_debit_ns":39051606,"remaining_paid_credit_ns":1988187482,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":39051606,"settlement_discard_ns":0,"settlement_residual_cpu_ns":6860,"stored_credit_ns":1988187482,"unsettled_known_live_cpu_ns":0},"elapsed_wall_ns":1262681209,"history_calls":7,"honest_calls_completed":15,"honest_calls_failed":2,"honest_calls_offered":17,"independent_operators":false,"listener_metrics":[{"abandoned_tasks":0,"accepted_connections":34,"body_bytes_received":99445,"capacity_refusals":1,"challenge_budget_refusals":0,"classical_authentication_cpu":{"attempts":45,"authenticated_input_bytes":3060,"grants_host_cpu_allowance":false,"in_flight":0,"interval_is_additive_to_mutation_cpu":false,"known_intervals":45,"known_thread_cpu_ns":1350281,"pending_response_signatures":0,"response_reservations":15,"schema":"public-v3-classical-authentication-cpu-v2","stored_credit_ns":1999974142,"unavailable":false,"unknown_intervals":0,"unused_response_reservations":0},"cleanup_scans":62,"completed_pool_status":0,"completed_pool_submit":0,"completed_read":0,"completed_submit":1,"connections_closed_on_shutdown":0,"delivered_response_frames":1,"disconnected_await_requests":0,"disconnected_before_enqueue":0,"enqueued_after_backpressure":0,"executor_refusals":0,"expired_connections":0,"expired_phase_counts":{},"issued_challenges":1,"lane_capacity_refusals":0,"mutating_grants_after_shutdown":0,"mutation_body_decode_cpu_ns":145276,"mutation_cpu_charged_ns":5286216,"mutation_cpu_clock_failures":0,"mutation_cpu_credit_ns_after_shutdown":1988187482,"mutation_cpu_debt_ns_after_shutdown":0,"mutation_cpu_in_flight_after_shutdown":0,"mutation_cpu_refusals":0,"mutation_cpu_reservations":1,"mutation_cpu_unavailable_after_shutdown":false,"mutation_dispatch_excluding_work_cpu_ns":4140586,"mutation_full_w [diagnostic line abbreviated; full raw log retained]
+1863: 2026-11-07T16:03:26.6858296Z 
+1864: 2026-11-07T16:03:26.6858304Z 
+1865: 2026-11-07T16:03:26.6858390Z successes:
+1866: 2026-11-07T16:03:26.6858712Z     ingress::public_v3::authentication_boundary_tests::actual_cold_zero_authentication_credit_serves_one_head_without_client_retry
+1867: 2026-11-07T16:03:26.6859162Z     ingress::public_v3::authentication_boundary_tests::foreign_operation_or_body_cookie_cannot_burn_the_original_signed_solution
+2114: 2026-11-07T16:03:26.6957867Z ---- ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work stdout ----
+2115: 2026-11-07T16:03:26.6958097Z 
+2116: 2026-11-07T16:03:26.6958389Z thread 'ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work' (7856) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4618:70:
+2117: 2026-11-07T16:03:26.6958956Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+2118: 2026-11-07T16:03:26.6959232Z 
+2119: 2026-11-07T16:03:26.6959416Z ---- ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline stdout ----
+2120: 2026-11-07T16:03:26.6959648Z 
+2121: 2026-11-07T16:03:26.6959935Z thread 'ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline' (7868) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5008:70:
+2122: 2026-11-07T16:03:26.6960496Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+2123: 2026-11-07T16:03:26.6960763Z 
+2124: 2026-11-07T16:03:26.6960922Z ---- ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work stdout ----
+2125: 2026-11-07T16:03:26.6961128Z 
+2126: 2026-11-07T16:03:26.6961394Z thread 'ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work' (7998) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4874:74:
+2127: 2026-11-07T16:03:26.6961928Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+2128: 2026-11-07T16:03:26.6962196Z 
+2129: 2026-11-07T16:03:26.6962383Z ---- ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work stdout ----
+2130: 2026-11-07T16:03:26.6962620Z 
+2131: 2026-11-07T16:03:26.6962916Z thread 'ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work' (8023) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4448:70:
+2132: 2026-11-07T16:03:26.6963477Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+2133: 2026-11-07T16:03:26.6963743Z 
+2134: 2026-11-07T16:03:26.6963745Z 
+2135: 2026-11-07T16:03:26.6963791Z failures:
+2136: 2026-11-07T16:03:26.6964071Z     ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work
+2137: 2026-11-07T16:03:26.6964431Z     ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline
+2138: 2026-11-07T16:03:26.6964768Z     ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work
+2139: 2026-11-07T16:03:26.6965461Z     ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work
+2140: 2026-11-07T16:03:26.6965673Z 
+2141: 2026-11-07T16:03:26.6965821Z test result: FAILED. 245 passed; 4 failed; 1 ignored; 0 measured; 968 filtered out; finished in 36.34s
+2142: 2026-11-07T16:03:26.6966014Z 
+2143: 2026-11-07T16:03:26.6966139Z error: test failed, to rerun pass `-p trnm-pon-node --lib`
+2144: 2026-11-07T16:03:26.6968913Z ##[error]Process completed with exit code 101.
+2145: 2026-11-07T16:03:26.7000236Z ##[group]Run set -euo pipefail
+2146: 2026-11-07T16:03:26.7000435Z [36;1mset -euo pipefail[0m
+2147: 2026-11-07T16:03:26.7000629Z [36;1mselector=valid_work_state_root_replays_are_paid_without_admission[0m
+2148: 2026-11-07T16:03:26.7000886Z [36;1mlog="$TRNM_CI_RECEIPT_DIR/valid-work-root-rejection.log"[0m
+2149: 2026-11-07T16:03:26.7001359Z [36;1mcargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test public_v3_multiprocess "$selector" -- --exact --show-output --test-threads=1 2>&1 | tee "$log"[0m
+2150: 2026-11-07T16:03:26.7001861Z [36;1mpython3 scripts/ci/check_required_native_test.py "$log" --test "$selector"[0m

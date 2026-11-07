@@ -1,0 +1,11 @@
+{
+  "name": "test_pon_public_v3_policy_read.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_pon_public_v3_policy_read.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.16563681419938803,
+  "timed_out": false
+}

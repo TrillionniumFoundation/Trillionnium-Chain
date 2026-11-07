@@ -1,0 +1,699 @@
+{
+  "upstream": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+  "verified": [
+    {
+      "path": "docs/development/specs/pon/USEFUL_CELL_NATIVE_V1.md",
+      "original_and_staged_blob": "8b5485ce43062df7dea97b10a95de02db8eee496"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ARCHIVES.json",
+      "original_and_staged_blob": "102b0238e3f116b206f6f08e2d17481eb6ce9889"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/INTEGRITY.json",
+      "original_and_staged_blob": "d1e8e49ecc5fb1144033c41e61cbc6b5719a05e4"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/MANIFEST.json",
+      "original_and_staged_blob": "aa56c1b952945d137e2d6d43d9a17508fc6be674"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/PACKAGE.sha256",
+      "original_and_staged_blob": "bbeca2feff16e7650e07e2d1d4056a4b3f3d5006"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/README.md",
+      "original_and_staged_blob": "b3fee99dd199cd60dd8433ac02bb68df2e1b602b"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/RECOVERY.json",
+      "original_and_staged_blob": "d35daa4af3d984d8aeace87a117c4169343767aa"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/REVIEW.json",
+      "original_and_staged_blob": "9650b516fd6d004f110c057de18a444f089a0eaa"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/archive-origin.json",
+      "original_and_staged_blob": "431df65179f065078435db270e7af51df2be8e63"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.json",
+      "original_and_staged_blob": "0aaf5b486c1287304b07ace730518e2120f11719"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.tar.gz",
+      "original_and_staged_blob": "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/summary.json",
+      "original_and_staged_blob": "c5c585b575a5c3ddd2e41e616244b60a2c6149c7"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/cache-availability-before-checkout.json",
+      "original_and_staged_blob": "d7f12fac189fbdef34a4f77ac0b75e823d590d34"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-ci-contract.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-ci-contract.stdout",
+      "original_and_staged_blob": "f2d190a5b7e9268e27bc3b67bd5fb5fc378cb4ec"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-repository-links.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-repository-links.stdout",
+      "original_and_staged_blob": "f1f0f159453a5f32f25e711014c92b697cce270a"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-after.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-after.stdout",
+      "original_and_staged_blob": "d0c4d87717d5ddbe9f50066035a25eb709321875"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-before.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/fresh-acc2-source-before.stdout",
+      "original_and_staged_blob": "d0c4d87717d5ddbe9f50066035a25eb709321875"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/head-before.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/head-before.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/materialized-raw-source.json",
+      "original_and_staged_blob": "2249e71d29a957dce674432b6a45535b80e7fa84"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/result.json",
+      "original_and_staged_blob": "ec0cee0711f0a11d77b5f92c90f9a6dd3277a6f8"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/select-development-branch.stderr",
+      "original_and_staged_blob": "e7baf023a6a0daa418206ed5d6aaeb293e36ade3"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/select-development-branch.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-audit-preflight.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-audit-preflight.stdout",
+      "original_and_staged_blob": "ef3a2737911e433331180d7d97c413faf0555074"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-preflight.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/source-preflight.stdout",
+      "original_and_staged_blob": "99bb107456abd46ee6db16a60a3e3cd59c736e9a"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/status-before.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/status-before.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/steps.json",
+      "original_and_staged_blob": "a84d199dab5f4b5ec98a836f362639861b9b5e91"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/target-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/target-tree.stdout",
+      "original_and_staged_blob": "90009a53944dc09288d802871ed8a5dd06bab19e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/tree-before.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/fresh-checks/tree-before.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/native/a4-a5-byte-continuity.json",
+      "original_and_staged_blob": "bc41c5e9339ed5e15b3c0ce61a96482229f70463"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/native/archive-origin.json",
+      "original_and_staged_blob": "5b0b5e521466aaf7bea0a7ebb0543b1348c1acc7"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/native/concurrent-native-acc2-evidence.tar.gz",
+      "original_and_staged_blob": "1beff6c8fcf33659183cb47a375199b2f2b152c7"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/native/download-verification.json",
+      "original_and_staged_blob": "b775af297cac3f11e5b5af95b03f4dc1636751a9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/native/retained-validation.json",
+      "original_and_staged_blob": "e9eeceb5ec31a88e35f7dbb0cc100eb6de3e93a9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/fetch-current.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/fetch-current.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/fetched-current.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/fetched-current.stdout",
+      "original_and_staged_blob": "879ed1a6d08859c73ad1d6157031d21f15c642cd"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-after.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-after.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-before.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-before.stdout",
+      "original_and_staged_blob": "879ed1a6d08859c73ad1d6157031d21f15c642cd"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-commit-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/github-commit-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/preserve-current-ancestry.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/preserve-current-ancestry.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/principal.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/principal.stdout",
+      "original_and_staged_blob": "04b51789de0bffebd1c9626f1bc509d566100a4e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/push-permission.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/push-permission.stdout",
+      "original_and_staged_blob": "27ba77ddaf61532f217964734769a42cdabc17dc"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/push.stderr",
+      "original_and_staged_blob": "32f5a32aa2b64b5e71a20447d5efe82f8e102986"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/push.stdout",
+      "original_and_staged_blob": "28aa22d85a5cf510ea1fe98a558c9e529be1be2e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/receipt.json",
+      "original_and_staged_blob": "58eb791b2c07e04e98930ac9bc6ce05647817084"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/steps.json",
+      "original_and_staged_blob": "da7ee3a26d92b4d2c7b59ae50eb418ba58ee4aae"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/publication/tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-diagnostics/cache-object-audit.json",
+      "original_and_staged_blob": "c1d8f04a316ac9a009553117ce15b72c4eccfad9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-diagnostics/cache-probe.json",
+      "original_and_staged_blob": "71d980d799cade43d0caccde18816414744e1e16"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/base-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-availability-before-checkout.json",
+      "original_and_staged_blob": "5b6802a66e88e28c8b4ccb60f65a2ba0f3b2eb8b"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-coverage.stderr",
+      "original_and_staged_blob": "696ee2cb4f09a857a0951278eecf33fe7ea4471e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-0.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-0.stdout",
+      "original_and_staged_blob": "0b7fd53439be3d6947fc0da5f8d26c8114b9ddfb"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-1.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-object-dir-1.stdout",
+      "original_and_staged_blob": "0b7fd53439be3d6947fc0da5f8d26c8114b9ddfb"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-0.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-0.stdout",
+      "original_and_staged_blob": "bf8f30891220a410c3e883b473bc1e3c49d4ac7e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-1.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/cache-origin-1.stdout",
+      "original_and_staged_blob": "bf8f30891220a410c3e883b473bc1e3c49d4ac7e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-preflight.stderr",
+      "original_and_staged_blob": "25bedd6b409df343be5b6a643f3cc17e8fe18eaf"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-preflight.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/checkout-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/clone-cached-worktree.stderr",
+      "original_and_staged_blob": "02076b0b73a3d3372463e10a142327036c5a98dd"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/clone-cached-worktree.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/select-acc2.stderr",
+      "original_and_staged_blob": "89cfff8106000c25bdffb163c31d974b4e67bc2e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/select-acc2.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/source-preflight.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/source-preflight.stdout",
+      "original_and_staged_blob": "2ae36cc3a88f78716fc30be166751b4c0f5e4618"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/steps.json",
+      "original_and_staged_blob": "e1639cce81a9dae728ca316741121597f24e7370"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/target-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v2-attempt/target-tree.stdout",
+      "original_and_staged_blob": "90009a53944dc09288d802871ed8a5dd06bab19e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/base-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-availability-before-checkout.json",
+      "original_and_staged_blob": "d7f12fac189fbdef34a4f77ac0b75e823d590d34"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-coverage.stderr",
+      "original_and_staged_blob": "696ee2cb4f09a857a0951278eecf33fe7ea4471e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-0.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-0.stdout",
+      "original_and_staged_blob": "0b7fd53439be3d6947fc0da5f8d26c8114b9ddfb"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-1.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-object-dir-1.stdout",
+      "original_and_staged_blob": "0b7fd53439be3d6947fc0da5f8d26c8114b9ddfb"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-0.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-0.stdout",
+      "original_and_staged_blob": "bf8f30891220a410c3e883b473bc1e3c49d4ac7e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-1.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/cache-origin-1.stdout",
+      "original_and_staged_blob": "bf8f30891220a410c3e883b473bc1e3c49d4ac7e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-preflight.stderr",
+      "original_and_staged_blob": "25bedd6b409df343be5b6a643f3cc17e8fe18eaf"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-preflight.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/checkout-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/clone-cached-worktree.stderr",
+      "original_and_staged_blob": "ef9176458cc9a0c92b952a14599e343812a0c45b"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/clone-cached-worktree.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/select-acc2.stderr",
+      "original_and_staged_blob": "89cfff8106000c25bdffb163c31d974b4e67bc2e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/select-acc2.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/source-preflight.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/source-preflight.stdout",
+      "original_and_staged_blob": "2ae36cc3a88f78716fc30be166751b4c0f5e4618"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/steps.json",
+      "original_and_staged_blob": "d83bc6cccc4d4411d4b9d20dcf5c8f3d2cd7bcd2"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/target-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/cache-v3-attempt/target-tree.stdout",
+      "original_and_staged_blob": "90009a53944dc09288d802871ed8a5dd06bab19e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-launch.json",
+      "original_and_staged_blob": "69a6170787dd2e17a5fb645003d4d7015d5181da"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-output.json",
+      "original_and_staged_blob": "ff01f1d1f6500c30c518b7169c6b991a2f59b23f"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v2-status.json",
+      "original_and_staged_blob": "6ff8dd427e6f9a7432cc081bb06d38ee9585ec07"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-launch.json",
+      "original_and_staged_blob": "2e8c7e6534813b8cc0cbf63895286317d132ece6"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-output.json",
+      "original_and_staged_blob": "52369b2610f26f54b149128f628294016f84de9a"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/cache-v3-status.json",
+      "original_and_staged_blob": "62fa855492a42be23115a62919fa786a15d78c3d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-launch.json",
+      "original_and_staged_blob": "42446992732856a492ace02c46a6d614183dc3b6"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-output.json",
+      "original_and_staged_blob": "268b40dcbbd5d0902ee83c6ffb9e99690b42762b"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/complete-v3-status.json",
+      "original_and_staged_blob": "9b666e2ee18d3ec3dc151701cba329b502798607"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/final-pack-metadata.json",
+      "original_and_staged_blob": "c138078550dcc8532774ee62d22d886e780be865"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-launch.json",
+      "original_and_staged_blob": "9d974aa0911a0c3195f2d50176c28685d9c3a6a3"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-output.json",
+      "original_and_staged_blob": "05eaa0561f061c16d4289d0c6840bdca45ff03b1"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-progress-sample-1.json",
+      "original_and_staged_blob": "57c15cfb67c098a59e80932644cb16c99f9dd99e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-progress-sample-2.json",
+      "original_and_staged_blob": "e5eae8b4ad92434a599363b862ae2c51a8ed05f5"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/network-status.json",
+      "original_and_staged_blob": "bf43b993f8e8445e945a0e120075a859c10e94d9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/jobs/summary.json",
+      "original_and_staged_blob": "aa14e291e7332c179c1fbaabb4da0063cc11b95e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-head.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-head.stdout",
+      "original_and_staged_blob": "76d38c709c0619900a228742182491ec3e50d52d"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-status.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-status.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-tree.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/base-tree.stdout",
+      "original_and_staged_blob": "f545cdc96b515be91af5a2f81a769feeb3e0aee9"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/clone-full-worktree.stderr",
+      "original_and_staged_blob": "fcaad7a1636a97507272773bf61358e8432333db"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/clone-full-worktree.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/origin-url.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/origin-url.stdout",
+      "original_and_staged_blob": "bf8f30891220a410c3e883b473bc1e3c49d4ac7e"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/select-acc2.stderr",
+      "original_and_staged_blob": "1b219eb8c92d3f8abcb3cbe065fa9f8ad1e9e1ca"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/select-acc2.stdout",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/source-preflight.stderr",
+      "original_and_staged_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/source-preflight.stdout",
+      "original_and_staged_blob": "2ae36cc3a88f78716fc30be166751b4c0f5e4618"
+    },
+    {
+      "path": "evidence/pon-cell-concurrent-revalidation-20261107/recovery-runtime/network-attempt/steps.json",
+      "original_and_staged_blob": "982f43986ba5e34955335abf0d70431114c9c571"
+    },
+    {
+      "path": "evidence/pon-cell-integration-v1-20261107/PACKAGE.sha256",
+      "original_and_staged_blob": "528c7303e0eaccc480097f0a204bb465ca3ea04c"
+    },
+    {
+      "path": "evidence/pon-cell-integration-v1-20261107/README.md",
+      "original_and_staged_blob": "b21d5d3f89e4caa6dd19d2b40e9c806f2f2f79a5"
+    },
+    {
+      "path": "evidence/pon-native-cell-v1-20261107/PACKAGE.sha256",
+      "original_and_staged_blob": "be339f219b6a433981f3312c092408f7826de5bb"
+    },
+    {
+      "path": "evidence/pon-native-cell-v1-20261107/README.md",
+      "original_and_staged_blob": "5ad4e14c99aff78fd82d1311f5e7692f57d25999"
+    },
+    {
+      "path": "evidence/pon-native-cell-v1-20261107/REPRODUCTION.md",
+      "original_and_staged_blob": "cae2241cfccde9e2cd833bc86d8fd74534fe3779"
+    }
+  ],
+  "raw_whitespace_failure_retained": "../final-concurrent-composition/diff.stdout",
+  "raw_streams_reformatted": false
+}

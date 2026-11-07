@@ -1,0 +1,70 @@
+{
+  "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "all_checks_pass": true,
+  "locks_before": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "locks_after": {
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1"
+  },
+  "results": [
+    {
+      "name": "default",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.916724617825821,
+      "packages": 175,
+      "resolve_nodes": 175
+    },
+    {
+      "name": "all-features",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline",
+        "--all-features"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.36600074800662696,
+      "packages": 180,
+      "resolve_nodes": 180
+    },
+    {
+      "name": "fuzz",
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "metadata",
+        "--manifest-path",
+        "tests/fuzz/Cargo.toml",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3157045829575509,
+      "packages": 147,
+      "resolve_nodes": 147
+    }
+  ],
+  "scope": "Exact locked native/default, all-feature and fuzz dependency graphs; no runtime acceptance."
+}

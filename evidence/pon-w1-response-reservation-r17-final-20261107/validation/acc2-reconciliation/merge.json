@@ -1,0 +1,9 @@
+{
+  "before_head": "68c664332e340591e629c4db0f611f11e33135f1",
+  "incoming": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "merge_exit_code": 1,
+  "conflicts": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "head_unchanged": true
+}

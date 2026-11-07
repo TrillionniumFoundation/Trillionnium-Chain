@@ -1,0 +1,11 @@
+{
+  "name": "test_integration_push_source.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_integration_push_source.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 4.024792889831588,
+  "timed_out": false
+}

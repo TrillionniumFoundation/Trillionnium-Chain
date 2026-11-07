@@ -1,0 +1,37 @@
+{
+  "changes": [
+    {
+      "path": "scripts/ci/check_ci_contract.py",
+      "old": "849067f57748d512cdd778e9aefc9eeb75a55de3",
+      "new": "82d45ae3136971ef1872868144480c40eda6ee2d"
+    },
+    {
+      "path": "scripts/ci/ci_job.sh",
+      "old": "0e0b9bd31c4317d4acbd5cbabae08ce063b3c764",
+      "new": "d8803b26fd4c8a3f6726863ed77970acbb973ada"
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "old": "bdae52ac10868f11cbf3764213a5a9c636a3fd57",
+      "new": "f5b37eed463b4058e573e85d1550f2b0d72de164"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "old": "57360880a303db6aaeda297752e2da8b4a450357",
+      "new": "dd19e7addb6901e0b09cb6e357ee732b0726f537"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "old": "aab6239a3e094c25d2319c5c16f1974a2ba67ca3",
+      "new": "f0bf0792e4b25d01fa0a7bb0071cc88773895125"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "old": "13ed1b33668335970ffbf98099bb4ee7757dab80",
+      "new": "7b10e0a9aa6a6a32800ec8e2a866dec98fdd828a"
+    }
+  ],
+  "pinned_blobs": 583,
+  "required_paths": 492,
+  "claims_unchanged": true
+}

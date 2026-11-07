@@ -1,0 +1,20 @@
+{
+  "id": 13581963076,
+  "node_id": "MDg6QXJ0aWZhY3QxMzU4MTk2MzA3Ng==",
+  "name": "priority-ubuntu-24.04-head-history-f97c3bc5aedebcf80b2a95648c6291525e0b0a9c-1",
+  "size_in_bytes": 60572998,
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13581963076",
+  "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13581963076/zip",
+  "expired": false,
+  "digest": "sha256:98d6dec89a292085091b17676e75ba2a1c55a59fdfa9c637b3f1d0f8787df5a4",
+  "created_at": "2026-11-07T16:40:13Z",
+  "updated_at": "2026-11-07T16:40:13Z",
+  "expires_at": "2026-12-07T16:40:08Z",
+  "workflow_run": {
+    "id": 42388392598,
+    "repository_id": 1323087357,
+    "head_repository_id": 1323087357,
+    "head_branch": "fix/chain-w1-ingress-integrated-20261107",
+    "head_sha": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c"
+  }
+}

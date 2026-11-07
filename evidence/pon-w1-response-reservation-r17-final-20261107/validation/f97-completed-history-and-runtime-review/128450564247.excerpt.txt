@@ -1,0 +1,81 @@
+5530: 2026-11-07T16:16:26.2169707Z test ingress::public_v3::tests::cpu_budget_reserves_two_starts_and_carries_actual_debt_before_refill ... ok
+5531: 2026-11-07T16:16:26.4947921Z test ingress::public_v3::tests::cpu_budget_signed_native_success_survives_clock_failure_and_reads_survive_debt ... ok
+5532: 2026-11-07T16:16:28.5349763Z test ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work ... FAILED
+5533: 2026-11-07T16:16:28.5373896Z test ingress::public_v3::tests::dropped_queue_task_is_not_observed_closed_before_its_last_grant_releases ... ok
+5534: 2026-11-07T16:16:28.6458993Z test ingress::public_v3::tests::early_complete_body_waiting_for_ready_preserves_signed_native_submission ... ok
+5535: 2026-11-07T16:16:30.7073047Z test ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline ... FAILED
+5536: 2026-11-07T16:16:30.7436270Z test ingress::public_v3::tests::failed_output_closes_only_that_connection_and_later_honest_request_succeeds ... ok
+5537: 2026-11-07T16:16:30.7599313Z test ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu ... ok
+5538: 2026-11-07T16:16:30.7600831Z test ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes ... ok
+5539: 2026-11-07T16:16:30.7721006Z test ingress::public_v3::tests::fixed_preface_checks_all_bounds_before_paid_body_allocation ... ok
+5540: 2026-11-07T16:16:30.7722183Z test ingress::public_v3::tests::hmac_sha256_matches_rfc4231_and_fixed_32_byte_oracle_vectors ... ok
+5541: 2026-11-07T16:16:34.8388221Z test ingress::public_v3::tests::honest_fragmented_small_frames_and_body_100_to_300_ms_need_no_retry ... ok
+5542: 2026-11-07T16:16:34.8530946Z test ingress::public_v3::tests::live_cpu_cancels_real_scoped_preparation_and_joins_all_started_threads ... ok
+5543: 2026-11-07T16:16:34.8532933Z test ingress::public_v3::tests::live_cpu_partial_debits_and_residual_settlement_do_not_charge_twice ... ok
+5544: 2026-11-07T16:16:34.8535565Z test ingress::public_v3::tests::live_cpu_poisoned_request_registry_disables_global_starts_without_deadlock ... ok
+5545: 2026-11-07T16:16:34.8540791Z test ingress::public_v3::tests::live_cpu_unknown_sample_and_overflow_disable_future_without_zero_refund ... ok
+5546: 2026-11-07T16:16:34.8544906Z test ingress::public_v3::tests::live_owner_cpu_is_observed_before_finish_and_full_interval_remains_authority ... ok
+5568: 2026-11-07T16:16:44.3075217Z test ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline ... ok
+5569: 2026-11-07T16:16:44.3080026Z test ingress::public_v3::tests::spent_cache_never_evicts_live_tokens_when_full ... ok
+5570: 2026-11-07T16:16:46.3493691Z test ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work ... FAILED
+5571: 2026-11-07T16:16:46.3518530Z test ingress::public_v3::tests::v2_magic_profile_and_signature_domains_are_rejected_exactly ... ok
+5572: 2026-11-07T16:16:46.3521932Z test ingress::public_v3::tests::w1_negative_cache_explicit_settings_are_bounded_before_service_startup ... ok
+5573: 2026-11-07T16:16:46.3721389Z test ingress::public_v3::tests::worker_clock_unknown_and_incomplete_or_overflowed_intervals_disable_new_starts ... ok
+5574: 2026-11-07T16:16:48.4126599Z test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... FAILED
+5575: 2026-11-07T16:16:49.9734586Z test ingress::public_v3::unpaid_pressure_tests::real_shared64_unpaid_pressure_releases_slots_protects_paid_body_and_confirms_one_business ... ok
+5576: 2026-11-07T16:16:50.0874085Z test ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet ... ok
+5577: 2026-11-07T16:16:50.0906942Z test ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges ... ok
+5578: 2026-11-07T16:16:50.0909260Z test ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit ... ok
+5579: 2026-11-07T16:16:50.0911519Z test ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown ... ok
+5580: 2026-11-07T16:16:50.1158856Z test ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context ... ok
+5581: 2026-11-07T16:16:50.1160989Z test ingress::public_v3::work_rejection::tests::absent_or_unfinished_rejection_observation_never_claims_a_cache_hit ... ok
+5582: 2026-11-07T16:16:50.2172895Z test ingress::public_v3::work_rejection::tests::default_paid_tcp_repeated_refusal_is_charged_and_valid_packet_still_replays ... ok
+5583: 2026-11-07T16:16:50.2528516Z test ingress::public_v3::work_rejection::tests::ordinary_default_preserves_cpu_owner_explicit_settings_and_other_profiles ... ok
+5584: 2026-11-07T16:16:50.2745361Z test ingress::public_v3::work_rejection::tests::warmed_refusal_keeps_original_cancellation_context_and_cpu_reservation ... ok
+5585: 2026-11-07T16:16:50.2746830Z test ingress::tests::authenticated_activation_recovery::authenticated_dispatch_retry_is_confined_to_local_queue_and_cancellation ... ok
+6375: 2026-11-07T16:39:35.6839085Z test store::task_observation::tests::legacy_selection_and_ambiguity_keep_the_original_codec_order ... ok
+6376: 2026-11-07T16:39:35.6839693Z 
+6377: 2026-11-07T16:39:35.6840197Z failures:
+6378: 2026-11-07T16:39:35.6840434Z 
+6379: 2026-11-07T16:39:35.6841082Z ---- ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work stdout ----
+6380: 2026-11-07T16:39:35.6841896Z 
+6381: 2026-11-07T16:39:35.6842931Z thread 'ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work' (32551) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4618:70:
+6382: 2026-11-07T16:39:35.6844864Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+6383: 2026-11-07T16:39:35.6845806Z 
+6384: 2026-11-07T16:39:35.6846168Z ---- ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline stdout ----
+6385: 2026-11-07T16:39:35.6846624Z 
+6386: 2026-11-07T16:39:35.6847212Z thread 'ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline' (32564) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5008:70:
+6387: 2026-11-07T16:39:35.6848601Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+6388: 2026-11-07T16:39:35.6849131Z 
+6389: 2026-11-07T16:39:35.6849443Z ---- ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work stdout ----
+6390: 2026-11-07T16:39:35.6849848Z 
+6391: 2026-11-07T16:39:35.6850367Z thread 'ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work' (32697) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4874:74:
+6392: 2026-11-07T16:39:35.6851412Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+6393: 2026-11-07T16:39:35.6851941Z 
+6394: 2026-11-07T16:39:35.6852315Z ---- ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work stdout ----
+6395: 2026-11-07T16:39:35.6852771Z 
+6396: 2026-11-07T16:39:35.6853350Z thread 'ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work' (32722) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4448:70:
+6397: 2026-11-07T16:39:35.6855106Z called `Result::unwrap()` on an `Err` value: Error { code: Some(FrameEof), kind: Transport, message: "FRAME_EOF", source: None, request_history_budget: false }
+6398: 2026-11-07T16:39:35.6855644Z 
+6399: 2026-11-07T16:39:35.6855649Z 
+6400: 2026-11-07T16:39:35.6855727Z failures:
+6401: 2026-11-07T16:39:35.6856125Z     ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work
+6402: 2026-11-07T16:39:35.6856821Z     ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline
+6403: 2026-11-07T16:39:35.6857476Z     ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work
+6404: 2026-11-07T16:39:35.6858470Z     ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work
+6405: 2026-11-07T16:39:35.6858887Z 
+6406: 2026-11-07T16:39:35.6859166Z test result: FAILED. 1201 passed; 4 failed; 31 ignored; 0 measured; 0 filtered out; finished in 1486.13s
+6407: 2026-11-07T16:39:35.6859538Z 
+6408: 2026-11-07T16:39:35.6910046Z error: test failed, to rerun pass `-p trnm-pon-node --lib`
+6409: 2026-11-07T16:39:40.1373704Z ##[error]Process completed with exit code 101.
+6410: 2026-11-07T16:39:40.1465642Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
+6411: 2026-11-07T16:39:40.1466623Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"[0m
+6412: 2026-11-07T16:39:40.2035621Z shell: /usr/bin/bash -e {0}
+6413: 2026-11-07T16:39:40.2035943Z env:
+6414: 2026-11-07T16:39:40.2036163Z   CI: true
+6415: 2026-11-07T16:39:40.2036390Z   CARGO_INCREMENTAL: 0
+6416: 2026-11-07T16:39:40.2036656Z   CARGO_BUILD_JOBS: 2
+6417: 2026-11-07T16:39:40.2036906Z   RUST_TEST_THREADS: 1
+6418: 2026-11-07T16:39:40.2037159Z   CARGO_TERM_COLOR: never
+6419: 2026-11-07T16:39:40.2037449Z   PYTHONDONTWRITEBYTECODE: 1
+6420: 2026-11-07T16:39:40.2038078Z   TRNM_EXPECTED_SOURCE_SHA: f97c3bc5aedebcf80b2a95648c6291525e0b0a9c

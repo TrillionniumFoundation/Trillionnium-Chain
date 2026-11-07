@@ -1,0 +1,11 @@
+{
+  "name": "repository-markdown-contracts",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 103.68215408688411,
+  "timed_out": false
+}

@@ -1,0 +1,79 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+@@ -4443,11 +4443,14 @@
+         let mut h = hello(1, raw.len());
+         h.caller = digest(caller.public_key()).unwrap();
+         h.digest = hash(b"public-request-body-v3", &[&raw]);
++        // Authenticate every connection before a complete body can occupy
++        // either original response-signing slot while this test holds the Node.
+         let mut sockets = Vec::new();
+         for _ in 0..3 {
+-            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
++            sockets.push(paid_grant(address, h, &caller, policy).unwrap());
++        }
++        for socket in &mut sockets {
+             socket.write_all(&raw).unwrap();
+-            sockets.push(socket);
+         }
+         // Initial Head was one task. Two Submit workers are waiting for this
+         // actual owner lock, leaving the third preserved request in the queue.
+@@ -4613,11 +4616,14 @@
+         let mut h = hello(1, raw.len());
+         h.caller = digest(caller.public_key()).unwrap();
+         h.digest = hash(b"public-request-body-v3", &[&raw]);
++        // Authenticate every connection before a complete body can occupy
++        // either original response-signing slot while this test holds the Node.
+         let mut sockets = Vec::new();
+         for _ in 0..8 {
+-            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
++            sockets.push(paid_grant(address, h, &caller, policy).unwrap());
++        }
++        for socket in &mut sockets {
+             socket.write_all(&raw).unwrap();
+-            sockets.push(socket);
+         }
+         // Initial Head was one task. Two Submit workers are waiting for this
+         // actual owner lock, leaving two in the channel and four inside bounded pending connections.
+@@ -4869,11 +4875,14 @@
+             let mut h = hello(1, raw.len());
+             h.caller = digest(caller.public_key()).unwrap();
+             h.digest = hash(b"public-request-body-v3", &[&raw]);
++            // Authenticate every connection before a complete body can occupy
++            // either original response-signing slot while this test holds the Node.
+             let mut sockets = Vec::new();
+             for _ in 0..8 {
+-                let mut socket = paid_grant(address, h, &caller, policy).unwrap();
++                sockets.push(paid_grant(address, h, &caller, policy).unwrap());
++            }
++            for socket in &mut sockets {
+                 socket.write_all(&raw).unwrap();
+-                sockets.push(socket);
+             }
+             // Initial Head was one task. Two Submit workers are waiting for this
+             // actual owner lock, leaving two in the channel and four inside bounded pending connections.
+@@ -4995,7 +5004,10 @@
+             .ok
+         );
+         let locked = owner.lock().unwrap();
++        // Finish all eight original paid grants before any complete body can
++        // reserve a response-signing slot while the Node remains locked.
+         let mut sockets = Vec::new();
++        let mut bodies = Vec::new();
+         for (index, packet) in packets.iter().enumerate() {
+             let raw = serde_json::to_vec(&Request::Submit {
+                 packet: hex::encode(packet.encode().unwrap()),
+@@ -5005,9 +5017,11 @@
+             let mut h = hello(1, raw.len());
+             h.caller = digest(caller.public_key()).unwrap();
+             h.digest = hash(b"public-request-body-v3", &[&raw]);
+-            let mut socket = paid_grant(address, h, &caller, policy).unwrap();
++            sockets.push(paid_grant(address, h, &caller, policy).unwrap());
++            bodies.push(raw);
++        }
++        for (socket, raw) in sockets.iter_mut().zip(bodies) {
+             socket.write_all(&raw).unwrap();
+-            sockets.push(socket);
+         }
+         wait_metric(&metrics, |m| {
+             m.tasks_enqueued == 5

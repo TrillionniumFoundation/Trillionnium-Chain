@@ -1,0 +1,4 @@
+4026:    fn paid_grant(
+4034:    fn paid_grant_counted(
+4051:    pub(super) fn paid_solution_only(
+4088:    fn wait_metric(metrics: &Mutex<PublicMetrics>, predicate: impl Fn(&PublicMetrics) -> bool) {

@@ -1,0 +1,13 @@
+{
+  "schema": "r17-evidence-worktree-preparation-v1",
+  "branch": "docs/chain-w1-ingress-r17-evidence-20261107",
+  "source_head": "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+  "previous_local_integration_branch_head_preserved": "68c664332e340591e629c4db0f611f11e33135f1",
+  "raw_evidence_files": 1135,
+  "raw_payload_bytes": 328208116,
+  "prior_unpublished_name_refused_by_original_policy": "evidence/chain-w1-ingress-r17-20261107",
+  "policy_modified": false,
+  "source_pr_modified": false,
+  "committed": false,
+  "pushed": false
+}

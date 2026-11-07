@@ -1,0 +1,16 @@
+
+running 6 tests
+test ingress::public_v3::response_signing_boundary_tests::classical_and_pq_head_responses_use_their_reserved_slots ... ok
+test ingress::public_v3::response_signing_boundary_tests::continuous_pq_response_pending_is_busy_and_unknown_fences_clean_close ... ok
+test ingress::public_v3::response_signing_boundary_tests::last_history_owner_cannot_clear_pq_pending_or_unknown_response_principal ... ok
+test ingress::public_v3::response_signing_boundary_tests::submit_ack_keeps_its_authentication_slot_while_a_real_head_competes ... ok
+test ingress::public_v3::response_signing_boundary_tests::tcp_cancellation_keeps_real_response_signing_interval_until_worker_returns ... FAILED
+test ingress::public_v3::response_signing_boundary_tests::unknown_response_cpu_preserves_committed_native_outcome_without_refund ... ok
+
+failures:
+
+failures:
+    ingress::public_v3::response_signing_boundary_tests::tcp_cancellation_keeps_real_response_signing_interval_until_worker_returns
+
+test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 1219 filtered out; finished in 5.23s
+

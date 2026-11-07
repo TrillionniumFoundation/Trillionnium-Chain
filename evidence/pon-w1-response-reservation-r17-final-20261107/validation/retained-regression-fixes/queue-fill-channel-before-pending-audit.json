@@ -1,0 +1,76 @@
+{
+  "scope": "Captured exact complete 436 public_v3.rs; three eight-request fixtures plus failure-only wait_metric diagnostic. No repository/remote writes or Rust/Cargo execution.",
+  "source_path": "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/public-v3-436.rs",
+  "source_bytes": 397785,
+  "source_sha256": "35458d41cbf4820316dc8831246e4df006db3609e70fa588dcc281ae1bc08529",
+  "failure_evidence": "Root reports existing 436 binary single eight-paid test RUST_BACKTRACE=1 points to source line 5051, the original full-queue wait. The new worker gate at line 5045 was passed. No failed-run counter snapshot exists.",
+  "source_cause": "Stage::Body returns Stage::Enqueue without try_send in the same connection visit; the reactor counts every Stage::Enqueue at loop end before the next visit can enqueue. Sending six remaining bodies together can therefore produce a historical pending peak greater than four, despite the two occupied workers.",
+  "patch_sha256": "d44fb12f99f848619d7d1e645f4b4b56963790eea9ba6bb8f51df03cc09f345c",
+  "patch_bytes": 5362,
+  "changed_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "changed_test_functions": [
+    "disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work",
+    "trailing_input_after_complete_body_cancels_without_starting_work",
+    "eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline"
+  ],
+  "changed_helper": "wait_metric",
+  "all_other_source_bytes_unchanged": true,
+  "three_request_fixture_unchanged": true,
+  "original_assertion_invocations_preserved_verbatim": 843,
+  "original_wait_metric_invocations_preserved_verbatim": 21,
+  "added_channel_gates": 3,
+  "added_channel_gate": "tasks_enqueued == 5 && tasks_dequeued == 3 && mutation_cpu_reservations == 2",
+  "existing_worker_gate_unchanged": "tasks_enqueued == 3 && tasks_dequeued == 3 && mutation_cpu_reservations == 2",
+  "all_original_duration_expressions_preserved_verbatim": 174,
+  "original_peak_pending_enqueue_equals_four_preserved": true,
+  "original_eight_grants_and_bodies_preserved": true,
+  "original_queue_size_worker_count_and_resource_limits_preserved": true,
+  "failure_diagnostic": {
+    "only_after_original_wait_deadline": true,
+    "scalar_fields": [
+      "tasks_enqueued",
+      "tasks_dequeued",
+      "peak_pending_enqueue",
+      "mutation_cpu_reservations",
+      "queue_backpressure_events",
+      "queue_refusals",
+      "mutation_cpu_refusals"
+    ],
+    "metrics_lock_released_before_original_assert": true,
+    "assert_invocation_unchanged": true,
+    "wait_deadline_seconds": 2,
+    "poll_sleep_milliseconds": 2,
+    "original_assert_remains_unconditional_after_diagnostic": true,
+    "diagnostic_only_if_already_expired_before_original_assert": true
+  },
+  "apply_checks": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-fill-channel-before-pending.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--whitespace=error-all",
+        "/workspace/scratch/270e2a9ce94f/validation/r17/queue-fixture-audit/queue-fill-channel-before-pending.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "applied_copy_matches_expected": true,
+  "apply_check_scope": "Full exact captured source in a disposable temporary repository; syntax/behavior awaits root native compilation and test execution.",
+  "expected_result_source_sha256": "0c80cc28bb4433db6e05ef6990a265a415dff6d70de224309c02356ee880f47b",
+  "supersedes_unapplied_patch_sha256": "207eb99a55db72d83a6bdb2734139e1e3b4c49626983227b7ec5f531b631c533",
+  "review_correction": "Failure diagnostic is a separate conditional; the original assert remains outside it and executes on each unsuccessful polling iteration in its original position before the unchanged sleep."
+}

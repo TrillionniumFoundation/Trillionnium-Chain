@@ -1,0 +1,8 @@
+Running as unit: trnm-from-zero-42388392598-1-native-priorities-4738.service
+{"failures": ["ValueError:HISTORY_NATIVE_PROCESS_REQUIRED", "ValueError:required-native-test: expected one passed, zero failed/ignored/measured", "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"], "passed": false, "schema": "trnm-ci-history-native-execution-v1", "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal", "target": "ancestry_long_sync"}
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 54min 29.641s
+CPU time consumed: 13min 37.373s
+Memory peak: 3.7M
+Memory swap peak: 0B

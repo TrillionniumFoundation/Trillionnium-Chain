@@ -1,0 +1,20 @@
+{
+  "id": 13581591658,
+  "node_id": "MDg6QXJ0aWZhY3QxMzU4MTU5MTY1OA==",
+  "name": "priority-ubuntu-24.04-arm-prospective-merge-state-f97c3bc5aedebcf80b2a95648c6291525e0b0a9c-1",
+  "size_in_bytes": 19160,
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13581591658",
+  "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13581591658/zip",
+  "expired": false,
+  "digest": "sha256:a2f7ca42db28478f378a2bfb3476c8b9c39a588d121252e2014b139123a88996",
+  "created_at": "2026-11-07T16:32:26Z",
+  "updated_at": "2026-11-07T16:32:26Z",
+  "expires_at": "2026-12-07T16:32:25Z",
+  "workflow_run": {
+    "id": 42388392598,
+    "repository_id": 1323087357,
+    "head_repository_id": 1323087357,
+    "head_branch": "fix/chain-w1-ingress-integrated-20261107",
+    "head_sha": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c"
+  }
+}

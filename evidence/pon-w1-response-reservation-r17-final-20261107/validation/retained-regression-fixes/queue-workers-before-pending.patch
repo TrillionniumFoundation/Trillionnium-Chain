@@ -1,0 +1,61 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+@@ -4622,7 +4622,17 @@
+         for _ in 0..8 {
+             sockets.push(paid_grant(address, h, &caller, policy).unwrap());
+         }
+-        for socket in &mut sockets {
++        // Let both original workers dequeue and reserve before filling the
++        // channel, so the remaining six produce exactly four pending tasks.
++        for socket in sockets.iter_mut().take(2) {
++            socket.write_all(&raw).unwrap();
++        }
++        wait_metric(&metrics, |m| {
++            m.tasks_enqueued == 3
++                && m.tasks_dequeued == 3
++                && m.mutation_cpu_reservations == 2
++        });
++        for socket in sockets.iter_mut().skip(2) {
+             socket.write_all(&raw).unwrap();
+         }
+         // Initial Head was one task. Two Submit workers are waiting for this
+@@ -4881,7 +4891,17 @@
+             for _ in 0..8 {
+                 sockets.push(paid_grant(address, h, &caller, policy).unwrap());
+             }
+-            for socket in &mut sockets {
++            // Let both original workers dequeue and reserve before filling the
++            // channel, so the remaining six produce exactly four pending tasks.
++            for socket in sockets.iter_mut().take(2) {
++                socket.write_all(&raw).unwrap();
++            }
++            wait_metric(&metrics, |m| {
++                m.tasks_enqueued == 3
++                    && m.tasks_dequeued == 3
++                    && m.mutation_cpu_reservations == 2
++            });
++            for socket in sockets.iter_mut().skip(2) {
+                 socket.write_all(&raw).unwrap();
+             }
+             // Initial Head was one task. Two Submit workers are waiting for this
+@@ -5020,7 +5040,18 @@
+             sockets.push(paid_grant(address, h, &caller, policy).unwrap());
+             bodies.push(raw);
+         }
+-        for (socket, raw) in sockets.iter_mut().zip(bodies) {
++        // Let both original workers dequeue and reserve before filling the
++        // channel, so the remaining six produce exactly four pending tasks.
++        let mut paid_bodies = sockets.iter_mut().zip(bodies);
++        for (socket, raw) in paid_bodies.by_ref().take(2) {
++            socket.write_all(&raw).unwrap();
++        }
++        wait_metric(&metrics, |m| {
++            m.tasks_enqueued == 3
++                && m.tasks_dequeued == 3
++                && m.mutation_cpu_reservations == 2
++        });
++        for (socket, raw) in paid_bodies {
+             socket.write_all(&raw).unwrap();
+         }
+         wait_metric(&metrics, |m| {

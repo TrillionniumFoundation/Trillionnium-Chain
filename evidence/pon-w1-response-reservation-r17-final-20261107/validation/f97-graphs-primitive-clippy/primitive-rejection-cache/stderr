@@ -1,0 +1,6 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_crypto_primitives-4eb026ebcf61d291)
+
+thread '<unnamed>' (808050) panicked at crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs:452:21:
+intentional rejection-cache poison control
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

@@ -1,0 +1,102 @@
+[
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-0.json",
+    "bytes": 18408,
+    "sha256": "c9a5dc5f5149cab0067ddaf46c0e525d0dbb44978a87257114fdfa51efb903eb"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-1.json",
+    "bytes": 18398,
+    "sha256": "c7f778cd0fbed315906bbf6660bae6002012d2b03b9de5b4f67f84eee50e644d"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-2.json",
+    "bytes": 18376,
+    "sha256": "d08dd72d2e308e960734b9d3b955910e76cc32c2b6d172a3cacff665dba4de05"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-3.json",
+    "bytes": 18379,
+    "sha256": "57e85404aae2c1ee5ee1117047243d9889855306644a1e4d0240a09dde904aa0"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-4.json",
+    "bytes": 18374,
+    "sha256": "99ed03e83877a312a23baae6c3d0f0b252bccc4c56158736e1473cd8e169c38e"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-5.json",
+    "bytes": 18377,
+    "sha256": "5e5de1adf13db740e9d1280e49cec3bec0d3a4319ad52af2aa32fe3790ed11e1"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-attack-free-baseline-6.json",
+    "bytes": 18382,
+    "sha256": "671790fb70e282d4cff1a8035f50df81ef4ac445d35247f0b53654e6561e4859"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-from-zero-pressure-0.json",
+    "bytes": 18412,
+    "sha256": "bd02325cf6700dfa09c1c32aa6047f2fbd391d478098c308ef255e066ce88f09"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-from-zero-pressure-1.json",
+    "bytes": 18387,
+    "sha256": "dd685731dea7a98f76fa03ac13bfb9b7f66784262c6409a17eb1cf35e6999871"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-from-zero-pressure-2.json",
+    "bytes": 18378,
+    "sha256": "b8c287d59689467f1666b98b57a2c69415d21568a6e6fc1bd071800fa0c53d78"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13580342341-from-zero-pressure-3.json",
+    "bytes": 18320,
+    "sha256": "ef55536e8e4ca928b6845c26e14bef23022362a2ede1fb5388010e74b95acd85"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-0.json",
+    "bytes": 18409,
+    "sha256": "8d4f4b65793f579e66c548c3d930894ffa55029d4d2dabf4e9aacc8af793d51b"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-1.json",
+    "bytes": 18396,
+    "sha256": "8c8ce685320164e70c65e61027dc767a1589f585065b980db268c2ebfd5d87c2"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-2.json",
+    "bytes": 18380,
+    "sha256": "73121d1ca66a74202d326fef782cfad0f43d4326f0cdca77e548718d95b59d7f"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-3.json",
+    "bytes": 18387,
+    "sha256": "f3f2972661b9b5da34f76ce8f23d8b53652fae97f0e7d8b93dc56816da6c4eab"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-4.json",
+    "bytes": 18383,
+    "sha256": "1e7b018ac2719eb3ed8dfdbe024e59de3dfcca7df2ea502e4239cc5f68f3e4f6"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-5.json",
+    "bytes": 18379,
+    "sha256": "36ce271c629287a384d67bf9d93b10ce013764a65671a44aed16cdae4ccf2645"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-attack-free-baseline-6.json",
+    "bytes": 18394,
+    "sha256": "dac26e43d4c6f8ebdb2af09455d12608aea5dc3273941382fa466ffa9b059802"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-from-zero-pressure-0.json",
+    "bytes": 18440,
+    "sha256": "1ced25dd05560a90046053cbd672d19965477475f969924241c01e7c5bc35533"
+  },
+  {
+    "path": "../validation/github-f97-fresh-artifacts/native-import-observations/13579839179-from-zero-pressure-1.json",
+    "bytes": 18348,
+    "sha256": "5c20be8d0ef2ddfe3aeced0a300f19c44d474657d9102e5cba3e1f955105c0c2"
+  }
+]

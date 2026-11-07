@@ -1,0 +1,12 @@
+trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs:684:                    row["client_import"]["native_import_observation"] =
+trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs:1479:                "native_import_observation": import_observer.snapshot(),
+trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1072:                    row["client_import"]["native_import_observation"] =
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:112:    pub host_checks: [HistoryHostObservation; 4],
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:113:    pub host_checks_are_nested_not_additive: bool,
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:182:        let host_checks = match self.host.lock() {
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:225:            host_checks,
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:226:            host_checks_are_nested_not_additive: true,
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:400:        let row = snapshot.host_checks[HistoryHostPhase::Checkpoint as usize];
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:416:        let absent = snapshot.host_checks[HistoryHostPhase::Final as usize];
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:439:            snapshot.host_checks[HistoryHostPhase::Initial as usize].calls_started,
+trillionnium/crates/trnm-pon-node/src/ingress/history_import/observation.rs:451:        let row = observer.snapshot().host_checks[HistoryHostPhase::Final as usize];

@@ -1,0 +1,5 @@
+[
+  "python3",
+  "-B",
+  "scripts/ci/test_run_w1_fresh_service_v1.py"
+]

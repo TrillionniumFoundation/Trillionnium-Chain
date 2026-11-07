@@ -1,0 +1,69 @@
+
+thread 'ingress::public_v3::authentication_cpu::tests::panic_keeps_original_reserve_and_fences_later_authentication' (1022944) panicked at crates/trnm-pon-node/src/ingress/public_v3/authentication_cpu.rs:794:17:
+controlled authentication unwind
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingress::public_v3::authentication_cpu::tests::response_reservation_never_bypasses_existing_unknown_or_unwind' (1022949) panicked at crates/trnm-pon-node/src/ingress/public_v3/authentication_cpu.rs:570:21:
+controlled native unwind before response crypto
+
+thread '<unnamed>' (1024104) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:343:13:
+test-only lease poison
+
+thread '<unnamed>' (1024107) panicked at crates/trnm-pon-node/src/ingress/public_v3/intake.rs:473:13:
+test-only lock poison
+
+thread 'ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch' (1024352) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:467:49:
+incomplete authentication CPU interval
+
+thread 'ingress::public_v3::pq_identity::tests::pq_response_reservation_unknown_finish_or_unwind_never_refunds_principal' (1024996) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity_tests.rs:139:17:
+controlled native unwind before PQ response
+
+thread 'ingress::public_v3::pq_identity::verifier_cache::tests::held_or_poisoned_material_lock_never_waits_or_skips_full_charged_verification' (1025017) panicked at crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs:270:9:
+only the optional mathematical material is poisoned
+
+thread '<unnamed>' (1025225) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1892:13:
+injected observation writer failure
+
+thread 'ingress::public_v3::request_observation::tests::submit_phase_outcomes_are_bounded_and_keep_abandoned_measurements_unknown' (1025371) panicked at crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs:1478:13:
+observation must retain unfinished admission
+
+thread 'ingress::public_v3::scalar_cpu::metered_fact_tests::panic_fences_shared_budget_without_rewriting_native_history' (1027771) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs:350:17:
+assertion `left == right` failed: injected W1 callback unwind
+  left: 1
+ right: 0
+
+thread '<unnamed>' (1027945) panicked at crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs:83:17:
+controlled actual worker unwind
+
+thread 'ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work' (1028287) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4094:13:
+actual reactor observation timed out
+
+thread 'ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline' (1028743) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4094:13:
+actual reactor observation timed out
+
+thread 'pon-exec-0' (1028987) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:6561:41:
+genuine test worker unwind
+
+thread '<unnamed>' (1028306) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4599:14:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PUBLIC_OWNER", source: None, request_history_budget: false }
+
+thread '<unnamed>' (1029329) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5857:13:
+controlled request registry poison
+
+thread '<unnamed>' (1028774) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4992:14:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PUBLIC_OWNER", source: None, request_history_budget: false }
+
+thread '<unnamed>' (1030212) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:7076:13:
+controlled poison
+
+thread '<unnamed>' (1030285) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5452:29:
+later scoped worker failure
+
+thread '<unnamed>' (1030288) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:5445:29:
+first scoped worker failure
+
+thread 'ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work' (1030519) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4094:13:
+actual reactor observation timed out
+
+thread '<unnamed>' (1030660) panicked at crates/trnm-pon-node/src/ingress/public_v3.rs:4858:18:
+called `Result::unwrap()` on an `Err` value: Error { code: None, kind: Unclassified, message: "PUBLIC_OWNER", source: None, request_history_budget: false }

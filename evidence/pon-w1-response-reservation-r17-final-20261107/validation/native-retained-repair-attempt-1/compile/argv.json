@@ -1,0 +1,17 @@
+[
+  "cargo",
+  "+1.95.0",
+  "test",
+  "--manifest-path",
+  "trillionnium/Cargo.toml",
+  "-p",
+  "trnm-pon-node",
+  "--lib",
+  "--all-features",
+  "--locked",
+  "--offline",
+  "--no-run",
+  "-j",
+  "2",
+  "--message-format=json"
+]

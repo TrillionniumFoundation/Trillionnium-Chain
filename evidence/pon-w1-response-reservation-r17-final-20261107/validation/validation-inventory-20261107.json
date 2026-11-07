@@ -1,0 +1,176 @@
+[
+  {
+    "directory": "acc2-reconciliation",
+    "files": 35,
+    "bytes": 592329,
+    "max_file_bytes": 581040
+  },
+  {
+    "directory": "base-drift-3",
+    "files": 33,
+    "bytes": 2749079,
+    "max_file_bytes": 1517729
+  },
+  {
+    "directory": "ci-f97-baseline-failures",
+    "files": 6,
+    "bytes": 359649,
+    "max_file_bytes": 200885
+  },
+  {
+    "directory": "ci-f97-early-failures",
+    "files": 22,
+    "bytes": 386412,
+    "max_file_bytes": 182331
+  },
+  {
+    "directory": "ci-f97-lint-service-failures",
+    "files": 7,
+    "bytes": 2935884,
+    "max_file_bytes": 1868263
+  },
+  {
+    "directory": "ci-f97-progress-2",
+    "files": 36,
+    "bytes": 317976,
+    "max_file_bytes": 79040
+  },
+  {
+    "directory": "ci-f97-progress-3",
+    "files": 33,
+    "bytes": 235093,
+    "max_file_bytes": 74525
+  },
+  {
+    "directory": "ci-f97-retained-pressure-failure",
+    "files": 6,
+    "bytes": 5984,
+    "max_file_bytes": 4117
+  },
+  {
+    "directory": "f97-graphs-primitive-clippy",
+    "files": 25,
+    "bytes": 3252623,
+    "max_file_bytes": 883093
+  },
+  {
+    "directory": "final-source-controls-attempt-1",
+    "files": 55,
+    "bytes": 41503,
+    "max_file_bytes": 16831
+  },
+  {
+    "directory": "final-source-controls-attempt-2",
+    "files": 67,
+    "bytes": 72876,
+    "max_file_bytes": 24541
+  },
+  {
+    "directory": "final-source-controls-attempt-3-f97",
+    "files": 67,
+    "bytes": 75480,
+    "max_file_bytes": 24541
+  },
+  {
+    "directory": "github-f97-campaign-artifact",
+    "files": 1774,
+    "bytes": 607480666,
+    "max_file_bytes": 72740746
+  },
+  {
+    "directory": "github-f97-fresh-artifacts",
+    "files": 151,
+    "bytes": 85578804,
+    "max_file_bytes": 11238112
+  },
+  {
+    "directory": "github-f97-state-artifacts",
+    "files": 48,
+    "bytes": 679786,
+    "max_file_bytes": 77322
+  },
+  {
+    "directory": "host-check-audit",
+    "files": 6,
+    "bytes": 12040,
+    "max_file_bytes": 5894
+  },
+  {
+    "directory": "native-component-attempt-1",
+    "files": 23,
+    "bytes": 140810,
+    "max_file_bytes": 122265
+  },
+  {
+    "directory": "native-component-attempt-2",
+    "files": 35,
+    "bytes": 141100,
+    "max_file_bytes": 122146
+  },
+  {
+    "directory": "native-component-attempt-3-f97",
+    "files": 40,
+    "bytes": 143936,
+    "max_file_bytes": 122376
+  },
+  {
+    "directory": "native-retained-repair-attempt-1",
+    "files": 3,
+    "bytes": 121760,
+    "max_file_bytes": 121396
+  },
+  {
+    "directory": "pr780-f97-ci-readback-1",
+    "files": 33,
+    "bytes": 615146,
+    "max_file_bytes": 242630
+  },
+  {
+    "directory": "pr780-readback-2",
+    "files": 28,
+    "bytes": 767769,
+    "max_file_bytes": 694375
+  },
+  {
+    "directory": "primitive-graphs-68",
+    "files": 8,
+    "bytes": 1743602,
+    "max_file_bytes": 879243
+  },
+  {
+    "directory": "primitive-graphs-68-attempt-2",
+    "files": 17,
+    "bytes": 1748272,
+    "max_file_bytes": 879243
+  },
+  {
+    "directory": "provider-attempt-1",
+    "files": 2,
+    "bytes": 49543,
+    "max_file_bytes": 47063
+  },
+  {
+    "directory": "provider-attempt-2",
+    "files": 2,
+    "bytes": 1325495,
+    "max_file_bytes": 1322458
+  },
+  {
+    "directory": "publish-f97",
+    "files": 20,
+    "bytes": 38819,
+    "max_file_bytes": 23249
+  },
+  {
+    "directory": "queue-fixture-audit",
+    "files": 4,
+    "bytes": 103677,
+    "max_file_bytes": 45544
+  },
+  {
+    "directory": "retained-regression-fixes",
+    "files": 34,
+    "bytes": 9569,
+    "max_file_bytes": 4106
+  }
+]

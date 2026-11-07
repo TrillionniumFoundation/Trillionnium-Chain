@@ -1,0 +1,5 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-sparse/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-sparse/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-sparse/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-w1-ingress-r17-20261107/source-sparse/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10m 37s

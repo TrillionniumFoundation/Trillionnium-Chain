@@ -1,0 +1,8 @@
+
+running 3 tests
+test ingress::public_v3::authentication_boundary_tests::actual_cold_zero_authentication_credit_serves_one_head_without_client_retry ... ok
+test ingress::public_v3::authentication_boundary_tests::foreign_operation_or_body_cookie_cannot_burn_the_original_signed_solution ... ok
+test ingress::public_v3::authentication_boundary_tests::forged_caller_cannot_spend_cookie_or_dispatch_victims_signed_native_packet ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1222 filtered out; finished in 1.12s
+

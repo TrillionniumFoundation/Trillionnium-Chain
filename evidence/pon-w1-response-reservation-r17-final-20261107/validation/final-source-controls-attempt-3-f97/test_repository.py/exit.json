@@ -1,0 +1,11 @@
+{
+  "name": "test_repository.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_repository.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 270.27247027214617,
+  "timed_out": false
+}

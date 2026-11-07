@@ -1,0 +1,646 @@
+[
+  {
+    "artifact_id": 13581963076,
+    "count": 4140,
+    "uncompressed_bytes": 640311495,
+    "largest_files": [
+      {
+        "name": "history-native/long-history/validator/native.sqlite",
+        "bytes": 220655616
+      },
+      {
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "bytes": 216260608
+      },
+      {
+        "name": "history-native/build.jsonl",
+        "bytes": 108359
+      },
+      {
+        "name": "history-native/long-history/packets/00900.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/01800.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/02700.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/03600.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/00001.bin",
+        "bytes": 49508
+      }
+    ],
+    "readable_files": [
+      {
+        "name": "history-native/execution-start.json",
+        "bytes": 76
+      },
+      {
+        "name": "history-native/build.stderr",
+        "bytes": 6896
+      },
+      {
+        "name": "history-native/history-resources.txt",
+        "bytes": 971
+      },
+      {
+        "name": "history-native/history.log",
+        "bytes": 11446
+      },
+      {
+        "name": "history-native/long-history/config.json",
+        "bytes": 632
+      },
+      {
+        "name": "history-native/long-history/source.json",
+        "bytes": 514
+      },
+      {
+        "name": "history-native/long-history/summary.json",
+        "bytes": 259
+      },
+      {
+        "name": "history-native/manifest.json",
+        "bytes": 4904
+      },
+      {
+        "name": "history-native/preparation.json",
+        "bytes": 3474
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent-after.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/after-provision.json",
+        "bytes": 1628
+      },
+      {
+        "name": "history-native-host/before-provision.json",
+        "bytes": 2795
+      },
+      {
+        "name": "history-native-host/child-final-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-result.json",
+        "bytes": 335
+      },
+      {
+        "name": "history-native-host/controller-result.json",
+        "bytes": 7731
+      },
+      {
+        "name": "history-native-host/install-reviewed-unit.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/inside-after.json",
+        "bytes": 1711
+      },
+      {
+        "name": "history-native-host/inside-before.json",
+        "bytes": 1686
+      },
+      {
+        "name": "history-native-host/outside-after.json",
+        "bytes": 1673
+      },
+      {
+        "name": "history-native-host/parent-properties.log",
+        "bytes": 146
+      },
+      {
+        "name": "history-native-host/seal-parent-directory.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/seal-parent-receipt.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/start-fixed-parent.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-reload.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-run.log",
+        "bytes": 644
+      },
+      {
+        "name": "history-native-host/unprovisioned-parent.json",
+        "bytes": 229
+      },
+      {
+        "name": "public-fixture-parent.json",
+        "bytes": 3223
+      },
+      {
+        "name": "source.json",
+        "bytes": 423
+      }
+    ]
+  },
+  {
+    "artifact_id": 13581768766,
+    "count": 4140,
+    "uncompressed_bytes": 645126051,
+    "largest_files": [
+      {
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "bytes": 220938240
+      },
+      {
+        "name": "history-native/long-history/validator/native.sqlite",
+        "bytes": 220790784
+      },
+      {
+        "name": "history-native/build.jsonl",
+        "bytes": 110125
+      },
+      {
+        "name": "history-native/long-history/packets/00900.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/01800.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/02700.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/03600.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/00001.bin",
+        "bytes": 49508
+      }
+    ],
+    "readable_files": [
+      {
+        "name": "history-native/build.stderr",
+        "bytes": 6872
+      },
+      {
+        "name": "history-native/execution-start.json",
+        "bytes": 76
+      },
+      {
+        "name": "history-native/history-resources.txt",
+        "bytes": 971
+      },
+      {
+        "name": "history-native/history.log",
+        "bytes": 11500
+      },
+      {
+        "name": "history-native/long-history/config.json",
+        "bytes": 632
+      },
+      {
+        "name": "history-native/long-history/source.json",
+        "bytes": 514
+      },
+      {
+        "name": "history-native/long-history/summary.json",
+        "bytes": 245
+      },
+      {
+        "name": "history-native/manifest.json",
+        "bytes": 4885
+      },
+      {
+        "name": "history-native/preparation.json",
+        "bytes": 3472
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent-after.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/after-provision.json",
+        "bytes": 1628
+      },
+      {
+        "name": "history-native-host/before-provision.json",
+        "bytes": 2795
+      },
+      {
+        "name": "history-native-host/child-final-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-result.json",
+        "bytes": 335
+      },
+      {
+        "name": "history-native-host/controller-result.json",
+        "bytes": 7729
+      },
+      {
+        "name": "history-native-host/inside-after.json",
+        "bytes": 1711
+      },
+      {
+        "name": "history-native-host/inside-before.json",
+        "bytes": 1686
+      },
+      {
+        "name": "history-native-host/install-reviewed-unit.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/outside-after.json",
+        "bytes": 1673
+      },
+      {
+        "name": "history-native-host/parent-properties.log",
+        "bytes": 146
+      },
+      {
+        "name": "history-native-host/seal-parent-directory.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/seal-parent-receipt.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/start-fixed-parent.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-reload.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-run.log",
+        "bytes": 643
+      },
+      {
+        "name": "history-native-host/unprovisioned-parent.json",
+        "bytes": 229
+      },
+      {
+        "name": "public-fixture-parent.json",
+        "bytes": 3221
+      },
+      {
+        "name": "source.json",
+        "bytes": 423
+      }
+    ]
+  },
+  {
+    "artifact_id": 13581848094,
+    "count": 4140,
+    "uncompressed_bytes": 573825666,
+    "largest_files": [
+      {
+        "name": "history-native/long-history/validator/native.sqlite",
+        "bytes": 220708864
+      },
+      {
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "bytes": 149721088
+      },
+      {
+        "name": "history-native/build.jsonl",
+        "bytes": 108359
+      },
+      {
+        "name": "history-native/long-history/packets/00900.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/01800.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/02700.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/03600.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/00001.bin",
+        "bytes": 49508
+      }
+    ],
+    "readable_files": [
+      {
+        "name": "history-native/build.stderr",
+        "bytes": 6896
+      },
+      {
+        "name": "history-native/execution-start.json",
+        "bytes": 76
+      },
+      {
+        "name": "history-native/history-resources.txt",
+        "bytes": 972
+      },
+      {
+        "name": "history-native/history.log",
+        "bytes": 11183
+      },
+      {
+        "name": "history-native/long-history/config.json",
+        "bytes": 632
+      },
+      {
+        "name": "history-native/long-history/source.json",
+        "bytes": 514
+      },
+      {
+        "name": "history-native/long-history/summary.json",
+        "bytes": 259
+      },
+      {
+        "name": "history-native/manifest.json",
+        "bytes": 5077
+      },
+      {
+        "name": "history-native/preparation.json",
+        "bytes": 3650
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent-after.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/after-provision.json",
+        "bytes": 1628
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/before-provision.json",
+        "bytes": 2795
+      },
+      {
+        "name": "history-native-host/child-final-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-result.json",
+        "bytes": 335
+      },
+      {
+        "name": "history-native-host/controller-result.json",
+        "bytes": 7907
+      },
+      {
+        "name": "history-native-host/inside-after.json",
+        "bytes": 1711
+      },
+      {
+        "name": "history-native-host/inside-before.json",
+        "bytes": 1689
+      },
+      {
+        "name": "history-native-host/install-reviewed-unit.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/outside-after.json",
+        "bytes": 1673
+      },
+      {
+        "name": "history-native-host/seal-parent-directory.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/parent-properties.log",
+        "bytes": 146
+      },
+      {
+        "name": "history-native-host/seal-parent-receipt.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/start-fixed-parent.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-reload.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-run.log",
+        "bytes": 645
+      },
+      {
+        "name": "history-native-host/unprovisioned-parent.json",
+        "bytes": 229
+      },
+      {
+        "name": "public-fixture-parent.json",
+        "bytes": 3310
+      },
+      {
+        "name": "source.json",
+        "bytes": 512
+      }
+    ]
+  },
+  {
+    "artifact_id": 13582163092,
+    "count": 4140,
+    "uncompressed_bytes": 645126763,
+    "largest_files": [
+      {
+        "name": "history-native/long-history/confirmer/native.sqlite",
+        "bytes": 220938240
+      },
+      {
+        "name": "history-native/long-history/validator/native.sqlite",
+        "bytes": 220790784
+      },
+      {
+        "name": "history-native/build.jsonl",
+        "bytes": 110125
+      },
+      {
+        "name": "history-native/long-history/packets/00900.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/01800.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/02700.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/03600.bin",
+        "bytes": 50697
+      },
+      {
+        "name": "history-native/long-history/packets/00001.bin",
+        "bytes": 49508
+      }
+    ],
+    "readable_files": [
+      {
+        "name": "history-native/build.stderr",
+        "bytes": 6872
+      },
+      {
+        "name": "history-native/execution-start.json",
+        "bytes": 76
+      },
+      {
+        "name": "history-native/history-resources.txt",
+        "bytes": 971
+      },
+      {
+        "name": "history-native/history.log",
+        "bytes": 11498
+      },
+      {
+        "name": "history-native/long-history/config.json",
+        "bytes": 632
+      },
+      {
+        "name": "history-native/long-history/source.json",
+        "bytes": 514
+      },
+      {
+        "name": "history-native/long-history/summary.json",
+        "bytes": 245
+      },
+      {
+        "name": "history-native/manifest.json",
+        "bytes": 5063
+      },
+      {
+        "name": "history-native/preparation.json",
+        "bytes": 3650
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent-after.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/actual-systemd-parent.log",
+        "bytes": 200
+      },
+      {
+        "name": "history-native-host/after-provision.json",
+        "bytes": 1628
+      },
+      {
+        "name": "history-native-host/before-provision.json",
+        "bytes": 2795
+      },
+      {
+        "name": "history-native-host/child-final-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-load-state.log",
+        "bytes": 10
+      },
+      {
+        "name": "history-native-host/child-result.json",
+        "bytes": 335
+      },
+      {
+        "name": "history-native-host/controller-result.json",
+        "bytes": 7907
+      },
+      {
+        "name": "history-native-host/inside-after.json",
+        "bytes": 1711
+      },
+      {
+        "name": "history-native-host/inside-before.json",
+        "bytes": 1687
+      },
+      {
+        "name": "history-native-host/install-reviewed-unit.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/outside-after.json",
+        "bytes": 1673
+      },
+      {
+        "name": "history-native-host/parent-properties.log",
+        "bytes": 146
+      },
+      {
+        "name": "history-native-host/seal-parent-directory.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/seal-parent-receipt.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/start-fixed-parent.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-reload.log",
+        "bytes": 0
+      },
+      {
+        "name": "history-native-host/systemd-run.log",
+        "bytes": 644
+      },
+      {
+        "name": "history-native-host/unprovisioned-parent.json",
+        "bytes": 229
+      },
+      {
+        "name": "public-fixture-parent.json",
+        "bytes": 3310
+      },
+      {
+        "name": "source.json",
+        "bytes": 512
+      }
+    ]
+  }
+]

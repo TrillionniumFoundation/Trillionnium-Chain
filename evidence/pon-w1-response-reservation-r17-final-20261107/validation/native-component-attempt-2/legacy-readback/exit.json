@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+    "store::legacy_admission_readback::tests::",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-11-07T15:34:33.518003+00:00",
+  "elapsed_seconds": 240.16840469115414
+}

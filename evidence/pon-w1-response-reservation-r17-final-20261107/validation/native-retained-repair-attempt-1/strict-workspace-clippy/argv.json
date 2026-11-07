@@ -1,0 +1,17 @@
+[
+  "cargo",
+  "+1.95.0",
+  "clippy",
+  "--manifest-path",
+  "trillionnium/Cargo.toml",
+  "--workspace",
+  "--all-targets",
+  "--all-features",
+  "--locked",
+  "--offline",
+  "-j",
+  "2",
+  "--",
+  "-D",
+  "warnings"
+]

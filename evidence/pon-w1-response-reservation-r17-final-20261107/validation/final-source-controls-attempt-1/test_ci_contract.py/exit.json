@@ -1,0 +1,11 @@
+{
+  "name": "test_ci_contract.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 39.823397506959736,
+  "timed_out": false
+}

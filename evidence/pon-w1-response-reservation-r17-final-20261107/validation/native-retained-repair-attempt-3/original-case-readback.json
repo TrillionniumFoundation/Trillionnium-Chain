@@ -1,0 +1,18 @@
+{
+  "schema": "r17-retained-public-v3-original-case-readback-v1",
+  "head": "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+  "original_stdout_bytes": 758415,
+  "original_stdout_sha256": "957ffc3ce2d6460d3a4fbb10f7dc52d46296cb41a5b7d9225fb595c18bd56db5",
+  "test_result": [
+    "test result: ok. 249 passed; 0 failed; 1 ignored; 0 measured; 986 filtered out; finished in 51.99s"
+  ],
+  "retained_queue_test_lines": [
+    "test ingress::public_v3::tests::disconnecting_paid_requests_waiting_for_queue_cancels_without_starting_work ... ok",
+    "test ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline ... ok",
+    "test ingress::public_v3::tests::trailing_input_after_complete_body_cancels_without_starting_work ... ok",
+    "test ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work ... ok"
+  ],
+  "ignored_test_lines": [
+    "test ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost ... ignored, paired PQ authentication cost; requires a fresh output directory"
+  ]
+}

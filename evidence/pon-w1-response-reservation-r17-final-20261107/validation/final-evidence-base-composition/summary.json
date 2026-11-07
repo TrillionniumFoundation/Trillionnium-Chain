@@ -1,0 +1,9 @@
+{
+  "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "prior": "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+  "branch": "docs/chain-w1-ingress-r17-evidence-20261107",
+  "staged_payload_paths": 1014,
+  "manifest_before_and_after_sha256": "8242992abcfa7f1bae431e01625baa26dcee90f2ed40f3e9711647c6a790f696",
+  "all_existing_staged_paths_preserved": true,
+  "main_written": false
+}

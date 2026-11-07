@@ -1,0 +1,22 @@
+1786: 2026-11-07T16:00:18.4553652Z     Checking trnm-escrow-vault v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-escrow-vault)
+1787: 2026-11-07T16:00:18.8009711Z     Checking trnm-worker-agent v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-worker-agent)
+1788: 2026-11-07T16:00:52.6534748Z error: call to `std::mem::drop` with a value that does not implement `Drop`. Dropping such a type only extends its contained lifetimes
+1789: 2026-11-07T16:00:52.6536044Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:9
+1790: 2026-11-07T16:00:52.6536708Z     |
+1791: 2026-11-07T16:00:52.6537020Z 434 |         drop(owner);
+1792: 2026-11-07T16:00:52.6537396Z     |         ^^^^^^^^^^^
+1793: 2026-11-07T16:00:52.6537760Z     |
+1794: 2026-11-07T16:00:52.6538293Z note: argument has type `trnm_sqlite_io_boundary::TransactionScope<'_>`
+1795: 2026-11-07T16:00:52.6539218Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:14
+1801: 2026-11-07T16:00:52.6543563Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`
+1802: 2026-11-07T16:00:52.6544083Z 
+1803: 2026-11-07T16:00:57.3642008Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error
+1804: 2026-11-07T16:00:57.3643363Z warning: build failed, waiting for other jobs to finish...
+1805: 2026-11-07T16:01:00.9341432Z ##[error]Process completed with exit code 101.
+1806: 2026-11-07T16:01:00.9402531Z ##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"
+1807: 2026-11-07T16:01:00.9403500Z [36;1mpython3 scripts/ci/verify_ci_source.py --kind head --expected-head "$TRNM_EXPECTED_SOURCE_SHA"[0m
+1808: 2026-11-07T16:01:00.9423670Z shell: /usr/bin/bash -e {0}
+1809: 2026-11-07T16:01:00.9423913Z env:
+1810: 2026-11-07T16:01:00.9424087Z   CI: true
+1811: 2026-11-07T16:01:00.9424276Z   CARGO_INCREMENTAL: 0
+1812: 2026-11-07T16:01:00.9424491Z   CARGO_BUILD_JOBS: 2

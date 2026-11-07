@@ -1,0 +1,11 @@
+{
+  "name": "test_run_from_zero_native.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_run_from_zero_native.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 44.676883863983676,
+  "timed_out": false
+}

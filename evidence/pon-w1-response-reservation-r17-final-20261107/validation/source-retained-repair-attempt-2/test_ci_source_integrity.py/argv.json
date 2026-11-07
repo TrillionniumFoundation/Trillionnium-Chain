@@ -1,0 +1,1 @@
+["python3", "-B", "scripts/ci/test_ci_source_integrity.py"]

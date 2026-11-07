@@ -1,0 +1,248 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-priority/release/deps/trnm_pon_node-10ac2862d4ea8e0a)
+
+running 1 test
+test account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover ... pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":0,"phase":"genesis_and_both_nodes_open"}
+pon_capacity_phase_v1 {"elapsed_seconds":48.987460989,"event":"end","height":0,"phase":"genesis_and_both_nodes_open"}
+authenticated full capacity: initialized real 65515-key test genesis in 48.987631097s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":1,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.172392524,"event":"end","height":1,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":1,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.829464283,"event":"end","height":1,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":1,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.84047195,"event":"end","height":1,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":1,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":58.676158035,"event":"end","height":1,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":1,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.51695994,"event":"end","height":1,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 1, elapsed 127.023266012s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":2,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.149395142,"event":"end","height":2,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":2,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.7997498739999997,"event":"end","height":2,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":2,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.833253955,"event":"end","height":2,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":2,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":52.719436425,"event":"end","height":2,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":2,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":14.129028352,"event":"end","height":2,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 2, elapsed 199.655456918s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":3,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.150377206,"event":"end","height":3,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":3,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.821107183,"event":"end","height":3,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":3,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8345579920000001,"event":"end","height":3,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":3,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":52.731737466,"event":"end","height":3,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":3,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":14.115778577,"event":"end","height":3,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 3, elapsed 272.309214916s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":4,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.149018445,"event":"end","height":4,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":4,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.852993631,"event":"end","height":4,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":4,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.840978343,"event":"end","height":4,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":4,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":52.772150674,"event":"end","height":4,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":4,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":14.122824379,"event":"end","height":4,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 4, elapsed 345.047379256s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":5,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.148844585,"event":"end","height":5,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":5,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.871228349,"event":"end","height":5,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":5,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.843803469,"event":"end","height":5,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":5,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":52.743531497,"event":"end","height":5,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":5,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.461556476,"event":"end","height":5,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 5, elapsed 417.116535061s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":6,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.15300156,"event":"end","height":6,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":6,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.905565385,"event":"end","height":6,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":6,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.851487472,"event":"end","height":6,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":6,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.247093429,"event":"end","height":6,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":6,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.48259352,"event":"end","height":6,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 6, elapsed 486.756480872s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":7,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.153621892,"event":"end","height":7,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":7,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.942533537,"event":"end","height":7,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":7,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8389403,"event":"end","height":7,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":7,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.251822811,"event":"end","height":7,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":7,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.471876785,"event":"end","height":7,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 7, elapsed 556.415469922s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":8,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.153665554,"event":"end","height":8,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":8,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.963797482,"event":"end","height":8,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":8,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8507192319999999,"event":"end","height":8,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":8,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.259906205,"event":"end","height":8,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":8,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.478499975,"event":"end","height":8,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 8, elapsed 626.12224688s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":9,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.151414934,"event":"end","height":9,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":9,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.007456747,"event":"end","height":9,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":9,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.830474521,"event":"end","height":9,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":9,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.151724929,"event":"end","height":9,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":9,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.45363642,"event":"end","height":9,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 9, elapsed 695.717144148s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":10,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.148802615,"event":"end","height":10,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":10,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":3.99959467,"event":"end","height":10,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":10,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.834723689,"event":"end","height":10,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":10,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.172247363,"event":"end","height":10,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":10,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.443886918,"event":"end","height":10,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 10, elapsed 765.31659088s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":11,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.150029618,"event":"end","height":11,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":11,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.028568444,"event":"end","height":11,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":11,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8419047210000001,"event":"end","height":11,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":11,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.165042999,"event":"end","height":11,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":11,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.469686237,"event":"end","height":11,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 11, elapsed 834.972006807s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":12,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.156357444,"event":"end","height":12,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":12,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.065464197,"event":"end","height":12,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":12,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.843505064,"event":"end","height":12,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":12,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.210360497,"event":"end","height":12,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":12,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.515672795,"event":"end","height":12,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 12, elapsed 904.763574034s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":13,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.153729454,"event":"end","height":13,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":13,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.090159335,"event":"end","height":13,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":13,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.847972521,"event":"end","height":13,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":13,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.393123266,"event":"end","height":13,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":13,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.469726464,"event":"end","height":13,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 13, elapsed 974.718475079s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":14,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.152288318,"event":"end","height":14,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":14,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.110594347,"event":"end","height":14,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":14,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8457138,"event":"end","height":14,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":14,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.264317115,"event":"end","height":14,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":14,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.510676164,"event":"end","height":14,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 14, elapsed 1044.602262172s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":15,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.155867011,"event":"end","height":15,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":15,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.188702976,"event":"end","height":15,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":15,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.852761413,"event":"end","height":15,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":15,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.320021984,"event":"end","height":15,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":15,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.507560108,"event":"end","height":15,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 15, elapsed 1114.62737515s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":16,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.156905756,"event":"end","height":16,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":16,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.185116206,"event":"end","height":16,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":16,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8604241620000002,"event":"end","height":16,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":16,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.286894955,"event":"end","height":16,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":16,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.452326202,"event":"end","height":16,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 16, elapsed 1184.569234908s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":17,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.149357998,"event":"end","height":17,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":17,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.200521444,"event":"end","height":17,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":17,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.841012396,"event":"end","height":17,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":17,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.225319333,"event":"end","height":17,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":17,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.467410293,"event":"end","height":17,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 17, elapsed 1254.453047026s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":18,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.155194122,"event":"end","height":18,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":18,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.236156903,"event":"end","height":18,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":18,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.8499427210000001,"event":"end","height":18,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":18,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.378381147,"event":"end","height":18,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":18,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.469725135000001,"event":"end","height":18,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 18, elapsed 1324.542662181s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":19,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.153850177,"event":"end","height":19,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":19,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.249257514,"event":"end","height":19,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":19,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.855418624,"event":"end","height":19,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":19,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.343256971,"event":"end","height":19,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":19,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.491098353,"event":"end","height":19,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 19, elapsed 1394.635730625s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.15348308,"event":"end","height":20,"phase":"producer_make"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":4.291667959,"event":"end","height":20,"phase":"producer_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":1.844318082,"event":"end","height":20,"phase":"producer_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":50.237215117,"event":"end","height":20,"phase":"validator_admit"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"validator_activate"}
+pon_capacity_phase_v1 {"elapsed_seconds":13.461554247,"event":"end","height":20,"phase":"validator_activate"}
+authenticated full capacity: actual admitted height 20, elapsed 1464.624163635s
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":20,"phase":"h20_full_state_and_capacity_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":5.299158215,"event":"end","height":20,"phase":"h20_full_state_and_capacity_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":21,"phase":"h21_growth_rejection_and_rollback_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":15.940792376,"event":"end","height":21,"phase":"h21_growth_rejection_and_rollback_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":21,"phase":"h21_refund_and_state_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":75.486019798,"event":"end","height":21,"phase":"h21_refund_and_state_checks"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":22,"phase":"h22_reentry_state_and_membership_proof"}
+pon_capacity_phase_v1 {"elapsed_seconds":91.824322664,"event":"end","height":22,"phase":"h22_reentry_state_and_membership_proof"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":23,"phase":"side_branch_construction_and_admission"}
+pon_capacity_phase_v1 {"elapsed_seconds":147.191689015,"event":"end","height":23,"phase":"side_branch_construction_and_admission"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":23,"phase":"reorganization_fault_and_old_state_check"}
+pon_capacity_phase_v1 {"elapsed_seconds":43.766626676,"event":"end","height":23,"phase":"reorganization_fault_and_old_state_check"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":23,"phase":"first_cold_reopen_recovery_and_proof"}
+pon_capacity_phase_v1 {"elapsed_seconds":123.358326341,"event":"end","height":23,"phase":"first_cold_reopen_recovery_and_proof"}
+pon_capacity_phase_v1 {"elapsed_seconds":0.0,"event":"begin","height":23,"phase":"second_cold_reopen_final_state_check"}
+pon_capacity_phase_v1 {"elapsed_seconds":28.19341999,"event":"end","height":23,"phase":"second_cold_reopen_final_state_check"}
+authenticated full capacity: accepted_native_packets=24, signed_transactions=2, rejected_growth=1, full_keys=65536, quota_refund=1, recipient_reentry=1, reorg_cut=detach:0, cold_reopens=2, synthetic_preallocated_genesis=true, elapsed 1995.78013071s
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1217 filtered out; finished in 1996.01s
+

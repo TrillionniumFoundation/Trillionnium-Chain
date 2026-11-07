@@ -1,0 +1,6 @@
+[
+  "/home/qian-qi/chain-w1-ingress-r17-20261107/target-native/debug/deps/trnm_pon_node-dad62fae90286334",
+  "store::legacy_admission_readback::tests::",
+  "--test-threads=1",
+  "--nocapture"
+]

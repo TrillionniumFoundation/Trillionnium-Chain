@@ -1,0 +1,8 @@
+{
+  "source_head": "f97c3bc5aedebcf80b2a95648c6291525e0b0a9c",
+  "file": "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs",
+  "before_sha256": "3f040dbf2cd7a8be26bdc15c82d9a0ce3c7ecccd5ce1102686391689a979c471",
+  "after_sha256": "0c263944f1117cadd6f209adf26160a6c98457d7518dd0287ddb3c51a5f9898d",
+  "production_behavior_changed": false,
+  "assertions_removed": false
+}

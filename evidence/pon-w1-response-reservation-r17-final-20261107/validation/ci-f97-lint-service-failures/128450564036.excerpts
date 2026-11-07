@@ -1,0 +1,145 @@
+2026-11-07T15:52:37.8623843Z [36;1mfor name, counts in expected.items():[0m
+2026-11-07T15:52:37.8624172Z [36;1m    text = (root / (name + ".log")).read_text()[0m
+2026-11-07T15:52:37.8624654Z [36;1m    rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)[0m
+2026-11-07T15:52:37.8625137Z [36;1m    if rows != [tuple(map(str, counts))]:[0m
+2026-11-07T15:52:37.8625735Z [36;1m        raise SystemExit(name + ': exact native controls did not execute')[0m
+2026-11-07T15:52:37.8626202Z [36;1mkernel = (root / 'factorial-kernel-tests.log').read_text()[0m
+2026-11-07T15:52:37.8626574Z [36;1mkernel_expected = {[0m
+2026-11-07T15:52:37.8627113Z [36;1m    'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',[0m
+2026-11-07T15:52:37.8627940Z [36;1m    'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',[0m
+2026-11-07T15:52:37.8628969Z [36;1m    'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',[0m
+2026-11-07T15:52:37.8629736Z [36;1m    'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',[0m
+2026-11-07T15:52:37.8630631Z [36;1m    'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',[0m
+2026-11-07T15:52:37.8631411Z [36;1m    'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',[0m
+2026-11-07T15:52:37.8632286Z [36;1m    'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',[0m
+2026-11-07T15:52:37.8633030Z [36;1m    'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',[0m
+2026-11-07T15:52:37.8633784Z [36;1m    'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',[0m
+2026-11-07T15:52:37.8634564Z [36;1m    'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',[0m
+2026-11-07T15:53:25.8606575Z test pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry ... ok
+2026-11-07T15:53:25.8607333Z 
+2026-11-07T15:53:25.8607804Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.30s
+2026-11-07T15:53:25.8608398Z 
+2026-11-07T15:53:25.9609014Z    Compiling syn v2.0.117
+2026-11-07T15:53:25.9610637Z    Compiling vcpkg v0.2.15
+2026-11-07T15:53:26.3472951Z    Compiling pkg-config v0.3.32
+2026-11-07T15:53:26.6412096Z    Compiling libsqlite3-sys v0.37.0
+2026-11-07T15:53:26.7662898Z    Compiling equivalent v1.0.2
+2026-11-07T15:53:26.7856929Z    Compiling winnow v1.0.4
+2026-11-07T15:53:27.5741706Z    Compiling hashbrown v0.16.1
+2026-11-07T15:53:27.9383878Z    Compiling indexmap v2.13.1
+2026-11-07T15:53:28.3768415Z    Compiling toml_parser v1.1.3+spec-1.1.0
+2026-11-07T15:53:28.7801709Z    Compiling generic-array v0.14.7
+2026-11-07T15:53:28.7914996Z    Compiling foldhash v0.2.0
+2026-11-07T15:53:28.8967428Z    Compiling toml_datetime v1.1.1+spec-1.1.0
+2026-11-07T15:53:29.0126029Z    Compiling typenum v1.20.1
+2026-11-07T15:56:07.6205749Z test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+2026-11-07T15:56:07.6206401Z 
+2026-11-07T15:56:07.6206805Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-11-07T15:56:07.6207245Z 
+2026-11-07T15:56:07.7104987Z    Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+2026-11-07T15:56:14.9962756Z     Finished `release` profile [optimized] target(s) in 7.36s
+2026-11-07T15:56:15.0033562Z      Running tests/work_header_binding.rs (/home/runner/work/_temp/target-w1-legal-factorial/release/deps/work_header_binding-349b00c1bd0d5102)
+2026-11-07T15:56:15.0045325Z 
+2026-11-07T15:56:15.0045514Z running 1 test
+2026-11-07T15:56:15.0879671Z test complete_w1_proofs_cannot_move_between_header_fields_or_growth_domains ... ok
+2026-11-07T15:56:15.0880444Z 
+2026-11-07T15:56:15.0880823Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+2026-11-07T15:56:15.0881291Z 
+2026-11-07T15:56:15.1789649Z    Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+2026-11-07T16:00:06.0670650Z     Finished `release` profile [optimized] target(s) in 3m 50s
+2026-11-07T16:00:06.0771880Z      Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-legal-factorial/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+2026-11-07T16:00:06.0794584Z 
+2026-11-07T16:00:06.0794853Z running 5 tests
+2026-11-07T16:00:06.0928205Z test ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill ... {"case":"valid","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":335326,"discarded_refill_ns":21843,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1407144,"live_owners":0,"paid_cpu_debit_ns":1408086,"remaining_paid_credit_ns":1998927240,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1408086,"settlement_discard_ns":0,"settlement_residual_cpu_ns":942,"stored_credit_ns":1998927240,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":false,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1407144,"live_refused":false,"owner_cpu_ns":1408086,"residual_cpu_ns":942,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1408086},"reference_boundaries":1099,"resource_calls":1099,"schema":"history-w1-host-boundary-count-v1"}
+2026-11-07T16:00:06.0941196Z {"case":"valid","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":335104,"discarded_refill_ns":27461,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1386155,"live_owners":0,"paid_cpu_debit_ns":1387007,"remaining_paid_credit_ns":1998948097,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1387007,"settlement_discard_ns":0,"settlement_residual_cpu_ns":852,"stored_credit_ns":1998948097,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":true,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1386155,"live_refused":false,"owner_cpu_ns":1387007,"residual_cpu_ns":852,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1387007},"reference_boundaries":1099,"resource_calls":1099,"schema":"history-w1-host-boundary-count-v1"}
+2026-11-07T16:00:06.0959901Z {"case":"false-trace","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":271894,"discarded_refill_ns":26344,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1134866,"live_owners":0,"paid_cpu_debit_ns":1135758,"remaining_paid_credit_ns":1999136136,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1135758,"settlement_discard_ns":0,"settlement_residual_cpu_ns":892,"stored_credit_ns":1999136136,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":false,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1134866,"live_refused":false,"owner_cpu_ns":1135758,"residual_cpu_ns":892,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1135758},"reference_boundaries":897,"resource_calls":897,"schema":"history-w1-host-boundary-count-v1"}
+2026-11-07T16:00:06.0971414Z {"case":"false-trace","flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":274368,"discarded_refill_ns":13206,"initial_credit_ns":2000000000,"live_debited_cpu_ns":1144695,"live_owners":0,"paid_cpu_debit_ns":1145547,"remaining_paid_credit_ns":1999128821,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":1145547,"settlement_discard_ns":0,"settlement_residual_cpu_ns":852,"stored_credit_ns":1999128821,"unsettled_known_live_cpu_ns":0},"owns_node_mutex":true,"physical_host_measurement":false,"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":1144695,"live_refused":false,"owner_cpu_ns":1145547,"residual_cpu_ns":852,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":1145547},"reference_boundaries":897,"resource_calls":897,"schema":"history-w1-host-boundary-count-v1"}
+2026-11-07T16:00:06.0993040Z ok
+2026-11-07T16:00:06.1129217Z test ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary ... ok
+2026-11-07T16:00:06.3445311Z test ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account ... ok
+2026-11-07T16:00:06.3889816Z test ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries ... ok
+2026-11-07T16:00:06.3992319Z test ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work ... ok
+2026-11-07T16:00:06.3993241Z 
+2026-11-07T16:00:06.3993915Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 1213 filtered out; finished in 0.32s
+2026-11-07T16:00:06.3994525Z 
+2026-11-07T16:00:06.4990236Z     Finished `release` profile [optimized] target(s) in 0.08s
+2026-11-07T16:00:06.5062470Z      Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-legal-factorial/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+2026-11-07T16:00:06.5085254Z 
+2026-11-07T16:00:06.5085501Z running 29 tests
+2026-11-07T16:00:06.9304861Z test ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced ... ok
+2026-11-07T16:00:07.9471570Z test ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation ... ok
+2026-11-07T16:00:08.3828176Z test ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account ... ok
+2026-11-07T16:00:08.4835642Z test ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline ... ok
+2026-11-07T16:00:13.4981169Z test ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu ... ok
+2026-11-07T16:00:18.5148534Z test ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry ... ok
+2026-11-07T16:00:18.7153726Z test ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account ... ok
+2026-11-07T16:00:19.2474022Z test ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen ... ok
+2026-11-07T16:00:19.2593024Z test ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account ... ok
+2026-11-07T16:00:29.5113588Z test ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer ... ok
+2026-11-07T16:00:29.5114100Z 
+2026-11-07T16:00:29.5114440Z test result: ok. 28 passed; 0 failed; 1 ignored; 0 measured; 1189 filtered out; finished in 23.00s
+2026-11-07T16:00:29.5114812Z 
+2026-11-07T16:00:29.6091846Z     Finished `release` profile [optimized] target(s) in 0.08s
+2026-11-07T16:00:29.6162812Z      Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-legal-factorial/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+2026-11-07T16:00:29.6187221Z 
+2026-11-07T16:00:29.6187452Z running 11 tests
+2026-11-07T16:00:30.6388083Z test ingress::public_v3::scalar_cpu::completion_tests::actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_identity ... verified completion actual W1 replays=174 cpu_ns=249762074 flow={"schema":"public-v3-local-actual-cpu-flow-v1","initial_credit_ns":0,"credited_refill_ns":251698047,"discarded_refill_ns":0,"booked_reservation_ns":0,"live_debited_cpu_ns":251333664,"settlement_residual_cpu_ns":1072,"settled_full_cpu_ns":251334736,"unsettled_known_live_cpu_ns":0,"paid_cpu_debit_ns":251334736,"settlement_discard_ns":0,"remaining_paid_credit_ns":363311,"balance_identity_verified":true,"stored_credit_ns":363311,"live_owners":0}
+2026-11-07T16:00:30.6392517Z ok
+2026-11-07T16:00:30.7529812Z test ingress::public_v3::scalar_cpu::completion_tests::already_running_probe_cannot_spend_beyond_its_original_quantum_during_completion ... ok
+2026-11-07T16:00:30.7663238Z test ingress::public_v3::scalar_cpu::completion_tests::complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once ... ok
+2026-11-07T16:00:30.7817433Z test ingress::public_v3::scalar_cpu::completion_tests::completion_identity_survives_cancel_and_unknown_without_invalidating_retry ... ok
+2026-11-07T16:00:31.1182303Z test ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences ... ok
+2026-11-07T16:00:31.1318313Z test ingress::public_v3::scalar_cpu::completion_tests::completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones ... ok
+2026-11-07T16:00:31.6787476Z test ingress::public_v3::scalar_cpu::completion_tests::exclusive_history_refill_observes_original_resource_cancellation_without_new_credit ... {"flow":{"balance_identity_verified":true,"booked_reservation_ns":0,"credited_refill_ns":133789476,"discarded_refill_ns":0,"initial_credit_ns":0,"live_debited_cpu_ns":133792309,"live_owners":0,"paid_cpu_debit_ns":133793581,"remaining_paid_credit_ns":-4105,"schema":"public-v3-local-actual-cpu-flow-v1","settled_full_cpu_ns":133793581,"settlement_discard_ns":0,"settlement_residual_cpu_ns":1272,"stored_credit_ns":-4105,"unsettled_known_live_cpu_ns":0},"receipt":{"accounting_unavailable":false,"finished_workers":0,"known_workers":0,"live_paid_cpu_ns":133792309,"live_refused":false,"owner_cpu_ns":133793581,"residual_cpu_ns":1272,"schema":"service-owner-scoped-thread-cpu-settlement-v1","scoped_worker_cpu_ns":0,"spawned_workers":0,"started_workers":0,"total_cpu_ns":133793581},"schema":"history-resource-cancellation-real-refill-v1"}
+2026-11-07T16:00:31.6792972Z ok
+2026-11-07T16:00:31.7806138Z test ingress::public_v3::scalar_cpu::completion_tests::same_verified_w1_with_changed_transaction_body_is_rejected_before_promotion ... ok
+2026-11-07T16:00:31.7806828Z 
+2026-11-07T16:00:31.7807149Z test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 1207 filtered out; finished in 2.16s
+2026-11-07T16:00:31.7807611Z 
+2026-11-07T16:00:31.8191695Z ##[group]Run bash scripts/ci/prepare_pq_provider.sh
+2026-11-07T16:00:31.8192141Z [36;1mbash scripts/ci/prepare_pq_provider.sh[0m
+2026-11-07T16:00:31.8211563Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-07T16:00:31.8211923Z env:
+2026-11-07T16:00:31.8212109Z   CI: true
+2026-11-07T16:00:31.8212302Z   CARGO_INCREMENTAL: 0
+2026-11-07T16:00:31.8212523Z   CARGO_BUILD_JOBS: 2
+2026-11-07T16:00:31.8212737Z   RUST_TEST_THREADS: 1
+2026-11-07T16:00:31.8212958Z   CARGO_TERM_COLOR: never
+2026-11-07T16:00:31.8213208Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-07T16:00:31.8213482Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04
+2026-11-07T16:00:31.8213764Z   SOURCE_KIND: head
+2026-11-07T16:00:31.8214229Z   EXPECTED_SOURCE: f97c3bc5aedebcf80b2a95648c6291525e0b0a9c
+2026-11-07T16:02:51.3403747Z     Checking trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+2026-11-07T16:02:53.3665349Z     Checking trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+2026-11-07T16:03:21.8085801Z error: call to `std::mem::drop` with a value that does not implement `Drop`. Dropping such a type only extends its contained lifetimes
+2026-11-07T16:03:21.8087583Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:9
+2026-11-07T16:03:21.8088528Z     |
+2026-11-07T16:03:21.8102774Z 434 |         drop(owner);
+2026-11-07T16:03:21.8103492Z     |         ^^^^^^^^^^^
+2026-11-07T16:03:21.8104074Z     |
+2026-11-07T16:03:21.8104690Z note: argument has type `trnm_sqlite_io_boundary::TransactionScope<'_>`
+2026-11-07T16:03:21.8105566Z    --> crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs:434:14
+2026-11-07T16:03:21.8106252Z     |
+2026-11-07T16:03:21.8106609Z 434 |         drop(owner);
+2026-11-07T16:03:21.8107007Z     |              ^^^^^
+2026-11-07T16:03:21.8108230Z     = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#drop_non_drop
+2026-11-07T16:03:21.8109628Z     = note: `-D clippy::drop-non-drop` implied by `-D warnings`
+2026-11-07T16:03:21.8110376Z     = help: to override `-D warnings` add `#[allow(clippy::drop_non_drop)]`
+2026-11-07T16:03:21.8110885Z 
+2026-11-07T16:03:26.6005851Z error: could not compile `trnm-pon-node` (lib test) due to 1 previous error
+2026-11-07T16:03:26.6007054Z warning: build failed, waiting for other jobs to finish...
+2026-11-07T16:03:26.8090556Z ##[error]Process completed with exit code 101.
+2026-11-07T16:03:26.8150316Z ##[group]Run env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "x64" --legal-strategy-v3
+2026-11-07T16:03:26.8151188Z [36;1menv -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_false_trace_reuse_v1.py --arch "x64" --legal-strategy-v3[0m
+2026-11-07T16:03:26.8170397Z shell: /usr/bin/bash -e {0}
+2026-11-07T16:03:26.8170652Z env:
+2026-11-07T16:03:26.8170834Z   CI: true
+2026-11-07T16:03:26.8171024Z   CARGO_INCREMENTAL: 0
+2026-11-07T16:03:26.8171240Z   CARGO_BUILD_JOBS: 2
+2026-11-07T16:03:26.8171446Z   RUST_TEST_THREADS: 1
+2026-11-07T16:03:26.8171656Z   CARGO_TERM_COLOR: never
+2026-11-07T16:03:26.8171907Z   PYTHONDONTWRITEBYTECODE: 1
+2026-11-07T16:03:26.8172168Z   TRNM_COST_RUNNER_LABEL: ubuntu-24.04
+2026-11-07T16:03:26.8172436Z   SOURCE_KIND: head
+2026-11-07T16:03:26.8172712Z   EXPECTED_SOURCE: f97c3bc5aedebcf80b2a95648c6291525e0b0a9c
+2026-11-07T16:03:26.8173132Z   TRNM_EXPECTED_SOURCE_SHA: f97c3bc5aedebcf80b2a95648c6291525e0b0a9c

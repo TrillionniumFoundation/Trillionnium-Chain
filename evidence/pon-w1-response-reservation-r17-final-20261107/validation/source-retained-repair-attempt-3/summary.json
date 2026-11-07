@@ -1,0 +1,36 @@
+{
+  "head": "2f66491d06453d9b5c9a1783f9441fb1d07619a3",
+  "checks": [
+    {
+      "name": "test_ci_contract.py",
+      "exit_code": 0,
+      "elapsed_seconds": 16.409554245183244
+    },
+    {
+      "name": "test_ci_source_integrity.py",
+      "exit_code": 0,
+      "elapsed_seconds": 5.177800222998485
+    },
+    {
+      "name": "test_pq_research_integration.py",
+      "exit_code": 0,
+      "elapsed_seconds": 67.45156167214736
+    },
+    {
+      "name": "test_pon_public_v3_policy_read.py",
+      "exit_code": 0,
+      "elapsed_seconds": 0.21556600602343678
+    },
+    {
+      "name": "test_pon_public_v3_phase_read.py",
+      "exit_code": 0,
+      "elapsed_seconds": 1.168696764158085
+    },
+    {
+      "name": "source-after",
+      "exit_code": 0
+    }
+  ],
+  "all_checks_pass": true,
+  "tests_do_not_grant_native_acceptance": true
+}
