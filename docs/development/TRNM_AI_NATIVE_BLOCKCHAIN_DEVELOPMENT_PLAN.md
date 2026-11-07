@@ -8252,3 +8252,47 @@ The [research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) an
 record this scope. No new test freeze or qualification is asserted here; the
 candidate remains **Draft/HOLD**, with production and whole-chain acceptance
 ungranted.
+
+### 2026-11-07 quantum four-gate continuation — Draft/HOLD
+
+Continue from PR #773's bounded literal-search candidate and preserve all
+historical observations. The original native required-work function, DAA,
+median/future timestamp checks, strict greater-work activation, service profile
+and four-second research deadline are unchanged.
+
+The [lifecycle envelope](../../formal/pon-nakamoto-v1/w1_machine_envelope.py)
+adds whole-schedule initialization, input/result transfer, readout, controller
+waits, bounded magic-state service attempts and discard/reset events. It
+separates heralded failure from accepted-output faults and composes conditional
+event bounds under a stated ideal-trace coupling. Physical clocks, noise,
+layout, energy and prices remain uncalibrated. A conservative construction is
+an implementation cost, not a lower bound for the cheapest adversary.
+
+The [finite consensus certificate](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+binds every measured nonce to its actual block and successor context, uses one
+shared resource/error envelope, and checks the complete declared finite action
+graph. It conditions on a real existing prefix and a fixed public competitor;
+it does not cover all future honest mining or every timestamp/network policy.
+Classical uniform q=0, constructed quantum search, and census-selected witnesses
+remain separately identified. Initial advice and preprocessing are explicit.
+
+The [native bridge](../../formal/pon-nakamoto-v1/experiments/w1_native_bridge.py)
+and explicit ignored Rust research controls connect complete selected paths to
+fresh native admission, separate activation and persistent reopen. CI must
+explicitly run and check both named tests; successful compilation or an ignored
+test count is not execution evidence. Preserve unsuccessful builds, incomplete
+paths and native refusals with their exact source and original limits.
+
+The [observed economics reader](../../scripts/pon_w1_observed_economics_v1.py)
+replays complete retained V4 denominators under fixed CPU budgets without a
+fastest-per-sample oracle, future-sample skipping or invented reuse. Its
+historical source scope is distinct from current-source validation. The
+[18-cell construction comparison](../../formal/pon-nakamoto-v1/experiments/w1_machine_frontier.py)
+keeps all full/restricted predicates, processor counts and q choices, including
+refusals. Neither comparison establishes calibrated equal-resource mining.
+
+This continuation changes research implementations, evidence validation and CI
+coverage. Hardware calibration, least-cost bounds, profitable native quantum
+attacks, general mixed quantum/classical consensus security and production
+activation remain separately unqualified. Final execution receipts must name
+their actual frozen source; no green result is inferred from this plan entry.

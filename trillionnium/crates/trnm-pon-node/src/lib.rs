@@ -715,6 +715,9 @@ pub fn development_public(i: u64) -> Result<Hash> {
 mod operator_continuous_test_support;
 
 #[cfg(test)]
+mod quantum_native_bridge_tests;
+
+#[cfg(test)]
 pub(crate) mod packet_encoding_tests {
     use super::*;
 

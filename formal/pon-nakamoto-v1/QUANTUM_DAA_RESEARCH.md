@@ -932,3 +932,59 @@ w1_cost_measured=false, security_theorem=false,
 production_consensus_activation=false and release_ready=false.
 The release gate remains **NO_GO** until the missing cost/soundness/native
 and independent validation work is completed.
+
+## 2026-11-07: lifecycle, finite native branches and observed economics
+
+The earlier synthetic receipts retain their original scopes. The new
+[machine lifecycle envelope](w1_machine_envelope.py) separately derives input
+transfer, initialization of the allocated data patches, terminal nonce readout,
+controller commands and waits, finite magic-state attempt/discard slots, host
+calls, proof and propagation events. A whole declared schedule uses one code
+distance and the original total failure budget. Factory rejection and an
+accepted but faulty output are different events. The finite-retry bound requires
+a rejection upper bound conditional on the complete prior history; a marginal
+failure rate does not justify exponentiation. These remain explicit physical
+premises, without calibration, a compiled layout or an economic-machine claim.
+
+[Certified probability arithmetic](w1_search_probability.py) uses outward-rounded
+dyadic matrix powers for the actual marked/full-accepted counts. A restricted
+phase oracle can return legal unmarked candidates. The deadline analysis counts
+complete delivery, including a first winner whose proof misses the deadline.
+Under the stated ideal-trace coupling, a total fault-event bound epsilon gives
+an additive interval around the ideal event probability; it does not justify
+multiplying by an independent success-of-hardware factor.
+
+[The finite consensus certificate](FINITE_QUANTUM_CONSENSUS.md) retains each
+nonce and resulting block identity. It checks all declared actions and exact
+rational transition probabilities, actual integer required work, retarget and
+timestamp rules, and Bellman inequalities on a closed finite graph. The native
+fixture starts from an explicitly charged/conditional existing height-15 prefix
+and one already generated public extension. It is not an open-ended honest
+mining process. The census-aware maximum is an upper envelope over the stated
+action class; a separate fixed-q sampler never consults that maximum.
+
+The [native bridge](experiments/w1_native_bridge.py) binds the fixture, all
+complete PNW1 bytes, selected paths and implementation source. The two explicit
+[Rust research controls](../../trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs)
+generate native contexts and replay completed selected paths through fresh
+Node admission, strict-work activation and persistent reopen. The original
+four-second model deadline and fixed seed remain unchanged. A selected path,
+an offline advice witness, a native accepted block and a QPU execution have
+separate fields. Classical uniform q=0 is also a separate legal implementation:
+it requires no QPU register initialization and gains no quantum-advantage claim.
+
+[The finite construction comparison](experiments/w1_machine_frontier.py) retains
+all 18 predeclared full/restricted, processor-count and iteration-count cells
+on one root context. All processors, services and failures remain in the same
+declared budget. Certified interval dominance cannot establish the cheapest
+legal algorithm, calibrated parallel throughput or equivalent capital/energy.
+
+[The observed economics reader](../../scripts/pon_w1_observed_economics_v1.py)
+reparses every original V4 native row from its complete 36-shard cost grid and
+12 separate controls. Fixed strategies use the same CPU budgets and sample
+order, pay actual cohort setup and misses, and receive no partial-proof credit.
+It records current-source mismatches rather than relabeling historical native
+measurements. The ledger excludes separately timed verification, propagation
+and evidence overhead, so it remains a CPU-phase comparison. Cross-horizon
+shared prefixes are not independent samples. Real equal-resource quantum
+economics and a lower bound over all legal implementations remain open.

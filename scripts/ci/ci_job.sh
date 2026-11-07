@@ -26,6 +26,12 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_bounded_search.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_constructed_search.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_bounded_search_campaign.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_search_probability.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_machine_envelope.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_finite_consensus.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_native_bridge.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_machine_frontier.py' -v
+    python3 scripts/ci/test_pon_w1_observed_economics_v1.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v
@@ -205,6 +211,19 @@ case "${1:?required job}" in
       test ! -e "$trnm_model_receipt_root/workspace-tests.log"
       test ! -L "$trnm_model_receipt_root/workspace-tests.log"
       cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features 2>&1 | tee "$trnm_model_receipt_root/workspace-tests.log"
+      export TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR="$trnm_model_receipt_root/w1-quantum-native-bridge"
+      test ! -e "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -L "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::export_source_bound_native_dag_fixture -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-native-export.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-native-export.log" --test quantum_native_bridge_tests::export_source_bound_native_dag_fixture
+      python3 formal/pon-nakamoto-v1/experiments/w1_native_bridge.py --observe "$TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR"
+      test ! -e "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      test ! -L "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features quantum_native_bridge_tests::replay_source_bound_native_search_samples -- --exact --ignored --nocapture --test-threads=1 2>&1 | tee "$trnm_model_receipt_root/w1-quantum-native-replay.log"
+      python3 scripts/ci/check_required_native_test.py "$trnm_model_receipt_root/w1-quantum-native-replay.log" --test quantum_native_bridge_tests::replay_source_bound_native_search_samples
+      unset TRNM_W1_NATIVE_BRIDGE_EVIDENCE_DIR
       unset TRNM_ZERO_PAIRED_PREFIX_OUTPUT
       python3 scripts/pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR" --expected-report-sha256 "$(sha256sum "$TRNM_DAA_EVIDENCE_DIR/daa-bounds.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/daa-bounds-python.json"
       python3 scripts/ci/test_pon_daa_schedule_reader.py --raw-dir "$TRNM_DAA_EVIDENCE_DIR"
