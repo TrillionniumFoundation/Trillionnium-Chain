@@ -404,16 +404,39 @@ def native_durable_schema(root):
                     # must match the complete pre-PQ owner contract verbatim.
                     expected = expected.replace('pq_network: None,','')
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
-            selected = rust_code(body(node,'fn','open_selected'))
+            selected_wrapper = body(node,'fn','open_selected')
+            layout(selected_wrapper, '''Self::open_selected_mode(
+                    path,
+                    settings,
+                    workers,
+                    hook,
+                    owners,
+                    state_backend,
+                    SelectedOpen::InitializeOrRecover {
+                        growth_observation_only,
+                    },
+                )''', 'durable backend selected schema delegation')
+            node_code = rust_code(node)
+            mode = re.search(r'\bfn\s+open_selected_mode\b',node_code)
+            require(mode is not None, 'durable backend selected schema')
+            mode_body_start = node_code.find('{',mode.end())
+            require(mode_body_start >= 0, 'durable backend selected schema')
+            mode_header = node_code[mode.start():mode_body_start]
+            require(re.search(r'\bmut\s+settings\b',mode_header) is None,
+                    'durable backend selected schema rebound')
+            selected = rust_code(body(node,'fn','open_selected_mode'))
             bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
-            remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
+            prefix = selected[:bindings[0].start()]
+            remaining = selected[bindings[0].end():]
             names = r'\b(?:state_backend|settings|ddl|schema_id)\b'
             places = names+r'(?:\s*\.\s*[A-Za-z_]\w*|\s*\[[^\]]*\])*'
-            require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
-                    and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)
-                    and not re.search(r'&\s*mut\s*\(*\s*'+names,remaining),
+            def rebound(text):
+                return (re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',text)
+                        or re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',text)
+                        or re.search(r'&\s*mut\s*\(*\s*'+names,text))
+            require(not rebound(prefix) and not rebound(remaining),
                     'durable backend selected schema rebound')
         else:
             matches = [match for match in re.finditer(r'\bhash\(\s*b"native-branch-schema-v2"\s*,\s*&\[\s*ddl\.as_bytes\(\)\s*\]\s*\)',source)
