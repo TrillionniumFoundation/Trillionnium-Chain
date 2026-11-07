@@ -93,7 +93,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 27b6342619ee051c57944de88b4bbab33ff4627c
           # Retain R10 and the subsequent bounded 30-second client-import
           # observation under the original budgets, with an exact whole-file pin.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = fac51ab9b5d9dda80977a61cac48a038abe2129b
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = 785aa9534d075825b0828c00ac0c576dac3dfe62
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash
