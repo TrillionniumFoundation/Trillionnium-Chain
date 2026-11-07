@@ -321,7 +321,7 @@
     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
     "scripts/ci/check_pq_research_integration.py": "18667f2ff0178e855485759d6303ed7c253c18e7",
     "scripts/ci/check_public_readiness_evidence.py": "8b7e6fa0ff455cdeffe191a2c0286a7a8359a051",
-    "scripts/ci/check_sqlite_build_requalification.py": "3790ce2b25faf674258b6cd9c4e1a16b4ec74817",
+    "scripts/ci/check_sqlite_build_requalification.py": "54440d8968cf5eee063605aabf81ea0f4438daf0",
     "scripts/ci/ci_job.sh": "2378c02d1c73fc9c67d716018ab4e1dddbf56c99",
     "scripts/ci/model-runtime-cpu-requirements.txt": "6796d0737af36e1521d89f6937df288fe67167a1",
     "scripts/ci/pq_authority_surface_scan.py": "feb87d0e5d0b056b7586d9fff584a7188487eefc",
