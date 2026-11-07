@@ -17,6 +17,78 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Hepta publication and concurrent-source reconciliation, 2026-11-07 UTC:**
+[PR 780](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/780)
+published the exact preliminary r17 head 33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2
+through ProfHepta's normal local GitHub channel. Its selected native controls
+retained 42 passed / 1 failed / 0 ignored; the strict EOF observation failure and
+two local source-control timeouts are preserved in the
+[r17 preliminary evidence](../../evidence/pon-w1-response-reservation-r17-20261107/README.md).
+Reconcile the concurrent d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89 source without
+replacing either history. Keep the original resource gates and r17 identity.
+The test-only lifecycle synchronization correction and final combined source
+still require their own exact-source native and hosted observations; keep HOLD.
+
+**Response-signing reservation continuation, 2026-11-07 America/New_York:**
+Preserve the concurrently verified integration head
+`96e1eede091153199894532c91430bfc0f8e4572` when composing the new source with the
+retained r16 implementation. That observed head still binds r14, leaving fresh
+resource revision r17 for the [R1 response-signing contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md).
+After caller authentication and complete-body queueing, the actual worker must
+reserve its eventual response signature from the original intake epoch before
+decode, reads or native mutation. Keep an unsigned reservation through the worker's
+original settlement and cleanup, including cancellation. After signing starts,
+settle its actual crypto interval without holding authentication slots until
+socket output. Return only demonstrably unused CPU principal/slots, not spent
+attempt/byte allowances. Preserve actual
+signer-thread clocks, the original classical limits and the finite PQ contract.
+Include held responses and current classical/PQ usage in last-reference and
+continuous-checkpoint settlement. Keep known live ownership as transient Busy
+and retain unknown/debt crash fences. No new Host credit, worker, queue, deadline
+or business authority is granted. Preserve r10–r14/r16 raw and r13/r14/r16
+arithmetic vectors and every retained failure. Mutation-response signing remains
+nested in mutation CPU; read-response signing has no mutation owner.
+Reserve ownership is not ACK delivery or client confirmation. Exact-source
+regressions, original fixed-Host service, three full campaigns, full History,
+capacity/churn and independent WAN remain separate obligations. Keep HOLD.
+
+PR #688 is historical and currently inaccessible; do not assume it is an existing
+submission target. The user-selected Hepta local GitHub route has verified normal
+repository authorization. No push, new PR or new hosted-CI result is claimed by
+this continuation. The earlier connector's HTTP 403 remains in the r16 record.
+
+**Retained r16 W1 admission resource continuation, 2026-11-07 America/New_York:**
+The r16 task began on the then-existing #688 integration lineage from
+`3d1b6507671ec694ce58e86d4063a125c8deeb66`.
+The [R1 admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md)
+adds a shared rolling classical-signature CPU reservation to the original intake
+owner, using the original scalar constants with known-failure debit, no unknown
+refund, zero cold-start credit and no extra Host allowance. Use fresh signed
+resource revision r16 and retain r10–r14 vectors; the separate r15 proposal is
+not silently merged. Check existing Node budget ownership before startup State
+reads without letting failed setup bind a new owner. Exercise actual TCP victim
+caller and cross-operation/body substitution before any spent/body/work grant.
+Settle the final shared listener/History reference from current scalar and
+authentication accounts under the Node lock. Keep controlled continuous close
+behind actual listener release and its existing durable accounting-fault fence;
+an old clean journal anchor cannot authorize fresh listener authentication.
+Expose complete offered business confirmation denominators and schedule-inclusive
+latency separately from receiver queue/ACK timings, preserving original v1–v3
+readback and all original deadlines. Mutation-response authentication CPU overlaps
+the original mutation interval and is never added twice. Preserve original cancellation
+ownership, full W1 and consumer contract checks, fixed Host limits, failed campaigns
+and all activation flags. Exact-source native and original-service results remain
+separate obligations; this change makes no fairness, PoW-hardness or release claim.
+
+The [retained r16 implementation and local evidence](../../evidence/pon-w1-ingress-contract-r16-20261107/README.md)
+bind native checks to implementation `2cd7353187bb58347ae7cbf884fef7aa2d05f610`.
+All 25 added regressions, strict Clippy and formatting passed; the complete
+workspace run retained 4,344 passed, 77 failed and 70 ignored across 385 targets
+(18 failed targets). The original fixed Host/campaign gates were not executed
+locally. That delivery recorded account-suspended HTTP 403 through its connected
+GitHub route, no publication and no new hosted CI result. These retained results
+do not qualify the r17 successor. Keep HOLD.
+
 **Finite multimodal computation and native Cell consumers, 2026-11-07:**
 Continue the same integration candidate with two separately named profiles.
 The [multimodal V3 relation](specs/pon/USEFUL_CELL_MULTIMODAL_V3.md) reexecutes raw
@@ -3116,11 +3188,13 @@ as separate correctness, resource and public-service contracts.
    retries, original deadlines and first-error behavior. Unknown/cancelled jobs
    retain consumed credit and require original-operation reconciliation.
 4. Rerun the unchanged public campaign: 1,024 signed seed transfers, four seed
-   blocks, 21 business blocks, three 30-second rounds in each baseline/from-zero/
+   blocks, 21 business blocks, one 30-second phase for each baseline/from-zero/
    late-product mode, 0/24/24 attackers, two workers, 2 CPU-second burst,
-   0.25 CPU-second/second refill and 100 ms start reservation. Require 3/3 timely
-   independently imported confirmations in each mode; repeat the complete frozen
-   campaign three times with all failures retained. This is a finite development
+   0.25 CPU-second/second refill and 100 ms start reservation. Each phase keeps
+   three confirmation rounds scheduled at t=1/5/9 inside its one original
+   absolute deadline. Require 3/3 timely independently imported confirmations
+   in each mode; repeat the complete frozen three-phase campaign three times,
+   preserving all 27 planned outcomes and every failure. This is a finite development
    regression under that attack envelope, not universal public fairness.
 5. After preserving that result, execute the separately preregistered I02
    capacity/churn supplement: actually produce at least 4,097 distinct complete
@@ -7591,3 +7665,34 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+## 2026-11-07 R17 retained queue and Legacy test repair
+
+The actual f97c3bc head and prospective merge ran under the unchanged original Host. Seven honest Submit acknowledgements succeeded in each fresh pressure sample, while independent History confirmation still missed the original four-second window; this is a service deadline, not consensus invalidity. The original three-campaign run also finished with failure. These failures remain retained, and this test-only change makes no service-acceptance, anonymous-fairness, WAN, or economic claim. State full-capacity and reorganization recovery passed all four original architecture/source lanes; this does not qualify the separate PN1 identity-capacity/churn supplement.
+
+Four retained queue/cancellation fixtures held the Node while sequentially authenticating and completing bodies. Two dequeued bodies now legitimately own both original response-signing slots, so later fixture authentication could not reach the intended queue state. Complete every original paid grant before sending those same bodies, retaining all original assertions, request counts, queue limits, and deadlines. Scope the non-Drop Legacy transaction owner lexically before rollback, preserving all readback and corrupt-write assertions and strict Clippy. Production resource, wire, Cookie, fee, and consensus behavior is unchanged. Exact native and strict-tool validation follows on the frozen repair commit; prior failures are not overwritten.
+
+
+### 2026-11-07 deterministic retained queue worker barrier
+
+The frozen first repair `06a995db87ba14a302eafe42ceae856eebfb9592` passed strict workspace/all-target/all-feature Clippy and all seven Legacy readback tests. Its complete retained Public V3 selector observed 246 passed, three failed and one existing ignored test out of 250. The three failures still timed out at the original queue-metric helper; the failure logs did not retain a counter snapshot, so a transient pending peak of six is a source-derived scheduling explanation, not an observed measurement.
+
+Keep all eight original paid grants, the original queue capacity, worker count, four-pending assertion, deadlines and cancellation/no-work-start checks. In exactly those three eight-request fixtures, send the first two bodies, wait for the actual two original worker reservations and dequeues, then send the remaining six bodies. This deterministically establishes the intended full-queue precondition while the original Node lock is held. The now-passing three-request fixture is unchanged. No production contract or acceptance threshold changes. Fresh full Public V3, Legacy and strict-tool execution must be recorded on this new frozen source, and both prior failures remain evidence.
+
+
+### 2026-11-07 original queue staging boundary and retained failures
+
+The second frozen repair `436ffaefca83292cecef149663d3bdc5a92e5764` again observed 246 passed, three failed and one existing ignored Public V3 test; all seven Legacy controls and strict all-target/all-feature workspace Clippy passed. A diagnostic execution of the unchanged binary with a backtrace locates the eight-request failure at the original full-queue wait, after the two-worker reservation gate had passed. The complete source shows why an additional fixture boundary is necessary: Body completion becomes Enqueue in one reactor visit, and the loop counts that transient stage before a later visit can try_send. No failure-time counter snapshot existed, so the precise failed peak is still not claimed as measured.
+
+Retain the actual two-worker gate, then fill the original two channel slots and observe their original enqueue/dequeue counts before sending the final four bodies. Keep all eight authenticated requests, the original peak-equals-four, backpressure, cancellation, zero-work-start, native commit and absolute deadline assertions. A bounded seven-counter diagnostic runs only after the original test wait deadline; the original assert remains outside that diagnostic branch and still executes every loop. No production source or deadline is changed. Fresh complete selector and strict-tool validation follows on this frozen source; both unsuccessful repairs remain evidence.
+
+The original f97 History execution is now confirmed failed in all four lanes: x64 head/merge returned 4,028/2,792 imports before the original 1,800-second server lifetime expired, and both ARM lanes returned 4,104 before the final original 30-second import deadline. Import-return counts are not durable activation. Original three-campaign confirmation is 3/27, with 9 observed failures and 15 unobserved planned rounds; its actual public Host receipts preserve all original limits. No finite offered-population tail, PN1 identity-churn, WAN, anonymous fairness, hardness or economic qualification follows.
+
+
+### 2026-11-07 final R17 composition with concurrent Cell evidence
+
+The exact R17 test-repair source `2f66491d06453d9b5c9a1783f9441fb1d07619a3` completed the retained Public V3 selector with 249 passed, zero failed and one existing paired-PQ-cost benchmark ignored. All seven Legacy controls, strict workspace/all-target/all-feature Clippy, negative source controls and the three original locked dependency graphs passed. This is component validation, not original fixed-Host service acceptance.
+
+The live integration ref advanced to `04bbc81e4aad9b29fef29385d3262297e2cb17df` while PR metadata still recorded acc2. Its 174 changed paths are documentation and recovered Cell evidence only. Preserve that entire branch history with an ordinary merge into the R17 candidate, retain both sets of plan entries and check the complete merged source. All tracked paths outside documentation/evidence must remain byte-identical to the validated R17 source. Fresh native selector, Legacy, strict-tool and source checks are recorded against the resulting committed merge. No native acceptance, force push, main change or activation follows from composition.
+
+Original upstream publication stdout/stderr retain their exact whitespace. The whole staged-tree whitespace check reports those raw stream lines; it is retained as a failed diagnostic. Authored source/document whitespace is checked separately, and every unchanged upstream evidence/specification blob is compared with the original 04bbc81 commit before publication. No raw observation is reformatted to satisfy a style check.

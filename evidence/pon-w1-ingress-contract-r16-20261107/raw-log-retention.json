@@ -1,0 +1,361 @@
+{
+  "schema": "trnm-r16-lossless-raw-log-retention-v1",
+  "encoding": "gzip",
+  "gzip_mtime": 0,
+  "raw_bytes_rewritten": false,
+  "scope": "Lossless storage of original captures, including their original trailing whitespace and empty files. Decoded hashes bind the original observations; compression is not a new test run.",
+  "files": [
+    {
+      "original_path": "logs/materialize-repository.log",
+      "retained_path": "logs/materialize-repository.log.gz",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_bytes": 20,
+      "retained_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "original_path": "logs/public-v3-native-corrected-profile.log",
+      "retained_path": "logs/public-v3-native-corrected-profile.log.gz",
+      "original_bytes": 29506,
+      "original_sha256": "3b688022c98aced44a53da95705aaa38d8a68f2f4233270ac2bdb08a41bf0992",
+      "retained_bytes": 6909,
+      "retained_sha256": "89f906de61b70b68e1cd1e97046434ca44a499e847232fe7395107199aaa3794"
+    },
+    {
+      "original_path": "logs/public-v3-native-original-profile.log",
+      "retained_path": "logs/public-v3-native-original-profile.log.gz",
+      "original_bytes": 3591,
+      "original_sha256": "9b4f99c7cfb4674333f14b9c7894abd78823d35da7884ec7bc7e0ed880375747",
+      "retained_bytes": 1075,
+      "retained_sha256": "3999468f877b8d577218111124b9610de051c58513a0781e0c5c859725708ef4"
+    },
+    {
+      "original_path": "logs/r16-after-additional-diagnostic-source.log",
+      "retained_path": "logs/r16-after-additional-diagnostic-source.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "1b05612a39ad94b5ba2e438c1cc2beed83e162daf7e12ef50d0622da740fd107",
+      "retained_bytes": 256,
+      "retained_sha256": "9ac3458ee8185d92d03edcb9f339ea428363318cb6eb69cdaa10755298d76fdf"
+    },
+    {
+      "original_path": "logs/r16-applicability-negative-tests.log",
+      "retained_path": "logs/r16-applicability-negative-tests.log.gz",
+      "original_bytes": 5748,
+      "original_sha256": "687f5f0f8ea2b928250b84768eabca3b43530682f8340f112bef30fd7f9167df",
+      "retained_bytes": 1072,
+      "retained_sha256": "e6896e04254a8c51582978f95a4ca0c9f3a6506478f8549ac9071d505b602d7e"
+    },
+    {
+      "original_path": "logs/r16-canonical-plan.log",
+      "retained_path": "logs/r16-canonical-plan.log.gz",
+      "original_bytes": 133,
+      "original_sha256": "093c3f70698a5284870955fe0b12130251a3b2e86c14d1b16f0a5e00b5b6aca9",
+      "retained_bytes": 124,
+      "retained_sha256": "4eb39f36dc3632a519a303f8fe34db96035e087ac6fef8aeaaff040e9cdbde8f"
+    },
+    {
+      "original_path": "logs/r16-evidence-preflight.log",
+      "retained_path": "logs/r16-evidence-preflight.log.gz",
+      "original_bytes": 171,
+      "original_sha256": "027b6c1a923456243a8e5bfc7a920b2d3362f68dec6ff4a66b1904ee858655e8",
+      "retained_bytes": 157,
+      "retained_sha256": "68cabda59fe1eee10d60ee6724cef92fbe4edc010fba4fbcd7462fe75d5f66c5"
+    },
+    {
+      "original_path": "logs/r16-final-canonical-plan.log",
+      "retained_path": "logs/r16-final-canonical-plan.log.gz",
+      "original_bytes": 8596,
+      "original_sha256": "5f2d1e7b12c6d6cfe1d1cdb73444face9deae081f9becb678282cc8b8eb02479",
+      "retained_bytes": 1829,
+      "retained_sha256": "f8b456cda6a699219a8b32b28e2a93b86f79c3f219906c0fe74c0203342da105"
+    },
+    {
+      "original_path": "logs/r16-final-format.log",
+      "retained_path": "logs/r16-final-format.log.gz",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_bytes": 20,
+      "retained_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+    },
+    {
+      "original_path": "logs/r16-final-phase-tests.log",
+      "retained_path": "logs/r16-final-phase-tests.log.gz",
+      "original_bytes": 11725,
+      "original_sha256": "d722388c0d51fd84a4d5b2e07665ae12d223de9050013a44edf742aa2222c9db",
+      "retained_bytes": 2221,
+      "retained_sha256": "55f0fba7e274ac82d38bdfef894f0cbea8cea5559e421c069ed5e62ae6fa0106"
+    },
+    {
+      "original_path": "logs/r16-final-policy-tests.log",
+      "retained_path": "logs/r16-final-policy-tests.log.gz",
+      "original_bytes": 1244,
+      "original_sha256": "72346aa28c8daf082cb9af8422280d12334a7bbcd4f92fab386cf67ecdc9501a",
+      "retained_bytes": 345,
+      "retained_sha256": "8c900a0681d97298f86f6cc3c8620ffe499d364b63c2e11ae6ceb191ae2bdb3e"
+    },
+    {
+      "original_path": "logs/r16-final-pq-source-tests.log",
+      "retained_path": "logs/r16-final-pq-source-tests.log.gz",
+      "original_bytes": 137,
+      "original_sha256": "f5b3fcaf48d798eb0452714fc1b51f057fe08f00c1087000fcbf804e09ebe87a",
+      "retained_bytes": 55,
+      "retained_sha256": "12e21abc159b919659fd736a2f02e0c900424474ae49f65e98a9ba011a14d0c7"
+    },
+    {
+      "original_path": "logs/r16-final-preflight.log",
+      "retained_path": "logs/r16-final-preflight.log.gz",
+      "original_bytes": 171,
+      "original_sha256": "027b6c1a923456243a8e5bfc7a920b2d3362f68dec6ff4a66b1904ee858655e8",
+      "retained_bytes": 157,
+      "retained_sha256": "68cabda59fe1eee10d60ee6724cef92fbe4edc010fba4fbcd7462fe75d5f66c5"
+    },
+    {
+      "original_path": "logs/r16-final-retained-artifact-tests.log",
+      "retained_path": "logs/r16-final-retained-artifact-tests.log.gz",
+      "original_bytes": 119,
+      "original_sha256": "bb9191324d86d824ddfbdda7314a1e9364f8a3fd678047610db03e7efc3e07ea",
+      "retained_bytes": 56,
+      "retained_sha256": "c44244e17ed55814404e3b15788d2a731d950695ac26f7128bd333f49c62d7b1"
+    },
+    {
+      "original_path": "logs/r16-final-source-after.log",
+      "retained_path": "logs/r16-final-source-after.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "1b05612a39ad94b5ba2e438c1cc2beed83e162daf7e12ef50d0622da740fd107",
+      "retained_bytes": 256,
+      "retained_sha256": "9ac3458ee8185d92d03edcb9f339ea428363318cb6eb69cdaa10755298d76fdf"
+    },
+    {
+      "original_path": "logs/r16-final-source-before.log",
+      "retained_path": "logs/r16-final-source-before.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "1b05612a39ad94b5ba2e438c1cc2beed83e162daf7e12ef50d0622da740fd107",
+      "retained_bytes": 256,
+      "retained_sha256": "9ac3458ee8185d92d03edcb9f339ea428363318cb6eb69cdaa10755298d76fdf"
+    },
+    {
+      "original_path": "logs/r16-final-source-integrity-tests.log",
+      "retained_path": "logs/r16-final-source-integrity-tests.log.gz",
+      "original_bytes": 6898,
+      "original_sha256": "1660951681ed9fbb698aff66ea12bf1bc66db927c717d272b1bd68f99ab39669",
+      "retained_bytes": 1248,
+      "retained_sha256": "81cefb5137fc98d8e0cad2519306c31f31aa207fca03b91df88aef0f2ab54ccb"
+    },
+    {
+      "original_path": "logs/r16-final-source-pins.log",
+      "retained_path": "logs/r16-final-source-pins.log.gz",
+      "original_bytes": 557,
+      "original_sha256": "5f3061646657c3addf30b3f37ceab0342d43385a93a5d1d0c62d5399a80ec77c",
+      "retained_bytes": 294,
+      "retained_sha256": "85de4612ba22bf07835e8e25b6bb0ae134347e63ddc41fb3a9138ccdee6b0ace"
+    },
+    {
+      "original_path": "logs/r16-formal-reference.log",
+      "retained_path": "logs/r16-formal-reference.log.gz",
+      "original_bytes": 2944,
+      "original_sha256": "3acf74739a63e5190932ec7ff402308d76b9524e62dd3114574a440d271ba623",
+      "retained_bytes": 699,
+      "retained_sha256": "c51133c711bd9f3053a370e295added37b5284902105e99844dfe1dcca210558"
+    },
+    {
+      "original_path": "logs/r16-phase-exact-source.log",
+      "retained_path": "logs/r16-phase-exact-source.log.gz",
+      "original_bytes": 11725,
+      "original_sha256": "f1931cc4b4b6a3035887910c91ac1096a3490bc668e835718b6eff4af1f2f11e",
+      "retained_bytes": 2221,
+      "retained_sha256": "5cdbecf41529583939836992b4add550e87cea98e9bf2864f82540a15f3253e5"
+    },
+    {
+      "original_path": "logs/r16-phase-reader-scope-final.log",
+      "retained_path": "logs/r16-phase-reader-scope-final.log.gz",
+      "original_bytes": 168,
+      "original_sha256": "b206b86e1ad1c6444c9c8a6d3c70e091c0c18f29cc35496180c84e0ecc3aebce",
+      "retained_bytes": 56,
+      "retained_sha256": "420db64790d8295d16046a583fce85bfb98d2ef74bb495e37a36d503d2d3a903"
+    },
+    {
+      "original_path": "logs/r16-phase-reader-tests.log",
+      "retained_path": "logs/r16-phase-reader-tests.log.gz",
+      "original_bytes": 11725,
+      "original_sha256": "c90bbdd2fd0fa87037b8495367e9ebb785293ec2b481490fe0194db2ff206b60",
+      "retained_bytes": 2221,
+      "retained_sha256": "972fda94bad07f4832c0c1f786c40f2f4df69613d3ac8b9a5176b0208f39272b"
+    },
+    {
+      "original_path": "logs/r16-policy-exact-source.log",
+      "retained_path": "logs/r16-policy-exact-source.log.gz",
+      "original_bytes": 1244,
+      "original_sha256": "db59078ef1cc8b9c5f7f7f6a13d08eabd8f575efe6a144cd8035115c286d55ee",
+      "retained_bytes": 346,
+      "retained_sha256": "25fe5ffc03870fac55c4991a581b6172a01eeb43a86ca2a18a38e568e6045e58"
+    },
+    {
+      "original_path": "logs/r16-policy-tests.log",
+      "retained_path": "logs/r16-policy-tests.log.gz",
+      "original_bytes": 1244,
+      "original_sha256": "3d7895fd68a8f41730e3b60526b84dc9eeec1c4463f5f9dadc7be69aa9f22905",
+      "retained_bytes": 346,
+      "retained_sha256": "2ebbfb49b671438638f0204f7eb12118d19d295fb8aa6170fb9e3e1dad5dbcce"
+    },
+    {
+      "original_path": "logs/r16-pq-source-negative-tests.log",
+      "retained_path": "logs/r16-pq-source-negative-tests.log.gz",
+      "original_bytes": 137,
+      "original_sha256": "225efc13dc27910154f9d3ea7c19d13f86ca0d8632540415edd4b48d149c56d6",
+      "retained_bytes": 55,
+      "retained_sha256": "44ebcadf36213127f028828472954bf9c1d2c6e8089224dbdfe5fe491a7941b4"
+    },
+    {
+      "original_path": "logs/r16-raw-log-whitespace-check.log",
+      "retained_path": "logs/r16-raw-log-whitespace-check.log.gz",
+      "original_bytes": 4244,
+      "original_sha256": "0afc20ac6b749ebc6e61989d9c270e6e77e0efd98457cfce37b644122f4f3086",
+      "retained_bytes": 984,
+      "retained_sha256": "ffeac282b45ece52b8eb7323d2a631e20bbcd9a56e562c74d138f00b9e06c4b6"
+    },
+    {
+      "original_path": "logs/r16-repository-binding-corrected.log",
+      "retained_path": "logs/r16-repository-binding-corrected.log.gz",
+      "original_bytes": 307,
+      "original_sha256": "91c247bb7d97d00d58f5533ff1fd561dc343ffa40fdb1925544d79b5feaea41a",
+      "retained_bytes": 241,
+      "retained_sha256": "ac04281b4955403bb4b932777dc683e17412345ddea737747416df17986389f9"
+    },
+    {
+      "original_path": "logs/r16-repository-negative-tests.log",
+      "retained_path": "logs/r16-repository-negative-tests.log.gz",
+      "original_bytes": 5345,
+      "original_sha256": "d89fce97aed171e4c11bbba7257c3d03a357c3d2274ebea0498c06326fd5d574",
+      "retained_bytes": 1046,
+      "retained_sha256": "00c3004fe87833f21bb00f2c5607aaae13915ba11bc2f0aeaabaef841115a9a4"
+    },
+    {
+      "original_path": "logs/r16-repository-precommit.log",
+      "retained_path": "logs/r16-repository-precommit.log.gz",
+      "original_bytes": 133,
+      "original_sha256": "093c3f70698a5284870955fe0b12130251a3b2e86c14d1b16f0a5e00b5b6aca9",
+      "retained_bytes": 124,
+      "retained_sha256": "4eb39f36dc3632a519a303f8fe34db96035e087ac6fef8aeaaff040e9cdbde8f"
+    },
+    {
+      "original_path": "logs/r16-retained-artifact-tests.log",
+      "retained_path": "logs/r16-retained-artifact-tests.log.gz",
+      "original_bytes": 119,
+      "original_sha256": "da8071c85889fdc8227d0b60b91c1614b2af47395dbd755117aee4ad0c5f5ada",
+      "retained_bytes": 56,
+      "retained_sha256": "f515a9683ed8de3850fd6f76cebf0dd0bd839e84e74d6abda0ef4459b5493f2a"
+    },
+    {
+      "original_path": "logs/r16-source-after-first-compile-failure.log",
+      "retained_path": "logs/r16-source-after-first-compile-failure.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "779c3a11ae18f87aff27a487f3560399ca28e6539110910d7a2d9fcd0a5b0a50",
+      "retained_bytes": 256,
+      "retained_sha256": "5221108a07cf1dd456770ec534acd2ec93b69596562344d8dc6eabed929506c9"
+    },
+    {
+      "original_path": "logs/r16-source-after-workspace-stop.log",
+      "retained_path": "logs/r16-source-after-workspace-stop.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "1b05612a39ad94b5ba2e438c1cc2beed83e162daf7e12ef50d0622da740fd107",
+      "retained_bytes": 256,
+      "retained_sha256": "9ac3458ee8185d92d03edcb9f339ea428363318cb6eb69cdaa10755298d76fdf"
+    },
+    {
+      "original_path": "logs/r16-source-before.log",
+      "retained_path": "logs/r16-source-before.log.gz",
+      "original_bytes": 423,
+      "original_sha256": "779c3a11ae18f87aff27a487f3560399ca28e6539110910d7a2d9fcd0a5b0a50",
+      "retained_bytes": 256,
+      "retained_sha256": "5221108a07cf1dd456770ec534acd2ec93b69596562344d8dc6eabed929506c9"
+    },
+    {
+      "original_path": "logs/r16-source-integrity-final.log",
+      "retained_path": "logs/r16-source-integrity-final.log.gz",
+      "original_bytes": 6898,
+      "original_sha256": "c0948a51306b5828bb4c374daff68dd37159134fdeea9805fe45823003cb0871",
+      "retained_bytes": 1248,
+      "retained_sha256": "b986a361d27da5838efd1a9db2a2690867d9482d45b828c94103fe67bfca6c52"
+    },
+    {
+      "original_path": "logs/r16-source-pins.log",
+      "retained_path": "logs/r16-source-pins.log.gz",
+      "original_bytes": 557,
+      "original_sha256": "5f3061646657c3addf30b3f37ceab0342d43385a93a5d1d0c62d5399a80ec77c",
+      "retained_bytes": 294,
+      "retained_sha256": "85de4612ba22bf07835e8e25b6bb0ae134347e63ddc41fb3a9138ccdee6b0ace"
+    },
+    {
+      "original_path": "logs/r16-strict-workspace-clippy.log",
+      "retained_path": "logs/r16-strict-workspace-clippy.log.gz",
+      "original_bytes": 5786,
+      "original_sha256": "2d23ea2d3e8dc145f5c72dda43c9ebccea9cec54b3c515a635067c484849f078",
+      "retained_bytes": 1247,
+      "retained_sha256": "1a24c3b5049d269193a132a16ad72edb639008cbcb8d374ad40669de3d9e48ed"
+    },
+    {
+      "original_path": "logs/r16-workspace-all-features-corrected.log",
+      "retained_path": "logs/r16-workspace-all-features-corrected.log.gz",
+      "original_bytes": 5883,
+      "original_sha256": "8f3569900dc350ffe6a5e1963e30b8bc4231ecaab88e43cb7fa6d0c4ba483923",
+      "retained_bytes": 1590,
+      "retained_sha256": "3efb85252ee684b52a56795f67d22b860c432c32dc0ef8774ed01c6d4b745614"
+    },
+    {
+      "original_path": "logs/r16-workspace-all-features-tests.log",
+      "retained_path": "logs/r16-workspace-all-features-tests.log.gz",
+      "original_bytes": 4733,
+      "original_sha256": "5c0b0e0a2a05e47b7d106dd58d78ac57d8348ae2f79dd002921f3eb1625bf6da",
+      "retained_bytes": 1151,
+      "retained_sha256": "c0abff09212bed161d62554f607816afed525ccb51bd4fe87327d7d69f123b5f"
+    },
+    {
+      "original_path": "logs/r16-workspace-complete-denominator.log",
+      "retained_path": "logs/r16-workspace-complete-denominator.log.gz",
+      "original_bytes": 618999,
+      "original_sha256": "5aa930c721773c9c223193a7d7a3e1cdc734a047459aad78e46ae99decdbffd9",
+      "retained_bytes": 114779,
+      "retained_sha256": "aaaafd77d7b1318faec9448ab1449d84098ea9bc55f7c591c2f749a3e9e424b2"
+    },
+    {
+      "original_path": "logs/rustup-install.log",
+      "retained_path": "logs/rustup-install.log.gz",
+      "original_bytes": 1946,
+      "original_sha256": "48cec2ecb3b73f633cef33411d2554c2a374e034472c29197a817a0ea09084ea",
+      "retained_bytes": 669,
+      "retained_sha256": "40419548696de610c198c3bdffeddc889397e14c43393d274d4d7242d9645446"
+    },
+    {
+      "original_path": "logs/source-integrity-tests.log",
+      "retained_path": "logs/source-integrity-tests.log.gz",
+      "original_bytes": 6898,
+      "original_sha256": "6a02f95486490b47133e8e6b107ef0bfb7200b963d0c39f499d278adf3b10278",
+      "retained_bytes": 1250,
+      "retained_sha256": "6e1d9dfd3d750f8c04579cb21acb500147034fb2edec9ba66e4a484ede9edb00"
+    },
+    {
+      "original_path": "logs/transport-crypto-tests.log",
+      "retained_path": "logs/transport-crypto-tests.log.gz",
+      "original_bytes": 20018,
+      "original_sha256": "c95a1944dd71d8bee74bffaec4bbbecd6bb1fa4aac27d532c9e859d8d96ee2b9",
+      "retained_bytes": 5281,
+      "retained_sha256": "bccff88dfbe98cdc0c97e066f78d1266535a10fcc341dda2fe1705eba142dab3"
+    },
+    {
+      "original_path": "logs/w1-false-transcript-oracle.log",
+      "retained_path": "logs/w1-false-transcript-oracle.log.gz",
+      "original_bytes": 2812,
+      "original_sha256": "cef5b9c30972926a3f78a22c108e6f23ce6b670a8e407a811e0bf986e9a940ed",
+      "retained_bytes": 1155,
+      "retained_sha256": "d87e7ca4396fdf8202e21241972b5fb471704eb0101d3ebc31de23e0fcc66ebb"
+    },
+    {
+      "original_path": "provider/pq-provider/build-and-smoke.log",
+      "retained_path": "provider/pq-provider/build-and-smoke.log.gz",
+      "original_bytes": 1266911,
+      "original_sha256": "194607cb5c91e7f59b4136cbe0b36337c036279718c3511edea12eca584e6528",
+      "retained_bytes": 36659,
+      "retained_sha256": "aa40e408f7eb839fd8e78491d0f0bac501b6e2bab4f625139d114450c0a9d679"
+    }
+  ]
+}

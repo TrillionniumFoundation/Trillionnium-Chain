@@ -1,0 +1,58 @@
+{
+  "boot_id": "12081329-1e3c-4565-8147-2bdaf8da2f6a",
+  "cgroup_controllers": null,
+  "consensus_or_model_authority": false,
+  "counters": {
+    "cgroup.events": null,
+    "cpu.stat": null,
+    "memory.current": null,
+    "memory.events": null,
+    "pids.current": null
+  },
+  "cwd": "/workspace/scratch/270e2a9ce94f/Trillionnium-Chain",
+  "gid": 1000,
+  "host_readiness_only": true,
+  "installed_unit_sha256": null,
+  "limits": {
+    "cpu.max": null,
+    "cpu.max.burst": null,
+    "memory.max": null,
+    "memory.swap.max": null,
+    "pids.max": null
+  },
+  "observed_utc": "2026-11-07T11:22:07.800683+00:00",
+  "original_host_acceptance_executed": false,
+  "parent": null,
+  "parent_path": "/sys/fs/cgroup/trnmponpublic.slice",
+  "phase": "r16-local-readiness",
+  "pid": 5,
+  "read_errors": {
+    "/run/systemd/system/trnmponpublic.slice": "[Errno 2] No such file or directory: '/run/systemd/system/trnmponpublic.slice'",
+    "/sys/fs/cgroup/cgroup.controllers": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cgroup.controllers'",
+    "/sys/fs/cgroup/trnmponpublic.slice": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cgroup.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cgroup.events'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.max.burst'",
+    "/sys/fs/cgroup/trnmponpublic.slice/cpu.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/cpu.stat'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.current'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.events": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.events'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/memory.swap.max'",
+    "/sys/fs/cgroup/trnmponpublic.slice/pids.current": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.current'",
+    "/sys/fs/cgroup/trnmponpublic.slice/pids.max": "[Errno 2] No such file or directory: '/sys/fs/cgroup/trnmponpublic.slice/pids.max'"
+  },
+  "schema": "trnm-ci-original-public-host-observation-v1",
+  "service": "not-launched-readiness-only",
+  "thread_cgroup": "0::/",
+  "thread_privileges": {
+    "CapBnd": "0000000000000000",
+    "NoNewPrivs": "1"
+  },
+  "uid": 1000,
+  "validation_errors": [
+    "FIXED_PARENT_IDENTITY",
+    "KERNEL_OBSERVATION_UNAVAILABLE",
+    "ORIGINAL_FINITE_LIMITS",
+    "REVIEWED_UNIT_BYTES"
+  ]
+}

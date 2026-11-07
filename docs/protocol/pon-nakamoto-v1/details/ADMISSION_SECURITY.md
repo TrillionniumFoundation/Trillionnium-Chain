@@ -4,6 +4,178 @@ The exact matrix transcript relation is unchanged. It has measured cheap-forgery
 full-recompute rejection asymmetry. No queue implementation resolves its cryptographic
 cost hardness, input-instance fairness or permissionless Sybil problem.
 
+## R1 admission resource contract: response-signing reservation revision r17
+
+The retained r16 implementation started from integration source
+`3d1b6507671ec694ce58e86d4063a125c8deeb66`. This successor keeps that evidence
+and adds worker-owned response-signing reservations in the same authentication
+epoch. A ticket-passing invented trace
+can require expensive rejection; it has not thereby supplied a valid block.
+The W1 statement, 49,188-byte proof, target, transcript replay and chainwork
+rules remain the same. Negative-cache hits concern exact failed mathematical
+statements; distinct false traces remain charged misses.
+
+### Authority and resource ordering
+
+The ordinary V3 receiver keeps this order:
+
+1. Acquire the shared listener/connection allowance, accept only bounded fixed
+   Hello/Solution bytes, retain the original absolute deadlines and bounded
+   queues. Check an already bound Node CPU domain before State/profile reads;
+   an unsuccessful first listener must not claim an unbound Node.
+2. Issue a receiver/epoch/connection/request/caller-bound Cookie only after the
+   existing shared challenge token is reserved. Cookie entropy/signing failure
+   does not return that spent issuance token.
+3. Validate the local Cookie and ticket, then reserve shared authentication CPU
+   before the actual caller signature verification. The resource charge is to
+   the local service, not the account named in untrusted input.
+4. Only a verified caller can consume that connection's spent-cookie identity
+   and obtain the original paid lane/body allowance. Ledger spending and one-use
+   business permissions still require their own authenticated native contracts.
+5. After the complete body reaches its original worker queue, the live dequeued
+   task reserves its response signature from the same intake epoch before
+   decoding, reads or native mutation. Waiting retains the original FIFO and
+   absolute task deadline; no new queue, worker or caller entitlement is created.
+6. Reserve original mutation CPU before body hashing/canonical decoding, complete
+   W1 replay, State/material access, execution and durable effects. Retain the
+   existing current-parent, task, consumer, expiry and commit checks.
+
+The actual caller-before-spent order already existed at the parent. The new
+real-TCP controls exercise an attacker that solves the actual receiver Cookie
+but signs for a victim with the wrong key, and an exact signed solution moved
+onto another connection with a changed operation or same-length body. Rejection
+must precede spent/body/task/work; the victim's original correctly signed
+request remains usable. These controls do not replace native ledger signature
+or permission verification.
+
+### Authentication accounting and the complete receiver
+
+Classical Cookie signing, caller verification and response signing use one
+rolling `AuthenticationCpuBudget` in the original shared
+`ListenerIntake`. It reserves 100,000,000 ns before crypto, has at most two live
+authentication reservations, a 2,000,000,000 ns ceiling and a 250,000,000 ns/second refill.
+The same two-slot allowance includes active crypto and held response signatures.
+These reuse the existing scalar constants. Counts/bytes are observations, not
+an 8,192-call lifetime limit: complete historical sync is not cut off by a new
+finite request count. Key rotation and listener reconstruction retain the
+account; a cold process has zero initial authentication credit. Temporary
+authentication capacity exhaustion retains the bounded Hello or Solution in
+its original FIFO and absolute deadline. A failed signing reservation never
+refunds an already spent challenge-issuance token or spends the caller's Cookie.
+
+Before native dispatch, the actual worker retains one response reservation.
+Later Cookie signing and caller verification cannot spend its reserved principal
+or slot. The signature consumes that existing reservation without a second
+credit, slot, attempt or byte admission. The CPU clock starts on the actual
+signing thread, not when the worker first promises the response. Socket closure
+only signals cancellation; it cannot release a reservation still owned by the
+worker. If signing was never entered, the reservation remains until the worker
+finishes its original settlement and cleanup; healthy accounting then returns
+the demonstrably unused CPU principal and slot while attempt/byte counters stay
+spent. It does not create a zero-duration crypto sample. Once signing starts,
+its real crypto interval must settle. Authentication ownership then ends without
+waiting for later cleanup or socket output; unknown timing, unwind or poisoned
+accounting cannot use the unused-work refund.
+
+The classical observation uses `public-v3-classical-authentication-cpu-v2`:
+`in_flight` includes pending response signatures, and attempt/byte counters include
+their reservations. `known_intervals` counts actual measured crypto only.
+`unused_response_reservations` records retirement before signing, not a claim
+that credit was refunded; unavailable accounting still fences that refund.
+
+Every completed interval charges actual calling-thread CPU, including an invalid
+signature. Unwind or an unavailable/moved clock makes accounting unavailable;
+unknown intervals are not zero and do not refund their principal. The actual
+crypto owner retains its reservation until completion. A synchronous native
+crypto call is not forcibly preempted, so an overrun is retained as debt and
+further starts refuse until the original refill permits them. The existing
+ordinary-service crash fence rechecks scalar, classical and PQ authentication
+state in the same epoch under the Node lock when the last listener or History reference
+finishes. An earlier listener's snapshot cannot clear subsequent debt or an
+unknown interval or a held response reservation. Its own successfully joined shutdown does not turn another
+live listener's temporary Busy state into a permanent unknown accounting fault.
+
+Continuous-owner clean checkpoints require actual listener permits to be
+released and the same scalar/authentication epoch to be settled and known, with
+no outstanding response reservations or surviving debt. Known live listeners,
+local helper intervals and held responses produce a transient refusal; accounting faults use the existing durable
+held-file-descriptor fault sink and prevent a clean checkpoint. A listener that
+starts after a clean checkpoint requires the existing authorized next journal
+event/view, so it cannot perform authentication under an old clean anchor.
+These guards do not claim complete durable billing of reactor/process overhead.
+
+| Resource owner | Covered work | Interpretation |
+| --- | --- | --- |
+| Fixed nonloopback Host kernel parent | All descendant receiver processes and threads, including reactor, signature, reads, W1/M06, material/State, cleanup and recovery | Existing aggregate 0.25 CPU, 2 GiB, zero swap and 256-PID envelope; source checks do not prove its runtime placement |
+| Original mutation scalar owner | Paid mutation body/decode, complete W1/M06, owner and all scoped-worker intervals, response construction and cleanup | Attribute every known interval once; cancellation does not return live worker resources |
+| Shared classical authentication sublimit | Cookie signing, caller verification and worker-owned response-signing reservations | Additional overlapping limiter; mutation-response signing is nested in mutation CPU, while read-response signing has no mutation owner; these counters must not be added into a total |
+| Existing PQ authentication account | Its explicit PQ signing/verification profile and worker-owned response-signing reservations | Original 8,192 attempts, 64 MiB and 2 s finite allowances remain; two live slots include held responses, without refill, classical fallback or whole-chain PQ qualification |
+| Shared intake/queue/storage owners | Connections, bounded frames, bytes, pending queues, grants and durable obligations | Resource accounting is independent of caller entitlement and block validity |
+
+The authentication sublimit grants no extra Host CPU. Mutation and authentication
+counters cannot be summed to reconstruct total receiver CPU. Use actual original
+Host parent counters for that total; retain unmeasured overhead and attribution
+gaps as unknown. Loopback component tests do not demonstrate the physical Host
+limit. Read/control fairness, alternate entrypoints, multiple processes and
+independent WAN service retain their separate acceptance obligations. A held
+response reservation closes the specific gap in which native work starts without
+retaining signature capacity; it adds no separate signing lane and guarantees no
+ACK delivery. Disconnects, deadlines, cancellation, provider/accounting faults
+and output failures can still prevent a reply. A nonpreemptible PQ CPU overrun
+can exceed its original finite allowance and refuse a previously reserved start.
+Any completed native commit remains factual; its reconciliation and honest-service
+completion must be measured rather than inferred from this reservation.
+
+The changed signed resource contract has exact revision `r17`; retained
+`r10`–`r14` and `r16` raw vectors and r13/r14/r16 arithmetic vectors keep their original bytes.
+The separate open r15 caller-quota proposal is not implicitly incorporated by
+this revision. Existing raw campaign selector names are historical: only the
+recorded exact `public_resource_policy.policy_id` identifies the resource
+contract actually selected. Older signed profiles cannot silently pass as r17.
+The base policy also binds the separate arithmetic, PQ History and growth
+profiles; their current derived identities change with this resource contract.
+
+### Cancellation, forwarding and acceptance
+
+Connection cancellation requests work to stop; it does not prove the worker
+stopped. The original task/lane/body permits remain live through actual worker
+use, joined scoped workers and disposal of their associated resources. CPU
+ownership continues through the subsequent settlement/journal tail; completed
+output retains its own allowance. `Busy`, deadline, cancellation and unknown
+accounting remain local service outcomes. Only a completed relation verification
+can establish a mathematical W1 failure; no local service refusal adds an invalid
+block fact or negative chainwork.
+
+P2P receiver identity belongs to the local Cookie. The consensus packet remains
+forwardable. A business task's independently expected consumer remains bound by
+that task contract; receiver-local resource admission does not replace it.
+
+`scripts/pon_public_v3_phase_read.py` derivation v4 adds the original offered
+business cohort: starts scheduled at t=1/5/9 seconds, three depth-six client
+confirmations and the unchanged absolute 30-second phase boundary. It keeps all
+three rounds in the denominator, includes late scheduling in successful latency,
+and refuses to report a finite all-offered p95/p99 when a round is missing,
+failed or unknown. Successful-only empirical tails retain their sample count;
+three observations are not a population p99 guarantee. Historical v1/v2/v3
+readbacks remain reproducible. Original native acceptance flags are not rewritten.
+
+This contract must still pass the original four-second/16-hostile Host test,
+three full 0/24/24-actor campaigns, full History and the capacity/churn supplement
+on the exact new source. Preserve all attacker attempts, misses, offered bytes,
+actual CPU and honest outcomes. A bounded resource counter is not a proof that
+an arbitrary anonymous honest node receives service. The retained failures
+below remain blocking; component regressions cannot close these service gates.
+
+The [r16 local implementation evidence](../../../../evidence/pon-w1-ingress-contract-r16-20261107/README.md)
+retains the exact implementation/source receipts, all 25 new regression results,
+complete workspace failures and a separately identified CLI-startup diagnostic.
+Strict Clippy/formatting passed; the 4,344/77/70 workspace result is not a green
+suite. The original Host/campaign qualifications remain unexecuted locally and
+that record also retains the connected GitHub account's HTTP 403 response at
+the time of the r16 delivery. Historical PR #688 is currently inaccessible.
+The user-selected Hepta local GitHub route has since verified normal repository
+authorization; this continuation claims no push, new PR or new hosted-CI result.
+
 ## PN1 shared-operation admission target
 
 This amendment specifies I02 of the
@@ -39,11 +211,13 @@ arrivals have no implied service guarantee. Paid/public isolation is accepted
 only for the tested envelope and shared bottlenecks, including disk and State.
 
 The first exit test is the original native campaign with 1,024 signed seed
-transfers, four seed blocks, 21 business blocks, three 30-second rounds per
+transfers, four seed blocks, 21 business blocks, one 30-second phase for each
 baseline/from-zero/late-product mode, 0/24/24 attackers, two workers,
 2 CPU-second burst, 0.25 CPU-second/second refill and 100 ms start reserve.
-Require 3/3 timely, independently imported confirmations per mode in each of
-three complete runs. Keep all offered honest requests, Busy, timeout, invalid,
+Each phase retains three confirmation rounds scheduled at t=1/5/9 seconds
+inside its one absolute phase deadline. Require 3/3 timely, independently
+imported confirmations per mode in each of three complete campaign runs;
+retain all 27 planned confirmation outcomes. Keep all offered honest requests, Busy, timeout, invalid,
 unknown, cancelled and reorged outcomes. Missing a planned confirmation fails
 that run; extending its window creates a different experiment. Source494 and
 df6 failures remain retained; the latest 9bd optimization still needs this run.
@@ -724,7 +898,7 @@ proof of public denial-of-service resistance.
 | P1 | M04/M15 | Enumerate all externally reachable complete W1 verification callers and bind an actual shared host/process CPU and memory owner. Key rotation, different listener process, process restart and cancellation cannot mint fresh unaudited mutation capacity. |
 | P2 | M04/M17 | Freeze W1 target, V3 Cookie bits and expiry, full actor/source identities and CPU/GPU/hash rates. Measure whole false-trace producer, all misses, honest Cookie cost, receive/decode/W1/M06 costs and tail latency under identical resource limits; estimate no hardware-independent minimum from a single CPU. A signed Cookie revision needs a fresh versioned profile. |
 | P3 | M04/M15/M17 | Cross-connection cookie replay, caller-key rotation, distinct false traces, valid-work/false-StateRoot, benign requests and branch recovery share one real budget. Busy/Deferred/local cancellation never imply Invalid or negative chainwork. |
-| P4 | M17/A03 | In **three runs per each of three attack modes**, demonstrate 3/3 timely client-confirmed honest rounds per run under preregistered attacker and host budgets; include all failures, Busy and censored requests, unchanged task/challenge and complete raw receipts. Local/same-admin runs are not independent WAN acceptance. |
+| P4 | M17/A03 | In **three complete runs, each containing baseline/from-zero/late-product**, demonstrate 3/3 timely client-confirmed honest rounds within each original 30-second phase under preregistered attacker and host budgets; include all failures, Busy and censored requests, unchanged task/challenge and complete raw receipts. Local/same-admin runs are not independent WAN acceptance. |
 | P5 | M01/M02/M17 | Compare W2-A Merkle intermediate-commitment sampling, W2-B complete cryptographic computation proof and W2-C explicitly separated anti-Sybil PoW. Bind complete original statement, unique lottery ticket, replay/fork choice and total generation plus validation cost. Freivalds product checks alone do not authenticate the false transcript. |
 | P6 | M01/M02/M17 | An independent reviewer implements a third verifier from a frozen new version's statement and byte grammar, tests hidden bad/valid witnesses and grinding/replay, and signs an environment/source-bound opinion. No internal vector or single assistant review can supply independence. |
 

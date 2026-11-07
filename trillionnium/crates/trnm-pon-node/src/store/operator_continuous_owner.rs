@@ -377,7 +377,16 @@ impl Node {
             self.public_service_epoch_listeners -= 1;
             return Ok(());
         }
-        if !clean {
+        // Check the SAME scalar and authentication epochs under the Node lock
+        // and only after determining this is its last reference. A History
+        // import can be the final finisher, and a listener's earlier snapshot
+        // can become stale while another listener closes. Neither may forgive
+        // authentication debt or an unknown interval on the next cold open.
+        let resource_clean = self
+            .public_service_cpu
+            .as_ref()
+            .is_none_or(|domain| domain.public_epoch_is_settled().unwrap_or(false));
+        if !clean || !resource_clean {
             // Preserve the ORIGINAL already-completed Native service result:
             // local unknown CPU never retroactively invalidates committed
             // work. Retain the SQLite marker and deny only a FUTURE cold
@@ -423,6 +432,18 @@ impl Node {
         &mut self,
         cpu: &ServiceMutationCpuDomain,
     ) -> Result<()> {
+        self.check_public_service_cpu_domain(cpu)?;
+        if self.public_service_cpu.is_none() {
+            self.public_service_cpu = Some(cpu.clone());
+        }
+        Ok(())
+    }
+    /// Read-only startup check: refuse a foreign domain before costly State
+    /// reads, without allowing a failed first listener to claim this owner.
+    pub(crate) fn check_public_service_cpu_domain(
+        &self,
+        cpu: &ServiceMutationCpuDomain,
+    ) -> Result<()> {
         ensure(
             !self.public_service_epoch_unknown,
             "OWNER_PUBLIC_SERVICE_UNCLEAN_EPOCH",
@@ -452,10 +473,7 @@ impl Node {
                 existing.shares_domain_with(cpu),
                 "OWNER_PUBLIC_SERVICE_CPU_DOMAIN",
             ),
-            None => {
-                self.public_service_cpu = Some(cpu.clone());
-                Ok(())
-            }
+            None => Ok(()),
         }
     }
     /// An existing trusted local supervisor may reconstruct a listener from the
@@ -588,6 +606,25 @@ impl Node {
             ensure(
                 (expected == crate::operator_pq_auth::Profile::PqV3) == pq,
                 "OWNER_CONTINUOUS_PROTECTED_CONTEXT",
+            )?;
+            let journal = owner
+                .journal
+                .lock()
+                .map_err(|_| "OWNER_CONTINUOUS_JOURNAL_UNKNOWN")?;
+            ensure(
+                !owner.unavailable.load(Ordering::Acquire)
+                    && !journal.unavailable_handle().load(Ordering::Acquire),
+                "OWNER_CONTINUOUS_UNKNOWN",
+            )?;
+            // A new listener must not do pre-authentication work after a clean
+            // checkpoint while leaving the old clean journal anchor intact.
+            // The Node lock orders this with close_continuous_checkpoint; an
+            // already reserved listener slot also makes that close refuse.
+            // Only the existing authorized owner workflow can append the next
+            // real journal event/view and make a later service start eligible.
+            ensure(
+                !journal.clean_restart_verified(),
+                "OWNER_CONTINUOUS_NEXT_VIEW_REQUIRED",
             )?;
         }
         Ok(())
@@ -1149,6 +1186,56 @@ impl Node {
             .as_ref()
             .ok_or("OWNER_CONTINUOUS_MODE_REQUIRED")?;
         ensure(o.slot()?.is_none(), "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        match o.cpu.public_listener_count() {
+            Ok(0) => {}
+            // A live listener can still authenticate without a task scope.
+            // This is a transient refusal, not terminal unknown accounting:
+            // stop/join its real workers, then try the original close again.
+            Ok(_) => return Err("OWNER_CONTINUOUS_SCOPE_BUSY".into()),
+            Err(_) => {
+                o.sink.persist_unknown().map_err(continuous_error)?;
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            }
+        }
+        let known_in_flight = match (
+            o.cpu.observe(),
+            o.cpu.observe_classical_authentication_cpu(),
+            o.cpu.observe_pq_authentication_cpu(),
+        ) {
+            (Ok(scalar), Ok(authentication), Ok(pq_authentication)) => {
+                !scalar.accounting_unavailable
+                    && !authentication.unavailable
+                    && authentication.unknown_intervals == 0
+                    && !pq_authentication.unavailable
+                    && pq_authentication.unknown_intervals == 0
+                    && scalar.in_flight <= scalar.worker_limit
+                    && authentication.in_flight <= scalar.worker_limit
+                    && pq_authentication.in_flight <= scalar.worker_limit
+                    && (scalar.in_flight != 0
+                        || authentication.in_flight != 0
+                        || pq_authentication.in_flight != 0)
+                    && o.cpu.observe_actual_flow().ok().flatten().is_some()
+            }
+            _ => false,
+        };
+        // A trusted local metered helper may have no listener or durable task
+        // slot yet, but still owns a real original CPU interval or a reserved
+        // classical/PQ response. Its unfinished reservation is not unknown cost.
+        // The caller must stop/join that work
+        // and retry close; no CleanClose or fault record is published now.
+        // Available credit may exclude that still-owned start principal; only
+        // the final fresh settled check below can certify no surviving debt.
+        ensure(!known_in_flight, "OWNER_CONTINUOUS_SCOPE_BUSY")?;
+        if !o.cpu.public_epoch_is_settled().is_ok_and(|settled| settled) {
+            // Reuse the existing held-FD accounting fault, never a caller's
+            // operation or a parallel journal. Unknown/negative authentication
+            // and scalar debt cannot become a clean restart. Previously
+            // completed Native outcomes and their journal rows remain intact.
+            // This protects controlled stop/join; it is not durable billing
+            // of all pre-authentication, reactor or process overhead CPU.
+            o.sink.persist_unknown().map_err(continuous_error)?;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
         let (p, g) = self.active()?;
         let mut journal = o
             .journal

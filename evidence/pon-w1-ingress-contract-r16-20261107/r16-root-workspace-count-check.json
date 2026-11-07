@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-r16-root-workspace-count-check-v1",
+  "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
+  "process_exit_code": 101,
+  "log_sha256": "5aa930c721773c9c223193a7d7a3e1cdc734a047459aad78e46ae99decdbffd9",
+  "log_bytes": 618999,
+  "counts": {
+    "targets": 385,
+    "passed_targets": 367,
+    "failed_targets": 18,
+    "passed": 4344,
+    "failed": 77,
+    "ignored": 70,
+    "measured": 0,
+    "filtered_out": 0,
+    "excluded_nested_child_summaries": 5
+  },
+  "method": "Last libtest result within each Cargo Running boundary, all targets terminated; earlier child summaries excluded. This does not attribute failure causes or qualify service performance."
+}

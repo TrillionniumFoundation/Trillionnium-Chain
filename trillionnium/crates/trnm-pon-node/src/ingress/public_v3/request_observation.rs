@@ -663,6 +663,17 @@ impl PublicRequestObserver {
         }
     }
 
+    /// Test synchronization reads only the actual owners' published closure.
+    /// Repeated diagnostic snapshots could contend with optional try-lock writes.
+    #[cfg(test)]
+    pub(super) fn lifecycle_closed_for_test(&self, index: usize) -> Option<(bool, bool)> {
+        let cell = self.0.rows.get(index)?.get()?;
+        Some((
+            cell.connection_closed.load(Ordering::Acquire),
+            cell.task_closed.load(Ordering::Acquire),
+        ))
+    }
+
     #[cfg(test)]
     pub(super) fn connection(&self) -> Option<ConnectionObservation> {
         self.connection_at(Instant::now())

@@ -71,8 +71,8 @@ jobs:
           fi
           python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source.json"
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = 668afe44ac0f793fa5a1b19a6144a5579c8d58f3
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 39797edcf18bd3b1b697de3617bf119270d15dea
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = fadc3f931c1ae4ac75a49596c08904a3fb8a9871
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999
@@ -91,7 +91,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs)" = 27b6342619ee051c57944de88b4bbab33ff4627c
           # Retain R10 and the subsequent bounded 30-second client-import
           # observation under the original budgets, with an exact whole-file pin.
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = ec6420becaba837f22d45c917d15554a8e653275
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs)" = cd2ce4d182c42aec6ef294988b121e8672f20ebb
           bash scripts/project-preflight.sh --audit
       - name: Execute conditional query accounting and anytime-bound counterexamples
         shell: bash

@@ -74,6 +74,9 @@ pub fn policy_observation() -> Value {
 /// variable. The original selector and every original helper remain raw.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum WorkProfile {
+    // Historical selector spelling preserves retained host-job contracts.
+    // It selects current plain W1; only policy_observation() identifies the
+    // exact resource revision. This name does not label a new policy as r14.
     RawR14,
     ArithmeticFactsV1,
 }
