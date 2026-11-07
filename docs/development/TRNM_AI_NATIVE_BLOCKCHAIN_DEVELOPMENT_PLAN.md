@@ -17,6 +17,28 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**W1 admission resource continuation, 2026-11-07 America/New_York:** Continue
+existing integration candidate #688 from `3d1b6507671ec694ce58e86d4063a125c8deeb66`.
+The [R1 admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md)
+adds a shared rolling classical-signature CPU reservation to the original intake
+owner, using the original scalar constants with known-failure debit, no unknown
+refund, zero cold-start credit and no extra Host allowance. Use fresh signed
+resource revision r16 and retain r10–r14 vectors; the separate r15 proposal is
+not silently merged. Check existing Node budget ownership before startup State
+reads without letting failed setup bind a new owner. Exercise actual TCP victim
+caller and cross-operation/body substitution before any spent/body/work grant.
+Settle the final shared listener/History reference from current scalar and
+authentication accounts under the Node lock. Keep controlled continuous close
+behind actual listener release and its existing durable accounting-fault fence;
+an old clean journal anchor cannot authorize fresh listener authentication.
+Expose complete offered business confirmation denominators and schedule-inclusive
+latency separately from receiver queue/ACK timings, preserving original v1–v3
+readback and all original deadlines. Mutation-response authentication CPU overlaps
+the original mutation interval and is never added twice. Preserve original cancellation
+ownership, full W1 and consumer contract checks, fixed Host limits, failed campaigns
+and all activation flags. Exact-source native and original-service results remain
+separate obligations; this change makes no fairness, PoW-hardness or release claim.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

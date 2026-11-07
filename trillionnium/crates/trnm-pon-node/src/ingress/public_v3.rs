@@ -7,6 +7,8 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+mod authentication_cpu;
+pub use authentication_cpu::ClassicalAuthenticationCpuObservation;
 mod intake;
 mod pq_identity;
 use intake::{ConnectionLease, ListenerIntake};
@@ -433,11 +435,14 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r14/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r16/classical-auth-cpu-v1-shared-original-intake-burst2000000000-refill250000000-reserve100000000-inflight2/actual-owner-thread-crypto-completion-failed-signatures-paid-panic-clock-unknown-sticky/no-lifetime-attempt-byte-cap-nested-response-cpu-not-additive/cold-zero-same-listener-domain-no-key-reset/no-total-host-allowance-increase/startup-check-existing-domain-before-state-without-first-bind/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
 pub struct PublicMetrics {
+    /// Shared original intake epoch snapshot, not a per-listener bill. Response
+    /// signing overlaps mutation CPU; never add this to that outer measurement.
+    pub classical_authentication_cpu: Option<ClassicalAuthenticationCpuObservation>,
     pub mutation_cpu_reservations: u64,
     pub mutation_cpu_refusals: u64,
     pub mutation_cpu_clock_failures: u64,
@@ -2062,12 +2067,15 @@ impl OrdinaryPublicServiceCrashFence {
         })
     }
 
-    fn complete(&mut self, clean: bool) -> Result<()> {
+    fn complete(&mut self) -> Result<()> {
         if self.ordinary {
+            // This listener has joined its own workers and completed normally.
+            // Only the last reference, under the owner lock, can classify the
+            // shared resources; another listener's earlier Busy is not Unknown.
             self.node
                 .lock()
                 .map_err(|_| "PUBLIC_OWNER")?
-                .finish_ordinary_public_service_epoch(clean)?;
+                .finish_ordinary_public_service_epoch(true)?;
         }
         self.finished = true;
         Ok(())
@@ -2124,6 +2132,9 @@ fn serve_public_protected_v3_inner(
     let settings = {
         let mut progress = |_: u64| public_startup_alive(startup_deadline, &stop);
         let mut owner = lock_owner(&node, &mut progress)?;
+        // Check an existing owner before profile/State reconstruction. An
+        // unbound Node stays unbound until all startup prerequisites pass.
+        owner.check_public_service_cpu_domain(&server.mutation_cpu_domain())?;
         owner.require_continuous_public_authentication(server.identity.is_pq())?;
         if server.identity.is_pq() {
             owner.require_pq_history_transport()?;
@@ -2620,7 +2631,18 @@ fn serve_public_protected_v3_inner(
                                 {
                                     return Ok(Stage::WaitChallenge { hello, pending });
                                 }
-                                let cookie = server.cookie(&settings, hello, conn.peer)?;
+                                let cookie = match server.cookie(&settings, hello, conn.peer) {
+                                    Ok(cookie) => cookie,
+                                    Err(error)
+                                        if error.is(crate::ErrorCode::PublicMutationCpuBudget) =>
+                                    {
+                                        // A cold or busy authentication sublimit waits in
+                                        // the original FIFO/deadline. The issuance token
+                                        // was already spent and is never refunded.
+                                        return Ok(Stage::WaitChallenge { hello, pending });
+                                    }
+                                    Err(error) => return Err(error),
+                                };
                                 let frame = framed(
                                     serde_json::to_vec(&cookie)?,
                                     pq_identity::challenge_maximum(server.identity.is_pq()),
@@ -2723,6 +2745,12 @@ fn serve_public_protected_v3_inner(
                                     return Err("PUBLIC_TICKET_TARGET".into());
                                 }
                                 if let Err(error) = server.verify_caller(&cookie, nonce, &bytes) {
+                                    if error.is(crate::ErrorCode::PublicMutationCpuBudget) {
+                                        // Keep only the bounded original solution; do
+                                        // not burn the Cookie, renew expiry or rerun
+                                        // crypto while its reservation is unavailable.
+                                        return Ok(Stage::Solution { cookie, bytes });
+                                    }
                                     metrics
                                         .lock()
                                         .map_err(|_| "PUBLIC_METRICS")?
@@ -3085,12 +3113,15 @@ fn serve_public_protected_v3_inner(
     // process restart that silently forgives historical CPU debt.
     // Earlier listeners of the SAME Node only drop their volatile reference
     // count; they cannot clear the shared on-disk marker.
-    let domain = server.mutation_cpu_domain();
-    let cpu = domain.observe()?;
-    let balanced = domain.observe_actual_flow()?.is_some();
-    epoch_fence.complete(
-        cpu.in_flight == 0 && !cpu.accounting_unavailable && cpu.stored_credit_ns >= 0 && balanced,
-    )?;
+    let authentication = intake.classical_authentication.observation()?;
+    metrics
+        .lock()
+        .map_err(|_| "PUBLIC_METRICS")?
+        .classical_authentication_cpu = Some(authentication);
+    // The original Node owner checks both resource accounts under its mutex
+    // when the LAST listener or History reference completes. This authentication
+    // snapshot is only an observation; shared Busy may settle before that lock.
+    epoch_fence.complete()?;
     if server.identity.is_pq() {
         let auth = server.listener_intake()?.pq_authentication.usage()?;
         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
@@ -5365,9 +5396,13 @@ mod tests {
 
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent r14 SHA-256/length-framing vector for development
+        // Fixed independent r16 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "75a918355d0172da4f4ce9319b2d4d69ba826a4543b60ba2f84462c1d5f5704b"
+        );
+        assert_ne!(
             hex::encode(PublicPolicy::development().id()),
             "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8"
         );
@@ -6692,7 +6727,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -6700,14 +6735,15 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10, r11, r12 AND r13 as validly signed predecessor inputs;
-        // r14 must reject them even with a correct current server MAC/signature.
+        // Preserve exact r10--r14 as validly signed predecessor inputs;
+        // r16 must reject them even with a correct current server MAC/signature.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, predecessor_profiles) in [
             (
                 8,
-                "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+                "4abdedfb5e177f310e2fb836347cb040e647addf2405f2e4cf78b5e4baa4cd5d",
                 [
+                    "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
                     "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
                     "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
                     "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
@@ -6716,8 +6752,9 @@ mod tests {
             ),
             (
                 16,
-                "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+                "75a918355d0172da4f4ce9319b2d4d69ba826a4543b60ba2f84462c1d5f5704b",
                 [
+                    "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
                     "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
                     "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
                     "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
@@ -6726,8 +6763,9 @@ mod tests {
             ),
             (
                 12,
-                "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+                "8428e1b62713405142ad1aa4ac688f9b455c865c1ffc3781fa75cab5c122a082",
                 [
+                    "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
                     "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
                     "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
                     "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
@@ -8432,6 +8470,10 @@ impl PublicServer {
 #[cfg(test)]
 #[path = "public_v3/intake_domain_tests.rs"]
 mod intake_domain_tests;
+
+#[cfg(test)]
+#[path = "public_v3/authentication_boundary_tests.rs"]
+mod authentication_boundary_tests;
 
 #[cfg(test)]
 #[path = "public_v3/unpaid_pressure_tests.rs"]

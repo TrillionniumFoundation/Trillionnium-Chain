@@ -980,6 +980,62 @@ impl ServiceMutationCpuDomain {
     pub fn shares_domain_with(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.budget, &other.budget)
     }
+    /// Nested authentication accounting from this exact shared intake epoch.
+    /// This is not an additive receiver CPU total or a caller entitlement.
+    pub fn observe_classical_authentication_cpu(
+        &self,
+    ) -> Result<super::ClassicalAuthenticationCpuObservation> {
+        let intake = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .intake
+            .clone();
+        intake.classical_authentication.observation()
+    }
+    /// The original intake counts services before their Node startup lock.
+    /// A clean continuous checkpoint must see none; this does not retire or
+    /// cancel a listener and grants no new service slot.
+    pub(crate) fn public_listener_count(&self) -> Result<usize> {
+        let intake = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .intake
+            .clone();
+        let count = *intake
+            .listeners
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        Ok(count)
+    }
+    /// One current scalar/authentication observation for the final Node epoch
+    /// owner. Call while holding that Node owner and after all service owners
+    /// joined; an earlier listener snapshot cannot authorize a clean restart.
+    pub(crate) fn public_epoch_is_settled(&self) -> Result<bool> {
+        let budget = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        let scalar_clean = !budget.unavailable
+            && budget.in_flight == 0
+            && budget.termination_reserved_ns == 0
+            && budget.credit_ns >= 0
+            && budget.flow.as_ref().is_some_and(|flow| {
+                flow.snapshot(
+                    budget.credit_ns,
+                    budget.in_flight,
+                    budget.termination_reserved_ns,
+                )
+                .is_some()
+            });
+        let authentication = budget.intake.classical_authentication.observation()?;
+        Ok(scalar_clean
+            && authentication.in_flight == 0
+            && !authentication.unavailable
+            && authentication.unknown_intervals == 0
+            && authentication.stored_credit_ns >= 0)
+    }
     /// Begin on the actual owner thread, after separate task-purpose authority
     /// but before expensive Native work. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {

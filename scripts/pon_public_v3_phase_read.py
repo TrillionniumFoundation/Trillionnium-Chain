@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read retained multiprocess observations; never infer confirmations from ACKs.
 
-Historical v1/v2 and the r11/r12/r13 paid CPU envelope's v3 observations are accepted.
+Historical v1/v2 and the r11/r12/r13/r14/r16 paid CPU envelope's v3 observations are accepted.
 The separate arithmetic-facts campaign retains its own schema and signed profile;
 reading it cannot qualify raw r13 or arbitrary-key service.
 An explicit observed policy is checked against exact revision vectors. Missing
@@ -33,6 +33,12 @@ PHASE_PARENTS_V4 = dict.fromkeys(('admission_prepare', 'execution', 'commit_owne
 WAIT_FIELDS_V4 = ('challenge_wait', 'grant_wait', 'paid_task_queue_wait', 'response_write')
 MODES = ('baseline', 'from-zero', 'late-product')
 ROUNDS = 3
+# The original native campaign schedules three seven-block business rounds at
+# t=1/5/9 seconds in one 30-second phase. These are not per-round renewals.
+BUSINESS_SCHEDULE_NS = (1_000_000_000, 5_000_000_000, 9_000_000_000)
+BUSINESS_DEADLINE_NS = 30_000_000_000
+BUSINESS_CONFIRMATION_DEPTH = 6
+BUSINESS_CONFIRMATION_WORK_MULTIPLIER = 6
 MAX_REPORT_BYTES = 256 * 1024 * 1024
 ARITHMETIC_REPORT_SCHEMA = 'native-public-v3-arithmetic-facts-separate-process-campaign-v1'
 ERROR_DIAGNOSTIC_SCHEMA = 'public-v3-request-error-diagnostics-v1'
@@ -843,7 +849,138 @@ def client_history_import_observations(history):
                       'unknown_cpu_is_not_zero': True, 'business_tps_capacity': None}}
 
 
-def phase_summary(phase, *, interval_outcomes=True):
+def business_confirmation_summary(phase):
+    """Read the original offered business cohort, including missing rounds.
+
+    Request ACKs, cold readback and the receiver's queue timings are not client
+    confirmations. The native in-window flag is retained separately; a missing
+    confirmation observation or end clock cannot establish an on-time result.
+    This checks internal retained evidence, not W1 or independent source truth.
+    """
+    phase_error = phase.get('startup_or_campaign_error')
+    # The current native panic wrapper emits an error-only object. If a
+    # retained failed phase also supplies partial observations, do not erase
+    # those rows or use them to restore the failed phase's acceptance.
+    rows = phase.get('confirmations', [])
+    require(isinstance(rows, list), 'business confirmation list required')
+    available = phase_error is None or bool(rows)
+    if available:
+        require(type(phase.get('duration_seconds')) is int and phase['duration_seconds'] == 30,
+                'original 30-second business phase required')
+    by_round = {}
+    for row in rows:
+        require(isinstance(row, dict), 'business confirmation object required')
+        index = integer(row['round'])
+        require(index < ROUNDS and index not in by_round,
+                'unique scheduled business confirmation rounds required')
+        by_round[index] = row
+
+    def clock(row, key):
+        value = row.get(key)
+        if value is not None:
+            require(integer(value) < 1 << 64, 'business clock u64 required')
+        return value
+
+    def confirmation_evidence(row):
+        observation = row.get('observation')
+        if observation is None:
+            return None
+        require(isinstance(observation, dict), 'native confirmation observation required')
+        fields = ('confirmed', 'reorged', 'finalized', 'execution_authority', 'depth',
+                  'observed_height', 'included_height', 'transaction', 'included_block',
+                  'observed_tip', 'work_delta', 'required_work_delta')
+        if not all(key in observation for key in fields) or not all(
+                key in row for key in ('transaction', 'included_block', 'tip')):
+            return None
+        require(observation['confirmed'] is True and observation['reorged'] is False
+                and observation['finalized'] is False and observation['execution_authority'] is False
+                and type(observation['depth']) is int and observation['depth'] == BUSINESS_CONFIRMATION_DEPTH
+                and integer(observation['observed_height']) - integer(observation['included_height'])
+                    == BUSINESS_CONFIRMATION_DEPTH,
+                'original business confirmation relation mismatch')
+        for source, target in (('transaction', 'transaction'), ('included_block', 'included_block'),
+                               ('observed_tip', 'tip')):
+            expected = digest(row[target])
+            require(expected is not None and digest(observation[source]) == expected,
+                    'business confirmation identity mismatch')
+        work, required = observation['work_delta'], observation['required_work_delta']
+        # Original settings require six times the included block's required
+        # work. Native required_work(target) is at least one for every legal
+        # 256-bit target. Zero or a non-multiple of six cannot be that threshold.
+        # This necessary relation does not infer or authenticate the target.
+        require(all(isinstance(value, str) and re.fullmatch('[0-9a-f]{128}', value)
+                    for value in (work, required))
+                and int(required, 16) >= BUSINESS_CONFIRMATION_WORK_MULTIPLIER
+                and int(required, 16) % BUSINESS_CONFIRMATION_WORK_MULTIPLIER == 0
+                and int(work, 16) >= int(required, 16),
+                'original business confirmation work mismatch')
+        return True
+
+    records = []
+    for index, scheduled in enumerate(BUSINESS_SCHEDULE_NS):
+        row = by_round.get(index)
+        start = end = flag = evidence = None
+        status = 'unobserved'
+        if row is not None:
+            flag = row.get('confirmed_inside_pressure_window')
+            require(flag is None or type(flag) is bool, 'business confirmation boolean required')
+            start, end = clock(row, 'started_ns'), clock(row, 'ended_ns')
+            require(start is None or start >= scheduled, 'business start precedes original schedule')
+            require(end is None or end >= (start if start is not None else scheduled),
+                    'business round clock order mismatch')
+            if flag is True:
+                require(end is None or end < BUSINESS_DEADLINE_NS,
+                        'late confirmation cannot satisfy original business window')
+                evidence = confirmation_evidence(row)
+                status = ('confirmed_in_window' if evidence is True and end is not None
+                          else 'confirmation_evidence_unknown')
+            else:
+                status = 'not_confirmed_in_window' if flag is False else 'outcome_unknown'
+        confirmed = status == 'confirmed_in_window'
+        records.append({'round': index, 'scheduled_start_ns': scheduled,
+            'started_ns': start, 'ended_ns': end, 'status': status,
+            'native_reported_in_window': flag, 'confirmation_evidence_consistent': evidence,
+            'schedule_delay_ns': start - scheduled if start is not None else None,
+            'confirmed_scheduled_latency_ns': end - scheduled if confirmed else None,
+            'confirmed_started_latency_ns': end - start if confirmed and start is not None else None,
+            'observed_elapsed_ns': end - start if start is not None and end is not None else None})
+
+    successful = [row for row in records if row['status'] == 'confirmed_in_window']
+
+    def tails(values):
+        result = stats(values)
+        known = sorted(value for value in values if value is not None)
+        result['p99_nearest_rank_ns'] = known[(99 * len(known) + 99) // 100 - 1] if known else None
+        return result
+
+    scheduled_tails = tails([row['confirmed_scheduled_latency_ns'] for row in successful])
+    started_tails = tails([row['confirmed_started_latency_ns'] for row in successful])
+    complete = len(successful) == ROUNDS and phase_error is None
+    return {'schema': 'pon-public-v3-business-completion-v1',
+        'observations_available': available, 'scheduled_rounds': ROUNDS, 'retained_rounds': len(rows),
+        'phase_error': phase_error, 'partial_observations_retained': phase_error is not None and bool(rows),
+        'scheduled_start_ns': list(BUSINESS_SCHEDULE_NS), 'absolute_phase_deadline_ns': BUSINESS_DEADLINE_NS,
+        'native_reported_in_window_rounds': sum(row['native_reported_in_window'] is True for row in records),
+        'readback_confirmed_in_window_rounds': len(successful),
+        'completion_fraction': {'numerator': len(successful), 'denominator': ROUNDS},
+        'outcome_counts': dict(Counter(row['status'] for row in records)), 'rounds': records,
+        'successful_only_scheduled_latency_ns': scheduled_tails,
+        'successful_only_started_latency_ns': started_tails,
+        'all_scheduled_rounds_latency_ns': {
+            'complete_observation': complete,
+            **{key: scheduled_tails[key] if complete else None
+               for key in ('p95_nearest_rank_ns', 'p99_nearest_rank_ns', 'max_ns')}},
+        'scope': {'scheduled_latency_includes_schedule_delay': True,
+            'started_latency_excludes_schedule_delay': True, 'one_original_absolute_phase_deadline': True,
+            'empirical_successful_cohort_tails_are_not_population_guarantees': True,
+            'missing_failed_or_unknown_rounds_suppress_all_offered_tail': True,
+            'phase_error_suppresses_all_offered_tail': True,
+            'acknowledgments_or_cold_state_are_not_confirmations': True,
+            'source_or_native_verification_performed': False, 'attacker_budget_verified': False,
+            'native_acceptance_flags_changed': False, 'resource_fairness_qualified': False}}
+
+
+def phase_summary(phase, *, interval_outcomes=True, business_outcomes=False):
     mode = phase['mode']
     require(mode in MODES, 'unknown campaign phase')
     base = {'mode': mode, 'state_backend': phase.get('state_backend'),
@@ -867,13 +1004,15 @@ def phase_summary(phase, *, interval_outcomes=True):
         if interval_outcomes:
             base.update(observed_confirmation_rounds=0, unobserved_scheduled_rounds=ROUNDS,
                         confirmation_rounds=[])
+        if business_outcomes:
+            base['honest_business_completion'] = business_confirmation_summary(phase)
         return base
-    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14'):
+    if policy is not None and policy.get('base_resource_revision', policy['resource_revision']) in ('r13', 'r14', 'r16'):
         base['completion_work_observation'] = completion_work_observation(
             phase.get('completion_work_observation'))
     else:
         require('completion_work_observation' not in phase,
-                'completion-work observation requires explicit r13 or r14 policy')
+                'completion-work observation requires explicit r13, r14 or r16 policy')
     if arithmetic_profile:
         owner = phase.get('work_arithmetic_owner')
         require(type(owner) is dict and set(owner) == {'schema', 'initial_state', 'slots',
@@ -898,6 +1037,8 @@ def phase_summary(phase, *, interval_outcomes=True):
     confirmed = sum(row['confirmed_inside_pressure_window'] is True for row in rounds)
     require(phase['all_signed_rounds_confirmed_in_window'] is (confirmed == ROUNDS),
             'native confirmation aggregate does not match retained rounds')
+    if business_outcomes:
+        base['honest_business_completion'] = business_confirmation_summary(phase)
     submissions, history = phase['submissions'], phase['history']
     client_imports = client_history_import_observations(history)
     if client_imports is not None:
@@ -918,7 +1059,7 @@ def phase_summary(phase, *, interval_outcomes=True):
             'monotonic_epoch_is_observer_local')), 'v4 inclusive/local-clock scope required')
     if policy is not None:
         require(schema.endswith(('-v3', '-v4')) is (policy.get('base_resource_revision', policy['resource_revision'])
-                                         in ('r11', 'r12', 'r13', 'r14')),
+                                         in ('r11', 'r12', 'r13', 'r14', 'r16')),
                 'public policy and observed CPU scope disagree')
     if schema.endswith(('-v3', '-v4')):
         require(observer.get('cpu_includes_reactor_authentication_or_response_signing') is True
@@ -985,7 +1126,9 @@ def phase_summary(phase, *, interval_outcomes=True):
     return base
 
 
-def analyze(report, *, interval_outcomes=True):
+def analyze(report, *, interval_outcomes=True, business_outcomes=None):
+    if business_outcomes is None:
+        business_outcomes = interval_outcomes
     arithmetic_profile = report['schema'] == ARITHMETIC_REPORT_SCHEMA
     require(arithmetic_profile or report['schema'] == 'native-public-v3-separate-process-campaign-v2',
             'unknown campaign schema')
@@ -1009,7 +1152,8 @@ def analyze(report, *, interval_outcomes=True):
              report.get('adversarial_key_churn_service_qualified') is False
              if arithmetic_profile else 'work_profile' not in report),
             'explicit separate arithmetic campaign scope required')
-    result = {'schema': ('pon-public-v3-multiprocess-phase-derivation-v3' if interval_outcomes
+    result = {'schema': ('pon-public-v3-multiprocess-phase-derivation-v4' if business_outcomes
+                         else 'pon-public-v3-multiprocess-phase-derivation-v3' if interval_outcomes
                          else 'pon-public-v3-multiprocess-phase-derivation-v2'),
             'state_backend': report.get('state_backend'),
             'native_finite_experiment_criteria_met': report['finite_experiment_criteria_met'],
@@ -1017,7 +1161,8 @@ def analyze(report, *, interval_outcomes=True):
             'best_observed_cold_legal_method': report['best_observed_cold_legal_method'],
             'honest_preparation_cpu_ns': report['preparation']['cpu_ns'],
             'honest_preparation_wall_ns': report['preparation']['wall_ns'],
-            'phases': [phase_summary(row, interval_outcomes=interval_outcomes) for row in report['phases']],
+            'phases': [phase_summary(row, interval_outcomes=interval_outcomes,
+                                    business_outcomes=business_outcomes) for row in report['phases']],
             'scope': {'reader_runs_native_admission': False,
                       'host_or_source_authentication_performed': False,
                       'production_qualification': False, 'business_tps_capacity': None,
@@ -1055,16 +1200,20 @@ def analyze_for_retained_schema(report, schema):
     excluded response construction. Its output had one combined exclusion flag
     and no per-phase dispatch_cpu_scope. These are the only versioned formatting
     differences for v1/v2. Version 3 additionally separates completed per-request
-    interval tails from unfinished elapsed costs. Historical reproduction omits
-    that extension: every original measurement, outcome, denominator and threshold
-    field remains in the exact equality comparison performed by the caller.
+    interval tails from unfinished elapsed costs. Version 4 additionally reads
+    all three scheduled business confirmations and their empirical latency tails.
+    Historical reproduction omits newer extensions: every original measurement,
+    outcome, denominator and threshold remains in the exact equality comparison.
     """
     require(schema in ('pon-public-v3-multiprocess-phase-derivation-v1',
                        'pon-public-v3-multiprocess-phase-derivation-v2',
-                       'pon-public-v3-multiprocess-phase-derivation-v3'),
+                       'pon-public-v3-multiprocess-phase-derivation-v3',
+                       'pon-public-v3-multiprocess-phase-derivation-v4'),
             'unknown retained phase derivation schema')
-    if schema.endswith('-v3'):
+    if schema.endswith('-v4'):
         return analyze(report)
+    if schema.endswith('-v3'):
+        return analyze(report, business_outcomes=False)
     if schema.endswith('-v2'):
         return analyze(report, interval_outcomes=False)
     require('public_resource_policy' not in report

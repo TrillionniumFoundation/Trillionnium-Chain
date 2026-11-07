@@ -98,6 +98,29 @@ def attribution_phase(submissions, history, attacks, records):
     }
 
 
+def business_round(index, *, started=None, ended=None, confirmed=True):
+    """Synthetic complete confirmation record; this is not native evidence."""
+    scheduled = reader.BUSINESS_SCHEDULE_NS[index]
+    transaction, included, tip = '01' * 32, '02' * 32, '03' * 32
+    return {'round': index, 'started_ns': scheduled if started is None else started,
+        'ended_ns': scheduled + 1_000_000_000 if ended is None else ended,
+        'confirmed_inside_pressure_window': confirmed,
+        'transaction': transaction, 'included_block': included, 'tip': tip,
+        'observation': {'confirmed': True, 'reorged': False, 'finalized': False,
+            'execution_authority': False, 'depth': 6, 'observed_height': 11 + index * 7,
+            'included_height': 5 + index * 7, 'transaction': transaction,
+            'included_block': included, 'observed_tip': tip,
+            'work_delta': '00' * 63 + '06', 'required_work_delta': '00' * 63 + '06'}}
+
+
+def business_phase(rounds):
+    phase = attribution_phase([], [], [], [])
+    phase['confirmations'] = rounds
+    phase['all_signed_rounds_confirmed_in_window'] = (
+        sum(row.get('confirmed_inside_pressure_window') is True for row in rounds) == reader.ROUNDS)
+    return phase
+
+
 def completion_observation():
     return dict(schema='public-v3-live-owner-completion-work-v1',
         identity_domain='public-v3-complete-work-identity-v1', identity_capacity=4096,
@@ -182,6 +205,184 @@ class ReaderTests(unittest.TestCase):
         return dict(started_ns=0, ended_ns=duration, wall_ns=duration,
                     completed=completed, accepted=accepted, error_code=code)
 
+    def test_business_latency_includes_original_scheduled_wait_and_fixed_denominator(self):
+        phase = business_phase([
+            business_round(0, started=2_000_000_000, ended=3_000_000_000),
+            business_round(1, started=6_000_000_000, ended=8_000_000_000),
+            business_round(2, started=10_000_000_000, ended=15_000_000_000)])
+        before = copy.deepcopy(phase)
+        value = reader.phase_summary(phase, business_outcomes=True)['honest_business_completion']
+        self.assertEqual(phase, before)
+        self.assertEqual(value['completion_fraction'], {'numerator': 3, 'denominator': 3})
+        self.assertEqual(value['scheduled_start_ns'], [1_000_000_000, 5_000_000_000, 9_000_000_000])
+        self.assertEqual(value['absolute_phase_deadline_ns'], 30_000_000_000)
+        self.assertEqual([row['schedule_delay_ns'] for row in value['rounds']], [1_000_000_000] * 3)
+        self.assertEqual([row['confirmed_scheduled_latency_ns'] for row in value['rounds']],
+                         [2_000_000_000, 3_000_000_000, 6_000_000_000])
+        self.assertEqual(value['successful_only_scheduled_latency_ns']['known_count'], 3)
+        self.assertEqual(value['successful_only_scheduled_latency_ns']['p99_nearest_rank_ns'], 6_000_000_000)
+        self.assertEqual(value['successful_only_started_latency_ns']['p99_nearest_rank_ns'], 5_000_000_000)
+        self.assertEqual(value['all_scheduled_rounds_latency_ns'], {
+            'complete_observation': True, 'p95_nearest_rank_ns': 6_000_000_000,
+            'p99_nearest_rank_ns': 6_000_000_000, 'max_ns': 6_000_000_000})
+        self.assertTrue(value['scope']['scheduled_latency_includes_schedule_delay'])
+        self.assertTrue(value['scope']['started_latency_excludes_schedule_delay'])
+        self.assertNotIn('schedule_delay_included', value['scope'])
+        self.assertTrue(value['scope']['empirical_successful_cohort_tails_are_not_population_guarantees'])
+        self.assertFalse(value['scope']['resource_fairness_qualified'])
+
+    def test_missing_business_round_is_in_denominator_and_cannot_have_all_offered_tail(self):
+        value = reader.business_confirmation_summary(business_phase([business_round(0), business_round(2)]))
+        self.assertEqual(value['completion_fraction'], {'numerator': 2, 'denominator': 3})
+        self.assertEqual(value['retained_rounds'], 2)
+        self.assertEqual(value['rounds'][1]['status'], 'unobserved')
+        self.assertEqual(value['outcome_counts'], {'confirmed_in_window': 2, 'unobserved': 1})
+        self.assertEqual(value['successful_only_scheduled_latency_ns']['known_count'], 2)
+        self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+        self.assertFalse(value['all_scheduled_rounds_latency_ns']['complete_observation'])
+
+    def test_failed_late_or_cold_business_observation_cannot_be_counted_as_confirmation(self):
+        rows = [business_round(0), business_round(1, confirmed=False),
+                business_round(2, ended=35_000_000_000, confirmed=False)]
+        # Even a retained depth-six observation cannot override the original
+        # in-window false result or make a later/cold return timely.
+        value = reader.business_confirmation_summary(business_phase(rows))
+        self.assertEqual(value['completion_fraction'], {'numerator': 1, 'denominator': 3})
+        self.assertEqual(value['outcome_counts'], {'confirmed_in_window': 1, 'not_confirmed_in_window': 2})
+        self.assertEqual(value['rounds'][2]['observed_elapsed_ns'], 26_000_000_000)
+        self.assertIsNone(value['rounds'][2]['confirmed_scheduled_latency_ns'])
+        self.assertEqual(value['successful_only_scheduled_latency_ns']['known_count'], 1)
+        self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+
+    def test_missing_confirmation_observation_cannot_be_supplied_by_successful_ack(self):
+        for missing in (None, {}, {'confirmed': True, 'depth': 6}):
+            with self.subTest(missing=missing):
+                row = business_round(0)
+                row['observation'] = missing
+                phase = business_phase([row])
+                phase['submissions'] = [{'status': 'ok', 'returned_after_window': False}]
+                phase['receiver_client_state_equal'] = True
+                value = reader.business_confirmation_summary(phase)
+                self.assertEqual(value['native_reported_in_window_rounds'], 1)
+                self.assertEqual(value['completion_fraction'], {'numerator': 0, 'denominator': 3})
+                self.assertEqual(value['rounds'][0]['status'], 'confirmation_evidence_unknown')
+                self.assertIsNone(value['successful_only_scheduled_latency_ns']['p99_nearest_rank_ns'])
+                self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+
+    def test_missing_business_end_clock_keeps_native_flag_but_cannot_supply_finite_confirmation_tail(self):
+        rows = [business_round(index) for index in range(3)]
+        rows[1]['ended_ns'] = None
+        value = reader.business_confirmation_summary(business_phase(rows))
+        self.assertEqual(value['native_reported_in_window_rounds'], 3)
+        self.assertEqual(value['completion_fraction'], {'numerator': 2, 'denominator': 3})
+        self.assertEqual(value['rounds'][1]['status'], 'confirmation_evidence_unknown')
+        self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p95_nearest_rank_ns'])
+        self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+
+    def test_missing_actual_start_does_not_invent_zero_wait_or_started_latency(self):
+        row = business_round(0)
+        row['started_ns'] = None
+        value = reader.business_confirmation_summary(business_phase([row]))
+        self.assertEqual(value['readback_confirmed_in_window_rounds'], 1)
+        self.assertIsNone(value['rounds'][0]['schedule_delay_ns'])
+        self.assertIsNone(value['rounds'][0]['confirmed_started_latency_ns'])
+        self.assertEqual(value['successful_only_started_latency_ns']['unknown_count'], 1)
+        self.assertIsNone(value['successful_only_started_latency_ns']['p99_nearest_rank_ns'])
+        self.assertEqual(value['successful_only_scheduled_latency_ns']['known_count'], 1)
+
+    def test_unknown_business_outcomes_and_startup_failures_remain_unknown(self):
+        row = business_round(1)
+        row['confirmed_inside_pressure_window'] = None
+        value = reader.business_confirmation_summary(business_phase([row]))
+        self.assertEqual(value['outcome_counts'], {'unobserved': 2, 'outcome_unknown': 1})
+        self.assertEqual(value['completion_fraction'], {'numerator': 0, 'denominator': 3})
+        summary = reader.phase_summary({'mode': 'baseline', 'state_backend': 'authenticated-v1',
+            'startup_or_campaign_error': 'original startup failure'}, business_outcomes=True)
+        self.assertIsNone(summary['confirmed_rounds'])
+        value = summary['honest_business_completion']
+        self.assertFalse(value['observations_available'])
+        self.assertEqual(value['retained_rounds'], 0)
+        self.assertEqual(value['outcome_counts'], {'unobserved': 3})
+        self.assertEqual(value['completion_fraction'], {'numerator': 0, 'denominator': 3})
+        self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+
+    def test_failed_campaign_keeps_explicit_partial_rounds_without_restoring_acceptance(self):
+        for rows in ([business_round(0)], [business_round(index) for index in range(3)]):
+            phase = business_phase(rows)
+            phase['startup_or_campaign_error'] = 'synthetic post-round failure'
+            before = copy.deepcopy(phase)
+            summary = reader.phase_summary(phase, business_outcomes=True)
+            self.assertEqual(phase, before)
+            self.assertFalse(summary['native_phase_criteria_met'])
+            self.assertFalse(summary['observations_available'])
+            self.assertIsNone(summary['confirmed_rounds'])
+            value = summary['honest_business_completion']
+            self.assertTrue(value['observations_available'])
+            self.assertTrue(value['partial_observations_retained'])
+            self.assertEqual(value['phase_error'], phase['startup_or_campaign_error'])
+            self.assertEqual(value['retained_rounds'], len(rows))
+            self.assertEqual(value['completion_fraction'], {'numerator': len(rows), 'denominator': 3})
+            self.assertEqual(value['successful_only_scheduled_latency_ns']['known_count'], len(rows))
+            self.assertFalse(value['all_scheduled_rounds_latency_ns']['complete_observation'])
+            self.assertIsNone(value['all_scheduled_rounds_latency_ns']['p99_nearest_rank_ns'])
+            self.assertNotIn('honest_business_completion', reader.phase_summary(phase))
+        del phase['duration_seconds']
+        with self.assertRaisesRegex(ValueError, 'original 30-second'):
+            reader.business_confirmation_summary(phase)
+
+    def test_business_confirmation_cannot_renew_original_deadline_or_remove_scheduler_wait(self):
+        for edit in (
+            lambda row: row.update(started_ns=999_999_999),
+            lambda row: row.update(ended_ns=999_999_999),
+            lambda row: row.update(ended_ns=30_000_000_000),
+            lambda row: row.update(ended_ns=40_000_000_000),
+            lambda row: row.update(ended_ns=True),
+            lambda row: row.update(started_ns=-1),
+            lambda row: row.update(ended_ns=1 << 64),
+            lambda row: row.update(confirmed_inside_pressure_window=1),
+        ):
+            row = business_round(0)
+            edit(row)
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                reader.business_confirmation_summary(business_phase([row]))
+        phase = business_phase([business_round(0)])
+        phase['duration_seconds'] = 31
+        with self.assertRaisesRegex(ValueError, 'original 30-second'):
+            reader.business_confirmation_summary(phase)
+
+    def test_business_confirmation_requires_original_depth_work_and_matching_context(self):
+        for edit in (
+            lambda row: row['observation'].update(confirmed=False),
+            lambda row: row['observation'].update(depth=1),
+            lambda row: row['observation'].update(reorged=True),
+            lambda row: row['observation'].update(finalized=True),
+            lambda row: row['observation'].update(execution_authority=True),
+            lambda row: row['observation'].update(observed_height=12),
+            lambda row: row['observation'].update(transaction='04' * 32),
+            lambda row: row['observation'].update(included_block='04' * 32),
+            lambda row: row['observation'].update(observed_tip='04' * 32),
+            lambda row: row['observation'].update(work_delta='00' * 63 + '05'),
+            lambda row: row['observation'].update(work_delta='not work'),
+        ):
+            row = business_round(0)
+            edit(row)
+            with self.subTest(edit=edit), self.assertRaises(ValueError):
+                reader.business_confirmation_summary(business_phase([row]))
+
+    def test_zero_or_nonmultiple_required_work_cannot_satisfy_original_confirmation_policy(self):
+        for actual, required in ((0, 0), (12, 0), (12, 1), (12, 5), (12, 7), (12, 11)):
+            row = business_round(0)
+            row['observation'].update(work_delta=f'{actual:0128x}', required_work_delta=f'{required:0128x}')
+            with self.subTest(actual=actual, required=required), self.assertRaisesRegex(
+                    ValueError, 'original business confirmation work mismatch'):
+                reader.business_confirmation_summary(business_phase([row]))
+
+    def test_business_confirmation_does_not_drop_duplicate_or_extra_rounds(self):
+        for rows in ([business_round(0), business_round(0)],
+                     [dict(business_round(0), round=3)]):
+            with self.subTest(rows=rows), self.assertRaisesRegex(ValueError, 'unique scheduled'):
+                reader.business_confirmation_summary(business_phase(rows))
+
     def test_per_request_queue_p99_is_order_statistic_not_waiter_total(self):
         rows = []
         for duration in range(1, 101):
@@ -260,7 +461,7 @@ class ReaderTests(unittest.TestCase):
             economics_complete=False, best_observed_cold_legal_method=None,
             preparation=dict(cpu_ns=None, wall_ns=None), phases=phases)
         current = reader.analyze(report)
-        self.assertEqual(current['schema'], 'pon-public-v3-multiprocess-phase-derivation-v3')
+        self.assertEqual(current['schema'], 'pon-public-v3-multiprocess-phase-derivation-v4')
         self.assertEqual(current['phases'][2]['observed_confirmation_rounds'], 0)
         self.assertEqual(current['phases'][2]['unobserved_scheduled_rounds'], 3)
         self.assertIsNone(current['phases'][2]['confirmed_rounds'])
@@ -271,6 +472,14 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual(old['phases'][0]['receiver']['all_retained_records']['submit_phases'][0][
             'wall_ns'], current['phases'][0]['receiver']['all_retained_records']['submit_phases'][0]['wall_ns'])
         self.assertEqual(reader.analyze_for_retained_schema(report, current['schema']), current)
+        previous = reader.analyze_for_retained_schema(report, 'pon-public-v3-multiprocess-phase-derivation-v3')
+        self.assertTrue(all('honest_business_completion' not in phase for phase in previous['phases']))
+        without_addition = copy.deepcopy(current)
+        without_addition['schema'] = previous['schema']
+        for phase in without_addition['phases']:
+            del phase['honest_business_completion']
+        self.assertEqual(without_addition, previous)
+        self.assertNotIn('honest_business_completion', reader.phase_summary(phases[0]))
 
     def test_request_error_diagnostic_extension_retains_legacy_unknown_and_typed_separation(self):
         measured = diagnostic_record()
@@ -815,6 +1024,39 @@ class ReaderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'completion-work observation'):
             reader.analyze(report)
 
+    def test_r16_authentication_policy_preserves_paid_scope_and_cannot_relabel_history(self):
+        report = arithmetic_report()
+        report['public_resource_policy'] = arithmetic_policy('r16')
+        with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
+            reader.analyze(report)
+        for phase in report['phases']:
+            phase['public_resource_policy'] = arithmetic_policy('r16')
+        result = reader.analyze(report)
+        self.assertEqual(result['public_resource_policy']['resource_revision'], 'r16-arithmetic-facts-v1')
+        self.assertFalse(result['native_finite_experiment_criteria_met'])
+        self.assertTrue(result['scope']['cpu_excludes_reactor_authentication'])
+        self.assertEqual([phase['confirmed_rounds'] for phase in result['phases']], [0, 0, 0])
+        self.assertTrue(all(phase['receiver']['dispatch_cpu_scope'] ==
+                            'paid-body-decode-native-dispatch-signed-response' for phase in result['phases']))
+        for phase in report['phases']:
+            phase['public_resource_policy'] = observation('r16')
+            del phase['work_profile'], phase['work_arithmetic_owner']
+            for row in phase['receiver_observation']['records']:
+                row.pop('work_arithmetic', None)
+        report['schema'] = 'native-public-v3-separate-process-campaign-v2'
+        report['public_resource_policy'] = observation('r16')
+        del report['work_profile']
+        raw = reader.analyze(report)
+        self.assertEqual([phase['public_resource_policy']['resource_revision'] for phase in raw['phases']],
+                         ['r16'] * 3)
+        # The unchanged observer's paid CPU does not suddenly include the
+        # newly limited reactor CPU or a sum of overlapping auth/response work.
+        self.assertTrue(raw['scope']['cpu_excludes_reactor_authentication'])
+        self.assertFalse(raw['native_finite_experiment_criteria_met'])
+        del report['phases'][0]['completion_work_observation']
+        with self.assertRaisesRegex(ValueError, 'completion-work observation'):
+            reader.analyze(report)
+
     def test_original_native_raw_report_remains_historical_and_cannot_claim_arithmetic(self):
         path = Path(__file__).resolve().parents[2] / 'evidence/pon-upgrade-implementation-20261018/native-rounds/chain-390-operational/public-v3-multiprocess/report.json'
         original = 'c662cf7d71adec835eb22e60058e3eccb7dc3faa88a31e262ec1bd4bdc069233'
@@ -925,7 +1167,7 @@ class ReaderTests(unittest.TestCase):
                             for phase in historical['phases']))
         current = reader.analyze(report)
         self.assertEqual(reader.analyze_for_retained_schema(report, current['schema']), current)
-        for unknown in (None, 'pon-public-v3-multiprocess-phase-derivation-v4'):
+        for unknown in (None, 'pon-public-v3-multiprocess-phase-derivation-v5'):
             with self.assertRaisesRegex(ValueError, 'unknown retained'):
                 reader.analyze_for_retained_schema(report, unknown)
         phases[0]['receiver_observation']['schema'] = 'public-v3-local-request-resource-observation-v3'

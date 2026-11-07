@@ -246,12 +246,14 @@ impl PublicServer {
                 .pq_authentication
                 .perform(message.len(), || self.identity.sign(message))
         } else {
-            self.identity.sign(message)
+            self.listener_intake()?
+                .classical_authentication
+                .perform(message.len(), || self.identity.sign(message))
         }
     }
     pub(super) fn verify_caller(&self, cookie: &Cookie, nonce: u64, bytes: &[u8]) -> Result<()> {
-        let message = caller_message(cookie, nonce, self.identity.is_pq())?;
         if self.identity.is_pq() {
+            let message = caller_message(cookie, nonce, true)?;
             let intake = self.listener_intake()?;
             intake
                 .pq_authentication
@@ -266,8 +268,16 @@ impl PublicServer {
                     )
                 })
         } else {
-            verify_hex_strict(&cookie.caller, &message, &hex::encode(&bytes[44..108]))
-                .map_err(|_| "PUBLIC_CALLER_SIGNATURE".into())
+            // The reactor already enforces this exact frame. Keep the private
+            // entry equally bounded before slicing or reserving crypto work.
+            ensure(bytes.len() == SOLUTION_BYTES, "PUBLIC_SOLUTION")?;
+            self.listener_intake()?
+                .classical_authentication
+                .perform(SOLUTION_BYTES + 32, || {
+                    let message = caller_message(cookie, nonce, false)?;
+                    verify_hex_strict(&cookie.caller, &message, &hex::encode(&bytes[44..108]))
+                        .map_err(|_| "PUBLIC_CALLER_SIGNATURE".into())
+                })
         }
     }
 }
