@@ -1,0 +1,8 @@
+{
+  "baseline_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "source_path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+  "baseline_source_sha256": "325c3d0fd88e7bd361255d2d50f0e89155a3b735483f302bf2d3bcfe8851ba93",
+  "candidate_source_sha256": "d8b06f0612b55a2537f9857ebe57b72a7ad7b2e126772bf7ae3e92fa59ff27ac",
+  "harness_sha256": "9fc367fed3dab70992929d1ac96ee2c3651207acb0ced7a251051cc046cc4d8e",
+  "scope": "exact extracted component functions; debug-profile serde dependency reuse; not whole-node, WAN, throughput or original gate qualification"
+}

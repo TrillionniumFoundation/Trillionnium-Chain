@@ -1,0 +1,13 @@
+
+running 8 tests
+test baseline::input_decode_tests::initialized_socket_reads_preserve_partial_bytes_and_ignore_unreceived_padding ... ok
+test baseline::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes ... ok
+test baseline::input_decode_tests::packet_envelopes_keep_empty_exact_maximum_and_over_limit_behavior ... ok
+test baseline::input_decode_tests::packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation ... ok
+test candidate::input_decode_tests::initialized_socket_reads_preserve_partial_bytes_and_ignore_unreceived_padding ... ok
+test candidate::input_decode_tests::initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_bytes ... ok
+test candidate::input_decode_tests::packet_envelopes_keep_empty_exact_maximum_and_over_limit_behavior ... ok
+test candidate::input_decode_tests::packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.43s
+

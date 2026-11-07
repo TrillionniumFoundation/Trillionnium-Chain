@@ -39,6 +39,43 @@ The [multimodal evidence](../../evidence/pon-useful-cell-multimodal-v3-20261107/
 retains the finite controls and complete proof material without promoting
 generated arithmetic labels into task-quality evidence.
 
+**Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate from
+`e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct
+the identical request after complete lowercase-hex/framing checks; bounded
+socket reads use the already reserved initialized buffer. Preserve every ticket,
+signature, work replay, live Host check, original deadline and resource ceiling.
+Classical mixed-sender execution skips speculative state work whose sender nonce
+already has an earlier transaction; every signature and canonical state effect
+still executes, with the old complete-speculation path retained as a test oracle.
+PQ and Growth keep their existing serial state-owner semantics.
+
+Only classical Legacy reorganization may reuse the existing bounded full-input
+root arithmetic. Actual SQL rows, canonical grammar, untouched corruption,
+current stored roots, atomic owner/cursor checks and cancellation remain checked;
+PQ, Growth and Authenticated profiles retain their original root validation.
+This still traverses complete State and is not touched-set/COW completion.
+The [continuation record](../../evidence/pon-throughput-closure-20261107/README.md)
+separates exact-source component controls, paired cost observations and the
+unchanged original 4-second/16-worker and 4,105-block business gates. Failed
+confirmation summaries retain all available hostile attempts, late/error returns,
+repeated inputs, missing observations and nested CPU ownership. Review existing
+SQLite source pins, actual accept-loop readiness and local CodeQL SARIF ownership
+without importing sibling-branch qualification. No parameter, consensus choice,
+production activation or original failed result is promoted by this work.
+
+Frozen native tree `807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7` completed eight
+512-block Legacy observations with identical final and cold-reopened State.
+Activation wall median decreased about 25.3%, while complete-process cost stayed
+approximately unchanged; repeated-sender reexecution decreases likewise do not
+establish confirmed throughput. Full Node lib execution retains three
+environment-denied Unix-socket startup failures alongside 1,150 passes and 31
+ignored tests. Preserve the concurrent `271a87f...` and `3d1b650...` source/evidence
+changes and the strict CodeQL source guard; separately index the later historical
+crypto scan lock rather than rewriting its original capture. Exact outcomes,
+all failed setup attempts and remaining original-resource gates are in the
+continuation record above.
+
 **Stateful useful-Cell computation, 2026-11-07 America/New_York:** Continue
 the existing #688 candidate with the separately named
 [V2 reference relation](specs/pon/USEFUL_CELL_RELATION_V2.md). Replay actual

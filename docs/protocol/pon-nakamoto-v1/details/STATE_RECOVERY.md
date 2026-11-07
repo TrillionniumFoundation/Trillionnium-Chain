@@ -207,6 +207,30 @@ schema, genesis, reward, rollback or root rule changes. This removes repeated Ru
 packet materialization but does not turn the complete-state root into persistent
 incremental authenticated storage or qualify physical power loss.
 
+### Complete-State arithmetic during Legacy reorganization
+
+The Legacy owner's staging, pre-COMMIT active-State and final publication root
+checks can reuse the existing M06 `FullRootArithmetic`. Its single retained
+mathematical payload remains bounded to 2 MiB; every invocation supplies the complete
+current State. Reuse requires the complete current leaf inputs for a partition to
+match, with original canonical grammar, limits and collision checks. A contention,
+poison or arithmetic failure uses the original full-root calculation. No stored
+block id, expected root, cursor, cached State or validation verdict supplies the
+answer. All actual SQL rows, including keys untouched by the block, are still read
+and checked at their original transactional boundaries.
+
+This choice is limited to classical Legacy reorganization validation. Ordinary
+admission and direct append keep their existing root path; PQ profiles retain
+their complete account-State validation, and authenticated storage and the distinct
+Growth commitment keep their own relations. Original before-images,
+step/cursor transactions, generation/slot checks, cancellation callbacks and one
+atomic active/events publication remain. Signed-history process-cut, cold-resume,
+untouched-corruption and original-error controls exercise this composition. Every
+current State row and its bytes are still traversed, and the complete leaf set
+is sorted. This is not touched-set authenticated execution or a COW storage
+migration, and it does not qualify the original 4,105-block deadline,
+four-second hostile-load screen, physical power loss or production throughput.
+
 ## PN2 / P1 bounded-state delivery at the existing owner
 
 This specifies the I03–I05 work order in the

@@ -1040,6 +1040,145 @@ def business_receive_observation(doc: dict, phase: dict, receiver: dict | None,
     }
 
 
+def attack_attempt_observation(workers: list | None, scheduled: int, window: int) -> dict:
+    """Keep hostile attempts, including failed and missing records, in readback.
+
+    A caller return is not a receiver dispatch. Repeated packet indices remain
+    separate paid attempts; exhausted construction records are not submissions.
+    The worker CPU already encloses its calls and must not be added to them.
+    This bounded reader describes retained rows, not authenticated completeness.
+    """
+    number = ConfirmationReportChecks.number
+    statuses = Counter()
+    submitted_rows, unknown_rows = [], []
+    records = call_lists = 0
+    cap_reached = cap_unknown = 0
+    for worker in workers or []:
+        cap = worker.get('attempt_cap_reached')
+        require(cap is None or type(cap) is bool, 'CONFIRMATION_ATTACK_ATTEMPT_CAP')
+        cap_reached += cap is True
+        cap_unknown += cap is None
+        rows = worker.get('calls')
+        if rows is None:
+            continue
+        require(isinstance(rows, list) and len(rows) <= 1024
+                and all(isinstance(row, dict) for row in rows),
+                'CONFIRMATION_ATTACK_ATTEMPT_BOUND')
+        call_lists += 1
+        records += len(rows)
+        for row in rows:
+            status = row.get('status')
+            require(status in (None, 'ok', 'refused', 'error', 'not_submitted_exhausted'),
+                    'CONFIRMATION_ATTACK_ATTEMPT_STATUS')
+            statuses['unknown' if status is None else status] += 1
+            if status is None:
+                unknown_rows.append(row)
+            elif status in ('ok', 'refused', 'error'):
+                submitted_rows.append(row)
+
+    def observations(rows, noun):
+        raw_errors, raw_refusals = Counter(), Counter()
+        packet_indices = set()
+        packet_slots = cpu_known = cpu_missing = cpu_sum = 0
+        byte_known = byte_missing = byte_sum = timing_known = timing_missing = 0
+        late_call = late_window = deadline_known = window_known = 0
+        for row in rows:
+            value = row.get('error')
+            require(value is None or isinstance(value, str), 'CONFIRMATION_DIAGNOSTIC_TEXT')
+            if value is not None:
+                raw_errors[value] += 1
+            response = row.get('response')
+            value = response.get('value') if isinstance(response, dict) else None
+            error = value.get('error') if isinstance(value, dict) else None
+            require(error is None or isinstance(error, str), 'CONFIRMATION_DIAGNOSTIC_TEXT')
+            if error is not None:
+                raw_refusals[error] += 1
+            cpu = row.get('client_thread_cpu_ns')
+            if cpu is None:
+                cpu_missing += 1
+            else:
+                cpu_known += 1
+                cpu_sum += number(cpu)
+            body_bytes = row.get('recorded_request_bytes')
+            if body_bytes is None:
+                byte_missing += 1
+            else:
+                byte_known += 1
+                byte_sum += number(body_bytes)
+            packet = row.get('packet_index')
+            if packet is not None:
+                packet_indices.add(number(packet))
+                packet_slots += 1
+            timing = ('started_ns', 'ended_ns', 'elapsed_wall_ns', 'deadline_ms',
+                      'returned_after_deadline', 'returned_after_window')
+            started, ended, elapsed, deadline = (
+                None if row.get(key) is None else number(row[key]) for key in timing[:4])
+            after_deadline, after_window = (row.get(key) for key in timing[4:])
+            require((deadline is None or deadline == 2000)
+                    and (started is None or ended is None or started <= ended)
+                    and (started is None or ended is None or elapsed is None
+                         or elapsed >= ended - started)
+                    and (after_deadline is None or type(after_deadline) is bool)
+                    and (after_window is None or type(after_window) is bool)
+                    and (after_deadline is None or elapsed is None
+                         or after_deadline is (elapsed > 2_000_000_000))
+                    and (after_window is None or ended is None
+                         or ended < window or after_window is True),
+                    'CONFIRMATION_ATTACK_CALL_TIME')
+            complete = all(row.get(key) is not None for key in timing)
+            timing_known += complete
+            timing_missing += not complete
+            deadline_known += after_deadline is not None
+            window_known += after_window is not None
+            late_call += after_deadline is True
+            late_window += after_window is True
+        return {
+            f'{noun}_with_complete_timing': timing_known,
+            f'{noun}_with_unknown_timing': timing_missing,
+            'returned_after_call_deadline': late_call,
+            'returned_after_original_window': late_window,
+            'return_flag_coverage': {
+                'returned_after_call_deadline': {
+                    'known_count': deadline_known, 'missing_count': len(rows) - deadline_known},
+                'returned_after_original_window': {
+                    'known_count': window_known, 'missing_count': len(rows) - window_known}},
+            'calling_thread_cpu': {'known_count': cpu_known, 'missing_count': cpu_missing,
+                                   'known_sum_ns': cpu_sum if cpu_known else None},
+            'recorded_request_body_bytes': {'known_count': byte_known, 'missing_count': byte_missing,
+                                            'known_sum': byte_sum if byte_known else None},
+            'unique_recorded_packet_indices': len(packet_indices),
+            f'repeated_recorded_packet_index_{noun}': packet_slots - len(packet_indices),
+            f'{noun}_without_packet_index': len(rows) - packet_slots,
+            'raw_client_error_counts': dict(raw_errors), 'raw_refusal_error_counts': dict(raw_refusals),
+        }
+
+    observed = len(workers) if workers is not None else 0
+    return {
+        'scheduled_workers': scheduled, 'observed_worker_records': observed,
+        'missing_worker_records': scheduled - observed,
+        'worker_call_lists_observed': call_lists,
+        'worker_call_lists_unavailable': scheduled - call_lists,
+        'all_scheduled_worker_call_lists_observed': call_lists == scheduled,
+        'recorded_attempts': records, 'submitted_client_calls_recorded': len(submitted_rows),
+        'exhausted_without_submission': statuses['not_submitted_exhausted'],
+        'unknown_status_records': statuses['unknown'],
+        'submitted_status_counts': {key: statuses[key] for key in ('ok', 'refused', 'error')},
+        'workers_reporting_attempt_cap_reached': cap_reached,
+        'worker_attempt_cap_status_unknown': cap_unknown + scheduled - observed,
+        **observations(submitted_rows, 'calls'),
+        'unknown_status_observations': {
+            'record_count': len(unknown_rows), **observations(unknown_rows, 'records'),
+            'scope': 'retained fields from unclassified records; submission is unknown; '
+                     'this disjoint bucket is excluded from submitted-call totals'},
+        'diagnostic_text_is_typed_error': False, 'unobserved_attempts': None,
+        'scope': 'retained hostile caller attempts; missing worker/call lists are unknown, not zero; '
+                 'repeated packets remain separate attempts; independently observed late flags '
+                 'overlap status counts even when another clock field is missing; '
+                 'call CPU is nested in worker CPU; recorded body bytes are not sent/physical bytes; '
+                 'no failed call is equated with receiver rejection or cancellation',
+    }
+
+
 def complete_confirmation_observation(doc: dict, report: dict) -> dict:
     """Add v2 accounting from existing facts without correlating distinct clocks.
 
@@ -1183,6 +1322,8 @@ def complete_confirmation_observation(doc: dict, report: dict) -> dict:
             'scheduled_workers': phase['workers'], 'observed_worker_records': len(roster),
             'worker_roster_observed': workers is not None}
         measured['resource_coverage'] = resources
+        measured['attacker_attempts'] = attack_attempt_observation(
+            workers, phase['workers'], measured['window_ns'])
 
         business = measured['business']
         in_window = business['reported_independently_confirmed_in_window'] == 1
