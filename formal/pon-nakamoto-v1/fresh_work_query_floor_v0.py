@@ -85,7 +85,9 @@ SCOPE AND TRANSFER OBLIGATIONS.
   L, and the corresponding sum of charges; the fixed-L bound must not silently
   award one profile another profile's more expensive nominal cost. Selecting
   among legal candidates or bulk precommits is allowed and all queries count.
-* An optional outer proof hash would create extra independent cheap tickets.
+* An outer lottery over allowed mutable or unbound proof/carrier bytes, or an
+  additional selectable nonce, can create extra independent cheap tickets.
+  Hashing one unique canonical proof alone does not create that multiplicity.
   Reusing a correct Cell product is lawful and contributes no multiplicative
   credit. This model neither proves W1 hardness nor supplies a quantum bound.
 * Classical random-oracle sequentiality is not a lower bound for all SHA-256
