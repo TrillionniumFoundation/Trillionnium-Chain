@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+    "store::public_reader::tests::",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "selected_count": 10,
+  "tests": [
+    "store::public_reader::tests::readonly_history_allows_real_writer_commit_without_releasing_writer_authority",
+    "store::public_reader::tests::readonly_history_cancel_drops_lease_and_namespace_changes_refuse",
+    "store::public_reader::tests::readonly_history_detects_foreign_write_restore_and_same_owner_raw_damage",
+    "store::public_reader::tests::readonly_history_one_cumulative_budget_has_exact_limit_and_no_partial_result",
+    "store::public_reader::tests::readonly_history_original_cursor_errors_and_used_fact_damage_keep_origin",
+    "store::public_reader::tests::readonly_history_refuses_reorganization_epoch_before_page_publication",
+    "store::public_reader::tests::readonly_history_same_generation_owner_epoch_damage_stops_without_wrapping_cancel",
+    "store::public_reader::tests::readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_normal_reads",
+    "store::public_reader::tests::readonly_history_snapshot_keeps_original_page_and_cold_reopen",
+    "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+  ]
+}

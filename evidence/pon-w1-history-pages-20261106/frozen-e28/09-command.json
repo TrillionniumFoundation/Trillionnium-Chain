@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+    "scalar_cpu::metered_fact_network_tests::",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "selected_count": 1,
+  "tests": [
+    "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight"
+  ]
+}

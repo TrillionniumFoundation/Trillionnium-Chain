@@ -1,0 +1,16 @@
+
+running 10 tests
+test store::public_reader::tests::readonly_history_allows_real_writer_commit_without_releasing_writer_authority ... ok
+test store::public_reader::tests::readonly_history_cancel_drops_lease_and_namespace_changes_refuse ... ok
+test store::public_reader::tests::readonly_history_detects_foreign_write_restore_and_same_owner_raw_damage ... ok
+test store::public_reader::tests::readonly_history_one_cumulative_budget_has_exact_limit_and_no_partial_result ... {"actual_blocks":17,"actual_signed_transactions":256,"complete_cumulative_sql":70,"full_page_equal":true,"schema":"native-readonly-history-exact-budget-control-v1","scope":"actual complete operation N/N-1 boundary; not extreme-height production exhaustion"}
+ok
+test store::public_reader::tests::readonly_history_original_cursor_errors_and_used_fact_damage_keep_origin ... ok
+test store::public_reader::tests::readonly_history_refuses_reorganization_epoch_before_page_publication ... ok
+test store::public_reader::tests::readonly_history_same_generation_owner_epoch_damage_stops_without_wrapping_cancel ... ok
+test store::public_reader::tests::readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_normal_reads ... ok
+test store::public_reader::tests::readonly_history_snapshot_keeps_original_page_and_cold_reopen ... ok
+test store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost ... ignored, complete snapshot/public-history cost and retained long-history growth; saved output required
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 1158 filtered out; finished in 2.72s
+

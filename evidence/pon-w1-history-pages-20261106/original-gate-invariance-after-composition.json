@@ -1,0 +1,387 @@
+{
+  "schema": "original-gate-invariance-after-composition-v1",
+  "checked_at_utc": "2026-11-07T00:47:11+00:00",
+  "check_started_at_utc": "2026-11-07T00:47:11+00:00",
+  "baseline_commit": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+  "current_worktree": "/workspace/scratch/a66f84888260/chain-integration",
+  "current_worktree_head": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+  "scope": "Read-only source and workflow comparison; records current worktree bytes, including uncommitted changes.",
+  "method": "Compare actual worktree bytes to git show baseline:path; record original git blob OIDs and SHA-256. Native-only change checks apply exactly the four listed substitutions to complete baseline files.",
+  "checks": {
+    "all_key_files_byte_identical": true,
+    "lock_and_requirements_count": 21,
+    "all_lock_and_requirements_byte_identical": true,
+    "fresh_service_block_byte_identical": true,
+    "workflow_trigger_permissions_concurrency_env_prefix_byte_identical": true,
+    "native_workflow_byte_identical": true,
+    "all_native_files_only_listed_namespace_and_policy_changes": true
+  },
+  "unchanged_key_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "baseline_blob": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+      "sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+      "bytes": 79067,
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "baseline_blob": "38d20a3344d40ea73a32982568dba14a275b1e10",
+      "sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f",
+      "bytes": 10907,
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "baseline_blob": "7089e961965af9209f2d588061c8526c5acba161",
+      "sha256": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+      "bytes": 53670,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "baseline_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "bytes": 24743,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "baseline_blob": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+      "sha256": "18c5f255df1bb69eb0a8629d3376b40b4f4d24c081cc81e15c4dc5d562f2d97a",
+      "bytes": 102985,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/run_w1_fresh_service_v1.py",
+      "baseline_blob": "68a3c2307159e17773c6a33c2636c62ddca56507",
+      "sha256": "dbc50b7fd7d23e2df5a158791c67b8935418d95f84beef1fdabb9bc9566961ef",
+      "bytes": 21503,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "baseline_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de",
+      "bytes": 5452,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "baseline_blob": "4d32cf894376d0fa9380ed64b78dc3ea7f48f795",
+      "sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3",
+      "bytes": 42949,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "baseline_blob": "98b288581160bbe0ef1713e21ba481acd358d064",
+      "sha256": "210332295e9d4bce59e26d581c214e2a459807f2a368a97ca1dc9a51957dd364",
+      "bytes": 118056,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "baseline_blob": "9d51dae6abe4836d16f170b8aaa9050c497d0bd4",
+      "sha256": "342bcf933b9a4b75e8e1d88171fd2a070741b0368c1fc460bc12c4320597180a",
+      "bytes": 34235,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "baseline_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "bytes": 11231,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/run_pon_w1_native_campaign.py",
+      "baseline_blob": "ebbbfb38c1392669776530a3b90475beda75b50b",
+      "sha256": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "bytes": 17265,
+      "byte_identical": true
+    },
+    {
+      "path": ".github/workflows/pon-native-campaign-qualification.yml",
+      "baseline_blob": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+      "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+      "bytes": 22343,
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "baseline_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
+      "bytes": 104121,
+      "byte_identical": true
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "baseline_blob": "8770b1d875864c5356dc4abad904b69ec484817f",
+      "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a",
+      "bytes": 86,
+      "byte_identical": true
+    }
+  ],
+  "lock_and_requirements_files": [
+    {
+      "path": "evidence/pon-w1-batch-guest-msrv-20261028-r8/after-guest-Cargo.lock",
+      "baseline_blob": "b42e77c0d8ad4964b6d18b196d95e41492e4cc0d",
+      "sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+      "bytes": 37506,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-batch-guest-msrv-20261028-r8/before-guest-Cargo.lock",
+      "baseline_blob": "6d2ee496115f3e7cd3833f3b22aed1e06bb9039b",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "bytes": 37525,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-batch-guest-msrv-20261028-r8/unchanged-native-Cargo.lock",
+      "baseline_blob": "dda606c9a0e095e6967ea815ae7076e837e0665d",
+      "sha256": "32953cbb86bb56186137507ee9e9bf59827bd8325c6e28c12b40d5c166fbfa4d",
+      "bytes": 67876,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-batch-ruint-security-20261028-r8/restore-fixed-lock/rejected-guest-Cargo.lock",
+      "baseline_blob": "b42e77c0d8ad4964b6d18b196d95e41492e4cc0d",
+      "sha256": "6de3cb567deb89569bdabe5c224e44b6fd5232ae9a91d9074e55bd4f9b43a993",
+      "bytes": 37506,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-batch-ruint-security-20261028-r8/restore-fixed-lock/restored-fixed-guest-Cargo.lock",
+      "baseline_blob": "6d2ee496115f3e7cd3833f3b22aed1e06bb9039b",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "bytes": 37525,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-join-diagnostic-20261105/tool/Cargo.lock",
+      "baseline_blob": "4b2780d16c1ce355ca46046a44fa8cc317b710b2",
+      "sha256": "2a029f0372a18f5fef3faa07df1defe65e11b85016a6f1e8f4e541602c1a74d8",
+      "bytes": 67615,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-nonblocking-cache-20261101b/host-module-harness/Cargo.lock",
+      "baseline_blob": "fbc0c60eafd5749d8a39d057c0d547d0276a0ae8",
+      "sha256": "c65968ad6434937125b6c7e865598b349e55ee3fe0e969932c1f8405133d8c6f",
+      "bytes": 17136,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/Cargo.lock",
+      "baseline_blob": "195e03f3ca3ac401ea83a28e506c0bcc25a739b8",
+      "sha256": "cb63cf4fc40a3a8ae05045abfd23e991728653bd2a694187a1f5aec2c84fbb21",
+      "bytes": 7207,
+      "byte_identical": true
+    },
+    {
+      "path": "evidence/pon-w1-work-security-20261101/trial-1/harness/Cargo.lock",
+      "baseline_blob": "16472725519e46e16d2d057a291fbeb24503cb23",
+      "sha256": "2b43c3281e939be185b4689582b8b7bbc6322ee4303d653fec69d9572b8ee6aa",
+      "bytes": 7455,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/requirements.txt",
+      "baseline_blob": "f505bfe105e824248803af99d2865a97dbf3cd8c",
+      "sha256": "ae117e781e1420b46bfc2c4b9a550da3fe3f98ff9cbe868192036d34c342aed5",
+      "bytes": 128,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/Cargo.lock",
+      "baseline_blob": "70ef9c45aaa139a857e8123c4af8da175c390636",
+      "sha256": "e56accd1c0259adba715ea17e252aee6214eb5ff06a449b5cee4d4c72b18ac8a",
+      "bytes": 67890,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_batch/methods/guest/Cargo.lock",
+      "baseline_blob": "6d2ee496115f3e7cd3833f3b22aed1e06bb9039b",
+      "sha256": "018423c898d09d0be7a7fbe207e4a1672c5b6f36202dda765a81da852c044d18",
+      "bytes": 37525,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "baseline_blob": "1020d2fd06b76312c69972261be5b56ebeb66972",
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865",
+      "bytes": 38332,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+      "baseline_blob": "91e93fe1667cb9fc4c58eca0c4e42bd0973bf917",
+      "sha256": "729bdcda4a9f49d5757c2726cd98582ed420d6dd858f46ac453ed0625c7a593b",
+      "bytes": 15493,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "baseline_blob": "661994ef71dccb88a8b175621f5304a3450307cc",
+      "sha256": "5b037e71d807d90d25fb6247a348cca30a63765411e08c1f9c370f4162704be9",
+      "bytes": 46474,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+      "baseline_blob": "4a9045fac34603d8f96ac88c1ac42c395cff6436",
+      "sha256": "ceac505ece9272b6d904cb31602e5fc88b91ebf36243081a3fd2270ae21d4c80",
+      "bytes": 74338,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "baseline_blob": "d2e384cdc16128fc6b23b971c5f7af9fa7538bc8",
+      "sha256": "9eb533e5746b597225d6dd91131efd1dec481464dc3d776ba4aa1bfc927bcabe",
+      "bytes": 45363,
+      "byte_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest/Cargo.lock",
+      "baseline_blob": "9bd40d35b9e2da403d161728acadedfa81b38801",
+      "sha256": "517632d9380db3b9b034efa475063cd2c081ba1af14de580dd09f8648e472f76",
+      "bytes": 40801,
+      "byte_identical": true
+    },
+    {
+      "path": "scripts/ci/model-runtime-cpu-requirements.txt",
+      "baseline_blob": "6796d0737af36e1521d89f6937df288fe67167a1",
+      "sha256": "178b2fe89a7bf58f2d127b195d82e4fa9b5c19d93cb3526d8789edf3df901017",
+      "bytes": 4678,
+      "byte_identical": true
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "baseline_blob": "6af28eb8c0debfa095df2b19c320eaeefa95f8c1",
+      "sha256": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+      "bytes": 33630,
+      "byte_identical": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "baseline_blob": "ce7b3d41c35e691bb4c21c3b6dc5be6b2bd8155e",
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "bytes": 40044,
+      "byte_identical": true
+    }
+  ],
+  "fresh_service": {
+    "workflow_path": ".github/workflows/pon-w1-work-security.yml",
+    "baseline_workflow_blob": "667004e05c75ebd52acc46d8fc4c63d5aefe020c",
+    "block": "fresh-challenge-service",
+    "bytes": 3646,
+    "sha256": "e2a6aa9722fec641257a22378a9f9c21d3e5edd8d9c28e97a857327e798c20f2",
+    "baseline_sha256": "e2a6aa9722fec641257a22378a9f9c21d3e5edd8d9c28e97a857327e798c20f2",
+    "byte_identical": true,
+    "prefix_byte_identical": true,
+    "needs_present": false,
+    "continue_on_error_present": false,
+    "execution_command": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\""
+  },
+  "native_workflow": {
+    "path": ".github/workflows/pon-native-campaign-qualification.yml",
+    "baseline_blob": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7",
+    "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+    "bytes": 22343,
+    "byte_identical": true
+  },
+  "native_only_namespace_and_policy_changes": {
+    "exact_substitutions": [
+      [
+        "RawR14",
+        "RawR16"
+      ],
+      [
+        "raw-r14",
+        "raw-r16"
+      ],
+      [
+        "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "09c3b50a335d9071c26842e98a54bd4b12c9bbd08c5f409dff1f9771fa2923bd"
+      ],
+      [
+        "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825",
+        "8be7d6cad23d856ae3248dfc4e2479c92c10d1af849bdb0a7b0fc6f6faa1ffb0"
+      ]
+    ],
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+        "baseline_blob": "ec6420becaba837f22d45c917d15554a8e653275",
+        "sha256": "986a5a599562f2bf4df692be9f6301adf6007d79abfce1b1aa960a1ff8a716af",
+        "bytes": 111313,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+        "baseline_blob": "5b3c8f9c7063c46e5086af15dd2851c4470f53f8",
+        "sha256": "80e681884ee2c6c9f770103625d3d80a8f1736bfc359eda025616bb24a44c9fd",
+        "bytes": 12378,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+        "baseline_blob": "bcd7a176d4f059e50198086daca3925d2fc6676e",
+        "sha256": "03840fae2bd169a7cffd01c2051fa050dcdc018544b793e8c3fc849d2051b14f",
+        "bytes": 20219,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+        "baseline_blob": "452a7c10265ecc337943832589e71ce80d0eff14",
+        "sha256": "c46824c25a01ae14523eaa3b72c0119c54397751ebf7b4e32cd4576ba99ba4ae",
+        "bytes": 70379,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      },
+      {
+        "path": "scripts/ci/run_native_phase_host.py",
+        "baseline_blob": "be4c1726ff0c2fa19616c42b9a6fa819b08a7d96",
+        "sha256": "08e351fe2982fdc6694c539437f67e7e97c29cdca3848b5afc390e5d4812f817",
+        "bytes": 18895,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      },
+      {
+        "path": "scripts/ci/run_fixed_root_phase_host.py",
+        "baseline_blob": "db687834cc17023dda2f793779ea29b511c6bbbf",
+        "sha256": "fad184a8a35f9e219fe3c478a431ce80fbc6f7e281d346c08a270a3a13fc25ad",
+        "bytes": 27285,
+        "byte_identical": false,
+        "only_listed_namespace_and_policy_changes": true
+      }
+    ]
+  },
+  "importer_exception": {
+    "byte_invariance_claimed": false,
+    "allowed_change": "Fixed-tip decode fence and its regression; importer is explicitly excluded from the byte-invariance claim.",
+    "files": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+        "baseline_blob": "bd89990d6e1d7bda56f0be69a526815d87edbc29",
+        "sha256": "a4c76863c6bd99caec009a392a5123acce97db2d15b4874f09c9d1b70f6ef6ed",
+        "bytes": 22981,
+        "byte_identical": false
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
+        "baseline_blob": "c75147a7ec1c51fc402bb5bf2c9a88994b2a1ff7",
+        "sha256": "8993940e97bf37cd4a609b48a735a2fd0abb0161f68691172cf8c7e0dbf408fb",
+        "bytes": 72747,
+        "byte_identical": false
+      }
+    ]
+  },
+  "tests_executed": false,
+  "qualification": false
+}

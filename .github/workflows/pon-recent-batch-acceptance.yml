@@ -74,7 +74,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs)" = 44acbb5d854a8e0a7c4979b4715bd9949b656cd5
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs)" = a6eb85aa2c2e3ad17244890128ef86975d71ecc9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)" = 6119f98bb45fda6399d2528db9f61a69751e397f
-          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = ff9a63deb340bbe74dec5109c754983290ddf1f2
+          test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)" = 22ba74f76e2616f72c7cc436fcde7acf3f6d1286
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/public_history.rs)" = 4e2cd748bd791c907156ac0eb6496a44fd6e241c
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9
           test "$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)" = c98c5333ab3609b30b11fd0a700917ce7f2a8999

@@ -11,13 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-w1-work-security.yml'
 SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs'
-COUNTS = {'factorial-kernel-tests': (9, 0), 'factorial-example-tests': (6, 0),
+RANK_SOURCE = SOURCE.parent / 'legal_attempt/low_rank.rs'
+COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (6, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (28, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (29, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
     'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors',
+    'history_page_cannot_decode_past_fixed_tip_before_native_admission',
 ]
 
 
@@ -28,6 +30,10 @@ class NativeGateTests(unittest.TestCase):
         self.names = ['pon_work::legal_attempt::tests::' + n for n in
                       re.findall(r'#\[test\]\s+fn (\w+)', SOURCE.read_text())]
         self.assertEqual(len(self.names), 9)
+        rank_names = ['pon_work::legal_attempt::low_rank::tests::' + n for n in
+                      re.findall(r'#\[test\]\s+fn (\w+)', RANK_SOURCE.read_text())]
+        self.assertEqual(len(rank_names), 5)
+        self.names += rank_names
         self.logs = {name: f'test result: ok. {passed} passed; 0 failed; {ignored} ignored;\n'
                      for name, (passed, ignored) in COUNTS.items()}
         self.logs['factorial-kernel-tests'] += ''.join(f'test {n} ... ok\n' for n in self.names)

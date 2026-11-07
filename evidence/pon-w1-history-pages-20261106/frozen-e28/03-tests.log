@@ -1,0 +1,8 @@
+
+running 3 tests
+test ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline ... ok
+test ingress::public_v3::history_response::tests::public_history_formatting_matches_bytes_cursors_and_fresh_foreign_damage ... ok
+test ingress::public_v3::history_response::tests::public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1165 filtered out; finished in 0.17s
+

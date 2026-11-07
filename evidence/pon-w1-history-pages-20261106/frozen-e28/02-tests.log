@@ -1,0 +1,11 @@
+
+running 6 tests
+test ingress::public_v3::history_response::tests::batch::public_history_batch_byte_boundary_returns_one_without_skipping_a_valid_candidate ... ok
+test ingress::public_v3::history_response::tests::batch::public_history_batch_cumulative_sql_boundary_and_later_cancellation_publish_no_partial_error ... ok
+test ingress::public_v3::history_response::tests::batch::public_history_batch_second_and_last_damage_refuse_the_entire_page ... ok
+test ingress::public_v3::history_response::tests::batch::public_history_batch_seven_packets_replay_independently_before_depth_six ... ok
+test ingress::public_v3::history_response::tests::batch::public_history_batch_sixteen_packet_cap_keeps_exact_cursor_tip_and_v2_singleton ... ok
+test ingress::public_v3::history_response::tests::batch::public_history_batch_total_bytes_bound_real_bodies_and_the_signed_response ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 1162 filtered out; finished in 1.50s
+

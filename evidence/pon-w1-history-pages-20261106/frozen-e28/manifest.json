@@ -1,0 +1,200 @@
+{
+  "schema": "local-frozen-debug0-lib-components-v1",
+  "head": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+  "clean_before": true,
+  "profile_scope": "existing dev/test debug0 binary; functional evidence only; no release or fixed-Host qualification",
+  "binary": "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+  "binary_bytes": 111901760,
+  "binary_sha256": "875c7dabc2b7673087f49a1cfc9f7b480647ed88be4ab070b04c9f15e9fc540e",
+  "configured_environment": {
+    "CARGO_HOME": "/workspace/scratch/a66f84888260/cargo-home",
+    "RUSTUP_HOME": "/workspace/scratch/bf693a71b444/toolchain/rustup",
+    "CARGO_TARGET_DIR": "/workspace/scratch/a66f84888260/build",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "path_prefix": "/workspace/scratch/bf693a71b444/toolchain/cargo/bin",
+  "test_threads": 1,
+  "full_test_list_count": 1168,
+  "selected_total": 76,
+  "groups": [
+    {
+      "index": 1,
+      "filter": "public_history_page_",
+      "selected_count": 3,
+      "tests": [
+        "ancestry_index::tests::public_history_page_budget_exhaustion_never_renews_for_the_second_packet",
+        "ancestry_index::tests::public_history_page_rechecks_current_jump_rows_after_a_successful_packet",
+        "ancestry_index::tests::public_history_page_sql_is_cumulative_including_each_length_and_body"
+      ]
+    },
+    {
+      "index": 2,
+      "filter": "public_history_batch_",
+      "selected_count": 6,
+      "tests": [
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_byte_boundary_returns_one_without_skipping_a_valid_candidate",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_cumulative_sql_boundary_and_later_cancellation_publish_no_partial_error",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_second_and_last_damage_refuse_the_entire_page",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_seven_packets_replay_independently_before_depth_six",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_sixteen_packet_cap_keeps_exact_cursor_tip_and_v2_singleton",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_total_bytes_bound_real_bodies_and_the_signed_response"
+      ]
+    },
+    {
+      "index": 3,
+      "filter": "public_history_formatting_",
+      "selected_count": 3,
+      "tests": [
+        "ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline",
+        "ingress::public_v3::history_response::tests::public_history_formatting_matches_bytes_cursors_and_fresh_foreign_damage",
+        "ingress::public_v3::history_response::tests::public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg"
+      ]
+    },
+    {
+      "index": 4,
+      "filter": "store::public_reader::tests::",
+      "selected_count": 10,
+      "tests": [
+        "store::public_reader::tests::readonly_history_allows_real_writer_commit_without_releasing_writer_authority",
+        "store::public_reader::tests::readonly_history_cancel_drops_lease_and_namespace_changes_refuse",
+        "store::public_reader::tests::readonly_history_detects_foreign_write_restore_and_same_owner_raw_damage",
+        "store::public_reader::tests::readonly_history_one_cumulative_budget_has_exact_limit_and_no_partial_result",
+        "store::public_reader::tests::readonly_history_original_cursor_errors_and_used_fact_damage_keep_origin",
+        "store::public_reader::tests::readonly_history_refuses_reorganization_epoch_before_page_publication",
+        "store::public_reader::tests::readonly_history_same_generation_owner_epoch_damage_stops_without_wrapping_cancel",
+        "store::public_reader::tests::readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_normal_reads",
+        "store::public_reader::tests::readonly_history_snapshot_keeps_original_page_and_cold_reopen",
+        "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+      ]
+    },
+    {
+      "index": 5,
+      "filter": "peer_polling::tests::",
+      "selected_count": 17,
+      "tests": [
+        "peer_polling::tests::actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries",
+        "peer_polling::tests::actual_valid_work_with_false_ledger_state_cannot_advance_cursor_or_owner",
+        "peer_polling::tests::call_and_global_page_budgets_round_robin_are_hard_finite",
+        "peer_polling::tests::config_file_refuses_symlink_fifo_hardlink_writable_and_oversized",
+        "peer_polling::tests::config_has_exact_context_finite_limits_and_no_discovery",
+        "peer_polling::tests::malformed_pages_fail_before_packet_allocation_and_do_not_claim_progress",
+        "peer_polling::tests::multi_packet_count_and_total_hex_are_bounded_before_decoding_any_packet",
+        "peer_polling::tests::multi_packet_false_tail_retains_durable_prefix_without_page_or_target_completion",
+        "peer_polling::tests::multi_packet_page_checks_every_parent_and_stops_at_the_fixed_target",
+        "peer_polling::tests::normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does",
+        "peer_polling::tests::oversized_failure_is_explicitly_retained_with_digest_and_utf8_boundary",
+        "peer_polling::tests::pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork",
+        "peer_polling::tests::pinned_peer_requires_the_existing_service_domain_before_full_work",
+        "peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text",
+        "peer_polling::tests::real_native_fixed_tip_disconnect_one_initial_cursor_fallback_and_heavier_fork",
+        "peer_polling::tests::transport_unknown_block_malformed_and_post_progress_cursor_never_fallback",
+        "peer_polling::tests::typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor"
+      ]
+    },
+    {
+      "index": 6,
+      "filter": "work_arithmetic::tests::",
+      "selected_count": 5,
+      "tests": [
+        "ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet",
+        "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges",
+        "ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit",
+        "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown",
+        "ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context"
+      ]
+    },
+    {
+      "index": 7,
+      "filter": "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+      ]
+    },
+    {
+      "index": 8,
+      "filter": "resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::tests::resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+      ]
+    },
+    {
+      "index": 9,
+      "filter": "scalar_cpu::metered_fact_network_tests::",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight"
+      ]
+    },
+    {
+      "index": 10,
+      "filter": "ingress::history_import::tests::",
+      "selected_count": 29,
+      "tests": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+        "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_kill_cut_child",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "purpose": "retained native History importer CPU/deadline/activation/crash controls for batched public History consumers"
+    }
+  ],
+  "selector_discovery": [
+    {
+      "requested": "store::public_reader_tests::",
+      "matched": 0,
+      "outcome": "pre-execution zero-selection guard stopped manifest; no tests claimed",
+      "resolved": "store::public_reader::tests::"
+    },
+    {
+      "requested_source_file": "scalar_cpu_metered_fact_network_tests.rs",
+      "resolved": "scalar_cpu::metered_fact_network_tests::"
+    }
+  ],
+  "source_identity_before": {
+    "commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+    "tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+    "tracked_worktree_clean": true
+  },
+  "source_identity_after": {
+    "commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+    "tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+    "tracked_worktree_clean": true
+  },
+  "profile": {
+    "cargo_profile": "dev/test",
+    "dev_debug": 0,
+    "test_debug": 0,
+    "release": false,
+    "fixed_host_qualified": false,
+    "used_existing_binary_without_rebuild": true
+  },
+  "results_summary": "summary.json"
+}

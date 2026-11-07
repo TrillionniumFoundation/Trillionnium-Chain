@@ -1,0 +1,52 @@
+{
+  "schema": "w1-frozen-followup-observations-v1",
+  "source_commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+  "source_tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+  "strict_clippy": {
+    "command": [
+      "cargo",
+      "+1.95.0",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "-j1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "log": "candidate-clippy-final.log",
+    "sha256": "a0a891dd67928ad5e17e074a4b212ab65b999363c20a40500aaba1dcd6fdeeb0",
+    "profile": "original dev with debuginfo; no debug0 override"
+  },
+  "component_tests": {
+    "summary": "summary.json",
+    "selected": 76,
+    "passed": 74,
+    "failed": 0,
+    "ignored": 2,
+    "profile": "existing dev/test debug0 component binary; not original release or Host qualification"
+  },
+  "retained_applicability_failure": {
+    "log": "applicability-controls.log",
+    "tests": 37,
+    "errors": 6,
+    "reason": "generated table still named r14 while the current registry named r16 when this earlier run began; corrected positive controls are separate observations"
+  },
+  "fixed_host_qualified": false,
+  "production_activation": false,
+  "corrected_applicability_positive_controls": {
+    "log": "applicability-corrected-positive-controls.log",
+    "exit_code": 0,
+    "tests": 6,
+    "passed": 6,
+    "elapsed_seconds": 136.265,
+    "sha256": "07ca356454b58e6790587b13b6ec4037f0dfb850d200f73617c1adff88603d55",
+    "source_commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad"
+  }
+}

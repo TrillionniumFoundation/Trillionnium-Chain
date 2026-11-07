@@ -143,6 +143,38 @@ At that publication snapshot the explicitly labelled local debug=0 library
 component build and final strict workspace Clippy are pending. Those local
 component builds never substitute for original release/Host qualification.
 
+The [frozen e28 follow-up](frozen-e28/README.md) retains the subsequent actual
+execution: 74 selected library controls pass, zero fail, and two original
+entries remain ignored. Strict workspace/all-targets/all-features Clippy also
+passes. These observations bind the original frozen e28 source and do not
+qualify the later composition.
+
+## Concurrent integration and fixed-target review
+
+After the initial candidate was frozen, the existing #688 integration branch
+was observed at `a3e9002cd12ef90d62f8b252cad570e72dab6fa3`. Its rank/batch
+observations, bounded prepared-SQL reuse and SQLite build requalification
+changes are preserved in the composition. Source pin conflicts are resolved
+against the combined actual bytes; neither parent's pins are accepted as the
+identity of a changed combined file. The original e28 source remains retained.
+
+Independent review also found that the existing generic History importer
+could decode a valid consecutive page past its fixed requested tip: packets
+`A, B, C` with requested tip `B`, cursor `C` and `complete=false` passed the
+old final-cursor predicate. Every packet still required full native work, but
+this violated the fixed-target boundary and could leave the next cursor
+outside the requested branch interval. The follow-up rejects another packet
+as soon as the decoded cursor equals the requested tip, before native
+admission of any packet from that page. This also rejects a nonempty page
+whose starting cursor already equals the tip. Original CPU accounting,
+cleanup, cancellation and Host checks remain; a rejection is not described
+as zero work. Consequently the follow-up importer is not claimed to be
+byte-identical to 0ca. The original qualification workloads, Host checker and
+lockfiles remain unchanged. The
+[gate-preservation audit](original-gate-invariance-after-composition.json)
+records exact file and workflow-block hashes, including all 21 retained
+lock/requirements inputs. It is a source audit, not an executed qualification.
+
 The unchanged original four-second workload and fresh-challenge workload must
 execute on the new exact source in the genuine fixed Host environment. The
 native campaign also retains its original three-run criteria. Local compilation,

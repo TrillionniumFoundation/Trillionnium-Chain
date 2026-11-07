@@ -1,0 +1,400 @@
+{
+  "schema": "local-frozen-debug0-lib-components-result-v1",
+  "head": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+  "binary_sha256": "875c7dabc2b7673087f49a1cfc9f7b480647ed88be4ab070b04c9f15e9fc540e",
+  "profile_scope": "existing dev/test debug0 binary; functional evidence only; no release or fixed-Host qualification",
+  "started_utc": "2026-11-07T00:33:48.997311+00:00",
+  "groups": [
+    {
+      "index": 1,
+      "filter": "public_history_page_",
+      "selected_count": 3,
+      "tests": [
+        "ancestry_index::tests::public_history_page_budget_exhaustion_never_renews_for_the_second_packet",
+        "ancestry_index::tests::public_history_page_rechecks_current_jump_rows_after_a_successful_packet",
+        "ancestry_index::tests::public_history_page_sql_is_cumulative_including_each_length_and_body"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "public_history_page_",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/01-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.381,
+      "harness_result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1165,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "19b7f96039476a708f6debd67909421c4828926cc0f9f902f5adb12acfef2865",
+      "ignored_tests": []
+    },
+    {
+      "index": 2,
+      "filter": "public_history_batch_",
+      "selected_count": 6,
+      "tests": [
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_byte_boundary_returns_one_without_skipping_a_valid_candidate",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_cumulative_sql_boundary_and_later_cancellation_publish_no_partial_error",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_second_and_last_damage_refuse_the_entire_page",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_seven_packets_replay_independently_before_depth_six",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_sixteen_packet_cap_keeps_exact_cursor_tip_and_v2_singleton",
+        "ingress::public_v3::history_response::tests::batch::public_history_batch_total_bytes_bound_real_bodies_and_the_signed_response"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "public_history_batch_",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/02-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 1.504,
+      "harness_result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1162,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "c079a3a7388df4c52e14b08f8113cd76cf4ddaab0ec58969ef9e02bf061c0ebd",
+      "ignored_tests": []
+    },
+    {
+      "index": 3,
+      "filter": "public_history_formatting_",
+      "selected_count": 3,
+      "tests": [
+        "ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline",
+        "ingress::public_v3::history_response::tests::public_history_formatting_matches_bytes_cursors_and_fresh_foreign_damage",
+        "ingress::public_v3::history_response::tests::public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "public_history_formatting_",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/03-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.18,
+      "harness_result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1165,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "d49a6a2c7a90a30c6add9638f76f4b2dd79dd3002baf5a39ce436c24ef5f981a",
+      "ignored_tests": []
+    },
+    {
+      "index": 4,
+      "filter": "store::public_reader::tests::",
+      "selected_count": 10,
+      "tests": [
+        "store::public_reader::tests::readonly_history_allows_real_writer_commit_without_releasing_writer_authority",
+        "store::public_reader::tests::readonly_history_cancel_drops_lease_and_namespace_changes_refuse",
+        "store::public_reader::tests::readonly_history_detects_foreign_write_restore_and_same_owner_raw_damage",
+        "store::public_reader::tests::readonly_history_one_cumulative_budget_has_exact_limit_and_no_partial_result",
+        "store::public_reader::tests::readonly_history_original_cursor_errors_and_used_fact_damage_keep_origin",
+        "store::public_reader::tests::readonly_history_refuses_reorganization_epoch_before_page_publication",
+        "store::public_reader::tests::readonly_history_same_generation_owner_epoch_damage_stops_without_wrapping_cancel",
+        "store::public_reader::tests::readonly_history_signed_repeated_request_budget_refusal_keeps_writer_and_normal_reads",
+        "store::public_reader::tests::readonly_history_snapshot_keeps_original_page_and_cold_reopen",
+        "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "store::public_reader::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/04-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 2.723,
+      "harness_result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 1,
+      "measured": 0,
+      "filtered_out": 1158,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "cfdccb81980be798dbe40ff9f0b03d5dee2e58346e787c3f60c6d6fc75fe2f35",
+      "ignored_tests": [
+        "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost"
+      ]
+    },
+    {
+      "index": 5,
+      "filter": "peer_polling::tests::",
+      "selected_count": 17,
+      "tests": [
+        "peer_polling::tests::actual_retained_header_fault_stops_poll_cycle_while_same_peer_diagnostic_retries",
+        "peer_polling::tests::actual_valid_work_with_false_ledger_state_cannot_advance_cursor_or_owner",
+        "peer_polling::tests::call_and_global_page_budgets_round_robin_are_hard_finite",
+        "peer_polling::tests::config_file_refuses_symlink_fifo_hardlink_writable_and_oversized",
+        "peer_polling::tests::config_has_exact_context_finite_limits_and_no_discovery",
+        "peer_polling::tests::malformed_pages_fail_before_packet_allocation_and_do_not_claim_progress",
+        "peer_polling::tests::multi_packet_count_and_total_hex_are_bounded_before_decoding_any_packet",
+        "peer_polling::tests::multi_packet_false_tail_retains_durable_prefix_without_page_or_target_completion",
+        "peer_polling::tests::multi_packet_page_checks_every_parent_and_stops_at_the_fixed_target",
+        "peer_polling::tests::normal_zero_progress_runtime_does_not_stop_service_and_observer_error_does",
+        "peer_polling::tests::oversized_failure_is_explicitly_retained_with_digest_and_utf8_boundary",
+        "peer_polling::tests::pinned_peer_false_product_spends_the_same_real_cpu_bucket_without_chainwork",
+        "peer_polling::tests::pinned_peer_requires_the_existing_service_domain_before_full_work",
+        "peer_polling::tests::pinned_polling_stops_on_local_cpu_account_failure_but_not_remote_error_text",
+        "peer_polling::tests::real_native_fixed_tip_disconnect_one_initial_cursor_fallback_and_heavier_fork",
+        "peer_polling::tests::transport_unknown_block_malformed_and_post_progress_cursor_never_fallback",
+        "peer_polling::tests::typed_local_structure_stops_but_remote_and_transport_failures_retain_cursor"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "peer_polling::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/05-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.566,
+      "harness_result": "ok",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1151,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "bc1a566358a370a7ef43492a9f5b232fbb80df6268866eb70b021926be4acdff",
+      "ignored_tests": []
+    },
+    {
+      "index": 6,
+      "filter": "work_arithmetic::tests::",
+      "selected_count": 5,
+      "tests": [
+        "ingress::public_v3::work_arithmetic::tests::actual_paid_arithmetic_tcp_rejects_current_bad_products_then_activates_exact_valid_packet",
+        "ingress::public_v3::work_arithmetic::tests::arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challenges",
+        "ingress::public_v3::work_arithmetic::tests::explicit_arithmetic_setup_preserves_the_exact_cpu_owner_and_cold_start_credit",
+        "ingress::public_v3::work_arithmetic::tests::original_observer_json_has_no_arithmetic_claim_and_opt_in_unfinished_is_unknown",
+        "ingress::public_v3::work_arithmetic::tests::warm_arithmetic_dispatch_cannot_bypass_original_abandonment_or_current_context"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "work_arithmetic::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/06-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.124,
+      "harness_result": "ok",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1163,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "ed1154b00fcb5f655c7e9ef5fe2b0b09f334ab657aab1705aa42079d661f98b0",
+      "ignored_tests": []
+    },
+    {
+      "index": 7,
+      "filter": "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/07-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.003,
+      "harness_result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1167,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "a4434e99aa0d5c00cacdbad9a6c819bb1727808293f108855f00ac3178c486ad",
+      "ignored_tests": []
+    },
+    {
+      "index": 8,
+      "filter": "resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::tests::resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "resource_revision_r16_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/08-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.008,
+      "harness_result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1167,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "fe4dbd4840598765eb55e8e3978a3695d14cb5a4f8356e6715be67ca8b0d02bb",
+      "ignored_tests": []
+    },
+    {
+      "index": 9,
+      "filter": "scalar_cpu::metered_fact_network_tests::",
+      "selected_count": 1,
+      "tests": [
+        "ingress::public_v3::scalar_cpu::metered_fact_network_tests::two_real_listeners_confirm_signed_work_while_bad_cached_request_is_in_flight"
+      ],
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "scalar_cpu::metered_fact_network_tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/09-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 0.242,
+      "harness_result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1167,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "176ff04a49c7c103232b28174dff8ceae0b6e41a207927fcb5c93e6c79ce9de8",
+      "ignored_tests": []
+    },
+    {
+      "index": 10,
+      "filter": "ingress::history_import::tests::",
+      "selected_count": 29,
+      "tests": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+        "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_kill_cut_child",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "purpose": "retained native History importer CPU/deadline/activation/crash controls for batched public History consumers",
+      "command": [
+        "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+        "ingress::history_import::tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "log": "/workspace/scratch/a66f84888260/frozen-lib-components-e28ac65b-debug0-20261107/10-tests.log",
+      "returncode": 0,
+      "elapsed_seconds": 23.07,
+      "harness_result": "ok",
+      "passed": 28,
+      "failed": 0,
+      "ignored": 1,
+      "measured": 0,
+      "filtered_out": 1139,
+      "count_matches_selection": true,
+      "has_actual_execution": true,
+      "complete_success": true,
+      "log_sha256": "8edd14a6fd1cc24b04b4f2c4900f108c5c5c923dd2893eb35fce1ffb72264d57",
+      "ignored_tests": [
+        "ingress::history_import::tests::history_kill_cut_child"
+      ]
+    }
+  ],
+  "ended_utc": "2026-11-07T00:35:09.345568+00:00",
+  "head_after": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+  "clean_after": true,
+  "binary_sha256_after": "875c7dabc2b7673087f49a1cfc9f7b480647ed88be4ab070b04c9f15e9fc540e",
+  "totals": {
+    "selected_count": 76,
+    "passed": 74,
+    "failed": 0,
+    "ignored": 2,
+    "measured": 0
+  },
+  "complete_success": true,
+  "source_identity_before": {
+    "commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+    "tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+    "tracked_worktree_clean": true
+  },
+  "source_identity_after": {
+    "commit": "e28ac65b0727eb98fb2bb67291870c16587c59ad",
+    "tree": "d8ff55d21d59a478f72cfedc9ce9a15cdbab4329",
+    "tracked_worktree_clean": true
+  },
+  "profile": {
+    "cargo_profile": "dev/test",
+    "dev_debug": 0,
+    "test_debug": 0,
+    "release": false,
+    "fixed_host_qualified": false,
+    "used_existing_binary_without_rebuild": true
+  },
+  "binary_path": "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+  "binary_bytes": 111901760,
+  "ignored_tests": [
+    "store::public_reader::tests::readonly_history_whole_operation_and_retained_growth_cost",
+    "ingress::history_import::tests::history_kill_cut_child"
+  ],
+  "executed_group_count": 10,
+  "failed_group_count": 0,
+  "all_process_exit_codes_zero": true,
+  "actual_execution_seconds": 28.801
+}
