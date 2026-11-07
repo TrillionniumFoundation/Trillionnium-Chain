@@ -1,0 +1,147 @@
+{
+  "schema": "pon-fairness-compute-readiness-v1",
+  "observed_at_utc": "2026-11-07T11:12:09+00:00",
+  "scope": "Read-only account, quota, inventory and original-job reconciliation; no cloud compute submitted in this task.",
+  "hepta_host": {
+    "alias": "rog",
+    "reachable": true,
+    "authenticated": true,
+    "health": "healthy"
+  },
+  "colab": {
+    "account_alias": "qiqian",
+    "status": "authorized",
+    "fresh_inventory_observed_at": "2026-11-07T11:11:00.106578+00:00",
+    "assignments_count": 0,
+    "paid_compute_units_balance": 0.0,
+    "tier": "SUBSCRIPTION_TIER_FREE",
+    "eligible_standard_accelerators": [
+      "T4",
+      "V5E1"
+    ],
+    "gpu_allocated": false,
+    "gpu_hardware_execution_verified": false,
+    "hepta_process_job_id": "1a1b5b42a3f-12894-a9",
+    "hepta_process_state": "succeeded",
+    "python": "/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/venv/bin/python",
+    "launcher": "/home/qian-qi/.local/share/hepta-colab/releases/20261107-d2d977949417/account_launcher.py",
+    "inventory_argv": [
+      "qiqian",
+      "manage",
+      "inventory"
+    ],
+    "create_template": [
+      "qiqian",
+      "manage",
+      "create",
+      "--key",
+      "<single-new-stable-key>",
+      "--kind",
+      "gpu",
+      "--accelerator",
+      "T4",
+      "--shape",
+      "standard"
+    ],
+    "bind_template": [
+      "qiqian",
+      "manage",
+      "bind",
+      "--key",
+      "<same-key>"
+    ],
+    "submit_template": [
+      "qiqian",
+      "run",
+      "submit",
+      "--key",
+      "<single-stable-workload-key>",
+      "--code-file",
+      "<absolute-source-path>",
+      "--artifact",
+      "result.json",
+      "--wall-seconds",
+      "300"
+    ],
+    "run_template": [
+      "qiqian",
+      "run",
+      "run",
+      "--job-id",
+      "<returned-adapter-job-id>"
+    ],
+    "rules": "Preserve the original manager key/job identities; no account rotation; eligibility is not allocation evidence. Account launcher fixes private credential storage and profile paths."
+  },
+  "kaggle": {
+    "account_alias": "tomas",
+    "username": "braynttomas",
+    "authenticated": true,
+    "verification": "official_token_introspection",
+    "latest_confirmed_release": "batch-0.1.6",
+    "unified_gateway_deployed": false,
+    "hepta_quota_job_id": "1a1b5b3f062-12894-a8",
+    "quota": {
+      "refresh_time": "2026-11-14T00:00:00Z",
+      "gpu": {
+        "timeUsed": "0s",
+        "timeReserved": "0s",
+        "totalTimeAllowed": "108000s",
+        "minimumTimeAllowed": "108000s"
+      },
+      "tpu": {
+        "timeUsed": "0s",
+        "timeReserved": "0s",
+        "totalTimeAllowed": "72000s",
+        "minimumTimeAllowed": "72000s"
+      }
+    },
+    "gpu_original": {
+      "request_id": "gpu-acceptance-20261107-01",
+      "kernel_id": 143210101,
+      "version": 1,
+      "notebook_ref": "braynttomas/hepta-gpu-acceptance-202-9a68fb45d85151258b3c17b8",
+      "remote_state": "ERROR",
+      "observed_remote": true,
+      "identity_verified": true,
+      "updated_at": "2026-11-07T11:11:51.645352+00:00",
+      "original_failure": "torch.cuda.is_available() == false",
+      "hepta_status_job_id": "1a1b5b4fff0-12894-ac"
+    },
+    "tpu_original": {
+      "request_id": "tpu-acceptance-20261107-01",
+      "kernel_id": 143210115,
+      "version": 1,
+      "notebook_ref": "braynttomas/hepta-tpu-acceptance-202-c012b39c29e35647aad8b91e",
+      "remote_state": "ERROR",
+      "observed_remote": true,
+      "identity_verified": true,
+      "updated_at": "2026-11-07T11:12:09.004706+00:00",
+      "original_failure": "device platform tpu assertion failed",
+      "hepta_status_job_id": "1a1b5b548bc-12894-ad"
+    },
+    "diagnostic02_submitted": false,
+    "root_cause": "unproven",
+    "original_interactive": {
+      "kernel_session_id": 366548198,
+      "api_cancel_acknowledged": true,
+      "api_terminal_stop_proved": false,
+      "historical_ui_state": "Cancelled",
+      "historical_ui_active_count": 0,
+      "historical_ui_observed_at": "2026-11-07T09:16:56.348238+00:00",
+      "receipt_limit": "UI did not expose the numeric session ID; retain original UNKNOWN interrupt04."
+    },
+    "python": "/home/qian-qi/.local/share/hepta-kaggle/venv/bin/python",
+    "launcher": "/home/qian-qi/.local/share/hepta-kaggle/multiaccount-v1/account_launcher.py"
+  },
+  "grouped_cell_scope": {
+    "profile": "pon-routed-int257-grouped-research-v0",
+    "feature_dimension": 257,
+    "exact_int64": true,
+    "max_batch": 64,
+    "router_rows": 3,
+    "expert_count": 3,
+    "maximum_dense_madd_positions": 98688,
+    "maximum_original_dense_logit_abs": 134737904,
+    "gpu_measurement_requirement": "Validate actual hardware and exact outputs against independent CPU reference, preserve setup/warmup/IPC/host transfer/preparation/cache/failed-attempt costs. Small profile can favor CPU; a scaled profile must be separately identified and cannot qualify existing W1 or deployed chainwork."
+  }
+}

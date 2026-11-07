@@ -180,6 +180,14 @@ independent future-evaluation gates.
 
 ## External research and remaining qualification
 
+The [legal-work and lottery audit](GROUPED_WORK_FAIRNESS_AUDIT_V0.md) now fixes a
+16-request candidate encoding and independently tests prechallenge binding,
+canonical ticket identity, lawful factor/merged/sparse/repeated strategies and
+all-query accounting. It confirms that this operator's arithmetic is challenge
+invariant, so a cached correct product can generate additional hash-only audit
+tickets. The audit grants zero chainwork; it is not a registered lottery and
+does not establish a defect in native W1.
+
 [Komargodski and Weinstein, ESA 2026](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESA.2026.2)
 report a GPU matrix path at large actual layer shapes. Their correlated
 low-rank intermediate-work assumption, finite-field semantics and matrix-path
