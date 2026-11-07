@@ -42,6 +42,18 @@ SQLite source pins, actual accept-loop readiness and local CodeQL SARIF ownershi
 without importing sibling-branch qualification. No parameter, consensus choice,
 production activation or original failed result is promoted by this work.
 
+Frozen native tree `807e589d4cb8c2c0d2c2123e8e4ff0870d6a1eb7` completed eight
+512-block Legacy observations with identical final and cold-reopened State.
+Activation wall median decreased about 25.3%, while complete-process cost stayed
+approximately unchanged; repeated-sender reexecution decreases likewise do not
+establish confirmed throughput. Full Node lib execution retains three
+environment-denied Unix-socket startup failures alongside 1,150 passes and 31
+ignored tests. Preserve the concurrent `271a87f...` and `3d1b650...` source/evidence
+changes and the strict CodeQL source guard; separately index the later historical
+crypto scan lock rather than rewriting its original capture. Exact outcomes,
+all failed setup attempts and remaining original-resource gates are in the
+continuation record above.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

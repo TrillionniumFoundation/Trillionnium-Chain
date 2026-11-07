@@ -137,8 +137,8 @@ Its full workflow is preserved: explicit `upload: never`, exact before/after
 source verification and always-retained local SARIF/identity artifacts, while
 repository default setup owns server-side uploads. The merged workflow adds
 source status and tracked-diff diagnostics before the unchanged after-verifier.
-The new Rust jobs generated parseable SARIF but failed the strict clean-source
-check; the available original artifacts do not identify which paths changed.
+The `271a87f...` Rust jobs generated parseable SARIF but failed the strict
+clean-source check; those artifacts do not identify which paths changed.
 These are failures, not qualified hosted analyses. This correction does not
 rewrite historical failures or turn local SARIF into a server-side export.
 
@@ -148,6 +148,18 @@ hash-verified Rust SARIF ZIP and the diagnostic-capture controls. Its denominato
 is 11 success, four failure and five still running; the new head's separate
 CodeQL exporter passed. This timestamped snapshot belongs to `271a87f...`, not
 the final combined throughput source.
+
+The next concurrent head `3d1b6507671ec694ce58e86d4063a125c8deeb66` added
+NUL-delimited dirty-worktree observations and a separate
+[F0/campaign/History failure readback](../../pon-current-inbound-history-e70-20261107/README.md).
+All four files are preserved. Its exact head and merge Rust artifacts identify
+only an untracked historical crypto harness `Cargo.lock`, with empty tracked
+diffs; the [later snapshot](concurrent-3d1b/README.md) preserves both complete
+ZIPs and the 20-run denominator. [New scan preparation](../codeql-lock/README.md)
+adds a lock with the same 12-package closure as the retained parent lock and
+passes two full locked metadata calls without modifying the historical inputs.
+The new lock is separately indexed as later material, not an original capture.
+The full scan and unchanged source guard still require a fresh hosted result.
 
 No native deadline, pressure count, History length, CPU/memory budget, consensus
 rule, production flag or original failed observation is relaxed by this record.

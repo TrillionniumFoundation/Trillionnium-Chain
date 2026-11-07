@@ -47,8 +47,26 @@
         "config/pon/pq-cross-branch-corpus-v1.json"
       ],
       "upstream_workflow_blob": "e4611a3f3c071de99ece39ccf25d50dc66f0f2bf",
-      "integrated_workflow_blob": "247e0330a49fccf2d3482c113f7fa71f5d2b65e5",
       "scope": "Preserve concurrent source change: identical SQLite pin plus complete CodeQL never-upload workflow, before/after source identity and always-retained artifacts. Add full worktree status and tracked worktree/index diffs before the unchanged strict after-check; no cleanup, source-guard relaxation or failure-to-success conversion. New Rust clean-source failures remain unqualified; historical e70f failures are retained separately.",
+      "source_integrity_checker_changed": false,
+      "intermediate_integrated_workflow_blob": "247e0330a49fccf2d3482c113f7fa71f5d2b65e5",
+      "subsequent_concurrent_head": "3d1b6507671ec694ce58e86d4063a125c8deeb66"
+    },
+    {
+      "pr": 688,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/3d1b6507671ec694ce58e86d4063a125c8deeb66",
+      "head": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+      "base": "271a87f831aa7e08f3c2024f738504c1422122dd",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml",
+        "evidence/pon-current-inbound-history-e70-20261107/README.md",
+        "evidence/pon-current-inbound-history-e70-20261107/readback.json",
+        "evidence/pon-current-inbound-history-e70-20261107/reproduce.py"
+      ],
+      "upstream_workflow_blob": "c374057ec4322039d21f64b12c062a8081259bc1",
+      "integrated_workflow_blob": "fb5236320eb9897be10f13e47ce3d39dfdb5c7a4",
+      "scope": "Preserve all four concurrent files and merge complementary full tracked-diff diagnostics. Exact later head and merge artifacts identify only a new untracked historical crypto Cargo.lock; tracked diffs are empty. A new separately indexed scan lock is derived from the retained parent dependency closure; no historical measurement manifest, runtime source, native test, original budget or source guard is changed.",
+      "historical_lock_preparation": "../codeql-lock/preparation.json",
       "source_integrity_checker_changed": false
     }
   ],

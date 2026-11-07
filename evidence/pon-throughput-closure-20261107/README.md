@@ -49,16 +49,48 @@ These current records are distinct from earlier 3,322/3,407 observations.
 
 The reviewed source corrections are the exact SQLite script pin from PR #768
 and the two actual accept-loop readiness files from PR #772. During this work,
-PR #688 advanced independently to `271a87f831aa7e08f3c2024f738504c1422122dd`.
+PR #688 advanced independently through `271a87f831aa7e08f3c2024f738504c1422122dd`
+to `3d1b6507671ec694ce58e86d4063a125c8deeb66`.
 Its SQLite correction is identical; its complete CodeQL workflow is preserved,
 including before/after source identity, explicit `upload: never` and failed-run
 SARIF retention. The earlier PR #760 `upload: false` setting is superseded:
 the pinned action interprets it as `failure-only`, not a complete upload disable.
 The already enabled repository default setup remains the server-side upload
-owner. New Rust analysis source-cleanliness failures remain failures, with
-status/diff diagnostics added before the unchanged strict verifier. No branch
-protection or repository security setting is changed. Sibling-branch results
-do not qualify this composition.
+owner. The later diagnostics identified one generated, untracked historical
+crypto harness lock, with no tracked diff. [Scan preparation](codeql-lock/README.md)
+adds its independently validated 12-package lock while retaining all original
+historical bytes and the strict source guard. All concurrent diagnostics and
+historical F0/campaign/History evidence are preserved. The failed scans retain
+their status; the final scan must pass on its own source. No branch protection
+or repository security setting is changed. Sibling-branch results do not
+qualify this composition.
+
+## Measured local results
+
+The [eight complete native observations](reorg-abba/README.md) use the same
+512-block real PNW1 fixture and the original release profile. All eight complete
+State and cold-reopen comparisons passed. Activation wall median fell from
+1.227694237 s to 0.916976377 s (about 25.3%); activation CPU fell about 26.7%.
+However, whole-process wall stayed at about 71.6 s, whole-process CPU at about
+70.0 s and maximum RSS at 23,580 KiB. Complete preparation dominates this
+fixture: the stage improvement does not establish overall throughput gain.
+
+[Repeated-sender observations](repeated-sender/README.md) retain all 84 rows
+and every signature/state comparison. For 256 transactions with two senders,
+reexecution fell from 255 to one; with 64 senders, from 255 to 63. Wall-clock
+comparisons vary and do not establish a consistent whole-executor speedup.
+The [inbound extracted-function observations](inbound/README.md) show lower
+decode/read overhead under their explicitly mixed compiler/dependency profile;
+they are not whole-Node release or original Host measurements.
+
+[Frozen-source validation](validation/README.md) records M06 141 passing tests,
+Cell 353, SQLite 13, strict workspace Clippy, the full locked graph, formatting,
+149 acceptance-reader controls and all source-integrity controls. Node records
+1,150 passed, three failed and 31 ignored. The three independent-witness tests
+fail during Unix-listener startup, before the business path; independent probes
+reproduce AF_UNIX socket-creation EPERM. Their failures are retained. All nine
+new Node regressions passed. No combined
+whole-product or original-resource gate is promoted by these component checks.
 
 ## Qualification rules
 
