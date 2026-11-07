@@ -4,8 +4,22 @@
   "consensus_weight_eligible": false,
   "denomination": "classical-seal-step-oracle-query",
   "exact_commit_validation": {
+    "first_attempt": {
+      "capture": "native-validation-source-v1.tar.gz",
+      "commands_failed": 1,
+      "commands_not_started": 0,
+      "commands_passed": 23,
+      "commands_planned": 24,
+      "commands_timed_out": 0,
+      "failure": "source-inventory",
+      "grouped_test_errors": 0,
+      "grouped_tests_passed": 210,
+      "grouped_tests_skipped": 0,
+      "source": "66b4f5a735d350849267e44526be2e12f1d076b5",
+      "summary": "native-validation-source-v1/summary.json"
+    },
     "original_required_gates": 24,
-    "status": "PENDING_SEPARATE_COMPLETE_CHECKOUT",
+    "status": "PENDING_CORRECTED_SOURCE",
     "waived": 0
   },
   "focused_tests": {
@@ -18,6 +32,7 @@
   },
   "fresh_neural_computation_is_credit_basis": false,
   "fresh_producer_business_contractions_per_ticket_lower_bound": 0,
+  "generated_native_source_inventory_changed": true,
   "historical_fanout": {
     "attempts": 42,
     "distinct_work_ids_across_all_topologies": 2,
@@ -47,7 +62,8 @@
     "status": "INCOMPLETE_NATIVE_SKIPS_AND_STAGING_GIT_ERRORS",
     "total": 252
   },
-  "native_tree": "38b2aba7fd25cfddb0e45747d7716a5ada3e9321",
+  "native_runtime_logic_changed": false,
+  "prior_native_tree": "38b2aba7fd25cfddb0e45747d7716a5ada3e9321",
   "production_activation": false,
   "qualification": "HOLD",
   "retained_python_queries": {

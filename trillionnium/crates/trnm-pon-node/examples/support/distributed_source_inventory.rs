@@ -64,6 +64,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "config/pon/grouped-security-work-metering-v1.json",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../config/pon/grouped-security-work-metering-v1.json"
+        )),
+    ),
+    (
         "config/pon/growth-reference-v2.json",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),

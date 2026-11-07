@@ -66,10 +66,12 @@ claim. A local journal quota cannot establish a global public-network cap.
 Task, material, statement, challenge, target, issuer and authorization window
 are pinned outside the evidence object. Rebinding the evidence's target or
 policy cannot turn a later choice into a prequery authorization.
-Authorization windows use the native half-open convention:
-`authorized_at <= observation_at < expires_at`, with operation records also
-strictly before their deadline. A query observed at or after expiry remains in
-the cost denominator and produces an explicit authorization issue.
+Expiry follows the native exclusive upper boundary: observations must be
+strictly before `expires_at`, and operation records strictly before their
+deadline. The inspector additionally requires queries and consumer uses to
+follow their pinned authorization declarations strictly in the supplied
+ordering coordinates. A query observed at or after expiry remains in the cost
+denominator and produces an explicit authorization issue.
 
 Different key strings or actor labels do not prove independent control. A native
 Node target snapshot establishes the checked branch value, not governance

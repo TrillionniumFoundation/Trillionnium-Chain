@@ -7,9 +7,11 @@ producer neural-contraction floor. The existing lawful cached business result
 can be reused, including across newly produced security seals.
 
 This continuation starts from commit
-`4699b4079fca323f8db7b9d3644fbb159aa687c0`. The native implementation subtree
-is unchanged from `e95e2eb9f456a37ec8841def69db79f49fbba7cb`:
-`38b2aba7fd25cfddb0e45747d7716a5ada3e9321` (`trillionnium/`).
+`4699b4079fca323f8db7b9d3644fbb159aa687c0`. The prior native subtree was
+`38b2aba7fd25cfddb0e45747d7716a5ada3e9321`, retained from
+`e95e2eb9f456a37ec8841def69db79f49fbba7cb`. Native runtime logic is unchanged;
+the generated distributed-source inventory is extended to include the new
+research declaration, using the repository's existing generator.
 The [sole plan](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 and [metering specification](../../docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md)
 define the continuation. Existing native verification, reservation rules and
@@ -127,8 +129,21 @@ tests comprised 247 passes, three Git-context errors and two native skips.
 The staging directory had no `.git` metadata or native binary. The complete
 logs and source hashes are retained unchanged in
 [local-validation-history](local-validation-history/SUMMARY.md).
-Exact-commit validation on a complete Git checkout is a separate gate; an
-updated receipt, when present, identifies its precise source and environment.
+The first complete-checkout validation on
+`66b4f5a735d350849267e44526be2e12f1d076b5` ran all 24 original gates. It
+recorded 23 PASS and one FAIL, with no unstarted commands or timeouts. The new
+JSON configuration had not yet been listed in the generated distributed-source
+inventory. All native tests, Python discovery, repository links, negative CI
+controls and strict Clippy passed in that run. In particular, the original
+three Git-context errors and two native skips were resolved: grouped discovery
+passed all 210 tests with no skips. The inventory failure is retained separately
+from the subsequent corrected-source validation; no gate is waived.
+The [complete first-run capture](native-validation-source-v1.tar.gz) includes
+all raw logs, source snapshots, runner bindings, the earlier launcher-only
+path-assertion failure and the generator's exact one-path inventory correction.
+Its [summary](native-validation-source-v1/summary.json) and
+[24 command records](native-validation-source-v1/commands.json) are also
+available separately. The capture's members were read back and SHA256-checked.
 
 The existing `test_grouped*.py` CI discovery already includes every new test
 module. No workflow, required gate or source-integrity check is weakened.
@@ -152,6 +167,16 @@ authorization at later journal commit or FinalUse. Separate keys or names do
 not prove independent operators. Local quotas do not establish public global
 coverage. Passing a structural fixture cannot satisfy these external facts.
 There is no Boolean input that enables qualification or positive chainwork.
+
+The concurrent demand work was also checked for relevant acceptance evidence:
+[demand/evaluation PR 777](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/777)
+at `ce9b9f734b99c0c7d0c0264e2819020e0bb9a5db`, and
+[native demand PR 779](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779)
+at `4a7e07e970d5bdb79626dda6bc98ae7906a02f18`. Their own review boundaries
+still leave independent customers and external budgets, actual adoption and
+complete physical costs unaccepted. Those parallel implementations are not
+merged or rerun by this continuation, and their reported tests are not added
+to this continuation's counts. They do not close the obligations above.
 
 ## 6. Reproduce the retained readings
 

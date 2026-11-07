@@ -6,7 +6,7 @@
   "step_queries_per_complete_seal": 64,
   "ticket": "the unique canonical 64th endpoint; no outer carrier or proof lottery",
   "nominal_award": "64 * floor(2^256 / (preauthorized_target + 1)); diagnostic model quantity only",
-  "query_identity": "SHA256 of the complete fixed-domain native step preimage",
+  "query_identity": "complete fixed-domain native step preimage bytes; SHA256 verifies the recorded answer",
   "counted_query_sources": [
     "producer",
     "preprocessing",

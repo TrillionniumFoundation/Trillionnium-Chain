@@ -1,14 +1,14 @@
 {
   "files": [
     {
-      "bytes": 10065,
+      "bytes": 11855,
       "path": "README.md",
-      "sha256": "239ae23a82a8683c4b23a65656336e05eeb6705fafc0339fd6e1ad7fd8d66a92"
+      "sha256": "0beeb05884fb0af52e79cd95b6a642e7e8a1ce6cf79ef0b5310f66edcb269921"
     },
     {
-      "bytes": 2434,
+      "bytes": 3018,
       "path": "acceptance.json",
-      "sha256": "6b72f29e51d898a17e01bfb49c05fae75279fe014f0f90378b2665545eaa629e"
+      "sha256": "b6ee06ab6f7395e7d6d0cbad2601f04bac26fd739d01c071ef01246595ccb124"
     },
     {
       "bytes": 342,
@@ -89,6 +89,51 @@
       "bytes": 2102,
       "path": "local-validation-history/syntax-and-whitespace.log",
       "sha256": "4b439fa50065c1bb59ee732d9180c9446550e37c2d2602cebbbb555f29c2b90a"
+    },
+    {
+      "bytes": 470,
+      "path": "native-validation-source-v1/capture-integrity.json",
+      "sha256": "18cd5476d73ca6a2c70cea63d447721f94c58c7f859aa5c65a91c39569e36d26"
+    },
+    {
+      "bytes": 26722,
+      "path": "native-validation-source-v1/commands.json",
+      "sha256": "f9dcd05e9beb5343ddf37a99f80fafd16bc1d4f3991fd8419b6d55315fe751df"
+    },
+    {
+      "bytes": 1104,
+      "path": "native-validation-source-v1/runner-bindings.json",
+      "sha256": "9b424da0cbd9d38bc1ea478f20efcdff2b53af8660842c388b7b6fc9d06144a0"
+    },
+    {
+      "bytes": 570,
+      "path": "native-validation-source-v1/source-after.json",
+      "sha256": "c31c2740bb6b5d0c5c2ed14e547c39fab96e1d64744853ec711c26bd4581c26d"
+    },
+    {
+      "bytes": 570,
+      "path": "native-validation-source-v1/source-before.json",
+      "sha256": "c31c2740bb6b5d0c5c2ed14e547c39fab96e1d64744853ec711c26bd4581c26d"
+    },
+    {
+      "bytes": 76,
+      "path": "native-validation-source-v1/source-inventory.log",
+      "sha256": "3060c11e06f46d1cbf92fbb40b0ecf6bfd5482816a73a13c7267e2efa34b28fb"
+    },
+    {
+      "bytes": 995,
+      "path": "native-validation-source-v1/source-inventory.result.json",
+      "sha256": "02db2ad69131d8603dab195f8adfac40715292ea96ec3ed444dac14948de0536"
+    },
+    {
+      "bytes": 2618,
+      "path": "native-validation-source-v1/summary.json",
+      "sha256": "3cf0e4f8f9b6bdd94cd70c9e20b66db0cc393a3d6e5efeeb2bed370d68712bcf"
+    },
+    {
+      "bytes": 210154,
+      "path": "native-validation-source-v1.tar.gz",
+      "sha256": "a693cb2d829d978865b1f8ff53f31f1306959df9968ae3adf26ce5ec2c5c82b5"
     },
     {
       "bytes": 40326,
