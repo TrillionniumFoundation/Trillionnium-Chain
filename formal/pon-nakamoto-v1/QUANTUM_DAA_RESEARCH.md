@@ -5,6 +5,109 @@ production DAA change, or mainnet readiness claim**. The source baseline is
 4b6b8a91b6dfe41fbd7f40f40b359d535c2c4251 (PR #498). This work adds only formal
 research, fixtures, tests and receipts. Native node consensus remains unchanged.
 
+## 2026-11-07: constructed costs and literal winners under a finite deadline
+
+Continue the #755 research candidate at
+`7a98f27f99abccc28da2f1f3cc60bdaa2eca4890`. The new
+[bounded literal executor](w1_bounded_search.py) and
+[construction binding](w1_constructed_search.py) connect the existing full and
+prefix-restricted W1 circuits to the actual nonce-domain census. The existing
+synthetic network simulator keeps its own declared probability premises; this
+fixed-context experiment does not qualify a dynamic branch or a mining attack.
+The [source and validation record](../../evidence/pon-quantum-bounded-search-20261107/README.md)
+separates implementation, original failures and frozen observations.
+
+### Exact successes, valid unmarked candidates and stopping
+
+The shared ideal Grover kernel now handles zero iterations by the exact input
+probability and marked fractions `1/4`, `1/2` and `3/4` by their exact integer
+periods. Previously `p=3/4, q=1` returned
+`1.4997597826618576e-32` even though its exact success probability is zero;
+the exact dyadic sampler could consequently sample an impossible winner.
+At `p=1/2, q=99,999,999`, floating argument reduction also drifted from `1/2`.
+The special cases use an exact rational parallel failure product before one
+binary64 conversion. Other interior probabilities retain their explicitly
+approximate trigonometric evaluation. This is a numerical correctness repair,
+not a new hardness result.
+
+Let `S` be the oracle's marked subset and `F` the full legal winner set, with
+`S` contained in `F`. Grover search amplifies `S`, but the unmarked measurement
+outcomes can still contain valid W1 winners. For a noiseless symmetric Grover
+state, writing `s=|S|`, `f=|F|`, and `N` for the domain size,
+
+\[
+p_S(q)=\sin^2\!\left((2q+1)\arcsin\sqrt{s/N}\right),\qquad
+p_{\rm valid}(q)=p_S(q)+(1-p_S(q))\frac{f-s}{N-s}
+\]
+
+when `s<N`; if `s=N`, every candidate is valid. A fully paid **full W1**
+candidate check therefore accepts legal unmarked candidates as well. At zero
+iterations the valid probability reduces to `f/N`, independently of the chosen
+phase subset. A retained reduced control has `N=2`, `f=2`, `s=0`: an empty
+restricted marked set does not make its postmeasurement legal-candidate
+probability zero. This is a reduced control, not a native attack receipt.
+
+The executor takes a fixed domain/iteration schedule and an exact decimal
+horizon. It re-enumerates the supplied censuses, then charges single-resident
+template setup, fresh preparation, iterations, readout, every processor's
+serial full-W1 check, one proof and separate propagation. Exact fractions of
+the declared binary64 clocks preserve partial phases and equality at the
+deadline. No measurement is sampled before readout ends; unfinished checks
+expose no winner flag. Incomplete proof or propagation receives no delivered
+result. Partial iteration time is a paid clock interval, not an assertion that
+a corresponding number of quantum gates ran. A plan digest and internal fixed
+schedule do not attest external precommitment or real execution.
+
+### One provisioned schedule, explicit physical assumptions
+
+The binding constructs each full/restricted oracle from its canonical header
+and public matrices, then derives all stage budgets from those actual leaves.
+Every planned preparation and Grover iteration contributes to one common code
+distance, even if success or the horizon prevents a later trial from starting.
+All processors pay their data patches and factories; the peak register width
+is reserved across domains. Each iteration includes forward compute, phase
+marking, complete uncompute and diffusion. The declared schedule serializes
+stage execution and T-state service; its ideal-overlap lower bound is not used
+as an achievable clock. Per-processor classical search setup is also paid.
+
+The error estimate covers only coherent patch-cycles and the declared T-state
+residual error. Initialization, reset/readout and the controller remain ideal
+assumptions or outside this estimate. Simulated outcomes use the ideal Grover
+law, not a noise-calibrated success distribution. Census/proof replay is offline
+observer work, not free advice given to a miner. `proof_complete` records the
+assumed proof-clock phase; `online_proofs_generated=0` and
+`native_blocks_admitted=0` remain explicit.
+
+The replayable [campaign](experiments/w1_bounded_search_campaign.py) retains
+native 64x64/rank-8/32-bit PNH1, changed-target and PGH2 domains alongside
+separately labeled reduced domains. Both predicates use the same predeclared
+schedules, processor choices, hypothetical physical parameters and analysis
+horizon. Changing target recomputes the entire challenged relation. The chosen
+four-second **analysis** horizon and illustrative qubit cap are not the original
+native service profile; no service gate is rerun, replaced or relaxed. A large
+cost for this deliberately nonoptimal construction is not a lower bound on an
+attacker, and zero completed iterations in that construction proves no quantum
+safety threshold.
+
+The campaign also retains predeclared `target=1` PNH1/PGH2 controls with zero
+Grover iterations. Their actual censuses determine whether these fixed domains
+are empty. The four-round retry/switch/revisit schedule exercises paid cache
+reuse and eviction, failed candidate checks, and schedule exhaustion rather
+than counting provisioned but unstarted transitions as executed.
+
+Physical-model admission additionally rejects a declared Toffoli T-layer depth
+larger than its declared T-gate count. This is consistency of one supplied
+decomposition, not a universal lower bound on the cheapest Toffoli implementation.
+
+Bailey and Sattath's [difficulty-increase analysis](https://arxiv.org/html/2403.08023v2)
+motivates preserving branch-local DAA, timestamps and accumulated work in the
+eventual attack model. Bounded retarget steps do not by themselves close the
+problem. [Zalka's oracle-query optimality result](https://arxiv.org/abs/quant-ph/9711070)
+does not prove that every legal W1 miner must use these arithmetic circuits.
+Hardware calibration, best known alternative strategies, equal real-budget
+accepted-work production, dynamic multi-miner fork security and production
+qualification remain open. Native target, chainwork and fork choice are unchanged.
+
 ## 2026-11-06 followthrough: adaptive clocks, cost admission and reuse scopes
 
 This continuation remains **Draft/HOLD**. Source-specific checks and preserved

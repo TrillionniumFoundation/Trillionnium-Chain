@@ -17,6 +17,24 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Constructed W1 costs and finite-horizon literal search, 2026-11-07 America/New_York:**
+Continue the #755 quantum research lineage from
+`7a98f27f99abccc28da2f1f3cc60bdaa2eca4890`, preserving the existing #750/#723/#688
+integration chain. Bind the actual full and prefix-restricted circuit counts,
+their separate literal marked sets, all-processor physical resource envelope
+and exact paid finite-deadline phases. Full candidate checks accept legal W1
+winners even when the restricted phase oracle leaves them unmarked. Repair
+exact rational-angle Grover probabilities so an impossible event cannot obtain
+a floating-point probability. Preserve failed observations and all unstarted,
+interrupted, failed and successful work; distinguish modeled proof-clock
+completion from offline scalar proof replay and native admission. The
+[research contract](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md) and
+[validation record](../../evidence/pon-quantum-bounded-search-20261107/README.md)
+own this component scope. No quantum lower bound, calibrated physical machine,
+profitable fork attack, mixed-miner security theorem or production activation
+follows. Dynamic native DAA/fork choice and all original service limits remain
+unchanged; their acceptance must be established independently.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

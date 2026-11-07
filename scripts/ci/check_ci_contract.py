@@ -160,6 +160,11 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
 )
+BOUNDED_W1_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_bounded_search.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_constructed_search.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_bounded_search_campaign.py' -v",
+)
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
@@ -382,6 +387,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in BOUNDED_W1_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'bounded W1 cost and campaign controls must execute exactly once in repository-truth')
     runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1

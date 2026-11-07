@@ -31,6 +31,28 @@ def exact_state_probability(size, marked_indices, iterations):
     return sum(amplitudes[i] ** 2 for i in marked) / size
 
 
+def exact_two_amplitude_probability(p, iterations):
+    """Repeated squaring of oracle/reflection on the two amplitude classes.
+
+    Amplitudes are scaled by the uniform-state amplitude. This reference uses
+    neither trigonometry nor a table of special periods. The tested rational
+    fractions have bounded periodic entries, including at very large counts.
+    """
+    def product(left, right):
+        return tuple(tuple(sum(left[i][k] * right[k][j] for k in range(2))
+                           for j in range(2)) for i in range(2))
+
+    operator = ((1 - 2 * p, 2 * (1 - p)), (-2 * p, 1 - 2 * p))
+    total = ((Fraction(1), Fraction(0)), (Fraction(0), Fraction(1)))
+    while iterations:
+        if iterations & 1:
+            total = product(operator, total)
+        operator = product(operator, operator)
+        iterations >>= 1
+    marked_amplitude = sum(total[0])
+    return p * marked_amplitude ** 2
+
+
 class TicketWords:
     def __init__(self, values):
         self.values = iter(values)
@@ -39,6 +61,61 @@ class TicketWords:
     def getrandbits(self, width):
         self.widths.append(width)
         return next(self.values)
+
+
+class RationalAngleControls(unittest.TestCase):
+    def test_zero_iterations_preserve_the_input_fraction_exactly(self):
+        for probability in (3 / 16, 5 / 16, math.nextafter(0.25, 0),
+                            math.ldexp(3.0, -200), math.ldexp(1.0, -1074)):
+            with self.subTest(probability=probability):
+                self.assertEqual(batch_success(probability, 0), probability)
+
+    def test_zero_iteration_parallel_measurements_match_positive_binomial_counts(self):
+        # Count outcomes with at least one marked measurement directly. This
+        # positive sum avoids both trigonometry and subtraction near one.
+        for probability in (3 / 16, 5 / 16, math.ldexp(3.0, -200), math.ldexp(1.0, -1074)):
+            marked, size = probability.as_integer_ratio()
+            for processors in (1, 3, 64):
+                accepted = sum(math.comb(processors, hits) * marked ** hits
+                               * (size - marked) ** (processors - hits)
+                               for hits in range(1, processors + 1))
+                expected = float(Fraction(accepted, size ** processors))
+                with self.subTest(probability=probability, processors=processors):
+                    self.assertEqual(batch_success(probability, 0, processors), expected)
+                if size == 16 and processors == 3:
+                    literal_outcomes = sum(any(value < marked for value in row)
+                                           for row in itertools.product(range(size), repeat=processors))
+                    self.assertEqual(accepted, literal_outcomes)
+
+    def test_two_class_reference_matches_full_small_state(self):
+        for marked in (1, 2, 3):
+            for iterations in range(18):
+                self.assertEqual(exact_two_amplitude_probability(Fraction(marked, 4), iterations),
+                                 exact_state_probability(4, range(marked), iterations))
+
+    def test_special_fractions_and_parallel_batches_are_exact_at_large_counts(self):
+        for marked in (1, 2, 3):
+            p = Fraction(marked, 4)
+            for iterations in (0, 1, 2, 3, 7, 16, 99_999_998, 99_999_999, 100_000_000):
+                single = exact_two_amplitude_probability(p, iterations)
+                for processors in (1, 2, 7, 53, 1024):
+                    with self.subTest(p=p, iterations=iterations, processors=processors):
+                        expected = float(1 - (1 - single) ** processors)
+                        self.assertEqual(batch_success(float(p), iterations, processors), expected)
+                        self.assertEqual(finite_domain_success(4, marked, iterations, processors), expected)
+
+    def test_impossible_or_certain_measurements_do_not_draw_random_words(self):
+        for iterations in (1, 100_000_000):
+            for processors in (1, 1024):
+                with self.subTest(iterations=iterations, processors=processors):
+                    words = TicketWords([])
+                    impossible = batch_success(0.75, iterations, processors)
+                    certain = batch_success(0.25, iterations, processors)
+                    self.assertEqual(impossible, 0.0)
+                    self.assertEqual(certain, 1.0)
+                    self.assertFalse(sample_binary_probability(words, impossible))
+                    self.assertTrue(sample_binary_probability(words, certain))
+                    self.assertEqual(words.widths, [])
 
 
 class FiniteDomainControls(unittest.TestCase):

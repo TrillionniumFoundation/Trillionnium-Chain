@@ -1,0 +1,21 @@
+{
+  "api_commit_metadata_preserves_local_commit_sha": false,
+  "base": "7a98f27f99abccc28da2f1f3cc60bdaa2eca4890",
+  "changed_source_blobs_uploaded_and_verified": 17,
+  "historical_records_relabelled": false,
+  "identical_implementation_tree": "9ba43628c3004950f4d79392301dba306adb5a1f",
+  "old_history_bundle": {
+    "archive": "development-observations.tar.xz",
+    "member": "original-local-validation.bundle",
+    "prerequisite": "7a98f27f99abccc28da2f1f3cc60bdaa2eca4890",
+    "sha256": "b3c228628aa4d9a42dac26d7ac8a48a130fd6840d7dbe5831c68988daf51099d"
+  },
+  "ordinary_https_git_push": "Failed with missing username/credential; no remote ref was updated by that attempt.",
+  "original_local_evidence": "f22c513ac515cba9808e348d4b8374c02eecf31a",
+  "original_local_implementation": "aa46f28505ac6d7cf4bb9830db043510a5aac3e2",
+  "public_implementation": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+  "public_source_validation_actually_rerun": true,
+  "publication_channel": "Connected GitHub Git-data API; normal new-branch creation and fast-forward continuation only.",
+  "remote_ci_pass_claimed": false,
+  "schema": "trnm-quantum-publication-source-v1"
+}

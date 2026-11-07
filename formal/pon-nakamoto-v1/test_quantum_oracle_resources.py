@@ -189,6 +189,40 @@ class ResourceAccounting(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "CIRCUIT_" + reason):
                     q.Circuit(logical_qubits=3, provenance="shape-control", **counts).validate()
 
+    def test_decomposition_t_depth_cannot_exceed_its_t_count_at_every_entry(self):
+        # Three nonempty T layers cannot be populated by one declared T gate.
+        # This is an internal schedule invariant, not a Toffoli minimum claim.
+        from quantum_network_sim import NetworkScenario
+        from quantum_resource_clock import bind_resource_clock
+
+        request = q.example(True)
+        model = replace(request.physical_models[0], t_per_toffoli=1,
+                        t_depth_per_toffoli=3)
+        changed = replace(request, physical_models=(model,))
+        stage = request.circuits["winner_compute"]
+        counts = {key: value for key, value in asdict(stage).items()
+                  if key not in ("logical_qubits", "provenance")}
+        case = NetworkScenario("decomposition-count-depth-control", duration_seconds=2,
+                               quantum_processors=request.workload.independent_instances,
+                               quantum_fixed_iterations=0, propagation_seconds=.1,
+                               max_events=10, max_blocks=10, max_trace_rows=1000)
+        operations = {
+            "model": model.validate,
+            "account": lambda: q.account(changed),
+            "serialized": lambda: q.load_request(wire(changed)),
+            "direct-estimate": lambda: q.physical_estimate(counts, stage.logical_qubits, 1, model),
+            "resource-clock": lambda: bind_resource_clock(case, changed, model.name, 10**30),
+        }
+        for name, operation in operations.items():
+            with self.subTest(entry=name), self.assertRaisesRegex(ValueError, "TOFFOLI_T_DEPTH_EXCEEDS_T_COUNT"):
+                operation()
+        # Equality obeys this necessary consistency condition; it still does
+        # not certify that the caller's hypothetical decomposition exists.
+        valid = replace(model, t_per_toffoli=3)
+        valid.validate()
+        self.assertEqual(q.account(replace(changed, physical_models=(valid,)))["status"],
+                         "CALLER_CONDITIONAL_ACCOUNTING_ONLY")
+
     def test_impossible_width_depth_rejected_at_every_entry(self):
         # Independent scheduling controls: one wire cannot execute 100 gates
         # in one layer; a three-wire Toffoli cannot fit on two wires; five
