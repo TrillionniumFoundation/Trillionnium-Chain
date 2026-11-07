@@ -9,6 +9,8 @@ pub mod ingress;
 pub mod mining;
 /// Opt-in durable local owner observations; grants no global execution authority.
 pub mod native_owner_journal;
+/// Persistent declared risk expenditure; grants no probability-law authority.
+pub mod native_risk_ledger;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;

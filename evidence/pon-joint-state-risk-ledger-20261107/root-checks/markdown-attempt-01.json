@@ -1,0 +1,14 @@
+{
+  "schema": "pon-root-observation-v1",
+  "recorded_at_utc": "2026-11-07T23:36:59.113073+00:00",
+  "source_commit_before_working_changes": "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c",
+  "source_state": "dirty-candidate-with-concurrent-evidence-download",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 2,
+  "output": "Repository check failed: broken link evidence/pon-joint-state-risk-ledger-20261107/native-risk/attempt-01/sources/formal/pon-nakamoto-v1/NATIVE_RISK_LEDGER_V1.md -> CERTIFICATE_OBSERVABILITY_V1.md\n",
+  "interpretation": "Retained Markdown source snapshot is byte-identical but relative links are interpreted at its new evidence path. Preserve bytes and hashes using a non-Markdown snapshot suffix with an explicit manifest mapping. Recheck the completed committed tree separately.",
+  "production_qualified": false
+}

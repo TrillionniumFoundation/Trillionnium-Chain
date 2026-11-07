@@ -140,6 +140,7 @@ CERTIFICATE_COMPOSITION_TESTS = "    python3 -m unittest discover -s formal/pon-
 NATIVE_OWNER_JOURNAL = ('    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_owner_journal\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_journal_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal"\n    NATIVE_OWNER_JOURNAL_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_owner_journal.py\' -v\n    python3 formal/pon-nakamoto-v1/native_owner_journal.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json"\n'
                         + CERTIFICATE_COMPOSITION_TESTS
                         + '    python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output-dir "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition"\n')
+NATIVE_RISK_LEDGER = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger\n    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"\n    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p \'test_native_risk_ledger.py\' -v\n    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"\n'
 WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/stateful_tail.py',
     'python3 formal/pon-nakamoto-v1/residual_grover.py',
@@ -318,6 +319,10 @@ PROTOCOL_CONTRACT_BLOCK = '''    python3 scripts/ci/run_from_zero_host.py -- pyt
     python3 formal/pon-nakamoto-v1/native_owner_journal.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/checked.json"
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'certificate_composition_tests.py' -v
     python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-journal/run.json" --output-dir "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/certificate-composition"
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger
+    "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_risk_ledger_v1")" "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger"
+    NATIVE_RISK_LEDGER_RUN="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v
+    python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/run.json" --output "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-risk-ledger/checked.json"
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
@@ -421,7 +426,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     for block, build, label in ((WORK_LIFECYCLE_NATIVE, CONTINUITY_BUILD, 'W1/PQ lifecycle'),
                                 (NATIVE_OWNER_SCORE_BRIDGE, NODE_EXAMPLE_BUILD, 'native owner score bridge'),
                                 (LIFECYCLE_QUERY_NATIVE, CONTINUITY_BUILD, 'lifecycle query observation'),
-                                (NATIVE_OWNER_JOURNAL, NODE_EXAMPLE_BUILD, 'durable native owner and composition')):
+                                (NATIVE_OWNER_JOURNAL, NODE_EXAMPLE_BUILD, 'durable native owner and composition'),
+                                (NATIVE_RISK_LEDGER, NODE_EXAMPLE_BUILD, 'durable native confirmation risk bank')):
         require(block in lanes['protocol-contract']
                 and all(code_lines(script).count(line) == 1 for line in code_lines(block))
                 and build in lanes['protocol-contract']

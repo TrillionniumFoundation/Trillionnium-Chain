@@ -1,0 +1,23 @@
+{
+  "schema": "pon-root-observation-v1",
+  "recorded_at_utc": "2026-11-07T23:41:19.184058+00:00",
+  "command": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "exit_code": 0,
+  "source_state": "dirty-candidate",
+  "result": {
+    "activation": false,
+    "head": "6615ffa37a0d8f6451bf3e49c2500b4626ffae6c",
+    "local_links": 3828,
+    "normal_dependency_edges": 25,
+    "result": "PASS",
+    "runtime_implemented": false,
+    "rust_files": 1181,
+    "tree": "4d8afc9ee59605abdff2a9e0e34c9d2a85bcc5b5",
+    "workspace_packages": 26
+  },
+  "scope": "Full currently materialized candidate tree after retaining the Markdown source snapshot bytes with a non-Markdown suffix. Later exact committed merged-source gates are separate.",
+  "production_qualified": false
+}

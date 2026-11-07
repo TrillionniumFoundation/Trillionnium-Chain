@@ -7635,3 +7635,37 @@ SHA-256/Poseidon idealization, all-algorithm physical-cost lower bound, global
 initial-state authentication, physical clock, hidden world inventory, honest
 progress law, native/MU1 relation bridge or six-successor failure probability is
 promoted. Complete applicable source and native gates retain separate outcomes.
+
+
+The completed PNRL1 component validation retains two actual native scenarios,
+10 Rust tests plus the real process-cut helper, 22 independent reader controls,
+formatting and strict Clippy. All eight starts remain charged, including both
+interruption cuts. Before-dispatch bank-only rollback and coherent post-hoc
+allowance changes remain explicit external-history counterexamples. FJS1 has
+34 exact-state tests and EC1 has 21 complete-event tests. The CI command contract
+requires fresh current native risk outputs and refuses omitted, historical,
+ignored or swallowed controls. Original test-harness, loader-environment and
+snapshot-link failures remain in evidence.
+
+For this continuation, the local GitHub channel resolves the existing integration
+branch `fix/chain-six-axis-performance-20261103` at
+`cb314bb4656e5da4844325cd83994ab4764fe8e9`. Compared with the recovered starting
+point `f8362822b406463ac3dfcc911a0c3eda1686e32d`, that frozen integration has 32
+additional commits and the old work has three, with merge base
+`adebe0bd78e6e1bdb55a599179ffe2313997170e`. Preserve both sides in a normal merge
+before final candidate-source verification. Current REST and GraphQL reads did
+not resolve historical PR #688; do not restate its current OPEN status as verified.
+The existing integration branch, also used as the base of current related Draft
+PRs, remains the review destination. This changes no protected-main policy or
+production qualification.
+
+
+The final cross-review also retained a concrete impossible-start counterexample:
+a coherent bank rewrite appended a pending start at an already ended native
+lease and was formerly accepted as nine starts/expenditure 37. Both the Rust
+replay and independent Python reader now require the same native epoch and an
+idle, non-stopped native prefix. The complete Rust target and Python suite were
+extended to cover closed, incomplete, cross-epoch and recorded-stopping cuts.
+Original standalone native scenarios keep their original source identities;
+new exact-source verification is recorded separately instead of relabelling
+old runs as execution of the hardened source.

@@ -3914,6 +3914,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/native_risk_ledger_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/examples/operator_owned_finite_mining.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4016,6 +4023,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/examples/support/native_owner_scenario.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/examples/support/native_risk_scenario.rs"
         )),
     ),
     (
@@ -4569,6 +4583,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/native_owner_journal.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/native_risk_ledger.rs"
         )),
     ),
     (
@@ -5773,6 +5794,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/tests/native_owner_observation.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/tests/native_risk_ledger.rs"
         )),
     ),
     (

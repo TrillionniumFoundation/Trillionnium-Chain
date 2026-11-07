@@ -296,3 +296,31 @@ beyond the declared horizon is authenticated.
 ```bash
 python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
 ```
+
+## Durable local confirmation risk registration
+
+[PNRL1](NATIVE_RISK_LEDGER_V1.md) privately wraps the actual persistent native
+owner and syncs each fixed-scope confirmation registration and declared allowance
+before dispatch. Every repeated, failed or interrupted start remains charged.
+The independent reader reconciles **every** confirmation intent in the complete
+supplied native journal, including native calls that bypassed the risk wrapper.
+
+The fresh native scenario exercises pre-dispatch and post-native process exits,
+reopening, unsuccessful confirmations, exact owner binding and cumulative budgets.
+Its tests also retain a real bank-only rollback counterexample before native
+intent, and coherent after-the-fact allowance rewrites. An independently retained
+newer checkpoint rejects those old or rewritten histories; the files alone do
+not authenticate the latest history or physical pre-registration.
+
+```bash
+cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test native_risk_ledger
+cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example native_risk_ledger_v1
+/path/to/release/examples/native_risk_ledger_v1 /tmp/new-native-risk-ledger
+NATIVE_RISK_LEDGER_RUN=/tmp/new-native-risk-ledger/run.json python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_risk_ledger.py' -v
+python3 formal/pon-nakamoto-v1/native_risk_ledger.py --run /tmp/new-native-risk-ledger/run.json --output /tmp/new-native-risk-ledger/checked.json
+```
+
+This is declared local expenditure and raw-history reconciliation. Conditional
+failure probabilities, world-wide start coverage, physical time, hidden inventory
+and a common native failure law remain uncertified. The report retains a null
+native failure bound and false probability qualification flags.

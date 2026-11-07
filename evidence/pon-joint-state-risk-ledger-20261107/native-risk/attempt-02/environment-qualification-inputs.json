@@ -1,0 +1,7 @@
+{
+  "CARGO_HOME": "/home/qian-qi/work/chain-pon-lifecycle-closure-20261107/cargo-home",
+  "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-pon-joint-state-risk-ledger-20261107/risk-target",
+  "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+  "LD_LIBRARY_PATH": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"
+}

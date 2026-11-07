@@ -20,7 +20,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
                                WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
-                               LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS,
+                               LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS, NATIVE_RISK_LEDGER,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -973,6 +973,29 @@ class CiContractTests(unittest.TestCase):
         moved = original.replace(command, '').replace('  repository-truth)\n',
                                                        '  repository-truth)\n' + command)
         self.rejected('scripts/ci/ci_job.sh', original, moved)
+
+    def test_native_risk_bank_requires_current_execution_and_all_raw_reconciliation(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        block = NATIVE_RISK_LEDGER
+        lines = block.splitlines(keepends=True)
+        mutations = ['', '    true # omitted native risk bank\n', block * 2,
+                     block.replace('realpath -e', 'printf %s'),
+                     block.replace('/native-risk-ledger', '/historical-risk-ledger'),
+                     block.replace('NATIVE_RISK_LEDGER_RUN=', 'OMITTED_RISK_RUN='),
+                     block.replace('--test native_risk_ledger\n',
+                                   '--test native_risk_ledger -- --ignored\n'),
+                     block.replace("test_native_risk_ledger.py' -v",
+                                   "test_native_risk_ledger.py' -v || true")]
+        mutations.extend(''.join(lines[:i] + lines[i + 1:]) for i in range(len(lines)))
+        for replacement in mutations:
+            with self.subTest(replacement=replacement[:100]):
+                self.rejected('scripts/ci/ci_job.sh', block, replacement)
+        moved_lane = original.replace(block, '').replace('  repository-truth)\n',
+                                                        '  repository-truth)\n' + block)
+        self.rejected('scripts/ci/ci_job.sh', original, moved_lane)
+        before_build = original.replace(block, '').replace(NODE_EXAMPLE_BUILD,
+                                                           block + NODE_EXAMPLE_BUILD)
+        self.rejected('scripts/ci/ci_job.sh', original, before_build)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
