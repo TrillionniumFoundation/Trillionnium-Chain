@@ -1,0 +1,35 @@
+{
+  "schema": "r17-final-pr-publication-v1",
+  "observed_utc": "2026-11-07T18:51:16.939582+00:00",
+  "actor": {
+    "id": 102159240,
+    "login": "ProfHepta"
+  },
+  "pr": 780,
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/780",
+  "source_head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "evidence_head": "0d931bf0361d5e332d4216f88c8661c60aa7b88d",
+  "draft": true,
+  "base_ref": "fix/chain-six-axis-performance-20261103",
+  "base_snapshot_sha": "04bbc81e4aad9b29fef29385d3262297e2cb17df",
+  "body_bytes": 10943,
+  "body_sha256": "11496f7baa93ccc9f36ca6131193f3873bbd7c8d108f59449f5d8243d5bc1a62",
+  "body_readback_exact": true,
+  "remote_source_and_evidence_refs_verified": true,
+  "ci_read_started_utc": "2026-11-07T18:50:56.063311+00:00",
+  "ci_read_completed_utc": "2026-11-07T18:51:11.564638+00:00",
+  "ci_workflow_counts": {
+    "in_progress": 7,
+    "failure": 2,
+    "success": 7
+  },
+  "ci_job_counts": {
+    "success": 66,
+    "in_progress": 27,
+    "failure": 9,
+    "skipped": 3
+  },
+  "ci_unsuccessful_completed_jobs": 9,
+  "original_resource_qualification": false,
+  "approval_or_activation": false
+}

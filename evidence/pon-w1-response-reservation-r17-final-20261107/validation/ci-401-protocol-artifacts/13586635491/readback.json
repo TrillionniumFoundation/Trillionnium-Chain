@@ -1,0 +1,103 @@
+{
+  "artifact_id": 13586635491,
+  "name": "merge-protocol-contract-06110d0bd0a285c249e2b6db9352fe131acc8939-1",
+  "zip_bytes": 5974382,
+  "zip_sha256": "11f787362d086b651f6af06e4147a21709ab7958eb3277e1fdcec6de2ed0cf6d",
+  "entries": 78,
+  "selected_text_files": 55,
+  "file_names": [
+    "from-zero-native/build/process.json",
+    "from-zero-native/build/stdout",
+    "from-zero-native/build/stderr",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+    "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+    "from-zero-native/confirmation/report.json",
+    "from-zero-native/format-check/process.json",
+    "from-zero-native/format-check/stderr",
+    "from-zero-native/format-check/stdout",
+    "from-zero-native/format-copy/process.json",
+    "from-zero-native/format-copy/stderr",
+    "from-zero-native/format-copy/stdout",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+    "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+    "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+    "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+    "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+    "from-zero-native/manifest.json",
+    "from-zero-native/native/report.json",
+    "from-zero-native/native/sustained/report.json",
+    "from-zero-native-host/actual-systemd-parent-after.log",
+    "from-zero-native-host/actual-systemd-parent.log",
+    "from-zero-native-host/after-provision.json",
+    "from-zero-native-host/before-provision.json",
+    "from-zero-native-host/child-final-load-state.log",
+    "from-zero-native-host/child-load-state.log",
+    "from-zero-native-host/child-result.json",
+    "from-zero-native-host/controller-result.json",
+    "from-zero-native-host/inside-after.json",
+    "from-zero-native-host/inside-before.json",
+    "from-zero-native-host/install-reviewed-unit.log",
+    "from-zero-native-host/outside-after.json",
+    "from-zero-native-host/parent-properties.log",
+    "from-zero-native-host/prepare-build/process.json",
+    "from-zero-native-host/prepare-build/stderr",
+    "from-zero-native-host/prepare-build/stdout",
+    "from-zero-native-host/prepare-build.json",
+    "from-zero-native-host/seal-parent-directory.log",
+    "from-zero-native-host/seal-parent-receipt.log",
+    "from-zero-native-host/start-fixed-parent.log",
+    "from-zero-native-host/systemd-reload.log",
+    "from-zero-native-host/systemd-run.log",
+    "from-zero-native-host/unprovisioned-parent.json",
+    "pq-provider/build-and-smoke.log",
+    "pq-provider/provider.json",
+    "public-fixture-parent.json",
+    "source.json"
+  ],
+  "failure_windows": [
+    {
+      "path": "from-zero-native/build/stderr",
+      "line_1_based": 1,
+      "context": [
+        "    Finished `release` profile [optimized] target(s) in 0.30s"
+      ]
+    },
+    {
+      "path": "from-zero-native-host/prepare-build/stderr",
+      "line_1_based": 1,
+      "context": [
+        "    Updating crates.io index",
+        " Downloading crates ...",
+        "  Downloaded cfg-if v1.0.4",
+        "  Downloaded autocfg v1.5.1",
+        "  Downloaded toml_datetime v1.1.1+spec-1.1.0",
+        "  Downloaded zeroize v1.8.2",
+        "  Downloaded anyhow v1.0.103",
+        "  Downloaded hashbrown v0.16.1",
+        "  Downloaded base64ct v1.8.3",
+        "  Downloaded sha2 v0.10.9",
+        "  Downloaded proc-macro2 v1.0.106",
+        "  Downloaded hybrid-array v0.4.15"
+      ]
+    },
+    {
+      "path": "from-zero-native-host/prepare-build/stderr",
+      "line_1_based": 185,
+      "context": [
+        "   Compiling trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)",
+        "   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)",
+        "   Compiling trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)",
+        "   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)",
+        "    Finished `release` profile [optimized] target(s) in 2m 58s"
+      ]
+    }
+  ]
+}

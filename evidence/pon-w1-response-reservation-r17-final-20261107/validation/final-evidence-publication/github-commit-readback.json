@@ -1,0 +1,35 @@
+{
+  "sha": "0d931bf0361d5e332d4216f88c8661c60aa7b88d",
+  "node_id": "C_kwDOTty1_doAKDBkOTMxYmYwMzYxZDVlMzMyZDQyMTZmODhjODY2MWM2MGFhN2I4OGQ",
+  "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/0d931bf0361d5e332d4216f88c8661c60aa7b88d",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/0d931bf0361d5e332d4216f88c8661c60aa7b88d",
+  "author": {
+    "name": "Tomasrgbsf",
+    "email": "tomasbraynt@gmail.com",
+    "date": "2026-11-07T18:45:43Z"
+  },
+  "committer": {
+    "name": "Tomasrgbsf",
+    "email": "tomasbraynt@gmail.com",
+    "date": "2026-11-07T18:45:43Z"
+  },
+  "tree": {
+    "sha": "95d059ae97baa0102a920ec3ee31790477edf356",
+    "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/95d059ae97baa0102a920ec3ee31790477edf356"
+  },
+  "message": "docs: retain R17 original service failures and final source validation",
+  "parents": [
+    {
+      "sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/40194538c7d74d860f9f0460d9f5f886df13281c"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

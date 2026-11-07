@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-prospective-merge/release/deps/public_v3_from_zero-ff17be0917ddd87e",
+    "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 5571605,
+  "user_cpu_ns": 1835000,
+  "system_cpu_ns": 0,
+  "cpu_ns": 1835000,
+  "max_rss_kib": 44672,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 158,
+  "major_faults": 0,
+  "voluntary_switches": 4,
+  "involuntary_switches": 0,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

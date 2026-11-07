@@ -1,0 +1,29 @@
+{
+  "job": {
+    "workflow": "PoN fixed Host ROOT F0 diagnostic",
+    "workflow_id": 42401831712,
+    "id": 128491081662,
+    "name": "F0 (x64, head, one baseline and one ROOT phase)",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831712/job/128491081662",
+    "completed_at": "2026-11-07T18:39:16Z",
+    "failed_steps": [
+      {
+        "number": 8,
+        "name": "Run exactly one pair in the declared controller and public Host",
+        "conclusion": "failure"
+      },
+      {
+        "number": 9,
+        "name": "Always retain denominators and inspect only exact owned services",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 238657,
+  "sha256": "da66012bc142c90df51b9e0e69720be1717eb60f9cd96b5a84be0a0a037088ac",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:52:56.784853+00:00"
+}

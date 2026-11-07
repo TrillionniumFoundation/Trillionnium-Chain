@@ -1,0 +1,24 @@
+{
+  "job": {
+    "workflow": "PoN priority acceptance",
+    "workflow_id": 42401831787,
+    "id": 128491081956,
+    "name": "retained-pressure-failure",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831787/job/128491081956",
+    "completed_at": "2026-11-07T18:33:03Z",
+    "failed_steps": [
+      {
+        "number": 2,
+        "name": "Retrieve exact historical failed artifact without reclassifying it",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 4110,
+  "sha256": "7b7c1e27201942779c276fe7446c8da5c49c491e445b5fea0a0b8fe827001ec6",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:52:55.830366+00:00"
+}

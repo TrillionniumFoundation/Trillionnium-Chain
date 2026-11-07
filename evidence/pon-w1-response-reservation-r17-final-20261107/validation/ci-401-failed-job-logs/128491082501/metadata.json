@@ -1,0 +1,24 @@
+{
+  "job": {
+    "workflow": "PoN W1 work security observations",
+    "workflow_id": 42401831771,
+    "id": 128491082501,
+    "name": "W1 fresh challenge service (x64, head)",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771/job/128491082501",
+    "completed_at": "2026-11-07T18:37:40Z",
+    "failed_steps": [
+      {
+        "number": 7,
+        "name": "Execute original and fresh service with original Host resources",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 181473,
+  "sha256": "324c697103dce7e0a24864e2711eb3c8a3360c70cf20c9aa7f98280e0c160854",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:52:56.383097+00:00"
+}

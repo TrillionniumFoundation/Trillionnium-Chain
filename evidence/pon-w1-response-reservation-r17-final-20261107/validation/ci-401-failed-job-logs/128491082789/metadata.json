@@ -1,0 +1,24 @@
+{
+  "job": {
+    "workflow": "PoN original native campaign",
+    "workflow_id": 42401832002,
+    "id": 128491082789,
+    "name": "original native campaign (x64, head, release)",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832002/job/128491082789",
+    "completed_at": "2026-11-07T18:43:14Z",
+    "failed_steps": [
+      {
+        "number": 7,
+        "name": "Run three original campaigns under verified actual limits",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 201216,
+  "sha256": "372d0e97180679840913e5970ee9cc812bbc159534af1ba138a783cddd328fbf",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:53:04.166198+00:00"
+}

@@ -1,0 +1,24 @@
+{
+  "job": {
+    "workflow": "trnm-required-baseline",
+    "workflow_id": 42401831625,
+    "id": 128491082363,
+    "name": "prospective-merge (protocol-contract)",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491082363",
+    "completed_at": "2026-11-07T18:42:10Z",
+    "failed_steps": [
+      {
+        "number": 11,
+        "name": "Execute the same lane on the prospective merge",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 156871,
+  "sha256": "142276383df8a81f4046416d9c1b27b65691575553a46f9bda28b712662594e7",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:53:00.085103+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "r17-normal-evidence-publication-v1",
+  "observed_utc": "2026-11-07T18:47:54.990449+00:00",
+  "actor": {
+    "login": "ProfHepta",
+    "id": 102159240
+  },
+  "head": "0d931bf0361d5e332d4216f88c8661c60aa7b88d",
+  "tree": "95d059ae97baa0102a920ec3ee31790477edf356",
+  "parent": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "branch": "docs/chain-w1-ingress-r17-evidence-20261107",
+  "changed_paths": 1347,
+  "manifest_sha256": "d3f252042e4a25e0d9e66c53314a1403c91a278089fd82ec4184b0400b767a87",
+  "manifest_git_blob": "91a8ef7634645b268f992d4c15ba69a1ed455bed",
+  "source_head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "manifest_payloads": 1346,
+  "stored_payload_bytes": 329739852,
+  "remote_head_verified": true,
+  "remote_commit_tree_verified": true,
+  "push_exit_code": 0,
+  "force_push": false,
+  "main_written": false,
+  "original_resource_qualification": false,
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/tree/0d931bf0361d5e332d4216f88c8661c60aa7b88d/evidence/pon-w1-response-reservation-r17-final-20261107"
+}

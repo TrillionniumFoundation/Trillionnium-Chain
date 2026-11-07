@@ -1,0 +1,35 @@
+{
+  "head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "branch": "docs/chain-w1-ingress-r17-evidence-20261107",
+  "manifest_sha256": "d3f252042e4a25e0d9e66c53314a1403c91a278089fd82ec4184b0400b767a87",
+  "previous_manifest_sha256": "8242992abcfa7f1bae431e01625baa26dcee90f2ed40f3e9711647c6a790f696",
+  "previous_payloads_preserved": 1135,
+  "added_payloads": 211,
+  "manifest_payloads": 1346,
+  "indexed_files_including_manifest": 1347,
+  "stored_payload_bytes": 329739852,
+  "largest_stored_file_bytes": 72740746,
+  "all_decoded_source_digests_verified": true,
+  "all_index_blobs_verified": true,
+  "relative_readme_links_verified": 29,
+  "original_log_omissions_found": 122,
+  "ignored_manifest_logs_explicitly_staged": true,
+  "gitignore_modified": false,
+  "non_evidence_metadata_excluded": [
+    {
+      "source": "final-source-publication/user.json",
+      "reason": "Non-evidence full account metadata remains local; the public actor and identity checks are retained in publication receipts."
+    },
+    {
+      "source": "final-source-publication-attempt-2/user.json",
+      "reason": "Non-evidence full account metadata remains local; the public actor and identity checks are retained in publication receipts."
+    },
+    {
+      "source": "final-source-publication-attempt-3/user.json",
+      "reason": "Non-evidence full account metadata remains local; the public actor and identity checks are retained in publication receipts."
+    }
+  ],
+  "component_validation_passed": true,
+  "original_resource_qualification": false,
+  "source_push_receipt": "validation/final-source-publication-attempt-3/published.json"
+}

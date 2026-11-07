@@ -1,0 +1,528 @@
+{
+  "schema": "r17-published-source-ci-readback-v1",
+  "read_started_utc": "2026-11-07T18:50:56.063311+00:00",
+  "read_completed_utc": "2026-11-07T18:51:11.564638+00:00",
+  "source_head": "40194538c7d74d860f9f0460d9f5f886df13281c",
+  "atomic_scheduler_snapshot": false,
+  "workflow_counts": {
+    "in_progress": 7,
+    "failure": 2,
+    "success": 7
+  },
+  "job_counts": {
+    "success": 66,
+    "in_progress": 27,
+    "failure": 9,
+    "skipped": 3
+  },
+  "workflow_total": 16,
+  "workflow_runs": [
+    {
+      "id": 42401831985,
+      "name": "PoN branch encoding exact-source acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831985",
+      "job_counts": {
+        "success": 4
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831791,
+      "name": "CodeQL exact-source analysis export",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831791",
+      "job_counts": {
+        "in_progress": 1
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831664,
+      "name": "PoN PQ network and rollback witness",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831664",
+      "job_counts": {
+        "in_progress": 4
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831771,
+      "name": "PoN W1 work security observations",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771",
+      "job_counts": {
+        "success": 17,
+        "in_progress": 3,
+        "failure": 2,
+        "skipped": 1
+      },
+      "failed_jobs": [
+        {
+          "id": 128491082501,
+          "name": "W1 fresh challenge service (x64, head)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771/job/128491082501",
+          "completed_at": "2026-11-07T18:37:40Z",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original and fresh service with original Host resources",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 128491082569,
+          "name": "W1 fresh challenge service (x64, prospective-merge)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771/job/128491082569",
+          "completed_at": "2026-11-07T18:38:24Z",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Execute original and fresh service with original Host resources",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42401831787,
+      "name": "PoN priority acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831787",
+      "job_counts": {
+        "failure": 1,
+        "in_progress": 12,
+        "skipped": 1
+      },
+      "failed_jobs": [
+        {
+          "id": 128491081956,
+          "name": "retained-pressure-failure",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831787/job/128491081956",
+          "completed_at": "2026-11-07T18:33:03Z",
+          "failed_steps": [
+            {
+              "number": 2,
+              "name": "Retrieve exact historical failed artifact without reclassifying it",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42401831798,
+      "name": "PoN original workspace test-profile CPU acceptance",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831798",
+      "job_counts": {
+        "in_progress": 3,
+        "success": 1
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831712,
+      "name": "PoN fixed Host ROOT F0 diagnostic",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831712",
+      "job_counts": {
+        "failure": 1
+      },
+      "failed_jobs": [
+        {
+          "id": 128491081662,
+          "name": "F0 (x64, head, one baseline and one ROOT phase)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831712/job/128491081662",
+          "completed_at": "2026-11-07T18:39:16Z",
+          "failed_steps": [
+            {
+              "number": 8,
+              "name": "Run exactly one pair in the declared controller and public Host",
+              "conclusion": "failure"
+            },
+            {
+              "number": 9,
+              "name": "Always retain denominators and inspect only exact owned services",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42401831619,
+      "name": "PoN original large-state CPU acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831619",
+      "job_counts": {
+        "success": 4
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831625,
+      "name": "trnm-required-baseline",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625",
+      "job_counts": {
+        "success": 11,
+        "in_progress": 4,
+        "failure": 4
+      },
+      "failed_jobs": [
+        {
+          "id": 128491081812,
+          "name": "cross-arch-cost (x64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081812",
+          "completed_at": "2026-11-07T18:37:54Z",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 128491081867,
+          "name": "cross-arch-cost (arm64)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081867",
+          "completed_at": "2026-11-07T18:39:26Z",
+          "failed_steps": [
+            {
+              "number": 12,
+              "name": "Execute exact native from-zero service controls",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 128491081917,
+          "name": "protocol-contract",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081917",
+          "completed_at": "2026-11-07T18:40:16Z",
+          "failed_steps": [
+            {
+              "number": 8,
+              "name": "Run actual protocol-contract checks",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 128491082363,
+          "name": "prospective-merge (protocol-contract)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491082363",
+          "completed_at": "2026-11-07T18:42:10Z",
+          "failed_steps": [
+            {
+              "number": 11,
+              "name": "Execute the same lane on the prospective merge",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42401831852,
+      "name": "PoN baseline diagnostic readback",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831852",
+      "job_counts": {
+        "success": 5,
+        "skipped": 1
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401832002,
+      "name": "PoN original native campaign",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832002",
+      "job_counts": {
+        "failure": 1
+      },
+      "failed_jobs": [
+        {
+          "id": 128491082789,
+          "name": "original native campaign (x64, head, release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832002/job/128491082789",
+          "completed_at": "2026-11-07T18:43:14Z",
+          "failed_steps": [
+            {
+              "number": 7,
+              "name": "Run three original campaigns under verified actual limits",
+              "conclusion": "failure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 42401831654,
+      "name": "PoN owned process cleanup",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831654",
+      "job_counts": {
+        "success": 8
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831723,
+      "name": "PoN W1 transparent candidate observations",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831723",
+      "job_counts": {
+        "success": 2
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831701,
+      "name": "Release finality reference and native baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831701",
+      "job_counts": {
+        "success": 4
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401832011,
+      "name": "PoN recent batch exact-source acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832011",
+      "job_counts": {
+        "success": 4
+      },
+      "failed_jobs": []
+    },
+    {
+      "id": 42401831752,
+      "name": "CodeQL exact-source analysis and SARIF retention",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "40194538c7d74d860f9f0460d9f5f886df13281c",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831752",
+      "job_counts": {
+        "success": 6
+      },
+      "failed_jobs": []
+    }
+  ],
+  "failed_jobs": [
+    {
+      "workflow": "PoN W1 work security observations",
+      "workflow_id": 42401831771,
+      "id": 128491082501,
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771/job/128491082501",
+      "completed_at": "2026-11-07T18:37:40Z",
+      "failed_steps": [
+        {
+          "number": 7,
+          "name": "Execute original and fresh service with original Host resources",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "PoN W1 work security observations",
+      "workflow_id": 42401831771,
+      "id": 128491082569,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831771/job/128491082569",
+      "completed_at": "2026-11-07T18:38:24Z",
+      "failed_steps": [
+        {
+          "number": 7,
+          "name": "Execute original and fresh service with original Host resources",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "PoN priority acceptance",
+      "workflow_id": 42401831787,
+      "id": 128491081956,
+      "name": "retained-pressure-failure",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831787/job/128491081956",
+      "completed_at": "2026-11-07T18:33:03Z",
+      "failed_steps": [
+        {
+          "number": 2,
+          "name": "Retrieve exact historical failed artifact without reclassifying it",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "PoN fixed Host ROOT F0 diagnostic",
+      "workflow_id": 42401831712,
+      "id": 128491081662,
+      "name": "F0 (x64, head, one baseline and one ROOT phase)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831712/job/128491081662",
+      "completed_at": "2026-11-07T18:39:16Z",
+      "failed_steps": [
+        {
+          "number": 8,
+          "name": "Run exactly one pair in the declared controller and public Host",
+          "conclusion": "failure"
+        },
+        {
+          "number": 9,
+          "name": "Always retain denominators and inspect only exact owned services",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "trnm-required-baseline",
+      "workflow_id": 42401831625,
+      "id": 128491081812,
+      "name": "cross-arch-cost (x64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081812",
+      "completed_at": "2026-11-07T18:37:54Z",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "trnm-required-baseline",
+      "workflow_id": 42401831625,
+      "id": 128491081867,
+      "name": "cross-arch-cost (arm64)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081867",
+      "completed_at": "2026-11-07T18:39:26Z",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "trnm-required-baseline",
+      "workflow_id": 42401831625,
+      "id": 128491081917,
+      "name": "protocol-contract",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081917",
+      "completed_at": "2026-11-07T18:40:16Z",
+      "failed_steps": [
+        {
+          "number": 8,
+          "name": "Run actual protocol-contract checks",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "trnm-required-baseline",
+      "workflow_id": 42401831625,
+      "id": 128491082363,
+      "name": "prospective-merge (protocol-contract)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491082363",
+      "completed_at": "2026-11-07T18:42:10Z",
+      "failed_steps": [
+        {
+          "number": 11,
+          "name": "Execute the same lane on the prospective merge",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "workflow": "PoN original native campaign",
+      "workflow_id": 42401832002,
+      "id": 128491082789,
+      "name": "original native campaign (x64, head, release)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401832002/job/128491082789",
+      "completed_at": "2026-11-07T18:43:14Z",
+      "failed_steps": [
+        {
+          "number": 7,
+          "name": "Run three original campaigns under verified actual limits",
+          "conclusion": "failure"
+        }
+      ]
+    }
+  ],
+  "original_resource_qualification_granted": false
+}

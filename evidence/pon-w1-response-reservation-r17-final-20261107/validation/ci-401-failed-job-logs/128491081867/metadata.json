@@ -1,0 +1,24 @@
+{
+  "job": {
+    "workflow": "trnm-required-baseline",
+    "workflow_id": 42401831625,
+    "id": 128491081867,
+    "name": "cross-arch-cost (arm64)",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42401831625/job/128491081867",
+    "completed_at": "2026-11-07T18:39:26Z",
+    "failed_steps": [
+      {
+        "number": 12,
+        "name": "Execute exact native from-zero service controls",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "download_exit_code": 0,
+  "bytes": 155749,
+  "sha256": "384130436e8aae7866d64cad1d4a8552abf3cbb5d2472c186b253b053381e59a",
+  "first_magic_hex": "efbbbf32",
+  "observed_utc": "2026-11-07T18:53:00.231502+00:00"
+}
