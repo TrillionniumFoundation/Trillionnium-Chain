@@ -5,6 +5,101 @@ use super::proof_wire::{self, Publication};
 use trnm_release_bundle::pq_release::{PqReleaseAuthorityV1, PqReleaseRoleV1};
 
 #[test]
+fn canonical_role_keys_replay_at_every_tagged_proof_boundary() {
+    fn round_trip<T: serde::Serialize + serde::de::DeserializeOwned>(value: &T) -> T {
+        let bytes = super::codec::encode(value, super::records::MAX_RECORD_BYTES).unwrap();
+        let decoded = super::codec::decode(&bytes, super::records::MAX_RECORD_BYTES).unwrap();
+        assert_eq!(
+            bytes,
+            super::codec::encode(&decoded, super::records::MAX_RECORD_BYTES).unwrap()
+        );
+        decoded
+    }
+    let (root, keys) = fixture::root(1, 1, 30, [0; 32]);
+    let digest = root.kernel().unwrap().digest().unwrap();
+    let decoded = round_trip(&root);
+    assert_eq!(decoded.kernel().unwrap().digest().unwrap(), digest);
+    let publication = round_trip(&Publication::RootRotation {
+        old_signatures: vec![fixture::signed(&keys[0], &root)],
+        new_signatures: vec![fixture::signed(&keys[0], &root)],
+        root,
+    });
+    let observed = round_trip(&proof_wire::ObservedPublication {
+        schema_version: 1,
+        publication,
+        observed_at: 10,
+        resulting_checkpoint: [9; 32],
+    });
+    let record = super::records::Record::Publication(observed);
+    let decoded = round_trip(&record);
+    assert_eq!(decoded.digest().unwrap(), record.digest().unwrap());
+    let super::records::Record::Publication(observed) = decoded else {
+        panic!("publication record changed type")
+    };
+    let Publication::RootRotation { root, .. } = observed.publication else {
+        panic!("rotation changed type")
+    };
+    assert_eq!(root.kernel().unwrap().digest().unwrap(), digest);
+}
+
+#[test]
+fn root_role_keys_refuse_aliases_unknown_codes_and_duplicates_in_tagged_proofs() {
+    fn reject_at_every_boundary(root: &str) {
+        assert!(serde_json::from_str::<proof_wire::Root>(root).is_err());
+        let publication = format!(
+            "{{\"kind\":\"RootRotation\",\"root\":{root},\"old_signatures\":[],\"new_signatures\":[]}}"
+        );
+        assert!(serde_json::from_str::<Publication>(&publication).is_err());
+        let checkpoint = serde_json::to_string(&[9_u8; 32]).unwrap();
+        let fields = format!(
+            "\"schema_version\":1,\"publication\":{publication},\"observed_at\":10,\"resulting_checkpoint\":{checkpoint}"
+        );
+        assert!(
+            serde_json::from_str::<proof_wire::ObservedPublication>(&format!("{{{fields}}}"))
+                .is_err()
+        );
+        assert!(serde_json::from_str::<super::records::Record>(&format!(
+            "{{\"record\":\"Publication\",{fields}}}"
+        ))
+        .is_err());
+    }
+    let (root, _) = fixture::root(1, 1, 30, [0; 32]);
+    let raw = serde_json::to_string(&root).unwrap();
+    for key in [
+        "0", "5", "255", "256", "01", "+1", "-1", " 1", "1 ", "1.0", "",
+    ] {
+        let changed = raw.replacen("\"roles\":{\"1\":", &format!("\"roles\":{{\"{key}\":"), 1);
+        assert_ne!(changed, raw);
+        reject_at_every_boundary(&changed);
+    }
+    let duplicate = format!(
+        "\"roles\":{{\"1\":{},",
+        serde_json::to_string(&root.roles[&1]).unwrap()
+    );
+    reject_at_every_boundary(&raw.replacen("\"roles\":{", &duplicate, 1));
+}
+
+#[test]
+fn role_decoding_preserves_complete_root_and_canonical_record_requirements() {
+    let (mut root, _) = fixture::root(1, 1, 30, [0; 32]);
+    root.roles.remove(&4);
+    let raw = super::codec::encode(&root, super::records::MAX_RECORD_BYTES).unwrap();
+    let decoded: proof_wire::Root =
+        super::codec::decode(&raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert!(decoded.kernel().is_err());
+    let (root, _) = fixture::root(1, 1, 30, [0; 32]);
+    let canonical = serde_json::to_string(&root).unwrap();
+    let noncanonical = canonical.replacen("\"roles\":{", "\"roles\": {", 1);
+    assert_ne!(canonical, noncanonical);
+    assert!(serde_json::from_str::<proof_wire::Root>(&noncanonical).is_ok());
+    assert!(super::codec::decode::<proof_wire::Root>(
+        noncanonical.as_bytes(),
+        super::records::MAX_RECORD_BYTES
+    )
+    .is_err());
+}
+
+#[test]
 fn all_three_service_keys_are_excluded_from_offline_root_and_every_online_role() {
     let (root, _) = fixture::root(1, 1, 30, [0; 32]);
     let services = [fixture::key(80), fixture::key(81), fixture::key(82)];
