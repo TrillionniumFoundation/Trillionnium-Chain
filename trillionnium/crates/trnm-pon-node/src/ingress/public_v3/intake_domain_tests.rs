@@ -671,7 +671,7 @@ fn public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy() {
             started.send(()).unwrap();
             let result =
                 OrdinaryPublicServiceCrashFence::begin(waiting_node, deadline, &waiting_stop)
-                    .and_then(|mut fence| fence.complete(true));
+                    .and_then(|mut fence| fence.complete());
             completed.send(()).unwrap();
             result
         });
