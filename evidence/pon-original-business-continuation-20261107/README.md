@@ -74,6 +74,27 @@ fixture mismatch and the deliberately failing negative controls remain retained.
 These are component/reader checks, not the original native business campaign.
 Exact later native and CI outcomes belong to their own source-bound receipts.
 
+Frozen source `d7952489ceaa5ae191a7bbcd96a3d3cc8350f785` completed all
+16 [source, reader, graph, formatting and repository-link commands](source-controls-d7952489/summary.json).
+The Python controls executed 360 tests, and the original full tracked-byte
+source observations before and after were identical. This is source validation,
+not a native service or History run.
+
+The first Desktop native component run on
+`9ce78655b574a638c54a0ee9c88d58ffdec74df7` compiled successfully, then recorded
+[67 passed and one failed](native-9ce-development/node-components.log). It used
+a clean sparse development checkout while the full historical evidence objects
+were still downloading, and does not claim a complete tracked-worktree gate.
+The new 129-block oracle passed all callback differences, snapshot locations,
+complete SQL comparisons and State comparisons before failing its cold-open
+expectation. Existing `Node::open` calls `recover`, which activates the best
+valid chain; the test incorrectly still expected genesis after that operation.
+The unchanged recovery function also matches the e70 source. The correction
+expects the exact `(tip, 1)` pair after reopen and retains the pre-open genesis,
+nonce 130, complete SQL/State and subsequent cold-reopen checks. Production
+recovery code is unchanged. The original failed run remains failed, and the
+corrected test requires a new native execution.
+
 ## GitHub execution entry
 
 The published 96e1 candidate has successful CodeQL push jobs, including an

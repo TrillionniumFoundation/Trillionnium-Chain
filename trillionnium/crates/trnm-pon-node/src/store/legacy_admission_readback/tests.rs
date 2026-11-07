@@ -198,7 +198,9 @@ fn legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication() {
     let cfg = actual.node.settings.clone();
     drop(actual.node);
     actual.node = Node::open(actual.directory.path(), cfg, 1).unwrap();
-    assert_eq!(actual.node.active().unwrap(), (actual.ids[0], 0));
+    // Node::open retains the original recover() contract: after complete
+    // admission it activates the best stored chain in generation one.
+    assert_eq!(actual.node.active().unwrap(), (tip, 1));
     for node in [&mut actual.node, &mut reference.node] {
         assert_eq!(node.activate_observed(tip, NOW).unwrap(), tip);
         assert_eq!(
