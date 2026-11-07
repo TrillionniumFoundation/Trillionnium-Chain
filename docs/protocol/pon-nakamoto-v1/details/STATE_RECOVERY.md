@@ -225,9 +225,10 @@ their complete account-State validation, and authenticated storage and the disti
 Growth commitment keep their own relations. Original before-images,
 step/cursor transactions, generation/slot checks, cancellation callbacks and one
 atomic active/events publication remain. Signed-history process-cut, cold-resume,
-untouched-corruption and original-error controls exercise this composition. Full
-State traversal remains O(N): this is not touched-set authenticated execution or
-a COW storage migration, and it does not qualify the original 4,105-block deadline,
+untouched-corruption and original-error controls exercise this composition. Every
+current State row and its bytes are still traversed, and the complete leaf set
+is sorted. This is not touched-set authenticated execution or a COW storage
+migration, and it does not qualify the original 4,105-block deadline,
 four-second hostile-load screen, physical power loss or production throughput.
 
 ## PN2 / P1 bounded-state delivery at the existing owner

@@ -26,7 +26,8 @@ defensive selector invariant, then supplies malformed PQ authority leaves with
 an attacker-consistent plain root to the actual PQ owner. Original PQ validation
 must still refuse them. A matching generic root never replaces profile validation.
 
-This Legacy optimization remains **O(N)** in current State. The separately
+This Legacy optimization still traverses every current State row and its bytes,
+and sorts the complete leaf set. It is not touched-set O(k) processing. The separately
 selected `PermanentAccountGrowthV2` already implements authenticated touched
 accounts, bounded working state and SQLite COW. Composing that path with PQ,
 complete mandatory ranges, migration, recovery anchors, retention and
@@ -46,12 +47,18 @@ fresh-challenge stream also remains 0/1 under pressure. Current History is
 4,105 non-genesis rows but retains active genesis and cancelled cursor 3,404.
 These current records are distinct from earlier 3,322/3,407 observations.
 
-The reviewed source corrections are the exact SQLite script pin from PR #768,
-the two actual accept-loop readiness files from PR #772, and PR #760's local
-CodeQL SARIF ownership correction. The latter retains exact-source analysis and
-parseable artifacts while the already enabled repository default setup remains
-the server-side upload owner. No branch protection or repository security
-setting is changed. Sibling-branch results do not qualify this composition.
+The reviewed source corrections are the exact SQLite script pin from PR #768
+and the two actual accept-loop readiness files from PR #772. During this work,
+PR #688 advanced independently to `271a87f831aa7e08f3c2024f738504c1422122dd`.
+Its SQLite correction is identical; its complete CodeQL workflow is preserved,
+including before/after source identity, explicit `upload: never` and failed-run
+SARIF retention. The earlier PR #760 `upload: false` setting is superseded:
+the pinned action interprets it as `failure-only`, not a complete upload disable.
+The already enabled repository default setup remains the server-side upload
+owner. New Rust analysis source-cleanliness failures remain failures, with
+status/diff diagnostics added before the unchanged strict verifier. No branch
+protection or repository security setting is changed. Sibling-branch results
+do not qualify this composition.
 
 ## Qualification rules
 

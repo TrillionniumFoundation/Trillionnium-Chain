@@ -33,8 +33,23 @@
       "paths": [
         ".github/workflows/codeql-real-exact-source.yml"
       ],
-      "integrated_workflow_blob": "7d2bc2b40aff6bd2fd7418633b656b5406c5c564",
-      "scope": "Single workflow correction reviewed by integration owner. Local exact-source SARIF generation uses upload false; default setup retains server-side upload ownership. Exact source checks, language/source matrix, pinned actions, SARIF validation and retention remain. Historical e70f CodeQL failures remain unchanged; no hosted success is inherited."
+      "scope": "Preliminary review preserved as provenance. In the pinned action, upload false means failure-only, not never. Superseded by the concurrent integration commit 271a87f831aa7e08f3c2024f738504c1422122dd, whose complete workflow and explicit never setting are retained.",
+      "initial_workflow_blob": "7d2bc2b40aff6bd2fd7418633b656b5406c5c564",
+      "superseded": true
+    },
+    {
+      "pr": 688,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/271a87f831aa7e08f3c2024f738504c1422122dd",
+      "head": "271a87f831aa7e08f3c2024f738504c1422122dd",
+      "base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "upstream_workflow_blob": "e4611a3f3c071de99ece39ccf25d50dc66f0f2bf",
+      "integrated_workflow_blob": "247e0330a49fccf2d3482c113f7fa71f5d2b65e5",
+      "scope": "Preserve concurrent source change: identical SQLite pin plus complete CodeQL never-upload workflow, before/after source identity and always-retained artifacts. Add full worktree status and tracked worktree/index diffs before the unchanged strict after-check; no cleanup, source-guard relaxation or failure-to-success conversion. New Rust clean-source failures remain unqualified; historical e70f failures are retained separately.",
+      "source_integrity_checker_changed": false
     }
   ],
   "child_ci_results_inherited": false,

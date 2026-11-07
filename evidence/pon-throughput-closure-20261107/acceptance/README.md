@@ -54,6 +54,22 @@ records and process failures. This is distinct from the previously quoted
 3,322 x64 returns and ARM cursor 3,407; those earlier observations are preserved
 under their original identities and are not results of these downloaded jobs.
 
+[Backend and stage attribution](history-stage-attribution.json) independently
+binds the original test, `Node::open` call path, native observation and both
+read-only SQLite schemas to **Legacy**, not AuthenticatedV1. The independently
+recomputed Legacy schema ID matches both databases; neither has the
+AuthenticatedV1 commitment/archive tables. The final History page triggers
+the long activation only after the preceding packets have been imported.
+
+The new Legacy arithmetic path therefore targets the ARM record's final
+activation staging, pre-COMMIT active-State and publication root checks. It
+does not replace admission/W1 replay, full SQL reads, cursor transactions or
+deadline checks. ARM recorded 3,406 staging validations (12.368103786 seconds
+wall) and 3,406 active-tail validations (5.611721846 seconds wall); these are
+whole-stage intervals, not isolated or wholly removable root-arithmetic costs.
+The x64 record never entered reorganization and has zero such observations.
+This root change cannot directly repair its earlier import/lifetime failure.
+
 ## Reader repair
 
 The v2 failed-confirmation summary previously retained the hostile worker CPU
@@ -109,15 +125,29 @@ rejected the advanced-configuration upload. Run `42352433630`, Rust head job
 performance and is not counted as a successful analysis export. The historical
 CodeQL exporter run `42352433650` separately exhausted its 1,200-second wait.
 
-The integration owner included the one-workflow correction from
+The integration owner initially reviewed the one-workflow correction from
 [PR #760](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/760)
-at `4906dbad8e97c2a252a395b7b581ebbe21a59204`: exact head and prospective-merge
-analyses retain local SARIF with `upload: false`, while repository default setup
-continues to own server-side uploads. Exact checkout checks, language/source
-matrix, pinned actions, parse validation and artifact retention remain in place.
-The unnecessary `security-events: write` permission is removed. This source
-correction does not rewrite the historical failures, qualify a new hosted run,
-or turn local SARIF into a server-side analysis export.
+at `4906dbad8e97c2a252a395b7b581ebbe21a59204`. Its `upload: false` value maps
+to `failure-only` in the
+[exact pinned action](https://github.com/github/codeql-action/blob/1fc58d04a4d4374f921bdac573c3811c240f9c26/src/actions-util.ts),
+so it is not a complete upload disable. This preliminary choice is superseded
+by the concurrent PR #688 commit
+[`271a87f831aa7e08f3c2024f738504c1422122dd`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/271a87f831aa7e08f3c2024f738504c1422122dd).
+Its full workflow is preserved: explicit `upload: never`, exact before/after
+source verification and always-retained local SARIF/identity artifacts, while
+repository default setup owns server-side uploads. The merged workflow adds
+source status and tracked-diff diagnostics before the unchanged after-verifier.
+The new Rust jobs generated parseable SARIF but failed the strict clean-source
+check; the available original artifacts do not identify which paths changed.
+These are failures, not qualified hosted analyses. This correction does not
+rewrite historical failures or turn local SARIF into a server-side export.
+
+The [concurrent-head readback](concurrent-271a/README.md) retains all 20 matching
+Actions rows at 10:56:37–10:56:38 UTC, the complete selected failure logs, the
+hash-verified Rust SARIF ZIP and the diagnostic-capture controls. Its denominator
+is 11 success, four failure and five still running; the new head's separate
+CodeQL exporter passed. This timestamped snapshot belongs to `271a87f...`, not
+the final combined throughput source.
 
 No native deadline, pressure count, History length, CPU/memory budget, consensus
 rule, production flag or original failed observation is relaxed by this record.
