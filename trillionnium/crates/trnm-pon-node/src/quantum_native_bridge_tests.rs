@@ -2,6 +2,7 @@
 //! The offline DAG census and prefix are retained advice, not free online mining.
 //! Neither these tests nor a selected q=0 path execute quantum hardware.
 mod competition;
+mod responsive;
 
 use crate::{consensus, development_public, maintenance, Node, Packet, Settings};
 use serde_json::{json, Value};

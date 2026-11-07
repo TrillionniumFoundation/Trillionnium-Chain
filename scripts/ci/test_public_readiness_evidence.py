@@ -1341,6 +1341,53 @@ class NativeDurableSchemaTests(unittest.TestCase):
                     self.extract(source,index)
 
 
+    def test_explicit_mode_forwarder_preserves_current_legacy_schema(self):
+        expected = self.extract(self.current)
+        self.assertEqual(expected[1], 'native-branch-schema-v2')
+        self.assertNotIn('pq_network_', expected[0])
+        for decoy in ('// SelectedOpen open_selected_mode\n',
+                      'const NOTE: &str = "SelectedOpen open_selected_mode";\n'):
+            old = self.historical_backend()
+            self.assertEqual(self.extract(old+decoy), self.extract(old))
+
+    def test_explicit_mode_forwarder_and_dispatch_are_closed_contracts(self):
+        before = 'SelectedOpen::InitializeOrRecover {\n                growth_observation_only,\n            },'
+        mutations = [
+            (before, 'SelectedOpen::ExistingPqOwner,'),
+            (before, before.replace('growth_observation_only,', 'growth_observation_only: true,')),
+            ('Self::open_selected_mode(', 'Self::unapproved_selected_mode('),
+            ('InitializeOrRecover { growth_observation_only: bool },',
+             'InitializeOrRecover { growth_observation_only: bool }, Unreviewed,'),
+            ('SelectedOpen::ExistingPqOwner => (false, true),',
+             'SelectedOpen::ExistingPqOwner => (false, false),'),
+            ('} => (growth_observation_only, false),', '} => (true, false),'),
+            ('fn open_selected_mode(', 'fn unsupported_selected_mode('),
+        ]
+        for before,after in mutations:
+            with self.subTest(mutation=after), self.assertRaisesRegex(ValueError, 'durable (?:backend selected mode|source body open_selected_mode)'):
+                self.extract(self.replace_once(self.current,before,after))
+
+    def test_explicit_mode_cannot_rebind_selector_or_flags_after_dispatch(self):
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        for statement in ('let selection = SelectedOpen::ExistingPqOwner;',
+                          'let growth_observation_only = true;',
+                          'existing_owner_only = false;',
+                          'let alias = &mut existing_owner_only;'):
+            with self.subTest(statement=statement), self.assertRaisesRegex(ValueError, 'durable backend selected schema rebound'):
+                self.extract(self.replace_once(self.current,pair,pair+'\n        '+statement))
+
+    def test_mode_marker_cannot_authorize_historical_fallback_or_nested_decoy(self):
+        old = self.historical_backend()
+        for marker in ('enum SelectedOpen { InitializeOrRecover { growth_observation_only: bool }, ExistingPqOwner }',
+                       'fn open_selected_mode() {}'):
+            with self.subTest(marker=marker), self.assertRaisesRegex(ValueError, 'durable (?:backend selected mode|source body SelectedOpen)'):
+                self.extract(old+'\n'+marker)
+        replaced = self.replace_once(self.current,'fn open_selected_mode(', 'fn unapproved_mode(')
+        decoy = 'mod hidden { fn open_selected_mode() { let ddl = state_backend.ddl(); let schema_id = state_backend.selected_schema_id(&settings); } }'
+        with self.assertRaisesRegex(ValueError, 'durable source body open_selected_mode'):
+            self.extract(replaced+'\n'+decoy)
+
+
 class PipelineExecutableBindingTests(unittest.TestCase):
     """Bounded local files and harmless child exits, never native qualification."""
     def setUp(self):

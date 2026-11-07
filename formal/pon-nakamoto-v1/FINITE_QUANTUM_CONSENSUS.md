@@ -304,3 +304,40 @@ Its abstract's game-specific conclusion is not a PoN variable-difficulty theorem
 The present closed action class does not claim to cover those correlated
 multi-miner strategies. The full mixed quantum/classical consensus security gate
 therefore remains open.
+
+## Responsive bounded competition continuation
+
+The [responsive native reader](experiments/w1_native_responsive.py) and
+[native executor](../../trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/responsive.rs)
+add receiver-following honest mining. The next nonce is a domain-separated
+SHA256 function of declared seed, attempt index and current parent. Selection
+changes generate delayed notifications. A changed parent cancels an in-flight
+attempt; completed stale packets remain queued. Independent honest, private
+and receiver databases execute real admission, native DAA/timestamp/work
+selection and reopen.
+
+The window remains 16 quarter-second ticks (four seconds), at most six honest
+starts and two private attempts. Eager scalar proof construction is observer
+work: complete actual CPU/wall costs remain even when modeled work is canceled.
+Model elapsed time is distinct from actual scalar execution time. Fixed
+controllers learn outcomes only at their declared completion. Whole-run
+initialization, observation and serialization remain separate charged costs.
+
+Twelve runs separate fixed classical policies, q0/q1 service configurations
+and observer-advice diagnostics. Positive-q searches may be deadline-censored;
+a timely positive-q request without a sampler fails explicitly with
+QUANTUM_SAMPLER_UNIMPLEMENTED. No CPU nonce is labelled a Grover output.
+The declared complete service model selects one correction distance per run;
+its physical parameters remain assumptions.
+
+The [responsive reduced model](w1_responsive_consensus.py) has independent
+Bellman and fixed-policy forward checkers. Bernoulli successes, constant work
+layers, observable events, caps and horizon are explicit conditional hypotheses,
+not native W1 probabilities. Four events stay distinct: ever replacing the
+public branch; private tip ownership at the horizon; private ancestry at the
+horizon (inclusive of the tip); and orphaning the initial public block.
+An honest descendant can preserve a private ancestor without private tip
+ownership. A separately labelled illustration changes only proof ticks from
+four to one, keeping the four-second horizon; it never substitutes for native
+service clocks. These finite statements do not establish arbitrary quantum
+algorithm, timestamp, network or long-horizon settlement security.

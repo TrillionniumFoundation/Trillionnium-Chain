@@ -181,3 +181,46 @@ checks the timing-row bijection and sums, and binds the progress journal. It doe
 not reproduce or attest historical timing values. CPU observations do not supply
 QPU calibration, energy/capital accounting, an exhaustive cache strategy space,
 or a minimum cost for generating an independent valid query.
+
+## Numerical calibration admissibility and legal producer portfolio
+
+The [calibration gate](w1_machine_calibration.py) distinguishes provenance/unit
+coverage from numerical support. Zero observed faults in a finite sample do
+not establish zero risk. Exact rational checks retain confidence allocation,
+complete denominators, event multiplicities, freshness and device/configuration
+identity. Its [campaign](experiments/w1_machine_calibration_campaign.py)
+reconstructs the complete native-sized declared machine and reports every
+active missing class. Synthetic acceptance controls are unit tests, not
+hardware data. Direct IID zero-fault inference is one possible route; a valid
+separately proved error-correction transformation could support rare logical
+bounds without directly sampling those failures. No hardware-bound
+transformation or physical calibration is supplied.
+
+The [producer portfolio](w1_preprocessing_portfolio.py) compares dense AB,
+exact sparse AB, correction after the already-required complete ordered trace,
+and verified rank-zero/rank-one factorization with a charged dense fallback.
+Every producer still builds full noise, trace, ticket and proof. An independent
+verifier recomputes direct AB. Trace recovery uses
+AB = C' - (A Fl) Fr - El (Er B'), costing four N-squared-R multiply-accumulate
+pairs plus correction, while the complete trace itself remains charged.
+This identity is neither a quantum-oracle improvement nor a global lower bound.
+
+The [campaign](experiments/w1_preprocessing_portfolio_campaign.py) freezes four
+payload capacities (0, 4096, 65536 and 262144 bytes) and all four strategies.
+Each pair runs once fully and once under the original four-second admission
+deadline: 32 fresh child processes. The fixed stream has 16 original native
+fixture candidates and 12 explicitly relation-only repeat/parent/target/task
+controls. Structured controls do not assert native task-supply eligibility.
+Censored reports preserve all 28 planned attempts, including never-started
+and partial work, full non-preemptive overrun, initialization, key checking,
+misses, fallback, evictions, proof checks, journal and outer startup/serialization.
+Payload caps and process RSS do not establish equal physical resources.
+
+Portable export first verifies the actual source-bound native fixture and
+charges native-host preparation. A remote CPU consumes externally pinned
+export bytes and implementation capsule and repeats complete W1 construction
+and independent checks. This delegates native provenance; it does not assert
+fresh Git/native admission on the remote CPU. Actual remote observation and
+verification receipts, allocation lifetime and source boundaries must accompany
+claims. No GPU/CPU result supplies QPU calibration, energy/capital cost,
+exhaustive algorithm coverage or a global minimum.

@@ -59,6 +59,20 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "formal/pon-nakamoto-v1/experiments/test_w1_machine_calibration_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/test_w1_native_responsive.py",
+    "formal/pon-nakamoto-v1/experiments/test_w1_preprocessing_portfolio_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/w1_machine_calibration_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/w1_native_responsive.py",
+    "formal/pon-nakamoto-v1/experiments/w1_preprocessing_portfolio_campaign.py",
+    "formal/pon-nakamoto-v1/test_w1_machine_calibration.py",
+    "formal/pon-nakamoto-v1/test_w1_preprocessing_portfolio.py",
+    "formal/pon-nakamoto-v1/test_w1_responsive_consensus.py",
+    "formal/pon-nakamoto-v1/w1_machine_calibration.py",
+    "formal/pon-nakamoto-v1/w1_preprocessing_portfolio.py",
+    "formal/pon-nakamoto-v1/w1_responsive_consensus.py",
+    "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/responsive.rs",
+    "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
     "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",

@@ -8446,3 +8446,44 @@ settlement theorem is claimed. Production activation remains false.
 Evidence, full raw outputs, exact source/ELF identities, independent reviews and
 supplemental reconciliations are retained at
 [evidence/pon-quantum-competing-gates-20261107](../../evidence/pon-quantum-competing-gates-20261107/README.md).
+
+### 2026-11-07 responsive mining, numerical calibration and legal producer portfolio — Draft/HOLD
+
+Continue from implementation a56889a54aac5f14141bb45fb602141dd6a37645 and
+evidence bef17d632d1e40014167dba2a1089b85366b67b8. Preserve prior failures,
+deadlines and source identities. The updated
+[finite contract](../../formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md)
+adds bounded receiver-following honest mining, delayed selection notices,
+charged in-flight cancellation and completed stale deliveries. A source-bound
+reader reconstructs complete native events and four ancestry/ownership outcomes.
+The scalar CPU observer stays distinct from the modeled quantum clock.
+A timely positive-q request without an implemented sampler fails explicitly.
+
+The finite Bellman/forward model declares stochastic successes and visibility,
+includes honest reactions and separates private ownership from private ancestry.
+Its four-second horizon, action caps and constant-work abstraction remain
+conditional limits, not arbitrary-algorithm or long-horizon settlement proof.
+
+The [machine/reuse contract](../../formal/pon-nakamoto-v1/MACHINE_SERVICE_AND_REUSE.md)
+adds numerical calibration admissibility and active-event gap reporting.
+Four exact complete-proof producers and four payload capacities each run once
+fully and once with an independent four-second deadline. Partial, canceled,
+late and never-started work stays visible. Portable CPU execution inherits
+explicitly delegated native provenance and retains preparation/source/terminal
+receipts. A configured HeptaRuntime Colab CPU probe has actually succeeded;
+these exact-integer tasks require no GPU and claim no QPU measurement.
+
+Three scoped CI repairs preserve acceptance: enumerate all ignored native
+selectors instead of a stale aggregate; check actual pinned JSON null-profile
+rejection while preserving nonzero exit and untouched databases; follow exact
+SelectedOpen forwarding/dispatch while retaining historical schema identities,
+namespace exclusion, no-fallback and rebinding refusals. Original CodeQL
+deadline and public-service resource constraints remain unchanged.
+
+Final committed-source campaigns and regression results are pending this source
+entry and must be attached with their actual implementation SHA, including
+failed attempts. CI retains all old commands and adds six focused suites, two
+explicit responsive native tests, calibration/portfolio observation and
+independent verification. All four general quantum gates remain HOLD.
+Publication continues through the authorized local Mac GitHub channel on the
+existing review PR, with exact source/object/ref readback, no force and no merge.

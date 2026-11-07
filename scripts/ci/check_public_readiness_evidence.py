@@ -404,12 +404,47 @@ def native_durable_schema(root):
                     # must match the complete pre-PQ owner contract verbatim.
                     expected = expected.replace('pq_network: None,','')
                 layout(body(node,'fn',name),expected,'durable backend opener '+name)
-            selected = rust_code(body(node,'fn','open_selected'))
+            selected_body = body(node,'fn','open_selected')
+            selected_names = ('state_backend', 'settings', 'ddl', 'schema_id')
+            if re.search(r'\b(?:SelectedOpen|open_selected_mode)\b',code):
+                # The explicit existing-owner refactor moved schema selection
+                # behind one closed forwarding contract. Do not discover an
+                # arbitrary call graph or fall back to the old body on failure.
+                layout(body(source,'enum','SelectedOpen'), '''
+                    InitializeOrRecover { growth_observation_only: bool },
+                    ExistingPqOwner,
+                ''', 'durable backend selected mode variants')
+                layout(selected_body, '''
+                    Self::open_selected_mode(
+                        path, settings, workers, hook, owners, state_backend,
+                        SelectedOpen::InitializeOrRecover { growth_observation_only, },
+                    )
+                ''', 'durable backend selected mode forwarding')
+                selected_body = body(node,'fn','open_selected_mode')
+                mode_code = rust_code(selected_body)
+                dispatch = re.match(r'\s*let\s*\(\s*growth_observation_only\s*,\s*existing_owner_only\s*\)'
+                                    r'\s*=\s*match\s+selection\s*\{',mode_code)
+                require(dispatch is not None, 'durable backend selected mode dispatch')
+                dispatch_end = rust_group_end(mode_code,dispatch.end()-1)
+                require(dispatch_end is not None, 'durable backend selected mode dispatch')
+                terminator = re.match(r'\s*;',mode_code[dispatch_end:])
+                require(terminator is not None, 'durable backend selected mode dispatch')
+                dispatch_end += terminator.end()
+                layout(selected_body[:dispatch_end], '''
+                    let (growth_observation_only, existing_owner_only) = match selection {
+                        SelectedOpen::InitializeOrRecover { growth_observation_only, } =>
+                            (growth_observation_only, false),
+                        SelectedOpen::ExistingPqOwner => (false, true),
+                    };
+                ''', 'durable backend selected mode dispatch')
+                selected_body = selected_body[dispatch_end:]
+                selected_names += ('selection', 'growth_observation_only', 'existing_owner_only')
+            selected = rust_code(selected_body)
             bindings = list(re.finditer(r'\blet\s+ddl\s*=\s*state_backend\.ddl\(\)\s*;\s*let\s+schema_id\s*=\s*state_backend\.selected_schema_id\(\s*&\s*settings\s*\)\s*;',selected))
             require(len(bindings) == 1 and direct(selected,bindings[0].start()),
                     'durable backend selected schema')
             remaining = selected[:bindings[0].start()]+selected[bindings[0].end():]
-            names = r'\b(?:state_backend|settings|ddl|schema_id)\b'
+            names = r'\b(?:'+'|'.join(selected_names)+r')\b'
             places = names+r'(?:\s*\.\s*[A-Za-z_]\w*|\s*\[[^\]]*\])*'
             require(not re.search(r'\blet\s+[^;=]*'+names+r'[^;=]*=',remaining)
                     and not re.search(places+r'\s*[+*/%&|^\-]?=(?!=)',remaining)
