@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+    "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "selected_count": 1,
+  "tests": [
+    "ingress::public_v3::tests::paid_envelope_resource_profile_has_fresh_exact_signed_commitment"
+  ]
+}

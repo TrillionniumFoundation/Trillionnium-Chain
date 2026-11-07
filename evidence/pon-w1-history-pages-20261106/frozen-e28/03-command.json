@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+    "public_history_formatting_",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "selected_count": 3,
+  "tests": [
+    "ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline",
+    "ingress::public_v3::history_response::tests::public_history_formatting_matches_bytes_cursors_and_fresh_foreign_damage",
+    "ingress::public_v3::history_response::tests::public_history_formatting_releases_owner_and_keeps_fixed_tip_during_reorg"
+  ]
+}

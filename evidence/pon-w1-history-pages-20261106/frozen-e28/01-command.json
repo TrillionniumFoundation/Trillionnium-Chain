@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/workspace/scratch/a66f84888260/build/debug/deps/trnm_pon_node-085be692ecfb33c8",
+    "public_history_page_",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "selected_count": 3,
+  "tests": [
+    "ancestry_index::tests::public_history_page_budget_exhaustion_never_renews_for_the_second_packet",
+    "ancestry_index::tests::public_history_page_rechecks_current_jump_rows_after_a_successful_packet",
+    "ancestry_index::tests::public_history_page_sql_is_cumulative_including_each_length_and_body"
+  ]
+}

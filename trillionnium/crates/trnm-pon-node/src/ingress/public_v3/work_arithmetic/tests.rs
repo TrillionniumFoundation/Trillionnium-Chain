@@ -15,11 +15,11 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let policy = policy();
     assert_eq!(
         hex::encode(policy.id()),
-        "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f"
+        "09c3b50a335d9071c26842e98a54bd4b12c9bbd08c5f409dff1f9771fa2923bd"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825"
+        "8be7d6cad23d856ae3248dfc4e2479c92c10d1af849bdb0a7b0fc6f6faa1ffb0"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();
@@ -41,7 +41,7 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let raw_cookie = raw.cookie(&settings, hello, peer).unwrap();
     let arithmetic_cookie = arithmetic.cookie(&settings, hello, peer).unwrap();
     // Correctly signed predecessor cookies remain old namespaces. A new
-    // resource revision cannot silently accept either r13 execution profile.
+    // resource revision cannot silently accept either r13 or r14 execution profile.
     for (owner, cookie, predecessor) in [
         (
             &raw,
@@ -52,6 +52,16 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
             &arithmetic,
             &arithmetic_cookie,
             "14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3",
+        ),
+        (
+            &raw,
+            &raw_cookie,
+            "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        ),
+        (
+            &arithmetic,
+            &arithmetic_cookie,
+            "c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825",
         ),
     ] {
         let mut old = (*cookie).clone();
@@ -70,6 +80,20 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
                 .unwrap_err()
                 .to_string(),
             "PUBLIC_COOKIE_CONTEXT"
+        );
+        assert_eq!(
+            validate_challenge_context(
+                &serde_json::to_vec(&old).unwrap(),
+                &old,
+                &hello,
+                &settings,
+                owner.identity.public_key(),
+                policy,
+                owner.resource_profile(),
+            )
+            .unwrap_err()
+            .to_string(),
+            "PUBLIC_CHALLENGE_CONTEXT"
         );
     }
     for (owner, own, foreign, expected) in [

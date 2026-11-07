@@ -1,0 +1,255 @@
+{
+  "base_commit": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+  "formal_qualification": false,
+  "local_passes": {
+    "ci_contract_controls": 102,
+    "ci_source_negative_controls": 43,
+    "fixed_root_phase_host_controls": 19,
+    "from_zero_host_controls": 78,
+    "from_zero_report_reader_controls": 140,
+    "native_phase_host_controls": 11,
+    "phase_reader_controls": 57,
+    "pq_source_negative_controls": 37,
+    "r16_policy_reader_controls": 8,
+    "repository_local_links": 3431,
+    "repository_rust_files": 1167,
+    "repository_workspace_packages": 26,
+    "w1_runner_controls": 20
+  },
+  "logs": [
+    {
+      "file": "local/baseline-build.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "12d14a05b2c3a1c4babf2a16d20888532b7fff9ab0a5befc2fe6ec854e43c5cd"
+    },
+    {
+      "file": "local/candidate-native-build.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "4ca992908af6e34049be28876cb73ae6cb35e34ba2300b3b98e36fbfbcc45bd8"
+    },
+    {
+      "file": "local/candidate-native-build-j1-r2.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "29fcd13df2be7f23cb6890d922877490ecad9564ec3eacbc35b92e61ff194620"
+    },
+    {
+      "file": "local/candidate-release-integration-build.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "3e8a48d21a33f495c05dbb010c3537fa28e84723548d141c01a0eddb2a4f4c7d"
+    },
+    {
+      "file": "local/candidate-clippy-preparation.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "fc71237808167373daaabb70ccdeb8245e2deccc724a9ca12c5f80f1311c72f8"
+    },
+    {
+      "file": "local/repository-check.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "831358fca0ab27a3bb8c59eb4794f66312827af6e86be802f0887b15f4881a6d"
+    },
+    {
+      "file": "local/repository-check-r2.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "3eecfe4b1c11cf4415ac7a556d0b3755c0ece8ad7a815c8a3ac982f92cc531f6"
+    },
+    {
+      "file": "local/repository-check-r3.log",
+      "python_results": [],
+      "rust_results": [],
+      "sha256": "dda8a95a02171f2a986d24397a74cef68313bb7c8c85ba9429c27574b936672c"
+    },
+    {
+      "file": "local/ci-contract-controls-r2.log",
+      "python_results": [
+        "Ran 102 tests in 11.228s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "d86ec48c0a24098141970688582d634efe5546e6c01b5386c7180ec38417d067"
+    },
+    {
+      "file": "local/source-integrity-negative.log",
+      "python_results": [
+        "Ran 43 tests in 2.954s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "12051ae0916ec38568ffa8e07180c462082e85a95bca22e9573c93386929d8d1"
+    },
+    {
+      "file": "local/pq-source-negative.log",
+      "python_results": [
+        "Ran 37 tests in 36.198s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "4c08e34aa483d62e4b7436b9127786e64c5dc91ae7a49f127abe785eb025fecf"
+    },
+    {
+      "file": "local/from-zero-host-controls-r2.log",
+      "python_results": [
+        "Ran 78 tests in 1.154s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "95ec1fcb2ced771f163546469ea43a6eb5a2e7722bd6315c38d26c35f2ddd341"
+    },
+    {
+      "file": "local/w1-runner-controls.log",
+      "python_results": [
+        "Ran 20 tests in 1.000s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "c598093ada6631f23cf1b966b5cf2188323e3c23f92b1548cee69e43b2ed822c"
+    },
+    {
+      "file": "local/from-zero-reader-controls.log",
+      "python_results": [
+        "Ran 140 tests in 17.399s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "2184da3ddd230acafc528ef8db0722ed9694e2699b93fd1cf669520da3612632"
+    },
+    {
+      "file": "local/r16-policy-read.log",
+      "python_results": [
+        "Ran 8 tests in 0.026s\n\nFAILED (failures=1)"
+      ],
+      "rust_results": [],
+      "sha256": "20060f07c7e7ed3c2508b8d722fe349d450bbaa18af0c0157eb3fb0a1a904661"
+    },
+    {
+      "file": "local/r16-policy-read-r2.log",
+      "python_results": [
+        "Ran 8 tests in 0.031s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "404ebcc05cb645035ad3816a2662a690f8d346b1a79ed4356ae21b9e9bfc29cb"
+    },
+    {
+      "file": "local/r16-phase-read.log",
+      "python_results": [
+        "Ran 57 tests in 0.425s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "33220608be0316278d47108e0ef547cb734df93d190c5741d122818959e42909"
+    },
+    {
+      "file": "local/native-phase-controls.log",
+      "python_results": [
+        "Ran 11 tests in 0.022s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "d96f614ed6b275bf1988e7c4c0626c3d19cc1e31674c7fca4fb3446cbad4efaa"
+    },
+    {
+      "file": "local/fixed-root-controls.log",
+      "python_results": [
+        "Ran 19 tests in 0.084s\n\nOK"
+      ],
+      "rust_results": [],
+      "sha256": "813a34fec4f4e7c73c9e2d3b79633e2722112b06525eb873b672990f2b24b0d4"
+    },
+    {
+      "file": "local/release-recovery-and-polling.log",
+      "python_results": [],
+      "rust_results": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s",
+        "test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.95s"
+      ],
+      "sha256": "ed438c59b1cd85d0261cb2037f55e37538b5ca3a531df96e6ff1a0426571a73f"
+    },
+    {
+      "file": "local/release-current-campaign-profile.log",
+      "python_results": [],
+      "rust_results": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.00s"
+      ],
+      "sha256": "570ad0d7141417ae98bcffd6857c8e67d80411bb1d297ee8bbb6c7a5e69a8c23"
+    },
+    {
+      "file": "local/release-network-only-business.log",
+      "python_results": [],
+      "rust_results": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 6.22s"
+      ],
+      "sha256": "339c3170681bd4f84de372bc7426e9445b7e9ea3257a30b37ada5bf7cfd20700"
+    },
+    {
+      "file": "local/release-mining-follower.log",
+      "python_results": [],
+      "rust_results": [
+        "test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s"
+      ],
+      "sha256": "fbb0efbb937864e8aaf12cd978eab3fc14d51b3aae4b962a1153e9e2593791d0"
+    }
+  ],
+  "original_inputs_unchanged_sha256": {
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "6f4cf524831e8af8e23c954764e388d6d167f125c3de0dd19ce235630ce7df7d",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f"
+  },
+  "pending_at_snapshot": {
+    "library_component_tests": "explicit local CARGO_PROFILE_DEV_DEBUG=0 and CARGO_PROFILE_TEST_DEBUG=0 build; not release or fixed-Host timing",
+    "original_four_second_hosted_gate": true,
+    "original_three_run_native_campaign": true,
+    "strict_workspace_all_targets_all_features_clippy": true
+  },
+  "production_activation": false,
+  "release": {
+    "all_six_selected_integration_targets_compile": true,
+    "current_campaign_profile_tests_passed": 1,
+    "mining_cli_failure": "PUBLIC_HOST_PROCESS_UNAVAILABLE during service startup; no successful follower observation",
+    "mining_cli_tests_failed": 1,
+    "mining_cli_tests_passed": 1,
+    "network_only_business_tests_passed": 1,
+    "pinned_peer_socket_tests_passed": 1,
+    "recovery_tests_passed": 26
+  },
+  "release_library_build": {
+    "jobs1": "rustc SIGKILL",
+    "jobs1_children_maxrss_kib": 2273928,
+    "jobs2": "rustc SIGKILL",
+    "oom_killer_trace_observed": false,
+    "successful_test_execution": false
+  },
+  "schema": "pon-w1-history-page-local-observations-v1",
+  "source_native_blobs": {
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "fee35f5ad6a4991abd753fa0773d8dbb6c26cc37",
+    "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs": "6dd4ff46ba34b4f53e146668f0ad7e9048c8a151",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "f6de94e93892592a8008b0a30ae74bad59d71585",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response.rs": "8ad9132d4debd87155959feb555f8d15b3017ae3",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response_batch_tests.rs": "7a82f9ebd8ac71a0437053a5090fd864cf9b848b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response_tests.rs": "a20fab78611986b02caa2964498d18fda25065bf",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_network_tests.rs": "d743127be8560eaed7507549213eb966614585e3",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": "f81f9b5704bbe1d7f517cd37c7dd74e4493c83ed",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "8c7f35cb36db7b36bb25d7813b8d6ceb1fd758dc",
+    "trillionnium/crates/trnm-pon-node/src/peer_polling.rs": "15c4e478b77bdde52ef1bdef544c6e1efc4e59d8",
+    "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "2a3ccb8025e9969e2a146cc5aa7ba6987c062443",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "ff9a63deb340bbe74dec5109c754983290ddf1f2",
+    "trillionnium/crates/trnm-pon-node/src/store/public_history.rs": "4e2cd748bd791c907156ac0eb6496a44fd6e241c",
+    "trillionnium/crates/trnm-pon-node/src/store/public_reader_tests.rs": "25dc6e5dd0f1fd5d4ddc5657b06f6b31403f5f9c",
+    "trillionnium/crates/trnm-pon-node/tests/mining_service_budget.rs": "bb2ea9ba95b2cefd87291b8ec86ec21d1efc4deb",
+    "trillionnium/crates/trnm-pon-node/tests/pinned_peer_polling.rs": "590791bfaa0893ed7d11471a4e657d4d2a9cd5be",
+    "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "71a90b6d84ec5c864de565dcf46b9b551ef7fb57",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs": "c64a94a5406934c10b69d77c60888a4b6fd7c314",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_service_campaign.rs": "165fb1d6e40bca65326eeac30ef84f5da5824558",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs": "dcc986daf2441761f644263e9ad2a01646e7cdcc",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs": "3fb9728d2326f3ef27704a963d6bc0fa076b7478",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs": "df34b111520db5139dac5206c99f45c5c50ea5e6"
+  },
+  "stage": "first-publication snapshot; later executions keep their own identities",
+  "superseded_intermediate_failures": [
+    "missing cached zeroize 1.8.2 fetched with unchanged Cargo.lock and matching crate checksum",
+    "two test-only drop_non_drop lint errors corrected with lexical scopes",
+    "stale workflow inline source pins refreshed, with added split-module coverage",
+    "generated applicability table selector refreshed from exact registry",
+    "initial r16 contract wording test updated from single-snapshot to same-owner-current-reads"
+  ]
+}

@@ -323,7 +323,7 @@ jobs:
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
           expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (29, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', text, re.M)
@@ -363,6 +363,11 @@ jobs:
           codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
           if len(codec_rows) != 1:
               raise SystemExit(codec_selector + ': exact codec control did not execute once')
+          target_selector = ('ingress::history_import::tests::'
+              'history_page_cannot_decode_past_fixed_tip_before_native_admission')
+          target_rows = re.findall(r'^test ' + re.escape(target_selector) + r' \.\.\. ok$', history, re.M)
+          if len(target_rows) != 1:
+              raise SystemExit(target_selector + ': exact fixed-target control did not execute once')
           PYTEST
       - name: Prepare pinned provider required by native all-feature controls
         shell: bash

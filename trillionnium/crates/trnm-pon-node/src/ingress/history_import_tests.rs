@@ -716,6 +716,206 @@ fn expired_history_never_starts_an_epoch_or_a_cpu_account() {
 }
 
 #[test]
+fn history_page_cannot_decode_past_fixed_tip_before_native_admission() {
+    let (_source_directory, settings, mut source, first, clock) = fixture();
+    let first_id = source.admit(&first, clock).unwrap();
+    source.activate_observed(first_id, clock).unwrap();
+    let mut chain = vec![first];
+    for height in [2, 3] {
+        let packet = source
+            .make(
+                chain.last().unwrap().id().unwrap(),
+                vec![],
+                crate::development_public(0).unwrap(),
+                settings.genesis_time() + height * 10,
+                4096,
+            )
+            .unwrap();
+        let id = source.admit(&packet, clock).unwrap();
+        source.activate_observed(id, clock).unwrap();
+        chain.push(packet);
+    }
+    let ids: Vec<_> = chain.iter().map(|packet| packet.id().unwrap()).collect();
+    let tip = ids[1];
+    let target_state = source.state_at(tip).unwrap();
+
+    // All supplied packets belong to a real, admitted G -> A -> B -> C chain.
+    // Exercise the importer after its transport boundary. This callback checks
+    // resource-boundary retention, not qualification of a fixed Host cgroup.
+    for shared in [false, true] {
+        for (case, after, supplied, complete) in [
+            ("past_tip", settings.genesis(), &chain[..], false),
+            ("already_at_tip", tip, &chain[2..], false),
+            ("exact_tip", settings.genesis(), &chain[..2], true),
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let mut node = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            if after == tip {
+                // Make C admissible in the negative control. Unknown parent
+                // rejection must not conceal the missing fixed-target fence.
+                for packet in &chain[..2] {
+                    let id = node.admit(packet, clock).unwrap();
+                    node.activate_observed(id, clock).unwrap();
+                }
+            }
+            let before = node.read_active().unwrap();
+            let original = node.remote_history_cpu_domain().unwrap();
+            let owner = Mutex::new(node);
+            let mut incoming = page(&settings, &supplied[0]);
+            incoming.tip = hex::encode(tip);
+            incoming.after = hex::encode(after);
+            incoming.packets = supplied
+                .iter()
+                .map(|packet| hex::encode(packet.encode().unwrap()))
+                .collect();
+            incoming.next = hex::encode(supplied.last().unwrap().id().unwrap());
+            incoming.complete = complete;
+            let observation = HistoryImportObserver::new();
+            let calls = AtomicUsize::new(0);
+            let resource = || {
+                calls.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            };
+            let control = Control {
+                deadline: Instant::now() + Duration::from_secs(10),
+                resource: &resource,
+            };
+            let result = if shared {
+                receive_observed(
+                    Owner::Shared(&owner),
+                    incoming,
+                    tip,
+                    after,
+                    clock,
+                    control,
+                    Some(&observation),
+                )
+            } else {
+                receive_observed(
+                    Owner::Exclusive(&mut owner.lock().unwrap()),
+                    incoming,
+                    tip,
+                    after,
+                    clock,
+                    control,
+                    Some(&observation),
+                )
+            };
+            if complete {
+                assert_eq!(result.unwrap(), tip, "{shared}/{case}");
+            } else {
+                assert_eq!(
+                    result.unwrap_err().to_string(),
+                    "PAGE_COMPLETE",
+                    "{shared}/{case}"
+                );
+            }
+            let snapshot = observation.snapshot();
+            assert_eq!(snapshot.measurement_failures, 0, "{shared}/{case}");
+            assert_eq!(snapshot.tip, Some(tip));
+            assert_eq!(snapshot.after, Some(after));
+            assert_eq!(snapshot.supplied_packets, Some(supplied.len()));
+            for phase in [SubmitPhase::Decode, SubmitPhase::HistoryImport] {
+                assert_eq!(
+                    snapshot.phases[phase as usize].accepted,
+                    Some(complete),
+                    "{shared}/{case}/{phase:?}"
+                );
+            }
+            for phase in [SubmitPhase::CpuSettle, SubmitPhase::HistoryEpochClose] {
+                assert_eq!(snapshot.phases[phase as usize].accepted, Some(true));
+            }
+            let decoded = if after == tip { 0 } else { 2 };
+            assert_eq!(snapshot.packets.len(), decoded, "{shared}/{case}");
+            for (index, packet) in snapshot.packets.iter().enumerate() {
+                assert_eq!(packet.packet_id, Some(ids[index]));
+                if complete {
+                    for phase in [
+                        SubmitPhase::Work,
+                        SubmitPhase::Execution,
+                        SubmitPhase::RootCommitment,
+                        SubmitPhase::Commit,
+                        SubmitPhase::HistoryImport,
+                    ] {
+                        assert_eq!(
+                            packet.phases[phase as usize].accepted,
+                            Some(true),
+                            "{shared}/{case}/{index}/{phase:?}"
+                        );
+                    }
+                } else {
+                    assert!(packet.phases.iter().all(|phase| !phase.started));
+                }
+            }
+            assert!(calls.load(Ordering::SeqCst) > 0);
+            let expected_active = {
+                let node = owner.lock().unwrap();
+                assert!(node
+                    .public_service_cpu_domain()
+                    .unwrap()
+                    .shares_domain_with(&original));
+                let active = node.read_active().unwrap();
+                if complete {
+                    assert_eq!(active.0, tip);
+                    assert_eq!(active.2, target_state);
+                } else {
+                    assert_eq!(active, before, "{shared}/{case}");
+                }
+                for (index, id) in ids.iter().enumerate() {
+                    let present = index < 2 && (complete || after == tip);
+                    assert_eq!(node.packet(*id).is_ok(), present, "{shared}/{case}/{index}");
+                    if present {
+                        assert_eq!(
+                            node.packet(*id).unwrap().encode().unwrap(),
+                            chain[index].encode().unwrap()
+                        );
+                    }
+                }
+                active
+            };
+            let account = original.observe().unwrap();
+            assert_eq!(account.in_flight, 0);
+            assert!(!account.accounting_unavailable);
+            let flow = original.observe_actual_flow().unwrap().unwrap();
+            assert_eq!(flow.initial_credit_ns, 0);
+            assert_eq!(flow.booked_reservation_ns, 0);
+            assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+            assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+            assert!(flow.balance_identity_verified);
+            assert_eq!(
+                original
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                if complete { 2 } else { 0 }
+            );
+            drop(owner);
+            let mut reopened = Node::open(directory.path(), settings.clone(), 2).unwrap();
+            assert_eq!(
+                reopened.read_active().unwrap(),
+                expected_active,
+                "{shared}/{case}"
+            );
+            for (index, id) in ids.iter().enumerate() {
+                let present = index < 2 && (complete || after == tip);
+                assert_eq!(
+                    reopened.packet(*id).is_ok(),
+                    present,
+                    "{shared}/{case}/{index}"
+                );
+            }
+            let cold = reopened
+                .remote_history_cpu_domain()
+                .unwrap()
+                .observe()
+                .unwrap();
+            assert_eq!(cold.stored_credit_ns, 0);
+            assert!(!cold.accounting_unavailable);
+        }
+    }
+}
+
+#[test]
 fn observed_history_retains_complete_native_path_and_real_w1_cancellation() {
     for cancel in [false, true] {
         let (_directory, settings, mut node, packet, clock) = fixture();

@@ -26,6 +26,7 @@ pub mod pinned_account_query;
 mod pq_migration_inventory;
 pub(crate) mod pq_network;
 pub(crate) mod pq_rollback_witness;
+mod public_history;
 #[cfg(test)]
 pub(crate) mod public_reader;
 #[cfg(test)]
@@ -6463,61 +6464,6 @@ impl Node {
             "commitment_scope":"admitted-active-header; no fresh key/value audit",
             "production_activation":false
         }))
-    }
-    /// One public history packet, with exact ancestry and pre-allocation bounds.
-    /// No unbounded tempfile spool or multi-packet JSON value is constructed.
-    pub(crate) fn public_history_packet(
-        &self,
-        tip: Hash,
-        after: Hash,
-        maximum_steps: u64,
-        progress: &mut dyn FnMut(u64) -> Result<()>,
-    ) -> Result<Vec<Packet>> {
-        progress(0)?;
-        self.ready()?;
-        #[cfg(test)]
-        let maximum_steps = self
-            .public_history_test_sql_limit
-            .map_or(maximum_steps, |limit| maximum_steps.min(limit));
-        let lookup = crate::ancestry_index::next_public_request(
-            &self.db,
-            self.ancestry_context()?,
-            tip,
-            after,
-            maximum_steps,
-            progress,
-        )?;
-        let Some(id) = lookup.next else {
-            return Ok(Vec::new());
-        };
-        progress(lookup.sql_lookups + 1)?;
-        // Query the scalar length before materializing a possibly damaged BLOB.
-        let maximum = 1_048_576;
-        let length: Option<usize> = self.db.query_row(
-            "SELECT length(packet) FROM blocks WHERE id=?",
-            [id.as_slice()],
-            |r| r.get(0),
-        )?;
-        ensure(
-            length.is_some_and(|n| n > 0 && n <= maximum),
-            "PUBLIC_HISTORY_BYTES",
-        )
-        .map_err(Error::local_integrity)?;
-        progress(lookup.sql_lookups + 2)?;
-        let raw: Vec<u8> = self.db.query_row(
-            "SELECT packet FROM blocks WHERE id=? AND length(packet)<=?",
-            params![id.as_slice(), maximum],
-            |r| r.get(0),
-        )?;
-        let packet =
-            Packet::decode_for_settings(&raw, &self.settings).map_err(Error::local_integrity)?;
-        ensure(
-            packet.id()? == id
-                && packet.header.parent == after
-                && packet.header.height == lookup.height,
-            "STORAGE_PACKET",
-        )?;
-        Ok(vec![packet])
     }
     /// Observe whether this exact packet is durably present in this already-open
     /// Node namespace. This never admits, activates, verifies work again, or creates

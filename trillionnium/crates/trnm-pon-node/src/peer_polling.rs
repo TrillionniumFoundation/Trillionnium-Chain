@@ -30,6 +30,8 @@ use trnm_crypto_primitives::verifying_key_from_hex;
 use trnm_protocol::pon_wire::{hash, Hash};
 const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
+const MAX_PAGE_PACKETS: usize = 16;
+const MAX_PAGE_HEX_BYTES: usize = 2_096_128;
 const MAX_ERROR_BYTES: usize = 2048;
 pub const PEER_POLLING_SCHEMA: &str = "pon-native-pinned-peer-poll-config-v1";
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -266,7 +268,7 @@ fn page(
     value: Value,
     target: Hash,
     after: Hash,
-) -> Result<(Option<Packet>, Hash, bool)> {
+) -> Result<(Vec<Packet>, Hash, bool)> {
     // The transport caps the complete response; reject collection/hex expansion
     // before serde can clone strings or Packet::decode can allocate raw bytes.
     let object = value.as_object().ok_or("PEER_PAGE_CANONICAL")?;
@@ -289,10 +291,15 @@ fn page(
         .get("packets")
         .and_then(Value::as_array)
         .ok_or("PEER_PAGE_CANONICAL")?;
-    ensure(packets.len() <= 1, "PEER_PAGE_PACKET_LIMIT")?;
-    if let Some(raw) = packets.first() {
+    ensure(packets.len() <= MAX_PAGE_PACKETS, "PEER_PAGE_PACKET_LIMIT")?;
+    let mut total = 0usize;
+    for raw in packets {
         let raw = raw.as_str().ok_or("PEER_PAGE_HEX")?;
         ensure(raw.len() <= 2 * MAX_PACKET_BYTES, "PEER_PAGE_PACKET_LIMIT")?;
+        total = total
+            .checked_add(raw.len())
+            .ok_or("PEER_PAGE_PACKET_LIMIT")?;
+        ensure(total <= MAX_PAGE_HEX_BYTES, "PEER_PAGE_PACKET_LIMIT")?;
     }
     let parsed: Page = serde_json::from_value(value)?;
     ensure(
@@ -305,7 +312,7 @@ fn page(
     ensure(
         parsed.tip == hex::encode(target)
             && parsed.after == hex::encode(after)
-            && parsed.packets.len() <= 1,
+            && parsed.packets.len() <= MAX_PAGE_PACKETS,
         "PEER_PAGE_CURSOR",
     )?;
     if parsed.packets.is_empty() {
@@ -313,25 +320,32 @@ fn page(
             after == target && parsed.complete && parsed.next == hex::encode(after),
             "PEER_PAGE_EMPTY",
         )?;
-        return Ok((None, after, true));
+        return Ok((Vec::new(), after, true));
     }
-    let raw = &parsed.packets[0];
-    ensure(
-        raw.len() <= 2 * MAX_PACKET_BYTES
-            && raw.len().is_multiple_of(2)
-            && raw
-                .bytes()
-                .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
-        "PEER_PAGE_PACKET_LIMIT",
-    )?;
-    let packet = Packet::decode(&hex::decode(raw).map_err(|_| "PEER_PAGE_HEX")?)?;
-    ensure(packet.header.parent == after, "PEER_PAGE_PARENT")?;
-    let next = packet.id()?;
+    let mut next = after;
+    let mut packets = Vec::with_capacity(parsed.packets.len());
+    for raw in &parsed.packets {
+        // A page cannot continue beyond the fixed target, even when its tail
+        // supplies a self-consistent next/complete pair for some other block.
+        ensure(next != target, "PEER_PAGE_COMPLETE")?;
+        ensure(
+            raw.len() <= 2 * MAX_PACKET_BYTES
+                && raw.len().is_multiple_of(2)
+                && raw
+                    .bytes()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)),
+            "PEER_PAGE_PACKET_LIMIT",
+        )?;
+        let packet = Packet::decode(&hex::decode(raw).map_err(|_| "PEER_PAGE_HEX")?)?;
+        ensure(packet.header.parent == next, "PEER_PAGE_PARENT")?;
+        next = packet.id()?;
+        packets.push(packet);
+    }
     ensure(
         parsed.next == hex::encode(next) && parsed.complete == (next == target),
         "PEER_PAGE_COMPLETE",
     )?;
-    Ok((Some(packet), next, parsed.complete))
+    Ok((packets, next, parsed.complete))
 }
 /// Native task/parent/clock checks bracket the immutable owned full proof replay.
 /// A repeated already-admitted exact packet uses the existing durable admission fact.
@@ -607,7 +621,7 @@ impl Engine {
         }
         let target = target.ok_or("PEER_TARGET")?;
         let after = self.states[index].cursor;
-        let (packet, next, complete) = match page(settings, reply.value, target, after) {
+        let (packets, next, complete) = match page(settings, reply.value, target, after) {
             Ok(value) => value,
             Err(error) => {
                 self.reject(index, stage, error, nanos(started), cost, observe)?;
@@ -616,11 +630,17 @@ impl Engine {
         };
         let mut verified = false;
         let mut active = None;
-        if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop, complete.then_some(target)) {
+        let packet_count = packets.len();
+        for (packet_index, packet) in packets.into_iter().enumerate() {
+            let activate = (complete && packet_index + 1 == packet_count).then_some(target);
+            match admit_page(node, packet, end, stop, activate) {
                 Ok((inserted, activated)) => {
-                    verified = inserted;
+                    verified |= inserted;
                     active = activated;
+                    if inserted {
+                        self.states[index].verified += 1;
+                        self.verified += 1;
+                    }
                 }
                 Err(error) => {
                     self.reject(
@@ -634,13 +654,15 @@ impl Engine {
                     return Ok(false);
                 }
             }
+        }
+        // A failed suffix may leave an admitted prefix, counted above, but it
+        // cannot advance this page's cursor, page count or fixed target. A
+        // retry reuses only those exact durable admissions through the same
+        // native importer and original service CPU domain.
+        if packet_count != 0 {
             self.states[index].pages += 1;
             self.states[index].admitted += 1;
             self.pages += 1;
-            if verified {
-                self.states[index].verified += 1;
-                self.verified += 1;
-            }
         }
         self.states[index].cursor = next;
         self.event(
@@ -890,13 +912,14 @@ mod tests {
             identity_authority: false,
         }
     }
-    fn page_value(
+    fn page_value<'a>(
         settings: &Settings,
         target: Hash,
         after: Hash,
-        packet: Option<&Packet>,
+        packets: impl IntoIterator<Item = &'a Packet>,
     ) -> Value {
-        let next = packet.map(|p| p.id().unwrap()).unwrap_or(after);
+        let packets: Vec<_> = packets.into_iter().collect();
+        let next = packets.last().map(|p| p.id().unwrap()).unwrap_or(after);
         serde_json::to_value(Page {
             schema: "pon-native-history-v1".into(),
             network: hex::encode(settings.network()),
@@ -904,7 +927,7 @@ mod tests {
             genesis: hex::encode(settings.genesis()),
             tip: hex::encode(target),
             after: hex::encode(after),
-            packets: packet
+            packets: packets
                 .into_iter()
                 .map(|p| hex::encode(p.encode().unwrap()))
                 .collect(),
@@ -1176,6 +1199,192 @@ mod tests {
         let mut bad = good;
         bad["packets"] = serde_json::json!(["AB"]);
         assert!(page(&settings, bad, genesis, genesis).is_err());
+    }
+    #[test]
+    fn multi_packet_page_checks_every_parent_and_stops_at_the_fixed_target() {
+        let clock = ingress::now().unwrap();
+        let settings = Settings::development(Some(clock - 1000)).unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        let mut source = Node::open(directory.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let mut packets = Vec::new();
+        let mut target = genesis;
+        for height in 1..=MAX_PAGE_PACKETS {
+            let packet = append(&mut source, target, clock - 1000 + height as u64 * 10, 0);
+            target = packet.id().unwrap();
+            packets.push(packet);
+        }
+        let good = page_value(&settings, target, genesis, &packets);
+        let (decoded, next, complete) = page(&settings, good.clone(), target, genesis).unwrap();
+        assert_eq!(decoded.len(), MAX_PAGE_PACKETS);
+        assert_eq!(next, target);
+        assert!(complete);
+        for (decoded, original) in decoded.iter().zip(&packets) {
+            assert_eq!(decoded.encode().unwrap(), original.encode().unwrap());
+        }
+
+        let mut bad = good.clone();
+        let mut tail = packets.last().unwrap().clone();
+        tail.header.parent = genesis;
+        bad["packets"][MAX_PAGE_PACKETS - 1] = hex::encode(tail.encode().unwrap()).into();
+        assert_eq!(
+            page(&settings, bad, target, genesis)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_PARENT"
+        );
+        for field in ["next", "complete"] {
+            let mut bad = good.clone();
+            bad[field] = if field == "complete" {
+                false.into()
+            } else {
+                hex::encode(genesis).into()
+            };
+            assert_eq!(
+                page(&settings, bad, target, genesis)
+                    .unwrap_err()
+                    .to_string(),
+                "PEER_PAGE_COMPLETE"
+            );
+        }
+        let earlier_target = packets[3].id().unwrap();
+        let beyond = page_value(&settings, earlier_target, genesis, &packets);
+        assert_eq!(
+            page(&settings, beyond, earlier_target, genesis)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_COMPLETE"
+        );
+    }
+    #[test]
+    fn multi_packet_count_and_total_hex_are_bounded_before_decoding_any_packet() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let genesis = settings.genesis();
+        let good = page_value(&settings, genesis, genesis, None);
+        let mut bad = good.clone();
+        bad["packets"] = serde_json::json!(vec!["00"; MAX_PAGE_PACKETS + 1]);
+        assert_eq!(
+            page(&settings, bad, genesis, genesis)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_PACKET_LIMIT"
+        );
+        // Each string is below the old single-packet cap; their combined
+        // length exceeds the original frame allowance before either decode.
+        let mut bad = good.clone();
+        let half = "00".repeat(MAX_PAGE_HEX_BYTES / 4 + 1);
+        assert!(half.len() <= 2 * MAX_PACKET_BYTES);
+        bad["packets"] = serde_json::json!([half, half]);
+        assert_eq!(
+            page(&settings, bad, genesis, genesis)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_PACKET_LIMIT"
+        );
+        let mut bad = good;
+        bad["packets"] = serde_json::json!(["00", 0]);
+        assert_eq!(
+            page(&settings, bad, genesis, genesis)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_HEX"
+        );
+    }
+    #[test]
+    fn multi_packet_false_tail_retains_durable_prefix_without_page_or_target_completion() {
+        let clock = ingress::now().unwrap();
+        let settings = Settings::development(Some(clock - 100)).unwrap();
+        let source_dir = tempfile::tempdir().unwrap();
+        let local_dir = tempfile::tempdir().unwrap();
+        let mut source = Node::open(source_dir.path(), settings.clone(), 2).unwrap();
+        let genesis = settings.genesis();
+        let first = append(&mut source, genesis, clock - 90, 0);
+        let second = append(&mut source, first.id().unwrap(), clock - 80, 0);
+        let tail = append(&mut source, second.id().unwrap(), clock - 70, 0);
+        let target = tail.id().unwrap();
+        let mut false_tail = tail.clone();
+        let offset = 4 + 2 * pon_work::CELLS * 4;
+        let prior = u32::from_le_bytes(false_tail.proof[offset..offset + 4].try_into().unwrap());
+        let forged = ((u128::from(prior) + 1) % pon_work::Q) as u32;
+        false_tail.proof[offset..offset + 4].copy_from_slice(&forged.to_le_bytes());
+        assert_eq!(false_tail.id().unwrap(), target);
+
+        let node = Mutex::new(Node::open(local_dir.path(), settings.clone(), 2).unwrap());
+        let cfg = config(&settings);
+        let stop = AtomicBool::new(false);
+        let ctx = context(&node, &cfg, &settings, &stop);
+        let cpu = node.lock().unwrap().public_service_cpu_domain().unwrap();
+        let mut engine = Engine::new(&cfg, &settings);
+        engine.states[0].target = Some(target);
+        let mut events = Vec::new();
+        let mut observe = |event: &PeerPollingEvent| {
+            events.push(event.clone());
+            Ok(())
+        };
+        let bad = page_value(&settings, target, genesis, [&first, &second, &false_tail]);
+        engine
+            .cycle(&ctx, &mut |_, _| Ok(reply(true, bad.clone())), &mut observe)
+            .unwrap();
+        assert_eq!(engine.pages, 0);
+        assert_eq!(engine.states[0].pages, 0);
+        assert_eq!(engine.states[0].admitted, 0);
+        assert_eq!(engine.verified, 2);
+        assert_eq!(engine.states[0].verified, 2);
+        assert_eq!(engine.states[0].cursor, genesis);
+        assert_eq!(engine.states[0].target, Some(target));
+        assert_eq!(engine.states[0].last_completed, None);
+        assert_eq!(engine.states[0].completed, 0);
+        assert_eq!(
+            engine.states[0].last_error.as_ref().unwrap().message,
+            "WORK:Product"
+        );
+        {
+            let owner = node.lock().unwrap();
+            assert_eq!(owner.read_active().unwrap().0, genesis);
+            for packet in [&first, &second] {
+                assert_eq!(
+                    owner
+                        .packet(packet.id().unwrap())
+                        .unwrap()
+                        .encode()
+                        .unwrap(),
+                    packet.encode().unwrap()
+                );
+            }
+            assert!(owner.packet(target).is_err());
+            assert!(owner
+                .public_service_cpu_domain()
+                .unwrap()
+                .shares_domain_with(&cpu));
+        }
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        assert!(!cpu.observe().unwrap().accounting_unavailable);
+
+        // Retry the original page cursor: the two exact durable packets must
+        // not count as newly verified again, and only the real tail activates.
+        let good = page_value(&settings, target, genesis, [&first, &second, &tail]);
+        engine
+            .cycle(
+                &ctx,
+                &mut |_, _| Ok(reply(true, good.clone())),
+                &mut observe,
+            )
+            .unwrap();
+        assert_eq!(engine.pages, 1);
+        assert_eq!(engine.states[0].admitted, 1);
+        assert_eq!(engine.verified, 3);
+        assert_eq!(engine.states[0].verified, 3);
+        assert_eq!(engine.states[0].target, None);
+        assert_eq!(engine.states[0].cursor, target);
+        assert_eq!(engine.states[0].last_completed, Some(target));
+        assert_eq!(engine.states[0].completed, 1);
+        assert_eq!(node.lock().unwrap().read_active().unwrap().0, target);
+        assert_eq!(events[0].kind, "failure_cursor_retained");
+        assert_eq!(events[0].cursor, hex::encode(genesis));
+        assert_eq!(events.last().unwrap().kind, "fixed_target_native_complete");
+        assert!(!stop.load(Ordering::Acquire));
+        assert_eq!(cpu.observe().unwrap().in_flight, 0);
+        assert!(!cpu.observe().unwrap().accounting_unavailable);
     }
     #[test]
     fn real_native_fixed_tip_disconnect_one_initial_cursor_fallback_and_heavier_fork() {

@@ -17,6 +17,29 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Independent History confirmation under W1 pressure, 2026-11-06:** Continue
+the existing #688 integration candidate from
+`0ca272d09d1522b0ffd740e441b6d3de1ed81de6`. Preserve the
+[original full business failures and exact identities](../../evidence/pon-w1-history-pages-20261106/README.md):
+both four-second pressure variants acknowledge all seven honest blocks but
+complete no independent confirmation; the separate original native campaign
+also fails all three actual runs. V3 now returns bounded consecutive History
+pages under one cumulative 1,024-query allowance and the original total hex
+byte bound, using a fresh signed r16 resource namespace. Keep V2 single-packet
+behavior, current owner/ancestry/body checks, unlocked response formatting,
+full independent W1/M06 replay and exact continuous-operation authority.
+Adapt fixed-neighbor polling and submission recovery to validate every returned
+packet and the final cursor. Do not cache Host authority: current boot, inode,
+permissions, thread membership and limits remain checked at every existing
+boundary. Original quarter-CPU, 2-GiB, no-swap, 256-PID, 16-worker, four-second
+depth-six/work criteria and the separate native campaign remain mandatory;
+component tests do not close availability or production qualification.
+Preserve the concurrent `a3e9002` rank/SQL/build continuation when composing
+the frozen `e28ac65` History candidate. The generic importer must reject any
+page that continues past its fixed requested tip before native admission,
+including a nonempty page starting at an already-complete cursor. Keep its
+original accounting and cleanup on refusal.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

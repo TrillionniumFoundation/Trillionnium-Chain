@@ -1,9 +1,13 @@
 # Public development intake V3 and the native local pool
 
-The current source selects signed resource revision **r13**, described in
+The current source selects signed resource revision **r16**, which extends the
+retained r14 contract with bounded consecutive History pages. Its exact bytes
+and historical identifiers are in the
+[resource-profile vectors](../../../../config/pon/public-resource-profile-vectors-v1.json).
+The r10–r14 contracts, vectors and earlier observations retain their original
+identities; none qualifies the new source. The separate r15 performance candidate
+is not implicitly included. Earlier completion behavior is described in
 [Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
-The r10 contracts, vectors and earlier observations below remain historical;
-they do not qualify r11's wider paid interval, r12's completion scheduling or r13's bounded replay/recovery changes.
 
 This is a fresh, explicitly selected development profile. It connects paid guest
 transport requests to the Node's actual persistent pool. It does not certify public
@@ -23,8 +27,26 @@ fixes still require review of both modules.
 An operator can select the bounded local
 [request resource observer](PUBLIC_REQUEST_RESOURCE_OBSERVATION.md) to capture
 actual worker-thread CPU intervals and application-frame byte progress. This
-optional API preserves the selected signed r10 policy and native request rules; its nested
+optional API preserves the selected signed policy and native request rules; its nested
 CPU intervals and stream bytes are not energy or physical network measurements.
+
+## Bounded History pages in r16
+
+V3 returns up to sixteen consecutive packets with at most 2,096,128 total hex
+payload bytes and one cumulative 1,024-statement ancestry/body query account.
+Every candidate retains its current context, ancestry, pre-allocation length,
+body decode, identity, parent and height checks. Partial pages cannot disguise an
+error encountered while inspecting a candidate. The Node owner protects reads;
+response encoding remains outside its mutex. See the
+[ancestry index contract](NATIVE_ANCESTRY_INDEX.md#bounded-lookup-and-corruption-behavior)
+for exact stop and error behavior.
+
+The current resource digest binds this page behavior and rejects old signed
+cookies. All original numeric resources, output pools, Host checks, independent
+W1/M06 replay, confirmation predicates and absolute deadlines remain. V2 retains
+its single-packet interface. The
+[original failed observations and candidate scope](../../../../evidence/pon-w1-history-pages-20261106/README.md)
+keep ACKs separate from complete independent confirmation.
 
 ## Exact boundary
 

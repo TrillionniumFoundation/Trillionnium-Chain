@@ -1,0 +1,11 @@
+test_compact_rejection_and_storage_python_controls_bind_every_real_test (__main__.ApplicabilityTests.test_compact_rejection_and_storage_python_controls_bind_every_real_test) ... ok
+test_current_table_binds_all_procedures_without_execution (__main__.ApplicabilityTests.test_current_table_binds_all_procedures_without_execution) ... ok
+test_factor_and_public_queue_bind_real_tests_without_execution (__main__.ApplicabilityTests.test_factor_and_public_queue_bind_real_tests_without_execution) ... ok
+test_native_authenticated_profile_is_explicit_local_source_navigation (__main__.ApplicabilityTests.test_native_authenticated_profile_is_explicit_local_source_navigation) ... ok
+test_native_m05_reconciliation_is_explicit_not_ordinary_product (__main__.ApplicabilityTests.test_native_m05_reconciliation_is_explicit_not_ordinary_product) ... ok
+test_native_m06_execution_and_delta_name_actual_node_owner (__main__.ApplicabilityTests.test_native_m06_execution_and_delta_name_actual_node_owner) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 136.265s
+
+OK

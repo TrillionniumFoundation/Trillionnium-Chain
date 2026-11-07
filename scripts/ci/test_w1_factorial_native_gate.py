@@ -14,11 +14,12 @@ SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_a
 RANK_SOURCE = SOURCE.parent / 'legal_attempt/low_rank.rs'
 COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (6, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (28, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (29, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
     'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors',
+    'history_page_cannot_decode_past_fixed_tip_before_native_admission',
 ]
 
 

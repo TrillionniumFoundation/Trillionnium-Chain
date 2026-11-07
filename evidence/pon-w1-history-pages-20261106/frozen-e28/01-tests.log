@@ -1,0 +1,8 @@
+
+running 3 tests
+test ancestry_index::tests::public_history_page_budget_exhaustion_never_renews_for_the_second_packet ... ok
+test ancestry_index::tests::public_history_page_rechecks_current_jump_rows_after_a_successful_packet ... ok
+test ancestry_index::tests::public_history_page_sql_is_cumulative_including_each_length_and_body ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1165 filtered out; finished in 0.38s
+

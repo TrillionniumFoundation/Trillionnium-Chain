@@ -355,7 +355,6 @@ impl Session<'_, '_> {
     }
 
     fn membership(&mut self, packet: &Packet) -> Result<bool> {
-        let id = packet.id()?;
         let head = self.head()?;
         // A known older active head establishes no membership for this packet.
         if head.height < packet.header.height {
@@ -363,13 +362,27 @@ impl Session<'_, '_> {
         }
         let tip = digest(&head.tip)?;
         let deadline = self.plan.deadline;
-        let expected =
-            self.node
-                .public_history_packet(tip, packet.header.parent, 1024, &mut |_| {
-                    ensure(Instant::now() < deadline, "SUBMIT_RECOVERY_DEADLINE")
-                })?;
+        // Reproduce the pinned V3 page bounds, including a legitimate partial
+        // page before the observed tip. Every returned successor remains part
+        // of the byte comparison; only the first packet proves this submission.
+        let expected = self.node.public_history_page(
+            tip,
+            packet.header.parent,
+            1024,
+            1_048_064,
+            &mut |_| ensure(Instant::now() < deadline, "SUBMIT_RECOVERY_DEADLINE"),
+        )?;
+        let expected_next = expected
+            .last()
+            .ok_or("SUBMIT_RECOVERY_STALE_BRANCH")?
+            .id()?;
+        let mut expected_bytes = Vec::with_capacity(expected.len());
+        for successor in expected {
+            self.plan.alive()?;
+            expected_bytes.push(hex::encode(successor.encode()?));
+        }
         ensure(
-            expected.len() == 1 && expected[0].encode()? == packet.encode()?,
+            expected_bytes.first() == Some(&hex::encode(packet.encode()?)),
             "SUBMIT_RECOVERY_STALE_BRANCH",
         )?;
         let reply = self.read(
@@ -387,14 +400,13 @@ impl Session<'_, '_> {
                 && page.genesis == self.outcome.genesis
                 && page.tip == head.tip
                 && page.after == hex::encode(packet.header.parent)
-                && page.next == hex::encode(id)
-                && page.complete == (id == tip)
-                && page.packets.len() == 1,
+                && page.next == hex::encode(expected_next)
+                && page.complete == (expected_next == tip)
+                && page.packets.len() == expected_bytes.len(),
             "SUBMIT_RECOVERY_HISTORY_CONTEXT",
         )?;
         ensure(
-            page.packets[0] == hex::encode(packet.encode()?)
-                && page.packets[0] == hex::encode(expected[0].encode()?),
+            page.packets == expected_bytes,
             "SUBMIT_RECOVERY_HISTORY_BYTES",
         )?;
         let latest = self.head()?;
