@@ -1,0 +1,141 @@
+{
+  "schema": "trnm-w1-qrom-theorem-source-followup-v1",
+  "observed_on": "2026-11-07",
+  "scope": "Public author and institution source discovery and version provenance only.",
+  "paper": {
+    "title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+    "authors": [
+      "Alessandro Chiesa",
+      "Zijing Di",
+      "Zihan Hu",
+      "Yuxi Zheng"
+    ],
+    "canonical_eprint_url": "https://eprint.iacr.org/2025/2166",
+    "target_revision_date_from_prior_review": "2026-03-02",
+    "target_revision_date_independently_verified_from_full_text_in_this_followup": false
+  },
+  "author_entries": [
+    {
+      "author": "Alessandro Chiesa",
+      "homepage_url": "https://ic-people.epfl.ch/~achiesa/",
+      "paper_link_label": "ePrint",
+      "paper_url": "https://eprint.iacr.org/2025/2166",
+      "link_observation": "Exact anchor href in the ordinary public HTML response.",
+      "homepage_response": {
+        "http_status": 200,
+        "bytes": 302817,
+        "sha256": "f051c965070c04b3183238993e2f95e3d7c50e29173e5750cab4de227fca4b6d"
+      }
+    },
+    {
+      "author": "Zijing Di",
+      "homepage_url": "https://dizidizidi.github.io/index.html",
+      "paper_link_label": "ePrint",
+      "paper_url": "https://eprint.iacr.org/2025/2166",
+      "link_observation": "Exact anchor href in the ordinary public HTML response.",
+      "homepage_response": {
+        "http_status": 200,
+        "bytes": 15819,
+        "sha256": "e897cf25c17d55530b06cba9825c6db1f4886c729404585260bf2e3084d87300"
+      }
+    },
+    {
+      "author": "Zihan Hu",
+      "homepage_url": "https://zihanhu.cn/",
+      "paper_link_label": "paper",
+      "paper_url": "https://eprint.iacr.org/2025/2166",
+      "link_observation": "Exact anchor href in the ordinary public HTML response.",
+      "homepage_response": {
+        "http_status": 200,
+        "bytes": 21416,
+        "sha256": "5d645006a1c54d6cd332f8fae56653daa936bfd8f7f105934bcbe5f45f1ea07f"
+      },
+      "separately_labeled_slides": {
+        "link_label": "slides",
+        "declared_href": "assets/pdf/pq-bcs.pdf",
+        "resolved_url": "https://zihanhu.cn/assets/pdf/pq-bcs.pdf",
+        "excluded_as_full_paper": true,
+        "reason": "The author homepage explicitly labels this separate link as slides.",
+        "web_open_observation": "The web reader refused the PDF because its reported content length exceeded the reader limit.",
+        "reported_content_length_bytes": 13802289,
+        "complete_pdf_bytes_obtained": false
+      }
+    },
+    {
+      "author": "Yuxi Zheng",
+      "homepage_url": "https://yuxi-zheng.github.io/",
+      "paper_link_label": "arXiv",
+      "paper_url": "https://eprint.iacr.org/2025/2166",
+      "link_observation": "The homepage declares the public module below; its matching publication entry declares this label and href. The label does not identify an arXiv mirror.",
+      "homepage_response": {
+        "http_status": 200,
+        "bytes": 6440,
+        "sha256": "2ac45eaca85ad26bcb9769870c6a8553365e0abe21ab8d7e0979b2afe04646dd"
+      },
+      "declared_public_module": {
+        "url": "https://yuxi-zheng.github.io/assets/index-CKgV2kv0.js",
+        "declared_src": "/assets/index-CKgV2kv0.js",
+        "http_status": 200,
+        "bytes": 209742,
+        "sha256": "c7af9fed097dac75a99926dd2fe3d370395325d9a48e4220a19b72abfa9f7f37",
+        "matching_publication_title": "How to Prove Post-Quantum Security for Succinct Non-Interactive Reductions",
+        "link_declaration": {
+          "label": "arXiv",
+          "href": "https://eprint.iacr.org/2025/2166"
+        },
+        "full_module_body_retained": false
+      }
+    }
+  ],
+  "other_public_sources": [
+    {
+      "url": "https://files01.core.ac.uk/download/690750245.pdf",
+      "observed_through": "Search index of the complete-paper PDF, not a successful new PDF download.",
+      "indexed_title_page_date": "2026-01-01",
+      "evidence_of_target_revision": false,
+      "boundary": "The January 1 title page cannot establish the contents of the target March 2 revision."
+    },
+    {
+      "url": "https://infoscience.epfl.ch/entities/publication/029a1aad-a83a-4e7a-bbf7-03819bb7dd4b",
+      "observed_through": "Public institution search index.",
+      "document_type": "EUROCRYPT 2026 conference chapter",
+      "doi": "10.1007/978-3-032-25336-1_14",
+      "first_page": 389,
+      "last_page": 415,
+      "evidence_of_target_complete_long_version": false
+    },
+    {
+      "url": "https://doi.org/10.1007/978-3-032-25336-1_14",
+      "document_type": "Published conference chapter",
+      "boundary": "The 27-page chapter is not assumed identical to the complete long version or to share its theorem numbering."
+    }
+  ],
+  "outcome": {
+    "independent_full_pdf_mirror_found_in_checked_author_entries": false,
+    "target_latest_full_text_obtained": false,
+    "target_title_page_date_verified": false,
+    "theorem_10_6_verified_against_target_revision": false,
+    "theorem_11_3_verified_against_target_revision": false,
+    "item_8_3_online_argument_order_verified_against_target_revision": false,
+    "theorem_11_3_to_8_3_online_parameter_order_correction_verified": false,
+    "january_version_promoted_to_latest": false,
+    "slides_or_conference_chapter_promoted_to_complete_long_version": false,
+    "source_version_gap_closed": false,
+    "search_exhaustiveness_proved": false,
+    "conclusion": "Retain the previously reviewed January-version identity and the open March-version and online-parameter-order obligations. This followup does not validate or change the existing conditional theorem formulas."
+  },
+  "acquisition_boundaries": {
+    "methods": [
+      "Primary-source web search",
+      "Ordinary HTTP GET of the public author homepages and their declared public JavaScript module"
+    ],
+    "known_eprint_pdf_403_retried": false,
+    "known_core_pdf_fetch_failure_retried": false,
+    "known_infoscience_record_429_retried": false,
+    "access_controls_bypassed": false,
+    "hepta_used": false,
+    "large_pdf_or_build_dependency_downloaded": false,
+    "full_author_homepage_or_javascript_bodies_saved": false,
+    "existing_repository_files_modified": false
+  }
+}

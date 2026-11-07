@@ -227,6 +227,31 @@ official image calculation and rejection observations are recorded as native
 observations. Their narrower identity boundary is not relabeled as a complete
 tracked-worktree check. Hosted complete-source verification remains separate.
 
+The completed [native summary](../../evidence/pon-w1-qrom-closure-20261107/native-summary.json)
+and [133-file raw packet](../../evidence/pon-w1-qrom-closure-20261107/native-7150-observations.tar.gz)
+preserve the full observed outcome. The selected 2,462 project source,
+configuration and fixture files matched 7150 before and after. The dependency
+review covered 310 packages and 16,395 registry source files, comparing crate
+archives against the locks and unpacked bytes against the archives. Its first
+successful dependency checkpoint occurred after the v2 build, during the
+workspace test; it is not a pre-compilation or hermetic-build attestation.
+An earlier checksum-helper failure is retained alongside the corrected
+archive-based check.
+
+The three v2 native tests, release build, fixed receipt verification, complete
+native relation replay, rejection probes, formatting and strict workspace
+Clippy passed. The separate full-workspace test did not pass: it exceeded its
+2,700-second budget and was terminated with exit -9 before its node harness
+completed. Three named outer-harness failures are present in the original
+stdout: the signed-submit disconnect test, expired-old-root recovery test and
+sealed-copy rewrite test. The [independent source/log review](../../evidence/pon-w1-qrom-closure-20261107/failure-classification.json) rejects the proposed
+interpretation that these were expected child-process negative controls. The
+unfinished harness did not print their final panic details, so the original
+run does not establish their precise causes. Counts summed from completed
+child and parent result blocks are not unique full-workspace test totals.
+The original timeout, failures and post-timeout process observation remain
+recorded regardless of any later isolated diagnostic result.
+
 The fixed v2 release's compiled-feature sub-scope is now complete: the resolved
 `risc0-zkvm 3.0.6` features are exactly `std` and `disable-dev-mode`; default,
 prover, client and Bonsai features are absent. The fresh release binary is
@@ -259,3 +284,85 @@ The sole [development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT
 retains the prior failures and current acceptance boundaries. This continuation
 does not alter the fixed proving parameters, guest, receipt profile, native
 work rule, Node admission path or production authorization.
+
+The continuation and source-inventory repair were subsequently published as
+`5c3a3c5b54f43dd1c2005c2eb744e9bcbeba6794` and
+`1a14f7d4826363daefac9ec10131c66d7e70ece7`, using the same authorized Hepta
+local Git channel and normal hooks. The
+[publication readback](../../evidence/pon-w1-qrom-closure-20261107/publication-1a14/publication-report.json)
+binds the latter's exact remote head. The inventory repair adds only the three
+QROM configuration entries absent from the generated distribution roster.
+The original broader required-check failures and their separate causes are
+retained in the [forensics record](../../evidence/pon-w1-qrom-closure-20261107/hosted-gate-forensics-42374726461.json).
+No required performance target or schema guard was relaxed to obtain a pass.
+
+The [complete 1a14 hosted readback](../../evidence/pon-w1-qrom-closure-20261107/hosted-1a14/verification.json)
+now independently verifies both QROM workflows for exact head and ordered
+prospective merge `f14298a2728b22fda625267e2e4844b70f829b37`. The ordered
+parents are cb114 and 1a14, and the merge tree equals 1a14's
+`e08b5dcd9ae2e90d0a36cb5d85e6ce1def387e85`. Each source before/after pair
+covers 11,144 tracked entries and 1,100,983,593 bytes. All 105 closure names
+and all 81 implementation names complete successfully in their respective
+workflows; closure also reproduces seven complete reports. The two
+repository-truth/inventory jobs pass. Broader failed and still-running checks
+remain in the retained snapshot, so this is not a whole-PR success claim.
+
+The [author-source follow-up](../../evidence/pon-w1-qrom-closure-20261107/theorem-source-followup.json)
+also retains the latest retrieval boundary: all four public author entries
+point back to the ePrint manuscript, and Hu's homepage labels its separate
+PDF link as slides; the complete PDF bytes were not obtained. Neither those
+links nor the publisher's conference chapter
+metadata supplies the missing complete March manuscript or resolves the
+January interface discrepancy.
+The subsequent [ordinary official-PDF request from the native host](../../evidence/pon-w1-qrom-closure-20261107/theorem-native-retrieval.json)
+returned HTTP 403. Its recorder exited successfully after preserving that
+failure; no complete paper bytes or version-equivalence claim resulted.
+
+## 7. Subsequent native failure diagnostics and scoped corrections
+
+The three original failures were rerun individually on the unchanged 7150
+node test binary, with one requested test and one harness thread per command.
+The [complete diagnostic records](../../evidence/pon-w1-qrom-closure-20261107/native-7150-failure-diagnostics/diagnostics-summary.json)
+bind the binary hash and selected source before and after. The ingress test
+passes in isolation. That observation does not identify the cause of its
+earlier two-thread failure or replace the unfinished workspace result.
+
+The expired-root recovery test independently reproduces a cold-replay error:
+`invalid type: string "1", expected u8`. Root role IDs are represented as
+JSON object keys. Direct `serde_json` decoding converted those keys, but the
+internally tagged Publication/Record buffering path lost that conversion.
+The correction explicitly decodes canonical decimal `u8` keys, refusing
+duplicates, noncanonical spellings and overflow. Serialization, root/schema
+fields, signing messages, dual-quorum verification and the complete
+`Root::kernel()` authority checks remain unchanged. Three new regressions
+exercise the actual nested record path, malformed keys and semantic root
+rejection; the original disk cold-replay test is unchanged.
+
+The [independent mechanism probe](../../evidence/pon-w1-qrom-closure-20261107/root-role-decode-probe/summary.json)
+reproduces the old error from the exact old declarations and confirms that
+the revised decoder round-trips bytes produced by the old serializer. This
+small probe and independent source review are not substitutes for the full
+crate regressions on the new committed candidate.
+
+The sealed-copy failure has a different explanation. The [native syscall
+probes](../../evidence/pon-w1-qrom-closure-20261107/native-7150-sealed-fields/test-correction.json) observe that a denied write can still change `mtime` and `ctime` on
+the tested kernel, while its content, extent, ownership, mode and seal set
+remain unchanged. The existing production identity check correctly refuses
+that changed snapshot. Its test incorrectly assumed that every rejected
+write also preserved timestamp identity. The correction keeps the source
+replacement/copy positive case separate from operations on the sealed
+descriptor, and adds actual metadata-drift rejection controls. The production
+identity comparison and all seal/mode checks are retained.
+
+The separate [source-pin follow-up](../../evidence/pon-w1-qrom-closure-20261107/source-pin-followup/refresh.json)
+also corrects the stale inventory fingerprint left by 1a14, and updates only
+that generated inventory plus the four reviewed release-owner source/test
+files. All 688 exact blob pins now match. The original source guard and
+inventory checker pass without changing their implementations or any
+HOLD/acceptance fields. This repairs source bookkeeping; it does not certify
+cryptographic authority or resolve unrelated broader CI failures.
+
+The new source-bound native regression results must be recorded separately
+from both the original 7150 failure and its isolated diagnostics. No successful
+targeted follow-up can certify the unfinished full workspace or discharge the
+separate PQ authorization, complete-proof and quantum-work obligations.

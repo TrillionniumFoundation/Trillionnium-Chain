@@ -1,0 +1,4 @@
+
+thread 'release_owner::sealed_tests::sealed_copy_survives_in_place_source_rewrite_and_path_replacement' (263760) panicked at crates/trnm-pon-node/src/release_owner/sealed_tests.rs:28:22:
+called `Result::unwrap()` on an `Err` value: Custom { kind: InvalidData, error: "M15 sealed object identity/seals changed" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

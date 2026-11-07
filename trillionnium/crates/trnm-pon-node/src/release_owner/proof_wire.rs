@@ -54,6 +54,43 @@ pub(super) fn role(value: u8) -> Result<PqReleaseRoleV1> {
     }
 }
 
+fn deserialize_roles<'de, D>(deserializer: D) -> std::result::Result<BTreeMap<u8, Keys>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    // JSON writes these integer map keys as strings. Internally tagged
+    // Publication/Record buffer them before Root is decoded, so serde_json's
+    // integer map-key conversion is no longer available. Read the same canonical
+    // strings explicitly without changing serialization or authority checks.
+    struct RolesVisitor;
+    impl<'de> serde::de::Visitor<'de> for RolesVisitor {
+        type Value = BTreeMap<u8, Keys>;
+
+        fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            formatter.write_str("unique canonical decimal u8 role keys")
+        }
+
+        fn visit_map<A>(self, mut map: A) -> std::result::Result<Self::Value, A::Error>
+        where
+            A: serde::de::MapAccess<'de>,
+        {
+            let mut roles = BTreeMap::new();
+            while let Some(key) = map.next_key::<String>()? {
+                let id = key.parse::<u8>().map_err(serde::de::Error::custom)?;
+                if key != id.to_string() {
+                    return Err(serde::de::Error::custom("M15 noncanonical root role key"));
+                }
+                if roles.contains_key(&id) {
+                    return Err(serde::de::Error::custom("M15 duplicate root role key"));
+                }
+                roles.insert(id, map.next_value()?);
+            }
+            Ok(roles)
+        }
+    }
+    deserializer.deserialize_map(RolesVisitor)
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct Root {
@@ -63,6 +100,7 @@ pub(super) struct Root {
     pub expires_at: u64,
     pub previous_root_digest: Digest32,
     pub offline_root: Keys,
+    #[serde(deserialize_with = "deserialize_roles")]
     pub roles: BTreeMap<u8, Keys>,
 }
 

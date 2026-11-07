@@ -8275,8 +8275,9 @@ at most five, with trace divisibility and semantic correctness still separate.
 The complete official ZKR archive supplies all 32 byte streams and the exact
 default-27 allowlist. All 27 fit the observed `po2=18` code capacity;
 `join_povw` leaves eight rows after ZK reservation. An independent C
-interpolation/LDE/Poseidon2/Merkle implementation recomputes every allowed
-control ID from the actual bytes and reconstructs the fixed control root.
+interpolation/LDE/Poseidon2/Merkle implementation recomputes the control IDs
+of all 27 default named programs from their actual bytes and reconstructs
+the fixed control root.
 Small independent DFT, permutation, tree and input-boundary controls check
 that implementation. Compiler correctness, program semantics, every reachable
 trace and digest-zero exclusion remain proof obligations.
@@ -8315,3 +8316,55 @@ generated file, adding exactly those two configurations and the new closure
 test roster (1,358 entries to 1,361). The unchanged generator's `--check`
 passes. This corrects the source packaging defect; it does not turn the old
 failed job or any other required check into a historical success.
+
+The [required-check forensics](../../evidence/pon-w1-qrom-closure-20261107/hosted-gate-forensics-42374726461.json)
+also preserves two separate 7150 failures. The original four-second,
+sixteen-worker pressure confirmation target reports zero of one independently
+confirmed request and `PUBLIC_REQUEST_DEADLINE`, after successful build,
+formatting and five named native tests. No baseline native pressure replay
+was performed and no timing cause is asserted. The external-evidence schema
+reader's direct-binding expectation fails against both cb114 and 7150,
+whose native openers already delegate to `open_selected_mode`; eleven
+relevant files are byte-identical between those commits. These observations
+remain separate from the repaired QROM inventory defect and from proof
+security. Original limits and acceptance guards remain intact.
+
+The complete frozen-7150 native packet is now retained: selected 2,462 project
+files match before and after, and the archive/source dependency comparison
+covers 310 packages and 16,395 registry files. The first successful dependency
+checkpoint was after the v2 build, not a pre-compilation supply-chain gate.
+The three v2 tests, fixed release/receipt/native replay and rejection probes,
+formatting and strict Clippy pass. The full workspace remains unsuccessful:
+three actual outer node-harness failure records plus a 2,700-second timeout
+before completion. Independent source/log review excludes the proposed
+expected-child-negative explanation; the original run has no final panic
+details. Original raw records are retained unchanged, and later isolated
+diagnostic observations cannot rewrite that result. Normal-hook Hepta
+publication has reached `1a14f7d4826363daefac9ec10131c66d7e70ece7`; the
+earlier 7150 hosted successes remain bound to their own source.
+
+The separate [1a14 hosted readback](../../evidence/pon-w1-qrom-closure-20261107/hosted-1a14/verification.json)
+now confirms both QROM workflows on exact head and ordered prospective merge,
+including 11,144 tracked entries / 1,100,983,593 bytes before and after.
+Closure's 105 names, implementation's distinct roster of 81 names, and all
+seven closure report reproductions pass for both source kinds. The two
+repository-truth/inventory jobs also pass; broader failed or unfinished jobs
+remain explicitly retained. These commit-specific results do not certify
+subsequent changes or upgrade any independent acceptance decision.
+
+Three exact isolated runs of the unchanged 7150 binary now give concrete
+diagnostics: the ingress case passes in isolation; the root cold-replay case
+fails at a JSON string-role-key to u8 conversion; the sealed-copy case detects
+timestamp drift after an otherwise rejected syscall. Correct the role-key
+decoder with canonical/duplicate/semantic rejection regressions while keeping
+its serialized root and signing bytes unchanged. Correct the sealed test's
+metadata assumption while retaining the production identity and seal guards.
+Bind the ensuing native regression to its own committed candidate, refresh
+only changed exact source pins, and retain the original failures/time budget.
+
+The source-pin follow-up refreshes exactly five existing entries: the earlier
+generated inventory plus four reviewed release-owner source/test files.
+The unchanged guard validates all 688 exact blobs and retains HOLD_NO_GO with
+cryptographic acceptance false. The unchanged generated-inventory checker
+also passes. Original pin failure, exact old/new identities, native syscall
+field probes and the correction of the sealed test's assumption are retained.
