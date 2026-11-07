@@ -1,7 +1,8 @@
 //! Exact typed M15 proofs. Candidate input cannot choose an observation time.
 use super::frontier::{invalid, Digest32, Result};
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Deserializer, Serialize};
 use std::collections::BTreeMap;
+use std::fmt;
 use std::io;
 use trnm_protocol::pq_frame::ML_DSA_65_SIGNATURE_BYTES;
 use trnm_release_bundle::pq_release::{
@@ -63,7 +64,47 @@ pub(super) struct Root {
     pub expires_at: u64,
     pub previous_root_digest: Digest32,
     pub offline_root: Keys,
+    #[serde(deserialize_with = "deserialize_roles")]
     pub roles: BTreeMap<u8, Keys>,
+}
+
+// Internally tagged publications buffer JSON map keys as strings. Decode the
+// existing canonical wire spelling explicitly, including through that buffer;
+// do not accept integer aliases or silently overwrite duplicate role entries.
+fn deserialize_roles<'de, D>(deserializer: D) -> std::result::Result<BTreeMap<u8, Keys>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct Roles;
+    impl<'de> de::Visitor<'de> for Roles {
+        type Value = BTreeMap<u8, Keys>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+            formatter.write_str("a map of distinct canonical M15 role keys 1 through 4")
+        }
+
+        fn visit_map<A>(self, mut map: A) -> std::result::Result<Self::Value, A::Error>
+        where
+            A: de::MapAccess<'de>,
+        {
+            let mut roles = BTreeMap::new();
+            while let Some(key) = map.next_key::<String>()? {
+                let id = match key.as_str() {
+                    "1" => 1,
+                    "2" => 2,
+                    "3" => 3,
+                    "4" => 4,
+                    _ => return Err(de::Error::custom("noncanonical or unknown M15 role key")),
+                };
+                if roles.contains_key(&id) {
+                    return Err(de::Error::custom("duplicate M15 role key"));
+                }
+                roles.insert(id, map.next_value()?);
+            }
+            Ok(roles)
+        }
+    }
+    deserializer.deserialize_map(Roles)
 }
 
 impl Root {
