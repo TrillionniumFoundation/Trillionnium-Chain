@@ -1,0 +1,56 @@
+{
+  "base_source_sha": "b9ccd327b363335ae6c219fd73565ab4ccaa9f17",
+  "benchmarks_or_new_experiments_run": false,
+  "changed_files": [
+    "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py"
+  ],
+  "checks": {
+    "all_model_and_transfer_flags_unchanged": true,
+    "all_non_docstring_ast_identical": true,
+    "coalition_formula_and_assumptions_unchanged": true,
+    "global_formula_unchanged": true,
+    "native_and_spec_sources_unchanged": true,
+    "no_code_behavior_change": true,
+    "only_top_level_docstring_changed": true,
+    "test_source_unchanged": true,
+    "unique_canonical_proof_hash_not_claimed_to_create_multiplicity": true,
+    "wording_requires_mutable_or_unbound_entropy_or_nonce": true
+  },
+  "closed_findings": [
+    {
+      "path": "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py",
+      "previous_issue": "Outer-proof-hash multiplicity statement was overbroad.",
+      "previous_line": 88,
+      "replacement": "* An outer lottery over allowed mutable or unbound proof/carrier bytes, or an\n  additional selectable nonce, can create extra independent cheap tickets.\n  Hashing one unique canonical proof alone does not create that multiplicity.",
+      "resolution": "Correctly qualified; prior documentation note closed."
+    }
+  ],
+  "diff_numstat": "3\t1\tformal/pon-nakamoto-v1/fresh_work_query_floor_v0.py",
+  "exact_diff": "diff --git a/formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py b/formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py\nindex 496b52fec..49e1d1633 100644\n--- a/formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py\n+++ b/formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py\n@@ -85,7 +85,9 @@ SCOPE AND TRANSFER OBLIGATIONS.\n   L, and the corresponding sum of charges; the fixed-L bound must not silently\n   award one profile another profile's more expensive nominal cost. Selecting\n   among legal candidates or bulk precommits is allowed and all queries count.\n-* An optional outer proof hash would create extra independent cheap tickets.\n+* An outer lottery over allowed mutable or unbound proof/carrier bytes, or an\n+  additional selectable nonce, can create extra independent cheap tickets.\n+  Hashing one unique canonical proof alone does not create that multiplicity.\n   Reusing a correct Cell product is lawful and contributes no multiplicative\n   credit. This model neither proves W1 hardness nor supplies a quantum bound.\n * Classical random-oracle sequentiality is not a lower bound for all SHA-256\n",
+  "exact_diff_sha256": "68c80376693af9195c502806730481373fb80a63208624eb695309d4ccb4145a",
+  "model_flags": {
+    "COALITION_IMPLEMENTATION_TRANSFER_ESTABLISHED": false,
+    "COALITION_PHYSICAL_COST_FLOOR_PROVED": false,
+    "RESEARCH_STEPS": 64
+  },
+  "prior_audit": "/workspace/scratch/10a9f8f2cba0/fresh-native-review/final-theory-audit.json",
+  "prior_audit_sha256": "f165adbbf4b853254b0f7d76e08bf5340a10e4240e38765bea0f5b3e5d2814d5",
+  "remaining_findings": [],
+  "repository_modified_by_review": false,
+  "reviewed_at_utc": "2026-11-07T12:57:16.790804+00:00",
+  "reviewed_source_sha": "1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7",
+  "root_reported_final_source_theory_tests": "27 PASS in final 21-gate validation; not rerun by this read-only review",
+  "schema": "pon-fresh-final-theory-followup-audit-v0",
+  "source_clean_after": true,
+  "source_clean_before": true,
+  "status": "PASS_NOTE_CLOSED",
+  "test_execution_this_review": false,
+  "test_source_counts": {
+    "CoalitionFeedbackTests": 7,
+    "FractionTheoremTests": 7,
+    "QueryLedgerTests": 13
+  },
+  "theory_source_git_blob": "49e1d1633376c8ab2364617b4106df14fc0679d3",
+  "theory_source_sha256": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001",
+  "theory_tests_total": 27
+}
