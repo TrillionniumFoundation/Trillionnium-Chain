@@ -10,9 +10,10 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import stat
 import sys
 import tomllib
+
+from pq_source_reader import SourceReadError, read_regular
 
 REL_MANIFEST = "config/pon/pq-cross-branch-corpus-v1.json"
 REQUIRED_UPSTREAM = frozenset(("base", "cell", "migration", "witness", "roster", "parity"))
@@ -59,6 +60,7 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "scripts/ci/pq_source_reader.py",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
     "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
@@ -654,25 +656,10 @@ class IntegrityError(ValueError):
 
 
 def _safe_regular(root: Path, relative: str, ceiling: int = 4 * 1024 * 1024) -> bytes:
-    if (type(relative) is not str or not relative or "\\" in relative
-            or relative.startswith("/") or relative.split("/") != list(Path(relative).parts)
-            or any(p in ("", ".", "..") for p in relative.split("/"))):
-        raise IntegrityError("unsafe path")
-    path = root
-    for part in relative.split("/"):
-        path = path / part
-        if path.is_symlink():
-            raise IntegrityError("symlink source refused: " + relative)
     try:
-        st = path.stat()
-    except OSError as exc:
-        raise IntegrityError("missing source: " + relative) from exc
-    if not stat.S_ISREG(st.st_mode) or st.st_size > ceiling:
-        raise IntegrityError("nonregular/oversize source: " + relative)
-    data = path.read_bytes()
-    if len(data) != st.st_size:
-        raise IntegrityError("changing source: " + relative)
-    return data
+        return read_regular(root, relative, ceiling)
+    except SourceReadError as error:
+        raise IntegrityError(str(error)) from error
 
 
 def _json(root: Path, relative: str) -> dict:
@@ -770,7 +757,9 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
                 # treat source enumeration as cryptographic authority.
 
 def check(root: Path) -> dict:
-    root = Path(root).resolve(strict=True)
+    # Keep the caller's pathname so descriptor traversal can reject symlinked
+    # checkout ancestors instead of silently selecting their resolved target.
+    root = Path(root).absolute()
     m = _json(root, REL_MANIFEST)
     if m.get("schema") != "trnm-pq-cross-branch-corpus-v1" or m.get("status") != "research-only-hold-no-go":
         raise IntegrityError("corpus must remain research/HOLD")

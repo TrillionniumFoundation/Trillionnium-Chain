@@ -11,8 +11,15 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_pq_research_integration import (
     CONVERGENCE_REQUIRED_PATHS, IntegrityError, NATIVE_FALSE,
-    NATIVE_REQUIRED_PATHS, NATIVE_V2_EXPECTED, check,
+    NATIVE_REQUIRED_PATHS, NATIVE_V2_EXPECTED, _safe_regular, check,
 )
+from test_pq_chain_claim_guard import DescriptorReaderControls
+
+
+class CorpusReaderRaceTests(DescriptorReaderControls, unittest.TestCase):
+    reader = staticmethod(_safe_regular)
+    reader_error = IntegrityError
+    byte_limit = 4 * 1024 * 1024
 
 REQUIRED = (
     "config/consensus-mainline.json", "config/pon/devnet-v1.json",
@@ -158,6 +165,28 @@ class CorpusGateTests(unittest.TestCase):
         (self.root / "formal/pon-nakamoto-v1/pq_envelope.py").unlink()
         with self.assertRaisesRegex(IntegrityError, "missing source"):
             check(self.root)
+
+    def test_source_reader_helper_is_required(self):
+        path = 'scripts/ci/pq_source_reader.py'
+        self.manifest['required_paths'].remove(path)
+        del self.manifest['pinned_blobs'][path]
+        self.save()
+        with self.assertRaises(IntegrityError):
+            check(self.root)
+
+    def test_symlinked_checkout_root_refuses(self):
+        alias = self.root.parent / (self.root.name + '-alias')
+        alias.symlink_to(self.root, target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        with self.assertRaisesRegex(IntegrityError, 'symlink'):
+            check(alias)
+
+    def test_symlinked_checkout_ancestor_refuses(self):
+        alias = self.root.parent / (self.root.name + '-parent-alias')
+        alias.symlink_to(self.root.parent, target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        with self.assertRaisesRegex(IntegrityError, 'symlink'):
+            check(alias / self.root.name)
 
     def test_source_symlink_refuses(self):
         p = self.root / "formal/pon-nakamoto-v1/pq_envelope.py"

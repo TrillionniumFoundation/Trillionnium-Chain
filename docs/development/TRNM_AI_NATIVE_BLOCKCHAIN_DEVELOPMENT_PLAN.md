@@ -8315,3 +8315,19 @@ unexplained earlier 200 ms announcement timeout even when a later unchanged
 source passes. Public-WAN service, whole-Node/Cell/FinalUse/effect rollback,
 independent custody and complete quantum work/fork/proof qualification remain
 open. Do not enable production or promote any whole-chain PQ claim.
+
+The continuation also repairs a reproduced source-reader check/open race in
+the claim guard and corpus checker. A shared POSIX reader binds every directory
+and the leaf through no-follow descriptors, keeps the original byte limits,
+checks the observed identities before and after reading, and refuses raced
+FIFO/symlink/substitution inputs. Fourteen actual-filesystem scheduling controls
+exercise each wrapper; normal HOLD fixtures remain. This is per-read source
+integrity, not an immutable filesystem snapshot or whole-state rollback proof.
+The final source corpus has 713 pins and 632 required paths.
+
+The CodeQL workflow retains real, locally validated SARIF after a failed remote
+upload. The original upload remains mandatory and its failure is preserved;
+the existing advanced/default-setup conflict still requires repository-level
+resolution. Local retention tests do not establish a new CodeQL scan or remote
+acceptance. Freeze these changes before the new native and quantum replay;
+record complete command outcomes and separate original failed observations.
