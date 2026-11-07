@@ -1,0 +1,220 @@
+{
+  "archives": {
+    "development-observations.tar.xz": {
+      "bytes": 427964,
+      "members": 110,
+      "scope": "Original development and aa46 local frozen observations, including unmodified failures and independent repeats. The Git bundle preserves aa46/f22 local history with the published #755 parent as prerequisite. prepared-frozen-* files were plans, not executed command receipts. Downloaded crate bytes excluded; official receipts retained.",
+      "sha256": "933059530ba55c1edfd0c5b69322c3105ca21ce4863383ffb39988801bf5e6b3"
+    },
+    "frozen-validation.tar.xz": {
+      "bytes": 132696,
+      "members": 72,
+      "scope": "Actual new executions at public e31e4e11, including retained environment bootstrap failure, failed Clippy environment attempt and separate successful Clippy supplement. Unit/control counts are not added to previous source executions.",
+      "sha256": "1256da1f4a35cca6ec6debc7e484045c1bae9cf32d64806f414894f1de35ad5c"
+    }
+  },
+  "base_source": "7a98f27f99abccc28da2f1f3cc60bdaa2eca4890",
+  "campaign": {
+    "bytes": 568946,
+    "completed_grover_iterations": 0,
+    "completed_model_candidate_checks": 84,
+    "completed_model_measurement_batches": 24,
+    "empty_domain_schedule_exhausted_runs": 4,
+    "file": "campaign.json",
+    "first_iteration_censored_runs": 4,
+    "groups": [
+      {
+        "candidate_evaluations": 20,
+        "distinct_numeric_nonce_values": 4,
+        "fixed_contexts": 5,
+        "full_legal_winners": 5,
+        "name": "native",
+        "phase_restricted_marked_winners": 5,
+        "scalar_native_winner_proof_checks": 5
+      },
+      {
+        "candidate_evaluations": 80,
+        "distinct_numeric_nonce_values": 16,
+        "fixed_contexts": 5,
+        "full_legal_winners": 34,
+        "name": "reduced",
+        "phase_restricted_marked_winners": 7,
+        "scalar_native_winner_proof_checks": 0
+      }
+    ],
+    "interpretation_limits": [
+      "Twenty native and eighty reduced figures count candidate evaluations across five contexts each, not globally distinct nonce integers or independent tasks.",
+      "The five native PNW1 winner proofs were scalar-verified as offline observer work; this is not five native-admitted blocks or five online quantum proofs.",
+      "All eight delivered outcomes use zero Grover iterations and assumed check/proof/propagation clocks; none demonstrates quantum acceleration.",
+      "All four one-iteration controls are censored before their first Grover iteration completes; no quantum measurement occurs in those controls.",
+      "The four empty-domain runs retain sixteen failed candidate checks each and exhaust their predeclared schedules.",
+      "The four-second research horizon is not the native original-resource acceptance profile.",
+      "Physical clock and error estimates are declared hypotheses; they do not prove minimum attacker cost, practical attack success, or quantum consensus security."
+    ],
+    "model_deliveries_using_q_zero": 8,
+    "native_blocks_admitted": 0,
+    "online_proofs_generated": 0,
+    "run_count": 16,
+    "sha256": "1734edb20d26881f126b7bdb53b2df1171dbde238cacce32bc01245e0c9b6154"
+  },
+  "frozen_source": {
+    "head": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+    "inventory_sha256": "294697b43d9760b5cb092d280b44c37105f504a25b7b1acaee9153d3c3982a76",
+    "tracked_files": 10977,
+    "tree": "9ba43628c3004950f4d79392301dba306adb5a1f"
+  },
+  "local_lint_environment": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "cargo_build_jobs": 2,
+    "cargo_incremental": false,
+    "debug_symbols": false,
+    "openssl": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "runtime_or_provider_parity_claimed": false,
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "successful_clippy_environment": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_INCREMENTAL": "0",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_TARGET_DIR": "/workspace/scratch/c9b48df754d6/target",
+      "OPENSSL_CONF": "/dev/null",
+      "OPENSSL_DIR": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install",
+      "OPENSSL_MODULES": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/lib/ossl-modules",
+      "OPENSSL_STATIC": "1",
+      "TRNM_PQ_OPENSSL": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+      "TRNM_PQ_OPENSSL_SHA256": "618a562227002c97f8ee6d8efd69c9d3aef0e5952c2e6c43bdc5e8e5d1ca0a85",
+      "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+    },
+    "target_directory": "/workspace/scratch/c9b48df754d6/target"
+  },
+  "qualification": {
+    "constructed_fixed_context_cost_binding_implemented": true,
+    "external_schedule_precommitment_attested": false,
+    "full_machine_error_accounting_complete": false,
+    "generic_complete_quantum_cost": null,
+    "mixed_quantum_classical_consensus_security_proved": false,
+    "native_service_acceptance_profile_satisfied": false,
+    "physical_clocks_measured": false,
+    "production_activation": false,
+    "profitable_executable_quantum_fork_attack_demonstrated": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "quantum_work_lower_bound_proved": false
+  },
+  "remaining_work": [
+    "Calibrate physical, controller, loading, measurement, proof and propagation costs and complete machine-level error accounting.",
+    "Evaluate economical alternative legal W1 implementations, preprocessing reuse and equal real resource budgets; a constructed upper bound is not an attacker lower bound.",
+    "Connect native-valid, costed adversarial Bailey-Sattath-style schedules to dynamic DAA, timestamps, forks and competing quantum/classical miners.",
+    "Develop a justified mixed quantum/classical consensus security argument; failed attack reproduction and slow illustrative circuits do not establish security."
+  ],
+  "schema": "trnm-w1-bounded-search-qualification-v2",
+  "source_scope": "Actual new executions on the public implementation commit. The API-created commit has the same tree as the earlier local implementation; old logs remain historical observations and were not relabelled. Later evidence commits do not imply another suite execution.",
+  "status": "Draft / HOLD",
+  "validation": {
+    "cargo_fmt": "PASS",
+    "ci_contract_tests": 106,
+    "execution_groups": {
+      "campaign": {
+        "commands": 2,
+        "group": "campaign",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+          "inventory_sha256": "294697b43d9760b5cb092d280b44c37105f504a25b7b1acaee9153d3c3982a76",
+          "tracked_files": 10977,
+          "tree": "9ba43628c3004950f4d79392301dba306adb5a1f"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "quantum": {
+        "commands": 6,
+        "group": "quantum",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+          "inventory_sha256": "294697b43d9760b5cb092d280b44c37105f504a25b7b1acaee9153d3c3982a76",
+          "tracked_files": 10977,
+          "tree": "9ba43628c3004950f4d79392301dba306adb5a1f"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "repository": {
+        "commands": 8,
+        "group": "repository",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+          "inventory_sha256": "294697b43d9760b5cb092d280b44c37105f504a25b7b1acaee9153d3c3982a76",
+          "tracked_files": 10977,
+          "tree": "9ba43628c3004950f4d79392301dba306adb5a1f"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "rust-rerun": {
+        "commands": 7,
+        "group": "rust",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+          "inventory_sha256": "294697b43d9760b5cb092d280b44c37105f504a25b7b1acaee9153d3c3982a76",
+          "tracked_files": 10977,
+          "tree": "9ba43628c3004950f4d79392301dba306adb5a1f"
+        },
+        "status": "FAIL",
+        "whole_chain_qualified": false
+      }
+    },
+    "full_rust_runtime_test_suite_executed": false,
+    "fuzz_metadata_initial": "Historical aa46 local cache miss retained in development archive; not the current public-source run.",
+    "fuzz_metadata_supplemental": {
+      "actual_new_execution": true,
+      "compilation_or_fuzz_execution": false,
+      "lockfile_changed": false,
+      "packages": 149,
+      "receipt": "frozen-validation.tar.xz:remote-frozen-validation/fuzz-metadata/receipt.json",
+      "registry_packages": 136,
+      "source": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7",
+      "status": "PASS"
+    },
+    "independent_development_controls": {
+      "counted_as_frozen_execution": false,
+      "full_state_amplitude_comparisons": 120,
+      "horizon_ledger_cases": 137
+    },
+    "independent_frozen_controls": {
+      "add_to_unit_test_total": false,
+      "bounded_controls": 22,
+      "constructed_control_groups": 10,
+      "source_files_checked_before_after": 255
+    },
+    "main_full_locked_offline_metadata": "PASS",
+    "pq_corpus_source_pins": 688,
+    "pq_integration_tests": 38,
+    "quantum_test_counts": {
+      "bounded_campaign": 19,
+      "fast_daa": 11,
+      "parallel_variable_ohie": 36,
+      "quantum": 153,
+      "reversible_components": 17,
+      "w1": 105
+    },
+    "quantum_tests_total": 341,
+    "remote_ci_execution_claimed": false,
+    "rust_environment_failures": {
+      "bootstrap": "Missing exported TRNM_PQ_OPENSSL variable; failed before Cargo invocations.",
+      "first_clippy": "OpenSSL variables existed as shell values but were not exported; openssl-sys could not locate the installation. rust-rerun/result.json remains FAIL.",
+      "repair": "Export all existing OpenSSL 3.5.9 environment values and repeat only strict Clippy with full source checks.",
+      "source_or_lock_changed": false,
+      "successful_clippy_receipt": "frozen-validation.tar.xz:remote-frozen-validation/clippy-supplemental/receipt.json"
+    },
+    "source_integrity_negative_tests": 43,
+    "strict_clippy_workspace_all_targets_all_features_warnings_denied": "PASS in separate exact-source supplement; original environment failure retained"
+  }
+}

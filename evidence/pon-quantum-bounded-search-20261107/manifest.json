@@ -1,0 +1,31 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 11453,
+      "sha256": "326ac1bc48e5303fad0a8c90df4cc2cc231d822a86cd0e60bc14ea3658e35f53"
+    },
+    "campaign.json": {
+      "bytes": 568946,
+      "sha256": "1734edb20d26881f126b7bdb53b2df1171dbde238cacce32bc01245e0c9b6154"
+    },
+    "development-observations.tar.xz": {
+      "bytes": 427964,
+      "sha256": "933059530ba55c1edfd0c5b69322c3105ca21ce4863383ffb39988801bf5e6b3"
+    },
+    "frozen-validation.tar.xz": {
+      "bytes": 132696,
+      "sha256": "1256da1f4a35cca6ec6debc7e484045c1bae9cf32d64806f414894f1de35ad5c"
+    },
+    "publication.json": {
+      "bytes": 1162,
+      "sha256": "b8ac71b5463602a70d89b6740d5a36a422837174b3728e0c15ec6f0c56ce06ee"
+    },
+    "qualification.json": {
+      "bytes": 10604,
+      "sha256": "54b22f61fa864a9ca528b5a34c3ea19b9f466a87760f13d8c9621a648e009389"
+    }
+  },
+  "schema": "trnm-w1-bounded-search-evidence-manifest-v2",
+  "self_excluded": "manifest.json",
+  "source_commit": "e31e4e1122c1f88c72025b507d5706a0dc96fbd7"
+}
