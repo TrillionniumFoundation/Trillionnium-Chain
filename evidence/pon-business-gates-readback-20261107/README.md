@@ -228,6 +228,13 @@ native consumers, docs and evidence. The [state integration receipt](state-integ
 also confirms the measured component source bytes were preserved.
 No constituent branch's tests certify the combined source.
 
+The subsequent remote `04bbc81e4aad9b29fef29385d3262297e2cb17df` was
+also merged normally after reviewing all 174 changed paths: two documentation
+files and 172 evidence files, with no computational-source change from acc2.
+The [recovered concurrent Cell record](../pon-cell-concurrent-revalidation-20261107/README.md)
+and both parallel plan additions are preserved. This evidence recovery does not
+change any original business qualification gate.
+
 [Cell preparation](cell-formal-preparation/PREPARATION_CORE.json) verified all
 415 required historical objects and the three original model fixtures, preserving
 the initial preparation failures. It changed no runtime or 30-second child

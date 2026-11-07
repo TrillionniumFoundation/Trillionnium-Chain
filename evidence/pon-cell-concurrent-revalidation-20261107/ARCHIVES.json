@@ -1,0 +1,30 @@
+{
+  "archive_bytes_preserved": true,
+  "archives": [
+    {
+      "all_indexed_payload_hashes_verified": true,
+      "bytes": 1803594,
+      "filename": "concurrent-ci-acc2ec24-20261107-v1.tar.gz",
+      "indexed_payload_count": 96,
+      "manifest_excludes_itself": true,
+      "ordinary_member_count": 97,
+      "path": "ci/concurrent-ci-acc2ec24-v1.tar.gz",
+      "prefix": "",
+      "safe_relative_regular_members": true,
+      "sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2"
+    },
+    {
+      "all_indexed_payload_hashes_verified": true,
+      "bytes": 679432,
+      "filename": "concurrent-native-acc2-evidence.tar.gz",
+      "indexed_payload_count": 175,
+      "manifest_excludes_itself": true,
+      "ordinary_member_count": 176,
+      "path": "native/concurrent-native-acc2-evidence.tar.gz",
+      "prefix": "concurrent-native-acc2/",
+      "safe_relative_regular_members": true,
+      "sha256": "6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b"
+    }
+  ],
+  "schema": "pon-cell-concurrent-archives-v1"
+}

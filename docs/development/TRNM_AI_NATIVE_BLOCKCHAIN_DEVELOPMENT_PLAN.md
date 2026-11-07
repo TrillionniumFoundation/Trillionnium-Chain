@@ -86,6 +86,13 @@ public native proof; proof-to-owner composition remains an explicit open gate.
 The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
 retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
 controls, raw source checks and failed observations without changing qualification.
+The [recovered concurrent record](../../evidence/pon-cell-concurrent-revalidation-20261107/README.md)
+pins combined source `acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030`, retains its
+affected native/CI controls and actual non-force candidate publication, and
+separates sparse build inputs from complete-tree checks. Its recovery disclosure
+distinguishes restored original archives from new checks and unavailable local
+sidecars. Native cold replay covers two claims/ten proofs across six verifier
+invocations and three stores; repeats change none of the open gates above.
 
 **Original business gates, continued 2026-11-07 America/New_York:**
 Continue the same integration branch after published
