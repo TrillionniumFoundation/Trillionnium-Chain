@@ -514,10 +514,11 @@ class CoordinatorFailureTests(unittest.TestCase):
             now[0] += .025
             return value
 
-        def failed_measure(command, output, seconds, *, deadline):
+        def failed_measure(command, output, seconds, *, deadline, environment_overrides):
             self.assertEqual(output.name, "prepare-full-execution")
             self.assertEqual(seconds, 180)
             self.assertEqual(deadline, 100.2)
+            self.assertEqual(environment_overrides, {"RAYON_NUM_THREADS": "8"})
             self.assertGreater(now[0], 100.0)
             self.assertLess(deadline - now[0], .2)
             # Exercise failure only, without a synthetic successful backend.

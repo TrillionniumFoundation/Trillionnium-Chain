@@ -1,0 +1,118 @@
+{
+  "aggregate_process_tree_peak_rss_bytes": null,
+  "canceled_signal": null,
+  "cancellation_event": null,
+  "cancellation_schema": "TRNM-W1-CANCELLATION-HANDOFF1",
+  "cleanup_errors": [],
+  "command": [
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/target-native/release/w1-verify-v2",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/header.bin",
+    "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin"
+  ],
+  "complete_proof_claim": false,
+  "completion_observed_before_deadline": true,
+  "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/repo",
+  "deadline_exhausted_at_snapshot": false,
+  "effective_deadline_monotonic": 1150563.858641758,
+  "effective_remaining_seconds": 596.5821575419977,
+  "environment": {
+    "RAYON_NUM_THREADS": "2",
+    "RISC0_HOME": null,
+    "RUST_LOG": null
+  },
+  "error": null,
+  "explicit_environment_override_names": [],
+  "final_known_group_probes": [
+    {
+      "group": 1123842,
+      "state": "ABSENT"
+    }
+  ],
+  "final_owned_session_members": [],
+  "finished_unix_ns": 1794072301611927448,
+  "group_probe_errors": [],
+  "known_owned_groups": [
+    1123842
+  ],
+  "max_bytes_per_output_log": 4194304,
+  "members_after_child_exit": [],
+  "note": "Stage exit 0 is not full proof success. Saved Succinct verification against the fixed image and external statement remains the cryptographic authority.",
+  "observer_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "owned_session_observation_complete": true,
+  "pid": 1123842,
+  "proc_clock_ticks_per_second": 100,
+  "proc_disappearance_races": [
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/1123794/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/1123794",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/1123840/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/1123840",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/1123841/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/1123841",
+      "phase": "running",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/1123777/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/1123777",
+      "phase": "settlement_entry",
+      "type": "FileNotFoundError"
+    },
+    {
+      "errno": 2,
+      "message": "[Errno 2] No such file or directory: '/proc/1123779/status'",
+      "operation": "read_proc_member",
+      "path": "/proc/1123779",
+      "phase": "settlement_entry",
+      "type": "FileNotFoundError"
+    }
+  ],
+  "proc_scan_errors": [],
+  "proc_scope": "sampled members of the owned new session; missed short-lived or escaped-session descendants remain unmeasured; PID plus birth ticks identifies samples",
+  "process_group_remaining_after_child_exit": false,
+  "prover_resource_completeness_established": false,
+  "resource_scope": "wait4 direct child including descendants it reaped; killed-stage CPU can be a lower bound; maxrss is largest single process, not aggregate peak",
+  "result_is_pre_handoff_snapshot": true,
+  "returncode": 0,
+  "rusage": {
+    "involuntary_context_switches": 2,
+    "major_faults": 0,
+    "max_single_process_rss_bytes": 24727552,
+    "minor_faults": 297,
+    "system_seconds": 0.00409,
+    "user_seconds": 0.036810999999999997,
+    "voluntary_context_switches": 1
+  },
+  "sample_log_truncated": false,
+  "sampled_max_single_process_rss_bytes": 0,
+  "schema": "TRNM-W1-STAGE-MEASUREMENT3",
+  "shared_cgroup": {},
+  "signal_attempts": [],
+  "stage_process_complete": true,
+  "started_monotonic": 1149967.276484216,
+  "started_unix_ns": 1794072301284201350,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "9880793ada57d0c367b7b4f64a17c960a2355717a7a1e1ccc6e7e336beb56f89",
+  "termination_grace_seconds": 5,
+  "termination_reasons": [],
+  "timed_out": false,
+  "wall_limit_seconds": 596.5825607890729,
+  "wall_seconds": 0.32775601791217923
+}

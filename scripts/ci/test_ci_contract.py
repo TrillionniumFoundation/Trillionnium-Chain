@@ -181,6 +181,27 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.subTest(path=path, change=label), self.assertRaises(ValueError):
                     check_independent_conformance(changed, self.lanes)
 
+    def test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
+        # Keep this inventory independent of the checker's command tuple.
+        for name in ('test_pon_proof_latency.py', 'test_w1_proof_latency_readback.py'):
+            command = '    python3 scripts/ci/' + name + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'true stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            }
+            for label, changed in changes.items():
+                with self.subTest(reader=name, change=label), self.assertRaisesRegex(
+                        ValueError, 'proof latency controls'):
+                    check_independent_conformance(changed, self.lanes)
+
     def test_current_runtime_controls_must_follow_pilot_and_parent_material(self):
         parent = '    python3 scripts/test_llm_parent_material.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
@@ -419,6 +440,23 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, script in variants.items():
                 with self.subTest(test=name, mutation=label), self.assertRaises(ValueError):
                     check_independent_conformance(script, self.lanes)
+
+    def test_integration_legacy_reorg_reader_retains_its_mandatory_lane(self):
+        command = '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n'
+        self.assertEqual(self.script.count(command), 1)
+        check_independent_conformance(self.script, self.lanes)
+        variants = {
+            'removed': self.script.replace(command, ''),
+            'duplicated': self.script.replace(command, command * 2),
+            'stubbed': self.script.replace(command, '    true # ' + command.lstrip()),
+            'skipped': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+            'swallowed': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'other-lane-duplicate': self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'moved': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+        }
+        for label, changed in variants.items():
+            with self.subTest(mutation=label), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
 
     def test_native_cell_suite_cannot_disappear_from_mandatory_conformance(self):
         selector = ' --test cell_native_v1'
@@ -1392,6 +1430,189 @@ cargo() {
             current_validate(self.root)
         finally:
             path.write_text(original)
+
+
+class W1PostwinLaneTests(unittest.TestCase):
+    """Executable CI contracts, not a substitute proof or provider success."""
+
+    def setUp(self):
+        self.script = (ROOT / "scripts/ci/ci_job.sh").read_text()
+        self.workflow = (ROOT / ".github/workflows/pon-w1-transparent-profile.yml").read_text()
+        self.required = {"repository-truth", "protocol-contract", "fuzz-smoke",
+                         "rust-baseline", "external-evidence-contract"}
+
+    def lane_check(self, text):
+        check_independent_conformance(text, self.required)
+
+    def workflow_check(self, text):
+        from check_ci_contract import check_w1_postwin_workflow
+        check_w1_postwin_workflow(text)
+
+    def step(self, name):
+        import re
+        blocks = re.findall(r"(?ms)^      - name: .*?(?=^      - name: |\Z)", self.workflow)
+        rows = [row for row in blocks if "\n        id: " + name + "\n" in row]
+        self.assertEqual(len(rows), 1)
+        return rows[0]
+
+    def commands(self):
+        # Independent literal inventory: do not import the checker's roster.
+        return (
+            'python3 -m unittest discover -s scripts/ci -p test_w1_cancellation_handoff.py -v 2>&1 | tee "$w1_contract_out/cancellation-handoff.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_coordinator_contract.py -v 2>&1 | tee "$w1_contract_out/coordinator-contract.log"',
+            'python3 -m unittest discover -s scripts -p test_kaggle_generation_contract_v2.py -v 2>&1 | tee "$w1_contract_out/provider-contract.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_generation_target_v2.py -v 2>&1 | tee "$w1_contract_out/generation-target.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_source_builder.py -v 2>&1 | tee "$w1_contract_out/source-builder.log"',
+            'python3 -m unittest discover -s scripts -p test_w1_owned_generation_runtime_v2.py -v 2>&1 | tee "$w1_contract_out/owned-runtime-reader.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_kaggle_worker_contract.py -v 2>&1 | tee "$w1_contract_out/kaggle-worker-contract.log"',
+            'python3 -m unittest discover -s scripts/ci -p test_w1_postwin_identity.py -v 2>&1 | tee "$w1_contract_out/winner-identity.log"',
+        )
+
+    def test_actual_postwin_lanes_retain_real_controls(self):
+        self.lane_check(self.script)
+        self.workflow_check(self.workflow)
+
+    def test_required_postwin_commands_cannot_be_missing_stubbed_or_swallowed(self):
+        for command in self.commands():
+            line = "      " + command + "\n"
+            self.assertEqual(self.script.count(line), 1)
+            replacements = (
+                "", line + line, "      # " + command + "\n",
+                "      true # " + command + "\n",
+                "      " + command + " || true\n",
+                "      if false; then\n" + line + "      fi\n",
+                "      if " + command + "; then :; fi\n",
+            )
+            for replacement in replacements:
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        self.lane_check(self.script.replace(line, replacement, 1))
+
+    def test_required_postwin_commands_cannot_change_or_duplicate_lane(self):
+        for command in self.commands():
+            line = "      " + command + "\n"
+            for remove_original in (False, True):
+                changed = self.script.replace(line, "", 1) if remove_original else self.script
+                changed = changed.replace("  fuzz-smoke)\n", "  fuzz-smoke)\n" + line, 1)
+                with self.subTest(command=command, moved=remove_original):
+                    with self.assertRaises(ValueError):
+                        self.lane_check(changed)
+
+    def test_postwin_count_and_original_budget_controls_cannot_be_softened(self):
+        mutations = (
+            ('("cancellation-handoff", 22)', '("cancellation-handoff", 0)'),
+            ('("coordinator-contract", 20)', '("coordinator-contract", 1)'),
+            ('("provider-contract", 11)', '("provider-contract", 8)'),
+            ('("generation-target", 4)', '("generation-target", 0)'),
+            ('("source-builder", 8)', '("source-builder", 0)'),
+            ('("owned-runtime-reader", 5)', '("owned-runtime-reader", 0)'),
+            ('("kaggle-worker-contract", 12)', '("kaggle-worker-contract", 0)'),
+            ('("winner-identity", 4)', '("winner-identity", 0)'),
+            (' or "skipped=" in text', ''),
+            ('      export TMPDIR="$w1_contract_tmp"\n', ''),
+            ('      trap \'rm -rf -- "$w1_contract_tmp"\' EXIT\n', ''),
+            ('    (\n      w1_contract_out=', '    if false; then\n    (\n      w1_contract_out='),
+            ('      export PYTHONDONTWRITEBYTECODE=1\n',
+             '      export PYTHONDONTWRITEBYTECODE=1\n      set +e\n'),
+        )
+        for before, after in mutations:
+            self.assertIn(before, self.script)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.lane_check(self.script.replace(before, after, 1))
+
+    def test_real_receiver_step_cannot_be_missing_duplicated_or_bypassed(self):
+        block = self.step("real_receiver_controls")
+        for replacement in (
+            "", block + block,
+            block.replace("        if: always() && steps.source.outcome == 'success' && steps.verifier_v2.outcome == 'success'\n",
+                          "        if: false\n"),
+            block.replace("          python3 scripts/ci/test_w1_receiver_real.py",
+                          "          true # python3 scripts/ci/test_w1_receiver_real.py"),
+            block.replace(' | tee "$W1_PROFILE_OUT/real-receiver-controls.log"',
+                          ' | tee "$W1_PROFILE_OUT/real-receiver-controls.log" || true'),
+            block.replace("          set -euo pipefail\n", "          set +e\n"),
+        ):
+            with self.subTest(replacement=replacement):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, replacement, 1))
+
+    def test_real_receiver_requires_all_exact_v2_inputs_and_fresh_output(self):
+        block = self.step("real_receiver_controls")
+        mutations = (
+            ('--verifier "$w1_v2_verifier"', ''),
+            ('--verifier-sha256 "$w1_v2_verifier_sha"', ''),
+            ('--receipt "$w1_v2_fixture/succinct.bin"', ''),
+            ('--input "$w1_v2_fixture/input.bin"', ''),
+            ('--header "$w1_v2_fixture/header.bin"', ''),
+            ('--expected-artifacts "$w1_v2_fixture/expected-artifacts.bin"', ''),
+            ('evidence/pon-w1-full-v2-20261105', 'evidence/pon-w1-complete-succinct-20261028/full-proof'),
+            ('--out "$W1_PROFILE_OUT/real-receiver-controls"', '--out /tmp/retained-receiver-success'),
+            ('257014, "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"',
+             '257014, "' + "0" * 64 + '"'),
+            ('counts = {"tests_run": 7,', 'counts = {"tests_run": 0,'),
+            ('"skipped": 0', '"skipped": 7'),
+            ('"fresh_proof_generations": 0', '"fresh_proof_generations": 1'),
+            ('report.get("actual_complete_receipt_used") is not True', 'False'),
+        )
+        for before, after in mutations:
+            self.assertIn(before, block)
+            with self.subTest(before=before):
+                changed = block.replace(before, after, 1)
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, changed, 1))
+
+    def test_real_receiver_requires_current_successful_release_build(self):
+        verifier, receiver = self.step("verifier_v2"), self.step("real_receiver_controls")
+        self.assertIn(verifier + receiver, self.workflow)
+        with self.assertRaises(ValueError):
+            self.workflow_check(self.workflow.replace(verifier + receiver, receiver + verifier, 1))
+        for before, after in (
+            ('cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest"',
+             'true # cargo +1.95.0 build --locked --release --manifest-path "$w1_manifest"'),
+            ('cp "$CARGO_TARGET_DIR/release/w1-verify-v2"', 'cp /tmp/old-verifier'),
+            ('-- -D warnings', '-- -A warnings'),
+        ):
+            self.assertIn(before, verifier)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(verifier, verifier.replace(before, after, 1), 1))
+
+    def test_postwin_staged_count_and_source_identity_cannot_be_softened(self):
+        for name, before, after in (
+            ("staged_tests", "counts != ['32']", "counts != ['0']"),
+            ("staged_tests", " or 'skipped=' in text", ""),
+            ("source", "python3 scripts/ci/verify_ci_source.py", "true # python3 scripts/ci/verify_ci_source.py"),
+            ("source_after", "python3 scripts/ci/verify_ci_source.py", "true # python3 scripts/ci/verify_ci_source.py"),
+            ("toolchain", "rustup toolchain install 1.95.0", "true # rustup toolchain install 1.95.0"),
+        ):
+            block = self.step(name)
+            self.assertIn(before, block)
+            with self.subTest(name=name, before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(block, block.replace(before, after, 1), 1))
+
+    def test_postwin_controls_keep_head_merge_matrix_and_read_only_scope(self):
+        for before, after in (
+            ("        source: [head, prospective-merge]", "        source: [head]"),
+            ("    timeout-minutes: 60", "    timeout-minutes: 0"),
+            ("  contents: read", "  contents: write"),
+            ("  cancel-in-progress: false", "  cancel-in-progress: true"),
+            ("      - evidence/pon-w1-full-v2-20261105/**\n", ""),
+        ):
+            self.assertIn(before, self.workflow)
+            with self.subTest(before=before):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow.replace(before, after, 1))
+
+    def test_repository_contracts_cannot_move_into_optional_profile(self):
+        for command in self.commands():
+            inserted = ('      - name: Wrong duplicate required lane\n'
+                        '        run: ' + command + '\n')
+            with self.subTest(command=command):
+                with self.assertRaises(ValueError):
+                    self.workflow_check(self.workflow + inserted)
+
 
 
 if __name__ == '__main__':

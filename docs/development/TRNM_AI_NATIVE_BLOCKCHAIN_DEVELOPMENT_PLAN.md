@@ -29,6 +29,38 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Funded W1 generation runtime continuation, 2026-11-07 UTC:** Continue the
+existing integration lineage from recovered commit
+`b6c730c2a81b932266c9a8b93858e2641aafd9f7`. The
+[runtime evidence record](../../evidence/pon-w1-runtime-recovery-20261107/README.md)
+keeps actual native winner/receiver identity, original deadlines, complete backend
+plans, NativeTask/M12 ownership and deployment/security qualification separate.
+GenerationV2 does not replace NativeTask V1 or rewind local revocation history.
+The new fixed-claim verifier ABBA still fails verification and raw-payload benefit.
+Cloud GPU presence is not proof acceleration: the fixed r0vm release is CPU-only,
+and a separate CUDA build request was rejected before dispatch by the normal
+provider ownership guard. No new full proof is claimed by component checks.
+The original business limits and all production activation gates remain unchanged.
+
+**Proof publication latency, 2026-11-07 America/New_York:** Continue the existing
+#688 candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66` with the
+[full-W1 latency contract](specs/pon/PROOF_PUBLICATION_LATENCY_V1.md) and
+[asynchronous settlement boundary](specs/pon/ASYNC_PROOF_SETTLEMENT_BOUNDARY_V1.md).
+Retain the complete v2 statement and independent expected-artifact binding.
+Read the original byte-pinned pipeline into exclusive stage intervals and
+separately nested clocks; do not relabel its 6,248.484-second fresh pipeline as
+a measured winner-to-publication or WAN clock. Separately screen predeclared
+finite campaigns against explicit competing-arrival assumptions, complete
+winner/receiver endpoints and original absolute deadlines. Keep failed,
+late, canceled and unknown observations in their proper denominators; finite
+screening cannot establish population p99, fresh-proof independence or admission.
+The [reproduction record](../../evidence/pon-proof-publication-latency-20261107/README.md)
+retains the 43 segment stages and 43-lift/42-join compression costs. It supplies
+no new proof or performance improvement. Full native W1 remains the current
+work gate; owner-authorized task payment and a future independently verified
+canonical proof settlement are distinct interfaces. Original four-second/16,
+PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
+
 **Original business readback and component follow-up, 2026-11-07 UTC — HOLD:**
 The [retained business readback](../../evidence/pon-business-gates-readback-20261107/README.md)
 records real push head `d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89`,
@@ -7644,3 +7676,46 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+
+### 2026-11-07 funded W1 generation and matched runtime gates
+
+The recovered baseline preserves the complete v2 independent expected-artifacts
+binding. The native winner records the actual target predicate event and original
+Linux monotonic clock/boot before downstream proof work. The independent receiver
+verifies raw complete receipts against the original header and external 64-byte
+artifact selection. Cancellation after an ACK or the final ABBA row retains the
+completed fact while vetoing operation success. The nested equal-five-second
+reaper race was reproduced with real distinct sessions; an explicit outer cleanup
+budget and recursive owner cgroup checks preserve terminal truth. Cleanup time
+does not restore proof eligibility or replace the original deadline.
+
+The staged backend adds bounded segment parallelism, balanced recursion and
+explicit worker/Rayon plans while retaining complete claim continuity, every
+issued worker's drain, strict SDK seals and independent v2 verification. The
+explicit retained-guest feature checks the actual historical ProgramBinary and
+image ID; it does not claim a fresh guest compilation. Startup/loading remain
+inside the observed execution path. Neither API object reuse nor thread joins
+prove that backend processes terminated or resources were released.
+
+GenerationV2 connects existing NativeTask funding/operation owners and M12
+holds/effects to real local and provider target interfaces. Its task fence is
+persistent across generation journals and reorganization. Pending operations
+observe their original dispatch; cancellation does not create a replacement
+request, settlement entitlement or legal native tag. The isolated research Node
+and its height window are not an active production chain. Unknown GPU/resource
+usage remains unknown, retains its hold, and cannot authorize payment.
+
+The actual ten-block ABBA campaign records twenty full native replays and twenty
+complete historical-receipt verifications. Inner medians are 2.5871055 ms and
+34.7207115 ms: the proof path is 13.420678631 times the native path. Raw receipt
+bytes are 5.191572739 times the native input. Supervisor/polling outer time is a
+separate clock. Repeated verification of one receipt adds no fresh generation
+sample and establishes no prover or publication population p99.
+
+The [detailed evidence and limitations](../../evidence/pon-w1-runtime-recovery-20261107/README.md)
+retain failed observations, actual provider refusals, source/build identities and
+original business/security gates. Same-host equal quotas alone do not remove
+cache, bandwidth or background-load interference. Fresh full executions, funded
+expensive-generation observations and later remote receipt handoffs must each
+supply their own original operation, process, clock and complete artifact evidence.
