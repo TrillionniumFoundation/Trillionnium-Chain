@@ -239,10 +239,11 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
     // These are the only two optional normal Cargo paths: the exact toolchain
     // root lib and the exact base profile output. Either may be absent from a
     // build-script environment, but no unlisted directory is admitted.
+    let target_profile = paths.target_directory(profile)?;
     let mut allowed = required.clone();
     for optional in [
         canonical_directory(&toolchain.join("lib"))?,
-        paths.target_directory(profile)?,
+        target_profile.clone(),
     ] {
         if !allowed.insert(optional) {
             return Err("optional loader directory overlaps the required set".into());
