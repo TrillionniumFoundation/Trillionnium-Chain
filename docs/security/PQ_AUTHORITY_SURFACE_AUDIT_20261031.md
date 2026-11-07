@@ -2,6 +2,10 @@
 
 **HOLD / NOT A COMPLETE AUTHORITY MAP / NOT A PRODUCTION-SECURITY CLAIM.**
 
+Historical absence findings below retain their named source scope. See the
+[2026-11-07 M15 source update](#2026-11-07-m15-source-update)
+before applying them to a later candidate.
+
 A first-pass research scan should not treat every `Ed25519` import as a deployed exploit, or every ML-DSA verification as an authorized effect. The [source scanner](../../scripts/ci/pq_authority_surface_scan.py) inventories Rust sources under `trillionnium/crates` with explicit line numbers, file SHA-256 digests, known owner hints and **unreviewed** indicators.
 
 ```sh
@@ -199,3 +203,26 @@ addition; independent witness deployment and custody remain unqualified. The
 composed Cell, storage/replay and preparation controls need new native
 observations on the combined source; either parent's reports retain their own
 source, binary and resource limits.
+
+### 2026-11-07 M15 source update
+
+The earlier no-installer/configuration-consumer findings describe their named
+historical sources, not `e36cfb88956a0e35e53d74c5ab71c94c628439d9`. At e36 the
+Node depends on `trnm-release-bundle`; the explicit
+[M15 owner](../../trillionnium/crates/trnm-pon-node/src/release_owner.rs)
+routes installation and launch through the retained owner, and
+`operator-continuous-m15-v1` connects the ordinary Node command to
+[`Session::consume`](../../trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs)
+for the selected sealed M15 profile. These actual source connections do not
+establish every installation/configuration entrypoint, a general Cell activation
+consumer, independent recovery custody, or production acceptance.
+
+The [seven-layer continuation](../../evidence/pq-seven-layer-continuation-20261107/README.md)
+retains the exact e36 source and native outcomes: 1217 passed, 35 failed and 33
+ignored in the complete library invocation. The 23 journal/recovery ENOENT
+failures and 12 Unix-listener EPERM failures remain distinct failed observations.
+The release service fixtures fail at socket binding before their clock stamp.
+The ignored ordinary-M15 consumer control was not executed. Earlier receipts
+keep their own source identities; neither historical success nor source presence
+qualifies this later composition. Whole-chain PQ, full-state rollback resistance
+and production activation remain HOLD.

@@ -1,0 +1,30 @@
+{
+  "assertions_unchanged_from_frozen": true,
+  "composed_pins": 713,
+  "left": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+  "left_pins": 713,
+  "required_paths": 632,
+  "retained_left_paths": true,
+  "retained_right_paths": true,
+  "reviewed_rebindings": [
+    {
+      "after": "614d7c1d26a06f221265b241ceb84c0d04f01330",
+      "before": "f9343222886105db2b80c1e5d813f8379dc6ccb2",
+      "path": ".github/workflows/codeql-real-exact-source.yml"
+    },
+    {
+      "after": "ef5479e859528e19d843343bc0ab658e9b4d3df6",
+      "before": "fbf7cf2986f832b43c18afde6fa690b8cd358d17",
+      "path": "scripts/ci/test_codeql_retention.py"
+    },
+    {
+      "after": "e67f9e3e5852c194818b0e99f592899cd0262358",
+      "before": "226c4b1b2c78deb50415922adc9f21f5799913e4",
+      "path": "docs/security/PQ_AUTHORITY_SURFACE_AUDIT_20261031.md"
+    }
+  ],
+  "right": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+  "right_pins": 558,
+  "source_base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "whole_chain_pq_qualified": false
+}

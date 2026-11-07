@@ -1,0 +1,1899 @@
+{
+  "schema": "trnm-pq-frozen-node-failure-independent-readback-v1",
+  "observed_utc": "2026-11-07T11:19:37.128743+00:00",
+  "readback_script": {
+    "path": "/workspace/scratch/a6448796d7e7/recovery-failure-readback/readback.py",
+    "bytes": 22941,
+    "sha256": "a4aca00c210e1b79c1f2b0b587c3bfc4c418cd3ad10930d57903ba1c377e9d9c"
+  },
+  "scope": {
+    "product_tests_executed_by_readback": false,
+    "repository_edited": false,
+    "live_services_modified": false,
+    "budget_changes": false,
+    "whole_chain_quantum_security_qualified": false,
+    "guard": "HOLD",
+    "method": "Read existing terminal logs and receipts, compare their hashes, and inspect immutable Git objects; no product executable is invoked."
+  },
+  "frozen_source": {
+    "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+    "tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+    "source_identity_check_is_not_a_test_pass": true
+  },
+  "primary_artifacts": [
+    {
+      "path": "/workspace/scratch/a6448796d7e7/self-time-namespace-observation.json",
+      "bytes": 1241,
+      "sha256": "8b369cc2093cb76afd5d7fa901fb80ade1ca2691c62b48809408a03401a38a09"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/completed-node-elf-retirement.json",
+      "bytes": 631,
+      "sha256": "7bf3a62c24e4452fd6fae0e6afa67022cead7b9e8745a47074459c9a0f5a3752"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-full.json",
+      "bytes": 2469,
+      "sha256": "5aedf3f6c23ee15063ea387c6bb900837293169543598d1c6b0fa16b1067b6b7"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-full.log",
+      "bytes": 7434812,
+      "sha256": "1c3aa009bbea424ce9b03986de6b5f22e10234a9e3ade37d117027ab365289bb"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-full.recorder.log",
+      "bytes": 135,
+      "sha256": "dc511928f78705e1c6f14dc45ec12f3e6abda233d8b6a3847815c84bb225c104"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-registry.json",
+      "bytes": 2339,
+      "sha256": "8293e6040c03bd706e2e5f1dd14ce70052f78bf17cfb694a14277f2545728484"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-registry.log",
+      "bytes": 145102,
+      "sha256": "548dbde5bb7b57e199f1176f37f92cffce31b667f53f23fa6fcc813e2d4c551a"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-registry.recorder.log",
+      "bytes": 140,
+      "sha256": "883653b52fc87f4dddc8cb98d4324eb7948bbad28f3f9b21efb1ebcafd8f4802"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness.json",
+      "bytes": 2532,
+      "sha256": "7a094224ec51b62a3bd0599c7060f3e5a241af47c4449c22e794b5cf1db79d3a"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness.log",
+      "bytes": 4176,
+      "sha256": "be594df8a4c2b9f580f3849863d5ead6fb6816fbc785f6aa093144a5c11ec05d"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness.recorder.log",
+      "bytes": 145,
+      "sha256": "82e0da42709b7ee3bcba8d975ae08d35fcbc85bacdde1da1c2e34c15ec3c98e3"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness-registry.json",
+      "bytes": 2513,
+      "sha256": "5f10f1dc0db49c11439123987aff2e6d90910b7c73bcbe9614fc7e0c9c562973"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness-registry.log",
+      "bytes": 1191,
+      "sha256": "6d186aea20f8230443d2003d8973e1e627ef1f277164ff086749cb78da002403"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness-registry.recorder.log",
+      "bytes": 155,
+      "sha256": "521c307aca99845065eedbbab089fb638be73aed0f096c06865e7f75892737bb"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-build.json",
+      "bytes": 2459,
+      "sha256": "46754dbf3044d9f86894e4972304520d8e604caa3b877c850254064695399162"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-build.log",
+      "bytes": 113826,
+      "sha256": "90ccd3bf4f154298f88e8aabafa7477d00876a8cad83a865ea8bbb02e60b5b67"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-build.recorder.log",
+      "bytes": 137,
+      "sha256": "9f0ca25a23dd331c282af68b2fe6ec8ef9a68c0f632b5ab5108b65d030797173"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/compiler.json",
+      "bytes": 2253,
+      "sha256": "5f106f15a626b4a0adec577755428a7965698abd6d96969c331db2fee87d60eb"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/compiler.log",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/compiler.recorder.log",
+      "bytes": 135,
+      "sha256": "ce6b372f78828162bd2ee85f0c28432cf614f89fb2db8ecc333931955be3143f"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/provider-version.json",
+      "bytes": 2350,
+      "sha256": "cc78ab205ea80b3e6bf1c360541240c1d61ae48377c2b8f0f5caf482c0d37b0f"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/provider-version.log",
+      "bytes": 63,
+      "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/provider-version.recorder.log",
+      "bytes": 143,
+      "sha256": "6a04a0f56004c7d1f688307b1abceaff7e46d370abbf5e58363ecd727104641b"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-elf-before.json",
+      "bytes": 641,
+      "sha256": "3d4550eab412001f78094149578e62e702d5135b17b58a97677fac04f3ccd4a3"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/node-elf-after.json",
+      "bytes": 641,
+      "sha256": "3d4550eab412001f78094149578e62e702d5135b17b58a97677fac04f3ccd4a3"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness-elf-before.json",
+      "bytes": 577,
+      "sha256": "78643bcd5093ca3ce3ed328625c78850464ece97edcb8b608548627e4d02da97"
+    },
+    {
+      "path": "/workspace/scratch/a6448796d7e7/validation-e36cfb88/native/tls-cli-and-witness-elf-after.json",
+      "bytes": 577,
+      "sha256": "78643bcd5093ca3ce3ed328625c78850464ece97edcb8b608548627e4d02da97"
+    }
+  ],
+  "full_node": {
+    "command_receipt": {
+      "after": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "argv": [
+        "timeout",
+        "1500",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--all-features",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "before": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "cwd": "/workspace/scratch/a6448796d7e7/chain-pq",
+      "elapsed_ns": 1409512013911,
+      "environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a6448796d7e7/target",
+        "GITHUB_RUN_ATTEMPT": null,
+        "GITHUB_RUN_ID": null,
+        "OPENSSL_DIR": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": null,
+        "RUSTC": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustc",
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "618a562227002c97f8ee6d8efd69c9d3aef0e5952c2e6c43bdc5e8e5d1ca0a85",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "exit_code": 101,
+      "log_bytes": 7434812,
+      "log_file": "node-full.log",
+      "log_sha256": "1c3aa009bbea424ce9b03986de6b5f22e10234a9e3ade37d117027ab365289bb",
+      "schema": "trnm-pq-native-command-v1",
+      "started_utc": "2026-11-07T10:48:31.174527+00:00",
+      "status": "command_failed",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "registry_receipt": {
+      "after": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "argv": [
+        "timeout",
+        "1500",
+        "/workspace/scratch/a6448796d7e7/target/debug/deps/trnm_pon_node-92e007dbc5af8b03",
+        "--list"
+      ],
+      "before": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "cwd": "/workspace/scratch/a6448796d7e7/chain-pq",
+      "elapsed_ns": 2302421198,
+      "environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a6448796d7e7/target",
+        "GITHUB_RUN_ATTEMPT": null,
+        "GITHUB_RUN_ID": null,
+        "OPENSSL_DIR": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": null,
+        "RUSTC": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustc",
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "618a562227002c97f8ee6d8efd69c9d3aef0e5952c2e6c43bdc5e8e5d1ca0a85",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "exit_code": 0,
+      "log_bytes": 145102,
+      "log_file": "node-registry.log",
+      "log_sha256": "548dbde5bb7b57e199f1176f37f92cffce31b667f53f23fa6fcc813e2d4c551a",
+      "schema": "trnm-pq-native-command-v1",
+      "started_utc": "2026-11-07T10:48:28.823533+00:00",
+      "status": "command_succeeded",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "registry_count": 1285,
+    "final_summary": {
+      "status": "FAILED",
+      "passed": 1217,
+      "failed": 35,
+      "ignored": 33,
+      "measured": 0,
+      "filtered_out": 0,
+      "elapsed_seconds": 1405.0
+    },
+    "failure_group_counts": {
+      "recovery_cases": 6,
+      "journal": 17,
+      "release_service": 8,
+      "existing_owner": 1,
+      "combined_witness": 3
+    },
+    "failure_errno_counts": {
+      "ENOENT_2": 23,
+      "EPERM_1": 12
+    },
+    "failures": [
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_call_cap_reservation_survives_cold_open_without_native_dispatch",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 317,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_call_cap_reservation_survives_cold_open_without_native_dispatch' (821) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:317:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_hybrid_tls_parent_recovery_and_cold_membership_keep_one_original_campaign",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 55,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_hybrid_tls_parent_recovery_and_cold_membership_keep_one_original_campaign' (827) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:55:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 175,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_lost_ack_and_cold_resume_reuse_exact_wire_without_history_consuming_sequence' (833) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:175:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 55,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_plain_parent_recovery_and_cold_membership_keep_one_original_campaign' (840) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:55:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_repeated_eof_and_cold_open_keep_the_original_three_attempt_limit",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 264,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_npq6_repeated_eof_and_cold_open_keep_the_original_three_attempt_limit' (846) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:264:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_signed_expiry_label_cannot_fence_a_healthy_local_campaign_or_gain_a_retry",
+        "status": "FAILED",
+        "group": "recovery_cases",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+            "line": 375,
+            "column": 10,
+            "line_text": "        .unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'ingress::pq_network::tls::tests::shared_tests::recovery_cases::actual_signed_expiry_label_cannot_fence_a_healthy_local_campaign_or_gain_a_retry' (853) panicked at crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs:375:10:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_actual_fsynced_candidate_inode_is_bound_for_fresh_and_existing_pending",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 588,
+            "column": 87,
+            "line_text": "        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_actual_fsynced_candidate_inode_is_bound_for_fresh_and_existing_pending' (1867) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:588:87:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_blob_prewrite_cut_leaves_inert_orphan_without_sequence_or_budget_credit",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 162,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_blob_prewrite_cut_leaves_inert_orphan_without_sequence_or_budget_credit' (1868) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:162:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_changed_held_blob_or_prepared_predecessor_never_becomes_a_new_publication",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 557,
+            "column": 87,
+            "line_text": "        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_changed_held_blob_or_prepared_predecessor_never_becomes_a_new_publication' (1869) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:557:87:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_cold_open_cannot_renew_expired_epoch_or_change_boot_namespace_identity",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 457,
+            "column": 75,
+            "line_text": "    let journal = Journal::initialize(&path, &client, [41; 32], 1, &plan).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_cold_open_cannot_renew_expired_epoch_or_change_boot_namespace_identity' (1870) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:457:75:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_cold_open_preserves_exact_wire_sequence_epoch_and_history_budget",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 124,
+            "column": 79,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 7, &plan).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_cold_open_preserves_exact_wire_sequence_epoch_and_history_budget' (1871) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:124:79:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_cold_replay_rejects_context_initial_sequence_bad_signature_and_wrong_signed_sequence",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 314,
+            "column": 87,
+            "line_text": "        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_cold_replay_rejects_context_initial_sequence_bad_signature_and_wrong_signed_sequence' (1872) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:314:87:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_direct_send_expiry_fence_requires_exact_prepared_and_prior_attempt",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 738,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_direct_send_expiry_fence_requires_exact_prepared_and_prior_attempt' (1873) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:738:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_expired_unknown_request_is_never_resigned_or_replaced_by_new_expiry",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 354,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_expired_unknown_request_is_never_resigned_or_replaced_by_new_expiry' (1874) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:354:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_expiry_after_durable_attempt_keeps_the_reservation_and_fences_all_reentry",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 704,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_expiry_after_durable_attempt_keeps_the_reservation_and_fences_all_reentry' (1875) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:704:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_expiry_fence_prepared_cut_is_sticky_and_cold_completion_never_reopens",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 669,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_expiry_fence_prepared_cut_is_sticky_and_cold_completion_never_reopens' (1876) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:669:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_hard_links_symlinks_fifo_oversize_and_broad_modes_refuse_before_decode",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 516,
+            "column": 83,
+            "line_text": "        let journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_hard_links_symlinks_fifo_oversize_and_broad_modes_refuse_before_decode' (1877) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:516:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_lock_inode_and_named_directory_replacement_fence_before_snapshot_publication",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 476,
+            "column": 87,
+            "line_text": "        let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_lock_inode_and_named_directory_replacement_fence_before_snapshot_publication' (1878) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:476:87:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_lost_actual_tcp_ack_replays_original_wire_and_durably_consumes_only_signed_reply",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 291,
+            "column": 15,
+            "line_text": "    operation.unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_lost_actual_tcp_ack_replays_original_wire_and_durably_consumes_only_signed_reply' (1879) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:291:15:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_original_rpc_submit_and_parent_caps_survive_real_cold_open",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 419,
+            "column": 77,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, id, 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_original_rpc_submit_and_parent_caps_survive_real_cold_open' (1881) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:419:77:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_pre_io_recheck_binds_named_snapshot_without_changing_durable_budget",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 784,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_pre_io_recheck_binds_named_snapshot_without_changing_durable_budget' (1883) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:784:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_prepared_request_and_attempt_fsync_cuts_finish_exact_local_transition_on_cold_open",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 185,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_prepared_request_and_attempt_fsync_cuts_finish_exact_local_transition_on_cold_open' (1884) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:185:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt",
+        "status": "FAILED",
+        "group": "journal",
+        "cause_id": "journal_time_namespace_absent",
+        "errno_values": [
+          2
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+            "line": 221,
+            "column": 83,
+            "line_text": "    let mut journal = Journal::initialize(&path, &client, [41; 32], 1, &f.plan()).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'public_submit::pq::journal::tests::journal_unknown_publication_is_sticky_and_cold_replay_does_not_refund_attempt' (1885) panicked at crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs:221:83:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: No such file or directory (os error 2)\", source: Some(Os { code: 2, kind: NotFound, message: \"No such file or directory\" }), request_history_budget: false }"
+      },
+      {
+        "name": "release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::actual_signed_clock_wrong_request_nonce_namespace_or_backward_floor_fences' (1911) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::admitted_completion_after_expiry_lost_reply_is_exact_and_cold_does_not_redispatch' (1912) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::clock_reply_then_real_elapsed_expiry_refuses_without_cas' (1913) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::durable_preparation_then_real_elapsed_expiry_refuses_without_cas' (1914) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::last_clock_callback_lock_row_or_provisioning_drift_refuses_and_retains_fault' (1915) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::prepared_failure_keeps_canonical_row_and_temp_is_not_admission' (1916) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::signed_cas_uses_exact_old_once_and_returns_only_the_observed_lower_floor' (1917) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence",
+        "status": "FAILED",
+        "group": "release_service",
+        "cause_id": "release_clock_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+            "line": 70,
+            "column": 56,
+            "line_text": "        let listener = UnixListener::bind(&clock_path).unwrap();"
+          }
+        ],
+        "original_stdout_block": "thread 'release_owner::service_tests::wrong_signature_domain_binding_namespace_and_nonce_cannot_mutate_or_fence' (1918) panicked at crates/trnm-pon-node/src/release_owner/service_test_fixture.rs:70:56:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "store::pq_existing_owner_tests::existing_pq_owner_rejects_link_special_file_and_incompatible_owner_without_repair",
+        "status": "FAILED",
+        "group": "existing_owner",
+        "cause_id": "special_file_fixture_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs",
+            "line": 279,
+            "column": 69,
+            "line_text": "            2 => Some(std::os::unix::net::UnixListener::bind(&path).unwrap()),"
+          }
+        ],
+        "original_stdout_block": "thread 'store::pq_existing_owner_tests::existing_pq_owner_rejects_link_special_file_and_incompatible_owner_without_repair' (2804) panicked at crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs:279:69:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+      },
+      {
+        "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart",
+        "status": "FAILED",
+        "group": "combined_witness",
+        "cause_id": "independent_witness_child_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 211,
+            "column": 21,
+            "line_text": "                    panic!("
+          },
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 330,
+            "column": 71,
+            "line_text": "    let listener = UnixListener::bind(directory.join(\"witness.sock\")).unwrap();"
+          }
+        ],
+        "original_stdout_block": "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2815,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}\n\nthread 'store::pq_rollback_witness::combined_tests::guarded_npq6_submit_recovers_after_invalid_signature_and_independent_process_restart' (2813) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:\nindependent witness exited before ready (exit status: 101): \nthread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2816) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nTRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":556,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}"
+      },
+      {
+        "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics",
+        "status": "FAILED",
+        "group": "combined_witness",
+        "cause_id": "independent_witness_child_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 211,
+            "column": 21,
+            "line_text": "                    panic!("
+          },
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 330,
+            "column": 71,
+            "line_text": "    let listener = UnixListener::bind(directory.join(\"witness.sock\")).unwrap();"
+          }
+        ],
+        "original_stdout_block": "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2819,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}\n\nthread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_cleanup_preserves_primary_error_and_child_diagnostics' (2817) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:\nindependent witness exited before ready (exit status: 101): \nthread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2820) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nTRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":556,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}"
+      },
+      {
+        "name": "store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart",
+        "status": "FAILED",
+        "group": "combined_witness",
+        "cause_id": "independent_witness_child_unix_bind_eperm",
+        "errno_values": [
+          1
+        ],
+        "panic_locations": [
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 211,
+            "column": 21,
+            "line_text": "                    panic!("
+          },
+          {
+            "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+            "line": 330,
+            "column": 71,
+            "line_text": "    let listener = UnixListener::bind(directory.join(\"witness.sock\")).unwrap();"
+          }
+        ],
+        "original_stdout_block": "TRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":2823,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}\n\nthread 'store::pq_rollback_witness::combined_tests::guarded_npq6_valid_submit_exact_replay_and_independent_process_restart' (2821) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:211:21:\nindependent witness exited before ready (exit status: 101): \nthread 'store::pq_rollback_witness::combined_tests::independent_witness_process_child' (2824) panicked at crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs:330:71:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nTRNM_PQ_PHASE_DIAGNOSTIC {\"budgets_unchanged\":true,\"cpu_is_calling_thread_only\":true,\"failure_checkpoint_saved\":false,\"has_open_operations\":false,\"has_open_records\":false,\"last_failure\":null,\"last_service_failure\":null,\"last_tcp_failure\":null,\"mark_order\":[\"transport_entered\",\"cas_commit_attempted\",\"cas_committed\",\"local_commit_attempted\",\"local_committed\",\"matching_cas_receipt\",\"fixture_delay_entered\"],\"measurement_failures\":0,\"nested_intervals_are_not_additive\":true,\"observation_has_authority\":false,\"operation_ids_are_process_local\":true,\"phase_totals\":[],\"process_id\":556,\"record_capacity\":8,\"records\":[],\"records_closed\":0,\"records_completed\":0,\"records_overwritten\":0,\"records_started\":0,\"schema\":\"pon-pq-test-phase-observation-v1\",\"scope_snapshot_is_final\":true,\"snapshot_is_not_service_completion\":true}"
+      }
+    ],
+    "failed_rows_and_final_failure_names_agree": true,
+    "nonfailure_stdout_blocks_with_expected_or_handled_panics": 22,
+    "embedded_subprocess_summaries_are_not_added_to_outer_counts": true,
+    "timeout_reached": false,
+    "status_remains": "FAILED"
+  },
+  "cli": {
+    "command_receipt": {
+      "after": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "argv": [
+        "timeout",
+        "1500",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "pq_tls_cli",
+        "--test",
+        "pq_tls_witness_cli",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "before": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "cwd": "/workspace/scratch/a6448796d7e7/chain-pq",
+      "elapsed_ns": 8866541079,
+      "environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a6448796d7e7/target",
+        "GITHUB_RUN_ATTEMPT": null,
+        "GITHUB_RUN_ID": null,
+        "OPENSSL_DIR": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": null,
+        "RUSTC": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustc",
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "618a562227002c97f8ee6d8efd69c9d3aef0e5952c2e6c43bdc5e8e5d1ca0a85",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "exit_code": 101,
+      "log_bytes": 4176,
+      "log_file": "tls-cli-and-witness.log",
+      "log_sha256": "be594df8a4c2b9f580f3849863d5ead6fb6816fbc785f6aa093144a5c11ec05d",
+      "schema": "trnm-pq-native-command-v1",
+      "started_utc": "2026-11-07T11:14:35.677512+00:00",
+      "status": "command_failed",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "registry_receipt": {
+      "after": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "argv": [
+        "timeout",
+        "1500",
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--all-features",
+        "--test",
+        "pq_tls_cli",
+        "--test",
+        "pq_tls_witness_cli",
+        "--",
+        "--list"
+      ],
+      "before": {
+        "base": null,
+        "candidate": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+        "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1106065430,
+        "tracked_entries": 11034,
+        "tracked_worktree_verified": true
+      },
+      "cwd": "/workspace/scratch/a6448796d7e7/chain-pq",
+      "elapsed_ns": 153991108414,
+      "environment": {
+        "CARGO_BUILD_JOBS": "2",
+        "CARGO_ENCODED_RUSTFLAGS": null,
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_TARGET_DIR": "/workspace/scratch/a6448796d7e7/target",
+        "GITHUB_RUN_ATTEMPT": null,
+        "GITHUB_RUN_ID": null,
+        "OPENSSL_DIR": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install",
+        "OPENSSL_STATIC": "1",
+        "RUNNER_ARCH": null,
+        "RUSTC": "/workspace/scratch/62902f6722b7/native-next/rust-1.95.0/bin/rustc",
+        "RUSTC_WORKSPACE_WRAPPER": null,
+        "RUSTC_WRAPPER": null,
+        "RUSTFLAGS": null,
+        "RUST_TEST_THREADS": "1",
+        "TRNM_PQ_OPENSSL": "/workspace/scratch/62902f6722b7/pq-next/trnm-pq-provider-3.5.9.oVQCdYOJ/install/bin/openssl",
+        "TRNM_PQ_OPENSSL_SHA256": "618a562227002c97f8ee6d8efd69c9d3aef0e5952c2e6c43bdc5e8e5d1ca0a85",
+        "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+      },
+      "exit_code": 0,
+      "log_bytes": 1191,
+      "log_file": "tls-cli-and-witness-registry.log",
+      "log_sha256": "6d186aea20f8230443d2003d8973e1e627ef1f277164ff086749cb78da002403",
+      "schema": "trnm-pq-native-command-v1",
+      "started_utc": "2026-11-07T11:12:01.086964+00:00",
+      "status": "command_succeeded",
+      "whole_chain_quantum_security_qualified": false
+    },
+    "separate_targets": {
+      "pq_tls_cli": {
+        "registry_count": 4,
+        "registry_names": [
+          "ordinary_binary_bad_config_pin_refuses_before_owner_creation",
+          "ordinary_binary_local_certificate_constraints_refuse_before_owner_creation",
+          "ordinary_binary_pq_tls_serve_dispatches_original_node_and_preserves_replay_after_exit",
+          "ordinary_binary_tls_nonloopback_refuses_before_config_and_owner"
+        ],
+        "actual_summary": {
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed_seconds": 5.9
+        },
+        "actual_tests": [
+          {
+            "name": "ordinary_binary_bad_config_pin_refuses_before_owner_creation",
+            "status": "ok",
+            "scope": "Actual config byte mutation after pinning is rejected before owner creation."
+          },
+          {
+            "name": "ordinary_binary_local_certificate_constraints_refuse_before_owner_creation",
+            "status": "ok",
+            "scope": "Actual local certificate constraint cases refuse before owner creation."
+          },
+          {
+            "name": "ordinary_binary_pq_tls_serve_dispatches_original_node_and_preserves_replay_after_exit",
+            "status": "ok",
+            "scope": "Actual bounded loopback pq-tls-serve process: ready profile checked, Head and Submit accepted, exact request replay preserved, normal exit, durable owner reopened and downgrade attempt refused. Service is five seconds; production_activation=false and public_history_tls=false are asserted."
+          },
+          {
+            "name": "ordinary_binary_tls_nonloopback_refuses_before_config_and_owner",
+            "status": "ok",
+            "scope": "Nonloopback listen refuses even with absent config; no owner is created."
+          }
+        ]
+      },
+      "pq_tls_witness_cli": {
+        "registry_count": 5,
+        "registry_names": [
+          "witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens",
+          "witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener",
+          "witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io",
+          "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+          "witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance"
+        ],
+        "actual_summary": {
+          "status": "FAILED",
+          "passed": 0,
+          "failed": 5,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed_seconds": 0.31
+        },
+        "failures": [
+          {
+            "name": "witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens",
+            "status": "FAILED",
+            "group": "cli_witness",
+            "cause_id": "cli_witness_fixture_unix_bind_eperm",
+            "errno_values": [
+              1
+            ],
+            "panic_locations": [
+              {
+                "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+                "line": 71,
+                "column": 52,
+                "line_text": "        let listener = UnixListener::bind(&socket).unwrap();"
+              }
+            ],
+            "original_stdout_block": "thread 'witness_existing_mode_never_creates_or_reenrolls_and_create_never_reopens' (3377) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:71:52:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace"
+          },
+          {
+            "name": "witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener",
+            "status": "FAILED",
+            "group": "cli_witness",
+            "cause_id": "cli_witness_fixture_unix_bind_eperm",
+            "errno_values": [
+              1
+            ],
+            "panic_locations": [
+              {
+                "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+                "line": 71,
+                "column": 52,
+                "line_text": "        let listener = UnixListener::bind(&socket).unwrap();"
+              }
+            ],
+            "original_stdout_block": "thread 'witness_missing_and_backlogged_endpoints_refuse_without_owner_or_listener' (3378) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:71:52:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+          },
+          {
+            "name": "witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io",
+            "status": "FAILED",
+            "group": "cli_witness",
+            "cause_id": "cli_witness_fixture_unix_bind_eperm",
+            "errno_values": [
+              1
+            ],
+            "panic_locations": [
+              {
+                "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+                "line": 71,
+                "column": 52,
+                "line_text": "        let listener = UnixListener::bind(&socket).unwrap();"
+              }
+            ],
+            "original_stdout_block": "thread 'witness_schema_identity_and_private_key_refusals_precede_owner_and_witness_io' (3379) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:71:52:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+          },
+          {
+            "name": "witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database",
+            "status": "FAILED",
+            "group": "cli_witness",
+            "cause_id": "cli_witness_fixture_unix_bind_eperm",
+            "errno_values": [
+              1
+            ],
+            "panic_locations": [
+              {
+                "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+                "line": 71,
+                "column": 52,
+                "line_text": "        let listener = UnixListener::bind(&socket).unwrap();"
+              }
+            ],
+            "original_stdout_block": "thread 'witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database' (3380) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:71:52:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+          },
+          {
+            "name": "witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance",
+            "status": "FAILED",
+            "group": "cli_witness",
+            "cause_id": "cli_witness_fixture_unix_bind_eperm",
+            "errno_values": [
+              1
+            ],
+            "panic_locations": [
+              {
+                "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+                "line": 71,
+                "column": 52,
+                "line_text": "        let listener = UnixListener::bind(&socket).unwrap();"
+              }
+            ],
+            "original_stdout_block": "thread 'witness_wrong_authenticated_service_binding_cannot_publish_ready_or_advance' (3381) panicked at crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs:71:52:\ncalled `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: \"Operation not permitted\" }"
+          }
+        ]
+      }
+    },
+    "registry_presence_does_not_mean_execution_passed": true,
+    "combined_command_status_remains": "FAILED",
+    "cli_counts_are_not_folded_into_full_node_counts": true
+  },
+  "causes": {
+    "journal_time_namespace_absent": {
+      "count_in_full_node": 23,
+      "errno": 2,
+      "observed": "Six recovery and seventeen journal tests return ENOENT during journal initialization.",
+      "source_path": "Journal::initialize (journal.rs:390) -> Epoch::new (93) -> stamp (54) -> metadata(/proc/self/ns/time).",
+      "host_corroboration": "/workspace/scratch/a6448796d7e7/self-time-namespace-observation.json",
+      "stage": "Before Files::acquire, prepare, or publish; recovery Harness readiness has already succeeded.",
+      "inference_scope": "Source-path attribution supported by the original ENOENT panics and independently observed missing exact namespace path; no backtrace or modified diagnostic test was run."
+    },
+    "release_clock_fixture_unix_bind_eperm": {
+      "count_in_full_node": 8,
+      "errno": 1,
+      "source_path": "release_owner/service_test_fixture.rs:70, UnixListener::bind(clock_path).",
+      "stage": "Fixture setup, before any clock-contract stamp; missing time namespace is a separate unmet condition, not the observed panic of these eight cases."
+    },
+    "special_file_fixture_unix_bind_eperm": {
+      "count_in_full_node": 1,
+      "errno": 1,
+      "source_path": "store/pq_existing_owner_tests.rs:279, UnixListener::bind(path).",
+      "stage": "Fault-2 Unix socket fixture construction; earlier symlink/hardlink loop iterations precede it, later incompatible-owner assertions are not reached."
+    },
+    "independent_witness_child_unix_bind_eperm": {
+      "count_in_full_node": 3,
+      "errno": 1,
+      "source_path": "store/pq_rollback_witness/combined_tests.rs:330 child UnixListener::bind(witness.sock); parent reports early exit at 211.",
+      "stage": "Child spawned and DurableWitness::open_existing returned successfully, then Unix listener creation failed before ready."
+    },
+    "cli_witness_fixture_unix_bind_eperm": {
+      "count_in_cli_witness": 5,
+      "errno": 1,
+      "source_path": "tests/pq_tls_witness_cli/support.rs:71, UnixListener::bind(w.sock).",
+      "stage": "All five call Witness::new first; DurableWitness::register_new returned successfully. Listener creation fails before the target CLI is launched and before the intended positive or negative assertions."
+    }
+  },
+  "host_observation": {
+    "clock_boottime_ns": 42997791673330,
+    "getpid": 5,
+    "observed_utc": "2026-11-07T10:56:22Z",
+    "paths": {
+      "/proc/self": {
+        "lstat": {
+          "dev": 30,
+          "ino": 4026531840,
+          "mode": "0o120777",
+          "size": 0
+        },
+        "readlink": "448323",
+        "stat": {
+          "dev": 30,
+          "ino": 2473488,
+          "mode": "0o40555",
+          "size": 0
+        }
+      },
+      "/proc/self/ns/pid": {
+        "lstat": {
+          "dev": 30,
+          "ino": 2473492,
+          "mode": "0o120777",
+          "size": 0
+        },
+        "stat": {
+          "dev": 4,
+          "ino": 4026532358,
+          "mode": "0o100444",
+          "size": 0
+        }
+      },
+      "/proc/self/ns/time": {
+        "lstat": {
+          "errno": 2,
+          "error": "No such file or directory"
+        },
+        "stat": {
+          "errno": 2,
+          "error": "No such file or directory"
+        }
+      },
+      "/proc/sys/kernel/random/boot_id": {
+        "lstat": {
+          "dev": 30,
+          "ino": 870623,
+          "mode": "0o100444",
+          "size": 0
+        },
+        "stat": {
+          "dev": 30,
+          "ino": 870623,
+          "mode": "0o100444",
+          "size": 0
+        }
+      }
+    },
+    "qualification": false,
+    "schema": "trnm-local-self-time-namespace-observation-v1"
+  },
+  "source_comparison": {
+    "refs": [
+      "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+      "b08e4f624c122175583094ea94f5c8c3150cec5d",
+      "e36cfb88956a0e35e53d74c5ab71c94c628439d9"
+    ],
+    "historical_baseline_context": "Parent identifies 1c14fab4 as the last complete full-pass source. This readback verifies exact source blobs, not a new historical test execution.",
+    "files": [
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "f663880bba1bfe54614e848e809073bb403d318a",
+            "bytes": 13707,
+            "sha256": "93878a60599aa42df5a20d5e90fefb4101d12d043724d7dd349efe8407735684"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "f663880bba1bfe54614e848e809073bb403d318a",
+            "bytes": 13707,
+            "sha256": "93878a60599aa42df5a20d5e90fefb4101d12d043724d7dd349efe8407735684"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "f663880bba1bfe54614e848e809073bb403d318a",
+            "bytes": 13707,
+            "sha256": "93878a60599aa42df5a20d5e90fefb4101d12d043724d7dd349efe8407735684"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+          "bytes": 13707,
+          "sha256": "93878a60599aa42df5a20d5e90fefb4101d12d043724d7dd349efe8407735684"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/fixture.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "3615d415b502bf802636b063d5616532e7e4faf1",
+            "bytes": 10809,
+            "sha256": "68e590a3564e7b394f62bbe3b50776bf4b522a277a4e71e3a2380a9575e54d9c"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "3615d415b502bf802636b063d5616532e7e4faf1",
+            "bytes": 10809,
+            "sha256": "68e590a3564e7b394f62bbe3b50776bf4b522a277a4e71e3a2380a9575e54d9c"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "3615d415b502bf802636b063d5616532e7e4faf1",
+            "bytes": 10809,
+            "sha256": "68e590a3564e7b394f62bbe3b50776bf4b522a277a4e71e3a2380a9575e54d9c"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/fixture.rs",
+          "bytes": 10809,
+          "sha256": "68e590a3564e7b394f62bbe3b50776bf4b522a277a4e71e3a2380a9575e54d9c"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/proxy.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "5a26187a4a2a70a3db672f4e9f88bec585ab5af3",
+            "bytes": 4703,
+            "sha256": "b49c6343396e8b4ab545dc8d813c7c0fbf7e99d350e4ec76fe71d1de95ed5322"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "5a26187a4a2a70a3db672f4e9f88bec585ab5af3",
+            "bytes": 4703,
+            "sha256": "b49c6343396e8b4ab545dc8d813c7c0fbf7e99d350e4ec76fe71d1de95ed5322"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "5a26187a4a2a70a3db672f4e9f88bec585ab5af3",
+            "bytes": 4703,
+            "sha256": "b49c6343396e8b4ab545dc8d813c7c0fbf7e99d350e4ec76fe71d1de95ed5322"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/proxy.rs",
+          "bytes": 4703,
+          "sha256": "b49c6343396e8b4ab545dc8d813c7c0fbf7e99d350e4ec76fe71d1de95ed5322"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "722d3af41e4cca57681c5b8c4de0e0fb00005ed0",
+            "bytes": 27046,
+            "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "722d3af41e4cca57681c5b8c4de0e0fb00005ed0",
+            "bytes": 27046,
+            "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "722d3af41e4cca57681c5b8c4de0e0fb00005ed0",
+            "bytes": 27046,
+            "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+          "bytes": 27046,
+          "sha256": "f145ea1ef0dd09c5019d4d07ee440bfa5bb7c7870c817ea1c9d9879644d46d5b"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "d6990c7a0a731f3ab1df07dd9bb9ca56a610a867",
+            "bytes": 31439,
+            "sha256": "6d348af6fdea45ac6acf3415a8cd60a1ccce5d2309ab3cf285106311aaa2b834"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "d6990c7a0a731f3ab1df07dd9bb9ca56a610a867",
+            "bytes": 31439,
+            "sha256": "6d348af6fdea45ac6acf3415a8cd60a1ccce5d2309ab3cf285106311aaa2b834"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "d6990c7a0a731f3ab1df07dd9bb9ca56a610a867",
+            "bytes": 31439,
+            "sha256": "6d348af6fdea45ac6acf3415a8cd60a1ccce5d2309ab3cf285106311aaa2b834"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+          "bytes": 31439,
+          "sha256": "6d348af6fdea45ac6acf3415a8cd60a1ccce5d2309ab3cf285106311aaa2b834"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "edefa3088bb4cd69ede6a83dca92b7b0d6a6bf87",
+            "bytes": 10775,
+            "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "edefa3088bb4cd69ede6a83dca92b7b0d6a6bf87",
+            "bytes": 10775,
+            "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "edefa3088bb4cd69ede6a83dca92b7b0d6a6bf87",
+            "bytes": 10775,
+            "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+          "bytes": 10775,
+          "sha256": "7c34a71f0180c740fd7a4cef9bcd196ff09ed5d479c3153899ddc4d7331b96d6"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "fb0347b0d28e9bf40f7f0ce898570a6b65cfad53",
+            "bytes": 6444,
+            "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "fb0347b0d28e9bf40f7f0ce898570a6b65cfad53",
+            "bytes": 6444,
+            "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "fb0347b0d28e9bf40f7f0ce898570a6b65cfad53",
+            "bytes": 6444,
+            "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+          "bytes": 6444,
+          "sha256": "c3316e46b63ee47a2467dfe5a31d9ab934881d2d4dde0137b93a51f09b158b92"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "cad3314544215ee2a1163ebe23ad6e66a5469997",
+            "bytes": 11353,
+            "sha256": "b14e2cd4188af9aa1f688c721cb0d62474f2218b9ce33df0fe27d4d115c9bdac"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "cad3314544215ee2a1163ebe23ad6e66a5469997",
+            "bytes": 11353,
+            "sha256": "b14e2cd4188af9aa1f688c721cb0d62474f2218b9ce33df0fe27d4d115c9bdac"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "cad3314544215ee2a1163ebe23ad6e66a5469997",
+            "bytes": 11353,
+            "sha256": "b14e2cd4188af9aa1f688c721cb0d62474f2218b9ce33df0fe27d4d115c9bdac"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs",
+          "bytes": 11353,
+          "sha256": "b14e2cd4188af9aa1f688c721cb0d62474f2218b9ce33df0fe27d4d115c9bdac"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+            "bytes": 26042,
+            "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+            "bytes": 26042,
+            "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "13c61b99303639372f058de580f2da6de0f53f16",
+            "bytes": 26042,
+            "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/combined_tests.rs",
+          "bytes": 26042,
+          "sha256": "1c55ec019547f319f18bf7a636b0352bc9e6b72485223b7f8bcb520096f8d58f"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "30780ead7cf37c01de81b927b55b3327e9e8ae9a",
+            "bytes": 10159,
+            "sha256": "392d23322002d3b65b2c95520ff581805189a9b5f1d3b331d3c6c0f071bc8a8c"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "30780ead7cf37c01de81b927b55b3327e9e8ae9a",
+            "bytes": 10159,
+            "sha256": "392d23322002d3b65b2c95520ff581805189a9b5f1d3b331d3c6c0f071bc8a8c"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "30780ead7cf37c01de81b927b55b3327e9e8ae9a",
+            "bytes": 10159,
+            "sha256": "392d23322002d3b65b2c95520ff581805189a9b5f1d3b331d3c6c0f071bc8a8c"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs",
+          "bytes": 10159,
+          "sha256": "392d23322002d3b65b2c95520ff581805189a9b5f1d3b331d3c6c0f071bc8a8c"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "def79da7523fcd3543aad76f8483628b9eb94d77",
+            "bytes": 12089,
+            "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "def79da7523fcd3543aad76f8483628b9eb94d77",
+            "bytes": 12089,
+            "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "def79da7523fcd3543aad76f8483628b9eb94d77",
+            "bytes": 12089,
+            "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+          "bytes": 12089,
+          "sha256": "cb470e478c6148f8cbe3f159a7c8be949152dcdd574aff0438ac1274ceab75dd"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "0b1bf6c79ffcaf6e0ea78367c1b2ebc8def1055c",
+            "bytes": 10536,
+            "sha256": "63dec4342115c86b03728670955e8fb9a9f52b27758dd74300ac8ae184703033"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "0b1bf6c79ffcaf6e0ea78367c1b2ebc8def1055c",
+            "bytes": 10536,
+            "sha256": "63dec4342115c86b03728670955e8fb9a9f52b27758dd74300ac8ae184703033"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "0b1bf6c79ffcaf6e0ea78367c1b2ebc8def1055c",
+            "bytes": 10536,
+            "sha256": "63dec4342115c86b03728670955e8fb9a9f52b27758dd74300ac8ae184703033"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+          "bytes": 10536,
+          "sha256": "63dec4342115c86b03728670955e8fb9a9f52b27758dd74300ac8ae184703033"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      },
+      {
+        "repository_path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
+        "versions": [
+          {
+            "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+            "git_blob": "b4bbbda544151cda376abe45919b8618f20f74f9",
+            "bytes": 9928,
+            "sha256": "c97dd420ff1f7e9bfb793184101f2958d05f93d0d0bc6189834bfc6a6979bd9d"
+          },
+          {
+            "commit": "b08e4f624c122175583094ea94f5c8c3150cec5d",
+            "git_blob": "b4bbbda544151cda376abe45919b8618f20f74f9",
+            "bytes": 9928,
+            "sha256": "c97dd420ff1f7e9bfb793184101f2958d05f93d0d0bc6189834bfc6a6979bd9d"
+          },
+          {
+            "commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
+            "git_blob": "b4bbbda544151cda376abe45919b8618f20f74f9",
+            "bytes": 9928,
+            "sha256": "c97dd420ff1f7e9bfb793184101f2958d05f93d0d0bc6189834bfc6a6979bd9d"
+          }
+        ],
+        "same_blob_across_all_three_commits": true,
+        "current_worktree_file": {
+          "path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
+          "bytes": 9928,
+          "sha256": "c97dd420ff1f7e9bfb793184101f2958d05f93d0d0bc6189834bfc6a6979bd9d"
+        },
+        "current_worktree_matches_frozen_git_object": true
+      }
+    ],
+    "all_13_files_identical_across_three_refs": true,
+    "conclusion_scope": "These fixtures and prerequisite checks were not introduced or changed by the current composition; this is not proof that no other regression exists."
+  },
+  "binary_evidence": {
+    "node_before": {
+      "bytes": 456005312,
+      "path": "/workspace/scratch/a6448796d7e7/target/debug/deps/trnm_pon_node-92e007dbc5af8b03",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "sha256": "c95475ef0d50d2edd7c8fb3f89da5cc90743f673bec81671c366d373bb5ba266",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "test": true
+      }
+    },
+    "node_after": {
+      "bytes": 456005312,
+      "path": "/workspace/scratch/a6448796d7e7/target/debug/deps/trnm_pon_node-92e007dbc5af8b03",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": true
+      },
+      "sha256": "c95475ef0d50d2edd7c8fb3f89da5cc90743f673bec81671c366d373bb5ba266",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/workspace/scratch/a6448796d7e7/chain-pq/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "test": true
+      }
+    },
+    "node_recorded_before_after_equal": true,
+    "node_retirement_record": {
+      "command_exit": 101,
+      "command_status": "command_failed",
+      "observed_utc": "2026-11-07T11:15:56Z",
+      "raw_elf_body_retained": false,
+      "raw_logs_and_receipts_retained": true,
+      "reason": "Filesystem exhausted after the complete library run; retire only its completed reproducible ELF after verifying both recorded digests.",
+      "retired": {
+        "bytes": 456005312,
+        "path": "/workspace/scratch/a6448796d7e7/target/debug/deps/trnm_pon_node-92e007dbc5af8b03",
+        "sha256": "c95475ef0d50d2edd7c8fb3f89da5cc90743f673bec81671c366d373bb5ba266"
+      },
+      "schema": "trnm-owned-build-cache-retirement-v1",
+      "source_edited": false
+    },
+    "node_retirement_matches_both_recorded_digests": true,
+    "node_raw_elf_exists_at_readback": false,
+    "node_raw_elf_body_retained": false,
+    "node_raw_body_not_rehashed_by_this_readback": true,
+    "cli_before": {
+      "/workspace/scratch/a6448796d7e7/target/debug/deps/pq_tls_cli-acc1c51410e858bb": {
+        "bytes": 217395616,
+        "sha256": "0ec84c38dae507f6570e4f57d7e12114e38a6c54ee2a87aa368f0321c2c1afde"
+      },
+      "/workspace/scratch/a6448796d7e7/target/debug/deps/pq_tls_witness_cli-37797f0694ea6ccd": {
+        "bytes": 214825768,
+        "sha256": "552f1df4935292b3110b0aed13b70fd37a78af7179f55738732f7052b189fc92"
+      },
+      "/workspace/scratch/a6448796d7e7/target/debug/trnm-pon-node": {
+        "bytes": 235188168,
+        "sha256": "969e09fdf54f2c05c91dc1c77f03867278850610754cd0056ec00c57b8472741"
+      }
+    },
+    "cli_after": {
+      "/workspace/scratch/a6448796d7e7/target/debug/deps/pq_tls_cli-acc1c51410e858bb": {
+        "bytes": 217395616,
+        "sha256": "0ec84c38dae507f6570e4f57d7e12114e38a6c54ee2a87aa368f0321c2c1afde"
+      },
+      "/workspace/scratch/a6448796d7e7/target/debug/deps/pq_tls_witness_cli-37797f0694ea6ccd": {
+        "bytes": 214825768,
+        "sha256": "552f1df4935292b3110b0aed13b70fd37a78af7179f55738732f7052b189fc92"
+      },
+      "/workspace/scratch/a6448796d7e7/target/debug/trnm-pon-node": {
+        "bytes": 235188168,
+        "sha256": "969e09fdf54f2c05c91dc1c77f03867278850610754cd0056ec00c57b8472741"
+      }
+    },
+    "cli_recorded_before_after_equal": true,
+    "cli_raw_bodies_not_rehashed_by_this_readback": true,
+    "retirement_does_not_change_completed_test_outcomes": true
+  },
+  "limitations_and_next_step": [
+    "Keep original command failures and guard HOLD. Do not reclassify host refusals as product passes.",
+    "The 23 ENOENT failures and 12 Unix bind EPERM failures are separate observations. Release-service cases did not reach their time-namespace contract.",
+    "The five CLI witness cases failed in fixture setup; their intended target CLI assertions remain unexecuted in this invocation.",
+    "Successful four ordinary TLS CLI cases establish only their bounded loopback scope; no public transport, continuous-service, whole-ledger rollback, or whole-chain PQ qualification follows.",
+    "No specific seccomp, AppArmor, kernel-config, filesystem-owner, or process-spawn cause is inferred for EPERM without evidence.",
+    "Run the unchanged complete workflow on a supported host providing exact time-namespace identity and the required Unix listener operations. Preserve all original budgets and fences.",
+    "The retired Node ELF raw body is absent; only its matching before/after digests, retirement record, build/source evidence, and original logs/receipts are retained."
+  ]
+}

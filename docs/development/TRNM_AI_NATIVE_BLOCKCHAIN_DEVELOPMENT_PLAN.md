@@ -8331,3 +8331,39 @@ the existing advanced/default-setup conflict still requires repository-level
 resolution. Local retention tests do not establish a new CodeQL scan or remote
 acceptance. Freeze these changes before the new native and quantum replay;
 record complete command outcomes and separate original failed observations.
+
+
+### 2026-11-07 frozen seven-layer results and concurrent CI composition
+
+The [sealed seven-layer continuation](../../evidence/pq-seven-layer-continuation-20261107/README.md)
+binds native and quantum execution to `e36cfb88956a0e35e53d74c5ab71c94c628439d9`
+and tree `b2586f06e82de55484a2e5752563e8b669c3ea17`. Source checks pass 262 cases;
+quantum checks pass 182 cases and replay four constructive/five restricted
+cases. These are bounded model observations and constructive upper bounds,
+not the cheapest legal quantum attack or full DAA/fork-choice qualification.
+
+The complete Node library terminates with 1217 passed, 35 failed, 33 ignored
+in 1405.00 seconds. Its 23 journal/recovery ENOENT failures and 12 Unix listener
+EPERM failures remain failed. TLS library 13 and ordinary CLI 4 pass; witness
+CLI 5 fail in fixture setup. NPQ6 migration 3 and TLS feature-off 1 pass.
+Checkpoint harness failures remain separate from the 43 passing release-bundle
+controls. The ignored isolated ordinary-M15 consumer is not executed.
+All 13 native commands finish; three commands fail and independent native
+readback remains FAIL. Strict whole-workspace/all-targets/all-features Clippy
+passes without changing warnings or budgets. SQLite's same-target four checks
+all return Cargo exit 0 while optional layout qualification alternates
+false/true/false/true. Default metadata has 176 packages; fresh all-features
+metadata has 181; both have 26 workspace members.
+
+The publication preserves target `3d1b6507671ec694ce58e86d4063a125c8deeb66`,
+including its inherited `271a87f8` local-SARIF policy and original failed
+public-inbound/History observations. Default CodeQL setup keeps upload ownership;
+the additional exact-source query lane uses upload never and retains genuine
+SARIF, source records, dirty-worktree observations and failure outcomes. Twelve
+local workflow controls pass. This does not claim a new CodeQL execution or
+remote acceptance. Original e36 native receipts are not transferred to the
+later CI/documentation composition. The dated authority audit now distinguishes
+the actual M15 installer/consumer from its historical absence finding; general
+Cell/FinalUse effects and complete entrypoint/custody/recovery qualification
+remain open. Whole-chain PQ, public WAN, full-state rollback and activation
+remain HOLD / NO-GO.
