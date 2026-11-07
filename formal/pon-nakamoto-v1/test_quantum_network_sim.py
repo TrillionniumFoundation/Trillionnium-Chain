@@ -66,6 +66,13 @@ class FiniteGroverTests(unittest.TestCase):
             with self.subTest(p=p, q=q, count=count), self.assertRaises(ValueError):
                 grover_success(p, q, count)
 
+    def test_empty_and_full_marked_sets_are_exact_at_large_iteration_counts(self):
+        for iterations in (0, 1, 87_366_946, 100_000_000):
+            for processors in (1, 7, 1024):
+                with self.subTest(iterations=iterations, processors=processors):
+                    self.assertEqual(grover_success(0.0, iterations, processors), 0.0)
+                    self.assertEqual(grover_success(1.0, iterations, processors), 1.0)
+
     def test_explicit_marked_fraction_and_missing_physics(self):
         self.assertTrue(ASSUMPTIONS["marked_fraction_assumed_equal_uniform_ticket_probability"])
         self.assertIsNone(ASSUMPTIONS["actual_w1_marked_count"])
@@ -995,6 +1002,51 @@ class AdversarialPolicyControls(unittest.TestCase):
         release = [r for r in sim.trace if r["kind"] == "adaptive-release-check" and r["release"]][0]
         self.assertTrue(release["timed_out"])
         self.assertEqual(release["at_seconds"], 2)
+
+    def test_fractional_private_timeout_uses_one_upward_deadline(self):
+        sim = Simulator(idle(duration_seconds=1, quantum_strategy="private-branch",
+                             private_release_policy="observed-work-lead", private_release_work_lead=100,
+                             private_release_max_wait_seconds=0.1))
+        sim.start()
+        sim.now = 0.5
+        private = append_block(sim, "own", miner="q")
+        sim.private_tip = private.block_id
+        sim.private_wait_started = sim.now
+        sim._maybe_adaptive_release("private-block")
+        exact = Fraction(0.5) + Fraction(0.1)
+        deadline = math.nextafter(0.6, math.inf)
+        self.assertLess(Fraction(0.6), exact)
+        self.assertGreaterEqual(Fraction(deadline), exact)
+        self.assertEqual(sim.adaptive_next_check, deadline)
+        sim.now = 0.6
+        sim._maybe_adaptive_release("public-message")
+        self.assertEqual(sim.adaptive_releases, 0)
+        self.assertEqual(sim.adaptive_next_check, deadline)
+        self.assertTrue(sim.step())
+        self.assertEqual(sim.now, deadline)
+        self.assertEqual(sim.adaptive_releases, 1)
+        self.assertEqual(sim.last_published_private_tip, private.block_id)
+        releases = [r for r in sim.trace if r["kind"] == "adaptive-release-check" and r["release"]]
+        self.assertEqual([(r["timed_out"], r["at_seconds"]) for r in releases], [(True, deadline)])
+        sim._maybe_adaptive_release("duplicate-timer")
+        self.assertEqual(sim.adaptive_releases, 1)
+
+    def test_fractional_timeout_stays_unpublished_before_deadline_horizon(self):
+        sim = Simulator(idle(duration_seconds=0.6, probe_arrival_seconds=0,
+                             quantum_strategy="private-branch", private_release_policy="observed-work-lead",
+                             private_release_work_lead=100, private_release_max_wait_seconds=0.1))
+        sim.start()
+        self.assertTrue(sim.step())  # Observe the probe before advancing the controlled clock.
+        sim.now = 0.5
+        private = append_block(sim, "own", miner="q")
+        sim.private_tip, sim.private_wait_started = private.block_id, sim.now
+        sim._maybe_adaptive_release("private-block")
+        summary, rows = sim.run()
+        self.assertEqual(summary["termination"], "horizon")
+        self.assertEqual(summary["observation_seconds"], 0.6)
+        self.assertEqual(sim.adaptive_releases, 0)
+        self.assertEqual(sim.adaptive_next_check, math.nextafter(0.6, math.inf))
+        self.assertFalse(any(r["kind"] == "publish" for r in rows))
 
     def test_slow_quantum_resource_clocks_censor_at_finite_horizon(self):
         case = NetworkScenario("slow_physics", duration_seconds=10,
