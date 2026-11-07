@@ -1,6 +1,7 @@
 {
   "assertions_unchanged_from_frozen": true,
   "composed_pins": 713,
+  "containing_merge_commit": "d1e6e279593b63049f538af081b0c0757a4f4506",
   "left": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
   "left_pins": 713,
   "required_paths": 632,
@@ -26,5 +27,7 @@
   "right": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
   "right_pins": 558,
   "source_base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "subsequent_target": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+  "subsequent_target_pin_changes": [],
   "whole_chain_pq_qualified": false
 }

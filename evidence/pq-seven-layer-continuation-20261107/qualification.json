@@ -391,7 +391,7 @@
   "production_activation": false,
   "public_wan_qualified": false,
   "publication_composition": {
-    "containing_commit": "recorded by Git; source-only receipt increment follows creation",
+    "containing_commit": "d1e6e279593b63049f538af081b0c0757a4f4506",
     "left_parent": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
     "native_observations_relabelled": false,
     "right_parent": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
@@ -528,6 +528,19 @@
     "unittest_cases": 262
   },
   "status": "HOLD_NO_GO",
+  "subsequent_analysis_input_composition": {
+    "changed_upstream_paths": [
+      "evidence/codeql-standalone-lock-20261107/README.md",
+      "evidence/codeql-standalone-lock-20261107/validation.json",
+      "evidence/pon-w1-work-security-20261101/matching-direct-deps/harness/crypto/Cargo.lock"
+    ],
+    "containing_commit": "recorded by Git; exact source-only receipt follows creation",
+    "left_parent": "d1e6e279593b63049f538af081b0c0757a4f4506",
+    "original_native_execution_relabelled": false,
+    "right_parent": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+    "runtime_and_formal_subtrees_byte_identical_to_tested_source": true,
+    "source_pins_changed_again": false
+  },
   "tested_commit": "e36cfb88956a0e35e53d74c5ab71c94c628439d9",
   "tested_tree": "b2586f06e82de55484a2e5752563e8b669c3ea17",
   "whole_chain_pq_qualified": false,

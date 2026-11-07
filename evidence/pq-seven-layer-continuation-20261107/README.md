@@ -18,7 +18,8 @@ remains the plan; this directory is an evidence record.
 | Pre-fix reader counterexample | Exact reader bytes from `79075c36cb8a9d27f922920c1f4958895efc32b5`, exercised against the same adversarial controls as the repaired snapshot. |
 | Concurrent integration target | `3d1b6507671ec694ce58e86d4063a125c8deeb66` advances the reviewed `271a87f831aa7e08f3c2024f738504c1422122dd` by adding a CodeQL worktree-observation block and three historical evidence files, with no runtime-source change in that advance. Neither target is the frozen e36 validation source. |
 | Reviewed CodeQL compositions | The first two-file candidate and its 11-control result remain immutable evidence. The second candidate preserves the new target's exact observation block and adds one real-Git dirty-path control, for 12 controls. Both are separate from the four CodeQL controls included in the e36 source phase. |
-| Final code/publication mapping | The containing merge composes e36 with the exact target `3d1b6507671ec694ce58e86d4063a125c8deeb66`. Its Rust and formal subtrees remain byte-identical to e36. A subsequent source-only receipt increment will identify the exact containing code commit; this observation does not relabel any native execution. |
+| CI policy and evidence merge | `d1e6e279593b63049f538af081b0c0757a4f4506` composes e36 with `3d1b6507671ec694ce58e86d4063a125c8deeb66`. Its Rust and formal subtrees remain byte-identical to e36. |
+| Subsequent analysis-input composition | The containing merge additionally preserves `adebe0bd78e6e1bdb55a599179ffe2313997170e`, which adds a standalone analysis lock and two explanatory evidence files. No runtime/formal source or pinned path changes again. The exact final code identity and source-only observations follow in a separate evidence increment; no native execution is relabelled. |
 
 ## Updated seven-layer audit
 
@@ -232,6 +233,17 @@ evidence of a causal fix for the earlier failure. The
 [historical M15 follow-through](../pq-m15-native-followthrough-20261107/README.md)
 likewise keeps its `1c14fab4` library result of 1249 passes / zero failures / 33
 ignored; that result does not transfer to e36 or the future publication source.
+
+### Subsequent standalone analysis input
+
+The concurrent target then advanced to `adebe0bd78e6e1bdb55a599179ffe2313997170e`.
+Its [retained analysis binding](../codeql-standalone-lock-20261107/README.md)
+adds a standalone primitive-harness Cargo lock and two evidence files. The
+historical five-file harness manifest and campaign archive remain unchanged;
+the new lock is subsequent analysis input, not recovered historical CI output.
+This composition preserves those exact files without changing the CodeQL source
+guard or any runtime/formal source. Its recorded twelve-package dependency
+check belongs to that upstream observation until separately executed here.
 
 ## Sealed evidence and readback
 

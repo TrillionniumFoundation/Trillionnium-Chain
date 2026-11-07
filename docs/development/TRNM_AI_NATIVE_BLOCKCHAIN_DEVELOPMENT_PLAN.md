@@ -8367,3 +8367,14 @@ the actual M15 installer/consumer from its historical absence finding; general
 Cell/FinalUse effects and complete entrypoint/custody/recovery qualification
 remain open. Whole-chain PQ, public WAN, full-state rollback and activation
 remain HOLD / NO-GO.
+
+
+#### Subsequent exact-source analysis-input composition
+
+Merge `d1e6e279593b63049f538af081b0c0757a4f4506` first preserves the reviewed
+`e36cfb88 + 3d1b6507` composition and its failed native observations. The next
+composition additionally retains `adebe0bd78e6e1bdb55a599179ffe2313997170e`:
+a new standalone primitive-harness Cargo lock and two explanatory evidence
+files. Its old harness inputs, campaign archive and qualification limits remain
+unchanged. No runtime/formal source or corpus pin changes again. Fresh final
+source-only checks remain required; e36 native execution is not relabelled.
