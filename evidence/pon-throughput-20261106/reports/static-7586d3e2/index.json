@@ -1,0 +1,86 @@
+{
+  "actual_committed_source_python_cases": 334,
+  "api_commit_response_member": "validation/base-sync-2859-5689/api-commit-verified.json",
+  "archive": {
+    "bytes": 201536,
+    "manifest_member": "packaging/manifest.json",
+    "manifest_sha256": "b4f793e3a875571101f2fc8e2ea8190493aafc27d4097d1b383511a5ffcda486",
+    "path": "records/final-source-7586d3e2.tar.xz",
+    "regular_members": 228,
+    "sha256": "dbca01863e2a55227c7d289df937fb0d948de4af1d70a961487774c55c4f3663",
+    "tar_stream_bytes": 6338560,
+    "tar_stream_sha256": "954c85af183f6a3cc99faca2f690ead2a66d208b28c2dd3e067327be69a66834"
+  },
+  "committed_source_summary_member": "ci-validation/composed-source-7586d3e2/final-summary.json",
+  "fresh_native_build_test_or_clippy_qualification": false,
+  "generated_utc": "2026-11-06T09:47:42.985417+00:00",
+  "input_groups": [
+    {
+      "bytes": 5409660,
+      "path": "ci-validation/composed-source-7586d3e2",
+      "regular_files": 164
+    },
+    {
+      "bytes": 77102,
+      "path": "ci-validation/base-sync-5689-roster-compat",
+      "regular_files": 14
+    },
+    {
+      "bytes": 60710,
+      "path": "validation/base-sync-2859-5689",
+      "regular_files": 30
+    },
+    {
+      "bytes": 524289,
+      "path": "validation/base-sync-5689-storage-review",
+      "regular_files": 16
+    },
+    {
+      "bytes": 30329,
+      "path": "validation/base-sync-5689-publish-manifest.json",
+      "regular_files": 1
+    }
+  ],
+  "local_composed_commit": "6a59b2645f6b4a86951c683b04a37ec5abcd8771",
+  "metadata_graphs": {
+    "cargo-metadata-all-features": {
+      "graph_receipt": "cargo-metadata-all-features.graph.json",
+      "packages": 180,
+      "passed": true,
+      "raw_metadata_sha256": "ab6793d88ec36c8bdfa7f461b788388b6d8dac740412191d6a243dd9741cd711",
+      "resolve_nodes": 180,
+      "workspace_members": 26,
+      "workspace_targets": 389
+    },
+    "cargo-metadata-default": {
+      "graph_receipt": "cargo-metadata-default.graph.json",
+      "packages": 175,
+      "passed": true,
+      "raw_metadata_sha256": "6e78566acb728b599a04598cd42a82a0ce49de7017ed28a6648333bb425c40fe",
+      "resolve_nodes": 175,
+      "workspace_members": 26,
+      "workspace_targets": 389
+    },
+    "cargo-metadata-fuzz-all-features": {
+      "graph_receipt": "cargo-metadata-fuzz-all-features.graph.json",
+      "packages": 147,
+      "passed": true,
+      "raw_metadata_sha256": "f2f1ea59eb53d78b1be58b0e70b9bc586cb2a769c674d162e57f704ad823e04e",
+      "resolve_nodes": 147,
+      "workspace_members": 1,
+      "workspace_targets": 3
+    }
+  },
+  "new_test_or_measurement_performed_by_packaging": false,
+  "schema": "trnm-final-source-7586-compact-index-v1",
+  "six_blob_publication_manifest_member": "validation/base-sync-5689-publish-manifest.json",
+  "source_review_member": "validation/base-sync-5689-storage-review/rust-source-review.json",
+  "tested_commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "tested_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "working_roster_cases_separately_recorded": [
+    6,
+    106
+  ],
+  "working_roster_compatibility_member": "ci-validation/base-sync-5689-roster-compat/summary.json",
+  "working_roster_counts_not_added_to_334": true
+}

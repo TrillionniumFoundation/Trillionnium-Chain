@@ -1,0 +1,6 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-pon-node)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-transport)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-task-kernel)
+error: could not compile `trnm-task-kernel` (test "task_archive_store_recovery") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

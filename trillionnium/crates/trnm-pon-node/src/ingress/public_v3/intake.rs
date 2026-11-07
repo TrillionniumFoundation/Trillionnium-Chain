@@ -4,8 +4,8 @@
 //! connection, new listener or cloned domain gets another quota. This is local
 //! overload protection, not peer entitlement, a host kernel cap or a new ledger.
 use super::{
-    ensure, mutating_operation, BufferPermit, Result, CHALLENGES_PER_SECOND, CHALLENGE_BURST,
-    MAX_CONNECTIONS, READ_CHALLENGE_RESERVE,
+    ensure, mutating_operation, try_paid_permits, BufferPermit, Cookie, PendingKind, PendingOrder,
+    Result, CHALLENGES_PER_SECOND, CHALLENGE_BURST, MAX_CONNECTIONS, READ_CHALLENGE_RESERVE,
 };
 use std::collections::BTreeMap;
 use std::sync::{
@@ -35,7 +35,37 @@ pub(super) struct ListenerIntake {
 #[derive(Default)]
 struct ConnectionLeases {
     next_id: u64,
+    next_pending: u64,
     entries: BTreeMap<u64, LeaseEntry>,
+    // Four indices into the same at-most-64 leases, not additional task queues.
+    // A non-head poll does not scan all connections. Rebuild only after a head
+    // changes or expires; the complete rebuild visits at most MAX_CONNECTIONS.
+    ready_heads: [Option<u64>; 4],
+    heads_dirty: bool,
+    #[cfg(test)]
+    head_scans: usize,
+}
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ReadinessStage {
+    Hello,
+    Challenge,
+    Solution,
+    Grant,
+    Paid,
+    Retired,
+}
+struct ReadyEntry {
+    kind: PendingKind,
+    op: u8,
+    order: PendingOrder,
+}
+impl ReadyEntry {
+    fn lane(&self) -> usize {
+        ready_lane(self.kind, self.op)
+    }
+}
+fn ready_lane(kind: PendingKind, op: u8) -> usize {
+    2 * usize::from(matches!(kind, PendingKind::Grant)) + usize::from(mutating_operation(op))
 }
 struct LeaseEntry {
     // None protects server-owed output and every paid stage. Only Hello and
@@ -43,6 +73,69 @@ struct LeaseEntry {
     waiting_since: Option<Instant>,
     cancelled: Arc<AtomicBool>,
     pressure_cancelled: Arc<AtomicBool>,
+    readiness_stage: ReadinessStage,
+    ready: Option<ReadyEntry>,
+    ready_op: Option<u8>,
+    service_stop: Option<Arc<AtomicBool>>,
+}
+impl LeaseEntry {
+    fn ready_alive(&self, now: Instant) -> bool {
+        self.ready
+            .as_ref()
+            .is_some_and(|ready| now < ready.order.deadline)
+            && !self.cancelled.load(Ordering::Acquire)
+            && self
+                .service_stop
+                .as_ref()
+                .is_some_and(|stop| !stop.load(Ordering::Acquire))
+    }
+}
+impl ConnectionLeases {
+    fn invalidate_head(&mut self, id: u64) {
+        for head in &mut self.ready_heads {
+            if *head == Some(id) {
+                *head = None;
+                self.heads_dirty = true;
+            }
+        }
+    }
+    fn refresh_heads(&mut self, now: Instant) {
+        if !self.heads_dirty
+            && self.ready_heads.iter().flatten().all(|id| {
+                self.entries
+                    .get(id)
+                    .is_some_and(|entry| entry.ready_alive(now))
+            })
+        {
+            return;
+        }
+        #[cfg(test)]
+        {
+            self.head_scans += 1;
+        }
+        let mut heads: [Option<(u64, u64)>; 4] = [None; 4];
+        for (id, entry) in &mut self.entries {
+            if entry.ready.is_none() {
+                continue;
+            }
+            if !entry.ready_alive(now) {
+                // Retire only scheduling metadata. Keep the actual Connection,
+                // original permit and cancellation observation with its owner.
+                // Once expired/stopped/cancelled, a stale clock cannot revive it.
+                entry.ready = None;
+                entry.readiness_stage = ReadinessStage::Retired;
+                continue;
+            }
+            let ready = entry.ready.as_ref().unwrap();
+            let candidate = (ready.order.sequence, *id);
+            let head = &mut heads[ready.lane()];
+            if head.is_none_or(|prior| candidate < prior) {
+                *head = Some(candidate);
+            }
+        }
+        self.ready_heads = heads.map(|head| head.map(|(_, id)| id));
+        self.heads_dirty = false;
+    }
 }
 pub(super) struct ConnectionLease {
     registry: Arc<Mutex<ConnectionLeases>>,
@@ -59,6 +152,90 @@ impl ConnectionLease {
     pub(super) fn waiting_for_input(&self, now: Instant) -> Result<()> {
         self.update(Some(now))
     }
+    // A complete valid Hello may join Challenge before caller authentication;
+    // Grant requires the original verified and spent-reserved Solution.
+    // The same service epoch orders every listener. Socket acceptance and
+    // incomplete or malformed input do not register either readiness order.
+    pub(super) fn register_ready(
+        &self,
+        kind: PendingKind,
+        op: u8,
+        deadline: Instant,
+        stop: &Arc<AtomicBool>,
+        now: Instant,
+    ) -> Result<PendingOrder> {
+        let mut leases = self
+            .registry
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        let entry = leases
+            .entries
+            .get(&self.id)
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        ensure(
+            !entry.cancelled.load(Ordering::Acquire) && !stop.load(Ordering::Acquire),
+            "PUBLIC_REQUEST_CANCELLED",
+        )?;
+        ensure(now < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+        ensure(entry.waiting_since.is_none(), "PUBLIC_PENDING_ORDER")?;
+        if let Some(ready) = &entry.ready {
+            ensure(
+                ready.kind == kind
+                    && ready.op == op
+                    && ready.order.deadline == deadline
+                    && entry
+                        .service_stop
+                        .as_ref()
+                        .is_some_and(|bound| Arc::ptr_eq(bound, stop)),
+                "PUBLIC_PENDING_ORDER",
+            )?;
+            // Duplicate polling/registration cannot allocate a new order or
+            // refresh either the wait timestamp or the absolute deadline.
+            return Ok(ready.order);
+        }
+        let expected = match kind {
+            PendingKind::Challenge => ReadinessStage::Hello,
+            PendingKind::Grant => ReadinessStage::Solution,
+        };
+        ensure(entry.readiness_stage == expected, "PUBLIC_PENDING_ORDER")?;
+        if let Some(bound_op) = entry.ready_op {
+            ensure(
+                bound_op == op
+                    && entry
+                        .service_stop
+                        .as_ref()
+                        .is_some_and(|bound| Arc::ptr_eq(bound, stop)),
+                "PUBLIC_PENDING_ORDER",
+            )?;
+        }
+        let sequence = leases
+            .next_pending
+            .checked_add(1)
+            .ok_or("PUBLIC_PENDING_ORDER")?;
+        let order = PendingOrder {
+            sequence,
+            entered_at: now,
+            deadline,
+        };
+        leases.next_pending = sequence;
+        let entry = leases
+            .entries
+            .get_mut(&self.id)
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        entry.readiness_stage = match kind {
+            PendingKind::Challenge => ReadinessStage::Challenge,
+            PendingKind::Grant => ReadinessStage::Grant,
+        };
+        entry.ready = Some(ReadyEntry { kind, op, order });
+        entry.ready_op = Some(op);
+        entry.service_stop = Some(stop.clone());
+        // A newly allocated order is later than every existing order. A dirty
+        // index must be rebuilt before use, never replaced by this new arrival.
+        if !leases.heads_dirty {
+            leases.ready_heads[ready_lane(kind, op)].get_or_insert(self.id);
+        }
+        Ok(order)
+    }
     fn update(&self, waiting_since: Option<Instant>) -> Result<()> {
         let mut leases = self
             .registry
@@ -71,7 +248,8 @@ impl ConnectionLease {
         // Linearizes input progress / paid transition with cross-listener
         // cancellation. Once selected, a connection cannot become paid later.
         ensure(
-            !entry.cancelled.load(Ordering::Acquire),
+            !entry.cancelled.load(Ordering::Acquire)
+                && entry.readiness_stage != ReadinessStage::Retired,
             "PUBLIC_REQUEST_CANCELLED",
         )?;
         entry.waiting_since = waiting_since;
@@ -82,6 +260,7 @@ impl Drop for ConnectionLease {
     fn drop(&mut self) {
         if let Ok(mut leases) = self.registry.lock() {
             leases.entries.remove(&self.id);
+            leases.invalidate_head(self.id);
         }
     }
 }
@@ -148,6 +327,10 @@ impl ListenerIntake {
                 waiting_since: Some(now),
                 cancelled,
                 pressure_cancelled: pressure_cancelled.clone(),
+                readiness_stage: ReadinessStage::Hello,
+                ready: None,
+                ready_op: None,
+                service_stop: None,
             },
         );
         Ok(ConnectionLease {
@@ -191,7 +374,96 @@ impl ListenerIntake {
         }
         Ok(false)
     }
-    // Caller tests the original lane FIFO head and absolute connection deadline
+    // Head selection and reservation share the registry lock. A concurrent
+    // listener cannot pass a stale head check and overtake an older ready item.
+    // Only original in-memory budget reservations run under this lock: cookie
+    // signing, socket IO, body allocation and native execution remain outside.
+    fn try_ready<T>(
+        &self,
+        lease: &ConnectionLease,
+        order: PendingOrder,
+        kind: PendingKind,
+        op: u8,
+        now: Instant,
+        reserve: impl FnOnce() -> Result<Option<T>>,
+    ) -> Result<Option<T>> {
+        ensure(
+            Arc::ptr_eq(&self.leases, &lease.registry),
+            "PUBLIC_INTAKE_UNAVAILABLE",
+        )?;
+        let mut leases = self
+            .leases
+            .lock()
+            .map_err(|_| "PUBLIC_INTAKE_UNAVAILABLE")?;
+        let entry = leases
+            .entries
+            .get(&lease.id)
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        ensure(
+            !entry.cancelled.load(Ordering::Acquire)
+                && entry
+                    .service_stop
+                    .as_ref()
+                    .is_some_and(|stop| !stop.load(Ordering::Acquire)),
+            "PUBLIC_REQUEST_CANCELLED",
+        )?;
+        ensure(now < order.deadline, "PUBLIC_REQUEST_DEADLINE")?;
+        ensure(
+            entry
+                .ready
+                .as_ref()
+                .is_some_and(|ready| ready.kind == kind && ready.op == op && ready.order == order),
+            "PUBLIC_PENDING_ORDER",
+        )?;
+        leases.refresh_heads(now);
+        if leases.ready_heads[ready_lane(kind, op)] != Some(lease.id) {
+            return Ok(None);
+        }
+        let Some(value) = reserve()? else {
+            return Ok(None);
+        };
+        let entry = leases
+            .entries
+            .get_mut(&lease.id)
+            .ok_or("PUBLIC_INTAKE_UNAVAILABLE")?;
+        entry.ready = None;
+        entry.readiness_stage = match kind {
+            PendingKind::Challenge => ReadinessStage::Solution,
+            PendingKind::Grant => ReadinessStage::Paid,
+        };
+        leases.invalidate_head(lease.id);
+        Ok(Some(value))
+    }
+    pub(super) fn try_ready_challenge(
+        &self,
+        lease: &ConnectionLease,
+        order: PendingOrder,
+        op: u8,
+        now: Instant,
+    ) -> Result<bool> {
+        Ok(self
+            .try_ready(lease, order, PendingKind::Challenge, op, now, || {
+                Ok(self.try_challenge(op, now)?.then_some(()))
+            })?
+            .is_some())
+    }
+    pub(super) fn try_ready_paid_permits(
+        &self,
+        lease: &ConnectionLease,
+        order: PendingOrder,
+        cookie: &Cookie,
+        now: Instant,
+    ) -> Result<Option<(BufferPermit, BufferPermit)>> {
+        self.try_ready(lease, order, PendingKind::Grant, cookie.op, now, || {
+            try_paid_permits(
+                cookie,
+                &self.mutating_grants,
+                &self.read_grants,
+                &self.body_pool,
+            )
+        })
+    }
+    // Caller holds the shared ready-head reservation and absolute deadline
     // first. Count once BEFORE entropy/signing. Later cancellation never refunds
     // the already incurred challenge; an exhausted request remains in its old slot.
     pub(super) fn try_challenge(&self, op: u8, now: Instant) -> Result<bool> {
@@ -222,6 +494,10 @@ impl ListenerIntake {
         Ok(true)
     }
 }
+
+#[cfg(test)]
+#[path = "intake/shared_readiness_tests.rs"]
+mod shared_readiness_tests;
 
 #[cfg(test)]
 mod tests {

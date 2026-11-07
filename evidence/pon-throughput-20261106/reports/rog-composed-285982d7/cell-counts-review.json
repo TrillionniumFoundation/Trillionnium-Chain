@@ -1,0 +1,411 @@
+{
+  "classification": "source-bound correctness/component results on 285982d7; neither production TPS nor confirmation-SLO acceptance, and no result transferred to a later integration base",
+  "commands": [
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--all-targets",
+        "--all-features",
+        "-j",
+        "2",
+        "--",
+        "--test-threads=1"
+      ],
+      "label": "m09-all-targets",
+      "native_elapsed_ns_including_command_setup": 76994074072,
+      "native_exit": 0,
+      "original_command_receipt": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m09-all-targets.json",
+        "sha256": "bfaf11a4eb64cec0972a0608df636c08e5fdbc15fb29b0fb609806cef5c567e4"
+      },
+      "original_log": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m09-all-targets.log",
+        "bytes": 46132,
+        "sha256": "c9e7338645ce4781c303533f4c34b863127d920aef0e22fc4ce77ebc8abd13fd"
+      },
+      "outer_harness_count": 15,
+      "outer_totals": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 387
+      },
+      "source_before_after_equal": true,
+      "targets": [
+        {
+          "additional_running_observations_not_added": [
+            {
+              "count": 1,
+              "line": 270
+            }
+          ],
+          "announcement_line": 15,
+          "cargo_target": "Running unittests src/lib.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/trnm_data_availability-b5fdc8252bdb9099)",
+          "harness_seconds": "52.63",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 353
+          },
+          "outer_running_count": 353,
+          "outer_summary_line": 374
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 376,
+          "cargo_target": "Running unittests src/bin/trnm-cell.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/trnm_cell-42f2ecaa86e2126a)",
+          "harness_seconds": "0.00",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "outer_running_count": 0,
+          "outer_summary_line": 380
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 382,
+          "cargo_target": "Running unittests src/bin/trnm-cell-discovery.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/trnm_cell_discovery-417166fa9063ce70)",
+          "harness_seconds": "0.00",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "outer_running_count": 0,
+          "outer_summary_line": 386
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 388,
+          "cargo_target": "Running tests/cell_cache_wal_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_cache_wal_cli-d1bcfcb2c8af2c41)",
+          "harness_seconds": "0.11",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 1
+          },
+          "outer_running_count": 1,
+          "outer_summary_line": 393
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 395,
+          "cargo_target": "Running tests/cell_closure_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_closure_cli-19af38dd2d03d0c1)",
+          "harness_seconds": "0.42",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "outer_running_count": 5,
+          "outer_summary_line": 404
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 406,
+          "cargo_target": "Running tests/cell_discovery_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_discovery_cli-0daaae0fee5fe5b0)",
+          "harness_seconds": "0.51",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "outer_running_count": 5,
+          "outer_summary_line": 415
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 417,
+          "cargo_target": "Running tests/cell_fetch_deadline_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_fetch_deadline_cli-dc36df154c8b84db)",
+          "harness_seconds": "0.33",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "outer_running_count": 5,
+          "outer_summary_line": 426
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 428,
+          "cargo_target": "Running tests/cell_persistent_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_persistent_cli-0f1165b44bb74de4)",
+          "harness_seconds": "0.38",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 5
+          },
+          "outer_running_count": 5,
+          "outer_summary_line": 437
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 439,
+          "cargo_target": "Running tests/cell_provider_ready_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_provider_ready_cli-c1c64e539c1d6823)",
+          "harness_seconds": "0.13",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "outer_running_count": 2,
+          "outer_summary_line": 445
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 447,
+          "cargo_target": "Running tests/cell_release_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_release_cli-bf42946c52f408af)",
+          "harness_seconds": "0.49",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "outer_running_count": 2,
+          "outer_summary_line": 453
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 455,
+          "cargo_target": "Running tests/cell_tensor_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/cell_tensor_cli-159f48bf91b21b7b)",
+          "harness_seconds": "0.84",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 7
+          },
+          "outer_running_count": 7,
+          "outer_summary_line": 466
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 468,
+          "cargo_target": "Running tests/pq_cell_cli.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/pq_cell_cli-cddd3d7309bca64f)",
+          "harness_seconds": "0.18",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 2
+          },
+          "outer_running_count": 2,
+          "outer_summary_line": 474
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 476,
+          "cargo_target": "Running unittests examples/cell_delta_workload_observer.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/examples/cell_delta_workload_observer-201a8e64680d9d2c)",
+          "harness_seconds": "0.00",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "outer_running_count": 0,
+          "outer_summary_line": 480
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 482,
+          "cargo_target": "Running unittests examples/cell_residency_observer.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/examples/cell_residency_observer-7609f1cd8439878d)",
+          "harness_seconds": "0.00",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "outer_running_count": 0,
+          "outer_summary_line": 486
+        },
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 488,
+          "cargo_target": "Running unittests examples/cell_serving_ab_observer.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/examples/cell_serving_ab_observer-8d5218dbd6409651)",
+          "harness_seconds": "0.00",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 0
+          },
+          "outer_running_count": 0,
+          "outer_summary_line": 492
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-data-availability",
+        "--doc",
+        "--all-features",
+        "-j",
+        "2",
+        "--",
+        "--test-threads=1"
+      ],
+      "label": "m09-doc",
+      "native_elapsed_ns_including_command_setup": 1664244379,
+      "native_exit": 0,
+      "original_command_receipt": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m09-doc.json",
+        "sha256": "670b2c2878fe1a531f019b17ddbab174e51f2bfb83aef8a2dc3d669a2452150c"
+      },
+      "original_log": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m09-doc.log",
+        "bytes": 1131,
+        "sha256": "a9ae2d4c1cd1cf2583a51ae1e9aa0054bd1531c8d52ca50c927bea5279d03cc8"
+      },
+      "outer_harness_count": 1,
+      "outer_totals": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 10
+      },
+      "source_before_after_equal": true,
+      "targets": [
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 2,
+          "cargo_target": "Doc-tests trnm_data_availability",
+          "harness_seconds": "0.27",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 10
+          },
+          "outer_running_count": 10,
+          "outer_summary_line": 16
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-service-settlement",
+        "--all-features",
+        "--lib",
+        "-j",
+        "2",
+        "native_budget",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "label": "m12-native-budget",
+      "native_elapsed_ns_including_command_setup": 8578207251,
+      "native_exit": 0,
+      "original_command_receipt": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m12-native-budget.json",
+        "sha256": "e15eefb3ddfd98a8e4374655301e22c42b8bbe8274aa71310d90cfdaec6c628d"
+      },
+      "original_log": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/native/m12-native-budget.log",
+        "bytes": 4784,
+        "sha256": "8196d4af69266d1d57f2e237f3c9d5b1064b1ab3cf000a5a4c21de6642c71ab1"
+      },
+      "outer_harness_count": 1,
+      "outer_totals": {
+        "failed": 0,
+        "filtered": 11,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 35
+      },
+      "source_before_after_equal": true,
+      "targets": [
+        {
+          "additional_running_observations_not_added": [],
+          "announcement_line": 20,
+          "cargo_target": "Running unittests src/lib.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/debug/deps/trnm_service_settlement-b0d508d542df75ad)",
+          "harness_seconds": "2.11",
+          "outer_counts": {
+            "failed": 0,
+            "filtered": 11,
+            "ignored": 0,
+            "measured": 0,
+            "passed": 35
+          },
+          "outer_running_count": 35,
+          "outer_summary_line": 59
+        }
+      ]
+    }
+  ],
+  "count_scope": "Per-command outer Cargo harness totals only. No cross-gate or cross-source unique-test sum is computed.",
+  "native_execution_or_build_for_this_review": false,
+  "nested_running_line_policy": "The extra running-1-test observation within the M09 library harness is retained as a child observation and not added to the outer count of 353.",
+  "original_cell_summary": {
+    "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/summary.json",
+    "bytes": 88535,
+    "sha256": "65ce3a366d1229c57dea3718768eed08962c617b9dbbe0c660738e6e071e14ab"
+  },
+  "other_gate_scope": {
+    "clippy": "one original strict workspace command with exit 0; not counted as native test cases",
+    "full_node_library": "1172 passed, 0 failed, 32 ignored; registry 1204; never relabel ignored as passed",
+    "pq_required_controls": "52 actual selected executions; overlaps with full Node library",
+    "semantic_controls": "80 actual selected executions; overlaps with full-library coverage"
+  },
+  "reviewed_utc": "2026-11-06T09:15:34.080935+00:00",
+  "schema": "trnm-composed-2859-cell-counts-read-only-review-v1",
+  "source_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "source_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04"
+}

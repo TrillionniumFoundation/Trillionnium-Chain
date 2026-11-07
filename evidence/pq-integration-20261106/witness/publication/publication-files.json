@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "bytes": 192380,
+      "git_blob": "e5a5b60ef7fb4fc0fbfc1706ce1d3ec9636098d8",
+      "path": "FILES.tsv",
+      "sha256": "a7c8250bfa2bf4a1f637aa3f4a6775f736c75a9b512a8cd35b2a2f2b189e82bb"
+    },
+    {
+      "bytes": 2075,
+      "git_blob": "ab7c77f57d392ef474616f673c75b32dd046939c",
+      "path": "README.md",
+      "sha256": "ec637f8361a0ea421be6efd54de585977d5c694e22a46b6f8f23764fc20c5975"
+    },
+    {
+      "bytes": 239946,
+      "git_blob": "81d1c9e3703d3c5bc8d70b35e0f5958770e2f81d",
+      "path": "archive-index.json",
+      "sha256": "88d098f87c21e7e5170aa7f2440d0f73ec48f11b66081b9e67dca765825969ad"
+    },
+    {
+      "bytes": 456,
+      "git_blob": "8840a1ed6fcc539eb9662f4d5507b231a595d7c1",
+      "path": "archive-verification.json",
+      "sha256": "a78a4131b86a4ee733bef270683dc2afff20a1dea827fec6472204264f03632d"
+    },
+    {
+      "bytes": 6730,
+      "git_blob": "2dbc7a7e2e925f2678b48451d797af8b36e97fa2",
+      "path": "collection-status.json",
+      "sha256": "78eaa712d1c09f7bcebeff612a61af6e0fe249385ac278ae640b73a379476446"
+    },
+    {
+      "bytes": 413049,
+      "git_blob": "e99b910547e670138baf263ea41edc777ff9694d",
+      "path": "file-manifest.json",
+      "sha256": "71bb95aa5232bb11ce69eb8aade3ce2a1b631c0df89650f579101bfd62f7abab"
+    },
+    {
+      "bytes": 1121155,
+      "git_blob": "1343f612ad06f1ff8f67fbd23eb91614c47406d3",
+      "path": "raw-evidence.tar.zst.part-000",
+      "sha256": "9f84ba375daa13b11650e173133bb042183bc4ed8570ff040aacc93c8e23027a"
+    },
+    {
+      "bytes": 417794,
+      "git_blob": "3fa7f722dd77339e30db71d9c96afef0afaff106",
+      "path": "selection-plan.json",
+      "sha256": "2357bb2951cd794e2e84ceeb3a7b2b285e72ecbbd022aac1ab45d4f7ba200850"
+    },
+    {
+      "bytes": 5012,
+      "git_blob": "87566b728641b6ea95d311a66b150df273151486",
+      "path": "verify_curated_evidence.py",
+      "sha256": "ad84ee5ccec29a339a54a20a863e964ced941821321c87f10e188de9979174c4"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "native_test_verdict": false,
+  "schema": "trnm-terminal-increment-publication-v1"
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "trnm-throughput-readme-independent-review-v1",
+  "draft_sha256": "ebbfab88bae26f5c57183f0796308678a75f0f0eb9d8d2cea9b7b4c944c147c3",
+  "reviewer": "/root/native_performance",
+  "scope": "sections 2-3 original b173/9e50 CI classifications and section 6 finite ROG observations; read-only",
+  "result": "no factual or source-scope issue found",
+  "compared_evidence": [
+    "native-performance/final-evidence/reports/README-20261106T081354Z.md",
+    "validation/rog-default-evidence/rog-component-observations/analysis.json"
+  ],
+  "verified_items": [
+    "all old CI outcomes and failure denominators",
+    "actual finite four-run paid CPU values and mean changes",
+    "192 Host samples / 12288 checks / 4096 per arm",
+    "packet identity agreement and n=2 per arm",
+    "temporary Host limit files kept distinct from actual fixed Host",
+    "different-hardware observations not treated as causal A/B",
+    "0/6 SLO kept distinct from observed late confirmations"
+  ],
+  "new_source_note": "reviewer also saw the separately source-bound 2859 campaign failure and large-state success; at its 2026-11-06 08:36:50 UTC observation F0/Workspace/PQ were not terminal",
+  "native_execution_or_build_for_this_review": false,
+  "repository_or_draft_files_modified_by_reviewer": false,
+  "post_review_editorial_change": "Updated the planned old-CI archive link to the actual immutable 08:13:54 ZIP name/format supplied by the same reviewer; reviewed factual sections unchanged."
+}

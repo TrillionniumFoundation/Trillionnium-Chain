@@ -236,7 +236,7 @@ impl RootPhaseJob {
         require(
             self.schema == PROFILE
                 && self.state_backend == "authenticated-v1"
-                && self.work_profile == "raw-r14"
+                && self.work_profile == "raw-r15"
                 && self.method == 0
                 && matches!(self.mode.as_deref(), None | Some("valid-work-root")),
             "EXACT_FIXED_ROOT_JOB_PROFILE",
@@ -414,7 +414,7 @@ fn fixed_phase(
     placement.controller.verify().unwrap();
     let configuration = CampaignConfiguration::new(
         StateBackendChoice::AuthenticatedV1,
-        support::WorkProfile::RawR14,
+        support::WorkProfile::RawR15,
     )
     .unwrap();
     let CampaignConfiguration {
@@ -1031,7 +1031,7 @@ fn run_phase(
     let method = 0;
     let configuration = CampaignConfiguration::new(
         StateBackendChoice::AuthenticatedV1,
-        support::WorkProfile::RawR14,
+        support::WorkProfile::RawR15,
     )
     .unwrap();
     assert_eq!(settings.network(), support::settings().network());
@@ -1071,7 +1071,7 @@ fn run_phase(
         binary_sha256: binary_sha(),
         state_backend: configuration.state_backend.label().to_owned(),
         work_profile: match configuration.work_profile {
-            support::WorkProfile::RawR14 => "raw-r14",
+            support::WorkProfile::RawR15 => "raw-r15",
             support::WorkProfile::ArithmeticFactsV1 => "arithmetic-facts-v1",
         }
         .to_owned(),
@@ -1522,7 +1522,7 @@ fn fixed_root_job_requires_its_exact_profile_and_complete_workload() {
             "boot_id":"00000000-0000-0000-0000-000000000001","cgroup":"/fixture",
             "executable":{"device":1,"inode":2,"bytes":3,"modified_seconds":4,"modified_nanoseconds":5}},
             "cgroup":{"device":1,"inode":2,"uid":0,"gid":0,"mode":493}},
-        "binary_sha256":"a".repeat(64),"state_backend":"authenticated-v1","work_profile":"raw-r14",
+        "binary_sha256":"a".repeat(64),"state_backend":"authenticated-v1","work_profile":"raw-r15",
         "mode":null,"method":0,"seed":vec!["00";4],"business":vec!["00";21]});
     let job: RootPhaseJob = serde_json::from_value(value.clone()).unwrap();
     job.validate_shape().unwrap();

@@ -1,0 +1,49 @@
+{
+  "archive": {
+    "bytes": 55341,
+    "fingerprint": [
+      66306,
+      28464109,
+      33152,
+      55341,
+      1793985809995625481,
+      1793985809995625481
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/archive/release-e746-originals.tar.gz",
+    "sha256": "51357a1f5cd3d3544a2de3684a11ab55fc3af21c7c529faac99998f08cb7b56c"
+  },
+  "archive_execution_is_native_test": false,
+  "manifest": {
+    "bytes": 16291,
+    "fingerprint": [
+      66306,
+      28464107,
+      33152,
+      16291,
+      1793985809985550403,
+      1793985809985550403
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/archive/manifest.json",
+    "sha256": "9923b7c78b5781435a64cbeb57a0d2dfa703f95758fe04e475b2c173e02aa97c"
+  },
+  "metadata": {
+    "bytes": 8107,
+    "fingerprint": [
+      66306,
+      28079183,
+      33152,
+      8107,
+      1793985809979898271,
+      1793985809979898271
+    ],
+    "path": "/home/qian-qi/chain-ee79-release-e746-v1/raw/release-elf-cost-observation.json",
+    "sha256": "6610446f77a701d90492d0694644f84f04800b9d51ee6a99d29caa6eca6451e9"
+  },
+  "native_gate_passed": true,
+  "native_job": "1a1b1db83f0-fc05-7b28",
+  "original_file_bytes": 250349,
+  "original_files": 38,
+  "schema": "trnm-original-release-evidence-archive-v1",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

@@ -1,0 +1,132 @@
+{
+  "api_source_identity": {
+    "branch_update_inferred": false,
+    "commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "commit_signature_verification": {
+      "payload": null,
+      "reason": "unsigned",
+      "signature": null,
+      "verified": false,
+      "verified_at": null
+    },
+    "parents": [
+      "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "56897f125df27994efa1dda935f2c62eceb36de9"
+    ],
+    "response_member": "validation/base-sync-2859-5689/api-commit-verified.json",
+    "same_tree_as_local_composed_commit": true,
+    "tree": "fc0e51b1235470b972de41f2d677f6d5948f4868"
+  },
+  "archive": {
+    "bytes": 201536,
+    "manifest_member": "packaging/manifest.json",
+    "manifest_sha256": "b4f793e3a875571101f2fc8e2ea8190493aafc27d4097d1b383511a5ffcda486",
+    "path": "records/final-source-7586d3e2.tar.xz",
+    "regular_members": 228,
+    "sha256": "dbca01863e2a55227c7d289df937fb0d948de4af1d70a961487774c55c4f3663",
+    "tar_stream_bytes": 6338560,
+    "tar_stream_sha256": "954c85af183f6a3cc99faca2f690ead2a66d208b28c2dd3e067327be69a66834"
+  },
+  "ci_review_stdout_fabricated": false,
+  "committed_static_validation": {
+    "actual_python_cases": 334,
+    "commit": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "result": "PASS",
+    "source_before_after_equal": true,
+    "summary_member": "ci-validation/composed-source-7586d3e2/final-summary.json",
+    "summary_sha256": "3305d5113ecd69c708fe676dc00c2414c77c66c8655c48728caff3aab3f22e79",
+    "tree": "fc0e51b1235470b972de41f2d677f6d5948f4868"
+  },
+  "cross_source_case_counts_aggregated": false,
+  "generated_utc": "2026-11-06T09:47:42.985417+00:00",
+  "historical_sampler_readback": {
+    "counts": {
+      "failed": 0,
+      "filtered_out": 0,
+      "ignored": 0,
+      "measured": 0,
+      "passed": 9
+    },
+    "credited_as_7586_native_execution": false,
+    "measured_source": {
+      "base": null,
+      "candidate": "361825dd1f924770562705d7a68c78170f0375c3",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "361825dd1f924770562705d7a68c78170f0375c3",
+      "tested_tree": "92f8fbdc5b722498ede9dd85040d4716aa6a182e",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1026202569,
+      "tracked_entries": 10646,
+      "tracked_worktree_verified": true
+    },
+    "qualification": "SAMPLER_TESTS_PASS_SQLITE_BOUNDARY_NOT_QUALIFIED_BY_THIS_RUN",
+    "record_member": "validation/base-sync-5689-storage-review/sampler-original-command.json",
+    "sqlite_warning_preserved": "trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute"
+  },
+  "local_composed_source_review": {
+    "commit": "6a59b2645f6b4a86951c683b04a37ec5abcd8771",
+    "inventory": {
+      "all_files_exist": true,
+      "all_include_bindings_match_labels": true,
+      "combined_entries": 1271,
+      "exact_parent_union": true,
+      "new_vs_285": [
+        "config/pon/w1-retained-disposition-v1.json",
+        "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
+        "trillionnium/crates/trnm-pon-node/src/store/storage_service/replay_owner_tests.rs"
+      ],
+      "parent_285_entries": 1268,
+      "parent_568_entries": 1244,
+      "sha256": "1e7db77a767d5e5b09024034530c77688abef9f229c372d72f1b4558092c1a5d",
+      "unique_labels": true
+    },
+    "native_execution": false,
+    "report_member": "validation/base-sync-5689-storage-review/rust-source-review.json",
+    "report_sha256": "db7a6422866e5b040c9d79d1a8fcefe870350c37a55f37e7a639b37770196f62",
+    "result": "NO_BLOCKER_WITHIN_REVIEWED_SCOPE",
+    "scope": "actual working-tree Rust bytes and inventory inheritance; not a native execution or whole-repository claim",
+    "storage_service": {
+      "all_changed_lines_vs_285_are_standalone_line_comments": true,
+      "changed_comment_lines": 12,
+      "exact_568_parent_bytes": true,
+      "new_runtime_statement_added_by_composition": false,
+      "replay_owner_registered_once_under_cfg_test": true
+    },
+    "tree": "fc0e51b1235470b972de41f2d677f6d5948f4868"
+  },
+  "ordered_parents": [
+    "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "56897f125df27994efa1dda935f2c62eceb36de9"
+  ],
+  "provenance": "Derived during packaging from retained JSON receipts; not historical tool stdout or a new independent source review",
+  "schema": "trnm-base-sync-7586-derived-summary-v1",
+  "source_modified_or_tests_reexecuted_by_packaging": false,
+  "uncommitted_roster_compatibility": {
+    "credited_as_committed_7586_execution": false,
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "merge_head": "56897f125df27994efa1dda935f2c62eceb36de9",
+    "python_suites": [
+      {
+        "cases": 6,
+        "exit_code": 0,
+        "label": "native-rosters"
+      },
+      {
+        "cases": 106,
+        "exit_code": 0,
+        "label": "ci-contract"
+      }
+    ],
+    "scope": "Python registration/CI regression only, uncommitted composed worktree; source fixtures are not native ELF execution",
+    "target_git_blob_sha": "23d764f7697970243e3f26ef1117b724e31ccf8a"
+  },
+  "working_merge": {
+    "all_non_source_corpus_fields_unchanged": true,
+    "pinned_blobs": 593,
+    "record_member": "validation/base-sync-2859-5689/resolution-working.json",
+    "recorded_status_preserved": "working merge; roster compatibility edit and independent review remain",
+    "required_paths": 512
+  }
+}

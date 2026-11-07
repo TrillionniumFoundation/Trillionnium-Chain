@@ -110,8 +110,13 @@ python3 scripts/ci/run_w1_rank_batch_v5.py --arch x64 \
 ```
 
 The runner preserves the existing build-override refusal rather than
-allowing a different compiler or code-generation flags. Host/cgroup identity
-is recorded. wait4 peak RSS is not aggregate simultaneous global memory,
+allowing a different compiler or code-generation flags. Host observations retain
+the original root-view controller fields and add bounded current-runner membership,
+cgroup2 mount mapping and visible ancestor limits. Missing reads, ambiguous mounts
+or changed membership remain partial or unresolved. The root view is not an
+effective quota: namespace-external ancestors, atomic identity and later native-child
+placement are not established by this read-only snapshot. It grants no Host authority.
+wait4 peak RSS is not aggregate simultaneous global memory,
 and unreaped descendants of a failed build may be missing from CPU totals.
 These observations cannot substitute for the original quarter-CPU, 2-GiB,
 no-swap public-service experiment.

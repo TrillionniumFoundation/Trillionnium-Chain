@@ -1,0 +1,212 @@
+{
+  "conclusion": "With the fixed parent absent on the current manual Host, these original launchers provide no authorized unchanged local provisioning route. Do not spoof GitHub context, provision the workstation through an alternate launcher, relax eligibility, skip the failing test, or rename its failure as a pass. Genuine hosted CI using its original source/job/Host owner is the supported automatic preparation route. A separately already-administrator-provisioned valid Host can execute the original body only while all native eligibility checks genuinely pass; that condition is not established on the current manual Host.",
+  "environment_modified": false,
+  "findings": [
+    {
+      "finding": "An already valid fixed Host executes the unchanged original body. Missing/invalid parent on non-GitHub local execution returns false rather than provisioning or reporting a skip/pass. A child marker additionally requires exact target/selector and genuine native Host verification; no marker creates the Host.",
+      "owner": "current_elf_host::execute_in_fixed_host",
+      "references": [
+        {
+          "end_line": 38,
+          "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+          "start_line": 7
+        }
+      ]
+    },
+    {
+      "finding": "Only nine exact target/selector pairs are permitted. Preparation requires declared GitHub CI, non-root direct original libtest parent, actual parent PID/start identity/current ELF and cwd, exact source/job, fresh output, and required original CLI. It calls the original Host owner and preserves the architecture 120-second bound and full named-test/report binding; it is not a generic local executable launcher.",
+      "owner": "run_public_fixture_native.prepare/launch",
+      "references": [
+        {
+          "end_line": 55,
+          "path": "scripts/ci/run_public_fixture_native.py",
+          "start_line": 37
+        },
+        {
+          "end_line": 176,
+          "path": "scripts/ci/run_public_fixture_native.py",
+          "start_line": 111
+        },
+        {
+          "end_line": 480,
+          "path": "scripts/ci/run_public_fixture_native.py",
+          "start_line": 465
+        }
+      ]
+    },
+    {
+      "finding": "Both outer entries reject non-hosted local provisioning before setup. Fresh setup additionally requires an unowned/unconfigured parent, exact checked-in unit bytes and non-root job identity. A preexisting parent can be reused only for the declared current-ELF registry through the original source/job-bound lease. Cleanup owns only its unique child, never the shared parent.",
+      "owner": "run_from_zero_host.outer/prepare_parent/outer_owned",
+      "references": [
+        {
+          "end_line": 345,
+          "path": "scripts/ci/run_from_zero_host.py",
+          "start_line": 282
+        },
+        {
+          "end_line": 329,
+          "path": "scripts/ci/run_from_zero_host.py",
+          "start_line": 311
+        },
+        {
+          "end_line": 439,
+          "path": "scripts/ci/run_from_zero_host.py",
+          "start_line": 360
+        }
+      ]
+    },
+    {
+      "finding": "Hosted context and the event/source receipt are verified before privileged lock setup. The shared root-owned nonblocking lock and source/job-bound sealed parent are not caller-selected generic permissions.",
+      "owner": "public_fixture_host_lease.context/workflow_source/parent_lock",
+      "references": [
+        {
+          "end_line": 91,
+          "path": "scripts/ci/public_fixture_host_lease.py",
+          "start_line": 41
+        }
+      ]
+    },
+    {
+      "finding": "This separate launcher is also hosted-CI-only, with exact GitHub workspace/non-root/current job checks. It accepts only the original campaign phase selector and complete seed/business inputs, binds exact ELF/job bytes and the separate 400%/16-GiB controller, and neither replaces architecture tests nor grants a manual-host provision path.",
+      "owner": "run_native_phase_host.outer/validate_job",
+      "references": [
+        {
+          "end_line": 145,
+          "path": "scripts/ci/run_native_phase_host.py",
+          "start_line": 83
+        },
+        {
+          "end_line": 195,
+          "path": "scripts/ci/run_native_phase_host.py",
+          "start_line": 179
+        },
+        {
+          "end_line": 329,
+          "path": "scripts/ci/run_native_phase_host.py",
+          "start_line": 302
+        },
+        {
+          "end_line": 430,
+          "path": "scripts/ci/run_native_phase_host.py",
+          "start_line": 364
+        }
+      ]
+    },
+    {
+      "finding": "The fixed path is /sys/fs/cgroup/trnmponpublic.slice. Native verification requires the actual canonical approved root-owned parent, boot/inode/permissions, actual calling-thread membership and fresh limits. The retained unit is quarter CPU, 2 GiB, zero swap and 256 tasks; successful static review or CI environment text is not native Host evidence.",
+      "owner": "native KernelBudget and fixed resource unit",
+      "references": [
+        {
+          "end_line": 569,
+          "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+          "start_line": 515
+        },
+        {
+          "end_line": 1404,
+          "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+          "start_line": 1402
+        },
+        {
+          "end_line": 24,
+          "path": "scripts/ci/public_host_ci_observation.py",
+          "start_line": 14
+        },
+        {
+          "end_line": 14,
+          "path": "config/systemd/trnmponpublic.slice",
+          "start_line": 1
+        }
+      ]
+    },
+    {
+      "finding": "The test retains all 18 original samples and keeps its original error/cold-reopen predicate. The complete report lives under TempDir by default; a receipt-directory copy is conditional. Bounded console failure entries are diagnostic records and do not substitute for the complete report.",
+      "owner": "architecture report and original failure predicate",
+      "references": [
+        {
+          "end_line": 719,
+          "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+          "start_line": 703
+        },
+        {
+          "end_line": 837,
+          "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+          "start_line": 779
+        }
+      ]
+    }
+  ],
+  "input_binding": "Each listed file was read from the exact Git commit and matched to current file bytes; no complete mutable-worktree qualification is claimed.",
+  "inputs": [
+    {
+      "bytes": 2996,
+      "git_blob": "243f28fca0fb179927a0fabedc8f480bebfeffb8",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e"
+    },
+    {
+      "bytes": 29037,
+      "git_blob": "253fbc7806b6631f5a29220ea42b0711f853f278",
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8"
+    },
+    {
+      "bytes": 24743,
+      "git_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "path": "scripts/ci/run_from_zero_host.py",
+      "sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791"
+    },
+    {
+      "bytes": 18895,
+      "git_blob": "e2b9efd944c7cb6ab23808051020bab6b52c0b23",
+      "path": "scripts/ci/run_native_phase_host.py",
+      "sha256": "e3cb74c1233bbd255ef2e716deb79de625f3bd4a4b84814eb68a61de579e4b61"
+    },
+    {
+      "bytes": 11040,
+      "git_blob": "69ecbe1183ef9e6123d3014376f9c50a3f43a063",
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70"
+    },
+    {
+      "bytes": 5452,
+      "git_blob": "245b5b905e32446ed20f39398619553c4dccead0",
+      "path": "scripts/ci/public_host_ci_observation.py",
+      "sha256": "27f0c506592f26f3a218a6d1723c4694e4d7a59f0786e16dbf853e2d5cdb60de"
+    },
+    {
+      "bytes": 60778,
+      "git_blob": "fafef7d039bca16067bcbf088d210d50a452836b",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "sha256": "55669358d7a92178edf661350ab7443f03d8504540e94302539599acaa48c2d5"
+    },
+    {
+      "bytes": 36607,
+      "git_blob": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661"
+    },
+    {
+      "bytes": 325,
+      "git_blob": "8981b6aeed4c08c21679664940366b36a991444a",
+      "path": "config/systemd/trnmponpublic.slice",
+      "sha256": "74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622"
+    }
+  ],
+  "native_execution": false,
+  "production_qualified": false,
+  "provisioning_performed": false,
+  "remote_host_commands_executed": false,
+  "required_reporting_boundaries": [
+    "Keep e746 Cargo101 full-runtime failure separate from passing Node library, selected118, release118 and documentation command.",
+    "Do not claim all original native gates completed/passed, or label the whole candidate qualified without its component scope.",
+    "The retained archive has the original runtime log and 18 bounded architecture failure diagnostics; missing complete-report readbacks must remain explicit. No full sample report or unknown exited process environment is reconstructed.",
+    "Later workspace tests after Cargo stopped receive no execution credit from that command; no unique-test total adds overlapping suites."
+  ],
+  "review_type": "static code/contract review only",
+  "reviewed_utc": "2026-11-06T17:49:07.680699+00:00",
+  "schema": "trnm-original-host-static-boundary-review-v1",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_modified": false,
+  "source_tests_executed": false,
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

@@ -1,0 +1,137 @@
+{
+  "scope": "finite local components only; no fixed Host campaign, new TPS, WAN or production acceptance",
+  "host": {
+    "arms": {
+      "original-absolute-path": {
+        "samples": 64,
+        "checks": 4096,
+        "thread_cpu_ns": 29103559,
+        "wall_ns": 29103011,
+        "failures": 0,
+        "mean_cpu_ns_per_check": 7105.361083984375,
+        "mean_wall_ns_per_check": 7105.227294921875
+      },
+      "absolute-path-plus-final-parent-fence": {
+        "samples": 64,
+        "checks": 4096,
+        "thread_cpu_ns": 30028095,
+        "wall_ns": 30040032,
+        "failures": 0,
+        "mean_cpu_ns_per_check": 7331.077880859375,
+        "mean_wall_ns_per_check": 7333.9921875
+      },
+      "held-parent-fresh-openat-plus-final-parent-fence": {
+        "samples": 64,
+        "checks": 4096,
+        "thread_cpu_ns": 28808082,
+        "wall_ns": 28799797,
+        "failures": 0,
+        "mean_cpu_ns_per_check": 7033.22314453125,
+        "mean_wall_ns_per_check": 7031.200439453125
+      }
+    },
+    "relative_vs_original_cpu_change_fraction": -0.010152607108979361,
+    "relative_vs_original_wall_change_fraction": -0.01041864706026463,
+    "relative_vs_refenced_cpu_change_fraction": -0.04062905089383795,
+    "all_planned_samples_retained": true
+  },
+  "signed_seed": {
+    "runs": [
+      {
+        "slot": "01-baseline",
+        "passed": true,
+        "reference_packet_id": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+        "wrong_packet_id": "673d64dae30e714544c659f0e6f7e9481516f692acce73d0d0ca465a0685a1b0",
+        "seed_transfers": 1024,
+        "refusal_paid_cpu_ns": 23615085,
+        "legal_paid_cpu_ns": 28873085,
+        "legal_call_cpu_ns": [
+          28873085
+        ],
+        "legal_client_wall_ns": [
+          48455457
+        ],
+        "live_unchanged": true,
+        "cold_unchanged": true,
+        "legal_equal": true,
+        "legal_cold_equal": true,
+        "fixture_file_sha256": "6d4a253f1c3d31bc8b238bea3753641353708ccb97aa0099c0972843ec85c49a"
+      },
+      {
+        "slot": "02-candidate",
+        "passed": true,
+        "reference_packet_id": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+        "wrong_packet_id": "673d64dae30e714544c659f0e6f7e9481516f692acce73d0d0ca465a0685a1b0",
+        "seed_transfers": 1024,
+        "refusal_paid_cpu_ns": 20353096,
+        "legal_paid_cpu_ns": 28059932,
+        "legal_call_cpu_ns": [
+          28059932
+        ],
+        "legal_client_wall_ns": [
+          47248150
+        ],
+        "live_unchanged": true,
+        "cold_unchanged": true,
+        "legal_equal": true,
+        "legal_cold_equal": true,
+        "fixture_file_sha256": "393073c7f9c5535a2e5686d4be5a9feb90fe77c20ec6ef414e1e704f6b87f61b"
+      },
+      {
+        "slot": "03-candidate",
+        "passed": true,
+        "reference_packet_id": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+        "wrong_packet_id": "673d64dae30e714544c659f0e6f7e9481516f692acce73d0d0ca465a0685a1b0",
+        "seed_transfers": 1024,
+        "refusal_paid_cpu_ns": 24543205,
+        "legal_paid_cpu_ns": 32037953,
+        "legal_call_cpu_ns": [
+          32037953
+        ],
+        "legal_client_wall_ns": [
+          51561486
+        ],
+        "live_unchanged": true,
+        "cold_unchanged": true,
+        "legal_equal": true,
+        "legal_cold_equal": true,
+        "fixture_file_sha256": "fa5cee35275472b9643dc6b60d6ba6e51c2d9beaf6669b12b84663f24422a464"
+      },
+      {
+        "slot": "04-baseline",
+        "passed": true,
+        "reference_packet_id": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+        "wrong_packet_id": "673d64dae30e714544c659f0e6f7e9481516f692acce73d0d0ca465a0685a1b0",
+        "seed_transfers": 1024,
+        "refusal_paid_cpu_ns": 22159123,
+        "legal_paid_cpu_ns": 29714192,
+        "legal_call_cpu_ns": [
+          29714192
+        ],
+        "legal_client_wall_ns": [
+          47363466
+        ],
+        "live_unchanged": true,
+        "cold_unchanged": true,
+        "legal_equal": true,
+        "legal_cold_equal": true,
+        "fixture_file_sha256": "1bb35630f2a99a11d5c5cab351544f671601540f6eef4269b2b41cd73014b63e"
+      }
+    ],
+    "means": {
+      "baseline": {
+        "refusal_paid_cpu_ns": 22887104,
+        "legal_paid_cpu_ns": 29293638.5
+      },
+      "candidate": {
+        "refusal_paid_cpu_ns": 22448150.5,
+        "legal_paid_cpu_ns": 30048942.5
+      }
+    },
+    "legal_paid_cpu_change_fraction": 0.025783891611825593,
+    "refusal_paid_cpu_change_fraction": -0.019179075692582148,
+    "packet_identities_equal": true,
+    "all_four_slots_retained": true,
+    "sample_size_per_arm": 2
+  }
+}

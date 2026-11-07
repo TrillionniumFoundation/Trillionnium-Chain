@@ -1,0 +1,123 @@
+{
+  "archive": {
+    "bytes": 17084,
+    "file": "original-development.tar.gz",
+    "sha256": "e7e49c7aa740b646c4ca2e625c6f6d0d09357da36ec7c6ce6244e69b5c1d561a"
+  },
+  "base_head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "files": [
+    {
+      "bytes": 4454,
+      "path": "candidate-manifest.json",
+      "sha256": "ab4df728c1e7c9ddefae58784387a4528baa247aaba3ed5ac2469520de3e839b"
+    },
+    {
+      "bytes": 32656,
+      "path": "pq-parallel-controls-0bca.patch",
+      "sha256": "44da0082ef5e2cf60cebe06061bf1bce414a30c12a314bea31f57b3a7a9b16ea"
+    },
+    {
+      "bytes": 19005,
+      "path": "ci-contract-working.log",
+      "sha256": "2dc53d8f162426653d2615be82a140a392c449c200821069cc1c38cc91d64924"
+    },
+    {
+      "bytes": 18209,
+      "path": "ci-contract-working-retry.log",
+      "sha256": "d4dd5a64295790c9ba53be7f2e2e7541712b0f0d84265a656b000c6a8413589a"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/apply-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/apply-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/diff-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/diff-check.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3169,
+      "path": "format-raw/download-index.json",
+      "sha256": "706baa23ee1dc314f84c79c67fbb5595b966440d5c2982852af62cd313e2189f"
+    },
+    {
+      "bytes": 2797,
+      "path": "format-raw/format-receipt.json",
+      "sha256": "2acf3ab23533f6f25fc7c07c9bfb9b8f15f8094104ce0a61df4f52bb1d1ad8be"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 5755,
+      "path": "format-raw/job-launch.json",
+      "sha256": "2cf62aef13b026ac3ebc4bb7a379c8ebb17b520ab9a7569534811e898d77fc3b"
+    },
+    {
+      "bytes": 731,
+      "path": "format-raw/job-status.json",
+      "sha256": "ac810458fe3ed78dd0346626c193cbc1dae6469accbb3869307a941adc8af718"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2629,
+      "path": "format-raw/job.stdout",
+      "sha256": "cb7195e69cdb120a1eeb0d1e1ee187079216a1c5654cd2ea87768df232b30d5b"
+    },
+    {
+      "bytes": 0,
+      "path": "format-raw/local-final-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 171,
+      "path": "format-raw/local-final-preflight.stdout",
+      "sha256": "4cafd813f31ebe77c6dadcc6afb9490c9c46c09a5d1976fc46ce1299da7e897f"
+    },
+    {
+      "bytes": 173,
+      "path": "format-raw/preflight.stdout",
+      "sha256": "ef0f0b1ad170199289e13253d578881ff6e87707c21f832137ea09280aad3d5e"
+    },
+    {
+      "bytes": 190,
+      "path": "format-raw/upload-receipt.json",
+      "sha256": "a755e9c202cf48e261a124a49a4ca2e15035f42d071db937966aa0bc5bdf801d"
+    }
+  ],
+  "integrated_head": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "native_execution": false,
+  "schema": "trnm-pq-control-development-carrier-v1",
+  "scope": "Original isolated candidate formatting and uncommitted reader observations. No native execution; no exact-source qualification is inferred from the two working-tree CI logs.",
+  "working_ci_first_result": {
+    "cause": "Current synthetic selector fixture omitted the new PQ modules.",
+    "failed": 1,
+    "tests": 109
+  },
+  "working_ci_retry_result": {
+    "failed": 0,
+    "tests": 109
+  }
+}

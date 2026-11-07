@@ -1,0 +1,336 @@
+{
+  "actual_runner_and_helpers": [
+    {
+      "archive_member": "validation/run_exact_selected_controls.py",
+      "bytes": 28107,
+      "sha256": "a8f8656fe25038fb67939b360b42631b6856dab9bd302365cd53591be2108e55"
+    },
+    {
+      "archive_member": "validation/run_pq_required_controls_v2.py",
+      "bytes": 19396,
+      "sha256": "94bccecdc9a33ac140633ab677af3b17f600c1483377c5b94083bcbed7bc3680"
+    },
+    {
+      "archive_member": "validation/run_composed_cell_controls.py",
+      "bytes": 18968,
+      "sha256": "4ed5320de1668893212dde62970a8ed53adb25717237f7cc74b42a3e623f905e"
+    },
+    {
+      "archive_member": "validation/run_composed_native_validation.py",
+      "bytes": 9239,
+      "sha256": "f210388a49e176df7beb3935a68c421bab7d345d9cf78422bb55e4c3a027a6fc"
+    }
+  ],
+  "build_attempts": [
+    {
+      "no_wrapper_exit_inferred_from_partial_cargo_output": true,
+      "prefix": "rog-composed-2859-workspace-build",
+      "records": {
+        "-source-after.json": {
+          "path": "validation/rog-composed-2859-workspace-build-source-after.json",
+          "present": false,
+          "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+        },
+        "-source-before.json": {
+          "archive_member": "validation/rog-composed-2859-workspace-build-source-before.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        ".json": {
+          "path": "validation/rog-composed-2859-workspace-build.json",
+          "present": false,
+          "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+        },
+        ".jsonl": {
+          "archive_member": "validation/rog-composed-2859-workspace-build.jsonl",
+          "bytes": 240737,
+          "present": true,
+          "sha256": "45858e321e6d8cffa51842d0451dc3d75b1cf8660107642cc4b4f788bd46d5a3"
+        },
+        ".stderr": {
+          "archive_member": "validation/rog-composed-2859-workspace-build.stderr",
+          "bytes": 3660,
+          "present": true,
+          "sha256": "2480e2921a52bed305a19e0b9df2648fef762e51c9b3c9a1e2081e8f2d0083aa"
+        }
+      },
+      "reported_cancelled_attempt": true,
+      "wrapper_exit_code_as_recorded": null
+    },
+    {
+      "no_wrapper_exit_inferred_from_partial_cargo_output": true,
+      "prefix": "rog-composed-2859-workspace-build-attempt2",
+      "records": {
+        "-source-after.json": {
+          "path": "validation/rog-composed-2859-workspace-build-attempt2-source-after.json",
+          "present": false,
+          "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+        },
+        "-source-before.json": {
+          "archive_member": "validation/rog-composed-2859-workspace-build-attempt2-source-before.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        ".json": {
+          "path": "validation/rog-composed-2859-workspace-build-attempt2.json",
+          "present": false,
+          "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+        },
+        ".jsonl": {
+          "archive_member": "validation/rog-composed-2859-workspace-build-attempt2.jsonl",
+          "bytes": 285418,
+          "present": true,
+          "sha256": "7626c96da8a3cd0d1bc0b466cdd8cc7c9ce072d3c2403e250a031e40997b0551"
+        },
+        ".stderr": {
+          "archive_member": "validation/rog-composed-2859-workspace-build-attempt2.stderr",
+          "bytes": 732,
+          "present": true,
+          "sha256": "bc3abde3c55d39393f51cb332e4f9378d6af213f509122b75e7de5326cff14bf"
+        }
+      },
+      "reported_cancelled_attempt": true,
+      "wrapper_exit_code_as_recorded": null
+    },
+    {
+      "no_wrapper_exit_inferred_from_partial_cargo_output": true,
+      "prefix": "rog-composed-2859-component-build",
+      "records": {
+        "-source-after.json": {
+          "archive_member": "validation/rog-composed-2859-component-build-source-after.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        "-source-before.json": {
+          "archive_member": "validation/rog-composed-2859-component-build-source-before.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        ".json": {
+          "archive_member": "validation/rog-composed-2859-component-build.json",
+          "bytes": 1073,
+          "present": true,
+          "sha256": "664175c2b2198eda78a36203d6842922547dd2d083769bc6c3ed18b8f4ce347c"
+        },
+        ".jsonl": {
+          "archive_member": "validation/rog-composed-2859-component-build.jsonl",
+          "bytes": 53331,
+          "present": true,
+          "sha256": "4ea395400187296b4e2baf5aa3216d1268eb0d0eb9dc8c2108a93f90fbf021de"
+        },
+        ".stderr": {
+          "archive_member": "validation/rog-composed-2859-component-build.stderr",
+          "bytes": 4677,
+          "present": true,
+          "sha256": "c52c11d7dff3d8eafd25c28e788f2f20a188eb629bb8636ad921d39427c2d847"
+        }
+      },
+      "reported_cancelled_attempt": false,
+      "wrapper_exit_code_as_recorded": 101
+    },
+    {
+      "no_wrapper_exit_inferred_from_partial_cargo_output": true,
+      "prefix": "rog-composed-2859-component-build-attempt2",
+      "records": {
+        "-source-after.json": {
+          "archive_member": "validation/rog-composed-2859-component-build-attempt2-source-after.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        "-source-before.json": {
+          "archive_member": "validation/rog-composed-2859-component-build-attempt2-source-before.json",
+          "bytes": 422,
+          "present": true,
+          "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+        },
+        ".json": {
+          "archive_member": "validation/rog-composed-2859-component-build-attempt2.json",
+          "bytes": 1233,
+          "present": true,
+          "sha256": "743ab2ed8cc4a5d69bb1154d72f6f9ce973dc70cc3042effd9212f286c349497"
+        },
+        ".jsonl": {
+          "archive_member": "validation/rog-composed-2859-component-build-attempt2.jsonl",
+          "bytes": 128714,
+          "present": true,
+          "sha256": "d9c54e00eef13a4a01bf94689ec2af68e007aa4cabf42a1bb1dcd44c36ecefe8"
+        },
+        ".stderr": {
+          "archive_member": "validation/rog-composed-2859-component-build-attempt2.stderr",
+          "bytes": 3340,
+          "present": true,
+          "sha256": "bec86ca3eb360ea1ec6e4d62bccf18f4a1327dd197605eac385925ecc4150a1b"
+        }
+      },
+      "reported_cancelled_attempt": false,
+      "wrapper_exit_code_as_recorded": 0
+    }
+  ],
+  "created_utc": "2026-11-06T09:07:51.667575+00:00",
+  "exclusions": [],
+  "expected_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "expected_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "gates": [
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T08:48:07.614248+00:00",
+      "gate": {
+        "archive_member": "validation/rog-composed-2859-native-suite/controls-80.gate.json",
+        "bytes": 3562,
+        "sha256": "6896e6e73847d0efb72ba7d6f445c7fc8d713c11fc6d049a18ea314b9879e703"
+      },
+      "label": "controls-80",
+      "observed_as_reported": {
+        "confirmed_named_execution_count": 80,
+        "passed_selector_count": 80
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-2859-native-suite/controls-80/summary.json",
+        "bytes": 554331,
+        "sha256": "e277e71d2641860c8cd7992b4073c35768a2fe5a6b8b92a615052b513994550c"
+      }
+    },
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T09:03:31.824670+00:00",
+      "full_library_as_reported": {
+        "counts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 32,
+          "measured": 0,
+          "passed": 1172
+        },
+        "harness_seconds": "884.43",
+        "harness_status": "ok",
+        "passed": true,
+        "registry_count": 1204,
+        "running": 1204,
+        "scope": "full original libtest invocation, including its ordinary child harness entries; not a substitute for the 52 meaningful required controls"
+      },
+      "gate": {
+        "archive_member": "validation/rog-composed-2859-native-suite/pq-full-and-required.gate.json",
+        "bytes": 4322,
+        "sha256": "89eb5e8640c0bcdc70430726e6915b4debb8a483eaad1092b396468fa2616f05"
+      },
+      "label": "pq-full-and-required",
+      "observed_as_reported": {
+        "confirmed_named_execution_count": 52,
+        "dispatched_selector_count": 52,
+        "passed_selector_count": 52
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-2859-native-suite/pq-full-and-required/summary.json",
+        "bytes": 381929,
+        "sha256": "a989ddcad635fa3f5f143dfe55ea817604ab9ce179c38b839328f543840e247d"
+      }
+    },
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T09:05:06.824946+00:00",
+      "gate": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls.gate.json",
+        "bytes": 3443,
+        "sha256": "ca3dae8c434e327ffd8385779cb4d77bbad6b62de2d3f3f86bcd60dfd68ebce7"
+      },
+      "label": "cell-controls",
+      "observed_as_reported": {
+        "executed_component_commands": 3,
+        "native_failed_component_commands": 0,
+        "passed_component_commands": 3
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-2859-native-suite/cell-controls/summary.json",
+        "bytes": 88535,
+        "sha256": "65ce3a366d1229c57dea3718768eed08962c617b9dbbe0c660738e6e071e14ab"
+      }
+    },
+    {
+      "driver_native_exit": 0,
+      "gate": {
+        "archive_member": "validation/rog-composed-2859-native-suite/strict-workspace-clippy.gate.json",
+        "bytes": 6442,
+        "sha256": "a102940b4271e853d8ef5148f7e748ece5f03ad44ca1d1b4d5393c53b32a8d86"
+      },
+      "label": "strict-workspace-clippy",
+      "native_exit_as_reported": 0,
+      "passed_as_reported": true,
+      "receipt": {
+        "archive_member": "validation/rog-composed-2859-native-suite/clippy/strict-workspace-clippy.json",
+        "bytes": 2584,
+        "sha256": "c18f59fc4d3cab43288a7480dc93e6aba8be5b78802c46d546cc1b684b63c929"
+      },
+      "status_as_reported": "command_succeeded"
+    }
+  ],
+  "missing_cancelled_wrapper_records": [
+    {
+      "path": "validation/rog-composed-2859-workspace-build.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-source-after.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-attempt2.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    },
+    {
+      "path": "validation/rog-composed-2859-workspace-build-attempt2-source-after.json",
+      "reason": "cancelled workspace wrapper did not write a terminal receipt; absence preserved, not reconstructed"
+    }
+  ],
+  "provider_receipt": {
+    "archive_member": "validation/rog-provider/pq-provider/provider.json",
+    "bytes": 3049,
+    "sha256": "8f38de77d89c99060882aaa73551c71faceacd5bba4375887c311131dbd9be73"
+  },
+  "provider_status_as_reported": "PREPARED_AND_SMOKE_VERIFIED",
+  "recovery_and_cleanup_receipts": [
+    {
+      "archive_member": "validation/rog-composed-2859-build-interruption.json",
+      "bytes": 961,
+      "sha256": "54a7c37aa9aa0138e15e79e58261ac4fb7cf5d06f4f38b5eddba461badde55ef"
+    },
+    {
+      "archive_member": "validation/rog-composed-2859-build-scope-recovery.json",
+      "bytes": 1114,
+      "sha256": "ec59d15a860675a775e1ebce98513be3475c2f3ab92be66ee4b3f712543532a3"
+    },
+    {
+      "archive_member": "validation/rog-composed-2859-component-tmpdir-recovery.json",
+      "bytes": 593,
+      "sha256": "a03ba06499145801c2f1e7ff889b44ddeb235ed9dca2edbf0e830611371a7ac2"
+    },
+    {
+      "archive_member": "validation/rog-owned-tmpfs-build-cache-cleanup.json",
+      "bytes": 1145,
+      "sha256": "58978cc451c17b1f31a71cc033012310db4237e24b5af503f348662c407348a2"
+    }
+  ],
+  "schema": "trnm-composed-rog-evidence-index-v1",
+  "scope": "Lossless evidence packaging only. Native failures and cancelled/unknown attempts remain their original results. No native execution, build, source modification, network call, or new performance acceptance.",
+  "suite": {
+    "archive_member": "validation/rog-composed-2859-native-suite/summary.json",
+    "bytes": 28216,
+    "sha256": "bebb191bfe5617a065f1b28e815af1eb5d9e40de068ab745414a11c0c2967508"
+  },
+  "suite_errors_as_reported": [],
+  "suite_passed_as_reported": true,
+  "suite_scope_verbatim": "80 exact semantic controls; full Node plus original PQ52; original Cell/M12 selections; strict workspace Clippy. Not the complete workspace native test suite, business SLO, public throughput or production qualification."
+}

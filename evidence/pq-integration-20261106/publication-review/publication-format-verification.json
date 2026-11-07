@@ -1,0 +1,10 @@
+{
+  "schema": "trnm-publication-format-verification-v1",
+  "staged_diff_check_exit": 0,
+  "staged_files": 80,
+  "observed_attributes": "evidence/pq-integration-20261106/README.md: whitespace: -blank-at-eof\nevidence/pq-integration-20261106/retained/publication/README.md: whitespace: -blank-at-eol\nevidence/pq-integration-20261106/terminal/publication/README.md: whitespace: -blank-at-eol\nscripts/llm_runtime_release.py: whitespace: unspecified\ndocs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md: whitespace: unspecified\nevidence/pq-integration-20261106/qualification.json: whitespace: unspecified\n",
+  "native_tests_executed": 0,
+  "frozen_bytes_modified": false,
+  "source_whitespace_rules_modified": false,
+  "original_before_observation_retained": true
+}

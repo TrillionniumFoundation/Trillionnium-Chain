@@ -1,0 +1,144 @@
+{
+  "after": [
+    {
+      "device": 66306,
+      "gid": 0,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o755",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/",
+      "uid": 0
+    },
+    {
+      "device": 66306,
+      "gid": 0,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o755",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home",
+      "uid": 0
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o750",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o775",
+      "original_journal_ancestor_mode_allows": false,
+      "path": "/home/qq/work",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o700",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq/work/chain-throughput-20261106-ee79",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o700",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq/work/chain-throughput-20261106-ee79/tmp",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o700",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq/trnm-ee79-0bca-runtime2-tmp",
+      "uid": 1000
+    }
+  ],
+  "before": [
+    {
+      "device": 66306,
+      "gid": 0,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o755",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/",
+      "uid": 0
+    },
+    {
+      "device": 66306,
+      "gid": 0,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o755",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home",
+      "uid": 0
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o750",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o775",
+      "original_journal_ancestor_mode_allows": false,
+      "path": "/home/qq/work",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o700",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq/work/chain-throughput-20261106-ee79",
+      "uid": 1000
+    },
+    {
+      "device": 66306,
+      "gid": 1000,
+      "is_directory": true,
+      "is_symlink": false,
+      "mode_octal": "0o700",
+      "original_journal_ancestor_mode_allows": true,
+      "path": "/home/qq/work/chain-throughput-20261106-ee79/tmp",
+      "uid": 1000
+    }
+  ],
+  "existing_permissions_unchanged": true,
+  "head": "0bca28ebf59058b6aba9db5eb956c4479556e9ee",
+  "new_tmpdir": "/home/qq/trnm-ee79-0bca-runtime2-tmp",
+  "only_new_owned_directory_created": true,
+  "original_failure_retained": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/runtime-stage.json",
+  "read_only_probe_job": "1a1b1b19a48-fc05-7a4c",
+  "same_filesystem_as_target_and_guard": true,
+  "schema": "trnm-original-ancestor-contract-environment-repair-v1"
+}

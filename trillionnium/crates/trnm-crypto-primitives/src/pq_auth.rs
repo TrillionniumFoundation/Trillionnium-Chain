@@ -23,7 +23,9 @@ use trnm_protocol::pq_frame::{
 };
 use zeroize::Zeroizing;
 
-pub const PQ_MAX_MESSAGE_BYTES: usize = 65_536;
+pub mod tuf;
+
+pub const PQ_MAX_MESSAGE_BYTES: usize = trnm_protocol::crypto_profile::MAX_SIGNED_MESSAGE_BYTES;
 const SPKI_PREFIX: [u8; 22] = [
     0x30, 0x82, 0x07, 0xb2, 0x30, 0x0b, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03,
     0x12, 0x03, 0x82, 0x07, 0xa1, 0x00,
@@ -231,6 +233,17 @@ impl PqNativeSigningKey {
         &self,
         message: &[u8],
     ) -> Result<[u8; ML_DSA_65_SIGNATURE_BYTES], PqNativeError> {
+        let result = self.sign_unverified_message(message)?;
+        self.verifier.verify_exact_message(message, &result)?;
+        Ok(result)
+    }
+
+    // Backend output is untrusted until the public signing entry point verifies
+    // its final exported bytes with the pinned canonical verifier.
+    fn sign_unverified_message(
+        &self,
+        message: &[u8],
+    ) -> Result<[u8; ML_DSA_65_SIGNATURE_BYTES], PqNativeError> {
         if message.len() > PQ_MAX_MESSAGE_BYTES {
             return Err(PqNativeError::SignatureRejected);
         }
@@ -252,7 +265,6 @@ impl PqNativeSigningKey {
                 }
             }
         }
-        self.verifier.verify_exact_message(message, &result)?;
         Ok(result)
     }
     pub fn sign_statement(
@@ -268,7 +280,9 @@ impl PqNativeSigningKey {
         frame[TPQ1_UNSIGNED_BYTES..TPQ1_UNSIGNED_BYTES + 2]
             .copy_from_slice(&(ML_DSA_65_SIGNATURE_BYTES as u16).to_be_bytes());
         preflight_unverified_with_spki(&frame, expected, &self.verifier.spki)?;
-        frame[TPQ1_UNSIGNED_BYTES + 2..].copy_from_slice(&self.sign_exact_message(statement)?);
+        frame[TPQ1_UNSIGNED_BYTES + 2..].copy_from_slice(&self.sign_unverified_message(statement)?);
+        // Verify the final frame once. Calling sign_exact_message here would
+        // repeat the same signature verification before this final-frame check.
         self.verifier.verify(&frame, expected)?;
         Ok(frame)
     }

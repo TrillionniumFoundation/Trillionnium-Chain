@@ -1,0 +1,117 @@
+{
+  "schema": "trnm-throughput-final-assembly-receipt-v1",
+  "created_utc": "2026-11-06T08:55:32Z",
+  "tree": "/workspace/scratch/1eed767ad985/validation/throughput-final-evidence-tree",
+  "source_before": {
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "status": ""
+  },
+  "source_after": {
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "status": ""
+  },
+  "payload_files": 35,
+  "total_regular_files": 37,
+  "manifest_sha256": "4f4bc0411b5d572558675dfcfb32c92574b2a49cd0aa18778b643a75ea1e8f5d",
+  "sha256sums_sha256": "6d13de67bb76d4568c9643ff327cdbd2a3e01529e0d0ddd57cdb523329f96ce1",
+  "readme_sha256": "03a87c97bee8aeab9041bceae472c4d3102a842a753d93ddb7c36a6d4ce9d20b",
+  "readme_lines": 323,
+  "archive_records": [
+    {
+      "path": "records/original-ci-20261106T081354Z.tar.xz",
+      "bytes": 956164,
+      "sha256": "04d901ed56db55937cdebf681859b2badf650dba508f79af5765b3c219fb8ec5",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 3257,
+      "regular_members_including_manifest": 3258,
+      "manifest_sha256": "9c48355196eeae770766258e6f23416ac3b1a010caf371fe78d25fc62ed2b4c1",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "source_snapshot": "2026-11-06T08:13:54Z",
+        "original_zip": {
+          "source": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-20261106T081354Z.zip",
+          "bytes": 5191414,
+          "sha256": "a109fc9f1941f66e135eba717e61144a6e4ad0aa4cc888ee3d6d4f5e16c06a35"
+        },
+        "all_3257_original_zip_members_equal_directory_bytes": true,
+        "original_zip_modified": false,
+        "not_a_new_native_run_or_new_snapshot": true
+      }
+    },
+    {
+      "path": "records/base-sync.tar.xz",
+      "bytes": 1222620,
+      "sha256": "7b976ccb971cef41a8cab2c76f5fba2d34cfdfd61095fdeb588c21a3a70f5587",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 65,
+      "regular_members_including_manifest": 66,
+      "manifest_sha256": "bf6629fe4dc60f05be4e180d32ab56ffd2ac13a7b44fd17bcac3ea691aa4c111",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "original_payload_records": 62,
+        "original_inventory_files": 1,
+        "original_inventory_matches_all_62_payloads": true,
+        "independent_review": "packaging-time transcription of actual collaboration messages; not a recovered historical tool stdout file",
+        "additional_publication_manifest": 1,
+        "source_parents": [
+          "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+          "1f723bba961ec5f8d7e25e7b33db222dac7ef50c"
+        ],
+        "resolved_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "native_build_or_test_executed_for_packaging": false
+      }
+    },
+    {
+      "path": "records/development-records.tar.xz",
+      "bytes": 59564,
+      "sha256": "54d3bbe7bf77aeb3fb6cd304a3b20de711ad08118d1a0753d6a5c10402876c4d",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 70,
+      "regular_members_including_manifest": 71,
+      "manifest_sha256": "19f74917dfbc2487ebcdcc60261085916354cba0543f2a251812969bcd78dab0",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "original_staged_regular_files": 66,
+        "original_inventory_retained": true,
+        "older_inventory_bound_source_variants_retained": 2,
+        "stale_inventory_rows_explicitly_recorded": 2,
+        "historical_failures_and_pending_statuses_unchanged": true
+      }
+    },
+    {
+      "path": "records/rog-default-evidence.tar.gz",
+      "bytes": 1408174,
+      "sha256": "3630f0830e1f3c13dde53b0d430b2a40ab0d0fe012b839c415f6c633bdbd61e4",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-default-evidence.tar.gz"
+    },
+    {
+      "path": "records/rog-pq-and-counter-evidence.tar.gz",
+      "bytes": 2470295,
+      "sha256": "65c648938556cc6ef8452e13e1c691ea0c380f27fa3fc147105e713fa3c7dbc2",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence.tar.gz"
+    },
+    {
+      "path": "records/ci-source-evidence.tar.gz",
+      "bytes": 576072,
+      "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.tar.gz"
+    }
+  ],
+  "input_files_rechecked": 3415,
+  "local_markdown_links": 27,
+  "no_source_modifications_no_builds_no_native_tests_no_api": true,
+  "pending_rows_for_root": [
+    "ROG Node+M06 library build",
+    "ROG combined-source full Node/PQ52/Workspace80",
+    "ROG combined-source Cell/M12 and Clippy",
+    "current F0/Workspace/PQ original terminal results"
+  ]
+}

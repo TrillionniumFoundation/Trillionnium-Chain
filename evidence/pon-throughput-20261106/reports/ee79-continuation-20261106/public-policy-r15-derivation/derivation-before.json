@@ -1,0 +1,386 @@
+{
+  "current_contract_matches_config": true,
+  "current_development": {
+    "bits": 16,
+    "lifetime_ms": 2000,
+    "part_lengths": [
+      31,
+      4387,
+      1,
+      8,
+      8,
+      8,
+      8,
+      4
+    ],
+    "policy_id": "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c",
+    "preimage_bytes": 4526
+  },
+  "derivation": "SHA256(TRNM-PON1-NUL || uint16le(tag_length) || tag || each(uint32le(part_length) || part))",
+  "historical_r14_development": "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+  "inputs": [
+    {
+      "bytes": 387142,
+      "git_blob": "fc778471a5b656768f44a340c6f4038ec6d38c26",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "sha256": "e4cfec701b5c44cf9c27bcf555ca500d82ef6a38aa4c821a553d65391d956bef"
+    },
+    {
+      "bytes": 76907,
+      "git_blob": "20d040f84c0d33f71a035f730265aea6722a5c82",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "sha256": "41b7be4de0ed9083afe69d37396bd78289c64efd3fda2834e70821208a2b6d69"
+    },
+    {
+      "bytes": 32354,
+      "git_blob": "9333ce92c6ba130dd182538bfd8f69ec289acc83",
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "be816ee5b209098fa790d6e190d1d9c659634ac22d58b95c83dc8b49899c70cd"
+    },
+    {
+      "bytes": 28457,
+      "git_blob": "791a4c24972b509bae1fa50bf9847e1b82942797",
+      "path": "config/pon/public-resource-profile-vectors-v1.json",
+      "sha256": "41c5f557fc9b7064f9c9262365112039f1ad4641d8ba6052ee239d61039ac238"
+    }
+  ],
+  "native_execution": false,
+  "production_qualified": false,
+  "recomputed_vectors": [
+    {
+      "expected": "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2408,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2547,
+      "recomputed": "099c63fdd9a5feedd83dea1e681bcf35fa4ce219338df81a46c621ee5f5c028a",
+      "revision": "r10",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2408,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2547,
+      "recomputed": "a589532b416e0d35273235ec692cf47040edf182df2121702c1b237c8cff52e7",
+      "revision": "r10",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2408,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2547,
+      "recomputed": "fbd012278826496785fbd166d2d920ffa70a3491e52ddf2c9211d782357f9c35",
+      "revision": "r10",
+      "ticket_bits": 16
+    },
+    {
+      "expected": "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2530,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2669,
+      "recomputed": "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
+      "revision": "r11",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2530,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2669,
+      "recomputed": "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
+      "revision": "r11",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2530,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 2669,
+      "recomputed": "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
+      "revision": "r11",
+      "ticket_bits": 16
+    },
+    {
+      "expected": "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2904,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3043,
+      "recomputed": "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
+      "revision": "r12",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2904,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3043,
+      "recomputed": "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
+      "revision": "r12",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        2904,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3043,
+      "recomputed": "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
+      "revision": "r12",
+      "ticket_bits": 16
+    },
+    {
+      "expected": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        3587,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3726,
+      "recomputed": "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
+      "revision": "r13",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        3587,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3726,
+      "recomputed": "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
+      "revision": "r13",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        3587,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 3726,
+      "recomputed": "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
+      "revision": "r13",
+      "ticket_bits": 16
+    },
+    {
+      "expected": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4045,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4184,
+      "recomputed": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+      "revision": "r14",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4045,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4184,
+      "recomputed": "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+      "revision": "r14",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4045,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4184,
+      "recomputed": "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+      "revision": "r14",
+      "ticket_bits": 16
+    },
+    {
+      "expected": "7407c22c85e06aecf4a80b36e0448fed09d36f1c3709b30d31602c399ac5ff73",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4387,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4526,
+      "recomputed": "7407c22c85e06aecf4a80b36e0448fed09d36f1c3709b30d31602c399ac5ff73",
+      "revision": "r15",
+      "ticket_bits": 8
+    },
+    {
+      "expected": "b2ee3da40ceb26af516e3b7f2a913abba5ca7311a5930c9d3fcd8f312aac8c3f",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4387,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4526,
+      "recomputed": "b2ee3da40ceb26af516e3b7f2a913abba5ca7311a5930c9d3fcd8f312aac8c3f",
+      "revision": "r15",
+      "ticket_bits": 12
+    },
+    {
+      "expected": "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c",
+      "lifetime_ms": 2000,
+      "part_lengths": [
+        31,
+        4387,
+        1,
+        8,
+        8,
+        8,
+        8,
+        4
+      ],
+      "preimage_bytes": 4526,
+      "recomputed": "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c",
+      "revision": "r15",
+      "ticket_bits": 16
+    }
+  ],
+  "schema": "trnm-independent-public-policy-material-readback-v1",
+  "scope": "independent Python byte derivation from current Rust material and all six historical config revisions; no existing policy reader imported",
+  "source_head": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "source_status": "",
+  "source_tree": "473434f61c82d9b8daa76dff98ab3bdedbba13ca",
+  "unchanged_scalars": {
+    "MUTATION_CPU_BURST_NS": 2000000000,
+    "MUTATION_CPU_REFILL_NS_PER_SECOND": 250000000,
+    "MUTATION_CPU_START_RESERVE_NS": 100000000,
+    "MUTATION_CPU_WORKERS": 2
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "archive": {
+    "archive": "historical-cost-recovered-v1.tar.gz",
+    "archive_bytes": 2460139,
+    "archive_sha256": "f7551e2bbf68341c4448c2c71af954f09de1f9cfead75ce199de2ac839866996",
+    "maximum_part_bytes": 921600,
+    "original_full_zip_included": false,
+    "parts": [
+      {
+        "bytes": 921600,
+        "name": "historical-cost-recovered-v1.tar.gz.part000",
+        "offset": 0,
+        "sha256": "4ed908ed50753a5d5c0dd7f6990235bee667ef72fc34f50f6d8b6f5c208e2504"
+      },
+      {
+        "bytes": 921600,
+        "name": "historical-cost-recovered-v1.tar.gz.part001",
+        "offset": 921600,
+        "sha256": "3caecd9741d366a29946f9db10283061107cec7a735abf15e344bea1c996e390"
+      },
+      {
+        "bytes": 616939,
+        "name": "historical-cost-recovered-v1.tar.gz.part002",
+        "offset": 1843200,
+        "sha256": "a8a2a5a1678c17470a3f129f495da5355a2e1b2188283c7411ec651abaf18c0e"
+      }
+    ],
+    "payload_manifest_sha256": "7d4aa17e35f60c4ae3af4457277ae5ed4afbfd87503ea6e97dfb16c1ce428848",
+    "schema": "historical-cost-recovered-backup-parts-v1"
+  },
+  "atomic_write_receipts": {
+    "index": "{\"mode\":384,\"sha256\":\"614fc156a70caada6f3c95d551730b2d5e1eb0c32f66a7dc5c708289e2df8d40\",\"size\":1021,\"version\":\"66306:47841844:1021:1793981379825942022:1793981379827052324\",\"written\":1021}",
+    "parts": [
+      {
+        "metadata_text": "{\"mode\":384,\"sha256\":\"4ed908ed50753a5d5c0dd7f6990235bee667ef72fc34f50f6d8b6f5c208e2504\",\"size\":921600,\"version\":\"66306:47841838:921600:1793981176530100456:1793981176531585758\",\"written\":921600}",
+        "part": "000"
+      },
+      {
+        "metadata_text": "{\"mode\":384,\"sha256\":\"3caecd9741d366a29946f9db10283061107cec7a735abf15e344bea1c996e390\",\"size\":921600,\"version\":\"66306:47841840:921600:1793981235817583989:1793981235818729242\",\"written\":921600}",
+        "part": "001"
+      },
+      {
+        "metadata_text": "{\"mode\":384,\"sha256\":\"a8a2a5a1678c17470a3f129f495da5355a2e1b2188283c7411ec651abaf18c0e\",\"size\":616939,\"version\":\"66306:47841842:616939:1793981326935645773:1793981326936937456\",\"written\":616939}",
+        "part": "002"
+      }
+    ]
+  },
+  "directory_job_status": {
+    "at_unix_ms": 1793980665740,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1b1946cbf-fc05-79ae",
+    "launch_nonce": "44198bbc09c84c989531db502de0ab53",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 183,
+        "stored": 183
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "local_payload_files_verified": 40,
+  "reader_git_blobs_reverified": 5,
+  "remote_directory": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/historical-cost-recovered",
+  "report_and_coverage_hashes_reverified": true,
+  "schema": "historical-cost-recovered-remote-backup-receipt-v1",
+  "scope": "Returned atomic create-only write receipts match all local part/index sizes and SHA256. Local reassembly and every payload manifest entry verified; no remote benchmark or extraction executed."
+}

@@ -1,0 +1,8 @@
+{
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "observed_unix_ns": 1793986985142068148,
+  "schema": "trnm-archival-source-readonly-observation-v1",
+  "status_porcelain": "",
+  "tests_executed_by_this_observation": false,
+  "tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

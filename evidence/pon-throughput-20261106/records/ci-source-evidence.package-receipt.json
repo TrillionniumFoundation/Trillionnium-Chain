@@ -1,0 +1,45 @@
+{
+  "archive": {
+    "absolute_members": false,
+    "bytes": 576072,
+    "gzip_mtime": 0,
+    "gzip_original_filename": null,
+    "original_regular_files": 301,
+    "path": "ci-source-evidence.tar.gz",
+    "regular_members": 304,
+    "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199",
+    "symlinks_or_hardlinks": false,
+    "tar_mtime_uid_gid": 0
+  },
+  "archive_members_read_back_and_hashed": true,
+  "archive_reused_without_rewrite": true,
+  "checksums": {
+    "path": "ci-source-evidence.SHA256SUMS",
+    "sha256": "4c71915029604ab6b21d01b8ebcaedc86622e181aded313bda1a73f397732b63"
+  },
+  "existing_manifest_verification": {
+    "manifests_verified": 6,
+    "path": "ci-source-evidence.existing-manifests.json",
+    "sha256": "198a26ce8fb73847dc291d25f3fce529d2b687a34a4527d059c1d7292c505f8e"
+  },
+  "index": {
+    "bytes": 23462,
+    "path": "ci-source-evidence.index.json",
+    "sha256": "e15eba7acfda16821df7f5cb717e675fe7bb883db5f03a2f0791c1ab7b841049"
+  },
+  "manifest": {
+    "bytes": 71421,
+    "path": "ci-source-evidence.manifest.json",
+    "sha256": "3654e386dc5e34ca2218b8cf9ac3b7b76020f66cc6334e653437847b7dbcd35e"
+  },
+  "original_inputs_rechecked_after_archive": true,
+  "prior_index_attempt": {
+    "path": "ci-source-evidence.package-attempt1.json",
+    "scope": "prior metadata-index parser failure; archive and original evidence unchanged",
+    "sha256": "d8e5d72969832bb26e349a7bff4fbe95ff409de40c23467dfa1eb849c4fd7c19"
+  },
+  "result": "PASS",
+  "schema": "trnm-ci-evidence-package-receipt-v1",
+  "source_or_evidence_mutation": false,
+  "tests_or_builds_executed": false
+}

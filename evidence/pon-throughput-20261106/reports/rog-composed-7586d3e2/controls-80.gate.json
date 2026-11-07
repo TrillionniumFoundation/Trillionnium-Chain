@@ -1,0 +1,78 @@
+{
+  "child_passed": true,
+  "collector_errors": [],
+  "execution": {
+    "argv": [
+      "/usr/bin/python3",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_exact_selected_controls.py",
+      "--repo-root",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "--expected-head",
+      "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+      "--build-jsonl",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.jsonl",
+      "--build-stderr",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.stderr",
+      "--build-receipt",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.json",
+      "--output",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/controls-80"
+    ],
+    "capture_errors": {},
+    "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/controls-80.command.json",
+    "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+    "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/controls-80.streams.jsonl",
+    "finished_utc": "2026-11-06T09:31:34.359924+00:00",
+    "log_exit": 0,
+    "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/controls-80.log",
+    "native_argv": [
+      "/usr/bin/python3",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_exact_selected_controls.py",
+      "--repo-root",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "--expected-head",
+      "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+      "--build-jsonl",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.jsonl",
+      "--build-stderr",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.stderr",
+      "--build-receipt",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-component-build.json",
+      "--output",
+      "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/controls-80"
+    ],
+    "native_exit": 0,
+    "observed_stream_bytes": {
+      "log": 33490,
+      "stderr": 0,
+      "stdout": 33490
+    },
+    "pid": 832560,
+    "resources_path": null,
+    "spawn_error": null,
+    "started_utc": "2026-11-06T09:31:19.674269+00:00",
+    "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/controls-80.stderr",
+    "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/driver/controls-80.stdout",
+    "wall_ns": 14685664904
+  },
+  "label": "controls-80",
+  "observed": {
+    "confirmed_named_execution_count": 80,
+    "passed_selector_count": 80
+  },
+  "passed": true,
+  "source_bound": true,
+  "summary_identity": {
+    "fingerprint": [
+      66306,
+      45745937,
+      33152,
+      554299,
+      1793957494329199169,
+      1793957494329199169
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-native-suite/controls-80/summary.json",
+    "sha256": "6e7b21d806848e01234182b5f5c45691167a3deda511392c31451419c8198dad",
+    "size": 554299
+  }
+}

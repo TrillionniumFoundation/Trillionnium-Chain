@@ -405,6 +405,29 @@ class CorpusGateTests(unittest.TestCase):
         self.save()
         self.assertFalse(check(self.root)['cryptographic_acceptance'])
 
+    def test_runtime_verifier_dependency_file_and_pin_cannot_both_be_dropped(self):
+        # Keep this real dependency named independently of the checker's set.
+        name = 'scripts/ci/runtime-release-requirements.txt'
+        self.put(name, b'packaging==26.3\n')
+        if name not in self.manifest['required_paths']:
+            self.manifest['required_paths'].append(name)
+        self.save()
+        self.assertEqual(check(self.root)['status'], 'HOLD_NO_GO')
+        original = copy.deepcopy(self.manifest)
+        for omission in ('required', 'pin', 'required-and-pin'):
+            with self.subTest(omission=omission):
+                self.manifest = copy.deepcopy(original)
+                if omission in ('required', 'required-and-pin'):
+                    self.manifest['required_paths'].remove(name)
+                if omission in ('pin', 'required-and-pin'):
+                    del self.manifest['pinned_blobs'][name]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
     def test_convergence_owner_source_changes_cannot_reuse_prior_pins(self):
         # Exercise every convergence dependency, including the model codecs,
         # tensor reader, transport, CLI, vector and specification. The separate

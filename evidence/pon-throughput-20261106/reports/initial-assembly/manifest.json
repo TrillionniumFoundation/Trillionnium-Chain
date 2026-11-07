@@ -1,0 +1,423 @@
+{
+  "schema": "trnm-throughput-final-evidence-tree-v1",
+  "created_utc": "2026-11-06T08:55:32Z",
+  "source_before": {
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "status": ""
+  },
+  "source_after": {
+    "head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+    "status": ""
+  },
+  "scope": "reviewable assembly of retained evidence; pending native/CI rows intentionally await coordinating agent updates",
+  "manifest_excludes": [
+    "manifest.json",
+    "SHA256SUMS"
+  ],
+  "all_existing_inputs_preserved": true,
+  "local_markdown_links_verified": [
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/README-20261106T081354Z.md"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/pq-system-original-artifact-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-counter/history-counter.log"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/history-sqlite-reprepare-counter-fix.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-components/analysis.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-pq-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-285982d7/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/campaign-business-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "manifest.json"
+    },
+    {
+      "from": "README.md",
+      "target": "SHA256SUMS"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/archive-provenance.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/README-20261106T081354Z.md"
+    },
+    {
+      "from": "README.md",
+      "target": "records/original-ci-20261106T081354Z.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-components/analysis.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-default-evidence.tar.gz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-pq-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-pq-and-counter-evidence.tar.gz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-285982d7/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/ci-source-evidence.tar.gz"
+    },
+    {
+      "from": "README.md",
+      "target": "records/ci-source-evidence.index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/independent-review-message-record.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/base-sync.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/source-map/remaining-throughput-source-map.md"
+    },
+    {
+      "from": "README.md",
+      "target": "records/development-records.tar.xz"
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 25121,
+      "sha256": "03a87c97bee8aeab9041bceae472c4d3102a842a753d93ddb7c36a6d4ce9d20b",
+      "kind": "derived_readme",
+      "source": "/workspace/scratch/1eed767ad985/validation/throughput-final-readme-draft.md",
+      "original_draft_sha256": "ebbfab88bae26f5c57183f0796308678a75f0f0eb9d8d2cea9b7b4c944c147c3",
+      "changes": [
+        "package links and carrier-format provenance",
+        "reported ROG GCC EDQUOT failure and explicit TMPDIR pending attempt",
+        "unchanged pending CI rows for coordinating agent to fill"
+      ]
+    },
+    {
+      "path": "records/base-sync.tar.xz",
+      "bytes": 1222620,
+      "sha256": "7b976ccb971cef41a8cab2c76f5fba2d34cfdfd61095fdeb588c21a3a70f5587",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 65,
+      "regular_members_including_manifest": 66,
+      "manifest_sha256": "bf6629fe4dc60f05be4e180d32ab56ffd2ac13a7b44fd17bcac3ea691aa4c111",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "original_payload_records": 62,
+        "original_inventory_files": 1,
+        "original_inventory_matches_all_62_payloads": true,
+        "independent_review": "packaging-time transcription of actual collaboration messages; not a recovered historical tool stdout file",
+        "additional_publication_manifest": 1,
+        "source_parents": [
+          "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+          "1f723bba961ec5f8d7e25e7b33db222dac7ef50c"
+        ],
+        "resolved_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+        "native_build_or_test_executed_for_packaging": false
+      }
+    },
+    {
+      "path": "records/ci-source-evidence.SHA256SUMS",
+      "bytes": 39887,
+      "sha256": "4c71915029604ab6b21d01b8ebcaedc86622e181aded313bda1a73f397732b63",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.SHA256SUMS"
+    },
+    {
+      "path": "records/ci-source-evidence.existing-manifests.json",
+      "bytes": 3635,
+      "sha256": "198a26ce8fb73847dc291d25f3fce529d2b687a34a4527d059c1d7292c505f8e",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.existing-manifests.json"
+    },
+    {
+      "path": "records/ci-source-evidence.index.json",
+      "bytes": 23462,
+      "sha256": "e15eba7acfda16821df7f5cb717e675fe7bb883db5f03a2f0791c1ab7b841049",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.index.json"
+    },
+    {
+      "path": "records/ci-source-evidence.manifest.json",
+      "bytes": 71421,
+      "sha256": "3654e386dc5e34ca2218b8cf9ac3b7b76020f66cc6334e653437847b7dbcd35e",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.manifest.json"
+    },
+    {
+      "path": "records/ci-source-evidence.package-attempt1.json",
+      "bytes": 985,
+      "sha256": "d8e5d72969832bb26e349a7bff4fbe95ff409de40c23467dfa1eb849c4fd7c19",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.package-attempt1.json"
+    },
+    {
+      "path": "records/ci-source-evidence.package-receipt.json",
+      "bytes": 1625,
+      "sha256": "3e6e3775a31b5b8649d50f4a9c104f3aeb920829b5988be24c107e54056c4f1f",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.package-receipt.json"
+    },
+    {
+      "path": "records/ci-source-evidence.tar.gz",
+      "bytes": 576072,
+      "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/ci-source-evidence.tar.gz"
+    },
+    {
+      "path": "records/development-records.tar.xz",
+      "bytes": 59564,
+      "sha256": "54d3bbe7bf77aeb3fb6cd304a3b20de711ad08118d1a0753d6a5c10402876c4d",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 70,
+      "regular_members_including_manifest": 71,
+      "manifest_sha256": "19f74917dfbc2487ebcdcc60261085916354cba0543f2a251812969bcd78dab0",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "original_staged_regular_files": 66,
+        "original_inventory_retained": true,
+        "older_inventory_bound_source_variants_retained": 2,
+        "stale_inventory_rows_explicitly_recorded": 2,
+        "historical_failures_and_pending_statuses_unchanged": true
+      }
+    },
+    {
+      "path": "records/original-ci-20261106T081354Z.tar.xz",
+      "bytes": 956164,
+      "sha256": "04d901ed56db55937cdebf681859b2badf650dba508f79af5765b3c219fb8ec5",
+      "kind": "new_lossless_carrier",
+      "payload_regular_files": 3257,
+      "regular_members_including_manifest": 3258,
+      "manifest_sha256": "9c48355196eeae770766258e6f23416ac3b1a010caf371fe78d25fc62ed2b4c1",
+      "all_members_read_back_equal": true,
+      "safe_regular_members_only": true,
+      "scope": {
+        "source_snapshot": "2026-11-06T08:13:54Z",
+        "original_zip": {
+          "source": "/workspace/scratch/1eed767ad985/native-performance/final-evidence-20261106T081354Z.zip",
+          "bytes": 5191414,
+          "sha256": "a109fc9f1941f66e135eba717e61144a6e4ad0aa4cc888ee3d6d4f5e16c06a35"
+        },
+        "all_3257_original_zip_members_equal_directory_bytes": true,
+        "original_zip_modified": false,
+        "not_a_new_native_run_or_new_snapshot": true
+      }
+    },
+    {
+      "path": "records/rog-default-evidence.tar.gz",
+      "bytes": 1408174,
+      "sha256": "3630f0830e1f3c13dde53b0d430b2a40ab0d0fe012b839c415f6c633bdbd61e4",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-default-evidence.tar.gz"
+    },
+    {
+      "path": "records/rog-pq-and-counter-evidence.tar.gz",
+      "bytes": 2470295,
+      "sha256": "65c648938556cc6ef8452e13e1c691ea0c380f27fa3fc147105e713fa3c7dbc2",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence.tar.gz"
+    },
+    {
+      "path": "reports/archive-provenance.json",
+      "bytes": 8278,
+      "sha256": "8ea703fb4f8e812ba8b91d12f5ac8d4107e3417123467c02347be3ab0c470f4d",
+      "kind": "packaging_receipt"
+    },
+    {
+      "path": "reports/assembly-inputs.json",
+      "bytes": 1011187,
+      "sha256": "d6a2929e0e70a73d1ff1e77a58ec5d8168fd46fb577c46b2dcf279ea4560093d",
+      "kind": "assembly_input_manifest"
+    },
+    {
+      "path": "reports/assembly-status-at-packaging.json",
+      "bytes": 1573,
+      "sha256": "81d48b21238ac979be32420906485c22d271993cbecb3f825c690fd68215339f",
+      "kind": "packaging_status_record"
+    },
+    {
+      "path": "reports/base-sync/independent-review-message-record.json",
+      "bytes": 2215,
+      "sha256": "709e271cab795cf6cf51cf167d530ff2e388379ce437ff2c01dcf9b19f9cb767",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/base-sync-independent-review-message-record.json"
+    },
+    {
+      "path": "reports/base-sync/publish-manifest.json",
+      "bytes": 32063,
+      "sha256": "6da5504a6711ad14c1c6cbb72d1d5bff2fb21fc40dd2620f6f9b8f8494d6814c",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/base-sync-publish-manifest.json"
+    },
+    {
+      "path": "reports/base-sync/summary.json",
+      "bytes": 1319,
+      "sha256": "bbd74f4f8c130add2e37b8362d8316076f74e4efc2bc905db901cd3c2ca00057",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/base-sync-1986-1f723/summary.json"
+    },
+    {
+      "path": "reports/current-ci-285982d7/campaign-business-summary.json",
+      "bytes": 16420,
+      "sha256": "b47f3d46cbde7b44053a62637a499266af46dffbb554fae482098f2102a1ecb0",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/native-performance/new-ci-2859/campaign-business-summary.json"
+    },
+    {
+      "path": "reports/current-ci-285982d7/large-cpu-api-snapshot.json",
+      "bytes": 149165,
+      "sha256": "294d5d759c7dd3e0ea13d295ecef21d31a5503613bb3e5a7197ddb23790bb54e",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/native-performance/new-ci-2859/poll-0011.json"
+    },
+    {
+      "path": "reports/history-counter-correction-note.md",
+      "bytes": 12600,
+      "sha256": "2570b3decd58d5855ac6302676920c6fc29447c0ccb2e6e8a8bfeed34523b2fc",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/history-counter-correction-note.md"
+    },
+    {
+      "path": "reports/history-counter-correction-source-anchors.json",
+      "bytes": 64470,
+      "sha256": "e7e7068f4f6e8bad87bb7df155e6b7f27a9ea6c15cce7e9c6ba4e2894ac6b2e6",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/history-counter-correction-source-anchors.json"
+    },
+    {
+      "path": "reports/history-sqlite-reprepare-counter-fix.json",
+      "bytes": 14757,
+      "sha256": "7f6a39efd59bb2d59267e4a55797603ace7b0eb7773def8be2bd194263068c51",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/history-sqlite-reprepare-counter-fix.json"
+    },
+    {
+      "path": "reports/original-ci/README-20261106T081354Z.md",
+      "bytes": 7360,
+      "sha256": "ebead9dfca888dcacf8db7c5b8b46cc6423e0349fb5cc55f607860e72ca47da0",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/native-performance/final-evidence/reports/README-20261106T081354Z.md"
+    },
+    {
+      "path": "reports/original-ci/original-zip-readback.json",
+      "bytes": 567,
+      "sha256": "162c60cf44322083fc83df9daaa292ed7f969b2a8572dcf7eedd6a78610a1680",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/native-performance/new-ci/evidence-bundle-readback-20261106T081354Z.json"
+    },
+    {
+      "path": "reports/original-ci/pq-system-original-artifact-summary.json",
+      "bytes": 1885817,
+      "sha256": "97dc7f633745616b08ed02ca5f8ef101119b66c618353bccfd27fc940e1352f2",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/native-performance/final-evidence/original-9e50/summaries/pq-system-original-artifact-summary-97dc7f633745616b.json"
+    },
+    {
+      "path": "reports/readme-original-draft-review.json",
+      "bytes": 1487,
+      "sha256": "1b3fa1ac96190a9a332cd34d057ee193e666f5cf19ae0a1b8adee229e1eb96cf",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/throughput-final-readme-draft.review.json"
+    },
+    {
+      "path": "reports/rog-components/analysis.json",
+      "bytes": 4705,
+      "sha256": "79e5b70ff76db5df485c988e4eb11aedda09f8ed4020593cdda861d6ff8f21fd",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-default-evidence/rog-component-observations/analysis.json"
+    },
+    {
+      "path": "reports/rog-counter/history-counter.log",
+      "bytes": 1861,
+      "sha256": "c24a1e005305c6ae5dde91226a8d857da456aa91c827a9afaace92e08c9b813b",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence/rog-corrected-1986-controls-80/semantic-controls/72-trnm-pon-node-writes_restoration_and_prepare_only_schema_changes_disable_completed_history.log"
+    },
+    {
+      "path": "reports/rog-counter/summary.json",
+      "bytes": 537293,
+      "sha256": "f3bd16b8255e40a4666e889b6373e068b5f48fdf78ce54fee133dda5e2c769c8",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence/rog-corrected-1986-controls-80/summary.json"
+    },
+    {
+      "path": "reports/rog-pq-counter/summary.json",
+      "bytes": 360580,
+      "sha256": "68ebdb2c918113902ae62bea1aa4ea475f03eb3f2d784aa8c0c1f119f047d5e9",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/validation/rog-pq-and-counter-evidence/rog-pq-allfeatures-52-attempt2/summary.json"
+    },
+    {
+      "path": "reports/source-map/remaining-throughput-source-map.json",
+      "bytes": 25873,
+      "sha256": "ab4ee6cc9c0037302db677b88d1c5768c7f7f033784bd525aa70a4bd50c9b404",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/evidence-staging/source-map/remaining-throughput-source-map.json"
+    },
+    {
+      "path": "reports/source-map/remaining-throughput-source-map.md",
+      "bytes": 17842,
+      "sha256": "35a5894f6c9d4715ad2f4ba1560ee983f26222907f6921e87cd35ab254e9c17d",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/evidence-staging/source-map/remaining-throughput-source-map.md"
+    },
+    {
+      "path": "reports/static-285982d7/final-summary.json",
+      "bytes": 7155,
+      "sha256": "5182a9be7478c96aee55a8f4114e730f70dd80bec11633ee6d5222637bc2abb9",
+      "kind": "exact_copy",
+      "source": "/workspace/scratch/1eed767ad985/ci-validation/composed-source-285982d7/final-summary.json"
+    }
+  ]
+}

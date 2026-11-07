@@ -5,7 +5,10 @@ use std::{
     error::Error,
     io::{self, Read},
 };
-use trnm_crypto_primitives::pq_auth::{PqNativeSigningKey, PqNativeVerifier};
+use trnm_crypto_primitives::pq_auth::{
+    tuf::{sign_tuf_mldsa65_v1, verify_tuf_mldsa65_v1},
+    PqNativeSigningKey, PqNativeVerifier,
+};
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
@@ -38,7 +41,7 @@ fn unhex(value: &Value, name: &str) -> Result<Vec<u8>> {
 }
 fn handle(value: &Value) -> Result<Value> {
     match value["mode"].as_str() {
-        Some("sign") => {
+        Some(mode @ ("sign" | "tuf_sign")) => {
             let number = value["test_seed"]
                 .as_u64()
                 .filter(|v| *v <= 255)
@@ -47,20 +50,33 @@ fn handle(value: &Value) -> Result<Value> {
             let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
             let key_id = ml_dsa_65_key_id_from_spki(&spki).map_err(|_| "PQ public SPKI")?;
             let key = PqNativeSigningKey::from_owned_seed(seed, key_id)?;
-            let message = unhex(value, "message")?;
-            let signature = key.sign_exact_message(&message)?;
+            let signature = if mode == "tuf_sign" {
+                let scheme = value["scheme"].as_str().ok_or("missing TUF scheme")?;
+                sign_tuf_mldsa65_v1(&key, scheme, &value["signed"])?
+            } else {
+                let message = unhex(value, "message")?;
+                key.sign_exact_message(&message)?
+            };
             Ok(json!({"spki":hex(&spki),"key_id":hex(&key_id),"signature":hex(&signature)}))
         }
-        Some("verify") => {
+        Some(mode @ ("verify" | "tuf_verify")) => {
             let spki = unhex(value, "spki")?;
             let key_id: [u8; 32] = unhex(value, "key_id")?
                 .try_into()
                 .map_err(|_| "key id length")?;
-            let message = unhex(value, "message")?;
             let signature = unhex(value, "signature")?;
-            let accepted = PqNativeVerifier::from_pinned_spki(&spki, key_id)
-                .and_then(|v| v.verify_exact_message(&message, &signature).map(|_| ()))
-                .is_ok();
+            let verifier = PqNativeVerifier::from_pinned_spki(&spki, key_id);
+            let accepted = if mode == "tuf_verify" {
+                let scheme = value["scheme"].as_str().ok_or("missing TUF scheme")?;
+                verifier.is_ok_and(|v| {
+                    verify_tuf_mldsa65_v1(&v, scheme, &value["signed"], &signature).is_ok()
+                })
+            } else {
+                let message = unhex(value, "message")?;
+                verifier
+                    .and_then(|v| v.verify_exact_message(&message, &signature).map(|_| ()))
+                    .is_ok()
+            };
             Ok(json!({"accepted":accepted}))
         }
         _ => Err("unknown operation".into()),
