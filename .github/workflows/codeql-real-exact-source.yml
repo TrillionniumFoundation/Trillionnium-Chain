@@ -1,6 +1,6 @@
-# Generate and upload real Code Scanning analyses for immutable source-head and prospective-merge SHAs.
-# The local SARIF artifact is retained separately for independent review.
-name: CodeQL exact-source analysis and SARIF retention
+# Generate and retain local Code Scanning SARIF for immutable source-head and prospective-merge SHAs.
+# Repository default setup owns server-side Code Scanning uploads; this workflow retains exact-source artifacts for independent review.
+name: CodeQL exact-source local SARIF retention
 on:
   push:
     branches:
@@ -24,7 +24,6 @@ jobs:
     permissions:
       contents: read
       actions: read
-      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -60,7 +59,7 @@ jobs:
           output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
           ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
           sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-          upload: always
+          upload: false
       - name: Verify generated SARIF is present and parseable
         shell: bash
         env:
