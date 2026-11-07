@@ -335,7 +335,7 @@ impl Rendezvous {
                 &addresses,
                 &stop,
                 bounds,
-                accepting,
+                accept_ready,
             )
         });
         let rendezvous = Self {
@@ -344,7 +344,7 @@ impl Rendezvous {
             handle: Some(handle),
         };
         setup.wait("rendezvous", initialized);
-        setup.wait_accept_loop("rendezvous_accept_loop", accept_ready);
+        setup.wait_accept_loop("rendezvous_accept_loop", accepting);
         rendezvous
     }
 
