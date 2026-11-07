@@ -1,0 +1,59 @@
+{
+  "schema": "pon-lifecycle-recovery-checks-v1",
+  "checks": [
+    {
+      "name": "lifecycle-query",
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/lifecycle_query_tests.py",
+        "-v"
+      ],
+      "environment_overrides": {},
+      "returncode": 0,
+      "elapsed_seconds": 0.13274383544921875,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "08234969a3307b6d74e7f4b944bb83e242fcac8faf6633969e68750e429c097d"
+    },
+    {
+      "name": "native-journal",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "test_native_owner_journal.py",
+        "-v"
+      ],
+      "environment_overrides": {
+        "NATIVE_OWNER_JOURNAL_RUN": "/workspace/scratch/8f0d1a7a75bb/chain_certificates/evidence/pon-lifecycle-closure-20261107/desktop-components/attempt-02/native-owner-journal/run.json"
+      },
+      "returncode": 0,
+      "elapsed_seconds": 0.5523097515106201,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "6fba662c7c126888af0614ef88fb34b50a9a20c0482d5fb66424d4240363fa55"
+    },
+    {
+      "name": "composition",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/pon-nakamoto-v1",
+        "-p",
+        "certificate_composition_tests.py",
+        "-v"
+      ],
+      "environment_overrides": {},
+      "returncode": 0,
+      "elapsed_seconds": 0.3134739398956299,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "42aa318e0dc5a5737a39b763b8010048856c5e17fd107568be00a90f42ed6c3d"
+    }
+  ],
+  "production_qualified": false
+}

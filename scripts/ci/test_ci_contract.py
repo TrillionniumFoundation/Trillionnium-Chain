@@ -20,6 +20,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
                                WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
+                               LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL, CERTIFICATE_COMPOSITION_TESTS,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -942,6 +943,36 @@ class CiContractTests(unittest.TestCase):
             changed = original.replace(block, '').replace('  repository-truth)\n',
                                                           '  repository-truth)\n' + block)
             self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_lifecycle_closure_requires_current_native_execution_and_complete_journals(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (LIFECYCLE_QUERY_NATIVE, NATIVE_OWNER_JOURNAL):
+            mutations = ['', '    true # omitted lifecycle closure\n', block * 2,
+                         block.replace('realpath -e', 'printf %s'),
+                         block.replace('/lifecycle-query"', '/historical-query"')
+                         if block == LIFECYCLE_QUERY_NATIVE else
+                         block.replace('/native-owner-journal', '/historical-journal')]
+            if block == NATIVE_OWNER_JOURNAL:
+                mutations.extend([block.replace('--test native_owner_journal\n',
+                                                '--test native_owner_journal -- --ignored\n'),
+                                  ''.join(block.splitlines(keepends=True)[1:]),
+                                  ''.join(block.splitlines(keepends=True)[:-1])])
+            for replacement in mutations:
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+        # CC1 verifies real ML-DSA signatures. The protocol-contract head and
+        # merge lanes install the pinned wheel; repository-truth does not.
+        command = CERTIFICATE_COMPOSITION_TESTS
+        for replacement in ('', command * 2, '    true # omitted real CC1 signatures\n',
+                            command.rstrip('\n') + ' || true\n'):
+            self.rejected('scripts/ci/ci_job.sh', command, replacement)
+        moved = original.replace(command, '').replace('  repository-truth)\n',
+                                                       '  repository-truth)\n' + command)
+        self.rejected('scripts/ci/ci_job.sh', original, moved)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()

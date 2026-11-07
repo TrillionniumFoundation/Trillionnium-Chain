@@ -208,3 +208,52 @@ the existing checks. [Source and raw evidence](../../evidence/pon-work-native-ce
 separate the previously delivered abstract models from new complete native W1/MU1
 executions. Neither three-candidate safety qualification nor a numerical risk
 for the current six-successor rule is asserted.
+
+## One lifetime, persistent local debt, and exact composition
+
+[LQC1](lifecycle_query_charging_v1.md) keeps one coalition-wide terminal
+oracle and one irreversible first-coherent-query boundary. A complete paid
+classical prefix is averaged under its explicit ideal-oracle law; subsequent
+queries, helper activity and retained state share one lifetime budget. A
+fixed-output-index union removes analysis-only virtual verification queries.
+Actual oracle-dependent validator feedback is still charged. The declared
+caps and complete joint initial-state independence are assumptions, not facts
+certified by a signed log or a newly started process. MU1 research credit is
+never substituted for native block work.
+
+The [persistent owner journal](NATIVE_OWNER_JOURNAL_V1.md) adds durable intent,
+complete packets and actual post-call census to an opt-in owner wrapper. It
+records native opening/recovery as an operation, keeps unadmitted outputs
+across restart, and exposes unfinished calls, outside-lease intervals,
+validation-clock regressions and orphan artifacts. The sidecar is separate
+from the native database transaction. A real process exit after a native
+commit cannot be relabeled a completed observation, and a hash chain does not
+authenticate the newest physical history without an independently retained
+expectation.
+
+[CC1](CERTIFICATE_COMPOSITION_V1.md) joins exact signed packet bytes to the
+actual journal's native-valid packet bindings, deduplicates native identities
+and retains that unresolved debt. Its controls distinguish a valid signature
+from production, the same header ID from the same valid packet, a global
+probability from a conditional probability at a selected start, and message
+payload from the entire observable helper channel. It supplies no route to
+turn these local observations into a native failure probability.
+
+```bash
+python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
+LQC_NATIVE_WORK=/absolute/path/to/pon_work_io LQC_NATIVE_PREPARED=/absolute/path/to/pon_zero_io python3 formal/pon-nakamoto-v1/lifecycle_query_evidence.py --out /tmp/new-lqc-run
+/absolute/path/to/native_owner_journal_v1 /tmp/new-owner-journal
+NATIVE_OWNER_JOURNAL_RUN=/tmp/new-owner-journal/run.json python3 -m unittest discover -s formal/pon-nakamoto-v1 -p test_native_owner_journal.py -v
+python3 formal/pon-nakamoto-v1/native_owner_journal.py --run /tmp/new-owner-journal/run.json --output /tmp/new-owner-checked.json
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p certificate_composition_tests.py -v
+python3 formal/pon-nakamoto-v1/certificate_composition_evidence.py --native-run /tmp/new-owner-journal/run.json --output-dir /tmp/new-composition
+```
+
+The native reader and composition driver require fresh raw journals and
+complete packet files; missing artifacts fail. Cryptographic composition
+tests run in protocol CI's pinned Python environment. The
+[continuation evidence](../../evidence/pon-lifecycle-closure-20261107/README.md)
+preserves initial failures, exact source/binary bindings, actual Linux native
+runs and the unchanged qualification table. Physical all-algorithm work
+losses, authentic joint initial state, full-world coverage, clocks, inventory
+and honest-progress laws remain the two actual scientific obligations.

@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "scripts/ci/test_ci_execution.py"
+  ],
+  "elapsed_ns": 23975293605,
+  "returncode": 0,
+  "source_samples_stable": true,
+  "source_sha256": {
+    ".github/workflows/trnm-required-baseline.yml": "8df781f1d5416aaa1426864aac2bd9f196b87b1283d81f630928872d763c479a",
+    "scripts/ci/check_ci_contract.py": "dbf78969af9a3a8f750765c8fe057b6d2f4bcaa6e8129f5c294e96b62c879e93",
+    "scripts/ci/ci_job.sh": "95be194ab855805856fd55747bf4bf820ceb7f036677b363f8372f5cc5dd2708",
+    "scripts/ci/test_ci_contract.py": "7e708c387dc145b0cd6445394ca0675f590802b5832d989c8d1b3a230c4b2d4f"
+  }
+}

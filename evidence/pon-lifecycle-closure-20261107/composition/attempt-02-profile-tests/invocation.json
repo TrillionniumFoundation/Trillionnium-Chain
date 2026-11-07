@@ -1,0 +1,31 @@
+{
+  "actual_native_journal_join_tested": false,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "certificate_composition_tests.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/b9454e263603/chain_obligations",
+  "elapsed_ns": 319776902,
+  "physical_resource_or_native_risk_certified": false,
+  "returncode": 0,
+  "schema": "pon-composition-test-invocation-v1",
+  "source_samples_stable": true,
+  "source_sha256": {
+    "certificate_composition.py": "32fa7d9da1326f95d6ef5829d74e748a3fc7f5af110d235d1db179bffe5805de",
+    "certificate_composition_tests.py": "6a7fe756f08b2333cc19d01f91741e4fc43b4d24d257de0338e5ddb8133191f0",
+    "certificate_observability_models.py": "deb60afe6cc20155ebb28a89a237410fcbcc525c1ecfde41b6cbd5fde55f9372",
+    "lifecycle_query_bound.py": "db93ca64dbd1110d529c7f89228adf4eeafdbeb3deb249eec334bcb5f23047bd",
+    "mandatory_units_query.py": "8127186bf3355ab749d753494caeeb14adbb875e13c7edf629df213f04e4ce0e",
+    "mandatory_units_relation.py": "329e330e74fba915a2b1458aa71cb983e67b10d14db3bdea4e78539b5c940834",
+    "work_lifecycle_certificate.py": "301ce5fb234b02332f60db1ed41c61302e54046a9d29753d76d2bf5ceb405d44",
+    "work_lifecycle_help.py": "0347e577f7d581ef880525d6b2e484c9831ee0ce76859069a1325e15fbcb08f7",
+    "work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  }
+}

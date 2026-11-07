@@ -1,0 +1,31 @@
+test_adaptive_stop_padding_has_binomial_global_law (__main__.BoundsTests.test_adaptive_stop_padding_has_binomial_global_law) ... ok
+test_all_required_outputs_classical_closed_form (__main__.BoundsTests.test_all_required_outputs_classical_closed_form) ... ok
+test_classical_prefix_formula_matches_complete_finite_game (__main__.BoundsTests.test_classical_prefix_formula_matches_complete_finite_game) ... ok
+test_complete_adaptive_prefix_leaves_full_complement_iid (__main__.BoundsTests.test_complete_adaptive_prefix_leaves_full_complement_iid) ... ok
+test_domain_exhaustion_has_no_dummy_query_assumption (__main__.BoundsTests.test_domain_exhaustion_has_no_dummy_query_assumption) ... ok
+test_fixed_subset_union_is_pathwise_with_duplicates_and_short_lists (__main__.BoundsTests.test_fixed_subset_union_is_pathwise_with_duplicates_and_short_lists) ... ok
+test_input_shape_and_check_limits_fail_closed (__main__.BoundsTests.test_input_shape_and_check_limits_fail_closed) ... ok
+test_known_winner_augmentation_is_pointwise (__main__.BoundsTests.test_known_winner_augmentation_is_pointwise) ... ok
+test_list_union_dominates_exact_blind_list_law (__main__.BoundsTests.test_list_union_dominates_exact_blind_list_law) ... ok
+test_math_does_not_authenticate_assumptions_or_native_risk (__main__.BoundsTests.test_math_does_not_authenticate_assumptions_or_native_risk) ... ok
+test_no_query_single_fixed_list_includes_blind_outputs (__main__.BoundsTests.test_no_query_single_fixed_list_includes_blind_outputs) ... ok
+test_one_phase_query_grover_finite_exact_law (__main__.BoundsTests.test_one_phase_query_grover_finite_exact_law) ... ok
+test_q_positive_unknown_slots_use_M_minus_s (__main__.BoundsTests.test_q_positive_unknown_slots_use_M_minus_s) ... ok
+test_removing_virtual_checks_is_material (__main__.BoundsTests.test_removing_virtual_checks_is_material) ... ok
+test_unconditional_prefix_is_not_a_conditional_restart (__main__.BoundsTests.test_unconditional_prefix_is_not_a_conditional_restart) ... ok
+test_zero_threshold_and_impossible_capacity (__main__.BoundsTests.test_zero_threshold_and_impossible_capacity) ... ok
+test_bounded_exchange_failure_keeps_partial_bytes_and_failed_status (__main__.ReferenceDispatchTests.test_bounded_exchange_failure_keeps_partial_bytes_and_failed_status) ... ok
+test_cache_reuse_preserves_origin_without_extra_query (__main__.ReferenceDispatchTests.test_cache_reuse_preserves_origin_without_extra_query) ... ok
+test_cap_refuses_before_actual_terminal_call (__main__.ReferenceDispatchTests.test_cap_refuses_before_actual_terminal_call) ... ok
+test_foreign_cache_and_fresh_owner_are_not_paid_imports (__main__.ReferenceDispatchTests.test_foreign_cache_and_fresh_owner_are_not_paid_imports) ... ok
+test_frozen_ticket_hook_counts_real_feedback_and_restores_on_error (__main__.ReferenceDispatchTests.test_frozen_ticket_hook_counts_real_feedback_and_restores_on_error) ... ok
+test_nested_hooks_are_refused (__main__.ReferenceDispatchTests.test_nested_hooks_are_refused) ... ok
+test_observation_cannot_be_promoted_to_global_budget (__main__.ReferenceDispatchTests.test_observation_cannot_be_promoted_to_global_budget) ... ok
+test_oracle_free_extractor_matches_frozen_framing (__main__.ReferenceDispatchTests.test_oracle_free_extractor_matches_frozen_framing) ... ok
+test_shape_only_extractor_is_not_a_work_validator (__main__.ReferenceDispatchTests.test_shape_only_extractor_is_not_a_work_validator) ... ok
+test_shared_frontier_is_irreversible_and_late_helper_cannot_reset_it (__main__.ReferenceDispatchTests.test_shared_frontier_is_irreversible_and_late_helper_cannot_reset_it) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.016s
+
+OK

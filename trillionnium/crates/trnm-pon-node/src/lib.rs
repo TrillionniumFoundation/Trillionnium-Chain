@@ -7,6 +7,8 @@ mod error;
 pub mod host_kernel_parent;
 pub mod ingress;
 pub mod mining;
+/// Opt-in durable local owner observations; grants no global execution authority.
+pub mod native_owner_journal;
 pub mod operator_checkpoint_tile;
 pub mod operator_continuous_controller;
 mod operator_continuous_cpu;

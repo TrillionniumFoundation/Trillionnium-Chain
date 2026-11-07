@@ -7571,3 +7571,39 @@ and refusal are retained. The unexecuted work-header target and subsequent
 component gates are run separately, without treating those passes as removal
 of the host qualification failure. Research publication does not promote this
 record to release, host-resource or whole-chain acceptance.
+
+### 2026-11-07 lifecycle-closure continuation work contract
+
+The next continuation retains the frozen MU1 relation, native chain scoring and
+the preceding candidate qualifications. Its work-query component accounts for
+one complete classical prefix and one subsequent joint-query lifetime across
+participants. A fixed output-index union may remove analysis-only virtual
+queries, but actual helper or validator feedback remains charged. Global
+pre-observation bounds and continuation bounds conditional on an already known
+prefix are separate claims. A recorder restart does not create a fresh oracle,
+initial state, prefix phase or probability budget.
+
+The native component is an opt-in journaled owner with a narrow exclusive API.
+It records a durable intent before opening or invoking the native owner, since
+opening can itself recover and activate stored branches. Successful operation
+coverage requires retained native outcomes, complete local observations and a
+durable terminal record. An unfinished intent, a lease gap or a new clock epoch
+remains explicit after recovery. A sidecar and the native database are not one
+atomic transaction; later state agreement does not reconstruct a missing past
+terminal observation. An external prior checkpoint can detect rollback relative
+to that checkpoint, but its authenticity is a separate assumption.
+
+The composition review consumes actual journal and work artifacts. It tests
+valid local records whose proposed global interpretation is invalid, including
+reimported work, repeated budgets, hidden help channels, cross-owner phase and
+clock splicing, and mismatched native/MU1 reward identities. Matching signatures,
+shared primitives or equal scalar weights do not establish the missing reward
+relation. No joint probability is promoted from the controlled example schedule.
+
+The execution record must retain unsuccessful recovery/build/test observations
+and bind the native runs to the actual source and executables. Native owner
+checks must use a target admitted by the unchanged SQLite build fence. Repository
+checks, original host requirements and complete remote CI keep their separate
+results. Actual all-algorithm physical costs, joint initial state, complete world
+coverage, physical clocks, hidden inventory and honest-progress laws remain
+scientific obligations; the current six-successor failure probability is unknown.
