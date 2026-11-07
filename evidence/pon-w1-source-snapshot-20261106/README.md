@@ -180,6 +180,15 @@ finalizer. The source-map byte comparison uses the new snapshot above.
 
 ## Remaining claim boundary
 
+The [source composition record](source-composition.json) preserves integration
+head `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`, including its 97 commits
+after the common base. Only two text conflicts required reconciliation: the
+corpus keeps all integration entries and the new W1 workflow pin (688 pins,
+607 required paths), and the plan keeps both appended histories. W1 source
+files had no concurrent content conflict. This composition does not transfer
+older execution results to the combined source or qualify the integration
+branch's other native changes.
+
 All production, consensus-admission and quantum-soundness qualification flags
 remain false. The repair supplies no new numerical W1 soundness bound, no
 instantiated QROM theorem, no quantum work-cost qualification, no external

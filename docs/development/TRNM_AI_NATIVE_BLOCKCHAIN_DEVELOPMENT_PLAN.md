@@ -7864,6 +7864,311 @@ neither executed native tests. The new combined source requires its own fixed
 source, actual binaries and the newly added target controls. No prior target,
 PQ, reader replay, Cell or ordinary-model result transfers to this composition.
 
+
+### 2026-11-06 preserve the original full-library timeout and repair expiry accounting
+
+The independent desktop batch on fixed source `f85fea4e` reached its original
+1,500-second command ceiling during the 65,536-key continuity control. The
+parent full-library process ended with SIGTERM/exit -15 and its process group
+was fully reaped. It never emitted the parent 1,191-test result or failure
+panic. Three nested one-test summaries are not an aggregate library result.
+The retained paid-pending `FAILED` progress row has an unknown assertion cause;
+neither a later exact pass nor static analysis may erase or reinterpret it.
+The batch continues its independent original gates without extending budgets.
+
+Independent source review found a separate expiry-observation gap. A reactor
+stage can cross its original deadline after the outer scan, then refuse in the
+inner pending/cookie check. The existing generic error path closes the request
+but does not add the expiry counters. Keep its exact terminal error, pending
+closure, generic/phase counters and connection removal. Add conservative expiry
+observations only for the precise deadline/cookie error after the original
+connection deadline. A monotonic stop takes precedence for deadline errors;
+a late error-handler timestamp must not turn an earlier shutdown into expiry.
+EOF, cancellation and other errors keep their original classification. This
+change renews no deadline and changes no credential, wire/profile, allowance,
+worker, body/lane allocation, work start or authorization decision.
+
+Retain the original real-socket paid-pending control byte-for-byte. Four added
+controls use actual sockets, accepted-connection ownership, pending/cookie
+refusals, terminal observation and removal/Drop to check supported expiry,
+early shutdown, EOF and cancellation, unchanged deadlines, one pending close,
+released connection slots and absence of body/work effects. Their source needs
+its own actual native execution and strict source/Clippy evidence. The optional
+behavior-preserving helper-extraction red design is unexecuted and is not the
+original f85 source. No current native pass is implied by preparing the patch.
+Earlier f85 component and CI results retain their exact source identities.
+Original service confirmation and all whole-chain PQ/production gates stay HOLD.
+
+
+### 2026-11-06 reconcile the next material-verifier target without transferring native results
+
+<!-- chain-pq-late-target-513e92-20261106 -->
+
+Before publication, the direct target ref advanced from `56897f12` to
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f` while the PR endpoint still named
+the old base. Preserve the new parent and its six historical compatibility
+artifacts. Its Python marker call-shape change needs explicit composition with
+the existing supported-host policy; a textual union of contradictory kwargs
+assertions is not a validated merge.
+
+Keep the `packaging >=25.0` refusal, including marker-free material, and the
+isolated exact-version/hash packaging 26.3 installation. Use the pinned supported
+library's metadata default in the single evaluate call; do not catch/retry with
+an ambient or weaker evaluation mode. Preserve the complete declared environment,
+empty/selected extra, missing dependency refusal, invalid marker refusal and
+propagated internal errors. Retain all 25 test methods from both parents. Replace
+the old keyword-spelling assertion with the effective context bound against the
+real API defaults and actual metadata-only empty-extra behavior; retain rejection
+of lock-file-only sets. The old-signature wrapper is an API-shape control on the
+supported library, not permission to run a real 24.x verifier. Keep historical
+513e92 evidence under its own source and add actual 24.0 to the unsupported-version
+negative control. The fixed 25.0 and 26.3 implementations establish the reviewed
+default; no general future-version compatibility is inferred.
+
+Only Python verifier/tests, verifier-requirement commentary, their corpus pins,
+these observations and the new target's evidence change. Rust implementation,
+Cargo manifests/locks, workflow gates and native resource limits are unchanged.
+The corpus is embedded as native source provenance, so even this change must not
+claim identical compiled inputs/ELF or transfer ebd executions. The new composed
+source requires its own material-verifier and source gates. Existing f85 and ebd
+native passes, failures, timeouts and blocked readers remain bound to those
+commits. Whole-chain PQ, performance, public-WAN and production acceptance stays
+HOLD; no new native outcome is implied by preparing this composition.
+
+
+### 2026-11-06 PQ integration terminal observations and source-specific HOLD
+
+<!-- chain-pq-20261106-terminal-delivery-8a6e -->
+
+The combined source is `f85fea4e8da02404d513d074ceb35ad5292b017b`, tree
+`0c1da9d2c13052b30af600e2a32a5eb286e985de`, preserving actual target
+`56897f125df27994efa1dda935f2c62eceb36de9`. Its independent desktop batch is
+terminal with exit 1: 271 observations, 269 succeeded, one original full-library
+timeout and one dependent reader blocked. The separate same-source x64/head CI
+library records 1,160 passed and 31 ignored; it does not erase the desktop's
+failed progress row or supply its missing panic. The original full-workspace
+Clippy, nonempty component/control scopes, independent C/SDK and source-specific
+CI artifacts are retained with their actual scopes and ELF-evidence limits.
+
+At the frozen 2026-11-06 10:19:27 UTC f85 CI cutoff, 73 checks are successful,
+12 failed and one skipped; the baseline run is still pending with zero jobs.
+The original four-second service gates, three-attempt campaign, four 4,105-block
+History gates and CodeQL-export deadline are not accepted. History uses the
+classical public_v2 owner: x64 reaches the original server lifetime, while ARM
+reaches the original final import deadline. Successful import returns or a
+complete-advertised page are not final state/reopen qualification.
+
+The expiry-accounting source is
+`ebd3c06da7d5f2bd136b7a24f24604508d420279`, tree
+`367b4cadbf5d9ec0f3e4cfcbb0de4e6fc91a2895`, with f85 as its only parent.
+Its 13 source gates and 207 Python observations pass. Its actual original-profile
+desktop supplement is terminal with exit 1: 44 observations comprise 40 successes,
+one native failure and three blocked readers. All ten exact R4 controls (four
+new, six retained), the original History/root/M06 cost controls and strict Clippy
+for all workspace targets and features pass. The original authentication cost
+control fails with exit 101: 67 of 512 samples, all in sixteen-key churn, are
+refused before reservation/verification by the unchanged cumulative two-second
+thread-CPU budget. Original and cached arms share cookie-signing/warm-up charges.
+The original acceptance condition is unmet; this is not evidence of 67 incorrect
+signature decisions or product under-accounting. The named reader for the failed test and
+two dependent aggregate readers remain blocked. No budget, sample, profile or
+worker limit is relaxed and no failure is replaced by a rerun. The complete ebd
+source matches before/after/post-terminal; owned groups are empty.
+
+The containing publication adds evidence and these plan observations on top of
+the later ca4e2fb9 composition described below. Its different commit identity
+does not create native execution of the publication commit. Nine local/server
+code-commit pairs retain their identical tree proof without transferring
+execution results. The old retained snapshot and
+new terminal increment are separate, hash-indexed packages, with raw failures,
+readers, method corrections and scoped conclusions preserved.
+
+The [full report](../../evidence/pq-integration-20261106/README.md) and
+[machine-readable disposition](../../evidence/pq-integration-20261106/qualification.json)
+record the remaining final-use installer/Cell activation consumer, ordinary-CLI
+independent witness wiring and custody, private-transport/WAN/PKI qualification,
+PQ finality, legacy migration and quantum work/DAA/fork-economic requirements.
+Current-check reads do not persist a new time floor on every read. PNQ2 witness
+coverage is limited to its resource/peer/request root; it is not account, block,
+History, CURRENT or Hepta rollback coverage. All whole-chain PQ, public-network,
+independent recovery, economic and production acceptance remains HOLD / NO-GO.
+PR #723 remains draft; no protected-main merge or production activation occurs.
+
+
+### 2026-11-06 Later target composition and finite committed-source acceptance
+
+<!-- chain-pq-20261106-ca4-terminal-8a6e -->
+
+The final code source is `ca4e2fb9160d3e388e131624f7b3350ae4f5d56b`,
+tree `ba691b8b5f06a0cfeb062261d6a33f0c086f06b0`, with ordered parents
+`ebd3c06da7d5f2bd136b7a24f24604508d420279` and actual later target
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f`. The local metadata counterpart
+`6e4071c17b92ced2a7c0055999eb78815c9e2ff6` has the same tree and parents.
+The direct Git ref was newer than the cached PR base, so both actual histories
+are preserved rather than inferring the target from stale PR metadata.
+
+The supported-host contract still refuses missing packaging and versions below
+25.0, including marker-free material. The isolated packaging 26.3 wheel/hash
+and both CI install paths remain fixed. A single evaluate call uses the verified
+metadata default with all pinned fields and explicit extra; errors propagate
+without retries. The two histories' test sets have exactly 25 retained methods.
+The old target's six compatibility evidence files are preserved as historical
+observations, including actual 24.x successes under that earlier policy; they
+do not qualify actual 24.x for this composed policy.
+
+All 20 finite recorded commands on committed ca4 pass: 104 CI-contract,
+43 source-integrity, 38 corpus, 22 claim-guard and 25 material-verifier tests;
+six locked/offline graphs, formatting, inventory, repository links/truth and
+diff checks. Every recorder and batch before/after proof binds 10,754 tracked
+entries and 1,031,991,037 bytes. These 232 Python observations are separate from
+native tests and from repeated prior-source runs. Main graph 175 packages and
+five W1 graphs 69/193/306/191/191 retain their locked identities.
+
+Rust bodies, manifests/locks, workflows and original native limits are unchanged
+from ebd, but the changed corpus pins are embedded provenance inputs. There is
+no ca4 native execution or strict native Clippy result, and no claim of equal
+compiled inputs or ELF. The f85 and ebd native results above remain bound to
+their actual sources, including both unresolved failures and original budgets.
+The old frozen EBD delivery is retained as history; the current outer report,
+qualification and nine-pair source map describe this ca4 composition.
+Whole-chain PQ, final-use/recovery custody, public WAN, finality, quantum work
+and production acceptance remain HOLD. The PR remains Draft.
+
+
+## 2026-11-06 follow-up: ordinary TLS witness owner integration (validation pending)
+
+- The source preserves the complete histories of evidence publication 790980db11c502a19248a2f3325f261b91b52558 and witness owner 4c76b342021deb7155a3c0ce915ff250fc7e23d0. The earlier ca4, f85 and ebd reports remain historical observations with their original source identities.
+- The automatic clean merge is independently checked as a three-way JSON union against f85: the ca4-side four changed pins and the witness-side ten disjoint changed pins/five added paths are retained, for 597 pinned blobs and 516 required paths. No complete parent corpus is substituted for the union.
+- Qualification on the eventual canonical committed source is PENDING: retain the twenty finite ca4 source/dependency/material commands and their original semantics, the isolated packaging 26.3 hash-pinned installation report, all six locked graphs and formatting. Report the actual current-source test counts rather than transferring ca4 counts.
+- Native qualification is PENDING: the witness CLI manifest requires five exact controls and an actual compiled registry of exactly those five names; retain the original TLS thirteen library, four ordinary-CLI and one feature-off controls and each original reader. Bind current Cargo-advertised harness and ordinary Node executables, whole-source before/after, process-group cleanup and strict whole-workspace/all-targets/all-features Clippy.
+- Use Rust 1.95.0, the previously fixed OpenSSL 3.5.9 provider with fresh identity checks, a separate target, two build jobs, disabled incremental compilation, single-threaded tests and the original optimization/debug/assertion/overflow settings and 1500-second command ceilings. No provider rebuild, old full-Node/65536 rerun, authentication-cost rerun or campaign is authorized by this phase.
+- Preserve the f85 incomplete desktop library, the original ebd 13-pass/1-fail native supplement and all failed or blocked readers. The ebd authentication cost has 67 original cumulative-CPU-budget refusals; no budget, sample or historical disposition is relaxed or replaced.
+- This is the ordinary native-PQ TLS external-witness owner scope, not complete Node/account/History/Cell rollback protection, production activation, public-WAN acceptance, consensus authority or whole-chain quantum-security qualification. None of those claims is activated by a successful source check or archive checksum.
+
+
+## 2026-11-06 follow-up: immutable release-root key material integration (validation pending)
+
+- This source composes canonical TLS-witness integration d6ec50bb4c9f92656c3b95430ca305896012e69c with concurrent release-root material owner 5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800, retaining both complete histories and all earlier evidence publications.
+- The independent three-way corpus merge is based on 4c76b342021deb7155a3c0ce915ff250fc7e23d0: retain the four earlier pin changes and the nine disjoint release-material pin changes/three new required paths, for 600 pinned blobs and 519 required paths. No full parent corpus replaces this union.
+- The completed desktop source-only observation remains bound to d6: job 1a1b0e5ac1f-fc05-73c8, twenty commands, all_commands_succeeded=false, actual Python suite counts {"ci-contract-tests": [104], "pq-source-corpus-tests": [38], "runtime-material-tests": [25], "source-integrity-tests": [43], "whole-chain-claim-tests": [22]}, summary SHA256 a2f68251c01f965a724c537de70f648c5d356779f3daa86125f5a17e42066f7c. It executed no Rust native tests or strict native Clippy and does not qualify this new source.
+- Qualification on the eventual canonical committed source is PENDING: repeat the original twenty finite source/dependency/material commands on this exact source, with a separate fresh packaging 26.3 hash-pinned environment/report and all six original locked graphs, formatting and actual test counts. Preserve the previous verifier environment and report.
+- Native qualification is PENDING: retain all original TLS thirteen library/four ordinary-CLI/one feature-off and five witness controls, each original reader and actual compiled registries. Add the unchanged original recovery/release all-targets component command, verify the complete forty-three-name release library registry and execution, and run the six new release-material exact controls with their original readers. The six repeated executions are not six additional distinct business controls.
+- Bind current Cargo harness and ordinary executable identities, whole-source before/after, process-group cleanup and strict whole-workspace/all-targets/all-features Clippy. Use Rust 1.95.0, the fixed OpenSSL 3.5.9 provider, the isolated target, two build jobs, disabled incremental compilation, single-threaded tests, original optimization/debug/assertion/overflow settings and the unchanged 1500-second command ceilings.
+- Preserve the original f85 incomplete desktop library and ebd 13-pass/1-fail supplement, including the 67 authentication-cost budget refusals and blocked readers. This phase does not repeat the full Node/65536 run, authentication cost or campaigns, and does not relax or replace their outcomes.
+- Source preparation, targeted controls and archive integrity do not activate production, public-WAN acceptance, consensus authority, whole-Node/account/History/Cell rollback protection or whole-chain quantum-security qualification. All such qualifications remain explicitly ungranted.
+- The first composition preparation retained a real original `git diff --cached --check` exit 2: the incoming workflow line 173 contained ten trailing spaces on an otherwise empty line. This continuation removes only those ten spaces and updates only that workflow pin in the already verified corpus union. All three original inline registry-reader bodies remain byte-for-byte identical; the diff gate remains unchanged and new-source qualification is still pending.
+
+
+## 2026-11-06 terminal: witnessed owner and release-root material composition
+
+<!-- chain-pq-20261106-c07-terminal-8a6e -->
+
+The two preceding "validation pending" sections remain historical preparation
+records. The actually executed code is
+`c07e8b9cce4621c5ef6f61256482bfe94e5a622f`, tree
+`35125592c14098385eab8693bbf05df0506d3610`, with ordered parents
+`d6ec50bb4c9f92656c3b95430ca305896012e69c` and
+`5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800`. Its local metadata counterpart
+`532bb6ff6ec8ab1aaf185d6e38fc41506ca32def` has the same tree and parents.
+The 600-pin/519-path union and all three original inline readers are preserved.
+
+The original d6 source batch is still FAILED: twenty observations, sixteen
+successful commands and four failed offline graphs, with 232 passing Python
+tests and no native execution. The complete original 102-file record has been
+read back. Four separate c07 `cargo fetch --locked` commands subsequently
+succeeded as dependency preparation only; no manifest, lock, fixed revision,
+offline command or original result was changed.
+
+On exact c07, all twenty original finite source commands pass. Actual Python
+counts are 104 CI-contract + 43 source-integrity + 38 corpus + 22 claim guard +
+25 material verifier = 232. The six locked/offline graphs contain
+175/69/193/306/191/191 packages. The fresh isolated packaging 26.3 environment,
+hash-pinned installation and original report/flags are retained. This phase
+executes zero Rust native tests and no native Clippy.
+
+The unique c07 native batch is terminal with durable exit 1, no timeout or
+cancellation: 77 command/reader observations comprise 74 succeeded, one failed
+and two blocked. Thirteen TLS library, four ordinary CLI, one feature-off and
+four of five witness CLI controls pass. The actual registry is separate from
+execution. The failing test is
+`witness_selected_binary_dispatches_replays_reopens_and_rejects_old_database`:
+Cargo exit 101, Rust 0 passed / 1 failed, 4.67 seconds. Its first send returns
+receipt.ok at height 0; the second fresh TLS send of the same signed request
+receives connection reset by peer at `pq_tls_witness_cli.rs:71:14`.
+The accepted=2, cross-process reopen/replay and restored old Node-directory
+refusal assertions are not reached. Its single-test reader and required-controls
+aggregate remain blocked. The original two-second fixture lifetime, five-second
+send deadline and 250 ms witness I/O deadline are unchanged. These timings
+provide a hypothesis, not an established cause. The original panic path loses
+the child stdout metrics; no later reconstruction or guessed fix substitutes
+for those unavailable observations.
+
+The unchanged checkpoint/release all-targets component command succeeds.
+Five actual harness summaries are 11/15/15/6/43 passed, each with zero failed
+or ignored. All 43 release names execute successfully; the six new initial-root
+exact executions and original readers also pass but overlap those same 43 names.
+There are no six additional unique release controls. Checkpoint counts remain
+per observed harness, without an inferred unique business-test sum.
+Strict whole-workspace/all-targets/all-features Clippy with `-D warnings`
+succeeds (exit 0; 128.315971997 seconds).
+
+Original Rust 1.95.0, fixed OpenSSL 3.5.9, isolated target, two build jobs,
+disabled incremental compilation, single-threaded tests, original Cargo profile
+settings and 1500-second command ceilings remain intact. Whole-source before
+and after bind 10,842 tracked entries / 1,090,618,849 bytes; additional phase
+checks bind the same identity. Per-command HEAD/status hints do not themselves
+prove all tracked bytes. All 70 native owned groups are empty; the 30 cache and
+source groups are also empty at sealing. The remote original owner and sealer
+rehash twelve retained ELFs totalling 1,356,549,040 bytes. The text package does
+not contain those binary bodies; the readback reviewers do not claim local
+rehashing of the ELF bodies.
+
+The current complete raw package contains 677 original files. Whole-package,
+Node/TLS/provider/Clippy and cache/source/checkpoint/release readbacks preserve
+the actual native failure. V6 reports bind those records, normalized cache/source
+counts, original terminal witnesses and eleven code metadata mappings. The
+original nine mapping rows and complete ca4 report/qualification/source-map
+objects remain historical data. Earlier 790 evidence publication is a separate
+mapping; its unavailable local commit body is not claimed newly verified.
+Recovery methods are explicitly new; preparation drafts without recovered exact
+bytes are listed by observed identity, never fabricated as original files.
+
+The ordinary TLS V2 owner now selects witnessed PNQ2 create/open_existing and
+checks Current before readiness. V1 remains unwitnessed and rejects V2 fields.
+Coverage is only the PNQ2 resource/peer/request tables. Current is not a writer
+lease or proof that the service never rolled back; service recovery still needs
+an independently retained fresh checkpoint. Lost CAS acknowledgement remains
+an uncertain effect. The fixture does not qualify independently deployed
+witness service custody, revocation, disaster recovery or WAN operation.
+
+Immutable initial-root material shares public verification-key mathematics,
+not signature/quorum success, current authorization or mutable owner state.
+Each bootstrap rechecks the full initial root, pin and current trusted
+initialization time. Old/new rotation quorums and independent owner state remain
+required. M15 current reads still do not persist a new time floor on every read;
+final installation/configuration/Cell activation effects still need explicit
+fresh authorization binding.
+
+The f85 full-Node timeout, frozen CI failures and ebd authentication-cost
+failure remain attached to their original sources and limits. No full-Node,
+65536 path, authentication-cost or campaign rerun occurs in this phase.
+The new publication changes only evidence and this sole plan on direct parent
+c07. Its exact containing commit and seven source-only publication checks are
+recorded externally after creation, without claiming new native execution.
+The retained and terminal archives keep their original bytes; the new increment
+is separately indexed at
+[the witness archive index](../../evidence/pq-integration-20261106/witness/publication/archive-index.json).
+
+The [current full report](../../evidence/pq-integration-20261106/README.md),
+[current disposition](../../evidence/pq-integration-20261106/qualification.json)
+and [source map](../../evidence/pq-integration-20261106/source-publication-map.json)
+retain HOLD / NO-GO. The actual native failure, final-use consumers, private
+transport coverage, production profiles, legacy-account migration, independent
+fresh recovery anchors, custody/revocation, long WAN and malicious-cost
+qualification, PQ finality and quantum-work/DAA/fork economics remain open.
+PR #723 remains Draft. No protected-main merge, self-approval, force push,
+production activation or whole-chain PQ acceptance is performed.
+
 ### 2026-11-06 STARK review and real-v2 CI acceptance control
 
 Continue PQ candidate `5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` without

@@ -1,8 +1,8 @@
 {
   "files": {
     "README.md": {
-      "bytes": 10399,
-      "sha256": "66b514fbd168babd68aa73be82b889401193bacb52709128d518dd6595b2c590"
+      "bytes": 10962,
+      "sha256": "35bcaf35a1f4c24515cf73f217466b352a17ce9dc874eb07f2467d25c8f9bdef"
     },
     "optional-budget-launch.json": {
       "bytes": 780,
@@ -67,6 +67,10 @@
     "security-map.json": {
       "bytes": 32499,
       "sha256": "119f0a70d4b98a1ba39b185c6d214e9a1c8219be63784034f1986cbf686bd5d1"
+    },
+    "source-composition.json": {
+      "bytes": 1137,
+      "sha256": "3bce124f6aad66485f9be539129fde078cb2bec7d883f3e51473408227b1d006"
     },
     "validation/source-ci/all-w1-python-tests.log": {
       "bytes": 20686,

@@ -1,0 +1,34 @@
+{
+  "archive_code_or_project_or_native_execution_requested": false,
+  "archive_review_process_invocations": 1,
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/review_final_increment.py"
+  ],
+  "elapsed_seconds": 0.5152664840006764,
+  "exception": null,
+  "exit_code": 0,
+  "method_after": {
+    "bytes": 20233,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/review_final_increment.py",
+    "sha256": "dc989f2c41ab7cd6661d97920905828c3a1a65bfe527ff60475e89d7062b349b"
+  },
+  "method_before": {
+    "bytes": 20233,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/review_final_increment.py",
+    "sha256": "dc989f2c41ab7cd6661d97920905828c3a1a65bfe527ff60475e89d7062b349b"
+  },
+  "schema": "trnm-final-increment-independent-review-execution-v1",
+  "started_utc": "2026-11-06T14:42:20.855396+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execution.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 302,
+    "path": "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-independent-review-v1/execution.stdout.log",
+    "sha256": "bdc78a7b1c81e841fe9bc5c39c6daef1530e0c2e01c252870134a3719bd12315"
+  }
+}

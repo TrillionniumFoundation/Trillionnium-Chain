@@ -23,6 +23,15 @@ impl PqTlsClient {
             context,
         })
     }
+    pub(crate) fn selected_client(&self) -> &PqClient {
+        &self.inner
+    }
+    pub fn restore_prepared(&self, wire: &[u8]) -> Result<PreparedPqRequest> {
+        self.inner.restore_prepared(wire)
+    }
+    pub fn audit_retained_reply(&self, request_wire: &[u8], reply_wire: &[u8]) -> Result<()> {
+        self.inner.audit_retained_reply(request_wire, reply_wire)
+    }
     pub fn prepare(
         &self,
         sequence: u64,
@@ -37,11 +46,37 @@ impl PqTlsClient {
         prepared: &PreparedPqRequest,
         budget: Duration,
     ) -> Result<PqResponse> {
+        self.send_with_evidence(address, prepared, budget)
+            .map(PqResponseEvidence::into_response)
+    }
+    pub fn send_with_evidence(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<PqResponseEvidence> {
         self.inner.policy.tls_pins()?;
         self.inner.check_send(address, prepared, budget)?;
         let end = Instant::now() + budget;
-        let response = self.exchange(address, prepared.wire(), end)?;
-        self.inner.finish_response(&response, prepared, end)
+        let wire = self.exchange(address, prepared.wire(), end)?;
+        let response = self.inner.finish_response(&wire, prepared, end)?;
+        Ok(PqResponseEvidence { response, wire })
+    }
+    /// Use the original absolute deadline for the real TLS exchange.
+    /// Validation, handshake and receipt verification cannot renew it.
+    pub fn send_with_evidence_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<PqResponseEvidence> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send_until(address, prepared, deadline)?;
+        let wire = self.exchange(address, prepared.wire(), deadline)?;
+        let response = self
+            .inner
+            .finish_response_until(&wire, prepared, deadline)?;
+        Ok(PqResponseEvidence { response, wire })
     }
     fn exchange(&self, address: SocketAddr, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
         let budget = deadline
@@ -72,7 +107,15 @@ impl PqTlsServer {
             context,
         })
     }
-    fn connection(&self, stream: TcpStream, node: &Mutex<Node>, deadline: Instant) -> Result<()> {
+    pub(super) fn selected_policy(&self) -> &PqNetworkPolicy {
+        &self.inner.policy
+    }
+    pub(super) fn connection(
+        &self,
+        stream: TcpStream,
+        node: &Mutex<Node>,
+        deadline: Instant,
+    ) -> Result<()> {
         self.inner.charge_connection(node, deadline)?;
         let mut channel =
             io::Channel::accept(stream, deadline, &self.context, node, &self.inner.policy)?;

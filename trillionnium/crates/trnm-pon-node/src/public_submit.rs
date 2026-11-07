@@ -1,4 +1,6 @@
 //! Bounded honest-client recovery. No new admission or confirmation authority.
+#[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+pub mod pq;
 use crate::{digest, ensure, ingress, Error, ErrorCode, Node, Packet, Result};
 use ingress::public_v3::{
     call_public_protected_v3_with_deadline, PublicClientMetrics, PublicClientStage, PublicPolicy,

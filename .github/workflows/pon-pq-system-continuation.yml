@@ -170,7 +170,7 @@ jobs:
           import re
           import sys
           from pathlib import Path
-          
+
           manifest = json.loads(Path(sys.argv[1]).read_text())
           counts = {"original_release": 37, "initial_root_material": 6, "complete_release": 43}
           if (not isinstance(manifest, dict)

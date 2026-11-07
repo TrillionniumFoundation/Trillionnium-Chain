@@ -48,6 +48,72 @@ type AuditRow = (u64, Vec<u8>, Vec<u8>, Option<Vec<u8>>, Option<Vec<u8>>, u8);
 type ReplayRow = (Vec<u8>, Option<Vec<u8>>, Option<Vec<u8>>, u8);
 
 impl Node {
+    /// Open an initialized PQ namespace without creating a database, lock,
+    /// initialization intent, schema or genesis. No incomplete initialization
+    /// may be completed through this entry point.
+    pub fn open_existing_with_pq_network(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+    ) -> Result<Self> {
+        Self::open_existing_pq_owner(path, settings, workers, policy, None)
+    }
+
+    /// The existing Node and externally retained witness are both required.
+    /// This selects no create/enrollment/recovery-of-initialization fallback.
+    pub fn open_existing_with_pq_witness(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        witness: crate::pq_rollback_witness::WitnessClient,
+    ) -> Result<Self> {
+        Self::open_existing_pq_owner(path, settings, workers, policy, Some(witness))
+    }
+
+    fn open_existing_pq_owner(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        policy: &PqNetworkPolicy,
+        witness: Option<crate::pq_rollback_witness::WitnessClient>,
+    ) -> Result<Self> {
+        ensure(policy.matches(&settings), "PQ_NETWORK_CONTEXT")?;
+        ensure(
+            !super::owner_marker_present(path)?,
+            "OWNER_TASK_POLICY_REQUIRED",
+        )?;
+        if let Some(client) = witness.as_ref() {
+            ensure(
+                client.binding().matches_policy(policy.canonical()),
+                "PQ_WITNESS_POLICY",
+            )?;
+        }
+        let backend = if witness.is_some() {
+            StateBackend::PqWitnessV4
+        } else {
+            StateBackend::PqNetworkV2
+        };
+        let node = Self::open_selected_mode(
+            path,
+            settings,
+            workers,
+            None,
+            NativeOwners {
+                policy: None,
+                mining: None,
+                continuous: None,
+                pq_network: Some(policy.canonical().to_vec()),
+                pq_witness: witness,
+            },
+            backend,
+            super::SelectedOpen::ExistingPqOwner,
+        )?;
+        node.validate_pq_network_ledger(policy)?;
+        Ok(node)
+    }
+
     /// New native database only; existing legacy/authenticated schemas refuse.
     /// Pins come from the operator, never network bytes. No installed account,
     /// task, mining or FinalUse signer is migrated by this constructor.

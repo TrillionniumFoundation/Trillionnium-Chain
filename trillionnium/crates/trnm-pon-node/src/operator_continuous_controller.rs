@@ -140,11 +140,18 @@ fn held_configuration(path: &Path, limit: u64) -> Result<Vec<u8>> {
 }
 fn read_launch(outside: &OutsideLaunch<'_>) -> Result<Launch> {
     let raw = held_configuration(outside.path, MAX_FRAME_BYTES as u64)?;
+    read_launch_bytes(outside, &raw)
+}
+fn read_launch_bytes(outside: &OutsideLaunch<'_>, raw: &[u8]) -> Result<Launch> {
     ensure(
-        crate::operator_task_policy::digest_bytes(&raw) == outside.sha256,
+        !raw.is_empty() && raw.len() <= MAX_FRAME_BYTES,
+        "OWNER_CONTINUOUS_LAUNCH_BOUND",
+    )?;
+    ensure(
+        crate::operator_task_policy::digest_bytes(raw) == outside.sha256,
         "OWNER_CONTINUOUS_LAUNCH_SHA",
     )?;
-    let config: Launch = serde_json::from_slice(&raw)?;
+    let config: Launch = serde_json::from_slice(raw)?;
     ensure(
         config.schema
             == config
@@ -176,6 +183,37 @@ fn read_launch(outside: &OutsideLaunch<'_>) -> Result<Launch> {
     .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?;
     Ok(config)
 }
+
+#[cfg(target_os = "linux")]
+pub(crate) fn validate_m15_configuration(
+    outside: &OutsideLaunch<'_>,
+    raw: &[u8],
+) -> Result<[u8; 32]> {
+    let config = read_launch_bytes(outside, raw)?;
+    ensure(
+        matches!(
+            config
+                .inputs
+                .view_authority
+                .identity
+                .profile()
+                .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?,
+            crate::operator_pq_auth::Profile::PqV3
+        ),
+        "M15_PQ_OPERATOR_CONTEXT_REQUIRED",
+    )?;
+    // The original background receiver owns a separate Node entry. This new
+    // profile does not silently enroll it without its own current-use gate.
+    ensure(
+        config.receiver_service.is_none(),
+        "M15_BACKGROUND_RECEIVER_UNSUPPORTED",
+    )?;
+    let value: Value = serde_json::from_slice(raw)?;
+    Ok(crate::release_owner::inputs_digest(
+        value.get("inputs").ok_or("M15_INPUTS_REQUIRED")?,
+    )?)
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct RecoveryLaunch {
@@ -327,10 +365,39 @@ pub struct Controller {
     stop: Arc<AtomicBool>,
     receiver: Option<thread::JoinHandle<Result<PublicMetrics>>>,
     closed: bool,
+    #[cfg(target_os = "linux")]
+    m15: Option<crate::release_owner::Session>,
 }
 impl Controller {
     pub fn open_pinned(outside: OutsideLaunch<'_>, started: Instant) -> Result<Self> {
         let config = read_launch(&outside)?;
+        #[cfg(target_os = "linux")]
+        {
+            Self::open_configuration(outside, started, config, None)
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            Self::open_configuration(outside, started, config)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    pub(crate) fn open_m15(
+        outside: OutsideLaunch<'_>,
+        started: Instant,
+        session: crate::release_owner::Session,
+    ) -> Result<Self> {
+        validate_m15_configuration(&outside, session.configuration())?;
+        let config = read_launch_bytes(&outside, session.configuration())?;
+        Self::open_configuration(outside, started, config, Some(session))
+    }
+
+    fn open_configuration(
+        outside: OutsideLaunch<'_>,
+        started: Instant,
+        config: Launch,
+        #[cfg(target_os = "linux")] m15: Option<crate::release_owner::Session>,
+    ) -> Result<Self> {
         let deadline = started
             .checked_add(Duration::from_secs(config.wall_seconds))
             .ok_or("OWNER_CONTINUOUS_DEADLINE")?;
@@ -341,8 +408,19 @@ impl Controller {
             .identity
             .profile()
             .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?;
+        #[cfg(target_os = "linux")]
+        let mut admission = m15
+            .as_ref()
+            .map(|session| session.admit(None))
+            .transpose()?;
+        #[cfg(target_os = "linux")]
+        if let Some(admission) = &mut admission {
+            admission.revalidate()?;
+        }
         let (node, model, input) =
             Node::open_operator_continuous_checkpoint(&config.store, config.inputs, deadline)?;
+        #[cfg(target_os = "linux")]
+        drop(admission);
         let startup = node.continuous_startup_receipt()?;
         let cpu = node.continuous_cpu_domain()?;
         let node = Arc::new(Mutex::new(node));
@@ -411,6 +489,8 @@ impl Controller {
             stop,
             receiver,
             closed: false,
+            #[cfg(target_os = "linux")]
+            m15,
         })
     }
     pub fn deadline(&self) -> Instant {
@@ -433,6 +513,27 @@ impl Controller {
             .node
             .lock()
             .map_err(|_| "OWNER_CONTINUOUS_NODE_POISONED")?;
+        #[cfg(target_os = "linux")]
+        let refresh_digest = if self.m15.is_some() && matches!(&step, Step::Refresh { .. }) {
+            let value: Value = serde_json::from_slice(raw)?;
+            Some(crate::release_owner::inputs_digest(
+                value.get("inputs").ok_or("M15_INPUTS_REQUIRED")?,
+            )?)
+        } else {
+            None
+        };
+        // The real Node mutex is already held; there is no Node lock queue
+        // between this fresh current-use admission and the owner frame.
+        #[cfg(target_os = "linux")]
+        let mut m15_admission = self
+            .m15
+            .as_ref()
+            .map(|session| session.admit(refresh_digest))
+            .transpose()?;
+        #[cfg(target_os = "linux")]
+        if let Some(admission) = &mut m15_admission {
+            admission.revalidate()?;
+        }
         let frame = node.begin_continuous_control_frame()?;
         self.completed_steps = self
             .completed_steps
@@ -450,7 +551,15 @@ impl Controller {
                         &self.registry2_package,
                     )
                     .map_err(|_| "OWNER_CONTINUOUS_PROTECTED_CONTEXT")?;
+                    #[cfg(target_os = "linux")]
+                    if let Some(admission) = &mut m15_admission {
+                        admission.revalidate()?;
+                    }
                     node.refresh_operator_continuous_view(*inputs)?;
+                    #[cfg(target_os = "linux")]
+                    if let (Some(session), Some(digest)) = (&mut self.m15, refresh_digest) {
+                        session.refreshed(digest);
+                    }
                     json!({"refreshed":true,"work_capability_issued":false})
                 }
                 Step::Search {

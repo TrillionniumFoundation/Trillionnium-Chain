@@ -1333,12 +1333,59 @@ fn continuous_command(
     controller.close()
 }
 
+#[cfg(target_os = "linux")]
+fn m15_continuous_command(args: &BTreeMap<String, String>, started: Instant) -> Result<Value> {
+    use trnm_pon_node::operator_continuous_controller::OutsideLaunch;
+    const OPTIONS: [&str; 9] = [
+        "--launch",
+        "--launch-sha256",
+        "--registry-key",
+        "--task-key",
+        "--source-commit",
+        "--policy-source",
+        "--registry2-package",
+        "--m15-launch-fd",
+        "--m15-handoff-fd",
+    ];
+    if args.len() != OPTIONS.len() || args.keys().any(|k| !OPTIONS.contains(&k.as_str())) {
+        return Err("OWNER_CONTINUOUS_ARGUMENTS".into());
+    }
+    let mut controller = trnm_pon_node::release_owner::open_controller(
+        OutsideLaunch {
+            path: Path::new(need(args, "--launch")?),
+            sha256: need(args, "--launch-sha256")?,
+            registry_key: need(args, "--registry-key")?,
+            task_key: need(args, "--task-key")?,
+            source_commit: need(args, "--source-commit")?,
+            node_policy_source: need(args, "--policy-source")?,
+            registry2_package: need(args, "--registry2-package")?,
+        },
+        need(args, "--m15-launch-fd")?
+            .parse()
+            .map_err(|_| Error::from("invalid --m15-launch-fd"))?,
+        need(args, "--m15-handoff-fd")?
+            .parse()
+            .map_err(|_| Error::from("invalid --m15-handoff-fd"))?,
+        started,
+    )?;
+    continuous_publish(
+        &json!({"schema":"m15-owner-continuous-startup-v1","startup_scope":controller.startup(),"public_network_ready":false,"original8193_qualification":false}),
+    )?;
+    let mut pending = Vec::new();
+    while let Some(frame) = continuous_next_frame(&mut pending, controller.deadline())? {
+        continuous_publish(&controller.apply(&frame)?)?;
+    }
+    controller.close()
+}
+
 fn run() -> Result<Value> {
     let command_started = Instant::now();
     let mut raw = std::env::args().skip(1);
     let command = raw.next().ok_or(
         "command: status|mine|submit|packet-status|export|confirm|sync|serve|push|head|history",
     )?;
+    #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+    let pq_parent_plan = pq_tls_cli::parent::capture_create(&command, command_started)?;
     let mut args = BTreeMap::new();
     while let Some(key) = raw.next() {
         let value = if matches!(
@@ -1361,6 +1408,15 @@ fn run() -> Result<Value> {
             return Err("DUPLICATE_OPTION".into());
         }
     }
+    if command.starts_with("m15-release-owner-") {
+        return trnm_pon_node::release_owner::run_admin(&command, &args);
+    }
+    if command == "operator-continuous-m15-v1" {
+        #[cfg(target_os = "linux")]
+        return m15_continuous_command(&args, command_started);
+        #[cfg(not(target_os = "linux"))]
+        return Err("M15_SEALED_LINUX_PROFILE_UNSUPPORTED".into());
+    }
     if command == "operator-continuous" {
         return continuous_command(&args, command_started, false);
     }
@@ -1371,6 +1427,23 @@ fn run() -> Result<Value> {
         return Err(
             "EXPLICIT_DEVELOPMENT_REQUIRED: public test identities; no monetary value".into(),
         );
+    }
+    if args.contains_key("--pq-application-config")
+        || args.contains_key("--pq-application-config-sha256")
+    {
+        #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+        return pq_tls_cli::local::run(&command, &args);
+        #[cfg(not(all(target_os = "linux", feature = "pq-native-openssl")))]
+        return Err("PQ_APPLICATION_LINUX_NATIVE_OPENSSL_REQUIRED".into());
+    }
+    if matches!(
+        command.as_str(),
+        "pq-parent-tls-serve" | "pq-parent-create" | "pq-parent-resume"
+    ) {
+        #[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+        return pq_tls_cli::parent::run(&command, &args, pq_parent_plan);
+        #[cfg(not(all(target_os = "linux", feature = "pq-native-openssl")))]
+        return Err("PQ_PARENT_LINUX_NATIVE_OPENSSL_REQUIRED".into());
     }
     if command == "pq-tls-serve" {
         #[cfg(all(unix, feature = "pq-native-openssl"))]
