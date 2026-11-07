@@ -176,3 +176,18 @@ retained. This replay is scoped to the exact mapper, locked inputs and cache;
 it does not compile a new verifier or generate another proof. All full W1,
 QROM, quantum-work, ordinary-node proof admission and whole-chain PQ gates
 remain HOLD.
+
+## 2026-11-07 continuation: fixed implementation and formal interfaces
+
+The [implementation mapping](W1_QROM_IMPLEMENTATION_MAP_20261107.md) advances
+the earlier abstract-only QROM discussion to selected formal statements in
+the January 1 manuscript, exact conditional component arithmetic, independent
+control-tree reconstruction, actual v2 identity/geometry checks and a fixed
+Fiat-Shamir/Merkle interface map. Latest-revision equivalence, complete theorem
+application and all recursive-program semantic proofs remain open. The
+[dated packet](../../evidence/pon-w1-qrom-implementation-20261107/README.md)
+retains the new results and failed observations without editing older evidence.
+It also corrects the role of ePrint 2023/1071: that is the FRI/Fiat-Shamir
+background paper, whereas the cited proximity-gap counterexamples are in
+2025/2046. No complete-proof, quantum-work, authorization or deployment gate is
+promoted by this continuation.

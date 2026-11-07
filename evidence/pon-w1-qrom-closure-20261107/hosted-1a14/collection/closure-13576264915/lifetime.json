@@ -1,0 +1,714 @@
+{
+  "counterexamples": {
+    "adaptive_statement_selection": {
+      "experiment": "Uniform R in 0..15; statement x fails exactly when x=R. History reveals R before x is selected.",
+      "failure_for_adaptively_selected_statement_R": {
+        "denominator": "1",
+        "numerator": "1"
+      },
+      "failure_for_fixed_statement_zero": {
+        "denominator": "16",
+        "numerator": "1"
+      },
+      "scope": "A fixed-statement marginal bound is not uniform conditional soundness."
+    },
+    "difficulty_weight_cost": {
+      "harder": {
+        "bits": "256",
+        "ideal_expected_credit_per_distinct_classical_first_query": {
+          "denominator": "1",
+          "numerator": "1"
+        },
+        "ideal_hit_probability": {
+          "denominator": "4096",
+          "numerator": "1"
+        },
+        "target": "28269553036454149273332760011886696253239742350009903329945699220681916415",
+        "weight": "4096"
+      },
+      "hypothetical_quantum_cost_ratio": "4",
+      "hypothetical_weight_per_cost_advantage": {
+        "denominator": "1",
+        "numerator": "4"
+      },
+      "ordinary": {
+        "bits": "256",
+        "ideal_expected_credit_per_distinct_classical_first_query": {
+          "denominator": "1",
+          "numerator": "1"
+        },
+        "ideal_hit_probability": {
+          "denominator": "256",
+          "numerator": "1"
+        },
+        "target": "452312848583266388373324160190187140051835877600158453279131187530910662655",
+        "weight": "256"
+      },
+      "scope": "Assumes equal full-oracle cost and square-root search scaling; no reachability, quantum clock, attack or finality theorem.",
+      "weight_ratio": {
+        "denominator": "1",
+        "numerator": "16"
+      }
+    },
+    "per_event_target": {
+      "meets_whole_lifetime_target": false,
+      "opportunities": "64",
+      "per_opportunity_error": {
+        "denominator": "340282366920938463463374607431768211456",
+        "numerator": "1"
+      },
+      "union_expression": {
+        "denominator": "5316911983139663491615228241121378304",
+        "numerator": "1"
+      },
+      "whole_lifetime_target": {
+        "denominator": "340282366920938463463374607431768211456",
+        "numerator": "1"
+      }
+    },
+    "query_reset": {
+      "partitions": [
+        "10",
+        "10"
+      ],
+      "powers": {
+        "2": {
+          "incorrect_sum_of_reset_powers": "200",
+          "shared_total_power": "400",
+          "understatement_factor": {
+            "denominator": "1",
+            "numerator": "2"
+          }
+        },
+        "3": {
+          "incorrect_sum_of_reset_powers": "2000",
+          "shared_total_power": "8000",
+          "understatement_factor": {
+            "denominator": "1",
+            "numerator": "4"
+          }
+        }
+      },
+      "scope": "Polynomial accounting counterexample, not a concrete QROM bound."
+    }
+  },
+  "independent_acceptance": {
+    "all_three_qualified": false,
+    "lines": {
+      "complete_computation_relation": {
+        "protected_claim": "The exact allowed computation relation, images, public values and recursion family are satisfied.",
+        "qualification_inferred_from_another_line": false,
+        "qualified": false,
+        "security_bits": null,
+        "security_error_upper": null,
+        "source_observation_ids": [
+          "native_work_verifier",
+          "npq6_packet_native_work_length",
+          "isolated_stark_verifier",
+          "fri_geometry_only",
+          "implementation_map_only"
+        ],
+        "status": "SOURCE_OBSERVATIONS_PRESENT_SECURITY_UNQUALIFIED",
+        "unclosed": [
+          "Separate native full replay from the isolated succinct-proof candidate.",
+          "Whole implemented relation, RBR/state-restoration and vector-commitment extraction assumptions.",
+          "Concrete shared hash/sponge/transcript model, recursive composition and all permitted control programs.",
+          "A complete theorem-derived lifetime bound; current record is not fresh receipt verification."
+        ]
+      },
+      "pq_authorization": {
+        "protected_claim": "The currently authorized owner approved these exact domain-bound bytes.",
+        "qualification_inferred_from_another_line": false,
+        "qualified": false,
+        "security_bits": null,
+        "security_error_upper": null,
+        "source_observation_ids": [
+          "canonical_mldsa_verifier",
+          "application_authority_and_failed_attempt_charge",
+          "key_identity_sha256",
+          "payload_sha384",
+          "profile_identity_sha512"
+        ],
+        "status": "SOURCE_OBSERVATIONS_PRESENT_SECURITY_UNQUALIFIED",
+        "unclosed": [
+          "Independent implementation/side-channel assessment and algorithm security assumptions.",
+          "Complete authority-producing entry-point coverage and current external trust-root/custody evidence.",
+          "Migration, revocation, replay, rollback and deployment composition across actual effect paths.",
+          "Lifetime multi-user authorization failure bound; local signature meters are not adversary query limits."
+        ]
+      },
+      "quantum_work_and_chain_weight": {
+        "protected_claim": "Adversarial resource expenditure corresponds to lottery wins and credited branch weight under the actual fork rule.",
+        "qualification_inferred_from_another_line": false,
+        "qualified": false,
+        "security_bits": null,
+        "security_error_upper": null,
+        "source_observation_ids": [
+          "required_work_formula",
+          "cumulative_weight",
+          "actual_target_rule",
+          "legal_task_reuse",
+          "classical_query_bound",
+          "constructive_quantum_oracle",
+          "restricted_quantum_strategy",
+          "resource_accounting",
+          "physical_clock",
+          "sqrt_cost_is_assumption"
+        ],
+        "status": "SOURCE_OBSERVATIONS_PRESENT_SECURITY_UNQUALIFIED",
+        "unclosed": [
+          "Cheapest legal attacker strategy, preprocessing/task reuse, subset marked counts and all query costs.",
+          "Physical clock/error correction/data-access assumptions and hardware calibration.",
+          "Adaptive target/timestamp/withholding/restart/propagation behavior under actual branch reachability.",
+          "Common-prefix/confirmation or other named security definition at equal additive resource budgets."
+        ]
+      }
+    },
+    "production_activation": false,
+    "rule": "Each claim requires its own evidence; signature validity, relation correctness and resource security do not imply one another.",
+    "whole_chain_post_quantum_qualified": false
+  },
+  "lifetime_ledger": {
+    "all_required_numerical_cells_supplied": false,
+    "boundary": [
+      "Phase envelopes may conservatively overlap; no purpose-level query independence is inferred.",
+      "One coherent invocation may address several purpose tags; retain the shared oracle and pay its actual invocation cost.",
+      "The sums are caller-premised upper envelopes, not measured adversarial queries or CDHZ shifted-budget substitutions.",
+      "Missing failed, offline, recursive, delegated or unclassified phases are rejected; explicit null stays unknown.",
+      "Mass is separate from query count; no w=t default and no unproved sum-of-masses identity.",
+      "Extractor, relation-decider and oracle-simulator costs need the actual composition theorem and may be correlated.",
+      "Local request/signature CPU limits do not cap an adversary's independent quantum computations.",
+      "Accepted top-level receipts alone bound neither abandoned search nor the size of internal recursive trees."
+    ],
+    "conditional_union": {
+      "composition_theorem_instantiated": false,
+      "conditioning": "all_prior_history_offline_information_quantum_auxiliary_states_and_same_lifetime_query_envelope",
+      "events": {
+        "authorization_admission_opportunities": {
+          "assumed_bound_valid_up_to_joint_queries": null,
+          "bound_reference_unverified": null,
+          "error_per_opportunity_upper": null,
+          "opportunities_max": null,
+          "union_addend": null
+        },
+        "complete_relation_verification_opportunities": {
+          "assumed_bound_valid_up_to_joint_queries": null,
+          "bound_reference_unverified": null,
+          "error_per_opportunity_upper": null,
+          "opportunities_max": null,
+          "union_addend": null
+        },
+        "work_weight_acceptance_opportunities": {
+          "assumed_bound_valid_up_to_joint_queries": null,
+          "bound_reference_unverified": null,
+          "error_per_opportunity_upper": null,
+          "opportunities_max": null,
+          "union_addend": null
+        }
+      },
+      "hypothetical_expression_meets_target": null,
+      "probability_expression": null,
+      "project_target_met": null,
+      "project_total_error_upper": null,
+      "target": null,
+      "unclipped_expression": null,
+      "uniform_conditional_premises_verified": false
+    },
+    "coverage_exhaustiveness_proved": false,
+    "groups": {
+      "mldsa_xof": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "ML-DSA XOF calls; dependency/model boundary not expanded here",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "ML-DSA-65 internal XOF use (locked ml-dsa depends on shake)"
+        ]
+      },
+      "other_unmapped": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "Unsurveyed or unclassified primitive interfaces",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "remaining protocol/authorization/application hash uses"
+        ]
+      },
+      "poseidon2_shared": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "Poseidon2 over BabyBear; concrete-to-ideal interface unresolved",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "STARK Merkle leaves",
+          "STARK Merkle internal nodes",
+          "recursion control-tree internal nodes",
+          "transcript message hashing",
+          "stateful Fiat-Shamir RNG permutation"
+        ]
+      },
+      "sha256_shared": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "SHA-256; per-role assumptions and joint oracle model unresolved",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "native W1 challenge/task/noise/ticket domains",
+          "native ordered arithmetic transcript",
+          "work/artifact/journal identities",
+          "zkVM image/receipt/claim/verifier-parameter commitments",
+          "TPQ1 canonical SPKI key identity"
+        ]
+      },
+      "sha384_shared": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "SHA-384; mapping and cross-use assumptions unresolved",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "TPQ1 length-framed payload commitment"
+        ]
+      },
+      "sha512_shared": {
+        "additional_reduction_queries_upper": {
+          "extractor": null,
+          "oracle_simulator": null,
+          "relation_decider": null
+        },
+        "additive_query_envelope_with_declared_overheads": null,
+        "adversary_queries_upper": null,
+        "mapped_to_cdhz_t_or_w": false,
+        "online_mass_upper": {
+          "fiat_shamir_online": null,
+          "vector_commitment_online": null
+        },
+        "primitive": "SHA-512; mapping and cross-use assumptions unresolved",
+        "queries_by_phase_upper": {
+          "accepted_root_attempts": null,
+          "adaptive_restart_batches": null,
+          "cross_protocol_unclassified_batches": null,
+          "delegated_service_batches": null,
+          "failed_aborted_root_attempts": null,
+          "offline_preprocessing": null,
+          "recursive_subproof_nodes": null
+        },
+        "query_bound_reference_unverified": null,
+        "selected_roles": [
+          "crypto profile configuration identity",
+          "separate candidate profile commitments"
+        ]
+      }
+    },
+    "input_kind": "project_unqualified",
+    "lifetime": {
+      "accepted_root_attempts_per_processor_max": null,
+      "adaptive_restart_batches_per_processor_max": null,
+      "cross_protocol_batches_per_processor_max": null,
+      "delegated_service_batches_per_processor_max": null,
+      "failed_aborted_root_attempts_per_processor_max": null,
+      "offline_batches_per_processor_max": null,
+      "online_seconds": null,
+      "processors_max": null,
+      "recursive_nodes_per_root_attempt_max": null
+    },
+    "lifetime_bound_reference_unverified": null,
+    "occurrences_all_processors_upper": {
+      "accepted_root_attempts": null,
+      "adaptive_restart_batches": null,
+      "cross_protocol_unclassified_batches": null,
+      "delegated_service_batches": null,
+      "failed_aborted_root_attempts": null,
+      "offline_preprocessing": null,
+      "recursive_subproof_nodes": null
+    },
+    "quantum_query_unit_instantiated": false,
+    "scope": {
+      "all_identities_processors_and_reorganizations_share_budget": true,
+      "coverage": "selected_implementation_coverage_not_exhaustive",
+      "pre_deployment_queries_included": true,
+      "protocol_upgrades_do_not_reset_budget": true,
+      "query_unit": "abstract_quantum_oracle_invocation_not_native_permutation_count"
+    },
+    "sum_of_group_adversary_query_envelopes": null,
+    "sum_with_declared_additional_reduction_queries": null
+  },
+  "schema": "TRNM-W1-LIFETIME-LEDGER-REPORT1",
+  "selected_source_survey": {
+    "all_selected_source_bytes_match": true,
+    "base_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+    "canonical_signature": {
+      "algorithm": "ML-DSA-65",
+      "canonical_spki_bytes": "1974",
+      "crate_checksum": "add6b9d92e496f16f4526d68ff29da1483aba4b119baeab8bed3b9e3544a6f3d",
+      "crate_version": "0.1.1",
+      "message_interface": "pure ML-DSA, empty context; versioned application bytes",
+      "public_key_bytes": "1952",
+      "signature_bytes": "3309"
+    },
+    "coverage": "selected_implementation_coverage_not_exhaustive",
+    "native_development_arithmetic": {
+      "clamp_lower_seconds": "38",
+      "clamp_upper_seconds": "600",
+      "desired_span_seconds": "150",
+      "future_skew_seconds": "120",
+      "initial_target_lottery": {
+        "bits": "256",
+        "ideal_expected_credit_per_distinct_classical_first_query": {
+          "denominator": "1",
+          "numerator": "1"
+        },
+        "ideal_hit_probability": {
+          "denominator": "2",
+          "numerator": "1"
+        },
+        "target": "57896044618658097711785492504343953926634992332820282019728792003956564819967",
+        "weight": "2"
+      },
+      "median_time_width": "11",
+      "native_daa_or_chain_attack_proved": false,
+      "retarget_interval": "16",
+      "target_spacing_seconds": "10"
+    },
+    "observations": {
+      "actual_target_rule": {
+        "anchor_line": "188",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Periodic branch-window retarget, not ASERT; arithmetic limits are not an economic security theorem.",
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+      },
+      "application_authority_and_failed_attempt_charge": {
+        "anchor_line": "830",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Resolve current witness authority, charge the shared signature counter, then verify the role/context/generation/nonce-bound TPQ1.",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+        "sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d"
+      },
+      "canonical_mldsa_verifier": {
+        "anchor_line": "154",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "One RustCrypto MlDsa65 message verifier; optional OpenSSL is a signing source, not an OR-verification fallback.",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      "classical_query_bound": {
+        "anchor_line": "13",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Expected credit <= first ideal distinct classical queries under predictable target; not quantum or physical-resource security.",
+        "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+        "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909"
+      },
+      "constructive_quantum_oracle": {
+        "anchor_line": "1",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "A full fixed-template reversible winner construction exists; native eligibility is a classical precondition and costs are construction upper bounds.",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+        "sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99"
+      },
+      "cumulative_weight": {
+        "anchor_line": "4975",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Each admitted block adds branch-target required work; no quantum resource meter replaces this weight.",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153"
+      },
+      "fri_geometry_only": {
+        "anchor_line": "4",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Saved-seal geometry and native RNG permutation counts are not lifetime adversary queries.",
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      },
+      "implementation_map_only": {
+        "anchor_line": "7",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Fixed-source mapping leaves QROM reduction, lifetime policy and authority unestablished.",
+        "path": "scripts/w1_qrom_implementation_audit.py",
+        "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+      },
+      "isolated_stark_verifier": {
+        "anchor_line": "111",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Isolated hardened succinct verifier is separate from native Node admission; this survey does not rerun cryptographic verification.",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5"
+      },
+      "key_identity_sha256": {
+        "anchor_line": "105",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Canonical ML-DSA-65 SPKI identity remains domain-separated SHA-256.",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      "legal_task_reuse": {
+        "anchor_line": "1251",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "PreparedTask computes public A B once and retains canonical proof prefix; challenge-specific transcript still must be produced.",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      "native_work_verifier": {
+        "anchor_line": "1108",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "The selected ordinary Node path obtains VerifiedWork from native PNW1, not a STARK receipt.",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153"
+      },
+      "npq6_packet_native_work_length": {
+        "anchor_line": "130",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "PQ packet encoding retains the native complete witness length.",
+        "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+        "sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc"
+      },
+      "payload_sha384": {
+        "anchor_line": "86",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "TPQ1 payload uses SHA-384 with domain and big-endian length.",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      "physical_clock": {
+        "anchor_line": "147",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Campaign envelope is conservative and pays all processors; serial physical clock depends on caller hardware/error assumptions.",
+        "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+        "sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a"
+      },
+      "profile_identity_sha512": {
+        "anchor_line": "277",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Profile configuration ID uses SHA-512; separate candidates do not migrate native W1 hashes.",
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      "required_work_formula": {
+        "anchor_line": "141",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Required work is floor(2^256/(T+1)), using checked 512-bit arithmetic.",
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+      },
+      "resource_accounting": {
+        "anchor_line": "175",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Resource model charges compute/inverse, independent processors, preprocessing, and failed-candidate rechecks; inputs are premises.",
+        "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+        "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f"
+      },
+      "restricted_quantum_strategy": {
+        "anchor_line": "9",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "A legal prefix-restricted search strategy exists; use its own marked set, not the full predicate's success probability.",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py",
+        "sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702"
+      },
+      "sqrt_cost_is_assumption": {
+        "anchor_line": "206",
+        "evidence_kind": "reviewed_fixed_source_not_fresh_execution",
+        "observation": "Square-root cost scaling is a model choice, not a measured complete W1 oracle rate.",
+        "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+        "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b"
+      }
+    },
+    "sources": [
+      {
+        "bytes": "924",
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+      },
+      {
+        "bytes": "40332",
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c"
+      },
+      {
+        "bytes": "12902",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      {
+        "bytes": "13891",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      {
+        "bytes": "41595",
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      {
+        "bytes": "41699",
+        "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+        "sha256": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d"
+      },
+      {
+        "bytes": "7976",
+        "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+        "sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc"
+      },
+      {
+        "bytes": "370473",
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "sha256": "b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153"
+      },
+      {
+        "bytes": "20098",
+        "path": "trillionnium/crates/trnm-pon-node/src/consensus.rs",
+        "sha256": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62"
+      },
+      {
+        "bytes": "104121",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      {
+        "bytes": "1964",
+        "path": "config/pon/devnet-v1.json",
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      {
+        "bytes": "7165",
+        "path": "formal/pon-nakamoto-v1/work_query_bound.py",
+        "sha256": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909"
+      },
+      {
+        "bytes": "37767",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_oracle.py",
+        "sha256": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99"
+      },
+      {
+        "bytes": "10893",
+        "path": "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py",
+        "sha256": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702"
+      },
+      {
+        "bytes": "27502",
+        "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+        "sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f"
+      },
+      {
+        "bytes": "15682",
+        "path": "formal/pon-nakamoto-v1/quantum_resource_clock.py",
+        "sha256": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a"
+      },
+      {
+        "bytes": "16888",
+        "path": "formal/pon-nakamoto-v1/quantum_daa_model.py",
+        "sha256": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b"
+      },
+      {
+        "bytes": "28049",
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5"
+      },
+      {
+        "bytes": "23660",
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      },
+      {
+        "bytes": "21678",
+        "path": "scripts/w1_qrom_implementation_audit.py",
+        "sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354"
+      }
+    ],
+    "whole_repository_build_or_behavior_verified": false
+  },
+  "status": "CONDITIONAL_ACCOUNTING_AND_SELECTED_SOURCE_SURVEY_SECURITY_HOLD"
+}

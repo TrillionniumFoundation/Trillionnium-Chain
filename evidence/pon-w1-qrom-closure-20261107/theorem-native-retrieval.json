@@ -1,0 +1,28 @@
+{
+  "schema": "TRNM-W1-CDHZ-OFFICIAL-NATIVE-RETRIEVAL-READBACK1",
+  "host": "desktop",
+  "job_id": "1a1b65f4231-12894-3e5",
+  "idempotency_key": "w1-cdhz-official-pdf-native-20261107-root-v1",
+  "url": "https://eprint.iacr.org/2025/2166.pdf",
+  "retrieved_utc": "2026-11-07T14:17:40.161894+00:00",
+  "request": "Ordinary unauthenticated urllib GET of the official public PDF URL, with a 40-second request timeout and a 30 MiB response bound.",
+  "request_result": {
+    "error_type": "HTTPError",
+    "error": "HTTP Error 403: Forbidden",
+    "complete_pdf_obtained": false
+  },
+  "recorder_process": {
+    "state": "succeeded",
+    "exit_code": 0,
+    "timed_out": false,
+    "output_complete": true,
+    "output_durable": true,
+    "stdout_bytes": 295,
+    "stderr_bytes": 0,
+    "interpretation": "The recorder completed and retained the failed HTTP observation; exit zero does not mean that the paper was downloaded."
+  },
+  "earlier_retrieval_record_unchanged": "theorem-source-followup.json",
+  "latest_complete_manuscript_version_equivalence_established": false,
+  "post_quantum_soundness_qualified": false,
+  "unconditional_project_security_bits": null
+}

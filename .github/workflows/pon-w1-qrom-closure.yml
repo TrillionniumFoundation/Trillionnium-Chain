@@ -1,0 +1,179 @@
+name: PoN W1 QROM closure observations
+on:
+  pull_request:
+    paths:
+      - formal/pon-nakamoto-v1/**
+      - trillionnium/**
+      - scripts/w1_*.py
+      - scripts/w1_*.c
+      - scripts/ci/**
+      - scripts/project-preflight.sh
+      - evidence/pon-w1-*/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
+      - AGENTS.md
+      - PROJECT_ID
+      - PROJECT_BOUNDARY.json
+      - .github/workflows/pon-w1-qrom-closure.yml
+permissions:
+  contents: read
+concurrency:
+  group: pon-w1-qrom-closure-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  W1_CLOSURE_ROSTER_SHA256: ee2b11492a362bd4be2f2df4e7ad691f4dd8a78cd9df884979cb3409e117745f
+jobs:
+  closure:
+    name: W1 QROM closure (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve fresh observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-qrom-closure-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'W1_CLOSURE_OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'Named controls, fixed image/AIR reconstruction, and explicit conditional arithmetic only. No complete QROM theorem, real quantum budget, PQ authorization or chain-weight qualification is granted. The full ZKR archive trial is separately retained.\n' > "$out/SCOPE.txt"
+      - name: Checkout exact candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete ordered source before execution
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CLOSURE_OUT/source-before.json" 2>&1 | tee "$W1_CLOSURE_OUT/source-before.log"
+      - name: Audit project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_CLOSURE_OUT/preflight.log"
+      - name: Execute the complete fixed named roster
+        id: named_controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_closure_controls.py run --roster-sha256 "$W1_CLOSURE_ROSTER_SHA256" --output "$W1_CLOSURE_OUT" 2>&1 | tee "$W1_CLOSURE_OUT/named-controls.log"
+          python3 scripts/ci/w1_qrom_closure_controls.py check --roster-sha256 "$W1_CLOSURE_ROSTER_SHA256" --output "$W1_CLOSURE_OUT" 2>&1 | tee "$W1_CLOSURE_OUT/named-controls-check.log"
+      - name: Reproduce pinned observations and unknown project inputs
+        id: reproduce
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_semantics_audit.py --out "$W1_CLOSURE_OUT/semantics.json"
+          python3 scripts/w1_lifetime_ledger.py --input evidence/pon-w1-lifetime-20261107/project-input.json > "$W1_CLOSURE_OUT/lifetime.json"
+          python3 scripts/w1_qrom_composition_budget.py > "$W1_CLOSURE_OUT/composition-unknown.json"
+          python3 scripts/w1_qrom_composition_budget.py --example > "$W1_CLOSURE_OUT/composition-example.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py > "$W1_CLOSURE_OUT/joint-oracle-unknown.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example alias > "$W1_CLOSURE_OUT/joint-oracle-alias.json"
+          python3 scripts/w1_qrom_joint_oracle_diagnostic.py --example separated > "$W1_CLOSURE_OUT/joint-oracle-separated.json"
+          cmp evidence/pon-w1-qrom-semantics-20261107/report.json "$W1_CLOSURE_OUT/semantics.json"
+          cmp evidence/pon-w1-lifetime-20261107/project-report.json "$W1_CLOSURE_OUT/lifetime.json"
+          for name in composition-unknown composition-example joint-oracle-unknown joint-oracle-alias joint-oracle-separated; do
+            cmp "evidence/pon-w1-qrom-formal-bridge-20261107/$name.json" "$W1_CLOSURE_OUT/$name.json"
+          done
+      - name: Verify complete ordered source after execution
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_CLOSURE_OUT/source-after.json" 2>&1 | tee "$W1_CLOSURE_OUT/source-after.log"
+      - name: Validate named completion and every required stage independently
+        id: completion
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        env:
+          W1_CLOSURE_STEPS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' 2>&1 | tee "$W1_CLOSURE_OUT/completion.log"
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, 'scripts/ci')
+          import w1_qrom_closure_controls as controls
+          out = Path(os.environ['W1_CLOSURE_OUT'])
+          required = ('observations', 'checkout', 'source_before', 'preflight',
+                      'named_controls', 'reproduce', 'source_after')
+          steps = controls.strict_json(os.environ['W1_CLOSURE_STEPS'])
+          failed = [name for name in required if type(steps.get(name)) is not dict
+                    or steps[name].get('outcome') != 'success'
+                    or steps[name].get('conclusion') != 'success']
+          error = None
+          try:
+              controls.check(Path.cwd(), out, os.environ['W1_CLOSURE_ROSTER_SHA256'])
+              before = controls.strict_json((out / 'source-before.json').read_bytes())
+              after = controls.strict_json((out / 'source-after.json').read_bytes())
+              controls.require(before == after, 'source observations differ')
+              controls.require(before['schema'] == 'trnm-ci-source-v1', 'source schema differs')
+              controls.require(before['tracked_worktree_verified'] is True, 'tracked source is unverified')
+              controls.require(type(before['tracked_entries']) is int and before['tracked_entries'] > 0,
+                               'tracked source count differs')
+              controls.require(before['kind'] == os.environ['SOURCE_KIND'], 'source kind differs')
+              controls.require(before['tested_commit'] == os.environ['EXPECTED_SOURCE'], 'source commit differs')
+              controls.require(before['candidate'] == os.environ['EXPECTED_HEAD'], 'candidate differs')
+              if os.environ['SOURCE_KIND'] == 'prospective-merge':
+                  controls.require(before['base'] == os.environ['EXPECTED_BASE'], 'base differs')
+                  controls.require(before['prospective_merge'] == os.environ['EXPECTED_SOURCE'], 'merge differs')
+              else:
+                  controls.require(before['base'] is None and before['prospective_merge'] is None,
+                                   'head observation has merge fields')
+          except (Exception, SystemExit) as caught:
+              error = type(caught).__name__ + ': ' + str(caught)
+          passed = not failed and error is None
+          status = {'schema': 'TRNM-W1-QROM-CLOSURE-CI1',
+                    'expected_source': os.environ['EXPECTED_SOURCE'],
+                    'expected_head': os.environ['EXPECTED_HEAD'],
+                    'expected_base': os.environ['EXPECTED_BASE'],
+                    'source_kind': os.environ['SOURCE_KIND'],
+                    'required_stages': list(required), 'steps': steps,
+                    'failed_or_skipped_stages': failed, 'completion_or_identity_error': error,
+                    'all_required_observations_passed': passed,
+                    'qualification': controls.QUALIFICATION}
+          with (out / 'ci-status.json').open('x') as stream:
+              json.dump(status, stream, indent=2, sort_keys=True, allow_nan=False)
+              stream.write('\n')
+          if not passed:
+              raise SystemExit('required QROM continuation observations did not all complete')
+          print('All fixed named observations completed; complete QROM and chain qualification remain false.')
+          PY
+      - name: Retain exact observations including failures
+        if: always() && steps.observations.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-closure-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ env.W1_CLOSURE_OUT }}/
+          if-no-files-found: error

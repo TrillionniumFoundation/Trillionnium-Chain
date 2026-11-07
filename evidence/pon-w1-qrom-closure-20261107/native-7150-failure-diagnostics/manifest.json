@@ -1,0 +1,118 @@
+{
+  "all_received_hashes_verified": true,
+  "files": [
+    {
+      "bytes": 586,
+      "name": "preflight.json",
+      "sha256": "424d52edc7013cd9b795c02afc365bcaeae75903607816261c152ee3682098ac",
+      "version": "2050:56290455:586:1794060745769108195:1794060745769108195"
+    },
+    {
+      "bytes": 178,
+      "name": "preflight.stdout.log",
+      "sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b",
+      "version": "2050:56290453:178:1794060745768535514:1794060745768535514"
+    },
+    {
+      "bytes": 0,
+      "name": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290454:0:1794060745768535514:1794060745768535514"
+    },
+    {
+      "bytes": 6116,
+      "name": "run_diagnostics.py",
+      "sha256": "257e9a227c996732e361bb301de33436b2ef47c0262b3b756e4be1074b41fea3",
+      "version": "2050:56290519:6116:1794060815646671650:1794060815662419851"
+    },
+    {
+      "bytes": 286,
+      "name": "source-before.json",
+      "sha256": "d92d32c01921d1f43d4617ce7ee2c6150c8da8b3877e78a3ec595ec8cc5dba57",
+      "version": "2050:56290520:286:1794060851342612037:1794060851342612037"
+    },
+    {
+      "bytes": 893,
+      "name": "binary-before.json",
+      "sha256": "4f6be90f70944ff67f764c341e6d30d135669b6a35620867ac5e5b25c61bda9b",
+      "version": "2050:56290523:893:1794060856948137064:1794060856948137064"
+    },
+    {
+      "bytes": 1412,
+      "name": "ingress.json",
+      "sha256": "c1352e00d1c112e55d417bf1a6b679a6ebb0ecfdd0ff98bf9250e91224f8c08d",
+      "version": "2050:56290524:1412:1794060859080071976:1794060859080071976"
+    },
+    {
+      "bytes": 239,
+      "name": "ingress.stdout.log",
+      "sha256": "3bb20252814bf4a7ec1f2ed07d88558968db6a8d29e001d6b9dff7919852b9de",
+      "version": "2050:56290521:239:1794060859061598666:1794060859061598666"
+    },
+    {
+      "bytes": 0,
+      "name": "ingress.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "2050:56290522:0:1794060858664084670:1794060858664084670"
+    },
+    {
+      "bytes": 1413,
+      "name": "root-separation.json",
+      "sha256": "8ab036db94c05621cae552fdef5c1487fca16121b45b83beb289de24c587031f",
+      "version": "2050:56290529:1413:1794060862302973790:1794060862302973790"
+    },
+    {
+      "bytes": 369,
+      "name": "root-separation.stdout.log",
+      "sha256": "26e5802d0a739fc473cc74505e00c895e3bcb3c183636648c215adbe2216ce08",
+      "version": "2050:56290525:369:1794060862252975311:1794060862252975311"
+    },
+    {
+      "bytes": 430,
+      "name": "root-separation.stderr.log",
+      "sha256": "ae27b54e73e20f8c46a1223cd55383bc395d681918104c1a263be4d1a1194667",
+      "version": "2050:56290526:430:1794060862251975341:1794060862251975341"
+    },
+    {
+      "bytes": 1392,
+      "name": "sealed-copy.json",
+      "sha256": "423b112ecfff5ebbdd190574b32eb341b677f31d5a3e110c18eae14b380575b1",
+      "version": "2050:56290530:1392:1794060863913343181:1794060863913343181"
+    },
+    {
+      "bytes": 351,
+      "name": "sealed-copy.stdout.log",
+      "sha256": "d55ca92d0c20be0c859c9297f0c9e2e6ceea7550ed877aea979206e8f833b92f",
+      "version": "2050:56290527:351:1794060863903158685:1794060863903158685"
+    },
+    {
+      "bytes": 391,
+      "name": "sealed-copy.stderr.log",
+      "sha256": "e95211e82c319b586bc04bc93c0d6e0362d62544faf75be361fa1cb73db7602c",
+      "version": "2050:56290528:391:1794060863901925168:1794060863901925168"
+    },
+    {
+      "bytes": 286,
+      "name": "source-after.json",
+      "sha256": "d92d32c01921d1f43d4617ce7ee2c6150c8da8b3877e78a3ec595ec8cc5dba57",
+      "version": "2050:56290531:286:1794060865654907514:1794060865654907514"
+    },
+    {
+      "bytes": 245,
+      "name": "binary-after.json",
+      "sha256": "d2dd53f818203b7c511bb84d588f0f51bd51803c3c947c9f98281daa9890308c",
+      "version": "2050:56290532:245:1794060868748260569:1794060868748260569"
+    },
+    {
+      "bytes": 6675,
+      "name": "diagnostics-summary.json",
+      "sha256": "38806aa31d2969ff50051419dab4abcefa7721fa1cf1cadd61ca30c73717e6e1",
+      "version": "2050:56290533:6675:1794060868781151722:1794060868781151722"
+    }
+  ],
+  "full_workspace_passed": false,
+  "original_failed_workspace_archive_unchanged": true,
+  "post_quantum_soundness_qualified": false,
+  "schema": "TRNM-W1-NATIVE-7150-DIAGNOSTIC-TRANSFER1",
+  "source_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1"
+}

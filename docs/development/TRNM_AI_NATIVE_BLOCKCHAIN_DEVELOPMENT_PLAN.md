@@ -8228,3 +8228,177 @@ continuation. External cryptographic review, concrete QROM instantiation,
 accepted recursive-family composition, complete quantum work/fork-choice
 analysis and independent deployment acceptance remain open. All activation
 and whole-chain PQ assertions remain false/HOLD.
+
+### 2026-11-07 W1 v2 implementation mapping toward QROM security
+
+Continue `cb114b13bf848a77634e40a08b31b30c7c758e7b` and the existing W1/PQ
+integration stack. The [fixed implementation review](../security/W1_QROM_IMPLEMENTATION_MAP_20261107.md)
+pins the selected verifier/guest source and dependency graphs, reconstructs
+the entire default 27-program control tree and parameter digest, maps every
+native transcript phase and Merkle auxiliary parameter, and accounts for the
+actual historical v2 seal geometry. It distinguishes allowed lift names,
+generic parser limits and the observed outer trace size. The
+[new evidence packet](../../evidence/pon-w1-qrom-implementation-20261107/README.md)
+retains exact inputs, machine-readable mapping, independent review findings
+and actual validation observations.
+
+Selected formal statements from the January 1 Chiesa-Di-Hu-Zheng manuscript
+replace an abstract-only reading for this narrow review. The exact-rational
+calculator evaluates only explicitly hypothetical component expressions;
+unknown budgets stay null, complete compiler/composition bounds stay
+uninstantiated, and all qualification flags stay false. Reconcile the latest
+revision, prove the concrete oracle/commitment interfaces and every permitted
+recursive relation, and adopt a justified whole-lifetime query/error policy
+before strengthening a security claim. PQ authorization, complete computation
+proofs and quantum-work/chainweight economics remain three independent gates.
+No production admission path, proof parameter, guest image or native work rule
+changes in this continuation.
+
+### 2026-11-07 W1 proof-obligation continuation and local GitHub publication
+
+Continue `7150d96a2112875b4afcf3023361a5cef4a0e4b1` through the user-selected
+Hepta local GitHub channel. Normal Git pre-push checks and exact remote readback
+completed; [Draft PR #778](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/778)
+continues the existing W1 v2 branch. The original 7150 head and ordered
+prospective-merge hosted QROM jobs passed, including complete tracked-source
+checks before and after. Those results remain bound to their original commits.
+
+The [continuation report](../security/W1_QROM_CLOSURE_CONTINUATION_20261107.md)
+and [evidence disposition](../../evidence/pon-w1-qrom-closure-20261107/README.md)
+retain all fifteen original obligation identities while discharging specific
+implementation subclaims. Independent R0BF loading and memory hashing match
+the configured guest image; an actual official `compute_image_id` execution
+agrees. The embedded kernel matches the locked release binary. Abstract
+execution of both complete generated constraint DAGs yields trace-tap degree
+at most five, with trace divisibility and semantic correctness still separate.
+
+The complete official ZKR archive supplies all 32 byte streams and the exact
+default-27 allowlist. All 27 fit the observed `po2=18` code capacity;
+`join_povw` leaves eight rows after ZK reservation. An independent C
+interpolation/LDE/Poseidon2/Merkle implementation recomputes the control IDs
+of all 27 default named programs from their actual bytes and reconstructs
+the fixed control root.
+Small independent DFT, permutation, tree and input-boundary controls check
+that implementation. Compiler correctness, program semantics, every reachable
+trace and digest-zero exclusion remain proof obligations.
+
+The exact-rational 10.6 evaluator retains relation/oracle compatibility,
+enlarged query domains and commutativity loss. The finite joint-oracle
+countermodel rejects an inference from uniform marginals to independent hash
+purposes. The lifetime ledger accounts for unsuccessful, offline, recursive,
+adaptive, delegated and unclassified work and retains unknown project budgets.
+No component example becomes a project security-bit estimate.
+
+The fixed native v2 release now has an observed exact feature graph,
+cryptographic saved-receipt verification, complete native replay, official
+image calculation and positive/negative profile controls. Only this concrete
+build/profile sub-scope is complete. Whole-source hosted checks and the local
+selected-source native inventory remain distinct; missing unrelated historical
+archive bodies are not hidden behind a clean-source claim. Earlier failed
+retrieval, local offline build and source observations remain retained.
+
+New CI uses a digest-pinned roster of actual test names, independent completion
+validation, fresh output directories, exact source before/after and both
+GitHub stage outcome and conclusion. Missing, skipped, failed or softened
+stages cannot pass with a copied result JSON. The 314 W1 tests include 105
+new continuation controls; a separate retained CI/source run passes 147.
+These are engineering observations, not theorem certificates. Complete QROM,
+PQ authorization, quantum work/chain weight and production acceptance remain
+independent HOLD decisions. No main merge, self-approval, force push or
+production activation is performed.
+
+The hosted 7150 `repository-truth` failure was traced to the generated
+distributed-source inventory: the static repository check passed, but the
+inventory check found the two new QROM configuration files absent. The
+[original failure and exact delta](../../evidence/pon-w1-qrom-closure-20261107/repository-truth-7150-inventory-failure.json)
+are retained. A normal follow-up to the 5c3a3c5b continuation refreshes that
+generated file, adding exactly those two configurations and the new closure
+test roster (1,358 entries to 1,361). The unchanged generator's `--check`
+passes. This corrects the source packaging defect; it does not turn the old
+failed job or any other required check into a historical success.
+
+The [required-check forensics](../../evidence/pon-w1-qrom-closure-20261107/hosted-gate-forensics-42374726461.json)
+also preserves two separate 7150 failures. The original four-second,
+sixteen-worker pressure confirmation target reports zero of one independently
+confirmed request and `PUBLIC_REQUEST_DEADLINE`, after successful build,
+formatting and five named native tests. No baseline native pressure replay
+was performed and no timing cause is asserted. The external-evidence schema
+reader's direct-binding expectation fails against both cb114 and 7150,
+whose native openers already delegate to `open_selected_mode`; eleven
+relevant files are byte-identical between those commits. These observations
+remain separate from the repaired QROM inventory defect and from proof
+security. Original limits and acceptance guards remain intact.
+
+The complete frozen-7150 native packet is now retained: selected 2,462 project
+files match before and after, and the archive/source dependency comparison
+covers 310 packages and 16,395 registry files. The first successful dependency
+checkpoint was after the v2 build, not a pre-compilation supply-chain gate.
+The three v2 tests, fixed release/receipt/native replay and rejection probes,
+formatting and strict Clippy pass. The full workspace remains unsuccessful:
+three actual outer node-harness failure records plus a 2,700-second timeout
+before completion. Independent source/log review excludes the proposed
+expected-child-negative explanation; the original run has no final panic
+details. Original raw records are retained unchanged, and later isolated
+diagnostic observations cannot rewrite that result. Normal-hook Hepta
+publication has reached `1a14f7d4826363daefac9ec10131c66d7e70ece7`; the
+earlier 7150 hosted successes remain bound to their own source.
+
+The separate [1a14 hosted readback](../../evidence/pon-w1-qrom-closure-20261107/hosted-1a14/verification.json)
+now confirms both QROM workflows on exact head and ordered prospective merge,
+including 11,144 tracked entries / 1,100,983,593 bytes before and after.
+Closure's 105 names, implementation's distinct roster of 81 names, and all
+seven closure report reproductions pass for both source kinds. The two
+repository-truth/inventory jobs also pass; broader failed or unfinished jobs
+remain explicitly retained. These commit-specific results do not certify
+subsequent changes or upgrade any independent acceptance decision.
+
+Three exact isolated runs of the unchanged 7150 binary now give concrete
+diagnostics: the ingress case passes in isolation; the root cold-replay case
+fails at a JSON string-role-key to u8 conversion; the sealed-copy case detects
+timestamp drift after an otherwise rejected syscall. Correct the role-key
+decoder with canonical/duplicate/semantic rejection regressions while keeping
+its serialized root and signing bytes unchanged. Correct the sealed test's
+metadata assumption while retaining the production identity and seal guards.
+Bind the ensuing native regression to its own committed candidate, refresh
+only changed exact source pins, and retain the original failures/time budget.
+
+The source-pin follow-up refreshes exactly five existing entries: the earlier
+generated inventory plus four reviewed release-owner source/test files.
+The unchanged guard validates all 688 exact blobs and retains HOLD_NO_GO with
+cryptographic acceptance false. The unchanged generated-inventory checker
+also passes. Original pin failure, exact old/new identities, native syscall
+field probes and the correction of the sealed test's assumption are retained.
+
+### 2026-11-07 W1 committed-source regression and evidence completion
+
+The corrected source candidate is
+`1e4bffc371bcdc53aabc621b6b6cb2485ab36f53` (A), tree
+`23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0`. Its
+[scoped final packet](../../evidence/pon-w1-qrom-closure-20261107/candidate-1e4b-final-summary.json)
+retains the actual native release-owner outcome: 40 passed, one failed and
+one ignored. The seven root and eight sealed tests all pass, including the
+repaired cold replay and unchanged production identity checks. One isolated
+same-A/same-binary service-window test passes without replacing the module
+failure; the exact timing cause remains unknown. Strict Clippy and the fixed
+v2 verification/replay controls pass. The A full workspace was not rerun, and
+selected native source identity is not complete tracked-worktree validation.
+
+Fresh desktop Python execution passes 314 + 147 + 38 = 499 distinct tests,
+with complete verbose logs and A source/fixture identity before and after.
+The 105 closure names are already included in 314. The original cloud raw
+packet had not been transferred during an executor interruption; the fresh
+desktop observations are independently retained. The original repository
+missing-link failure and Python report's pending fields remain immutable.
+After restoring 124 linked historical targets as exact A blobs, the separate
+repository check passes; its larger later materialized-file snapshot does not
+retroactively expand the 499-test scope. Historical evidence omissions remain
+explicit and whole-source qualification remains false.
+
+The final B continuation is limited to these three existing Markdown records
+and new closure evidence. It preserves every A production/configuration,
+script, formal and fixed-fixture byte, and does not claim to have rerun native
+tests on B. Its hosted head/merge results require fresh readback. All fifteen
+original theoretical/deployment obligations, the three independent PQ
+authorization/proof/quantum-work acceptance lines, and production activation
+remain HOLD. Original failures and the reviewed time and identity guards are
+retained without weakening.

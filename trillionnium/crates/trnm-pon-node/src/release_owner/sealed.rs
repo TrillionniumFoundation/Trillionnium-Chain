@@ -217,6 +217,9 @@ impl Sealed {
         self.recheck()?;
         super::elf::verify(&self.file, self.identity.size, platform)
     }
+    /// File seals protect bytes and execution bits, not a stable timestamp
+    /// snapshot. Even a rejected write can advance memfd mtime/ctime; the
+    /// complete captured identity must still match before any use.
     pub fn recheck(&self) -> Result<()> {
         if self.identity != identity(&self.file)? || !fcntl_get_seals(&self.file)?.contains(seals())
         {

@@ -1,0 +1,252 @@
+{
+  "artifact_sha256": {
+    "composition-example-input.json": "ef5290bda10dee96b03b6aea9ce0a3767cace131675d056e47f9d0cbc8bc8894",
+    "composition-example.json": "afa82237a9ad859193e53e0ebad83652c63c76ea0058c1213e61d81a04aa5457",
+    "composition-unknown.json": "e130e7ffb3ef74d9583b8b4ae7a74e50312a729e42688764dfaac157ba4e9041",
+    "joint-oracle-alias-input.json": "59a378e33d1376b5b997f455c21eed4ee0f9677aef4b13dd7d5d1744475637a9",
+    "joint-oracle-alias.json": "1e427168ad06f93dee645982bd412e58b97ce825132559e7a07a47f2a6530522",
+    "joint-oracle-separated-input.json": "d10dfffa502b852b5a8ca92742794407582d54b447fbfcb1c4e4603faa246b89",
+    "joint-oracle-separated.json": "0373ec119814b52efeecdff6f654dd1d3d8008908ef7a6eea3ec92b648928d17",
+    "joint-oracle-unknown.json": "cac5fa1b09a64207bfde34931de1937894e31739912e9bcea70705b0fac899eb",
+    "tests.log": "eeef65bc80181b75719fa7af7109ece5ea66a5d8c5a59f406a7382b32e6df412",
+    "theorem-review.json": "8c9083660cd477a7e9002c076dd070ab75bcfde9a00e7567318201ec6994b875"
+  },
+  "candidate_head": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "created_at_utc": "2026-11-07T13:00:05.587177+00:00",
+  "preflight_observation": {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "exit_code": 0,
+    "remote_policy_mutated": false,
+    "result": "PASS"
+  },
+  "previous_observation": {
+    "path": "initial-validation.json",
+    "reason_for_final_observation": "Corrected documentation LaTeX exponents and recorded this provenance; executable sources and numeric artifacts unchanged.",
+    "sha256": "0593dfe5d25298b3b1373f9280ffc379ec9a86f14ba86c82f4c7511a7e118d80",
+    "tests_log": "initial-tests.log"
+  },
+  "prospective_merge_checked": false,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "unconditional_project_security_bits": null
+  },
+  "remote_ci_ran": false,
+  "report_commands": [
+    {
+      "artifact": "composition-unknown.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-EXPRESSION1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "composition-example-input.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py",
+        "--example-input"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-INPUT1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "composition-example.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_composition_budget.py",
+        "--example"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-CDHZ-JAN1-COMPOSITION-EXPRESSION1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "joint-oracle-unknown.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-JOINT-ORACLE-TOY-REPORT1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "joint-oracle-alias-input.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example-input",
+        "alias"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-JOINT-ORACLE-TOY-INPUT1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "joint-oracle-alias.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "alias"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-JOINT-ORACLE-TOY-REPORT1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "joint-oracle-separated-input.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example-input",
+        "separated"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-JOINT-ORACLE-TOY-INPUT1",
+      "stderr_empty": true
+    },
+    {
+      "artifact": "joint-oracle-separated.json",
+      "command": [
+        "python3",
+        "scripts/w1_qrom_joint_oracle_diagnostic.py",
+        "--example",
+        "separated"
+      ],
+      "exit_code": 0,
+      "schema": "TRNM-W1-JOINT-ORACLE-TOY-REPORT1",
+      "stderr_empty": true
+    }
+  ],
+  "report_commands_retained_from_initial_observation": true,
+  "schema": "TRNM-W1-QROM-FORMAL-BRIDGE-VALIDATION1",
+  "scope": "local conditional expression and finite-model validation only",
+  "source_bytes_unchanged": true,
+  "source_sha256_after": {
+    "docs/security/W1_QROM_FORMAL_OBLIGATIONS_20261107.md": "8c3d7b2cb4999d0aab1511e2077e69cc56eaa0c9132e85751a3dc942d46b5604",
+    "evidence/pon-w1-qrom-formal-bridge-20261107/README.md": "6e30bb8703cd8373c8fc496ed088020b79083693a242272a3a79309324938842",
+    "evidence/pon-w1-qrom-formal-bridge-20261107/theorem-review.json": "8c9083660cd477a7e9002c076dd070ab75bcfde9a00e7567318201ec6994b875",
+    "scripts/ci/test_w1_qrom_composition_budget.py": "4c165a372057793436b10ccb280d17905c6570a5d1936dcacef460c166b3eab8",
+    "scripts/ci/test_w1_qrom_joint_oracle_diagnostic.py": "883d1333e1c934a2bec211ecb4972064a8caee01202d6ce99818f4cb24fff39b",
+    "scripts/w1_qrom_composition_budget.py": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427",
+    "scripts/w1_qrom_joint_oracle_diagnostic.py": "ce6dd894f949cced697ecdcb9f8960b3e4280eefa3815f02ad708e06842b4658"
+  },
+  "source_sha256_before": {
+    "docs/security/W1_QROM_FORMAL_OBLIGATIONS_20261107.md": "8c3d7b2cb4999d0aab1511e2077e69cc56eaa0c9132e85751a3dc942d46b5604",
+    "evidence/pon-w1-qrom-formal-bridge-20261107/README.md": "6e30bb8703cd8373c8fc496ed088020b79083693a242272a3a79309324938842",
+    "evidence/pon-w1-qrom-formal-bridge-20261107/theorem-review.json": "8c9083660cd477a7e9002c076dd070ab75bcfde9a00e7567318201ec6994b875",
+    "scripts/ci/test_w1_qrom_composition_budget.py": "4c165a372057793436b10ccb280d17905c6570a5d1936dcacef460c166b3eab8",
+    "scripts/ci/test_w1_qrom_joint_oracle_diagnostic.py": "883d1333e1c934a2bec211ecb4972064a8caee01202d6ce99818f4cb24fff39b",
+    "scripts/w1_qrom_composition_budget.py": "4d3d6a3b8efcac266cfaf7fb2204a4f3b0482ea0ead2481b72617556f0771427",
+    "scripts/w1_qrom_joint_oracle_diagnostic.py": "ce6dd894f949cced697ecdcb9f8960b3e4280eefa3815f02ad708e06842b4658"
+  },
+  "tests": {
+    "count": 26,
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "modules": [
+      "scripts.ci.test_w1_qrom_composition_budget",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic"
+    ],
+    "registered_ids": [
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_absent_range_or_bytes_remain_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_examples_roundtrip_with_exact_fractions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_degenerate_one_element_range_does_not_claim_distinguishability",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_distinct_encoded_inputs_positive_control_matches_product_law",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_empty_encoding_is_an_actual_byte_string_not_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_gap_and_guess_success_use_distinct_advantage_conventions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_noncanonical_or_unbounded_encoding_is_refused"
+    ],
+    "skips": 0,
+    "started_ids": [
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_absent_range_or_bytes_remain_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_examples_roundtrip_with_exact_fractions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_degenerate_one_element_range_does_not_claim_distinguishability",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_distinct_encoded_inputs_positive_control_matches_product_law",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_empty_encoding_is_an_actual_byte_string_not_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_gap_and_guess_success_use_distinct_advantage_conventions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_noncanonical_or_unbounded_encoding_is_refused"
+    ],
+    "success_ids": [
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_duplicate_nonfinite_deep_and_oversized_input_fail_structurally",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_cli_example_roundtrip_retains_exact_inputs",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_component_must_cover_shifted_queries_not_only_original_t",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_enlarged_query_points_and_commutator_are_not_simple_error_sum",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_exact_target_boundary_and_large_expression_are_not_clamped",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_input_cannot_override_version_security_or_qualification",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_intermediate_size_requires_common_slice_coverage",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_known_parameter_or_instance_slice_mismatch_is_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_missing_description_blocks_conditional_claim_not_raw_arithmetic",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_numeric_coercion_negative_coefficients_and_unknown_models_are_refused",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_only_dependencies_of_missing_query_cost_are_suppressed",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_strict_relaxed_and_all_oracle_components_must_match",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_commutativity_does_not_disappear_under_zero_coefficient",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_unknown_inputs_never_become_zero_or_security_bits",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_assumed_errors_never_qualify_three_independent_security_lines",
+      "scripts.ci.test_w1_qrom_composition_budget.CompositionBudgetTests.test_zero_envelope_without_domain_or_parameter_scope_stays_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_absent_range_or_bytes_remain_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cardinality_is_explicit_and_no_native_digest_conversion_is_accepted",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_examples_roundtrip_with_exact_fractions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_cli_malformed_deep_duplicate_and_oversized_inputs_fail_structurally",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_degenerate_one_element_range_does_not_claim_distinguishability",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_distinct_encoded_inputs_positive_control_matches_product_law",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_empty_encoding_is_an_actual_byte_string_not_unknown",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_exhaustive_joint_distribution_has_uniform_marginals_and_nonzero_alias_gap",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_gap_and_guess_success_use_distinct_advantage_conventions",
+      "scripts.ci.test_w1_qrom_joint_oracle_diagnostic.JointOracleDiagnosticTests.test_noncanonical_or_unbounded_encoding_is_refused"
+    ],
+    "unexpected_successes": 0
+  }
+}

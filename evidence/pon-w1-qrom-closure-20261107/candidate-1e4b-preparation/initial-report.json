@@ -1,0 +1,246 @@
+{
+  "GitHub_push_performed": false,
+  "candidate": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "commands": [
+    {
+      "args": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "label": "initial-status",
+      "seconds": 0.1704792499076575,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 39790,
+      "stdout_sha256": "656eefdb3db33f6367a66df9cd4b872c46bbe764c8b634da2f2f12fde9000923"
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0,
+      "label": "initial-preflight",
+      "seconds": 0.10048977192491293,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 176,
+      "stdout_sha256": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78"
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "verify",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_native_fixes_1e4bffc371bc.bundle"
+      ],
+      "exit_code": 0,
+      "label": "bundle-verify",
+      "seconds": 0.022201624931767583,
+      "stderr_bytes": 107,
+      "stderr_sha256": "a7828a3b168e691f4bd2439148c7566e2ff8961300f00b077ea1d9b6ac554f0d",
+      "stdout_bytes": 207,
+      "stdout_sha256": "e69c530adada9a7b3c4af6fd1d9a4fff821a92411e4860d517102b3e50d8bad0"
+    },
+    {
+      "args": [
+        "git",
+        "bundle",
+        "list-heads",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_native_fixes_1e4bffc371bc.bundle"
+      ],
+      "exit_code": 0,
+      "label": "bundle-heads",
+      "seconds": 0.003540279110893607,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 46,
+      "stdout_sha256": "dcc80cebda34987aaf62c420879ca68f2a5e6e0dbbb1686a9420edda9e3e5e43"
+    },
+    {
+      "args": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/W1_QROM_native_fixes_1e4bffc371bc.bundle",
+        "HEAD:refs/heads/w1-qrom-native-A-1e4bffc371bc"
+      ],
+      "exit_code": 0,
+      "label": "fetch-A",
+      "seconds": 0.02135084499605,
+      "stderr_bytes": 176,
+      "stderr_sha256": "b149c6cfaf7d4e06957afdba6ac9ec765ac95f57329826aaa4a9f6de8e8b4975",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53"
+      ],
+      "exit_code": 0,
+      "label": "old-is-ancestor",
+      "seconds": 0.0034137300681322813,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "git",
+        "-c",
+        "core.hooksPath=.githooks",
+        "merge",
+        "--ff-only",
+        "refs/heads/w1-qrom-native-A-1e4bffc371bc"
+      ],
+      "exit_code": 0,
+      "label": "normal-fast-forward-A",
+      "seconds": 0.18938424810767174,
+      "stderr_bytes": 140,
+      "stderr_sha256": "080f62ce189ff26b6821102e753b414dddefce9e372070640d039cfa52477b39",
+      "stdout_bytes": 44661,
+      "stdout_sha256": "e16d0dc81004f409dd8349275d87779f28637861b753d30d3212cd853f88e663"
+    },
+    {
+      "args": [
+        "git",
+        "diff",
+        "--name-only",
+        "--no-renames",
+        "-z",
+        "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+        "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53"
+      ],
+      "exit_code": 0,
+      "label": "changed-paths-from-published",
+      "seconds": 0.0054543460719287395,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 23963,
+      "stdout_sha256": "4cf8c2512e6d990f4a6533d47e0359255eaac81eedaefd43aa0344f1ff189d36"
+    },
+    {
+      "args": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "exit_code": 0,
+      "label": "actual-status-A",
+      "seconds": 0.14875857415609062,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 39790,
+      "stdout_sha256": "656eefdb3db33f6367a66df9cd4b872c46bbe764c8b634da2f2f12fde9000923"
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "exit_code": 0,
+      "label": "preflight-dev",
+      "seconds": 0.09261583490297198,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 176,
+      "stdout_sha256": "c7c16fa4063ae662f66ad87360110011edd94c2df0a2066a261de290db051c78"
+    },
+    {
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "exit_code": 0,
+      "label": "preflight-audit",
+      "seconds": 0.09291716013103724,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "51a5abc2021052aea213b79dde0b32428dc5a763c2cc00d35986433f71cab67b"
+    },
+    {
+      "args": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 1,
+      "label": "source-pin-check",
+      "seconds": 0.08085788087919354,
+      "stderr_bytes": 84,
+      "stderr_sha256": "b9a59b4b0aa96d0e6b1218460b7b1deafebc6662d0d5f7c90892953e496ec00f",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "args": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "generated-inventory-check",
+      "seconds": 0.12144722207449377,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "args": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+        "--output",
+        "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/publication-prepare-A-1e4bffc-v1/complete-source.json"
+      ],
+      "exit_code": 1,
+      "label": "complete-source-check",
+      "seconds": 0.32669770694337785,
+      "stderr_bytes": 781,
+      "stderr_sha256": "8c8dcba7dcc6d420b22284ee96460ed85c44d0d4ee40cca801225c35e3afbf22",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "complete_source_worktree_verified": false,
+  "completed_utc": "2026-11-07T15:03:26.270701+00:00",
+  "driver_sha256": "56532211dd326da3957144059ef841577a024be0abf06e0a3553f8593f29a7f5",
+  "error": "ValueError: one or more A preparation gates failed; raw results retained",
+  "exact_blob_downloads": [],
+  "gate_exit_codes": {
+    "generated-inventory-check": 0,
+    "preflight-audit": 0,
+    "preflight-dev": 0,
+    "source-pin-check": 1
+  },
+  "missing_historical_evidence_count": 488,
+  "native_clone_accessed": false,
+  "prepared_for_independent_followup": false,
+  "previous_publication_head": "1a14f7d4826363daefac9ec10131c66d7e70ece7",
+  "schema": "TRNM-W1-PUBLICATION-PREPARE-A1",
+  "selected_source": {
+    "bytes": 43158943,
+    "changed_present_paths": 259,
+    "files": 2729,
+    "whole_source_claimed": false
+  },
+  "tree": "23c95cb4acfcfd2b1355d9d6e33c4c18b3f332a0"
+}

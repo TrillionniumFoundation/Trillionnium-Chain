@@ -145,3 +145,159 @@ fn expired_root_recovery_requires_both_real_quorums_and_a_fresh_successor() {
         assert!(state.index.records.is_empty());
     }
 }
+
+#[test]
+fn canonical_root_roles_round_trip_through_publication_and_record() {
+    let (old, old_keys) = fixture::root(1, 1, 30, [0; 32]);
+    let ids = [fixture::key(80), fixture::key(81), fixture::key(82)]
+        .each_ref()
+        .map(|key| key.public_key_id());
+    let context = fixture::context(&old, ids);
+    let (next, next_keys) = fixture::root(20, 2, 100, context.initial_root_pin);
+    let expected_root = next.kernel().unwrap();
+    let root_raw = super::codec::encode(&next, super::records::MAX_RECORD_BYTES).unwrap();
+    let direct: proof_wire::Root =
+        super::codec::decode(&root_raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert_eq!(
+        direct.kernel().unwrap().digest().unwrap(),
+        expected_root.digest().unwrap()
+    );
+    let publication = Publication::RootRotation {
+        old_signatures: vec![fixture::signed(&old_keys[0], &next)],
+        new_signatures: vec![fixture::signed(&next_keys[0], &next)],
+        root: next,
+    };
+    let publication_raw =
+        super::codec::encode(&publication, super::records::MAX_RECORD_BYTES).unwrap();
+    let publication: Publication =
+        super::codec::decode(&publication_raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert_eq!(
+        super::codec::encode(&publication, super::records::MAX_RECORD_BYTES).unwrap(),
+        publication_raw
+    );
+    let mut state = State::initial(&context, 10).unwrap();
+    let record = state
+        .prepare_publication(&context, publication, 40)
+        .unwrap();
+    let record_raw = record.encode().unwrap();
+    let decoded: super::records::Record =
+        super::codec::decode(&record_raw, super::records::MAX_RECORD_BYTES).unwrap();
+    assert_eq!(decoded.encode().unwrap(), record_raw);
+    assert_eq!(decoded.digest().unwrap(), record.digest().unwrap());
+    let super::records::Record::Publication(observed) = decoded else {
+        panic!("expected the original publication record");
+    };
+    let Publication::RootRotation { root, .. } = observed.publication else {
+        panic!("expected the original root rotation");
+    };
+    assert_eq!(
+        super::codec::encode(&root, super::records::MAX_RECORD_BYTES).unwrap(),
+        root_raw
+    );
+    let decoded_root = root.kernel().unwrap();
+    assert_eq!(
+        decoded_root.digest().unwrap(),
+        expected_root.digest().unwrap()
+    );
+    assert_eq!(
+        decoded_root.signing_message().unwrap(),
+        expected_root.signing_message().unwrap()
+    );
+}
+
+// Syntax-only records for decoder rejection controls. Empty signature sets are
+// never submitted as valid authority proofs; the real-quorum path is above.
+fn root_record_for_decode(root: proof_wire::Root) -> super::records::Record {
+    super::records::Record::Publication(proof_wire::ObservedPublication {
+        schema_version: 1,
+        publication: Publication::RootRotation {
+            root,
+            old_signatures: Vec::new(),
+            new_signatures: Vec::new(),
+        },
+        observed_at: 40,
+        resulting_checkpoint: [27; 32],
+    })
+}
+
+#[test]
+fn tagged_root_roles_reject_noncanonical_duplicate_and_out_of_range_keys() {
+    let (root, _) = fixture::root(20, 2, 100, [7; 32]);
+    let first_role = serde_json::to_string(&root.roles[&1]).unwrap();
+    let record = root_record_for_decode(root);
+    let raw = String::from_utf8(record.encode().unwrap()).unwrap();
+    super::codec::decode::<super::records::Record>(
+        raw.as_bytes(),
+        super::records::MAX_RECORD_BYTES,
+    )
+    .unwrap();
+    for key in [
+        "",
+        "01",
+        "+1",
+        " 1",
+        "1 ",
+        "1.0",
+        "1e0",
+        "-1",
+        "256",
+        "18446744073709551616",
+    ] {
+        let changed = raw.replacen(r#""roles":{"1":"#, &format!(r#""roles":{{"{key}":"#), 1);
+        assert_ne!(changed, raw);
+        assert!(
+            serde_json::from_str::<super::records::Record>(&changed).is_err(),
+            "key {key:?}"
+        );
+    }
+    let duplicate = raw.replacen(
+        r#""roles":{"#,
+        &format!(r#""roles":{{"1":{first_role},"#),
+        1,
+    );
+    assert_ne!(duplicate, raw);
+    assert!(serde_json::from_str::<super::records::Record>(&duplicate).is_err());
+    // Escaping a canonical key still denotes the same key, but the existing
+    // exact-byte codec must reject its noncanonical JSON representation.
+    let escaped = raw.replacen(r#""roles":{"1":"#, r#""roles":{"\u0031":"#, 1);
+    assert_ne!(escaped, raw);
+    assert!(serde_json::from_str::<super::records::Record>(&escaped).is_ok());
+    assert!(super::codec::decode::<super::records::Record>(
+        escaped.as_bytes(),
+        super::records::MAX_RECORD_BYTES,
+    )
+    .is_err());
+}
+
+#[test]
+fn decoded_root_role_keys_do_not_bypass_complete_root_validation() {
+    let (root, _) = fixture::root(20, 2, 100, [7; 32]);
+    for cut in 0..7 {
+        let mut changed = root.clone();
+        match cut {
+            0..=2 => {
+                let keys = changed.roles.remove(&1).unwrap();
+                changed.roles.insert([0, 5, 255][cut], keys);
+            }
+            3 => {
+                changed.roles.remove(&1);
+            }
+            4 => {
+                changed.roles.insert(5, changed.roles[&1].clone());
+            }
+            5 => changed.offline_root.threshold = 0,
+            6 => changed.schema_version = 2,
+            _ => unreachable!(),
+        }
+        let raw = root_record_for_decode(changed).encode().unwrap();
+        let decoded: super::records::Record =
+            super::codec::decode(&raw, super::records::MAX_RECORD_BYTES).unwrap();
+        let super::records::Record::Publication(observed) = decoded else {
+            panic!("expected publication record");
+        };
+        let Publication::RootRotation { root, .. } = observed.publication else {
+            panic!("expected root rotation");
+        };
+        assert!(root.kernel().is_err(), "invalid root case {cut}");
+    }
+}

@@ -1,0 +1,142 @@
+{
+  "cloud_copy_completed": false,
+  "copy_is_evidence_only_not_a_new_native_test_run": true,
+  "directory": "candidate-1e4b-native",
+  "files": [
+    {
+      "bytes": 1066112,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/observations.tar.gz",
+      "path": "observations.tar.gz",
+      "sha256": "787ecdea6f3dfb11f03b61dd20f2484b763453f390b3d9802ca37e0cc5ec89c0"
+    },
+    {
+      "bytes": 57689,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/native-summary.json",
+      "path": "native-summary.json",
+      "sha256": "ddf738cce4d0d37d2d53cca440dc2f84b0a039372d88b299fe53b64fbd12cf1f"
+    },
+    {
+      "bytes": 22123,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/manifest.json",
+      "path": "manifest.json",
+      "sha256": "180332efa62927fd8b8f5e93b020d5bfe0ea7f0c5f01192c94fb18087129aa20"
+    },
+    {
+      "bytes": 502,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/package-result.json",
+      "path": "package-result.json",
+      "sha256": "2a88e22709834530107e147404ea7c8b8d4886e98b6a8965883377da7c048961"
+    },
+    {
+      "bytes": 34607,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/run_candidate.py",
+      "path": "run_candidate.py",
+      "sha256": "0de72bb06ab637ffb834a3f7d22a024f8f031dbadfd79bf53373f82823f764c7"
+    },
+    {
+      "bytes": 5669,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/release-owner-tests.stdout.log",
+      "path": "release-owner-tests.stdout.log",
+      "sha256": "36adedc308cbe8b23fc97e3631296c005c75b5becf78bb6f37261f477e244387"
+    },
+    {
+      "bytes": 291,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/release-owner-tests.stderr.log",
+      "path": "release-owner-tests.stderr.log",
+      "sha256": "d49ba74ab56f4e203a1cd95ff6f5dc586c753a20b49617fff0822c4235b66ed5"
+    },
+    {
+      "bytes": 1029,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/release-owner-tests.json",
+      "path": "release-owner-tests.json",
+      "sha256": "d75364e022ba0630bbfbd18dca949c7307dc2771c59d9721fdc73ecd0ab22591"
+    },
+    {
+      "bytes": 9320,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/release-owner-compiled-roster.json",
+      "path": "release-owner-compiled-roster.json",
+      "sha256": "103a55b257aab35772cf19cdc2530168248feceffbcf2579b26301d920639cec"
+    },
+    {
+      "bytes": 1320,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc/selected-source-comparison.json",
+      "path": "selected-source-comparison.json",
+      "sha256": "c41e51e20abf95eb3cf68d89b6b519683df94cfb2a258a55dd34e762e7437f49"
+    },
+    {
+      "bytes": 24356,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/summary.json",
+      "path": "independent-summary.json",
+      "sha256": "90ee6d281e5b4d4e71ef3ca8c27eb49b66cf3260bf58840278ef0b3041e66d00"
+    },
+    {
+      "bytes": 12074,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/observations.tar.gz",
+      "path": "independent-review.tar.gz",
+      "sha256": "e76b70ea6911bd015a0f2eb5cf98f7283111ad148734b48ec22f8c744ce5b2e5"
+    },
+    {
+      "bytes": 1341,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/manifest.json",
+      "path": "independent-review-manifest.json",
+      "sha256": "5468c4efc264068ca89dd9d36d23de8fea09faa3cd0c0d8256cd3d2da2a1bd85"
+    },
+    {
+      "bytes": 530,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/package-result.json",
+      "path": "independent-review-package-result.json",
+      "sha256": "d1dec8725d545eca1fcefcfc59be46cf9fb53d1aeec7f3f6c03581154aa26103"
+    },
+    {
+      "bytes": 16729,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/review.py",
+      "path": "independent-review.py",
+      "sha256": "010727a4af63d8b49fc6291754db67110754b89a6b6fcf2ce5c064b99e0339f8"
+    },
+    {
+      "bytes": 650,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/archive-integrity.json",
+      "path": "independent-archive-integrity.json",
+      "sha256": "a571ea7f8fb512a3f2deaa7e819cefdc4e6694549d5d886856515b1825e4a83f"
+    },
+    {
+      "bytes": 6684,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/key-fifteen-completion.json",
+      "path": "key-fifteen-completion.json",
+      "sha256": "c1dc07256e70241643786fe77319d92aa07dc1c829af95d2576fb2d9998e3d4c"
+    },
+    {
+      "bytes": 446,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/selected-source-third-check.json",
+      "path": "selected-source-third-check.json",
+      "sha256": "6d704ee74f133f58d8f8517d45210781af3ea65307b383efa2fe68029e65d7ee"
+    },
+    {
+      "bytes": 296,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/sealed-production-comment-only.json",
+      "path": "sealed-production-comment-only.json",
+      "sha256": "b07a04d2db8015a3f1d915c827ef96f6e543716f8d1c2d256112229905b54ebc"
+    },
+    {
+      "bytes": 731,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/controller-terminal.json",
+      "path": "controller-terminal.json",
+      "sha256": "1f65b42512567bddf6fe95b1abbc7ea64b1513248156cfc2d70ae8e2d81e0430"
+    },
+    {
+      "bytes": 327,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/native-1e4bffc371bc-review/review-process-semantics.json",
+      "path": "review-process-semantics.json",
+      "sha256": "bd2db960108e07f3d0b933deae4f2f8223c79e6dbf53c3891f47ff9fa8c9e44f"
+    },
+    {
+      "bytes": 5316,
+      "copied_from": "/home/qian-qi/work/chain-qrom-closure-20261107-evidence/assemble-final-native-evidence.py",
+      "path": "assemble-final-native-evidence.py",
+      "sha256": "1f1bb26bdf505e9727a4d225d72613862fb595251b2b123b415bde21d99b56db"
+    }
+  ],
+  "head": "1e4bffc371bcdc53aabc621b6b6cb2485ab36f53",
+  "narrow_candidate_gate_pass": false,
+  "schema": "TRNM-W1-A-NATIVE-COPY-DIRECTORY1"
+}

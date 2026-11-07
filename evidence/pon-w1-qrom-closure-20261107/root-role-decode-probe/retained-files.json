@@ -1,0 +1,33 @@
+{
+  "compiled_probe_binary_included": false,
+  "files": [
+    {
+      "bytes": 2337,
+      "path": "summary.json",
+      "sha256": "30119661006e51311674fe5a62768160747a0595d2df83c000f707520d360b92"
+    },
+    {
+      "bytes": 422,
+      "path": "sources.json",
+      "sha256": "ba5ad6a36505cf7f6ae30129ba0f34d2e228324e7db94359aa09f33c0f7e414a"
+    },
+    {
+      "bytes": 6360,
+      "path": "probe.rs",
+      "sha256": "d8cb71fda5a66682495b0e3e761dc1a26cdea88befeca8a36ea19dabcff8391e"
+    },
+    {
+      "bytes": 564,
+      "path": "stdout.log",
+      "sha256": "27f7c8ad8db16d042ffca2823d9d1ac83aa55ce108c1d403a2eb73ca2742e14a"
+    },
+    {
+      "bytes": 0,
+      "path": "stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "post_quantum_soundness_qualified": false,
+  "schema": "TRNM-W1-ROOT-ROLE-MECHANISM-TRANSFER1",
+  "scope": "Exact reduced-mechanism probe source and observations; full native crate regression is separate."
+}
