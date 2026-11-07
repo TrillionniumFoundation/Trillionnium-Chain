@@ -45,7 +45,8 @@ header、packet、trace 和完整已核验 State，同时生成原盘点报告�
 
 迁移控制使用创建存储之前明确定义的受限源 genesis，真实接纳转账和任务 escrow，
 检查账户 balance/nonce、task/reward 义务，随后构造 NPQ6 目的节点并执行双 PQ CLAIM
-与冷重开。普通和 authenticated 两种存储后端都必须验收。经典请求、错误 prior signer、
+与冷重开。源端的普通和 authenticated 两种存储后端都必须验收；目的端使用现有
+PQ network owner，经典打开入口必须拒绝 NPQ6 配置。经典请求、错误 prior signer、
 旧 nonce 和重复领取均应拒绝。普通源链的 `work:*` 等未获完整保留规则的状态仍返回
 `PQ2_UNSUPPORTED_SOURCE_STATE`，零余额也不能使这些权利被丢弃。因此这项交接补上了
 运行代码之间的入口，但运行中网络完整迁移、源资产锁定/退休和真实故障域验收仍为 HOLD。

@@ -59,8 +59,9 @@ device that fabricates reads or simultaneous rollback of every fresh authority.
 ### The service endpoint has its own owner
 
 Journal admission alone must not authorize replacing a different live checkpoint
-service. Startup validates the private socket parent before any pathname mutation
-and holds a separate exclusive `socket-owner-v1` lease. Its bounded versioned
+service. Startup validates the private socket parent before creating the endpoint
+lease or removing/rebinding an existing socket, and holds a separate exclusive
+`socket-owner-v1` lease. Its bounded versioned
 record identifies the socket it created; only that exact stale socket can be
 removed after its lease is obtained. An unleased socket, replaced lease or
 unrecognized record requires offline reconciliation rather than implicit adoption.

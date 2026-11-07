@@ -2,7 +2,8 @@
 //! This fixture deliberately has no work registry to retire. Ordinary source
 //! profiles with unsupported rows remain refused; no production cutover follows.
 use super::*;
-use crate::store::native_ancestry_commit_tests::{logical_rows, open};
+use crate::ingress::pq_network::PqNetworkPolicy;
+use crate::store::native_ancestry_commit_tests::{logical_rows, open as open_source};
 use crate::{development_public, Hash, Settings};
 use std::collections::BTreeSet;
 use trnm_crypto_primitives::{pq_auth::PqNativeSigningKey, sign_hex, signing_key_from_hex};
@@ -184,16 +185,16 @@ fn claim(settings: &Settings, account: Hash, nonce: u64, prior: &PqNativeSigning
 
 #[test]
 fn admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_cold_open() {
-    for authenticated in [false, true] {
+    for source_authenticated in [false, true] {
         let source_directory = tempfile::tempdir().unwrap();
         let source_settings = restricted_source_settings();
         // Retain the external registry selection before admitting the source.
         let prior_registry = registry(&source_settings);
         let commitment = prior_registry.commitment();
-        let mut source = open(
+        let mut source = open_source(
             source_directory.path(),
             source_settings.clone(),
-            authenticated,
+            source_authenticated,
         );
         let packet = source
             .make_consensus_maintenance(
@@ -223,10 +224,10 @@ fn admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_col
         assert_eq!(report.tasks.units, 10_000);
         let source_state = source.state_at(checkpoint).unwrap();
         drop(source);
-        let source = open(
+        let source = open_source(
             source_directory.path(),
             source_settings.clone(),
-            authenticated,
+            source_authenticated,
         );
         let (reopened_anchor, reopened_report) = source
             .prepare_pq_migration_checkpoint(selected, commitment, prior_registry)
@@ -279,11 +280,40 @@ fn admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_col
             }
         }
         let destination_directory = tempfile::tempdir().unwrap();
-        let mut destination = open(
+        // NPQ6 always selects its existing PQ network-owner namespace. Only
+        // the legacy source alternates between flat and authenticated State.
+        for rejected in [
+            Node::open(
+                destination_directory.path(),
+                destination_settings.clone(),
+                1,
+            ),
+            Node::open_with_authenticated_state(
+                destination_directory.path(),
+                destination_settings.clone(),
+                1,
+            ),
+        ] {
+            assert_eq!(
+                rejected.err().unwrap().to_string(),
+                "PQ_ACCOUNT_REQUIRES_PQ_NETWORK_OWNER"
+            );
+            assert!(!destination_directory.path().join("native.sqlite").exists());
+        }
+        let destination_policy = PqNetworkPolicy::new(
+            &destination_settings,
+            key(71).public_spki(),
+            1,
+            [key(72).public_spki().to_vec()],
+        )
+        .unwrap();
+        let mut destination = Node::open_with_pq_network(
             destination_directory.path(),
             destination_settings.clone(),
-            authenticated,
-        );
+            1,
+            &destination_policy,
+        )
+        .unwrap();
         let legacy = development_public(0).unwrap();
         let raw = claim(&destination_settings, legacy, 2, &key(31));
         for rejected in [
@@ -324,11 +354,13 @@ fn admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_col
             1
         );
         drop(destination);
-        let destination = open(
+        let destination = Node::open_existing_with_pq_network(
             destination_directory.path(),
             destination_settings,
-            authenticated,
-        );
+            1,
+            &destination_policy,
+        )
+        .unwrap();
         assert_eq!(destination.state_at(id).unwrap(), current);
         assert!(destination
             .make_consensus_maintenance(id, vec![raw], legacy, 1020, 4096)
@@ -342,7 +374,7 @@ fn admitted_source_handoff_refuses_wrong_registry_pins_and_unsupported_source_ro
     let settings = Settings::development(Some(1)).unwrap();
     let registry = registry(&settings);
     let commitment = registry.commitment();
-    let mut source = open(directory.path(), settings.clone(), false);
+    let mut source = open_source(directory.path(), settings.clone(), false);
     let packet = source
         .make(
             settings.genesis(),
