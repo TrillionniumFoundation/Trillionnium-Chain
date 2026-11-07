@@ -1,0 +1,264 @@
+{
+  "archive_bytes": 53156,
+  "archive_sha256": "5f740183a548101ea7ce671d7406139b7f763fdfedd72f8cc4d89d726c9cab25",
+  "candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+  "consensus_admission": false,
+  "post_quantum_soundness_qualified": false,
+  "records": [
+    {
+      "path": "w1-qrom-implementation-head-x64-7150d96a2112875b4afcf3023361a5cef4a0e4b1-1/ci-status.json",
+      "record": {
+        "all_required_observations_passed": true,
+        "complete_w1_soundness_qualified": false,
+        "consensus_admission": false,
+        "expected_base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "expected_candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_source": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "failed_or_skipped_stages": [],
+        "named_test_completion_error": null,
+        "named_test_completion_sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff",
+        "named_test_completion_verified": true,
+        "post_quantum_soundness_qualified": false,
+        "pq_signature_qualification_inferred": false,
+        "production_qualified": false,
+        "quantum_work_qualified": false,
+        "required_stages": [
+          "observations",
+          "checkout",
+          "source_before",
+          "preflight",
+          "named_tests",
+          "implementation",
+          "budget_unknown",
+          "budget_hypothetical",
+          "report_scopes",
+          "source_after"
+        ],
+        "schema": "TRNM-W1-QROM-CI-OBSERVATION1",
+        "scope": "Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.",
+        "source_identity_error": null,
+        "source_kind": "head",
+        "steps": {
+          "budget_hypothetical": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "budget_unknown": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "checkout": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {
+              "commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+              "ref": ""
+            }
+          },
+          "implementation": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "named_tests": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "observations": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "report_scopes": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_before": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "unconditional_project_security_bits": null
+      },
+      "sha256": "e59585efafce82c77eb9e7345b24c18eaa003a0e083f9e07c4707f4473c03b81"
+    },
+    {
+      "path": "w1-qrom-implementation-head-x64-7150d96a2112875b4afcf3023361a5cef4a0e4b1-1/source-after.json",
+      "record": {
+        "base": null,
+        "candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "tested_tree": "c8acae01f6fed538fabd918b6d7b63da348538df",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1095556148,
+        "tracked_entries": 11052,
+        "tracked_worktree_verified": true
+      },
+      "sha256": "6fa0c40daddf722254b2dc8577930563b09ad10ebe8ccd7dbc3ba550cd74538d"
+    },
+    {
+      "path": "w1-qrom-implementation-head-x64-7150d96a2112875b4afcf3023361a5cef4a0e4b1-1/source-before.json",
+      "record": {
+        "base": null,
+        "candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "tested_tree": "c8acae01f6fed538fabd918b6d7b63da348538df",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1095556148,
+        "tracked_entries": 11052,
+        "tracked_worktree_verified": true
+      },
+      "sha256": "6fa0c40daddf722254b2dc8577930563b09ad10ebe8ccd7dbc3ba550cd74538d"
+    },
+    {
+      "path": "w1-qrom-implementation-prospective-merge-x64-525f75b49cf20849f5dec6a4c0e0b2a40776744f-1/ci-status.json",
+      "record": {
+        "all_required_observations_passed": true,
+        "complete_w1_soundness_qualified": false,
+        "consensus_admission": false,
+        "expected_base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "expected_candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "expected_source": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+        "failed_or_skipped_stages": [],
+        "named_test_completion_error": null,
+        "named_test_completion_sha256": "f0f11131bc18fae2c15f24ec5701ccd616785e696523b88da8ca31170e5719ff",
+        "named_test_completion_verified": true,
+        "post_quantum_soundness_qualified": false,
+        "pq_signature_qualification_inferred": false,
+        "production_qualified": false,
+        "quantum_work_qualified": false,
+        "required_stages": [
+          "observations",
+          "checkout",
+          "source_before",
+          "preflight",
+          "named_tests",
+          "implementation",
+          "budget_unknown",
+          "budget_hypothetical",
+          "report_scopes",
+          "source_after"
+        ],
+        "schema": "TRNM-W1-QROM-CI-OBSERVATION1",
+        "scope": "Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.",
+        "source_identity_error": null,
+        "source_kind": "prospective-merge",
+        "steps": {
+          "budget_hypothetical": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "budget_unknown": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "checkout": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {
+              "commit": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+              "ref": ""
+            }
+          },
+          "implementation": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "named_tests": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "observations": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "preflight": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "report_scopes": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_after": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          },
+          "source_before": {
+            "conclusion": "success",
+            "outcome": "success",
+            "outputs": {}
+          }
+        },
+        "unconditional_project_security_bits": null
+      },
+      "sha256": "032b7cfe3dbe07e66c5bc229b499954520336792228a3460cd491e2d61b1a10e"
+    },
+    {
+      "path": "w1-qrom-implementation-prospective-merge-x64-525f75b49cf20849f5dec6a4c0e0b2a40776744f-1/source-after.json",
+      "record": {
+        "base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "kind": "prospective-merge",
+        "prospective_merge": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+        "tested_tree": "c8acae01f6fed538fabd918b6d7b63da348538df",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1095556148,
+        "tracked_entries": 11052,
+        "tracked_worktree_verified": true
+      },
+      "sha256": "cf36c43edffc0a8e6a7b09e96980d8deadedabdaab7f5f19c86fd7ac183ae982"
+    },
+    {
+      "path": "w1-qrom-implementation-prospective-merge-x64-525f75b49cf20849f5dec6a4c0e0b2a40776744f-1/source-before.json",
+      "record": {
+        "base": "cb114b13bf848a77634e40a08b31b30c7c758e7b",
+        "candidate": "7150d96a2112875b4afcf3023361a5cef4a0e4b1",
+        "kind": "prospective-merge",
+        "prospective_merge": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "525f75b49cf20849f5dec6a4c0e0b2a40776744f",
+        "tested_tree": "c8acae01f6fed538fabd918b6d7b63da348538df",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1095556148,
+        "tracked_entries": 11052,
+        "tracked_worktree_verified": true
+      },
+      "sha256": "cf36c43edffc0a8e6a7b09e96980d8deadedabdaab7f5f19c86fd7ac183ae982"
+    }
+  ],
+  "run_id": 42374726537,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42374726537",
+  "schema": "TRNM-W1-QROM-HOSTED-READBACK1"
+}

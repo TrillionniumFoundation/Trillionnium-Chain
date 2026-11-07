@@ -8253,3 +8253,55 @@ before strengthening a security claim. PQ authorization, complete computation
 proofs and quantum-work/chainweight economics remain three independent gates.
 No production admission path, proof parameter, guest image or native work rule
 changes in this continuation.
+
+### 2026-11-07 W1 proof-obligation continuation and local GitHub publication
+
+Continue `7150d96a2112875b4afcf3023361a5cef4a0e4b1` through the user-selected
+Hepta local GitHub channel. Normal Git pre-push checks and exact remote readback
+completed; [Draft PR #778](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/778)
+continues the existing W1 v2 branch. The original 7150 head and ordered
+prospective-merge hosted QROM jobs passed, including complete tracked-source
+checks before and after. Those results remain bound to their original commits.
+
+The [continuation report](../security/W1_QROM_CLOSURE_CONTINUATION_20261107.md)
+and [evidence disposition](../../evidence/pon-w1-qrom-closure-20261107/README.md)
+retain all fifteen original obligation identities while discharging specific
+implementation subclaims. Independent R0BF loading and memory hashing match
+the configured guest image; an actual official `compute_image_id` execution
+agrees. The embedded kernel matches the locked release binary. Abstract
+execution of both complete generated constraint DAGs yields trace-tap degree
+at most five, with trace divisibility and semantic correctness still separate.
+
+The complete official ZKR archive supplies all 32 byte streams and the exact
+default-27 allowlist. All 27 fit the observed `po2=18` code capacity;
+`join_povw` leaves eight rows after ZK reservation. An independent C
+interpolation/LDE/Poseidon2/Merkle implementation recomputes every allowed
+control ID from the actual bytes and reconstructs the fixed control root.
+Small independent DFT, permutation, tree and input-boundary controls check
+that implementation. Compiler correctness, program semantics, every reachable
+trace and digest-zero exclusion remain proof obligations.
+
+The exact-rational 10.6 evaluator retains relation/oracle compatibility,
+enlarged query domains and commutativity loss. The finite joint-oracle
+countermodel rejects an inference from uniform marginals to independent hash
+purposes. The lifetime ledger accounts for unsuccessful, offline, recursive,
+adaptive, delegated and unclassified work and retains unknown project budgets.
+No component example becomes a project security-bit estimate.
+
+The fixed native v2 release now has an observed exact feature graph,
+cryptographic saved-receipt verification, complete native replay, official
+image calculation and positive/negative profile controls. Only this concrete
+build/profile sub-scope is complete. Whole-source hosted checks and the local
+selected-source native inventory remain distinct; missing unrelated historical
+archive bodies are not hidden behind a clean-source claim. Earlier failed
+retrieval, local offline build and source observations remain retained.
+
+New CI uses a digest-pinned roster of actual test names, independent completion
+validation, fresh output directories, exact source before/after and both
+GitHub stage outcome and conclusion. Missing, skipped, failed or softened
+stages cannot pass with a copied result JSON. The 314 W1 tests include 105
+new continuation controls; a separate retained CI/source run passes 147.
+These are engineering observations, not theorem certificates. Complete QROM,
+PQ authorization, quantum work/chain weight and production acceptance remain
+independent HOLD decisions. No main merge, self-approval, force push or
+production activation is performed.
