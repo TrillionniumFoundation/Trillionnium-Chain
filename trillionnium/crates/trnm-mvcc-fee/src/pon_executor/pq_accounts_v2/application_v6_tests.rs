@@ -1,11 +1,11 @@
 //! Adversarial integration tests run real ML-DSA and the original M06 owner.
+use super::fixture_v5 as fixture;
 use super::*;
 use crate::{pon_executor as exec, public_evaluation as evaluation};
 use exec::{BlockExecution, ExecutionControl};
+use fixture::{Key, Witness};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use trnm_crypto_primitives::{pon_work, qualified_work_task::TaskMaterial};
-use super::fixture_v5 as fixture;
-use fixture::{Key, Witness};
 
 struct Harness {
     cfg: Config,
