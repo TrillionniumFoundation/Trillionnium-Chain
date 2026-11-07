@@ -134,6 +134,28 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_bounded_w1_controls_cannot_be_removed_duplicated_bypassed_or_moved(self):
+        # Independent inventory keeps deleting a checker requirement visible.
+        entries = (
+            ("formal/pon-nakamoto-v1", "test_w1_bounded_search.py"),
+            ("formal/pon-nakamoto-v1", "test_w1_constructed_search.py"),
+            ("formal/pon-nakamoto-v1/experiments", "test_w1_bounded_search_campaign.py"),
+        )
+        for directory, filename in entries:
+            command = f"    python3 -m unittest discover -s {directory} -p '{filename}' -v\n"
+            self.assertEqual(self.script.count(command), 1)
+            changes = (
+                self.script.replace(command, ''),
+                self.script.replace(command, command * 2),
+                self.script.replace(command, '    # ' + command.lstrip()),
+                self.script.replace(command, command.replace('python3 ', 'true # python3 ')),
+                self.script.replace(command, command.rstrip() + ' || true\n'),
+                self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            )
+            for changed in changes:
+                with self.subTest(filename=filename), self.assertRaisesRegex(ValueError, 'bounded W1'):
+                    check_independent_conformance(changed, self.lanes)
+
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
             '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell\n',

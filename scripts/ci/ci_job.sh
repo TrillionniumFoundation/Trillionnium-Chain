@@ -23,6 +23,9 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_preprocessing_reuse.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_bounded_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_constructed_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1/experiments -p 'test_w1_bounded_search_campaign.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_restricted_oracle.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fast_daa_reference_component.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_parallel_variable_ohie.py' -v

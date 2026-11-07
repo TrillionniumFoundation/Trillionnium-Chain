@@ -231,7 +231,8 @@ class PhysicalModel:
     cycle, plus every distilled T state's caller-supplied residual error. An odd
     code distance is selected against that union estimate for the whole workload.
     toffoli_decomposition_depth covers the complete decomposition, including
-    its declared T layers; it cannot be smaller than t_depth_per_toffoli.
+    its declared T layers; it cannot be smaller than t_depth_per_toffoli. The
+    same decomposition's nonempty T layers cannot exceed its declared T count.
     These are hypothetical parameters, never measured W1 hardware results.
     """
     name: str
@@ -277,6 +278,11 @@ class PhysicalModel:
         # stage and emit an internally inconsistent resource clock.
         if self.toffoli_decomposition_depth < self.t_depth_per_toffoli:
             raise ValueError("TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH")
+        # Count and depth describe the same declared decomposition. Each
+        # nonempty T layer consumes at least one of its declared T gates.
+        # This checks internal coherence, not a universal Toffoli T minimum.
+        if self.t_depth_per_toffoli > self.t_per_toffoli:
+            raise ValueError("TOFFOLI_T_DEPTH_EXCEEDS_T_COUNT")
         integer(self.maximum_distance, "MAXIMUM_DISTANCE", 3, 1001)
         if self.maximum_distance % 2 != 1:
             raise ValueError("ODD_MAXIMUM_DISTANCE_REQUIRED")
