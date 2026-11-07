@@ -75,6 +75,7 @@ def validate_contract(value):
             require(units(value['fixed_net_fees'][account]) <= value['fees'][account], 'DEMAND_FIXED_NET_FEE')
     require(value['fees']['service'] > 0 and value['fees']['evaluation'] > 0, 'DEMAND_SERVICE_BUDGET')
     require(value['beneficiaries']['service'] == value['provider'], 'DEMAND_PROVIDER')
+    require(value['beneficiaries']['improvement'] == value['provider'], 'DEMAND_IMPROVEMENT_BENEFICIARY')
     units(sum(value['fees'].values()))
     return commitment('contract', value)
 
@@ -124,7 +125,7 @@ class DemandEvidenceBook:
 
     def _origin(self, record, contract, terms, now, since):
         if record is None:
-            return 'unknown', False
+            return 'unknown', False, None
         data = self._statement(record, kind='provenance', contract=contract, role='audit')
         fields(data, ('registry', 'valid_from', 'valid_until', 'classification',
                       'control_groups', 'evidence', 'status'))
@@ -157,7 +158,7 @@ class DemandEvidenceBook:
             groups['adopter'] not in {groups['provider'], groups['auditor']} and
             len({terms['requester'], terms['provider'], self._keys['evaluation'], self._keys['audit']}) == 4 and
             self._keys['adoption'] not in {terms['provider'], self._keys['audit']})
-        return origin, independent
+        return origin, independent, data['valid_until']
 
     def observe(self, raw, *, expected_contract, expected_anchor, height):
         """Verify one frozen evidence bundle and retain its conditional accounting.
@@ -204,7 +205,8 @@ class DemandEvidenceBook:
                     source['beneficiary'] == terms['beneficiaries'][account] and
                     units(source['units']) == terms['fees'][account] and
                     source['state'] in ('locked', 'settled'), 'DEMAND_FUNDED_TERMS')
-        origin, independent = self._origin(bundle['provenance'], expected_contract, terms, height, funding['locked_at'])
+        origin, independent, provenance_valid_until = self._origin(
+            bundle['provenance'], expected_contract, terms, height, funding['locked_at'])
         due = dict.fromkeys(ACCOUNTS, False)
         delivered = False
         output = None
@@ -328,13 +330,14 @@ class DemandEvidenceBook:
         for account in ACCOUNTS:
             units(sum(r['paid'][account] for r in self._records.values()) + paid[account])
             units(sum(r['gross'][account] for r in self._records.values()) + gross[account])
-        observation = dict(schema='pon-demand-composition-observation-v1', contract=expected_contract,
+        observation = dict(schema='pon-demand-composition-observation-v2', contract=expected_contract,
             bundle=identity, anchor=expected_anchor, observed_height=height,
             origin=origin, independence_attested=independent, delivered=delivered, output_key=output_key,
             delivery_observed=bundle['delivery'] is not None,
             evaluation_outcome=outcome, dispute=resolution, conditional_fee_due=due,
             paid=paid, gross=gross, deadline=terms['deadline'], qualified_work=terms['qualified_work'],
             funding_valid_until=funding['valid_until'],
+            provenance_valid_until=provenance_valid_until,
             funding_available=all(s is None or s['state'] == 'locked' for s in funding['sources'].values()),
             status=('NoUpdate' if not due['improvement'] else 'conditional-adoption-observed'),
             native_adapter_verified=False, independent_demand_proven=False,
@@ -370,6 +373,7 @@ class DemandEvidenceBook:
         eligible = [r for r in self._records.values() if not r['delivery_observed'] and
                     r['dispute'] == 'none' and r['funding_available'] and
                     r['observed_height'] <= height <= min(r['deadline'], r['funding_valid_until']) and
+                    (r['provenance_valid_until'] is None or height <= r['provenance_valid_until']) and
                     r['anchor'] == expected_anchor]
         priority = {'external-attested': 0, 'project-budget': 1, 'self-or-related': 2, 'unknown': 3}
         eligible.sort(key=lambda r: (priority[r['origin']], r['deadline'], r['contract']))

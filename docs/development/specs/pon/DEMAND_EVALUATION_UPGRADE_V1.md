@@ -65,6 +65,9 @@ input root, output specification, qualified-work statement, evaluation protocol,
 fixed fee schedule, dispute policy, delivery deadline, dispute end and retention
 end. It precommits four service/bonus amounts and exact beneficiaries. A positive
 evaluation cannot change either the gross or precommitted net evaluation fee.
+The improvement beneficiary must be the provider in this Task/Release contract;
+an evaluator, auditor or adoption owner cannot receive a result-dependent bonus
+through another account. Provider/control conflicts still prevent eligibility.
 A zero-priced account requires no
 fabricated funding source.
 
@@ -102,7 +105,9 @@ The independently developed
 [common-control continuation, PR742](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/742)
 contains a more complete registry and control-coalition audit. This work specifies
 its receiving boundary; it does not pretend that the full separate PR or real
-independent identities have been imported.
+independent identities have been imported. Observation schema
+`pon-demand-composition-observation-v2` retains the audit validity end; later
+queue queries recheck it without changing the historical revenue observation.
 
 ## Five economic accounts, existing native sources
 
@@ -147,8 +152,9 @@ or remove that real fair-exchange gap.
 
 The finite supplied inventory is ordered by externally attested funded tasks,
 project-budget tasks, related-party tasks and unknown-origin tasks, then deadline
-and contract identity. Expired/settled funding, any observed delivery, a refund or
-pending dispute, or a different current anchor is excluded.
+and contract identity. Expired/settled funding, expired attached provenance,
+any observed delivery, a refund or pending dispute, or a different current anchor
+is excluded.
 This is a queue observation, not global queue discovery or dispatch authority.
 An empty eligible inventory returns the **existing native maintenance** mode with
 zero useful-output credit. Funding shortages do not create fictitious demand.
@@ -234,7 +240,7 @@ The product construction follows
 and the [safe anytime-valid inference review](https://arxiv.org/html/2210.01948v2).
 
 Marginal zero means are insufficient: let all 20 ostensibly different clusters
-share one fair sign Z. With lambda=1/2, the positive branch gives 1.5^20 > 160 and
+share one fair sign Z. Take alpha=0.05 and lambda=1/2: the positive branch gives 1.5^20 > 160 and
 passes the first-attempt threshold with probability 1/2. The nominal per-control
 budget is only 1/160. This violates the conditional-mean assumption even if every
 row has a new hash. Fresh IDs and future timestamps cannot fix dependent sampling.
