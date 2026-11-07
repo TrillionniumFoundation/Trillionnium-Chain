@@ -17,6 +17,25 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Proof publication latency, 2026-11-07 America/New_York:** Continue the existing
+#688 candidate from `3d1b6507671ec694ce58e86d4063a125c8deeb66` with the
+[full-W1 latency contract](specs/pon/PROOF_PUBLICATION_LATENCY_V1.md) and
+[asynchronous settlement boundary](specs/pon/ASYNC_PROOF_SETTLEMENT_BOUNDARY_V1.md).
+Retain the complete v2 statement and independent expected-artifact binding.
+Read the original byte-pinned pipeline into exclusive stage intervals and
+separately nested clocks; do not relabel its 6,248.484-second fresh pipeline as
+a measured winner-to-publication or WAN clock. Separately screen predeclared
+finite campaigns against explicit competing-arrival assumptions, complete
+winner/receiver endpoints and original absolute deadlines. Keep failed,
+late, canceled and unknown observations in their proper denominators; finite
+screening cannot establish population p99, fresh-proof independence or admission.
+The [reproduction record](../../evidence/pon-proof-publication-latency-20261107/README.md)
+retains the 43 segment stages and 43-lift/42-join compression costs. It supplies
+no new proof or performance improvement. Full native W1 remains the current
+work gate; owner-authorized task payment and a future independently verified
+canonical proof settlement are distinct interfaces. Original four-second/16,
+PQ, funding/reorg, WAN, proof-benefit and model-adoption gates remain open.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

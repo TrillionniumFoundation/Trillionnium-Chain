@@ -147,6 +147,10 @@ CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_pon_public_v3_policy_read.py',
     'python3 scripts/ci/test_llm_cell_handoff_deadline.py',
 )
+PROOF_LATENCY_READER_COMMANDS = (
+    'python3 scripts/ci/test_pon_proof_latency.py',
+    'python3 scripts/ci/test_w1_proof_latency_readback.py',
+)
 LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_rss_owner.py\n'
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
@@ -363,6 +367,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in PROOF_LATENCY_READER_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'proof latency controls must execute exactly once in repository-truth')
     runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1

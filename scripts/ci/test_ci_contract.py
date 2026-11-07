@@ -181,6 +181,27 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.subTest(path=path, change=label), self.assertRaises(ValueError):
                     check_independent_conformance(changed, self.lanes)
 
+    def test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
+        # Keep this inventory independent of the checker's command tuple.
+        for name in ('test_pon_proof_latency.py', 'test_w1_proof_latency_readback.py'):
+            command = '    python3 scripts/ci/' + name + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'true stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            }
+            for label, changed in changes.items():
+                with self.subTest(reader=name, change=label), self.assertRaisesRegex(
+                        ValueError, 'proof latency controls'):
+                    check_independent_conformance(changed, self.lanes)
+
     def test_current_runtime_controls_must_follow_pilot_and_parent_material(self):
         parent = '    python3 scripts/test_llm_parent_material.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
