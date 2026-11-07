@@ -1257,8 +1257,24 @@ class NativeDurableSchemaTests(unittest.TestCase):
                         self.assertRaisesRegex(ValueError, 'durable backend opener'):
                     self.extract(self.replace_once(self.current,current,changed))
 
+    def test_open_selected_wrapper_must_delegate_to_shared_mode(self):
+        wrapper = '''Self::open_selected_mode(
+            path,
+            settings,
+            workers,
+            hook,
+            owners,
+            state_backend,
+            SelectedOpen::InitializeOrRecover {
+                growth_observation_only,
+            },
+        )'''
+        replacement = 'Self::open_selected_mode(path, settings, workers, hook, owners, state_backend, SelectedOpen::ExistingPqOwner)'
+        with self.assertRaisesRegex(ValueError, 'durable backend selected schema delegation'):
+            self.extract(self.replace_once(self.current,wrapper,replacement))
+
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
-        header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
+        header = 'fn open_selected_mode(\n        path: &Path,\n        settings: Settings,'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
         statements = [
             'settings.app.params["work_task_profile"] = serde_json::json!("legacy-task-v1");',
