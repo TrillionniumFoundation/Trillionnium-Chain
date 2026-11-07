@@ -42,6 +42,9 @@ The [native evidence](../../evidence/pon-native-cell-v1-20261107/README.md)
 retains full owner inputs, claims and verified-parent packets plus fresh-process
 historical replay. The separate private Hepta owner path does not consume this
 public native proof; proof-to-owner composition remains an explicit open gate.
+The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
+retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
+controls, raw source checks and failed observations without changing qualification.
 
 **Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate from
