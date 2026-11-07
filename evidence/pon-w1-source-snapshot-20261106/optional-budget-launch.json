@@ -1,0 +1,15 @@
+{
+  "schema": "trnm-w1-optional-budget-launch-observation-v1",
+  "job_id": "1a1b342173a-fc05-8184",
+  "host": "ai395",
+  "idempotency_key": "w1-pq-006e9a6c46c6-budget-replay-corrected-1",
+  "state": "launch_unknown",
+  "launch_error": "Remote launch outcome unavailable",
+  "reconciliation": "process_status reported missing remote job directory; exact intended output was absent; same idempotency key returned reused launch_unknown",
+  "automatic_retry": false,
+  "new_request_started": false,
+  "scope": "Only an optional component-budget re-evaluation. The source mapper command completed successfully earlier and its output was read back and hashed.",
+  "component_budget_replay_qualified": false,
+  "consensus_admission": false,
+  "post_quantum_soundness_qualified": false
+}
