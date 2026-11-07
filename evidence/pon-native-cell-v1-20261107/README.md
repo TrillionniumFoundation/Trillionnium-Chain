@@ -20,10 +20,18 @@ output, after-state and after-model. This count includes the clearly identified
 retired-model counterfactual control; it is not a count of independent external
 tasks. Legacy and Authenticated history cases share one claim and are counted once.
 
-Six fresh CLI verifier processes rebuilt three new Node stores from retained
-owner inputs, fixed settings and genuine parent/successor packets. Historical
-receipts agreed before and after the active tip advanced. This replay generated
-zero new proofs and used no Cell historical clock override.
+Cold replay constructed **three fresh Node stores** and made **six fresh
+historical-verifier invocations** over **two distinct claims containing ten
+distinct W1 proofs**. Legacy and authenticated history share one claim and
+verify before and after the active tip advances; masked sampling/training
+repeats its claim at the same verified parent. Separate status/submission
+processes perform ordinary store setup. This replay generated zero new proofs
+and used no Cell historical clock override. The cold 2/10 subset is not a
+replay of the entire retained 11/55 corpus.
+
+The [recovered acc2 concurrent record](../pon-cell-concurrent-revalidation-20261107/README.md)
+retains the subsequent native gates and cold subset on the combined source.
+Its 40 case files match A4 byte-for-byte. Repeats do not increase unique counts.
 
 ## Review and reproduction
 

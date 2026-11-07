@@ -1,0 +1,11 @@
+{
+  "cache_coverage_conclusion": null,
+  "explanation": "The helper stopped at its assertion checking git cat-file batch exit status. The underlying Git stderr was not emitted, so this record does not infer the reason or establish cache coverage.",
+  "job_id": "1a1b6c9953a-12894-6c6",
+  "qualification_changed": false,
+  "schema": "pon-recovery-read-only-diagnostic-v1",
+  "scope": "Optional read-only cache-coverage inspection; not CI/native/calculation testing",
+  "source_mutated": false,
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 8, in <module>\nAssertionError\n",
+  "stdout": ""
+}

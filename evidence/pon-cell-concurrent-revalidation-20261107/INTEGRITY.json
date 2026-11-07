@@ -1,0 +1,93 @@
+{
+  "archives": [
+    {
+      "all_indexed_payload_hashes_verified": true,
+      "bytes": 1803594,
+      "filename": "concurrent-ci-acc2ec24-20261107-v1.tar.gz",
+      "indexed_payload_count": 96,
+      "manifest_excludes_itself": true,
+      "ordinary_member_count": 97,
+      "prefix": "",
+      "safe_relative_regular_members": true,
+      "sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2"
+    },
+    {
+      "all_indexed_payload_hashes_verified": true,
+      "bytes": 679432,
+      "filename": "concurrent-native-acc2-evidence.tar.gz",
+      "indexed_payload_count": 175,
+      "manifest_excludes_itself": true,
+      "ordinary_member_count": 176,
+      "prefix": "concurrent-native-acc2/",
+      "safe_relative_regular_members": true,
+      "sha256": "6fffb1e9538bd2a8fd0809488018694c1bd9b65225a8ac359dcdaa0d0888053b"
+    }
+  ],
+  "calculation_tests_executed_by_packaging_review": false,
+  "ci_source": {
+    "before_after_identical": true,
+    "materialized_bytes": 42631117,
+    "materialized_files": 2322,
+    "raw_bytes_and_git_blobs_match": true,
+    "sparse_absent_files": 8748,
+    "whole_tree_materialized_in_original_ci_run": false
+  },
+  "fresh_complete_source": {
+    "source_before_after_equal": true,
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1035950468,
+    "tracked_entries": 11070,
+    "tracked_worktree_verified": true
+  },
+  "native_material_integrity": {
+    "a4_archive_sha256": "fee7f1aa1022e978f13c2453d9431fab81d776ff7a56c3154e522130305c056b",
+    "arithmetic_or_cryptographic_verifier_rerun": false,
+    "bytes_per_full_w1_proof": 49188,
+    "case_directories": 12,
+    "case_files_byte_identical_a4_a5": 40,
+    "cold_distinct_claims": 2,
+    "cold_distinct_full_w1_proofs": 10,
+    "cold_fresh_stores": 3,
+    "cold_logical_now_override_used": false,
+    "cold_new_proofs": 0,
+    "cold_verifier_invocations": 6,
+    "counts_additive_across_repeats": false,
+    "every_proof_hex_decoded_and_hash_compared": true,
+    "unique_claim_byte_strings": 11,
+    "unique_full_w1_proof_byte_strings": 55
+  },
+  "native_source": {
+    "before_after_gates_final_file_arrays_identical": true,
+    "entire_repository_materialization_claimed_by_native_run": false,
+    "materialized_build_scope_files": 1369,
+    "materialized_bytes": 21925836,
+    "missing_in_declared_scope": [],
+    "raw_bytes_and_git_blobs_match": true,
+    "scope_prefixes": [
+      "trillionnium",
+      "config/pon",
+      "tests/fuzz",
+      "formal/pon-nakamoto-v1/vectors"
+    ],
+    "source_set_sha256": "95c8094b8248615554a202f936e5d6d72ba3a6792b87e19f3bc2470e85ab61b8"
+  },
+  "observation": "New desktop recovery material review; not the old local integrity file",
+  "public_material_review": {
+    "matches": [],
+    "pattern_names": [
+      "github_credential",
+      "private_key",
+      "authorization_value",
+      "url_user_password",
+      "private_raw_source_path"
+    ],
+    "payloads_scanned": 450,
+    "public_source_only_inputs": true,
+    "safe_archive_members": true,
+    "scope": "Bounded credential/private-source-path pattern review; not a universal secret detector."
+  },
+  "result": "PASS",
+  "schema": "pon-cell-recovery-integrity-v1",
+  "source_commit": "acc2ec24fac7e6fbebb49384fc7efc7c9f8b2030",
+  "source_tree": "e59270db7fe6ea77e01362b591dd98e4e93d62fe"
+}
