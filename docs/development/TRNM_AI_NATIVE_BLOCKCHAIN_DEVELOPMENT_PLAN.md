@@ -8228,3 +8228,28 @@ continuation. External cryptographic review, concrete QROM instantiation,
 accepted recursive-family composition, complete quantum work/fork-choice
 analysis and independent deployment acceptance remain open. All activation
 and whole-chain PQ assertions remain false/HOLD.
+
+### 2026-11-07 W1 v2 implementation mapping toward QROM security
+
+Continue `cb114b13bf848a77634e40a08b31b30c7c758e7b` and the existing W1/PQ
+integration stack. The [fixed implementation review](../security/W1_QROM_IMPLEMENTATION_MAP_20261107.md)
+pins the selected verifier/guest source and dependency graphs, reconstructs
+the entire default 27-program control tree and parameter digest, maps every
+native transcript phase and Merkle auxiliary parameter, and accounts for the
+actual historical v2 seal geometry. It distinguishes allowed lift names,
+generic parser limits and the observed outer trace size. The
+[new evidence packet](../../evidence/pon-w1-qrom-implementation-20261107/README.md)
+retains exact inputs, machine-readable mapping, independent review findings
+and actual validation observations.
+
+Selected formal statements from the January 1 Chiesa-Di-Hu-Zheng manuscript
+replace an abstract-only reading for this narrow review. The exact-rational
+calculator evaluates only explicitly hypothetical component expressions;
+unknown budgets stay null, complete compiler/composition bounds stay
+uninstantiated, and all qualification flags stay false. Reconcile the latest
+revision, prove the concrete oracle/commitment interfaces and every permitted
+recursive relation, and adopt a justified whole-lifetime query/error policy
+before strengthening a security claim. PQ authorization, complete computation
+proofs and quantum-work/chainweight economics remain three independent gates.
+No production admission path, proof parameter, guest image or native work rule
+changes in this continuation.
