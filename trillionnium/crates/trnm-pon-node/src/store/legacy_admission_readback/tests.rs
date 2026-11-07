@@ -421,17 +421,18 @@ fn legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writ
             rusqlite::TransactionBehavior::Immediate,
         )
         .unwrap();
-        let owner = TransactionScope::capture(&f.node.db).unwrap();
-        assert!(native_authenticated::PostWriteReadback::new(
-            &f.node.db,
-            &f.node.settings,
-            block.id().unwrap(),
-            &owner,
-            f.node.legacy_admission_readback_schema().unwrap(),
-        )
-        .unwrap()
-        .is_none());
-        drop(owner);
+        {
+            let owner = TransactionScope::capture(&f.node.db).unwrap();
+            assert!(native_authenticated::PostWriteReadback::new(
+                &f.node.db,
+                &f.node.settings,
+                block.id().unwrap(),
+                &owner,
+                f.node.legacy_admission_readback_schema().unwrap(),
+            )
+            .unwrap()
+            .is_none());
+        }
         tx.rollback().unwrap();
         if damage {
             let before = facts(&f.node.db);

@@ -7658,3 +7658,9 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+## 2026-11-07 R17 retained queue and Legacy test repair
+
+The actual f97c3bc head and prospective merge ran under the unchanged original Host. Seven honest Submit acknowledgements succeeded in each fresh pressure sample, while independent History confirmation still missed the original four-second window; this is a service deadline, not consensus invalidity. The original three-campaign run also finished with failure. These failures remain retained, and this test-only change makes no service-acceptance, anonymous-fairness, WAN, or economic claim. State full-capacity and reorganization recovery passed all four original architecture/source lanes; this does not qualify the separate PN1 identity-capacity/churn supplement.
+
+Four retained queue/cancellation fixtures held the Node while sequentially authenticating and completing bodies. Two dequeued bodies now legitimately own both original response-signing slots, so later fixture authentication could not reach the intended queue state. Complete every original paid grant before sending those same bodies, retaining all original assertions, request counts, queue limits, and deadlines. Scope the non-Drop Legacy transaction owner lexically before rollback, preserving all readback and corrupt-write assertions and strict Clippy. Production resource, wire, Cookie, fee, and consensus behavior is unchanged. Exact native and strict-tool validation follows on the frozen repair commit; prior failures are not overwritten.
