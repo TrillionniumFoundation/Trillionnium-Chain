@@ -17,6 +17,22 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Security-work metering continuation, 2026-11-07 America/New_York:** Continue
+`4699b4079fca323f8db7b9d3644fbb159aa687c0` under the
+[explicit metering contract](specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md).
+Count classical seal step-oracle queries and preserve lawful cached Cell
+outputs; a new ticket does not imply fresh producer neural contractions.
+Inspect separately pinned task/target policies, exact observed query identities,
+declared consumer operations and typed resource scopes without promoting pins
+or fixture signatures into public authority. Preserve unknown/private queries,
+missing costs and all planned attempts. Reject missing work identities, missing
+or negative byte counts, overflowed CPU totals, impossible child subsets and
+unknown attempt states in the existing fanout cost reader. Reanalyze original
+bytes without overwriting prior reports. Current external authorization, actual
+demand/FinalUse/settlement, complete public query coverage and physical-cost
+transfer remain explicit obligations. Keep native W1 and the existing research
+owner intact, retain all CI gates, and award zero actual chainwork.
+
 **Verifier resource transfer, 2026-11-07 America/New_York:** Continue the sealed
 grouped research from evidence checkpoint `37c1f3fe24c88476f39b0bd6e9ed32453bfc4551`
 under the [resource-transfer contract](specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md).

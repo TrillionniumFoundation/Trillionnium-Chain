@@ -8,6 +8,7 @@ composition; it does not replace a call to any of those owners.
 from __future__ import annotations
 
 import hashlib
+import math
 from pathlib import Path
 
 from contract_wire import canonical
@@ -110,11 +111,41 @@ def demand_bridge_audit(root):
     }
 
 
+def _counter(value):
+    return type(value) is int and 0 <= value < 1 << 64
+
+
+def _identity(value):
+    # These labels are observations, not authenticated identities. Preserve the
+    # existing opaque-label fixtures while refusing missing/unhashable aliases.
+    return type(value) is str and 0 < len(value) <= 512 and value.strip() == value
+
+
+def _seconds(value):
+    if type(value) not in (int, float):
+        return None
+    try:
+        value = float(value)
+    except (OverflowError, ValueError):
+        return None
+    return value if math.isfinite(value) and value >= 0 else None
+
+
+def _sum_seconds(values):
+    try:
+        total = math.fsum(values)
+    except OverflowError:
+        return None
+    return total if math.isfinite(total) else None
+
+
 def topology_accounting(planned_receivers, workers):
     """Check all precommitted slots; partial/failed workers stay in the denominator.
 
     CPU in wait4 includes each reaped receiver and its waited native child on
     Linux. Native-only CPU and per-stage timings are subsets, never extra charges.
+    Missing or malformed observations make complete totals null. Named partial
+    sums retain usable measurements without asserting coverage of omitted work.
     Caller must independently bind these local observations to retained bytes.
     """
     if type(planned_receivers) is not int or planned_receivers not in (1, 2, 4):
@@ -123,120 +154,255 @@ def topology_accounting(planned_receivers, workers):
         raise ValueError('FANOUT_WORKERS')
     issues, ids, attempts, permits, cell_calls, macs = [], set(), 0, 0, 0, 0
     verified, rejected, cancelled, discarded = 0, 0, 0, 0
-    cpu, native_cpu, known_wait4, cpu_complete = 0.0, 0.0, 0, True
-    tx, rx, ack_kernel, content_ids, work_ids = 0, 0, 0, set(), set()
-    if len(workers) != planned_receivers:
+    cpu_parts, native_parts, content_ids, work_ids = [], [], set(), set()
+    known_wait4 = known_native = known_permits = known_material = 0
+    cpu_complete = native_complete = cells_complete = work_complete = True
+    slots_complete = records_complete = len(workers) == planned_receivers
+    byte_parts = dict(receiver=0, client=0, ack_kernel=0)
+    byte_known = dict.fromkeys(byte_parts, 0)
+    byte_complete = dict.fromkeys(byte_parts, True)
+    expected_attempts = planned_receivers * len(CASES)
+    if not slots_complete:
         issues.append('RECEIVER_DENOMINATOR')
+
+    def mapping(value, code):
+        if type(value) is not dict:
+            issues.append(code)
+            return {}
+        return value
+
+    def record_bytes(kind, value, code, terminal):
+        if not _counter(value):
+            issues.append(code)
+            byte_complete[kind] = False
+        else:
+            byte_parts[kind] += value
+            byte_known[kind] += 1
+        if not terminal:
+            byte_complete[kind] = False
+
     for index, observed in enumerate(workers):
         label = f'receiver-{index}'
         if type(observed) is not dict:
             issues.append(label + ':MALFORMED')
+            slots_complete = False
             continue
         identity = observed.get('receiver_id')
-        if type(identity) is not str or not identity or identity in ids:
+        if not _identity(identity) or identity in ids:
             issues.append(label + ':DUPLICATE_OR_MISSING_ID')
-        ids.add(identity)
-        wait4 = observed.get('wait4')
-        if isinstance(wait4, dict):
-            user, system = wait4.get('user_seconds'), wait4.get('system_seconds')
-            if all(type(v) in (int, float) and 0 <= v < float('inf') for v in (user, system)):
-                cpu += user + system
-                known_wait4 += 1
-            else:
-                issues.append(label + ':CPU_RANGE')
-            if wait4.get('exit_code') != 0:
-                issues.append(label + ':EXIT')
-                cpu_complete = False
+            slots_complete = False
         else:
-            issues.append(label + ':CPU_UNKNOWN')
+            ids.add(identity)
+        wait4 = mapping(observed.get('wait4'), label + ':CPU_UNKNOWN')
+        wait_times = [_seconds(wait4.get(key)) for key in ('user_seconds', 'system_seconds')]
+        cpu_parts.extend(v for v in wait_times if v is not None)
+        receiver_cpu = _sum_seconds(wait_times) if None not in wait_times else None
+        if receiver_cpu is None:
+            issues.append(label + ':CPU_RANGE')
+            cpu_complete = False
+        else:
+            known_wait4 += 1
+        if type(wait4.get('exit_code')) is not int or wait4['exit_code'] != 0:
+            issues.append(label + ':EXIT')
             cpu_complete = False
         report = observed.get('worker_report')
-        if not isinstance(report, dict):
+        if type(report) is not dict:
             issues.append(label + ':REPORT_UNAVAILABLE')
+            records_complete = cpu_complete = False
             continue
         if report.get('status') != 'PASS':
             issues.append(label + ':WORKER_NOT_PASS')
-        if not report.get('source_bytes_stable') or not report.get('runner_bytes_stable'):
+        if report.get('source_bytes_stable') is not True or report.get('runner_bytes_stable') is not True:
             issues.append(label + ':SOURCE_OR_RUNNER_CHANGED')
-        if report.get('chainwork_awarded') != 0 or report.get('external_demand_authenticated') is not False:
+        if (type(report.get('chainwork_awarded')) is not int or report['chainwork_awarded'] != 0
+                or report.get('external_demand_authenticated') is not False
+                or any(key in report and report[key] is not False
+                       for key in ('production_activation', 'independent_operators'))):
             issues.append(label + ':QUALIFICATION_OVERCLAIM')
-        content_ids.add(report.get('material_content_id'))
-        records = report.get('transport_records', [])
-        if type(records) is not list or [r.get('case') for r in records] != list(CASES):
+        material = report.get('material_content_id')
+        if _identity(material):
+            content_ids.add(material)
+            known_material += 1
+        else:
+            issues.append(label + ':MATERIAL_ID_UNKNOWN')
+
+        # Cost observations survive malformed/missing transport records. These
+        # independent fields must not be skipped by an early records refusal.
+        ledger = mapping(report.get('final_ledger'), label + ':LEDGER_MALFORMED')
+        budget = mapping(ledger.get('verification_budget'), label + ':BUDGET_MALFORMED')
+        budget_values = [budget.get(k) for k in ('fixed_limit', 'reserved', 'remaining')]
+        if (not all(_counter(v) for v in budget_values)
+                or tuple(budget_values) != (LOCAL_CAP, LOCAL_CAP, 0)):
+            issues.append(label + ':LOCAL_BUDGET')
+        if _counter(budget.get('reserved')):
+            permits += budget['reserved']
+            known_permits += 1
+        if 'spent' in budget and (not _counter(budget['spent'])
+                or not _counter(budget.get('reserved')) or budget['spent'] > budget['reserved']):
+            issues.append(label + ':LOCAL_BUDGET_SPENT')
+        native = mapping(report.get('native_exit'), label + ':NATIVE_EXIT_MALFORMED')
+        native_times = [_seconds(native.get(k)) for k in
+                        ('native_child_user_seconds', 'native_child_system_seconds')]
+        native_parts.extend(v for v in native_times if v is not None)
+        child_cpu = _sum_seconds(native_times) if None not in native_times else None
+        if child_cpu is None:
+            issues.append(label + ':NATIVE_CPU_OR_EXIT_UNKNOWN')
+            cpu_complete = native_complete = False
+        else:
+            known_native += 1
+        if type(native.get('exit_code')) is not int or native['exit_code'] != 0:
+            issues.append(label + ':NATIVE_CPU_OR_EXIT_UNKNOWN')
+            cpu_complete = native_complete = False
+        # wait4 values have microsecond resolution. Allow only one microsecond
+        # for conversion/subtraction rounding, not a proportional cost subsidy.
+        if (receiver_cpu is not None and child_cpu is not None
+                and child_cpu - receiver_cpu > 0.000001):
+            issues.append(label + ':NATIVE_CPU_EXCEEDS_RECEIVER')
+            cpu_complete = native_complete = False
+
+        records = report.get('transport_records')
+        if (type(records) is not list or len(records) != len(CASES)
+                or any(type(r) is not dict or r.get('case') != case
+                       for r, case in zip(records, CASES))):
             issues.append(label + ':ATTEMPT_DENOMINATOR')
+            records_complete = False
+        if type(records) is not list:
             continue
-        for row in records:
-            if row.get('status') in ('not_started', 'started'):
-                issues.append(label + ':UNFINISHED_ATTEMPT')
+        for ordinal, row in enumerate(records):
+            entry = f'{label}:attempt-{ordinal}'
+            if type(row) is not dict:
+                issues.append(entry + ':MALFORMED')
+                continue
+            terminal = row.get('status') == 'observed'
+            if not terminal:
+                issues.append(entry + ':UNFINISHED_OR_UNKNOWN_ATTEMPT')
+                work_complete = cells_complete = False
             else:
                 attempts += 1
-            response = row.get('verification') or {}
-            case = row['case']
+            if type(row.get('ordinal')) is not int or row['ordinal'] != ordinal:
+                issues.append(entry + ':ORDINAL')
+                records_complete = False
+            case = row.get('case')
+            if type(case) is not str or case not in CASES:
+                issues.append(entry + ':CASE')
+                records_complete = False
+            if type(row.get('complete_verifier_called')) is not bool:
+                issues.append(entry + ':VERIFIER_CALL_UNKNOWN')
+                cells_complete = False
+            response_value = row.get('verification')
+            if case == 'truncated_cancel' and response_value is None:
+                response, stages = {}, {}
+            else:
+                response = mapping(response_value, entry + ':VERIFICATION_MALFORMED')
+                stages = mapping(response.get('stages'), entry + ':STAGES_MALFORMED')
+            if (('chainwork_awarded' in response and
+                    (type(response['chainwork_awarded']) is not int or response['chainwork_awarded'] != 0))
+                    or any(key in response and response[key] is not False
+                           for key in ('production_activation', 'external_demand_authenticated'))):
+                issues.append(entry + ':QUALIFICATION_OVERCLAIM')
+            full_cell = 'independent_full_cell' in stages
+            expected_cell = case in ('valid', 'carrier_replay', 'forged_endpoint', 'discarded_response')
+            if expected_cell and (not full_cell or row.get('complete_verifier_called') is not True):
+                issues.append(entry + ':FULL_CELL_OBSERVATION_MISSING')
+                cells_complete = False
             if case in ('valid', 'carrier_replay', 'discarded_response'):
                 if response.get('status') != 'verified':
-                    issues.append(label + ':' + case + ':NOT_VERIFIED')
+                    issues.append(entry + ':NOT_VERIFIED')
+                    work_complete = False
                 else:
                     verified += 1
-                    work_ids.add(response.get('work_id'))
+                    work_id = response.get('work_id')
+                    if not _identity(work_id):
+                        issues.append(entry + ':WORK_ID_UNKNOWN')
+                        work_complete = False
+                    else:
+                        work_ids.add(work_id)
             elif case == 'forged_endpoint':
                 if response.get('status') != 'rejected' or response.get('error') != 'NATIVE_Seal(Endpoint)':
-                    issues.append(label + ':FORGED_ENDPOINT')
+                    issues.append(entry + ':FORGED_ENDPOINT')
                 rejected += int(response.get('status') == 'rejected')
             elif case == 'truncated_cancel':
-                if row.get('transport_error') != 'TCP_TRUNCATED_FRAME' or row.get('complete_verifier_called'):
-                    issues.append(label + ':CANCELLATION')
+                if (row.get('transport_error') != 'TCP_TRUNCATED_FRAME'
+                        or row.get('complete_verifier_called') is not False or response_value is not None):
+                    issues.append(entry + ':CANCELLATION')
+                    cells_complete = False
                 cancelled += int(row.get('transport_error') == 'TCP_TRUNCATED_FRAME')
             elif case == 'after_local_cap':
-                if response.get('status') != 'rejected' or response.get('error') != 'NATIVE_VerificationBudget':
-                    issues.append(label + ':CAP_NOT_ENFORCED')
-                if 'independent_full_cell' in response.get('stages', {}):
-                    issues.append(label + ':CAP_REJECTED_AFTER_CELL')
+                if (response.get('status') != 'rejected' or response.get('error') != 'NATIVE_VerificationBudget'
+                        or row.get('complete_verifier_called') is not True):
+                    issues.append(entry + ':CAP_NOT_ENFORCED')
+                if full_cell:
+                    issues.append(entry + ':CAP_REJECTED_AFTER_CELL')
+                    cells_complete = False
                 rejected += int(response.get('status') == 'rejected')
-            if 'independent_full_cell' in response.get('stages', {}):
-                cell_calls += 1
-                if response.get('reference_macs') != 37008:
-                    issues.append(label + ':CELL_MAC_COUNT')
-                macs += response['reference_macs']
+            if full_cell:
+                if type(stages['independent_full_cell']) is not dict:
+                    issues.append(entry + ':CELL_STAGE_MALFORMED')
+                    cells_complete = False
+                else:
+                    cell_calls += 1
+                count = response.get('reference_macs')
+                if not _counter(count) or count != 37008:
+                    issues.append(entry + ':CELL_MAC_COUNT')
+                    cells_complete = False
+                if _counter(count):
+                    macs += count
+            client = mapping(row.get('client'), entry + ':CLIENT_MALFORMED')
+            client_status = client.get('status')
+            client_terminal = client_status in ('response_observed', 'response_intentionally_discarded', 'failed')
             if case == 'discarded_response':
-                client = row.get('client') or {}
-                if client.get('status') != 'response_intentionally_discarded' or client.get('received_bytes') != 0:
-                    issues.append(label + ':DISCARD_CONTROL')
-                discarded += int(client.get('status') == 'response_intentionally_discarded')
-            tx += row.get('received_frame_bytes', 0)
-            ack_kernel += row.get('ack_kernel_accepted_bytes', 0)
-            rx += (row.get('client') or {}).get('received_bytes', 0)
-        budget = (report.get('final_ledger') or {}).get('verification_budget', {})
-        if (budget.get('fixed_limit'), budget.get('reserved'), budget.get('remaining')) != (LOCAL_CAP, LOCAL_CAP, 0):
-            issues.append(label + ':LOCAL_BUDGET')
-        permits += budget.get('reserved', 0)
-        native = report.get('native_exit') or {}
-        native_times = [native.get('native_child_user_seconds'), native.get('native_child_system_seconds')]
-        if native.get('exit_code') != 0 or not all(
-                type(v) in (int, float) and 0 <= v < float('inf') for v in native_times):
-            issues.append(label + ':NATIVE_CPU_OR_EXIT_UNKNOWN')
-            cpu_complete = False
-        else:
-            native_cpu += sum(native_times)
-    if None in content_ids or len(content_ids) != 1:
+                if (client_status != 'response_intentionally_discarded'
+                        or type(client.get('received_bytes')) is not int or client['received_bytes'] != 0):
+                    issues.append(entry + ':DISCARD_CONTROL')
+                discarded += int(client_status == 'response_intentionally_discarded')
+            elif client_status != 'response_observed':
+                issues.append(entry + ':CLIENT_NOT_OBSERVED')
+            record_bytes('receiver', row.get('received_frame_bytes'), entry + ':RECEIVER_BYTES_UNKNOWN', terminal)
+            record_bytes('ack_kernel', row.get('ack_kernel_accepted_bytes'), entry + ':ACK_BYTES_UNKNOWN', terminal)
+            record_bytes('client', client.get('received_bytes'), entry + ':CLIENT_BYTES_UNKNOWN', client_terminal)
+            if (_counter(client.get('received_bytes')) and _counter(row.get('ack_kernel_accepted_bytes'))
+                    and client['received_bytes'] > row['ack_kernel_accepted_bytes']):
+                issues.append(entry + ':CLIENT_BYTES_EXCEED_ACK')
+                byte_complete['client'] = byte_complete['ack_kernel'] = False
+    if known_material != planned_receivers or len(content_ids) != 1:
         issues.append('MATERIAL_CONTENT_CHANGED_OR_UNKNOWN')
+    cpu, native_cpu = _sum_seconds(cpu_parts), _sum_seconds(native_parts)
+    if cpu is None:
+        issues.append('CPU_SUM_RANGE')
+    if native_cpu is None:
+        issues.append('NATIVE_CPU_SUM_RANGE')
+    coverage = slots_complete and records_complete
+    byte_totals = {k: byte_parts[k] if coverage and byte_complete[k]
+                   and byte_known[k] == expected_attempts else None for k in byte_parts}
     return dict(schema=SCHEMA, status='PASS' if not issues else 'FAIL', issues=issues,
                 planned_receivers=planned_receivers, observed_receiver_slots=len(workers),
-                planned_transport_attempts=planned_receivers * len(CASES),
+                planned_transport_attempts=expected_attempts,
                 completed_transport_attempts=attempts, verified_receptions=verified,
                 rejected_verifications=rejected, truncated_sender_cancellations=cancelled,
                 intentionally_discarded_client_responses=discarded,
-                distinct_verified_work_ids=len(work_ids - {None}),
-                distinct_material_content_ids=len(content_ids - {None}),
-                observed_local_reservations=permits,
+                distinct_verified_work_ids=len(work_ids) if coverage and work_complete else None,
+                observed_distinct_verified_work_ids_partial=len(work_ids),
+                distinct_material_content_ids=len(content_ids) if slots_complete
+                    and known_material == planned_receivers else None,
+                observed_distinct_material_content_ids_partial=len(content_ids),
+                observed_local_reservations=permits if slots_complete and known_permits == planned_receivers else None,
+                observed_local_reservations_partial=permits,
                 configured_sum_of_local_caps=LOCAL_CAP * planned_receivers,
-                independent_full_cell_calls=cell_calls, independent_full_cell_macs=macs,
-                receiver_wait4_cpu_seconds=cpu if known_wait4 == planned_receivers and cpu_complete else None,
-                observed_wait4_cpu_seconds_partial=cpu,
-                native_cpu_seconds_subset=native_cpu,
+                independent_full_cell_calls=cell_calls if coverage and cells_complete else None,
+                independent_full_cell_macs=macs if coverage and cells_complete else None,
+                observed_independent_full_cell_calls_partial=cell_calls,
+                observed_independent_full_cell_macs_partial=macs,
+                receiver_wait4_cpu_seconds=cpu if slots_complete and known_wait4 == planned_receivers
+                    and cpu_complete else None,
+                observed_wait4_cpu_seconds_partial=cpu, known_wait4_receivers=known_wait4,
+                native_cpu_seconds_subset=native_cpu if slots_complete and known_native == planned_receivers
+                    and native_complete else None,
+                observed_native_cpu_seconds_partial=native_cpu, known_native_cpu_receivers=known_native,
                 native_cpu_is_subset_not_additional=True,
-                tcp_application_received_by_receivers_bytes=tx,
-                tcp_application_received_by_clients_bytes=rx,
-                tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read=ack_kernel,
+                tcp_application_received_by_receivers_bytes=byte_totals['receiver'],
+                tcp_application_received_by_clients_bytes=byte_totals['client'],
+                tcp_ack_kernel_accepted_bytes_not_proof_of_peer_read=byte_totals['ack_kernel'],
+                observed_transport_bytes_partial=byte_parts, transport_byte_observation_counts=byte_known,
                 global_verification_cap_enforced=False,
                 actual_consumer_uses_observed=0, external_demand_authenticated=False,
                 independent_operators=False, production_activation=False, chainwork_awarded=0)

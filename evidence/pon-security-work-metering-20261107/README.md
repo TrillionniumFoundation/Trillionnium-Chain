@@ -1,0 +1,176 @@
+# Security-work metering continuation — 2026-11-07
+
+Qualification: **HOLD; actual chainwork 0; production activation false**.
+The implemented object is a research evidence contract for **classical
+security-seal step-oracle queries**. It does not establish a positive fresh
+producer neural-contraction floor. The existing lawful cached business result
+can be reused, including across newly produced security seals.
+
+This continuation starts from commit
+`4699b4079fca323f8db7b9d3644fbb159aa687c0`. The native implementation subtree
+is unchanged from `e95e2eb9f456a37ec8841def69db79f49fbba7cb`:
+`38b2aba7fd25cfddb0e45747d7716a5ada3e9321` (`trillionnium/`).
+The [sole plan](../../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
+and [metering specification](../../docs/development/specs/pon/GROUPED_SECURITY_WORK_METERING_V1.md)
+define the continuation. Existing native verification, reservation rules and
+required CI gates remain authoritative.
+
+## 1. Delivered implementation
+
+- [New v1 inspector](../../formal/pon-nakamoto-v1/grouped_work_profile_v1.py):
+  separately pinned policies, exact native query preimages and SHA256 answers,
+  immutable operation identities, declared use references, typed costs and
+  explicit unresolved predicates. A policy pin authenticates neither its issuer
+  nor the chronology supplied with the observations.
+- [Hardened existing cost reader](../../formal/pon-nakamoto-v1/grouped_fresh_deployment_cost_v0.py):
+  rejects missing verified work IDs, missing or negative bytes, overflowed CPU
+  totals, impossible child CPU subsets and unknown attempt states. Missing
+  observations remain unknown while known partial work is retained.
+- [Pinned historical reanalysis](../../formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py):
+  requires a separate raw-byte SHA256 pin and the complete ordered receiver
+  denominator `[1, 2, 4]`. It recomputes the reader from worker observations and
+  preserves earlier failures. Existing output paths are refused.
+- [Fixed-input query reinspection](replay_retained_query_trace.py):
+  reproduces all retained Python trace rows without fabricating missing native
+  queries, independent issuers, consumer demand or complete campaign costs.
+
+The selected unit is one classical call to the existing fixed security-seal
+step oracle. A complete seal has 64 steps. The diagnostic quantity
+`64 * floor(2^256 / (T + 1))` uses a preauthorized target in the conditional
+model; it is neither a measured physical cost nor an actual chainwork award.
+
+The new inspector reconciles costs for each operation separately. An honest
+verifier's 64 recorded queries cannot cover a producer's missing charge. Scope
+containment is explicit: disjoint descendants must fit every enclosing exact
+amount or upper bound, including through UNKNOWN intermediate nodes. CPU, GPU,
+wall time, bytes, energy, funding, seed hashes, seal queries and business MACs
+are separate units. Input aliases, cycles, duplicate JSON keys and bounded
+resource violations are rejected.
+
+## 2. Historical ROG fanout: accounting reanalysis
+
+The [original report](../pon-resource-transfer-20261107/rog/key-records/fanout-exact-rog/report.json)
+is 402,979 bytes with SHA256
+`915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96`.
+Its experiment source was `e95e2eb9f456a37ec8841def69db79f49fbba7cb`.
+The [new reanalysis](fanout-exact-rog-reanalysis-v1.json) binds those exact bytes
+and the new reader source hashes. It executes no new workload, native binary or
+packet-file readback. Original metadata remains a retained historical
+observation, not reauthenticated evidence.
+
+| Receiver slots | Original → reanalysis | Attempts | Verified receptions | Distinct work IDs | Full Cell calls | Reference MACs | Sum of local reservations |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | PASS → PASS | 6 | 3 | 2 | 4 | 148,032 | 256 |
+| 2 | PASS → PASS | 12 | 6 | 2 | 8 | 296,064 | 512 |
+| 4 | PASS → PASS | 24 | 12 | 2 | 16 | 592,128 | 1,024 |
+
+| Receiver slots | Enclosing receiver CPU (s) | Native CPU subset (s) | Received bytes | Client-read bytes | Kernel-accepted ACK bytes |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 0.309628 | 0.103199 | 17,654 | 8,372 | 11,229 |
+| 2 | 0.586721 | 0.202294 | 35,308 | 16,766 | 22,482 |
+| 4 | 1.198597 | 0.392033 | 70,616 | 33,511 | 44,937 |
+
+CPU values above are rounded only for display. Native CPU is a subset of
+receiver CPU and is not added again. Across the three topologies there are
+42 attempts, 21 verified receptions and 28 full Cell calls. The same two work
+IDs recur; they are not six distinct tickets or 21 independent useful jobs.
+The 1,792 reservations are the sum of local allowances, not a globally enforced
+public-network cap. All original observations were same-host TCP on ext4 with
+controlled operators. Actual independent customer demand and consumer uses
+remain unestablished.
+
+## 3. Complete retained Python trace reinspection
+
+This is a different historical run. The original
+[fresh-work report](../pon-fresh-work-floor-20261107/fresh-work/report.json)
+binds source `1e0eba75f4f4a4e24e17cbd0f263f915c1493ac7` and has SHA256
+`3e18ebd0437320941f452e66088f49dedd1f71e3c747fb4d1965d85945285ac3`.
+The [recorded transcript](../pon-fresh-work-floor-20261107/fresh-work/hash-transcript.ndjson)
+has SHA256
+`16c761002daf687fa16086fe2966b89d0443bf2c7dafbd1fb8df55eaea082e3d`.
+
+The [normalized observations](query-reinspection/observations.json.gz),
+[expected policy](query-reinspection/expected-policy.json),
+[assessment](query-reinspection/assessment.json) and
+[provenance](query-reinspection/provenance.json) retain all **1,088 Python step
+observations**: 1,024 helper crosscheck queries and 64 queries from the recorded
+untrusted producer control. They contain 1,088 distinct native inputs and 17
+complete seal traces. There are zero omitted Python trace rows and zero native
+counter rows promoted to observed transcripts.
+
+The selected 17 operations describe the trace subset, not all experiment work.
+The original denominator of 16 primary attempts and all 251 control records
+remains bound by the original report and named in provenance. Reader-assigned
+file-order coordinates are not trusted original clocks. All policy actors are
+declared as one controlled group. There are no fabricated demand or consumer-use
+records. Unknown physical costs, payers and beneficiaries remain explicit.
+The assessment reports **104 local issues and nine external obligations**, with
+public and coalition query totals unknown and qualification HOLD.
+
+The inspection itself recomputes hashes to check the old observations. These
+new inspection hashes are excluded from the original experiment's query counts
+and original physical-cost measurements.
+
+## 4. Validation record and preserved failures
+
+The focused standard-library suites passed **100 tests**: 41 inspector tests,
+41 accounting tests and 18 reanalysis tests. Their retained logs are
+[inspector](grouped-work-profile-v1-tests.log) and
+[accounting plus reanalysis](grouped-fanout-integrity-and-reanalysis-tests.log).
+An independent targeted review also rechecked the previously failing nested
+cost cases, UNKNOWN propagation, aliases/cycles and half-open authorization
+boundaries against the final inspector source.
+
+The broader [initial local validation](local-validation-history/summary.json)
+must not be called a complete PASS. All three discovery commands ran: 252
+tests comprised 247 passes, three Git-context errors and two native skips.
+The staging directory had no `.git` metadata or native binary. The complete
+logs and source hashes are retained unchanged in
+[local-validation-history](local-validation-history/SUMMARY.md).
+Exact-commit validation on a complete Git checkout is a separate gate; an
+updated receipt, when present, identifies its precise source and environment.
+
+The existing `test_grouped*.py` CI discovery already includes every new test
+module. No workflow, required gate or source-integrity check is weakened.
+
+## 5. External obligations still open
+
+The executable assessment lists all nine obligations explicitly:
+
+1. Authenticated policy, task and target issuers.
+2. Trusted prequery ordering and unomitted preprocessing.
+3. Complete public coalition and assisting-query coverage.
+4. Independent task supply and unbiased assignment.
+5. Current target, task and consumer state at actual use.
+6. Genuine demand, current consumer use and settlement.
+7. Authenticated meters and complete resource transfer.
+8. Cheapest legal implementation and physical-cost transfer.
+9. Adopted native consensus profile registration.
+
+The native owner's historical verification receipt does not prove current
+authorization at later journal commit or FinalUse. Separate keys or names do
+not prove independent operators. Local quotas do not establish public global
+coverage. Passing a structural fixture cannot satisfy these external facts.
+There is no Boolean input that enables qualification or positive chainwork.
+
+## 6. Reproduce the retained readings
+
+Run from the repository root with new output paths outside the source checkout:
+
+```bash
+bash scripts/project-preflight.sh
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  formal/pon-nakamoto-v1/experiments/reanalyze_grouped_fanout_v1.py \
+  --input evidence/pon-resource-transfer-20261107/rog/key-records/fanout-exact-rog/report.json \
+  --expected-sha256 915485a66d8b9ee4d1aadece413edb928274640a1830a840f818571b3042df96 \
+  --out /absolute/new-output/fanout-reanalysis.json
+PYTHONDONTWRITEBYTECODE=1 python3 \
+  evidence/pon-security-work-metering-20261107/replay_retained_query_trace.py \
+  --report evidence/pon-fresh-work-floor-20261107/fresh-work/report.json \
+  --trace evidence/pon-fresh-work-floor-20261107/fresh-work/hash-transcript.ndjson \
+  --out /absolute/new-output/query-reinspection
+```
+
+The reader outputs bind source hashes and the raw historical pins. Neither
+command reruns the historical workload. The policy digest uses the inspector's
+domain-separated `policy_digest()` and is not a raw JSON-file SHA256.

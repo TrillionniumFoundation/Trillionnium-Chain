@@ -1,0 +1,22 @@
+{
+  "bytecode_writes_disabled": true,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "formal/pon-nakamoto-v1",
+    "-p",
+    "test_fresh_work_resource_transfer_v0.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/89df848c3501/candidate",
+  "elapsed_seconds": 0.18386943800032896,
+  "exit_code": 0,
+  "finished_utc": "2026-11-07T17:31:40.635205+00:00",
+  "label": "fresh-resource-transfer",
+  "log": "/workspace/scratch/89df848c3501/evidence/final-local-validation/fresh-resource-transfer.log",
+  "started_utc": "2026-11-07T17:31:40.451208+00:00"
+}

@@ -1,0 +1,126 @@
+{
+  "files": [
+    {
+      "bytes": 10065,
+      "path": "README.md",
+      "sha256": "239ae23a82a8683c4b23a65656336e05eeb6705fafc0339fd6e1ad7fd8d66a92"
+    },
+    {
+      "bytes": 2434,
+      "path": "acceptance.json",
+      "sha256": "6b72f29e51d898a17e01bfb49c05fae75279fe014f0f90378b2665545eaa629e"
+    },
+    {
+      "bytes": 342,
+      "path": "fanout-exact-rog-reanalysis-v1-cli.log",
+      "sha256": "29c61bfa10b1d21600468c9a068099926c7d6f39685c792cab4158315603ceba"
+    },
+    {
+      "bytes": 74029,
+      "path": "fanout-exact-rog-reanalysis-v1.json",
+      "sha256": "bc3b5d56ec2d985343b96b9de5fe606942820668dcba778f2c2085ed8d691e98"
+    },
+    {
+      "bytes": 11213,
+      "path": "grouped-fanout-integrity-and-reanalysis-tests.log",
+      "sha256": "0061f3f861cfbd9e1e04a80abaa7c5f12730bc46c64e0081a251234d28a0f86a"
+    },
+    {
+      "bytes": 6756,
+      "path": "grouped-work-profile-v1-tests.log",
+      "sha256": "61abb0ea2478acab5784af90ca11fad939078c7f39deaf7addda11c6defb0172"
+    },
+    {
+      "bytes": 4252,
+      "path": "local-validation-history/SUMMARY.md",
+      "sha256": "2647b863f986abe3e9827027b4d642f93a9b6cc57f8156fc432df79eab523704"
+    },
+    {
+      "bytes": 4896,
+      "path": "local-validation-history/entry-inventory.json",
+      "sha256": "e0b3995c5577a73775442cc05870346af38e28d969427f9aab49b87b9f489a3c"
+    },
+    {
+      "bytes": 642,
+      "path": "local-validation-history/fresh-query-floor-execution.json",
+      "sha256": "4c4c16462d4b3ec7d20e2fa6e27863f1d41506a0b93af9f3342b92ad70a436ab"
+    },
+    {
+      "bytes": 4912,
+      "path": "local-validation-history/fresh-query-floor.log",
+      "sha256": "273162fb6378135ae166da94f11c97a80a6507e908ff61f104ca9ced8388a81e"
+    },
+    {
+      "bytes": 660,
+      "path": "local-validation-history/fresh-resource-transfer-execution.json",
+      "sha256": "df172aa18535a959318fac4a89fbf167b04740c901aca55382b601e3138908e0"
+    },
+    {
+      "bytes": 2930,
+      "path": "local-validation-history/fresh-resource-transfer.log",
+      "sha256": "579eb25451b1de29e83015323ac905e04ddbce117bad2b22f5de7a66e47cfa34"
+    },
+    {
+      "bytes": 603,
+      "path": "local-validation-history/grouped-execution.json",
+      "sha256": "5aced2e4a7349518b8b95f4a9568399232da34b48429c46c339c90ab5da6f09c"
+    },
+    {
+      "bytes": 44411,
+      "path": "local-validation-history/grouped.log",
+      "sha256": "94b5259f874377076ef433442d1fa3c71c54c852dfe3b68080408b7b30f30bea"
+    },
+    {
+      "bytes": 1817,
+      "path": "local-validation-history/sha256-manifest.json",
+      "sha256": "8da7518410c3d674df1ee5157921c775117972991d162324f50aba008be41990"
+    },
+    {
+      "bytes": 11357,
+      "path": "local-validation-history/summary.json",
+      "sha256": "18907592c09e52a065284750ebbedd2493744e873f177f2ec9de45f287f0cb75"
+    },
+    {
+      "bytes": 7195,
+      "path": "local-validation-history/syntax-and-whitespace.json",
+      "sha256": "a650b43a77803dcd4feca365d0f797b2120dac30ce48c6c14cc1e7d4145c60d4"
+    },
+    {
+      "bytes": 2102,
+      "path": "local-validation-history/syntax-and-whitespace.log",
+      "sha256": "4b439fa50065c1bb59ee732d9180c9446550e37c2d2602cebbbb555f29c2b90a"
+    },
+    {
+      "bytes": 40326,
+      "path": "query-reinspection/assessment.json",
+      "sha256": "08dd515716e1f8af9199f40a33260516e4ecdb76550fffadf6a51056c405f2d8"
+    },
+    {
+      "bytes": 22736,
+      "path": "query-reinspection/expected-policy.json",
+      "sha256": "f9dca2666f474f90474fab5833470b176e1838d5857db27f4aca91f705e83e86"
+    },
+    {
+      "bytes": 111091,
+      "path": "query-reinspection/observations.json.gz",
+      "sha256": "806468794f688725d0168dd2030b5f4b63d6085fa6def5257c4b4ee81d63a256"
+    },
+    {
+      "bytes": 2337,
+      "path": "query-reinspection/provenance.json",
+      "sha256": "bf31edd0279a98a4b5b5437b06cfce5a105a69bd523a9ebd7da065f1ed304903"
+    },
+    {
+      "bytes": 8758,
+      "path": "replay_retained_query_trace.py",
+      "sha256": "71b6c30bfe78b910b075126279e30165d021ae4df47b44455f05d47ce8625c3e"
+    },
+    {
+      "bytes": 1349,
+      "path": "retained-inputs-manifest.json",
+      "sha256": "c0531c2d103ee9a4c6df331554a0fe9fe6b84a616003c89f7908801ad793eab1"
+    }
+  ],
+  "schema": "pon-security-work-metering-evidence-manifest-v1",
+  "self_excluded": true
+}
