@@ -1,0 +1,6 @@
+[
+  "python3",
+  "-B",
+  "scripts/refresh_distributed_source_inventory.py",
+  "--check"
+]

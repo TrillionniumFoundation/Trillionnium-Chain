@@ -1,0 +1,11 @@
+{
+  "name": "test_applicability.py",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_applicability.py"
+  ],
+  "exit_code": 124,
+  "elapsed_seconds": 180.0048880840186,
+  "timed_out": true
+}

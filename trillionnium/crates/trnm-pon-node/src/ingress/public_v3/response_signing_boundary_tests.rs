@@ -162,6 +162,7 @@ fn with_server(node: Node, pq: bool, test: impl FnOnce(&Fixture)) -> PublicMetri
         let _stop = Stop(stop.clone());
         // This genuine reply synchronizes startup before any Node-lock gate.
         assert!(fixture.call(&Request::Head).unwrap().ok);
+        fixture.complete_record(0);
         test(&fixture);
         stop.store(true, Ordering::Release);
         service.join().unwrap().unwrap()
@@ -304,9 +305,11 @@ impl Fixture {
 
     fn complete_record(&self, index: usize) -> PublicRequestObservation {
         observed(|| {
-            let record = self.record(index);
-            record.complete.then_some(record)
-        })
+            (self.observer.lifecycle_closed_for_test(index) == Some((true, true))).then_some(())
+        });
+        let record = self.record(index);
+        assert!(record.complete && !record.observation_failed);
+        record
     }
 
     fn begin_request(&self, request: &Request) -> PendingResponse {
@@ -428,7 +431,7 @@ fn submit_ack_keeps_its_authentication_slot_while_a_real_head_competes() {
     let metrics = with_server(node, false, |fixture| {
         let owner = fixture.owner.lock().unwrap();
         let pending = fixture.begin_request(&request);
-        observed(|| fixture.record(pending.index).dispatch_started.then_some(()));
+        observed(|| (fixture.authentication().pending == 1).then_some(()));
         assert_eq!(fixture.authentication().pending, 1);
         thread::scope(|scope| {
             let (started, entered) = mpsc::channel();
@@ -470,7 +473,7 @@ fn classical_and_pq_head_responses_use_their_reserved_slots() {
         with_server(node, pq, |fixture| {
             let owner = fixture.owner.lock().unwrap();
             let pending = fixture.begin_request(&Request::Head);
-            observed(|| fixture.record(pending.index).dispatch_started.then_some(()));
+            observed(|| (fixture.authentication().pending == 1).then_some(()));
             assert_eq!(fixture.authentication().pending, 1);
             thread::scope(|scope| {
                 let (started, entered) = mpsc::channel();
@@ -508,10 +511,15 @@ fn tcp_cancellation_keeps_real_response_signing_interval_until_worker_returns() 
                 // interval has not settled. This gate does not pretend that the
                 // signing algorithm is still running or measure attack cost.
                 pending.socket.shutdown(Shutdown::Both).unwrap();
-                let disconnected = observed(|| {
-                    let record = fixture.record(pending.index);
-                    record.connection_closed.then_some(record)
+                observed(|| {
+                    fixture
+                        .observer
+                        .lifecycle_closed_for_test(pending.index)
+                        .filter(|(connection_closed, _)| *connection_closed)
+                        .map(|_| ())
                 });
+                let disconnected = fixture.record(pending.index);
+                assert!(!disconnected.observation_failed);
                 assert_eq!(disconnected.terminal_phase, Some("work"));
                 assert_eq!(
                     disconnected.terminal_error_code,

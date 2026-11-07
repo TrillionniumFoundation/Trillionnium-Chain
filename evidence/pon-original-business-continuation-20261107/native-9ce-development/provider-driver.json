@@ -1,0 +1,7 @@
+{
+  "scope": "local dependency preparation; not GitHub Actions or original business gate",
+  "exit_code": 0,
+  "script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "elapsed_seconds": 93.1102786064148,
+  "exports_path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/provider.exports"
+}

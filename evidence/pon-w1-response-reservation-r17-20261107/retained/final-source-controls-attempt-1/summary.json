@@ -1,0 +1,164 @@
+{
+  "schema": "w1-r17-final-source-control-results-v1",
+  "head": "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+  "checks": [
+    {
+      "name": "source-before",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+        "--output",
+        "/home/qian-qi/chain-w1-ingress-r17-20261107/validation/final-source-controls-attempt-1/source-before.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.858237989945337,
+      "timed_out": false
+    },
+    {
+      "name": "distributed-inventory",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.11547217704355717,
+      "timed_out": false
+    },
+    {
+      "name": "pq-exact-source",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4154490469954908,
+      "timed_out": false
+    },
+    {
+      "name": "repository-markdown-contracts",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 101.05379640986212,
+      "timed_out": false
+    },
+    {
+      "name": "test_project_boundary.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.787263779900968,
+      "timed_out": false
+    },
+    {
+      "name": "test_repository.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_repository.py"
+      ],
+      "exit_code": 124,
+      "elapsed_seconds": 180.00920026306994,
+      "timed_out": true
+    },
+    {
+      "name": "test_applicability.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_applicability.py"
+      ],
+      "exit_code": 124,
+      "elapsed_seconds": 180.0048880840186,
+      "timed_out": true
+    },
+    {
+      "name": "test_ci_contract.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 39.823397506959736,
+      "timed_out": false
+    },
+    {
+      "name": "test_ci_source_integrity.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.728099629050121,
+      "timed_out": false
+    },
+    {
+      "name": "test_pq_research_integration.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 74.1555550058838,
+      "timed_out": false
+    },
+    {
+      "name": "test_pon_public_v3_policy_read.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_policy_read.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.16563681419938803,
+      "timed_out": false
+    },
+    {
+      "name": "test_pon_public_v3_phase_read.py",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pon_public_v3_phase_read.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1685263249091804,
+      "timed_out": false
+    },
+    {
+      "name": "source-after",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+        "--output",
+        "/home/qian-qi/chain-w1-ingress-r17-20261107/validation/final-source-controls-attempt-1/source-after.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.522113265004009,
+      "timed_out": false
+    }
+  ],
+  "all_source_checks_pass": false,
+  "native_acceptance_granted": false
+}

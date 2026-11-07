@@ -1,0 +1,98 @@
+{
+  "schema": "retained-business-failure-reader-check-v1",
+  "head": "96e1eede091153199894532c91430bfc0f8e4572",
+  "scope": "Four retained failure readbacks using current local reader bytes, not a clean-source or native campaign qualification",
+  "readers": {
+    "scripts/ci/run_from_zero_native.py": "baa7cba8096a3908c9b7ebe0705949b95061191ec78846006527fd80e6a5a0c8",
+    "scripts/ci/run_w1_fresh_service_v1.py": "143b0f26f914798fc6650afc08d2f73379bcf82b7fd84cc318ca2fb83299d324",
+    "scripts/ci/run_history_native.py": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797",
+    "scripts/ci/check_required_native_test.py": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+  },
+  "retained_failures": [
+    {
+      "kind": "original",
+      "artifact_id": 13566551605,
+      "run_id": 42352433680,
+      "source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "report_sha256": "3f3be3ea389fbfd45969220dc3c1151bd9fb5d69b96f4c885cba633911c2b868",
+      "native_process_exit_code": 0,
+      "named_native_log": {
+        "accepted": true,
+        "error": null
+      },
+      "strict_reader": {
+        "accepted": false,
+        "error": "ValueError: CONFIRMATION_TARGET"
+      },
+      "phase_confirmed_transactions": [
+        1,
+        0
+      ],
+      "phase_finite_business_target_met": [
+        true,
+        false
+      ]
+    },
+    {
+      "kind": "fresh",
+      "artifact_id": 13566551605,
+      "run_id": 42352433680,
+      "source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "report_sha256": "cde4d4aef0c4dc0224c1f1f78c78778bbe43b8e2d47f6e6ae9603a436392286f",
+      "native_process_exit_code": 101,
+      "named_native_log": {
+        "accepted": false,
+        "error": "ValueError: required-native-test: expected one passed, zero failed/ignored/measured"
+      },
+      "strict_reader": {
+        "accepted": false,
+        "error": "ValueError: FRESH_BUSINESS_TARGET"
+      },
+      "phase_confirmed_transactions": [
+        1,
+        0
+      ],
+      "phase_finite_business_target_met": [
+        true,
+        false
+      ]
+    },
+    {
+      "kind": "history-x64",
+      "artifact_id": 13568123690,
+      "run_id": 42352433738,
+      "source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "summary_sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+      "native_process_exit_code": 101,
+      "named_native_log": {
+        "accepted": false,
+        "error": "ValueError: required-native-test: expected one passed, zero failed/ignored/measured"
+      },
+      "strict_reader": {
+        "accepted": false,
+        "error": "ValueError: HISTORY_NATIVE_COMPLETION_REQUIRED"
+      },
+      "retained_summary_passed": false
+    },
+    {
+      "kind": "history-arm64",
+      "artifact_id": 13568038035,
+      "run_id": 42352433738,
+      "source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "summary_sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+      "native_process_exit_code": 101,
+      "named_native_log": {
+        "accepted": false,
+        "error": "ValueError: required-native-test: expected one passed, zero failed/ignored/measured"
+      },
+      "strict_reader": {
+        "accepted": false,
+        "error": "ValueError: HISTORY_NATIVE_COMPLETION_REQUIRED"
+      },
+      "retained_summary_passed": false
+    }
+  ],
+  "all_four_remain_refused": true,
+  "native_execution": false,
+  "github_actions_execution": false
+}

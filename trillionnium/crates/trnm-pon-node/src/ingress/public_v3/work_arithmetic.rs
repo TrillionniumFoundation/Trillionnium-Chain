@@ -1,6 +1,8 @@
 //! Separate opt-in resource profile for exact mathematical-fact reuse.
 //!
-//! Default clients and servers use the current base policy and raw verifier.
+//! Default clients and servers use the current base policy and the complete
+//! verifier for valid/new proofs. Ordinary classical service startup may reuse
+//! only previously completed mathematical refusals through its bounded cache.
 //! This owner is fresh and empty, volatile and local to one explicitly configured
 //! server. Its setup allocation is not a guest CPU charge. All actual request
 //! lookup/comparison/reconstruction/publication work runs inside the original

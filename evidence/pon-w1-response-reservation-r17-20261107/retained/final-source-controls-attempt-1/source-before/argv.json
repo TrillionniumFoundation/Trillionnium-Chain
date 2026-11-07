@@ -1,0 +1,11 @@
+[
+  "python3",
+  "-B",
+  "scripts/ci/verify_ci_source.py",
+  "--kind",
+  "head",
+  "--expected-head",
+  "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+  "--output",
+  "/home/qian-qi/chain-w1-ingress-r17-20261107/validation/final-source-controls-attempt-1/source-before.json"
+]

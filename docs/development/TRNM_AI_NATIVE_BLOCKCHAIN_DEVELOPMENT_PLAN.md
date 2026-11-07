@@ -17,6 +17,18 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Hepta publication and concurrent-source reconciliation, 2026-11-07 UTC:**
+[PR 780](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/780)
+published the exact preliminary r17 head 33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2
+through ProfHepta's normal local GitHub channel. Its selected native controls
+retained 42 passed / 1 failed / 0 ignored; the strict EOF observation failure and
+two local source-control timeouts are preserved in the
+[r17 preliminary evidence](../../evidence/pon-w1-response-reservation-r17-20261107/README.md).
+Reconcile the concurrent d26e047dedfcdb17a1ac2c47cc26e6f1185f6b89 source without
+replacing either history. Keep the original resource gates and r17 identity.
+The test-only lifecycle synchronization correction and final combined source
+still require their own exact-source native and hosted observations; keep HOLD.
+
 **Response-signing reservation continuation, 2026-11-07 America/New_York:**
 Preserve the concurrently verified integration head
 `96e1eede091153199894532c91430bfc0f8e4572` when composing the new source with the
@@ -76,6 +88,45 @@ workspace run retained 4,344 passed, 77 failed and 70 ignored across 385 targets
 locally. That delivery recorded account-suspended HTTP 403 through its connected
 GitHub route, no publication and no new hosted CI result. These retained results
 do not qualify the r17 successor. Keep HOLD.
+
+**Original business gates, continued 2026-11-07 America/New_York:**
+Continue the same integration branch after published
+`96e1eede091153199894532c91430bfc0f8e4572`. ProfHepta is the project
+administrator and the designated local GitHub publication identity. Ordinary
+classical V3 service startup installs a bounded exact mathematical refusal
+cache (256 slots, 30 seconds, at most 32 KiB retained Rust objects); a prior
+explicit positive configuration wins. Only completed Transcript/Product failures
+may be reused. Full proof bytes, profile, challenge, task and target identify a
+fact; new proofs and valid work retain native verification. Original caller,
+current context, cancellation, deadline and actual CPU ownership still apply.
+PQ, Growth and the separate arithmetic profile do not acquire this default.
+Per-request observations distinguish a found fact, a returned cached refusal,
+native-verifier entry and actual replay, including incomplete observations.
+The fresh-challenge reader must refuse every exact-fact hit and inconsistent
+path; it preserves the original business requirement and legacy records.
+
+Classical Legacy admission may lend a fully read-back historical parent State
+once to its child's readback in the same original writer transaction, after
+all intended writes. This excludes active-parent KV reads, all PQ/Growth/
+Authenticated profiles, and a child's actual snapshot path. Actual SQL linkage,
+delta values, roots, complete parent equality, closed schema, no-write epoch,
+transaction identity and final callback checks remain required. Failure to
+qualify the closed schema retains both original reads; changed transaction
+identity remains an integrity error. See [State recovery](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md)
+and the [business continuation record](../../evidence/pon-original-business-continuation-20261107/README.md).
+These changes do not complete touched-set migration or close the original
+4-second/16-worker service or 4,105-block History gates. Preserve the e70
+baseline 1/1 at 3.098539910 seconds, pressure 0/1, x64 2,362/4,105 and ARM
+4,104/4,105 with all rows but active genesis and cancelled cursor 3,404.
+
+Preserve the existing PR path and add a separate real push source entry only
+for the same integration branch. Freeze the pushed head and resolver-observed
+main, reproduce the canonical ordered-parent merge in every worker, and retain
+both success and attempted/unverified failure contexts. The original complete
+source verifier, 54 native command scripts and all 34 original priority/W1
+matrix lanes remain required. The two workflows may contribute to one merged
+result only when their head, base and merge identities all agree. These source
+controls do not substitute for original-resource business observations.
 
 **Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate from

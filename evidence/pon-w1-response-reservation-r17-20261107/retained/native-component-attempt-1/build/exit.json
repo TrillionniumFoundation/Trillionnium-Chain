@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "cargo",
+    "+1.95.0",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--all-features",
+    "--locked",
+    "--offline",
+    "--no-run",
+    "-j",
+    "2",
+    "--message-format=json"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "started_utc": "2026-11-07T14:53:16.424402+00:00",
+  "elapsed_seconds": 673.4706711869221
+}

@@ -219,8 +219,10 @@ for the cache owner outside native cancellation checkpoints. A cache miss still
 executes complete W1 verification. Skipping publication cannot change the result
 of an already completed refusal. Only exact Transcript/Product refusals may be
 reused, with the original bounded lifetime, full proof key and current caller
-authority checks. The cache remains opt-in and supplies no fresh-trace cost
-bound, public-service fairness, or permission to omit native verification.
+authority checks. Ordinary classical V3 installs the [bounded default](ADMISSION_SECURITY.md);
+explicit settings win, while PQ/Growth/arithmetic profiles stay excluded.
+It supplies no fresh-trace cost bound, public-service fairness, or permission to
+omit native verification.
 
 The kernel-parent checker still reopens and reads all five current limit files
 at every original check. CPU-token parsing and slash-delimited membership avoid

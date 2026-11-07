@@ -1,0 +1,49 @@
+{
+  "schema": "w1-r17-native-component-results-v1",
+  "head": "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+  "binary_sha256": "2b63ca12a98d54fab9f195bb3ddb702a4adc75230c5b017f015d64cea0414193",
+  "results": [
+    {
+      "name": "response-signing-boundaries",
+      "selector": "ingress::public_v3::response_signing_boundary_tests::",
+      "exit_code": 101,
+      "passed": 5,
+      "failed": 1,
+      "ignored": 0,
+      "expected_minimum": 6,
+      "accepted_component_result": false
+    },
+    {
+      "name": "authenticated-caller-boundaries",
+      "selector": "ingress::public_v3::authentication_boundary_tests::",
+      "exit_code": 0,
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0,
+      "expected_minimum": 3,
+      "accepted_component_result": true
+    },
+    {
+      "name": "classical-authentication",
+      "selector": "ingress::public_v3::authentication_cpu::tests::",
+      "exit_code": 0,
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0,
+      "expected_minimum": 4,
+      "accepted_component_result": true
+    },
+    {
+      "name": "pq-identity",
+      "selector": "ingress::public_v3::pq_identity::tests::",
+      "exit_code": 0,
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0,
+      "expected_minimum": 6,
+      "accepted_component_result": true
+    }
+  ],
+  "host_qualification_claimed": false,
+  "all_component_controls_pass": false
+}

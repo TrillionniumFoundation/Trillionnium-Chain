@@ -1,5 +1,6 @@
 //! Optional bounded local measurements. Never ledger or transport authority.
 use super::work_arithmetic::PublicArithmeticWorkObservation;
+use super::work_rejection::PublicRejectionWorkObservation;
 use serde::{ser::SerializeStruct, Serialize};
 use std::fmt::{self, Write};
 use std::sync::{
@@ -354,6 +355,11 @@ pub struct PublicRequestObservation {
     /// verification; it must not be interpreted as a fresh arithmetic replay.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub work_arithmetic: Option<PublicArithmeticWorkObservation>,
+    /// Exact mathematical refusals may avoid replay. The legacy full_work
+    /// fields still measure the complete verification attempt and actual CPU;
+    /// only this path observation identifies a cached refusal or native replay.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub work_rejection: Option<PublicRejectionWorkObservation>,
     pub dispatch_started: bool,
     pub dispatch_accepted: Option<bool>,
     pub dispatch_error_code: Option<&'static str>,
@@ -411,6 +417,7 @@ impl PublicRequestObservation {
             full_work_accepted: None,
             full_work_thread_cpu_ns: None,
             work_arithmetic: None,
+            work_rejection: None,
             dispatch_started: false,
             dispatch_accepted: None,
             dispatch_error_code: None,
@@ -443,6 +450,7 @@ struct TaskProgress {
     full_work_accepted: Option<bool>,
     full_work_thread_cpu_ns: Option<u64>,
     work_arithmetic: Option<PublicArithmeticWorkObservation>,
+    work_rejection: Option<PublicRejectionWorkObservation>,
     dispatch_started: bool,
     dispatch_accepted: Option<bool>,
     dispatch_error_code: Option<&'static str>,
@@ -573,6 +581,7 @@ impl PublicRequestObserver {
                         value.full_work_accepted = task.full_work_accepted;
                         value.full_work_thread_cpu_ns = task.full_work_thread_cpu_ns;
                         value.work_arithmetic = task.work_arithmetic;
+                        value.work_rejection = task.work_rejection;
                         value.dispatch_started = task.dispatch_started;
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_error_code = task.dispatch_error_code;
@@ -652,6 +661,17 @@ impl PublicRequestObserver {
             monotonic_epoch_is_observer_local: true,
             stream_bytes_are_physical_network_bytes: false,
         }
+    }
+
+    /// Test synchronization reads only the actual owners' published closure.
+    /// Repeated diagnostic snapshots could contend with optional try-lock writes.
+    #[cfg(test)]
+    pub(super) fn lifecycle_closed_for_test(&self, index: usize) -> Option<(bool, bool)> {
+        let cell = self.0.rows.get(index)?.get()?;
+        Some((
+            cell.connection_closed.load(Ordering::Acquire),
+            cell.task_closed.load(Ordering::Acquire),
+        ))
     }
 
     #[cfg(test)]
@@ -945,6 +965,11 @@ impl TaskObservation {
     pub(super) fn work_arithmetic(&self, observation: PublicArithmeticWorkObservation) {
         self.update_task(|r| {
             r.work_arithmetic = Some(observation);
+        });
+    }
+    pub(super) fn work_rejection(&self, observation: PublicRejectionWorkObservation) {
+        self.update_task(|r| {
+            r.work_rejection = Some(observation);
         });
     }
     pub(super) fn work_finished(&self, cpu: Option<u64>, accepted: bool) {

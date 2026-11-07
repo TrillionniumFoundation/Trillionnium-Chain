@@ -15,6 +15,7 @@ mod historical_commitment;
 #[cfg(test)]
 mod historical_commitment_tests;
 mod history_page;
+mod legacy_admission_readback;
 #[cfg(test)]
 mod legacy_reorg_observation_tests;
 #[cfg(test)]
@@ -1101,14 +1102,29 @@ impl WorkCheckedPacket {
         cache: &pon_work::rejection_cache::RejectionCache,
         progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
     ) -> Result<Self> {
+        Self::verify_with_rejection_cache_observed(
+            packet,
+            cache,
+            progress,
+            &mut pon_work::rejection_cache::RejectionObservation::default(),
+        )
+    }
+
+    pub(crate) fn verify_with_rejection_cache_observed(
+        packet: Packet,
+        cache: &pon_work::rejection_cache::RejectionCache,
+        progress: &mut impl FnMut(pon_work::VerificationProgress) -> Result<()>,
+        observation: &mut pon_work::rejection_cache::RejectionObservation,
+    ) -> Result<Self> {
         let h = &packet.header;
         let work = cache
-            .verify_with_progress(
+            .verify_with_observation(
                 h.challenge(),
                 h.work_task,
                 h.target,
                 &packet.proof,
                 progress,
+                observation,
             )
             .map_err(|error| match error {
                 pon_work::VerificationError::Relation(error) => {
@@ -1232,6 +1248,9 @@ pub struct Node {
     // Immutable source DDL for the existing ordinary authenticated writer.
     // No SQL/schema observation from a prior operation is an authority here.
     post_write_schema: Option<BTreeMap<String, String>>,
+    // Separate from authenticated/reorganization graph reuse. This source DDL
+    // only nominates ordinary Legacy admission for a fresh same-writer scope.
+    legacy_admission_schema: Option<BTreeMap<String, String>>,
     #[cfg(test)]
     // Fault injection only; the production public endpoint always uses1024.
     public_history_test_sql_limit: Option<u64>,
@@ -2078,6 +2097,10 @@ impl Node {
             fs::remove_file(marker)?;
             sync_dir(&directory)?;
         }
+        let legacy_admission_schema = (state_backend == StateBackend::Legacy
+            && !pq_accounts_v2::enabled(&settings.app)
+            && !growth_profile_v2::enabled(&settings.app))
+        .then(|| expected_schema.clone());
         let mut node = Self {
             db,
             owner,
@@ -2093,6 +2116,7 @@ impl Node {
             expected_schema: expected_schema.clone(),
             post_write_schema: (state_backend == StateBackend::AuthenticatedV1)
                 .then_some(expected_schema),
+            legacy_admission_schema,
             #[cfg(test)]
             public_history_test_sql_limit: None,
             #[cfg(test)]
@@ -3735,7 +3759,16 @@ impl Node {
         &self,
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
+        readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+    ) -> Result<State> {
+        self.state_at_with_replay_prefix(tip, progress, readback, None)
+    }
+    fn state_at_with_replay_prefix(
+        &self,
+        tip: Hash,
+        progress: &mut dyn FnMut() -> Result<()>,
         mut readback: Option<&mut native_authenticated::PostWriteReadback<'_>>,
+        mut prefix: Option<&mut legacy_admission_readback::Parent<'_, '_>>,
     ) -> Result<State> {
         ensure(
             self.state_backend != StateBackend::PermanentAccountGrowthV2,
@@ -3755,6 +3788,14 @@ impl Node {
         let mut cur = tip;
         let (mut state, mut commitment): (State, Option<CheckedCommitment>) = loop {
             progress()?;
+            if let Some(state) = prefix
+                .as_deref_mut()
+                .map(|prefix| prefix.take_if_current(&self.db, tip, cur))
+                .transpose()?
+                .flatten()
+            {
+                break (state, None);
+            }
             let row = self.record(cur)?;
             let snapshot = self
                 .db
@@ -4887,7 +4928,11 @@ impl Node {
         } = admission;
         let h = &packet.header;
         let id = packet.id()?;
-        let progress = control.progress;
+        let progress = |point: ExecutionProgress| -> Result<()> {
+            #[cfg(test)]
+            legacy_admission_readback::test_progress(&self.db, point)?;
+            (control.progress)(point)
+        };
         ensure(
             h.state == output.root && h.receipts == sequence_root("receipts", &output.receipts),
             "ROOT",
@@ -4913,11 +4958,21 @@ impl Node {
             &self.db,
             rusqlite::TransactionBehavior::Immediate,
         )?;
+        let legacy_readback_schema = match self.legacy_admission_readback_schema() {
+            // An active-parent read comes from KV, while its child's original
+            // path still reads historical snapshots/deltas. Those obligations
+            // are different and must never borrow this common-prefix path.
+            Some(expected) if !h.height.is_multiple_of(128) && h.parent != self.active()?.0 => {
+                Some(expected)
+            }
+            _ => None,
+        };
         // This is the existing c165 executed-transaction owner, captured before
         // any callback or write. total_changes alone cannot detect an ABA or DDL.
         let original_readback_owner = self
             .post_write_schema
             .as_ref()
+            .or(legacy_readback_schema)
             .map(|_| {
                 trnm_sqlite_io_boundary::TransactionScope::capture(&tx)
                     .map_err(native_authenticated::readback_scope_error)
@@ -5019,6 +5074,23 @@ impl Node {
                         .zip(self.post_write_schema.as_ref()),
                 )?;
             }
+            // All intended writes, including their triggers, precede this
+            // baseline. A failed schema qualification keeps the original two
+            // full replays; a replaced original writer is an integrity error.
+            let mut legacy_readback = original_readback_owner
+                .as_ref()
+                .zip(legacy_readback_schema)
+                .map(|(owner, expected)| {
+                    native_authenticated::PostWriteReadback::new(
+                        &tx,
+                        &self.settings,
+                        id,
+                        owner,
+                        expected,
+                    )
+                })
+                .transpose()?
+                .flatten();
             // Re-read after every write/trigger, while rollback can still remove the
             // whole block. A snapshot cannot conceal an omitted canonical delta.
             ensure(
@@ -5029,20 +5101,29 @@ impl Node {
                 "STORAGE_WRITE",
             )
             .map_err(Error::local_integrity)?;
-            ensure(
-                self.state_at_with_readback(
-                    h.parent,
+            if let Some(scope) = legacy_readback.as_mut() {
+                self.check_legacy_admission_states(
+                    (h.parent, id),
+                    (&prior, &output.state),
                     &mut || progress(ExecutionProgress::BeforeDurableCommit),
-                    publication_readback.as_mut(),
-                )? == prior
-                    && self.state_at_with_readback(
-                        id,
+                    scope,
+                )?;
+            } else {
+                ensure(
+                    self.state_at_with_readback(
+                        h.parent,
                         &mut || progress(ExecutionProgress::BeforeDurableCommit),
                         publication_readback.as_mut(),
-                    )? == output.state,
-                "STORAGE_WRITE",
-            )
-            .map_err(Error::local_integrity)?;
+                    )? == prior
+                        && self.state_at_with_readback(
+                            id,
+                            &mut || progress(ExecutionProgress::BeforeDurableCommit),
+                            publication_readback.as_mut(),
+                        )? == output.state,
+                    "STORAGE_WRITE",
+                )
+                .map_err(Error::local_integrity)?;
+            }
             crate::ancestry_index::verify_inserted(&tx, index_context, &inserted_ancestry)
                 .map_err(Error::local_integrity)?;
             self.check_active_before_commit_with_readback(
@@ -5052,6 +5133,11 @@ impl Node {
             progress(ExecutionProgress::BeforeDurableCommit)?;
             if let Some(scope) = publication_readback.as_mut() {
                 scope.validate_consumed(&tx)?;
+            }
+            if let Some(scope) = legacy_readback.as_mut() {
+                // Any use of the shared prefix stays fenced until AFTER the
+                // last active/ancestry/control check. Never re-stamp this scope.
+                scope.require_unchanged_after_last_write(&tx)?;
             }
             Ok(())
         })();

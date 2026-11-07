@@ -1,0 +1,13 @@
+{
+  "schema": "w1-r17-integrated-commit-v1",
+  "head": "33fdb7a2721ee8e4ff42a7ab0a7b57a90ba254d2",
+  "tree": "484bcf680f416748827d8972de6a6161a1d0a3f7",
+  "parents": [
+    "96e1eede091153199894532c91430bfc0f8e4572",
+    "85bc6bc9274eab363afca83f3a1d750c046df0d7"
+  ],
+  "branch": "fix/chain-w1-ingress-integrated-20261107",
+  "worktree_status": "",
+  "source_scope": "committed-objects-and-materialized-runtime-not-yet-full-checkout",
+  "lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be"
+}
