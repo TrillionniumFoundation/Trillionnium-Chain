@@ -1,0 +1,45 @@
+{
+  "job_id": "1a1b6b58336-12894-611",
+  "label": "first-archive-raw",
+  "logs_retained": [
+    {
+      "bytes": 777,
+      "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/stdout.log",
+      "sha256": "18ea3a271c0f50a0fd3e092ff8a012dee44cc8190ff489f5d670cbeec3d91f5f"
+    },
+    {
+      "bytes": 0,
+      "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 498,
+      "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/exit.json",
+      "sha256": "b6000f170c74e85b624038ba6695137d2c68f06bbf98a437d98182dbb815afb3"
+    }
+  ],
+  "observed_files": [
+    "child.json",
+    "exit.json",
+    "exit.witness.json",
+    "launch.json",
+    "launch.lock",
+    "owner-intent.json",
+    "owner.lock",
+    "request.json",
+    "runner.py",
+    "started.json",
+    "stderr.log",
+    "stdout.log"
+  ],
+  "runtime_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b6b58336-12894-611",
+  "source": {
+    "bytes": 1824,
+    "path": "publication-materialization-v5/runtime-jobs/1a1b6b58336-12894-611/actual-shell-command.sh",
+    "sha256": "c9c9bb6c1685051a969d7452b612899ee58f1add9bbbece25fcdf95d2b903cd5"
+  },
+  "source_candidates": [
+    "request.json.args"
+  ],
+  "source_retained": true
+}

@@ -1,0 +1,49 @@
+{
+  "artifacts": [
+    {
+      "bytes": 31345,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-91-target-report-v1/native-five-targets.json",
+      "sha256": "ed43cfcf6bce9754ba531b723c1be702dadeced2835d4c8fea71ebb36e78a53f"
+    },
+    {
+      "bytes": 507315,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-91-target-report-v1/node-91-targets.json",
+      "sha256": "b2be7d719038ea4f7a2b48e8ee039469c2f7bf46724c526aef35eb596de2bafb"
+    },
+    {
+      "bytes": 23052,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-91-target-report-v1/node-91-targets.csv",
+      "sha256": "62a3183c28e4011d5f549c2b54066a9efc14766dc777df881cdcd3335ba52bf9"
+    },
+    {
+      "bytes": 11651,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-91-target-report-v1/node-coverage-report.md",
+      "sha256": "be6d0e572eb4ec8c1783c72342487a710b197b6cd2b4fcae109f83b8de2f728d"
+    }
+  ],
+  "completed_target_count": 91,
+  "inputs": {
+    "original_diagnosis_artifacts": [
+      {
+        "bytes": 33222,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json",
+        "sha256": "99dddd4fe1ec2249b02bd20da57b4a1a62803d7d108769be7e23ec4dbf6ea358"
+      }
+    ],
+    "renderer": {
+      "bytes": 11703,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/render_node_union_report_recovery_v1.py",
+      "sha256": "5cd3d591f3a9da480175abdf2e419fd85dbd23c360d8a777765c8624b49a07b4"
+    },
+    "union": {
+      "bytes": 918710,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+      "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+    }
+  },
+  "native_completed_target_count": 5,
+  "node_live_log_read": false,
+  "qualification": false,
+  "schema": "pon-node-coverage-report-files-v1",
+  "tests_started": false
+}

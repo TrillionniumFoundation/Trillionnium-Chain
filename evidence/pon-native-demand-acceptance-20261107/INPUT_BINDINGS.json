@@ -1,0 +1,13 @@
+{
+  "complete_node_qualification": false,
+  "core_summary_sha256": "7ae138b863ab5c0469fb6a635d43e9ebd5b8f9109daa36e1de52363f719c23d9",
+  "frozen_static_summary_sha256": "f9ee0b54b47049a06a737cfade1f66c7e1a06860971d98c638d960bd9cbc40bd",
+  "implementation_source": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "implementation_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "node_union_sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2",
+  "original_node_job": "1a1b6390138-12894-305",
+  "production_activation": false,
+  "remaining_node_job": "1a1b6b4fa87-12894-60d",
+  "review_note": "Assembler v1 was not executed. Read-only review required explicit source/job/coverage/hash binding; v2 adds those preconditions before any repository mutation.",
+  "schema": "pon-native-acceptance-sealed-inputs-v1"
+}

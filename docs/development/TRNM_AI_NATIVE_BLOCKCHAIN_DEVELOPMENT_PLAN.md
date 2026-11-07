@@ -17,6 +17,41 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Exact-source native acceptance observation, 2026-11-07 America/New_York:**
+The native funded-contract/evidence/prospective-operation implementation is
+`690f710c1b6808787996e86aa4c36bd53e1f3939`, tree
+`b9ff2e5c4ca6e465b86cb4b2bd466ad831147899`, in
+[draft PR #779](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779),
+stacked on #777 and the existing #688 integration lineage. The
+[actual acceptance record](../../evidence/pon-native-demand-acceptance-20261107/README.md)
+separates tested implementation from later evidence-only publication commits.
+New HeptaRuntime desktop execution passed the three core crates with 388 passed
+and 10 ignored, workspace warnings-as-errors Clippy, formatting, exact locked
+root/fuzz Cargo graphs and the 52/131/103 Python groups. The original complete
+Node attempt reached its process limit after 30 complete targets, one interrupted
+target and 60 unstarted targets. It retained eight failures and lacks its original
+closing source-after receipt. A separately bound continuation covers the remaining
+61 targets and ended with exit 101. The complete 91-target cross-run coverage
+records 1,548 passed, 15 failed and 55 ignored; it remains separate from a
+successful original complete command. Complete Node qualification is not granted.
+The original refusals include two CPU-budget cases, three PQ witness transport
+cases and three fixed host-parent prerequisite cases; detailed observations and
+unresolved causes are retained without widening original budgets or deadlines.
+
+Hepta [draft PR #5318](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318)
+continues #5316 with the original evaluated-NoUpdate owner and full selection-bundle
+identity. Its exact implementation `e0a3bd2bde77c58a0ae7d211214f326371a72a4a`
+passed the original 60-test selector; 662 other tests were outside that selector.
+The Chain archive retains only the verified Hepta interoperability handoff; it
+does not combine independent repository test counts into deployment qualification.
+Actual external customer/control and funding evidence, independent prospective
+cost-matched evaluation, production learning-owner recovery, and real canary,
+installation, next-task use, withdrawal and rollback remain acceptance obligations.
+Owner cost declarations are not independent physical meters; consumer-epoch
+reconciliation is not a network-epoch proof. Honest NoGain service fees do not
+qualify an improvement bonus. No main merge or production activation follows.
+
+
 **Native funded Task admission and owner reconciliation, 2026-11-07 America/New_York:**
 Continue the published demand/evaluation candidate through the user-selected
 HeptaRuntime local GitHub channel. The prior evidence continuation is retained in

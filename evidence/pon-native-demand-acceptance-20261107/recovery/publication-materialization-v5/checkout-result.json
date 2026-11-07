@@ -1,0 +1,60 @@
+{
+  "all_tracked_blob_hashes_match": true,
+  "all_tracked_modes_match": true,
+  "checkout-file-manifest.json": {
+    "bytes": 4224004,
+    "sha256": "797b41526c2b9b86954c8ab143b3d435fbaa55145bbbd7ccaaa80d0c3ce66d65"
+  },
+  "checkout_bytes": 1028138715,
+  "checkout_command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "-C",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-publication",
+    "read-tree",
+    "--reset",
+    "-u",
+    "690f710c1b6808787996e86aa4c36bd53e1f3939"
+  ],
+  "checkout_exit_code": 0,
+  "checkout_log_bytes": 0,
+  "checkout_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "checkout_seconds": 15.454075813293457,
+  "expected_checkout_bytes": 1028138715,
+  "finished_unix_seconds": 1794067473.2306142,
+  "frozen_running_source_head_unchanged": true,
+  "identity_after_preflight": {
+    "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "identity_before_preflight": {
+    "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "missing_unique_blobs": 0,
+  "preflight.stderr.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "preflight.stdout.log": {
+    "bytes": 174,
+    "sha256": "4e9b84761cc4c4b5f54dd88dab0830b34b194dd6bb0fa292ad833f9d844d1c55"
+  },
+  "preflight_command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "preflight_exit_code": 0,
+  "preflight_seconds": 0.11497831344604492,
+  "refs_sha256": "217f54d8f997715e5937c500d6b55b9583b89cd12efbadf12a90da9dcc46ee95",
+  "refs_unchanged": true,
+  "result": "COMPLETE_VERIFIED_CHECKOUT",
+  "source_commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "source_tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899",
+  "started_unix_seconds": 1794067380.2040603,
+  "tracked_paths": 10711,
+  "unique_blobs": 9501,
+  "worktree": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-publication"
+}

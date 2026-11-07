@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/extract_node_failure_classification_recovery_v1.py",
+    "--union",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+    "--union-sha256",
+    "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2",
+    "--original-diagnosis",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-690f-diagnosis-v1.json",
+    "--output-directory",
+    "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-classification-v1"
+  ],
+  "elapsed_seconds": 0.11259317398071289,
+  "exit_code": 0,
+  "name": "classify",
+  "qualification": false,
+  "script": {
+    "bytes": 17186,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/extract_node_failure_classification_recovery_v1.py",
+    "sha256": "269d63d9164fd0de02e90869c26d7ad261348b1abd6a90f7ff26583ebb57450e"
+  },
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/classify.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 1064,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/classify.stdout.log",
+    "sha256": "38971e5b284c1e367529013b27bbc6f588c569745e311e9678c4c58c522ae640"
+  }
+}

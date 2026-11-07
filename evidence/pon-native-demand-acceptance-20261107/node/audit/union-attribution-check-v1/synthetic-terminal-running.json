@@ -1,0 +1,9 @@
+{
+  "audit_recorded": true,
+  "exit_code": null,
+  "job_id": "synthetic-fixture-only-job",
+  "output_complete": true,
+  "output_durable": true,
+  "state": "running",
+  "terminal_publication_confirmed": true
+}
