@@ -71,15 +71,26 @@ def main():
                "trillionnium/Cargo.toml", "-p", "trnm-sqlite-io-boundary"]
     environment = os.environ.copy()
     # Both spellings execute the same compiler; only its path spelling changes.
-    environment["PATH"] = str(args.rustc.parent) + os.pathsep + environment.get("PATH", "")
+    rustc_binary = args.rustc.resolve()
+    if rustc_binary.parent.name != "bin":
+        parser.error("the pinned rustc must be the canonical toolchain bin/rustc")
+    toolchain = rustc_binary.parent.parent.resolve()
+    toolchain_lib = (toolchain / "lib").resolve()
+    if not toolchain_lib.is_dir() or toolchain_lib.parent != toolchain:
+        parser.error("the pinned toolchain must contain its canonical lib directory")
+    environment["PATH"] = str(rustc_binary.parent) + os.pathsep + environment.get("PATH", "")
     environment["CARGO_TARGET_DIR"] = str(args.target)
+    # Cargo adds target/deps and rustlib to each build-script loader path. Seed
+    # only the canonical parent toolchain lib directory that Cargo 1.95 omits;
+    # the native build fence verifies the complete exact set and rejects extras.
+    environment["LD_LIBRARY_PATH"] = str(toolchain_lib)
     initial = source_identity(args.root)
     write_json(args.output / "source-before.json", initial)
     phases = [("refuse-1", "rustc", False), ("qualify-1", str(args.rustc), True),
               ("refuse-2", "rustc", False), ("qualify-2", str(args.rustc), True)]
     records = []
     for label, rustc, expected in phases:
-        environment["RUSTC"] = rustc
+        environment["RUSTC"] = "rustc" if rustc == "rustc" else str(rustc_binary)
         start = time.monotonic_ns()
         usage_before = resource.getrusage(resource.RUSAGE_CHILDREN)
         log_path = args.output / f"{label}.log"
@@ -114,6 +125,7 @@ def main():
         raw_log = log_path.read_bytes()
         record = {
             "label": label, "argv": command, "rustc": rustc,
+            "loader_path_seed": str(toolchain_lib),
             "exit_code": result.returncode, "passed": bool(passed),
             "wall_ns": time.monotonic_ns() - start,
             "waited_child_cpu_seconds": usage_after.ru_utime + usage_after.ru_stime
