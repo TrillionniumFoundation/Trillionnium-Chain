@@ -37,6 +37,20 @@ fn serde_packet_oracle(bytes: &[u8], op: u8) -> Option<Request> {
     Some(request)
 }
 
+fn compare_borrowed_submit_grammar(bytes: &[u8], op: u8) {
+    if op == 1 {
+        assert_eq!(
+            CanonicalPacketText::from_body(bytes)
+                .map(|_| ())
+                .map_err(|e| e.to_string()),
+            canonical_request(bytes, op)
+                .map(|_| ())
+                .map_err(|e| e.to_string()),
+            "borrowed Submit must keep the independent original grammar and errors"
+        );
+    }
+}
+
 #[test]
 fn packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation() {
     for op in [1, 6, 7] {
@@ -45,15 +59,18 @@ fn packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation() 
             for value in 0..=u8::MAX {
                 let mut changed = raw.clone();
                 changed[position] = value;
+                compare_borrowed_submit_grammar(&changed, op);
                 assert_eq!(
                     canonical_request(&changed, op).ok(),
                     serde_packet_oracle(&changed, op),
                     "operation {op}, byte {position}, value {value}"
                 );
             }
+            compare_borrowed_submit_grammar(&raw[..position], op);
             assert!(canonical_request(&raw[..position], op).is_err());
             let mut removed = raw.clone();
             removed.remove(position);
+            compare_borrowed_submit_grammar(&removed, op);
             assert_eq!(
                 canonical_request(&removed, op).ok(),
                 serde_packet_oracle(&removed, op),
@@ -63,6 +80,7 @@ fn packet_envelopes_match_serde_for_every_single_byte_mutation_and_truncation() 
         for suffix in [b" ".as_slice(), b"\n", b"{}", b"\0"] {
             let mut changed = raw.clone();
             changed.extend_from_slice(suffix);
+            compare_borrowed_submit_grammar(&changed, op);
             assert!(canonical_request(&changed, op).is_err());
         }
     }
@@ -74,10 +92,12 @@ fn packet_envelopes_keep_empty_exact_maximum_and_over_limit_behavior() {
         for bytes in [0, 1, MAX_PACKET] {
             let request = packet_request(op, "ac".repeat(bytes));
             let raw = serde_json::to_vec(&request).unwrap();
+            compare_borrowed_submit_grammar(&raw, op);
             assert_eq!(canonical_request(&raw, op).unwrap(), request);
             assert_eq!(serde_packet_oracle(&raw, op), Some(request));
         }
         let raw = serde_json::to_vec(&packet_request(op, "ac".repeat(MAX_PACKET + 1))).unwrap();
+        compare_borrowed_submit_grammar(&raw, op);
         assert!(canonical_request(&raw, op).is_err());
         assert!(serde_packet_oracle(&raw, op).is_none());
     }
