@@ -20,7 +20,9 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 **PQ migration and recovery continuation, 2026-11-07 UTC:**
 Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`,
 preserving the concurrent `f943c23b` migration/schema-reader work and `0ca272d0`
-baseline partition in integrated source `9fb011c4`.
+baseline partition in integrated source `9fb011c4`. Preserve the later M15
+proof-decoder and sealed-test corrections from `1c14fab4` in frozen `2c51e15e`,
+with separately recorded native execution and retained prior source/ELF evidence.
 Connect the actual admitted source checkpoint and complete inventory to the
 existing M06 migration anchor under an independently pinned prior PQ registry.
 Retain all account nonce/balance and supported task/reward obligations, and refuse

@@ -36,6 +36,18 @@
     "history_preserving_parent": {
       "commit": "b35b6a7c2a7f140f73506b29486b984ba7a54d1e",
       "tree": "5f4f1730e0f5218e4db9706e6daf2c25cde5c182"
+    },
+    "first_evidence_candidate": {
+      "commit": "b0dadfdc0d906d35f19a1ba79df2ddbb8bbfba25",
+      "tree": "f05bd4edc080e447e467d9de23d6c36cb42ebb0c"
+    },
+    "concurrent_m15_head": {
+      "commit": "1c14fab4cca9c2ad1a48c502f51eb89edeb7df50",
+      "tree": "cd446a4dc02d94f446134e9fd441bab04a672a2c"
+    },
+    "reintegrated_candidate": {
+      "commit": "2c51e15e5b4f57b133b53cc9c386431e29563db5",
+      "tree": "3f62762d719765b920cb7c7f1c1621440f98818e"
     }
   },
   "public_regression_blob_identical_on_red_and_green": "623013c6d93589d120b9b6eec58698f60156294c",
@@ -47,7 +59,9 @@
       "corrected_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
       "unchanged_between_frozen_commits": true,
       "integrated_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "246eeb548a5b0736b023381bbf04d0a960ed3126",
+      "unchanged_integrated_to_reintegrated": true
     },
     {
       "path": "trillionnium/crates/trnm-checkpoint-store/src/socket_owner_v1.rs",
@@ -55,7 +69,9 @@
       "corrected_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
       "unchanged_between_frozen_commits": true,
       "integrated_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "e11768412c987143ab797382a1d47b74b5fb6080",
+      "unchanged_integrated_to_reintegrated": true
     },
     {
       "path": "trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs",
@@ -63,7 +79,9 @@
       "corrected_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
       "unchanged_between_frozen_commits": true,
       "integrated_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "623013c6d93589d120b9b6eec58698f60156294c",
+      "unchanged_integrated_to_reintegrated": true
     },
     {
       "path": "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs",
@@ -71,7 +89,9 @@
       "corrected_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
       "unchanged_between_frozen_commits": true,
       "integrated_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
+      "unchanged_integrated_to_reintegrated": true
     },
     {
       "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs",
@@ -79,7 +99,9 @@
       "corrected_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
       "unchanged_between_frozen_commits": true,
       "integrated_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "d04024453a1441c78f0768b708aa01bfb189c277",
+      "unchanged_integrated_to_reintegrated": true
     },
     {
       "path": "trillionnium/crates/trnm-pon-node/src/store/pq_migration_handoff_tests.rs",
@@ -87,7 +109,9 @@
       "corrected_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
       "unchanged_between_frozen_commits": false,
       "integrated_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
-      "unchanged_corrected_to_integrated": true
+      "unchanged_corrected_to_integrated": true,
+      "reintegrated_commit_blob": "2a21b664b9c6c9f92fef14c308bbe3f09107966f",
+      "unchanged_integrated_to_reintegrated": true
     }
   ],
   "changed_paths_after_checkpoint_and_probe_execution": [
@@ -105,5 +129,21 @@
   "integration_resolution": "Retain both complete CI additions, union required paths, regenerate embedded inventory and verify actual source pins; all qualification flags stay false.",
   "integrated_source_pins": 694,
   "integrated_runtime_execution_status": "recorded separately in qualification.json",
-  "concurrent_base_merge_preserved_with_identical_entire_tree": true
+  "concurrent_base_merge_preserved_with_identical_entire_tree": true,
+  "reintegrated_source_delta_from_first_evidence_candidate": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs"
+  ],
+  "reintegrated_production_rust_delta": [
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs"
+  ],
+  "reintegrated_entire_tree_matches_9fb011c": false,
+  "prior_native_receipts_are_not_relabelled": true,
+  "changed_paths_after_checkpoint_and_probe_execution_range": {
+    "from": "2058225aa0d50ca57b1eb0d5f520d7f4eefae69b",
+    "to": "37ef49311db7e62df1b152b8a7b0fc9104d56c17",
+    "is_final_publication_delta": false
+  }
 }

@@ -44,10 +44,42 @@
       "all_member_hashes_checked": true
     },
     {
+      "file": "native-reintegrated-2c51e15.tar.gz",
+      "bytes": 100162,
+      "sha256": "73df6cbde2fcfb99293dbf7f68ec4678b184ae89109bc67a557f62f1c1d57b95",
+      "payload_members": 166,
+      "manifest_member": "MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "publication-stopped-before-1c14.tar.gz",
+      "bytes": 11731,
+      "sha256": "e912d780718eef7f1b90dbf5985c9a677d86ec43ea47df79ba71d3c03ae71c4c",
+      "payload_members": 21,
+      "manifest_member": "publication-final-v1/SEALED_MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
       "file": "readbacks-and-controller-records.tar.gz",
       "bytes": 77235,
       "sha256": "5861176e46f25c52c16093454e5573b696dd838ef875f47d48d23afbb41fc5e2",
       "payload_members": 71,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "reintegrated-local-validation.tar.gz",
+      "bytes": 161141,
+      "sha256": "098f6c4944525494bc1dc9171f6243b45d77e094edea382e145de58decef23c1",
+      "payload_members": 80,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "reintegrated-readbacks-and-controller.tar.gz",
+      "bytes": 8500,
+      "sha256": "9e45721111ac2467a89a7163abdbb1ce29e844f7ff942476f18d3b4dde70aa43",
+      "payload_members": 10,
       "manifest_member": "manifest.json",
       "all_member_hashes_checked": true
     }

@@ -16,6 +16,7 @@ and the existing draft PR #723.
 | Endpoint fix, handoff and probe | `2058225aa0d50ca57b1eb0d5f520d7f4eefae69b` | Complete checkpoint package: 56 passed, zero failed/ignored. Actual two-host exercise. Initial Node migration attempt: 6 passed, 1 failed. |
 | Correct PQ destination test owner | `37ef49311db7e62df1b152b8a7b0fc9104d56c17` | Node migration 7/7, M06 migration inventory 7/7 and strict all-workspace/all-targets/all-features Clippy pass. |
 | Preserve concurrent migration controls and current CI base | `9fb011c4af1f9f54353207f9ad9fbc54ab6235e3` | Checkpoint 56/56, Node migration with all features 7/7, M06 inventory 7/7, three default-feature NPQ6 integration controls, exact execution readers and strict workspace Clippy all pass. |
+| Preserve concurrent M15 production fixes and rerun | `2c51e15e5b4f57b133b53cc9c386431e29563db5` | Original 73 executions plus both complete seven-test M15 modules: 87/87, all three execution readers and strict workspace Clippy pass. |
 
 The public regression test blob is identical on red and green:
 `623013c6d93589d120b9b6eec58698f60156294c`. The original checkpoint production
@@ -50,8 +51,55 @@ controls, so their totals are not combined into a distinct-control count.
 The publication check later observed concurrent merge `dfffc5b2`, which only
 retained the same `0ca272d0` base. Merge `b35b6a7c` preserves that history and has
 the **identical entire tracked tree** as the executed `9fb011c4`; no new native
-execution is claimed for that history-only commit. The containing publication
-adds this evidence and updates the sole plan without changing code or CI.
+execution is claimed for that history-only commit. Evidence candidate `b0dadfdc` added the first complete evidence set and updated
+the sole plan without changing code or CI. Its publication attempt later stopped
+before checkout fast-forward, preflight, dry-run or push when the remote branch
+advanced again to `1c14fab4`; the complete stop and transport receipts are retained.
+
+That advance contains the `a676947a` M15 canonical role-key decoder fix and the
+`1c14fab4` sealed-object test correction. Merge `2c51e15e` preserves both commits
+and the entire earlier evidence history. Its tree is
+`3f62762d719765b920cb7c7f1c1621440f98818e`. The only changed production Rust file
+relative to `9fb011c4` is `release_owner/proof_wire.rs`; the six migration/recovery
+component files, Cargo graph and CI implementation retain their prior bytes.
+The existing canonical wire spelling, complete-root checks and sealed metadata
+identity guards remain required. This is a real production-source change, so
+the earlier 73 native executions are not relabeled as executions of this merge.
+
+A new native run on exact `2c51e15e` completes all 87 test executions: checkpoint
+56, all-features Node migration 7, M06 inventory 7, default-feature integration 3,
+root-separation 7 and sealed-object 7. All three actual-execution readers and
+strict workspace/all-targets/all-features Clippy pass. The 35 original command
+receipts and final complete record retain this exact source. The job terminates
+successfully with complete durable output and no timeout, cancellation or
+automatic retry. Its complete receipt is 35,642 bytes, SHA-256
+`e7f9fca25ca1fe266818145ff28eaabfb406d3d14b4b06dc26b0374340d1762e`.
+The earlier 11 `9fb011c4` ELF bodies are independently retained before reusing the
+build cache; the original source checkouts and evidence records remain unchanged.
+
+On clean `2c51e15e`, the source suites again pass 43/38/22/9 executions, and
+public readiness, baseline shards, CI execution and CI contracts pass 71/9/77/104.
+The 16 local command receipts retain identical source before/after, complete log
+bytes and verified hashes. The 694 source pins, inventory, repository links,
+locked-offline Cargo graph, formatting and CI contract checker also pass. These
+Python suite counts still overlap; they are not summed as unique controls.
+
+The final containing evidence commit updates only the evidence directory and
+the sole development plan relative to the newly executed frozen source; no
+additional native execution is claimed for that evidence-only publication.
+
+### Concurrent M15 proof and sealed-object controls
+
+The new role decoder accepts only the existing role-key strings `1` through `4`
+and refuses aliases, unknown codes and duplicates at the typed proof boundaries.
+The existing kernel still requires the complete role set and its key/threshold
+constraints; the codec still requires exact canonical re-encoding. The sealed
+production implementation is unchanged. Its tests now distinguish immutable
+bytes from metadata identity: rejected writes may still change Linux timestamps,
+and a changed identity must refuse read, copy, descriptor and exec handoff without
+refreshing the retained pin. The two complete affected modules each contain seven
+tests. These controls do not qualify a complete M15 launcher, CURRENT, FinalUse,
+external effects or a production recovery deployment.
 
 ## Admitted source handoff
 
@@ -156,10 +204,24 @@ Integrated preparation also retains the upload admission-capacity refusal
 shallow-clone prerequisite `513e92df`. That attempt did not fetch or fast-forward
 the source and executed zero integrated tests. These are not recast as native
 test failures or successful executions.
-The second integrated attempt obtains the real missing prerequisite through a
-normal exact fetch from the canonical origin. The unchanged bundle verifies,
+The second `9fb011c4` integration attempt obtains its real missing prerequisite
+through a normal exact fetch from the canonical origin. The unchanged bundle verifies,
 the source fast-forwards normally, and the original native gates complete.
-No shallow metadata or ancestor is fabricated. The publication expected-head
+No shallow metadata or ancestor is fabricated.
+
+The first `2c51e15e` preparation also stops before tests: the shallow source
+causes Git to ignore local-clone sharing, so the new checkout lacks the imported
+but unadvertised `b0dadfdc` object. Its clean HEAD remains `9fb011c4`; zero tests
+execute. The complete 11 prior ELF bodies were independently copied, fsynced and
+verified before that stop, and those copies remain retained.
+
+The second `2c51e15e` preparation verifies the already retained `b0dadfdc` bundle,
+imports it with ordinary Git, and normally fetches exact `1c14fab4` from the local
+publication repository. The unchanged 1,179-byte reintegration bundle then
+verifies and fast-forwards the new checkout to exact `2c51e15e`. The prior 11 ELF
+copies are referenced and rehashed, not recreated or replaced. The original
+`2058225` and `9fb011c4` checkouts remain unchanged.
+ The publication expected-head
 guard also stops on the concurrent branch advance before preflight or push;
 the controller interpretation distinguishes its planned flags from executed work.
 
@@ -171,6 +233,10 @@ Native executable identities are retained and rehashed on the executing host.
 Executable bodies are retained there; the text archives do not contain them,
 and readback reviewers do not claim to have locally hashed those binary bodies.
 The optional counted-SQLite I/O boundary remains UNQUALIFIED in these runs.
+A local publication-route probe passes preflight but its dry-run cannot obtain
+Git credentials with terminal prompts disabled, and stops before pre-push. It
+attempts no actual push and is not a native-test failure; the existing remote
+publication route remains selected.
 
 | Evidence archive | Payload members | Contents |
 | --- | ---: | --- |
@@ -180,6 +246,10 @@ The optional counted-SQLite I/O boundary remains UNQUALIFIED in these runs.
 | [local-validation.tar.gz](local-validation.tar.gz) | 77 | Earlier local failures, source checks on 2058225/37ef493 and preparatory controls. |
 | [integrated-local-validation.tar.gz](integrated-local-validation.tar.gz) | 40 | Exact 9fb011c source checks and the schema/CI/shard suites. |
 | [readbacks-and-controller-records.tar.gz](readbacks-and-controller-records.tar.gz) | 71 | Independent readbacks, archive review, original controller records and publication preparation. |
+| [reintegrated-local-validation.tar.gz](reintegrated-local-validation.tar.gz) | 80 | Exact `2c51e15e` local suites, source identities and log verification; earlier `b0dadfdc` evidence-candidate checks. |
+| [publication-stopped-before-1c14.tar.gz](publication-stopped-before-1c14.tar.gz) | 21 | Original transport and expected-head stop before checkout fast-forward, preflight, dry-run or push. |
+| [native-reintegrated-2c51e15.tar.gz](native-reintegrated-2c51e15.tar.gz) | 166 | Exact `2c51e15e` 87-test run, strict Clippy, unchanged prior ELF custody and original zero-test preparation failure. |
+| [reintegrated-readbacks-and-controller.tar.gz](reintegrated-readbacks-and-controller.tar.gz) | 10 | Independent complete/terminal readbacks, all-member/command review, ELF-record review and local publication-route refusal. |
 
 Each payload count excludes its manifest. [artifact-index.json](artifact-index.json)
 records archive lengths and SHA-256; [SHA256SUMS](SHA256SUMS) also covers the
