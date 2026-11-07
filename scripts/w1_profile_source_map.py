@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -54,10 +55,15 @@ def unique_object(pairs: list[tuple[str, object]]) -> dict:
     return result
 
 
-def read_json(path: Path) -> dict:
-    value = json.loads(bounded_bytes(path, 2 * 1024 * 1024), object_pairs_hook=unique_object)
+def read_json_snapshot(path: Path) -> tuple[dict, str]:
+    data = bounded_bytes(path, 2 * 1024 * 1024)
+    value = json.loads(data, object_pairs_hook=unique_object)
     require(isinstance(value, dict), f'{path.name}: expected JSON object')
-    return value
+    return value, sha_bytes(data)
+
+
+def read_json(path: Path) -> dict:
+    return read_json_snapshot(path)[0]
 
 
 def unique_match(pattern: str, text: str, name: str, flags: int = 0) -> re.Match:
@@ -111,8 +117,9 @@ SELECTED = {
 REGISTRY_SOURCE = 'registry+https://github.com/rust-lang/crates.io-index'
 
 
-def load_locked_packages(path: Path) -> dict:
-    parsed = tomllib.loads(bounded_bytes(path, 2 * 1024 * 1024).decode('utf-8'))
+def load_locked_packages_snapshot(path: Path) -> tuple[dict, str]:
+    data = bounded_bytes(path, 2 * 1024 * 1024)
+    parsed = tomllib.loads(data.decode('utf-8'))
     require(isinstance(parsed.get('package'), list), 'lockfile package roster is missing')
     locked = {}
     for item in parsed['package']:
@@ -127,7 +134,11 @@ def load_locked_packages(path: Path) -> dict:
                 f'{key}: invalid lock checksum')
         locked[key] = item
     require(set(locked) == set(SELECTED), 'missing selected lock package or unsupported version')
-    return locked
+    return locked, sha_bytes(data)
+
+
+def load_locked_packages(path: Path) -> dict:
+    return load_locked_packages_snapshot(path)[0]
 
 
 def registry_paths(cargo_home: Path) -> tuple[Path, Path]:
@@ -143,39 +154,41 @@ def inspect_package(src: Path, cache: Path, package: str, locked: dict) -> tuple
     """Compare fixed selected files with the exact archive identified by Cargo.lock."""
     require(package in SELECTED, 'package outside the selected mapping scope')
     archive = cache / f'{package}.crate'
-    actual = sha_file(archive)
+    archive_bytes = bounded_bytes(archive, 16 * 1024 * 1024)
+    actual = sha_bytes(archive_bytes)
     expected = locked['checksum']
     require(actual == expected, f'{package}: archive differs from Cargo.lock')
     selected = SELECTED[package] + ['.cargo_vcs_info.json']
     records = []
     files = {}
     vcs = None
-    with tarfile.open(archive, 'r:gz') as tar:
+    # Inspect the exact bytes just hashed, even if the cache path is replaced.
+    with tarfile.open(fileobj=io.BytesIO(archive_bytes), mode='r:gz') as tar:
         members = tar.getmembers()
         for relative in selected:
             name = f'{package}/{relative}'
             matches = [entry for entry in members if entry.name == name]
             require(len(matches) == 1 and matches[0].isfile(),
                     f'{name}: missing, duplicate or nonregular archive member')
+            limit = 65536 if relative == '.cargo_vcs_info.json' else 2 * 1024 * 1024
+            require(0 <= matches[0].size <= limit, f'{name}: archive member exceeds bound')
             stream = tar.extractfile(matches[0])
             require(stream is not None, f'{name}: unreadable archive member')
-            h = hashlib.sha256()
-            for block in iter(lambda: stream.read(65536), b''):
-                h.update(block)
-            archive_sha = h.hexdigest()
+            member_bytes = stream.read(limit + 1)
+            require(len(member_bytes) == matches[0].size, f'{name}: archive member size mismatch')
+            archive_sha = sha_bytes(member_bytes)
             local = src / name
             require(not local.is_symlink(), f'{name}: symlink source')
-            local_sha = sha_file(local)
+            value = bounded_bytes(local, limit)
+            local_sha = sha_bytes(value)
             require(archive_sha == local_sha, f'{name}: local source differs from locked archive')
             entry = {
-                'path': relative, 'bytes': local.stat().st_size, 'sha256': local_sha,
+                'path': relative, 'bytes': len(value), 'sha256': local_sha,
                 'matches_locked_archive_member': True,
             }
             records.append(entry)
             files[name] = entry
             if relative == '.cargo_vcs_info.json':
-                value = bounded_bytes(local, 65536)
-                require(sha_bytes(value) == local_sha, f'{name}: source changed during inspection')
                 vcs = json.loads(value, object_pairs_hook=unique_object)
                 require(isinstance(vcs, dict), f'{name}: invalid provenance record')
     return {
@@ -188,7 +201,7 @@ def inspect_package(src: Path, cache: Path, package: str, locked: dict) -> tuple
 
 def build_profile(repo_root: Path, cargo_home: Path) -> dict:
     lock_path = repo_root / 'formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock'
-    locked = load_locked_packages(lock_path)
+    locked, lock_sha = load_locked_packages_snapshot(lock_path)
     src, cache = registry_paths(cargo_home)
     packages = []
     files = {}
@@ -199,7 +212,7 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
 
     def source(package: str, relative: str) -> str:
         name = f'{package}/{relative}'
-        value = (src / name).read_bytes()
+        value = bounded_bytes(src / name, 2 * 1024 * 1024)
         require(sha_bytes(value) == files[name]['sha256'], f'{name}: source changed during inspection')
         return value.decode('utf-8')
 
@@ -280,7 +293,7 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
     receipt = bounded_bytes(receipt_path, 16 * 1024 * 1024)
     require(len(receipt) >= 12, 'receipt is too short')
     historical_path = packet / 'measurements/fresh-hardened-full-gate/stdout.log'
-    historical = read_json(historical_path)
+    historical, historical_sha = read_json_snapshot(historical_path)
     require(sha_bytes(receipt) == historical['receipt_sha256'], 'saved receipt hash differs from historical verifier record')
     require(historical['hash_function'] == 'poseidon2', 'historical receipt uses an unsupported hash suite')
     tag, seal_words = struct.unpack_from('<IQ', receipt)
@@ -304,7 +317,7 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
     require(seal_root == control_root, 'saved inner control root differs from default')
 
     manifest_path = packet / 'full-proof/manifest.json'
-    manifest = read_json(manifest_path)
+    manifest, manifest_sha = read_json_snapshot(manifest_path)
     require(len(manifest['segments']) == 59, 'unsupported frozen segment count')
     require(manifest['segment_limit_po2'] == 18, 'unsupported frozen segment po2')
 
@@ -355,7 +368,7 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
             'selected_source_archive_integrity_checks_passed': True,
         },
         'lockfile': {
-            'repo_path': str(lock_path.relative_to(repo_root)), 'sha256': sha_file(lock_path),
+            'repo_path': str(lock_path.relative_to(repo_root)), 'sha256': lock_sha,
             'package_scope': 'Seven exact packages; the selected files are byte-equal to locked archive members. This does not claim an audit of all transitive source files or enabled build features.',
         },
         'packages': packages,
@@ -453,9 +466,9 @@ def build_profile(repo_root: Path, cargo_home: Path) -> dict:
                 'wire_parameter_digest_matches_recomputed_default_and_historical_log': True,
                 'decoded_inner_control_root_matches_default': True,
             },
-            'historical_log': {'repo_path': str(historical_path.relative_to(repo_root)), 'sha256': sha_file(historical_path)},
+            'historical_log': {'repo_path': str(historical_path.relative_to(repo_root)), 'sha256': historical_sha},
             'frozen_manifest': {
-                'repo_path': str(manifest_path.relative_to(repo_root)), 'sha256': sha_file(manifest_path),
+                'repo_path': str(manifest_path.relative_to(repo_root)), 'sha256': manifest_sha,
                 'prover_guest_source': manifest['source_commit'], 'guest_sha256': manifest['guest_sha256'],
                 'r0vm_sha256': manifest['r0vm_sha256'], 'full_claim_digest': manifest['full_claim_digest'],
                 'segments': len(manifest['segments']), 'segment_limit_po2': manifest['segment_limit_po2'],

@@ -145,7 +145,7 @@
     ".github/workflows/pon-original-workspace-large-state-cpu.yml": "7e966fecb14d7975e15ad6c5a81786c20ad62bf7",
     ".github/workflows/pon-pq-system-continuation.yml": "dd1ceb95b09de66f78644e11b10412919bcedc73",
     ".github/workflows/pon-recent-batch-acceptance.yml": "64a752915af7423757e45e79132ba15c8914bbba",
-    ".github/workflows/pon-w1-transparent-profile.yml": "9abea7fc603194940db33855d6d8a870558db6e3",
+    ".github/workflows/pon-w1-transparent-profile.yml": "576ce233210de95844a4be5a496c7f296afa27cf",
     ".github/workflows/trnm-required-baseline.yml": "4d8a23542b730786c8e9055ca8485cf6da2c1b8c",
     "config/consensus-mainline.json": "b193c404177350c5e1443104f02bb0ac114f6aeb",
     "config/pon/binary-diverse60-training-v3.json": "4bad08228c9e85570a67a30f5a546b9cf418bd01",

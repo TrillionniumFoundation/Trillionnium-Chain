@@ -137,3 +137,42 @@ annotation and unresolved applicability obligation; historical
 `security-map.json` evidence remains unchanged. External cryptographic review,
 an explicit quantum cost/error target, complete source/parameter mapping and
 full composition analysis are still required before a stronger claim.
+
+## Follow-through: source snapshots and actual-record consistency
+
+The [source-snapshot continuation](../../evidence/pon-w1-source-snapshot-20261106/README.md)
+starts from `d9fd07c473998bd236207c1b7db4233f0eafd7fe`. The original transparent
+workflow has now completed successfully on both that head and its prospective
+merge. Its retained head artifact contains all three named v2 Rust tests and
+all 58 actual saved-v2 receipt controls. This is evidence that the earlier
+always-reject coverage repair executed; it is not the same unresolved defect.
+
+Two further evidence-boundary defects are addressed in this continuation:
+
+- The source mapper used to hash a crate archive and then reopen its path for
+  parsing. A deterministic replacement between those reads made it accept
+  different source bytes under the original archive checksum. Archive hashing
+  and parsing now consume the same bounded byte snapshot. Lockfile parsing,
+  historical-log and manifest parsing, and selected-source size/hash records
+  likewise retain the digest of the bytes actually inspected.
+- The v2 CI report gate used to check the outer case result without reconciling
+  contradictory nested process results or incomplete output observations.
+  The continuation reconciles the report with the retained per-case process,
+  input and log records, while keeping the real accepted receipt as a positive
+  control and preserving the original ordered 58-case plan and deadline.
+
+These are source and observation integrity repairs. They do not demonstrate a
+forged STARK, a Node admission bypass, or a practical attack on the fixed
+cryptographic profile. The original source-map byte comparison and GitHub
+Actions step failures provided additional detection boundaries; a permissive
+standalone report check does not by itself prove an entire CI job could turn
+green. The real historical positive receipt and all negative qualification
+flags remain unchanged.
+
+An offline replay of the repaired mapper against seven actual locked crate
+archives verifies 37 selected files. Its new snapshot differs from the dated
+historical snapshot only in the generator digest. The original snapshots are
+retained. This replay is scoped to the exact mapper, locked inputs and cache;
+it does not compile a new verifier or generate another proof. All full W1,
+QROM, quantum-work, ordinary-node proof admission and whole-chain PQ gates
+remain HOLD.

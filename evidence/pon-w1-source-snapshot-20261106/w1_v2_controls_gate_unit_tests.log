@@ -1,0 +1,28 @@
+test_budget_and_qualification_cannot_be_widened (test_w1_v2_controls_gate.V2ControlsGateTests.test_budget_and_qualification_cannot_be_widened) ... ok
+test_case_command_must_use_pinned_verifier (test_w1_v2_controls_gate.V2ControlsGateTests.test_case_command_must_use_pinned_verifier) ... ok
+test_case_command_must_use_planned_inputs (test_w1_v2_controls_gate.V2ControlsGateTests.test_case_command_must_use_planned_inputs) ... ok
+test_case_result_must_match_summary (test_w1_v2_controls_gate.V2ControlsGateTests.test_case_result_must_match_summary) ... ok
+test_incomplete_session_observation_is_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_incomplete_session_observation_is_rejected) ... ok
+test_integer_exit_codes_cannot_be_booleans (test_w1_v2_controls_gate.V2ControlsGateTests.test_integer_exit_codes_cannot_be_booleans) ... ok
+test_mutation_identity_must_match_planned_bytes (test_w1_v2_controls_gate.V2ControlsGateTests.test_mutation_identity_must_match_planned_bytes) ... ok
+test_negative_process_acceptance_is_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_negative_process_acceptance_is_rejected) ... ok
+test_nested_timeout_is_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_nested_timeout_is_rejected) ... ok
+test_original_control_order_and_count_are_required (test_w1_v2_controls_gate.V2ControlsGateTests.test_original_control_order_and_count_are_required) ... ok
+test_output_hashes_must_match_saved_logs (test_w1_v2_controls_gate.V2ControlsGateTests.test_output_hashes_must_match_saved_logs) ... ok
+test_positive_process_rejection_is_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_positive_process_rejection_is_rejected) ... ok
+test_positive_stdout_must_match_summary (test_w1_v2_controls_gate.V2ControlsGateTests.test_positive_stdout_must_match_summary) ... ok
+test_process_pid_must_belong_to_observed_groups (test_w1_v2_controls_gate.V2ControlsGateTests.test_process_pid_must_belong_to_observed_groups) ... ok
+test_process_scan_errors_are_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_process_scan_errors_are_rejected) ... ok
+test_real_saved_controls_pass (test_w1_v2_controls_gate.V2ControlsGateTests.test_real_saved_controls_pass) ... ok
+test_rejection_layer_must_match_saved_stderr (test_w1_v2_controls_gate.V2ControlsGateTests.test_rejection_layer_must_match_saved_stderr) ... ok
+test_required_rejection_text_must_be_present (test_w1_v2_controls_gate.V2ControlsGateTests.test_required_rejection_text_must_be_present) ... ok
+test_retained_process_must_match_summary (test_w1_v2_controls_gate.V2ControlsGateTests.test_retained_process_must_match_summary) ... ok
+test_saved_inputs_must_match_planned_bytes (test_w1_v2_controls_gate.V2ControlsGateTests.test_saved_inputs_must_match_planned_bytes) ... ok
+test_truncated_output_scans_are_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_truncated_output_scans_are_rejected) ... ok
+test_unsettled_owned_groups_are_rejected (test_w1_v2_controls_gate.V2ControlsGateTests.test_unsettled_owned_groups_are_rejected) ... ok
+test_verifier_hash_must_match_pinned_identity (test_w1_v2_controls_gate.V2ControlsGateTests.test_verifier_hash_must_match_pinned_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 3.496s
+
+OK
