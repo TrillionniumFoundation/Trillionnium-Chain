@@ -149,3 +149,33 @@ contract are in [Model operations acceptance](../../docs/protocol/pon-nakamoto-v
 It replays existing target-decoder controls and adds prospective-record separation,
 poison/backdoor/forgetting probes, unique reported consumer uses and retention costs.
 A contract pass never establishes real model efficacy or independent acceptance.
+
+## Mandatory work and native execution certificates
+
+The [MU1 research relation](MANDATORY_UNITS_RELATION_V1.md) freezes a complete,
+domain-separated fixed-target envelope over one to eight native W1 units. Each
+unit retains the full original relation; one aggregate lottery binds the ordered
+canonical outputs. The profile is not enabled in the native node. The conservative
+query certificate grants unit work for free, charges preprocessing and public
+oracle help, and requires a complete-output budget. It is not a lower bound on
+the cheapest physical W1 strategy.
+
+The [stateful resource theorem](STATEFUL_RESOURCE_TAIL_V1.md),
+[fork witness](NATIVE_FORK_MAPPING_V1.md) and
+[execution accounting](NATIVE_EXECUTION_CERTIFICATE_V1.md) keep initial inventory,
+oracle-correlated residual state, honest off-branch work, availability and
+selection deficits explicit. Complete declared model traces can be checked;
+unseen native candidates, physical time and an environment probability law are
+not authenticated by a trace label or a passing parser.
+
+```bash
+python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v
+python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
+MU1_NATIVE_WORK=/absolute/path/to/release/examples/pon_work_io MU1_NATIVE_PREPARED=/absolute/path/to/release/examples/pon_zero_io python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v
+```
+
+The repository-truth and protocol-contract lanes retain these controls alongside
+the existing checks. [Source and raw evidence](../../evidence/pon-work-native-certificates-20261107/README.md)
+separate the previously delivered abstract models from new complete native W1/MU1
+executions. Neither three-candidate safety qualification nor a numerical risk
+for the current six-successor rule is asserted.

@@ -7461,3 +7461,45 @@ publishes a candidate nor asserts that independent evaluation or no-update
 occurred. Native cold recovery, current selection, fresh ordinary task use
 and the original complete workspace gate retain their own evidence needs;
 no external effect, model adoption or real funding is inferred from an API.
+
+### 2026-11-07 mandatory-work and native-execution certificate continuation
+
+The [source-bound continuation](../../evidence/pon-work-native-certificates-20261107/README.md)
+retains the existing work-scale candidate and imports the previously delivered
+stateful-potential/fork-witness models with their original provenance. New work
+freezes [MU1](../../formal/pon-nakamoto-v1/MANDATORY_UNITS_RELATION_V1.md), a fresh
+research namespace over one to eight complete native W1 units, one common fixed
+target, one aggregate lottery and unique all-branch work accounting. Exact
+PreparedTask reuse remains legal. The actual producer and verifier are exercised
+on full transcripts; unit indexes, order, task and context cannot be transplanted.
+No native node header, activation, target or confirmation threshold is changed.
+
+The conservative ideal-terminal-oracle tail grants unit arithmetic for free and
+charges the whole lifetime of relevant preprocessing/public help plus a finite
+complete-output budget. Its independent initial state and correlated residual
+profile are explicit mathematical interfaces, not measured W1 minimum costs or
+an authenticated actual quantum state. A nontrivial query-model bound does not
+establish the assumed physical resource-to-query conversion or linear unit cost.
+
+The [native execution accounting](../../formal/pon-nakamoto-v1/NATIVE_EXECUTION_CERTIFICATE_V1.md)
+splits comparison-score deficits into full availability and selection terms.
+Early cross-view failures therefore have a deterministic witness even before
+propagation; its bound can correctly be trivial. Initial inventory, old-parent
+in-flight work, honest off-branch work, complete eligibility, timestamp checks,
+weight limits, honest progress and repeated starts retain separate obligations.
+Declared finite-model replay is never promoted to native attestation or a joint
+environment probability certificate.
+
+| Candidate | Retained conclusion | Qualification after this continuation |
+| --- | --- | --- |
+| One common target for the complete experiment window | Removes amplification due to target changes inside that window | Controlled experiment condition; work tail, inventory and native network mapping remain open |
+| One common absolute difficulty interval on every branch | Bounds difficulty-induced efficiency variation under the stated cost model and rounding | Trusted common interval, legal-strategy cost coefficients and full failure-event probability remain open |
+| Fixed probability, varying unit count | The stated cost model still gives the scaling `u^(1-alpha)` | Conditional research; no safety qualification |
+| Current six-successor rule | Both confirmation gates and local inclusive `K_tau >= 7*w(b)` remain verified | Failure probability unknown; abstract numerical examples confer no approval |
+
+New model controls enter the existing repository-truth lane. Complete MU1
+native controls enter protocol-contract after the unchanged release build and
+existing zero-work controls; missing binaries fail. CI mutation controls retain
+the actual commands and backends. Full remote CI and original capacity gates
+remain their own observations; all production and whole-chain security flags
+remain HOLD.

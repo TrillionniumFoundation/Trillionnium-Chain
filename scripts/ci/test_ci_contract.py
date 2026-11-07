@@ -18,6 +18,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
+                               MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -899,6 +900,32 @@ class CiContractTests(unittest.TestCase):
         self.rejected('scripts/ci/ci_job.sh', original, changed)
         self.rejected('scripts/ci/ci_job.sh', PAIRED_WORK_ORACLE + ZERO_WORK_ORACLE,
                       ZERO_WORK_ORACLE + PAIRED_WORK_ORACLE)
+
+    def test_mandatory_units_requires_complete_current_native_execution(self):
+        for replacement in ['', '    true # omitted complete MU1 checks\n',
+                            MANDATORY_UNITS_NATIVE.replace('realpath -e', 'printf %s'),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_WORK=', 'OMITTED_WORK='),
+                            MANDATORY_UNITS_NATIVE.replace('MU1_NATIVE_PREPARED=', 'OMITTED_PREPARED='),
+                            MANDATORY_UNITS_NATIVE.replace('mandatory_units_tests.py -v',
+                                                          'mandatory_units_tests.py QueryCertificateTests -v'),
+                            MANDATORY_UNITS_NATIVE * 2]:
+            with self.subTest(replacement=replacement):
+                self.rejected('scripts/ci/ci_job.sh', MANDATORY_UNITS_NATIVE, replacement)
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        changed = original.replace(MANDATORY_UNITS_NATIVE, '').replace(
+            '  repository-truth)\n', '  repository-truth)\n' + MANDATORY_UNITS_NATIVE)
+        self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_work_native_model_controls_cannot_be_omitted_or_moved(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for command in WORK_NATIVE_MODEL_COMMANDS:
+            line = '    ' + command + '\n'
+            for replacement in ['', '    true # omitted work/native model\n', line * 2]:
+                with self.subTest(command=command, replacement=replacement):
+                    self.rejected('scripts/ci/ci_job.sh', line, replacement)
+            changed = original.replace(line, '').replace('  protocol-contract)\n',
+                                                        '  protocol-contract)\n' + line)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):
         original = (self.root / 'scripts/ci/ci_job.sh').read_text()
