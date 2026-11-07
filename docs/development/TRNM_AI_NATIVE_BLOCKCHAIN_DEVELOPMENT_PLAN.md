@@ -17,6 +17,43 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Five-axis evidence continuation and joint WAN domains, 2026-11-06 America/New_York:**
+Continue the existing #742 candidate from
+`73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa` under the existing M17 evidence owner.
+Keep unresolved producer control and unknown resource units in the actionable
+findings. Freeze each control map's source/context/window and compute its
+usable control groups once; stale relations remain available for forbidden-origin
+exclusion. Add a separate bounded, read-only materialization report for actual
+referenced bytes, with an externally pinned input digest and create-only output.
+Matching file hashes does not verify signatures, appointment, ownership or
+independent administration. Explicit WAN V4 adds a simultaneous control-group
+and failure-domain matching requirement; V1/V2/V3 retain their historical
+interpretations, original schedules, failures, budgets and denominators.
+The [five-axis contract](../protocol/pon-nakamoto-v1/details/DECENTRALIZATION_AUDIT_V1.md)
+and [WAN accounting contract](../protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md)
+define these scoped additions. Empty deployed custody and resource inventories
+remain missing evidence. No production acceptance, new trust root, service
+activation or independent 72-hour campaign is inferred.
+
+**Five-dimensional decentralization audit, 2026-11-06 America/New_York:**
+Continue the existing #688 candidate with the
+[declared-control evidence contract](../protocol/pon-nakamoto-v1/details/DECENTRALIZATION_AUDIT_V1.md).
+Assess work access, complete data distribution, evaluator administration,
+release/root/upgrade and recovery authority, and funding/hardware concentration
+separately. Collapse declared common control across node, endpoint, key and
+witness aliases; preserve unknown ownership and the original share denominators.
+Report key thresholds separately from the minimum declared approving and
+blocking control coalitions, and retain author/common-control conflicts.
+Extend the existing PN5 evidence-accounting owner under an explicit new version;
+preserve V1/V2 inputs, signed consensus/release bytes, frozen rosters, original
+service budgets and all existing owner boundaries. Candidate JSON and source
+tests cannot authenticate custody or independent operation. The
+[source and execution record](../../evidence/pon-decentralization-20261106/README.md)
+keeps actual inspected bytes and observed test results separate. Three genuinely
+independent administrators and failure domains, the original preregistered
+cohorts and at least 72 hours of real WAN operation remain external PN5 gates;
+no public, utility, release, security or production acceptance is promoted.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

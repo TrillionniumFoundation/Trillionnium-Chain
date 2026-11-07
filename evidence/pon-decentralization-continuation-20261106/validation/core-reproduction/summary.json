@@ -1,0 +1,140 @@
+{
+  "cases": [
+    {
+      "case": "unresolved_producers",
+      "findings": [
+        {
+          "axis": "work_production",
+          "code": "PRODUCER_CONTROL_UNRESOLVED"
+        }
+      ],
+      "input": {
+        "bytes": 18516,
+        "path": "unresolved_producers-input.json",
+        "sha256": "974bfe753acfcf3a89d176de0f859679be4fc51b7b7ab651ffda085abd49cf29"
+      },
+      "report": {
+        "bytes": 18661,
+        "path": "unresolved_producers-report.json",
+        "sha256": "eafe167d1ee2c93d96ea7120927d17919aaa791777ddb2b996129704a55bf355"
+      },
+      "status": "HOLD"
+    },
+    {
+      "case": "unknown_unit_zero",
+      "findings": [
+        {
+          "axis": "resources",
+          "code": "FUNDING_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+        },
+        {
+          "axis": "resources",
+          "code": "HARDWARE_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+        }
+      ],
+      "input": {
+        "bytes": 16803,
+        "path": "unknown_unit_zero-input.json",
+        "sha256": "88cc90a7c6a028cbbf87f30c169ac1c0fc90e45834246b527f7bd237cde19d18"
+      },
+      "report": {
+        "bytes": 18706,
+        "path": "unknown_unit_zero-report.json",
+        "sha256": "9c939430bc7bcbfce5a258101ae1abc07b35a6c278a4a97fe67cb2fd455a6688"
+      },
+      "status": "HOLD"
+    },
+    {
+      "case": "unknown_unit_positive",
+      "findings": [
+        {
+          "axis": "resources",
+          "code": "FUNDING_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+        },
+        {
+          "axis": "resources",
+          "code": "HARDWARE_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+        }
+      ],
+      "input": {
+        "bytes": 18508,
+        "path": "unknown_unit_positive-input.json",
+        "sha256": "699d5173f67108756221eecc82abacefc3fc980a920a66f610a3d4f298ed3488"
+      },
+      "report": {
+        "bytes": 18896,
+        "path": "unknown_unit_positive-report.json",
+        "sha256": "0d2bec6ea473f466d0fa3631ef2ff908564e59929891c8ef5f6a89b0f34eac29"
+      },
+      "status": "HOLD"
+    },
+    {
+      "case": "known_unit_zero",
+      "findings": [],
+      "input": {
+        "bytes": 16831,
+        "path": "known_unit_zero-input.json",
+        "sha256": "c3898c9941567c5d2d3dc6e13d753a3e1eed9a5c54c04e610414c910701e33b4"
+      },
+      "report": {
+        "bytes": 18537,
+        "path": "known_unit_zero-report.json",
+        "sha256": "1650bc98de00704673f289d5508c9d18a71dfcaa8f886481a6a00eca130ffb24"
+      },
+      "status": "HOLD"
+    }
+  ],
+  "quorum_costs": [
+    {
+      "input": {
+        "bytes": 83847,
+        "path": "quorum-128-registry.json",
+        "sha256": "3f4f1c3f284f12d1a25967851d3cf232361b26a2b16df2ad1ece14f4bc5bea89"
+      },
+      "n": 128,
+      "quorum_wall_seconds": 0.00015203899965854362,
+      "reference_calls": 0,
+      "registry_canonical_bytes": 66649,
+      "report": {
+        "bytes": 731,
+        "path": "quorum-128-report.json",
+        "sha256": "e7beece0abb0f69ce599015d6ea4549a8028a305da16753ac93937d8151fa72c"
+      }
+    },
+    {
+      "input": {
+        "bytes": 167559,
+        "path": "quorum-256-registry.json",
+        "sha256": "e44dbfaae59f6087ba42fa9f019a677305a1e82d771a24bbd4d1ece1de9e67e7"
+      },
+      "n": 256,
+      "quorum_wall_seconds": 0.0003703579995999462,
+      "reference_calls": 0,
+      "registry_canonical_bytes": 133209,
+      "report": {
+        "bytes": 732,
+        "path": "quorum-256-report.json",
+        "sha256": "2613c1c9f0e3f5b594788b0dfa7ee1c2e802a61a7345ae4c0fe20ba71a4b2a72"
+      }
+    },
+    {
+      "input": {
+        "bytes": 334983,
+        "path": "quorum-512-registry.json",
+        "sha256": "5d38f8f00814d5ca6a37e66e87616223ad87c9b73b2b15eb42c4c363420d73eb"
+      },
+      "n": 512,
+      "quorum_wall_seconds": 0.0006364589999066084,
+      "reference_calls": 0,
+      "registry_canonical_bytes": 266329,
+      "report": {
+        "bytes": 732,
+        "path": "quorum-512-report.json",
+        "sha256": "17b731dd86d0e5712d53007e5da7030e4471cec1d127bcad24ff13c754245bb4"
+      }
+    }
+  ],
+  "scope": "synthetic declaration accounting only; no deployed or independent administration",
+  "source_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+  "source_file_sha256": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390"
+}

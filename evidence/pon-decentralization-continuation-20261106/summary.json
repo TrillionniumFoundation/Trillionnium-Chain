@@ -1,0 +1,177 @@
+{
+  "baseline_commit": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+  "command_receipts": [
+    {
+      "interpretation": "completed-successfully",
+      "label": "boundary-tests",
+      "observed_exit_code": 0,
+      "receipt": "boundary-tests.json"
+    },
+    {
+      "interpretation": "unexecuted-native-command-missing-cargo",
+      "label": "cargo-graph",
+      "observed_exit_code": 127,
+      "receipt": "cargo-graph.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "ci-contract-tests",
+      "observed_exit_code": 0,
+      "receipt": "ci-contract-tests.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "core-reproduction",
+      "observed_exit_code": 0,
+      "receipt": "core-reproduction.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "core-tests",
+      "observed_exit_code": 0,
+      "receipt": "core-tests.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "current-assessment",
+      "observed_exit_code": 0,
+      "receipt": "current-assessment.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "current-materialization",
+      "observed_exit_code": 0,
+      "receipt": "current-materialization.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "evaluation-lineage",
+      "observed_exit_code": 0,
+      "receipt": "evaluation-lineage.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "materialization-tests",
+      "observed_exit_code": 0,
+      "receipt": "materialization-tests.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "quorum-oracle",
+      "observed_exit_code": 0,
+      "receipt": "quorum-oracle.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "repository-contract",
+      "observed_exit_code": 0,
+      "receipt": "repository-contract.json"
+    },
+    {
+      "interpretation": "unexecuted-native-command-missing-cargo",
+      "label": "rust-format",
+      "observed_exit_code": 127,
+      "receipt": "rust-format.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "source-after",
+      "observed_exit_code": 0,
+      "receipt": "source-after.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "source-before",
+      "observed_exit_code": 0,
+      "receipt": "source-before.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "source-integrity-tests",
+      "observed_exit_code": 0,
+      "receipt": "source-integrity-tests.json"
+    },
+    {
+      "interpretation": "unexecuted-native-command-missing-cargo",
+      "label": "strict-clippy",
+      "observed_exit_code": 127,
+      "receipt": "strict-clippy.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "trap-v3",
+      "observed_exit_code": 0,
+      "receipt": "trap-v3.json"
+    },
+    {
+      "interpretation": "expected-negative-V4-arithmetic-refusal",
+      "label": "trap-v4-refusal",
+      "observed_exit_code": 2,
+      "receipt": "trap-v4-refusal.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "wan-legacy-tests",
+      "observed_exit_code": 0,
+      "receipt": "wan-legacy-tests.json"
+    },
+    {
+      "interpretation": "completed-successfully",
+      "label": "wan-v4-tests",
+      "observed_exit_code": 0,
+      "receipt": "wan-v4-tests.json"
+    }
+  ],
+  "current_assessment_bytes_unchanged": true,
+  "current_findings": 23,
+  "current_findings_by_axis": {
+    "all": 1,
+    "authority": 6,
+    "context": 1,
+    "data_distribution": 4,
+    "evaluation": 3,
+    "resources": 2,
+    "work_production": 6
+  },
+  "declared_material_count": 0,
+  "implementation_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+  "implementation_tree_equivalence_verified": true,
+  "independent_acceptance": false,
+  "materialization_status": "empty",
+  "measured_implementation_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+  "native_validation": "UNEXECUTED: cargo missing; earlier failures retained",
+  "physical_wan_executed": false,
+  "production_activation": false,
+  "published_implementation_commit": "22a1fe67c247072eface8625a93e23ed01974a51",
+  "python_tests_passed": 329,
+  "quorum_query_reference_calls_512": {
+    "after": 0,
+    "before": 1050624,
+    "output_sha256_equal": true,
+    "scope": "one quorum query after map construction; no TPS or full-network performance claim"
+  },
+  "schema": "trnm-decentralization-continuation-summary-v1",
+  "source_before_after_equal": true,
+  "status": "HOLD",
+  "test_counts": {
+    "boundary-tests": 16,
+    "ci-contract-tests": 104,
+    "core-tests": 69,
+    "evaluation-lineage": 17,
+    "materialization-tests": 20,
+    "quorum-oracle": 4,
+    "source-integrity-tests": 43,
+    "wan-legacy-tests": 25,
+    "wan-v4-tests": 31
+  },
+  "tracked_bytes": 1027152925,
+  "tracked_entries": 10765,
+  "wan_counterexample": {
+    "recorded": 80,
+    "scheduled": 80,
+    "scope": "synthetic declaration arithmetic only",
+    "v3_arithmetic": true,
+    "v4_arithmetic": false,
+    "v4_joint_count": 2
+  }
+}

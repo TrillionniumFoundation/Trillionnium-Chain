@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""Task-local command receipt writer. It neither modifies source nor grants acceptance."""
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+root = Path('/workspace/scratch/f783dbf79043/chain')
+out = Path('/workspace/scratch/f783dbf79043/validation')
+out.mkdir(exist_ok=True)
+label, *command = sys.argv[1:]
+if not label.replace('-', '').replace('_', '').isalnum() or not command:
+    raise SystemExit('label and command required')
+receipt_path = out / (label + '.json')
+log_path = out / (label + '.log')
+if receipt_path.exists() or log_path.exists():
+    raise SystemExit('original observation already exists')
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
+
+source = git('rev-parse', 'HEAD')
+tree = git('rev-parse', 'HEAD^{tree}')
+state = git('status', '--porcelain', '--untracked-files=all')
+start = datetime.datetime.now(datetime.timezone.utc).isoformat()
+tick = time.monotonic()
+env = dict(os.environ)
+env['PATH'] = '/home/agent/.cargo/bin:' + env.get('PATH', '')
+env['CARGO_BUILD_JOBS'] = os.environ.get('TRNM_AUDIT_BUILD_JOBS', '4')
+env['CARGO_TARGET_DIR'] = '/workspace/scratch/f783dbf79043/validation-target'
+with log_path.open('xb') as log:
+    result = subprocess.run(command, cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT)
+receipt = dict(schema='trnm-local-command-receipt-v1', label=label, command=command,
+    cwd=str(root), source_commit=source, source_tree=tree, source_clean_before=not state,
+    source_unchanged_after=source == git('rev-parse', 'HEAD') and not git('status', '--porcelain', '--untracked-files=all'),
+    started_utc=start, finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    wall_seconds=time.monotonic()-tick, exit_code=result.returncode,
+    log_file=log_path.name, log_bytes=log_path.stat().st_size,
+    log_sha256=hashlib.sha256(log_path.read_bytes()).hexdigest(),
+    selected_environment={key:env[key] for key in ('CARGO_BUILD_JOBS','CARGO_TARGET_DIR')},
+    independent_acceptance=False, production_activation=False)
+receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True)+'\n')
+print(json.dumps(receipt, sort_keys=True))
+raise SystemExit(result.returncode)

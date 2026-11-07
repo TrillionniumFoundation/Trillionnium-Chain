@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_project_boundary.py"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T14:17:00.733871+00:00",
+  "independent_acceptance": false,
+  "label": "boundary-tests",
+  "log_bytes": 2425,
+  "log_file": "boundary-tests.log",
+  "log_sha256": "7f9f1673169b8d931dee8225bbc80e2a8c8d31e9412d47385da77b74a86dabca",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "41e433a79548082f6eb4d9926f309153a16960d9",
+  "source_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:16:56.838065+00:00",
+  "wall_seconds": 3.895819481000217
+}

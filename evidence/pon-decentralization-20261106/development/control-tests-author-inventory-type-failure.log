@@ -1,0 +1,82 @@
+EEEEF
+======================================================================
+ERROR: test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) (authors=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 554, in test_author_inventory_requires_a_json_array_not_scalar_or_mapping
+    audited(value)
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 99, in audited
+    return D.evaluate(value["audit"], value["registry"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 400, in evaluate
+    quorum = controls.quorum(evaluation["roster"], evaluation["threshold"], evaluation["authors"],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 268, in quorum
+    authors = self.identifiers(list(authors), self.subjects, "AUTHOR")
+                               ^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+
+======================================================================
+ERROR: test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) (authors=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 554, in test_author_inventory_requires_a_json_array_not_scalar_or_mapping
+    audited(value)
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 99, in audited
+    return D.evaluate(value["audit"], value["registry"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 400, in evaluate
+    quorum = controls.quorum(evaluation["roster"], evaluation["threshold"], evaluation["authors"],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 268, in quorum
+    authors = self.identifiers(list(authors), self.subjects, "AUTHOR")
+                               ^^^^^^^^^^^^^
+TypeError: 'bool' object is not iterable
+
+======================================================================
+ERROR: test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) (authors=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 554, in test_author_inventory_requires_a_json_array_not_scalar_or_mapping
+    audited(value)
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 99, in audited
+    return D.evaluate(value["audit"], value["registry"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 400, in evaluate
+    quorum = controls.quorum(evaluation["roster"], evaluation["threshold"], evaluation["authors"],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 268, in quorum
+    authors = self.identifiers(list(authors), self.subjects, "AUTHOR")
+                               ^^^^^^^^^^^^^
+TypeError: 'bool' object is not iterable
+
+======================================================================
+ERROR: test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) (authors=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 554, in test_author_inventory_requires_a_json_array_not_scalar_or_mapping
+    audited(value)
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 99, in audited
+    return D.evaluate(value["audit"], value["registry"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 400, in evaluate
+    quorum = controls.quorum(evaluation["roster"], evaluation["threshold"], evaluation["authors"],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 268, in quorum
+    authors = self.identifiers(list(authors), self.subjects, "AUTHOR")
+                               ^^^^^^^^^^^^^
+TypeError: 'int' object is not iterable
+
+======================================================================
+FAIL: test_author_inventory_requires_a_json_array_not_scalar_or_mapping (__main__.FiveAxisReports.test_author_inventory_requires_a_json_array_not_scalar_or_mapping) (authors={'author': {'ignored': True}})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 553, in test_author_inventory_requires_a_json_array_not_scalar_or_mapping
+    with self.subTest(authors=authors), self.assertRaises(ValueError):
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+FAILED (failures=1, errors=4)

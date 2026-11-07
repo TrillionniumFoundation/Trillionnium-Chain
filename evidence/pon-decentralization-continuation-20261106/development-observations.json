@@ -1,0 +1,18 @@
+{
+  "initial_materialization_suite": {
+    "cause_observed": "The isolated checkout current-input.json had link count 2; the strict reader refused it.",
+    "error": "HARDLINK_FILE",
+    "errors": 1,
+    "final_frozen_suite_passed": 20,
+    "original_full_log_retained": false,
+    "passed": 18,
+    "repair": "Use a byte-identical single-link temporary input, preserving its externally fixed digest. The reader refusal was not weakened."
+  },
+  "publication_preparation": {
+    "initial_tree_payload_read_truncated": true,
+    "remote_mutation_from_truncated_payload": false,
+    "resolution": "Read bounded chunks and compare the created tree with the exact measured tree before publishing."
+  },
+  "runtime_or_independent_acceptance": false,
+  "schema": "trnm-development-observations-v1"
+}

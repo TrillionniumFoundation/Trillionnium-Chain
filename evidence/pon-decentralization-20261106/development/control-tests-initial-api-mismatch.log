@@ -1,0 +1,498 @@
+.................EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE.EEEEEEEE..E...
+======================================================================
+ERROR: test_aliases_change_actual_coalitions_even_with_unique_key_fingerprints (__main__.QuorumCoalitions.test_aliases_change_actual_coalitions_even_with_unique_key_fingerprints)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 328, in test_aliases_change_actual_coalitions_even_with_unique_key_fingerprints
+    self.assertEqual(report["min_approving_groups"], 1)
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 1, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 1, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 1, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 1], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 2], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 2], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 2], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 2], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[4, 1, 1], threshold=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[2, 3, 1], threshold=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[1, 2, 1, 2], threshold=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=6)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=7)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=8)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_coefficients_match_exhaustive_coalitions_for_every_small_threshold (__main__.QuorumCoalitions.test_coefficients_match_exhaustive_coalitions_for_every_small_threshold) (weights=[3, 3, 2, 1], threshold=9)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 290, in test_coefficients_match_exhaustive_coalitions_for_every_small_threshold
+    self.assertEqual(report["min_approving_groups"],
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima (__main__.QuorumCoalitions.test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima) (subjects=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 302, in test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima
+    self.assertIsNone(report["min_approving_groups"])
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima (__main__.QuorumCoalitions.test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima) (subjects=['subject-0'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 302, in test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima
+    self.assertIsNone(report["min_approving_groups"])
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima (__main__.QuorumCoalitions.test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima) (subjects=['subject-0', 'subject-1'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 302, in test_missing_keys_preserve_frozen_threshold_and_do_not_invent_minima
+    self.assertIsNone(report["min_approving_groups"])
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_stale_controller_cannot_turn_partial_known_groups_into_exact_minimum (__main__.QuorumCoalitions.test_stale_controller_cannot_turn_partial_known_groups_into_exact_minimum)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 319, in test_stale_controller_cannot_turn_partial_known_groups_into_exact_minimum
+    self.assertIsNone(report["min_approving_groups"])
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_three_keys_can_require_one_or_two_controllers (__main__.QuorumCoalitions.test_three_keys_can_require_one_or_two_controllers) (weights=[1, 1, 1])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 278, in test_three_keys_can_require_one_or_two_controllers
+    self.assertEqual(report["min_approving_groups"], expected)
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_three_keys_can_require_one_or_two_controllers (__main__.QuorumCoalitions.test_three_keys_can_require_one_or_two_controllers) (weights=[2, 1])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 278, in test_three_keys_can_require_one_or_two_controllers
+    self.assertEqual(report["min_approving_groups"], expected)
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_three_keys_can_require_one_or_two_controllers (__main__.QuorumCoalitions.test_three_keys_can_require_one_or_two_controllers) (weights=[3])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 278, in test_three_keys_can_require_one_or_two_controllers
+    self.assertEqual(report["min_approving_groups"], expected)
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+======================================================================
+ERROR: test_unknown_owner_or_key_prevents_claimed_global_minimum (__main__.QuorumCoalitions.test_unknown_owner_or_key_prevents_claimed_global_minimum)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 310, in test_unknown_owner_or_key_prevents_claimed_global_minimum
+    report = mapped(registry).quorum([s["id"] for s in registry["subjects"]], 2)
+             ^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 53, in mapped
+    return D.ControlMap(registry,
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 177, in __init__
+    require(row["evidence_sha256"] is None, "UNKNOWN_CONTROL_EVIDENCE")
+  File "/workspace/scratch/f783dbf79043/chain/scripts/pon_decentralization_audit.py", line 46, in require
+    raise ValueError(code)
+ValueError: UNKNOWN_CONTROL_EVIDENCE
+
+======================================================================
+ERROR: test_empty_registry_is_honest_unresolved_input (__main__.StrictRegistry.test_empty_registry_is_honest_unresolved_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f783dbf79043/chain/scripts/ci/test_pon_decentralization_audit.py", line 372, in test_empty_registry_is_honest_unresolved_input
+    self.assertIsNone(report["min_approving_groups"])
+                      ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'min_approving_groups'
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.030s
+
+FAILED (errors=54)

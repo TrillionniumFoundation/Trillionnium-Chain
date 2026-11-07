@@ -1,0 +1,25 @@
+test_actual_source_only_input_is_empty_with_all_findings_retained (__main__.Materialization.test_actual_source_only_input_is_empty_with_all_findings_retained) ... ok
+test_artifact_directory_replacement_is_detected (__main__.Materialization.test_artifact_directory_replacement_is_detected) ... ok
+test_changes_to_previously_read_material_or_input_are_rejected (__main__.Materialization.test_changes_to_previously_read_material_or_input_are_rejected) ... ok
+test_cli_fatal_input_error_leaves_no_report (__main__.Materialization.test_cli_fatal_input_error_leaves_no_report) ... ok
+test_cli_is_create_only_and_does_not_write_input_or_artifact_directory (__main__.Materialization.test_cli_is_create_only_and_does_not_write_input_or_artifact_directory) ... ok
+test_cli_rejects_drifted_installed_policy_without_report (__main__.Materialization.test_cli_rejects_drifted_installed_policy_without_report) ... ok
+test_duplicate_json_and_duplicate_evidence_are_rejected (__main__.Materialization.test_duplicate_json_and_duplicate_evidence_are_rejected) ... ok
+test_expected_digest_binds_raw_input_bytes_before_artifact_access (__main__.Materialization.test_expected_digest_binds_raw_input_bytes_before_artifact_access) ... ok
+test_file_symlinks_hardlinks_directories_and_fifos_never_read (__main__.Materialization.test_file_symlinks_hardlinks_directories_and_fifos_never_read) ... ok
+test_growth_during_read_is_bounded (__main__.Materialization.test_growth_during_read_is_bounded) ... ok
+test_initially_missing_material_cannot_appear_after_its_check (__main__.Materialization.test_initially_missing_material_cannot_appear_after_its_check) ... ok
+test_input_symlink_hardlink_or_nonregular_is_refused (__main__.Materialization.test_input_symlink_hardlink_or_nonregular_is_refused) ... ok
+test_invalid_digest_paths_unknown_references_and_extra_fields_reject (__main__.Materialization.test_invalid_digest_paths_unknown_references_and_extra_fields_reject) ... ok
+test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation (__main__.Materialization.test_matched_bytes_and_repeated_uses_are_deterministic_without_mutation) ... ok
+test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps (__main__.Materialization.test_matching_bytes_do_not_clear_revoked_unknown_or_declared_time_gaps) ... ok
+test_missing_and_mismatched_files_keep_original_references (__main__.Materialization.test_missing_and_mismatched_files_keep_original_references) ... ok
+test_per_file_input_and_total_caps_are_enforced_before_large_reads (__main__.Materialization.test_per_file_input_and_total_caps_are_enforced_before_large_reads) ... ok
+test_root_and_ancestor_symlinks_and_traversal_are_refused (__main__.Materialization.test_root_and_ancestor_symlinks_and_traversal_are_refused) ... ok
+test_same_size_mutation_and_replacement_during_read_reject (__main__.Materialization.test_same_size_mutation_and_replacement_during_read_reject) ... ok
+test_unused_material_is_not_a_deployment_inventory (__main__.Materialization.test_unused_material_is_not_a_deployment_inventory) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.368s
+
+OK

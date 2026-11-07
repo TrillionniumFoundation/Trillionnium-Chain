@@ -1,0 +1,244 @@
+{
+  "schema": "trnm-decentralization-source-inventory-v1",
+  "reviewed_base_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+  "reviewed_base_tree": "945c280e0690923f82726995484811f4b10e597e",
+  "review_scope": "Read-only source/configuration inspection of a fixed existing integration candidate. No deployed authority inventory or external operator authentication.",
+  "collection": "Hashes and byte counts read from the exact Git commit, not the concurrently edited working tree.",
+  "source_facts": {
+    "base_development_profile": {
+      "path": "config/pon/devnet-v1.json",
+      "schema": "pon-devnet-2",
+      "evaluation_profile": "explicit-attested-dev-profile-not-permissionless-utility",
+      "evaluation_signers": 3,
+      "evaluation_threshold": 2,
+      "not_mainnet": true,
+      "production_activation": false
+    },
+    "explicit_native_quorum_profile": {
+      "path": "config/pon/public-evaluation-quorum-v2.json",
+      "schema": "pon-native-public-evaluation-quorum-v2",
+      "id": "native-public-evaluation-quorum-dev-v2",
+      "development_evaluators": 4,
+      "roster": "four controlled development keys; freeze all non-author keys, including evidenced disqualified keys in the denominator",
+      "aggregation": "ceil(2*n/3) real matching native-checked reveals; disqualified keys never count; frozen denominator never decreases",
+      "non_author_roster_size_when_author_in_installed_four": 3,
+      "threshold_for_that_non_author_roster": 2,
+      "independent_governance_accepted": false,
+      "production_activation": false
+    },
+    "release_signature_scope": {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "role_key_membership_fields": [
+        "threshold",
+        "keys"
+      ],
+      "threshold_unit": "distinct pinned cryptographic key",
+      "cross_role_check": "duplicate key IDs refused",
+      "administrative_control_evidence_in_signed_root": false,
+      "deployed_root_or_role_inventory_supplied": false
+    },
+    "wan_reference_requirements": {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md",
+      "minimum_independent_administrators": 3,
+      "minimum_independent_failure_domains": 3,
+      "minimum_real_duration_hours": 72,
+      "current_record_is_campaign_evidence": false
+    }
+  },
+  "axes": [
+    {
+      "id": "work_production",
+      "current_evidence": "Source-level complete-work admission, task/material ownership and explicit development profiles.",
+      "actual_operator_inventory": null,
+      "independent_evidence_status": "NOT_PROVIDED",
+      "open_items": [
+        "New-producer end-to-end access under original rules and hostile-load budgets",
+        "Observed valid-work distribution and complete producer-cost/control attribution"
+      ]
+    },
+    {
+      "id": "data_distribution",
+      "current_evidence": "Configured-peer content verification, signed location hints, local physical retention/repair and complete-release mechanisms.",
+      "actual_operator_inventory": null,
+      "independent_evidence_status": "NOT_PROVIDED",
+      "open_items": [
+        "Independent complete replica/control/failure-domain evidence",
+        "Publisher/provider loss, repair/renewal and original-budget readback"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "current_evidence": "Explicit development profiles and cryptographic/native model-admission rules.",
+      "actual_operator_inventory": null,
+      "independent_evidence_status": "NOT_PROVIDED",
+      "open_items": [
+        "Authenticated evaluator and author control/custody mapping",
+        "Prospective independent data/evaluation and governed replacement/dispute evidence"
+      ]
+    },
+    {
+      "id": "release_upgrade",
+      "current_evidence": "Pinned PQ root and disjoint key roles with exact key quorum, root rotation and version checks.",
+      "actual_operator_inventory": null,
+      "independent_evidence_status": "NOT_PROVIDED",
+      "open_items": [
+        "Complete deployed root/role/updater/emergency/recovery authority inventory",
+        "Actual independent custody, control coalition and physical recovery/rotation evidence"
+      ]
+    },
+    {
+      "id": "funding_hardware",
+      "current_evidence": "Native resource/funding contracts and scoped component observations without a complete network population.",
+      "actual_operator_inventory": null,
+      "independent_evidence_status": "NOT_PROVIDED",
+      "open_items": [
+        "Original complete population/window/unit and unknown-share denominator",
+        "Authenticated beneficial/control and productive-capacity/funding measurements"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "config/pon/devnet-v1.json",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+      "bytes": 1964,
+      "owner": "M00/M11",
+      "review_scope": "Base development profile and its explicit attestation-only utility label."
+    },
+    {
+      "path": "config/pon/public-evaluation-native-v1.json",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "250bf776f46fb9255ea7aa4fd7a52296f6bbeaeb835894f34b436c089bc3632c",
+      "bytes": 1098,
+      "owner": "M06/M11",
+      "review_scope": "Original frozen genesis development roster and all-eligible reveal policy."
+    },
+    {
+      "path": "config/pon/public-evaluation-quorum-v2.json",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "896978622250af7ecb6f116a21e1167f62f96494d8dd8f8fadb3e9989ca4bbf7",
+      "bytes": 1854,
+      "owner": "M06/M11",
+      "review_scope": "Four controlled development keys; frozen non-author denominator and threshold."
+    },
+    {
+      "path": "config/pon/operator-actors-dev-v1.json",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "eb7dcd1ada227e3e78a3747e51a89c626ef97b854c056d06dfef7e97c6ffa6ac",
+      "bytes": 917,
+      "owner": "M05/M06/M15",
+      "review_scope": "Explicit operator role inputs; strict keys do not authenticate independent custody."
+    },
+    {
+      "path": "config/portability-inventory-v1.json",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "e766e17c0b85a79066f09ba609beca4439e91bc66b3039fa7b10f3b00fa0b390",
+      "bytes": 30218,
+      "owner": "M00-M17",
+      "review_scope": "Existing source ownership and denial of network governance authority to local governance component."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "9150fca7d509c4bb26e54609cde30ed461f536d98606aebda95917cf22699daf",
+      "bytes": 366485,
+      "owner": "M15",
+      "review_scope": "Native admission retains parent, task, proof, state and local owner checks."
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/operator_deployment.rs",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "df1954cf9c41315fef5ba23747fab473d33bdb18d6c11583676c80a60c1b9234",
+      "bytes": 13412,
+      "owner": "M15",
+      "review_scope": "Public bootstrap descriptors and separate source/requester approval verification."
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "c2a19976f1157d8cf0fcd67905f3d55ae6c08b9c4ee48a3c6e9845097f10cc68",
+      "bytes": 33832,
+      "owner": "M06/M11",
+      "review_scope": "Evaluation state owner uses cryptographic identities; not an external controller registry."
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "bce7620bdf37faf6cd3bd21c07c3540c18e748a8d96a1f9468e76e7335335083",
+      "bytes": 10378,
+      "owner": "M06/M11",
+      "review_scope": "Frozen quorum and reveal counting remain native model-admission rules."
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "92b9d2942a0ad2473ebee418accb20090e3fbc1f42f4b9ff2fcdc7e9d13ab204",
+      "bytes": 24778,
+      "owner": "M15",
+      "review_scope": "Pinned key thresholds and cross-role key separation contain no independent administrative custody proof."
+    },
+    {
+      "path": "scripts/pon_wan_evidence.py",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "28a46b943965efb8859636e40ba02d071e2376ccbf5650d4dfa9531f8e6b03b2",
+      "bytes": 26899,
+      "owner": "M17",
+      "review_scope": "Existing V1/V2 declared administrator/failure-domain arithmetic and false external-acceptance flags."
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/WAN_EVIDENCE_ACCOUNTING_V1.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "288f8a339f8138f5a9a04f0616f293e5d41aaf2f52b3e511071a7c3a53c12069",
+      "bytes": 13969,
+      "owner": "M17",
+      "review_scope": "Original PN5 independent operator, failure domain and 72-hour external campaign obligations."
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/OPERATOR_ACTORS_V1.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "82247f8a7a0f51235b717d7413482014825306cab3eea25d12352f48a03f3cfc",
+      "bytes": 8837,
+      "owner": "M05/M06/M15",
+      "review_scope": "No global source allowlist added by selected operator-actor profile; no independence inference."
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "0cd9568815c471305decefd1cc3ec67551a13cc4584fe1d63f86160742e47c7a",
+      "bytes": 15149,
+      "owner": "M06/M11",
+      "review_scope": "Controlled-key scope, author exclusion and lack of independence/finality claims."
+    },
+    {
+      "path": "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_DEV_V1.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "c82ecc8d7df5dd33178a2285140c5756de91cedf132fa51be8c7a87cfad8aadd",
+      "bytes": 26216,
+      "owner": "M09",
+      "review_scope": "Signed hints are not possession, retention, independent custody or endpoint-control proofs."
+    },
+    {
+      "path": "docs/development/specs/pon/CELL_RETENTION_V1.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "78afb8a6e1e4e01a59ceb6b2d702c976d6156b6b63b97e40f87a0cae683feb2d",
+      "bytes": 14574,
+      "owner": "M09/M12",
+      "review_scope": "Local physical reservation/readback with separate funded repair; independent domains remain PN5."
+    },
+    {
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "source_commit": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "sha256": "5ac9aeeca56acb66431c7550db6751d7b6d5ef6c0d1fc88ad53efabd8b801a89",
+      "bytes": 15044,
+      "owner": "M03/M15",
+      "review_scope": "Independently retained recovery expectation and release key-role boundaries; no deployed custody claim."
+    }
+  ],
+  "assessment": "HOLD_NO_GO",
+  "independent_accepted": false,
+  "permissionless_utility_accepted": false,
+  "pn5_accepted": false,
+  "public_network_ready": false,
+  "production_activation": false
+}

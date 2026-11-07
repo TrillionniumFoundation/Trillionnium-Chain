@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T14:17:00.373940+00:00",
+  "independent_acceptance": false,
+  "label": "source-integrity-tests",
+  "log_bytes": 6898,
+  "log_file": "source-integrity-tests.log",
+  "log_sha256": "5834ae75dff679ff90b4063cb74227dcc5ae7a25227899d67c14bb2c1b198108",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "41e433a79548082f6eb4d9926f309153a16960d9",
+  "source_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:16:56.869047+00:00",
+  "wall_seconds": 3.5049002529999598
+}

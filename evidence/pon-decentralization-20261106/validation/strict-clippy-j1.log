@@ -1,0 +1,81 @@
+warning: failed to save last-use data
+This may prevent cargo from accurately tracking what is being used in its global cache. This information is used for automatically removing unused data in the cache.
+
+database or disk is full
+
+Caused by:
+  Error code 13: database or disk is full
+   Compiling syn v2.0.117
+   Compiling serde_derive v1.0.228
+    Checking serde v1.0.228
+   Compiling curve25519-dalek-derive v0.1.1
+    Checking curve25519-dalek v4.1.3
+    Checking ed25519-dalek v2.2.0
+    Checking rustix v1.1.4
+    Checking hybrid-array v0.4.15
+   Compiling autocfg v1.5.1
+   Compiling thiserror v1.0.69
+   Compiling num-traits v0.2.19
+    Checking crypto-common v0.2.2
+   Compiling thiserror-impl v1.0.69
+    Checking const-oid v0.10.2
+    Checking der v0.8.3
+    Checking digest v0.11.3
+    Checking spki v0.8.1
+    Checking keccak v0.2.2
+    Checking sponge-cursor v0.1.0
+    Checking shake v0.1.0
+    Checking pkcs8 v0.11.0
+    Checking module-lattice v0.2.3
+    Checking signature v3.0.0
+    Checking ml-dsa v0.1.1
+   Compiling anyhow v1.0.103
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-protocol)
+   Compiling openssl-sys v0.9.117
+    Checking foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+    Checking foreign-types v0.3.2
+   Compiling openssl-macros v0.1.1
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-crypto-primitives)
+    Checking once_cell v1.21.4
+    Checking fastrand v2.3.0
+    Checking tempfile v3.27.0
+   Compiling libsqlite3-sys v0.37.0
+    Checking foldhash v0.2.0
+    Checking hashbrown v0.16.1
+    Checking hashlink v0.11.1
+    Checking smallvec v1.15.1
+    Checking fallible-streaming-iterator v0.1.9
+    Checking fallible-iterator v0.3.0
+    Checking rusqlite v0.39.0
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling cfg_aliases v0.2.2
+   Compiling borsh v1.8.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh-derive v1.8.0
+    Checking fs2 v0.4.3
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-data-availability)
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.4
+   Compiling sha2 v0.10.9
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-transport)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/f783dbf79043/chain/trillionnium/crates/trnm-pon-node)
+error: could not compile `trnm-pon-node` (lib)
+
+Caused by:
+  process didn't exit successfully: `/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver /home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name trnm_pon_node --edition=2021 crates/trnm-pon-node/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata -C embed-bitcode=no -C debuginfo=2 --cfg 'feature="default"' --cfg 'feature="pq-native-openssl"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default", "pq-native-openssl"))' -C metadata=648bcd19a45557cd -C extra-filename=-3192b8b746bcab0f --out-dir /workspace/scratch/f783dbf79043/validation-target/debug/deps -C incremental=/workspace/scratch/f783dbf79043/validation-target/debug/incremental -L dependency=/workspace/scratch/f783dbf79043/validation-target/debug/deps --extern fs2=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libfs2-e999aabeb9702368.rmeta --extern hex=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libhex-7029ca3838e3fb5b.rmeta --extern libc=/workspace/scratch/f783dbf79043/validation-target/debug/deps/liblibc-9e3036e9e06353da.rmeta --extern openssl=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libopenssl-9a25f7db902c9797.rmeta --extern rusqlite=/workspace/scratch/f783dbf79043/validation-target/debug/deps/librusqlite-36d3d60c8339b34e.rmeta --extern rustix=/workspace/scratch/f783dbf79043/validation-target/debug/deps/librustix-22cab5679b0447c1.rmeta --extern serde=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libserde-b16e63406a0b6821.rmeta --extern serde_json=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libserde_json-e0c440b8e3735cf3.rmeta --extern sha2=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libsha2-c6c1886f431b02f0.rmeta --extern tempfile=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtempfile-7b19e007160f57c2.rmeta --extern trnm_crypto_primitives=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_crypto_primitives-0c80aad98aee3fd2.rmeta --extern trnm_data_availability=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_data_availability-88ede7368b90b455.rmeta --extern trnm_mempool=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_mempool-cacdacc0d890be3e.rmeta --extern trnm_mvcc_fee=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_mvcc_fee-2e4988e04d11d159.rmeta --extern trnm_protocol=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_protocol-b4d64b76624f95e5.rmeta --extern trnm_service_settlement=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_service_settlement-1034ee93fb1dc4ab.rmeta --extern trnm_sqlite_io_boundary=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_sqlite_io_boundary-09ce6e9c39ce6a04.rmeta --extern trnm_transport=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libtrnm_transport-f2f209cef7e3979d.rmeta --extern zeroize=/workspace/scratch/f783dbf79043/validation-target/debug/deps/libzeroize-258c1d358d21c96e.rmeta -L native=/workspace/scratch/f783dbf79043/validation-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out -L native=/workspace/scratch/f783dbf79043/validation-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/f783dbf79043/validation-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/workspace/scratch/f783dbf79043/validation-target/debug/build/trnm-sqlite-io-boundary-9e0cbde7b03b0669/out` (signal: 9, SIGKILL: kill)

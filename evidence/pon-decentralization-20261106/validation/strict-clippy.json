@@ -1,0 +1,36 @@
+{
+  "command": [
+    "/home/agent/.cargo/bin/cargo",
+    "clippy",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 101,
+  "finished_utc": "2026-11-06T13:58:23.884573+00:00",
+  "independent_acceptance": false,
+  "label": "strict-clippy",
+  "log_bytes": 3141,
+  "log_file": "strict-clippy.log",
+  "log_sha256": "c0583ae645788cde449f3662761415142fb46bd60859d507a0b6fc286b692125",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:08.543617+00:00",
+  "wall_seconds": 15.340959528999974
+}

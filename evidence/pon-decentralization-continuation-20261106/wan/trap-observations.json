@@ -1,0 +1,2282 @@
+[
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o0-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+    "operator": "o0",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa1",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003e9",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o0-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+    "operator": "o0",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa2",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003ea",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o0-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+    "operator": "o0",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa3",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003eb",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o0-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000004",
+    "operator": "o0",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa4",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003ec",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o1-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000005",
+    "operator": "o1",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa5",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003ed",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o1-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000006",
+    "operator": "o1",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa6",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003ee",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o1-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000007",
+    "operator": "o1",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa7",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003ef",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o1-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000008",
+    "operator": "o1",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa8",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f0",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o2-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000009",
+    "operator": "o2",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fa9",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f1",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o2-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000a",
+    "operator": "o2",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000faa",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f2",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o2-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000b",
+    "operator": "o2",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fab",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f3",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o2-late-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000c",
+    "operator": "o2",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fac",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f4",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o3-early-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000d",
+    "operator": "o3",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fad",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f5",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o3-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000e",
+    "operator": "o3",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fae",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f6",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o3-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000000f",
+    "operator": "o3",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000faf",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f7",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o3-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000010",
+    "operator": "o3",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb0",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f8",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o4-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000011",
+    "operator": "o4",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb1",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003f9",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o4-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000012",
+    "operator": "o4",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb2",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003fa",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o4-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000013",
+    "operator": "o4",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb3",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003fb",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "confirmation",
+    "elapsed_ms": 500,
+    "id": "confirmation-o4-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000014",
+    "operator": "o4",
+    "outcome": "confirmed",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb4",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "block_id": "00000000000000000000000000000000000000000000000000000000000003fc",
+      "confirmed_depth": 6,
+      "observed_chainwork_delta": 10
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o0-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000015",
+    "operator": "o0",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb5",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o0-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000016",
+    "operator": "o0",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb6",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o0-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000017",
+    "operator": "o0",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb7",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o0-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000018",
+    "operator": "o0",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb8",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o1-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000019",
+    "operator": "o1",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fb9",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o1-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001a",
+    "operator": "o1",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fba",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o1-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001b",
+    "operator": "o1",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fbb",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o1-late-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001c",
+    "operator": "o1",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fbc",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o2-early-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001d",
+    "operator": "o2",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fbd",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o2-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001e",
+    "operator": "o2",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fbe",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o2-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000001f",
+    "operator": "o2",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fbf",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o2-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000020",
+    "operator": "o2",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc0",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o3-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000021",
+    "operator": "o3",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc1",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o3-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000022",
+    "operator": "o3",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc2",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o3-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000023",
+    "operator": "o3",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc3",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o3-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000024",
+    "operator": "o3",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc4",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o4-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000025",
+    "operator": "o4",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc5",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o4-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000026",
+    "operator": "o4",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc6",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o4-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000027",
+    "operator": "o4",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc7",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "cell_retrieval",
+    "elapsed_ms": 500,
+    "id": "cell_retrieval-o4-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000028",
+    "operator": "o4",
+    "outcome": "retrieved",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc8",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "source_operators": [
+        "o3",
+        "o4"
+      ]
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o0-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000029",
+    "operator": "o0",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fc9",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007f9",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o0-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002a",
+    "operator": "o0",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fca",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007fa",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o0-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002b",
+    "operator": "o0",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fcb",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007fb",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o0-late-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002c",
+    "operator": "o0",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fcc",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007fc",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o1-early-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002d",
+    "operator": "o1",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fcd",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007fd",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o1-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002e",
+    "operator": "o1",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fce",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007fe",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o1-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000002f",
+    "operator": "o1",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fcf",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "00000000000000000000000000000000000000000000000000000000000007ff",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o1-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000030",
+    "operator": "o1",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd0",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000800",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o2-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000031",
+    "operator": "o2",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd1",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000801",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o2-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000032",
+    "operator": "o2",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd2",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000802",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o2-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000033",
+    "operator": "o2",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd3",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000803",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o2-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000034",
+    "operator": "o2",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd4",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000804",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o3-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000035",
+    "operator": "o3",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd5",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000805",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o3-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000036",
+    "operator": "o3",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd6",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000806",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o3-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000037",
+    "operator": "o3",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd7",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000807",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o3-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000038",
+    "operator": "o3",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd8",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000808",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o4-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000039",
+    "operator": "o4",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fd9",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000809",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o4-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003a",
+    "operator": "o4",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fda",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080a",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o4-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003b",
+    "operator": "o4",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fdb",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080b",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "replica_repair",
+    "elapsed_ms": 500,
+    "id": "replica_repair-o4-late-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003c",
+    "operator": "o4",
+    "outcome": "repaired",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fdc",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "complete_replica_operators": [
+        "o0",
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080c",
+      "manifest_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "payload_bytes": 100,
+      "payload_sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o0-early-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003d",
+    "operator": "o0",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fdd",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080d",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bf5"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o0-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003e",
+    "operator": "o0",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fde",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080e",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bf6"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o0-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000003f",
+    "operator": "o0",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fdf",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000080f",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bf7"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o0-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000040",
+    "operator": "o0",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe0",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000810",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bf8"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o1-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000041",
+    "operator": "o1",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe1",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000811",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bf9"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o1-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000042",
+    "operator": "o1",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe2",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000812",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bfa"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o1-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000043",
+    "operator": "o1",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe3",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000813",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bfb"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o1-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000044",
+    "operator": "o1",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe4",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000814",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bfc"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o2-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000045",
+    "operator": "o2",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe5",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000815",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bfd"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o2-early-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000046",
+    "operator": "o2",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe6",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000816",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bfe"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o2-late-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000047",
+    "operator": "o2",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe7",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000817",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000bff"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o2-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000048",
+    "operator": "o2",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe8",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000818",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c00"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o3-early-0",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000049",
+    "operator": "o3",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fe9",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000819",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c01"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o3-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004a",
+    "operator": "o3",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fea",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081a",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c02"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o3-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004b",
+    "operator": "o3",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000feb",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081b",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c03"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o3-late-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004c",
+    "operator": "o3",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fec",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081c",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c04"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o4-early-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004d",
+    "operator": "o4",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fed",
+    "recorded_unix_ms": 1800000000501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081d",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c05"
+    },
+    "started_unix_ms": 1800000000000,
+    "terminal_unix_ms": 1800000000500,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o4-early-1",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004e",
+    "operator": "o4",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fee",
+    "recorded_unix_ms": 1800000000601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081e",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c06"
+    },
+    "started_unix_ms": 1800000000100,
+    "terminal_unix_ms": 1800000000600,
+    "window": "early"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o4-late-0",
+    "operation_sha256": "000000000000000000000000000000000000000000000000000000000000004f",
+    "operator": "o4",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000fef",
+    "recorded_unix_ms": 1800259200501,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "000000000000000000000000000000000000000000000000000000000000081f",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c07"
+    },
+    "started_unix_ms": 1800259200000,
+    "terminal_unix_ms": 1800259200500,
+    "window": "late"
+  },
+  {
+    "cohort": "recovery",
+    "elapsed_ms": 500,
+    "id": "recovery-o4-late-1",
+    "operation_sha256": "0000000000000000000000000000000000000000000000000000000000000050",
+    "operator": "o4",
+    "outcome": "recovered",
+    "raw_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000ff0",
+    "recorded_unix_ms": 1800259200601,
+    "resources": {
+      "cpu_ns": 1000,
+      "funding_units": 0,
+      "peak_rss_bytes": 1024,
+      "rx_bytes": 200,
+      "tx_bytes": 20
+    },
+    "result": {
+      "effect_sha256": "0000000000000000000000000000000000000000000000000000000000000820",
+      "mode": "reconcile",
+      "new_payments": 0,
+      "redispatched_effects": 0,
+      "target_receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000c08"
+    },
+    "started_unix_ms": 1800259200100,
+    "terminal_unix_ms": 1800259200600,
+    "window": "late"
+  }
+]

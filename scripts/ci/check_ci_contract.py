@@ -133,6 +133,12 @@ ZERO_WORK_ORACLE = '    TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trill
 MODEL_WINDOW_ORACLE = '    python3 formal/pon-nakamoto-v1/test_model_window_history.py -v\n'
 EVALUATION_QUORUM_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_native_evaluation_quorum_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/native_evaluation_quorum_oracle.py\n')
+DECENTRALIZATION_EVIDENCE_CONTROLS = (
+    "    python3 scripts/ci/test_pon_decentralization_audit.py -v\n"
+    "    python3 scripts/ci/test_pon_decentralization_evidence.py -v\n"
+    "    python3 scripts/ci/test_pon_wan_evidence.py -v\n"
+    "    python3 scripts/ci/test_pon_wan_control_domains.py -v\n"
+)
 MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v\n'
                           '    python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v\n')
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
@@ -354,6 +360,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
+    control_commands = code_lines(DECENTRALIZATION_EVIDENCE_CONTROLS)
+    require(code_lines(lanes['external-evidence-contract'])[:len(control_commands)] == control_commands
+            and all(code_lines(script).count(command) == 1 for command in control_commands),
+            'decentralization and original/new WAN controls must execute once, first and without fallback in external-evidence-contract')
     parent_material = '    python3 scripts/test_llm_parent_material.py\n'
     parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
     for command in (parent_material, parent_step):

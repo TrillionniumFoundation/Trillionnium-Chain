@@ -1,0 +1,32 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+    "--output",
+    "/workspace/scratch/f783dbf79043/validation/source-before-raw.json"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:57:53.957827+00:00",
+  "independent_acceptance": false,
+  "label": "source-before",
+  "log_bytes": 423,
+  "log_file": "source-before.log",
+  "log_sha256": "f2a2f3588bf7b7d848ab35af6fab314685f7eeaa94d73c9e9779410bab8967aa",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:57:45.501710+00:00",
+  "wall_seconds": 8.456115715000124
+}

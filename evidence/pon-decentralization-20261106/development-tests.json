@@ -1,0 +1,65 @@
+{
+  "command": "python3 -m unittest discover -s scripts/ci -p test_pon_decentralization_audit.py -v",
+  "final_source_validation_recorded_separately": true,
+  "independent_accepted": false,
+  "independent_test_author_observations": {
+    "author_inventory_type_counterexample": {
+      "errors": 4,
+      "failures": 1,
+      "repair": "Validate JSON authors as an array and reject scalar or object coercion before quorum conversion",
+      "selected_tests": 1
+    },
+    "ci_review": "Direct exact-file invocations replace discover so an absent or renamed suite cannot return a zero-test success; actual missing-file commands tested",
+    "early_test_api_mismatch": "Test scaffold used min_* output names before final minimum_* API; corrected as test API mismatch, not a production vulnerability",
+    "retained_originals": [
+      {
+        "bytes": 700,
+        "path": "development/control-tests-freeze-handoff.json",
+        "sha256": "016438bf2f12b9a9f20f9f4992720e4f96d1ddf1c3878dc32aba9f2489f51f81"
+      },
+      {
+        "bytes": 6257,
+        "path": "development/control-tests-author-inventory-type-failure.log",
+        "sha256": "836438fda2828af3a7fef90f04c0c734a2d1fa46bea6912fcace6b94ace51416"
+      },
+      {
+        "bytes": 142,
+        "path": "development/control-tests-wan-review.log",
+        "sha256": "67a0718137a7b820e11bf0fb6f9cc7708e676b343594460b564aec5ca44aa459"
+      },
+      {
+        "bytes": 38386,
+        "path": "development/control-tests-initial-api-mismatch.log",
+        "sha256": "dc647b7169e9058560f49db8f6114a361b3b1e17548f9db9dac2b2e23113fe03"
+      }
+    ],
+    "scope": "Internal adversarial code review, not external operator qualification"
+  },
+  "initial_observation": {
+    "error_names": [
+      "test_verified_map_is_a_snapshot_not_mutable_registry_aliases",
+      "test_unknown_owner_or_key_prevents_claimed_global_minimum"
+    ],
+    "errors": 2,
+    "exit_code": 1,
+    "failure_names": [
+      "test_direct_constructor_obeys_same_byte_limit_as_cli"
+    ],
+    "failures": 1,
+    "raw_output_scope": "Original tool execution output retained in the working conversation; this file is a summary, not a reconstructed raw log",
+    "tests_run": 32
+  },
+  "other_review_repairs": [
+    "Retain transitive common-key relationships through unknown-owner subjects for exclusion",
+    "Make report output create-only to preserve earlier observations",
+    "Report cross-role control and evaluation-authority overlap explicitly"
+  ],
+  "production_activation": false,
+  "repairs": [
+    "Apply the registry byte bound at the direct ControlMap API as well as the JSON CLI",
+    "Build the control snapshot from the exact immutable canonical bytes whose digest was checked",
+    "Retain unknown ownership and missing subject evidence without granting a control-group count"
+  ],
+  "schema": "trnm-development-observation-v1",
+  "scope": "Observed uncommitted unit-test development result; no exact committed source or deployment qualification claimed"
+}

@@ -230,3 +230,118 @@ authorized WAN deployment/monitoring environments. It has not run 72 hours
 and cannot acquire that evidence by accelerating a clock, replaying rows or
 renaming local processes. Work package 5 is **NOT RUN / HOLD_NO_GO**. The
 reader makes missing evidence visible; it does not supply it.
+
+## Explicit declared-control accounting v3
+
+The same PN5 reader additionally accepts `trnm-wan-preregistration-v3`.
+V1/V2 retain their existing schemas and meanings. V3 composes the V2 original
+schedule, windows, typed results, failure denominators, completion/tail floors,
+resource limits and minimum 72-hour coverage with the
+[five-dimensional declared-control evidence model](DECENTRALIZATION_AUDIT_V1.md).
+It does not create a WAN campaign or authenticate administrative independence.
+
+All original V2 fields are retained. V3 additionally requires exactly these
+context/control fields:
+
+| Field | Meaning |
+| --- | --- |
+| `profile_sha256` | Exact selected profile identity reference. |
+| `network_sha256`, `genesis_sha256`, `parameters_sha256` | Frozen network, genesis and parameter identity references; the registry cannot be substituted across these contexts. |
+| `control_registry` | A bounded `trnm-control-registry-v1` object consumed by the existing declared-control reader. |
+| `control_registry_sha256` | Digest of the exact registry under the core reader's canonical JSON rules. A digest binds declared bytes; it does not authenticate their truth. |
+| `operator_subjects` | Exact mapping from every manifest operator ID to a subject ID in that registry. Missing/extra operator mappings or unknown subjects reject. |
+
+The registry context must match all four original Chain/Hepta source/binary
+references and the four added profile/network/genesis/parameter references.
+Its validity and usable evidence must cover the full declared campaign
+interval. Subject ownership, parent-controller links, aliases and key bindings
+remain declarations. Their common-control closure is transitive. Unknown,
+unresolved or stale control evidence cannot supply a counted independent group.
+Known stale relationships still matter to related-origin exclusion: expiration
+does not turn a previously declared alias into a newly independent source.
+
+V3 requires at least three resolved **declared control groups** across the
+complete operator roster. It also retains the V2 requirement for at least
+three administrator labels and failure-domain labels. These checks cannot
+convert any of the labels into independently authenticated administrators or
+physical domains. A shared hosting provider is a separate infrastructure
+dependency; different provider names do not establish different controllers.
+
+Typed result checks gain the following additional conditions:
+
+| Result | V3 declared-control condition |
+| --- | --- |
+| `retrieved` | The original `minimum_source_operators` floor must be met both by distinct source IDs and by their resolved declared control groups. A source related to any forbidden operator is excluded even when its operator ID differs. Unknown forbidden ownership cannot establish that sources are unrelated. |
+| `repaired` | The original `minimum_administrators` floor must also be met by resolved declared control groups of the complete-replica operators. Original complete-copy and declared failure-domain floors remain required. |
+| `confirmed`, `recovered` | Original V2 native-result identity, depth/work, effect/state and no-redispatch/no-new-payment rules remain unchanged. The roster-level control requirement still applies. |
+
+No control relation resets a completion clock, creates a vote or receipt,
+changes an original operation ID, removes a failed/missing sample, lowers a
+frozen threshold or adds a resource allowance. Actual source and complete-copy
+lists remain receipt claims pending authentication and physical readback.
+The reader's positive synthetic fixtures demonstrate only these conditional
+accounting rules.
+
+The original CLI accepts the new explicit manifest version:
+
+```sh
+python3 scripts/pon_wan_evidence.py frozen-v3-manifest.json original-observations.jsonl
+python3 -m unittest discover -s scripts/ci -p test_pon_wan_evidence.py -v
+```
+
+V3 success is declared-data arithmetic only. It keeps the external-attestation,
+raw-receipt, physical-duration, source/binary, preregistration, independent,
+PN5, public-network and production-activation acceptances false. The current
+**NOT RUN / HOLD_NO_GO** external WAN boundary above remains unchanged.
+
+## Explicit joint control and failure-domain accounting v4
+
+`trnm-wan-preregistration-v4` selects a new interpretation and produces
+`trnm-wan-evidence-accounting-v4`. It retains all V3 input fields and every
+original cohort, schedule, typed identity, sample, time, tail and resource
+requirement. V1/V2/V3 retain their schemas and historical meanings. Selecting
+V4 cannot relabel an earlier campaign as having preregistered the new rule.
+
+Separate counts do not establish simultaneous independence. Consider five
+complete-replica declarations:
+
+| Operator | Declared control group | Declared failure domain |
+| --- | --- | --- |
+| o0 | A | X |
+| o1 | A | Y |
+| o2 | A | Z |
+| o3 | B | X |
+| o4 | C | X |
+
+There are three groups and three failure-domain labels, but at most two
+operators can be selected with both labels different. V3's marginal arithmetic
+can pass this case. V4 constructs a bipartite graph from resolved control groups
+to failure-domain labels, with one edge per declared operator. It finds an exact
+maximum matching using deterministic iterative augmenting paths. Duplicate
+edges cannot add credit; unknown, stale or revoked control contributes no edge.
+The graph retains the existing maximum of 64 operators.
+
+The V4 global operator roster requires a matching of at least three, in addition
+to the original complete-control, administrator-label and failure-domain floors.
+For every claimed `repaired` record, V4 separately computes the matching on that
+record's `complete_replica_operators`. Its size must be at least
+`min(minimum_administrators, minimum_failure_domains)`. Both original marginal
+floors and `minimum_complete_replicas` still apply; with 3/3 floors the same
+three replicas must differ in both dimensions. A suitable global roster cannot
+replace the copies actually declared in that repair record.
+
+The report supplies `operator_joint_control_failure_domain_count`,
+`operator_joint_matched_subset`, `declared_operator_joint_floor_met` and explicit
+failure codes. `repair_joint_results` retains each claimed repair's observation
+identity, maximum joint count, required count, declared matching subset, unknown
+control and `typed_result_success`. The latter is only the typed result check;
+late reporting, missed deadlines, resources and every cohort/global requirement
+still govern the overall result. Failed and missing requests retain their
+original denominators and costs.
+
+A matching subset explains the declaration arithmetic. It is not a physical
+replica readback, independent-hosting observation, cryptographic witness or proof
+that all common infrastructure dependencies were disclosed.
+`physical_replica_independence_verified` and every original external/PN5/public/
+production acceptance flag remain false. Real publisher loss, repair, renewal,
+funding/payment and 72-hour independent WAN evidence remain required.

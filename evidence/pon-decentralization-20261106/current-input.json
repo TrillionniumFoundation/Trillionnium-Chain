@@ -1,0 +1,98 @@
+{
+  "audit": {
+    "authority": {
+      "inventory_complete": false,
+      "inventory_evidence_sha256": null,
+      "routes": []
+    },
+    "context": {
+      "chain_source_sha256": "b417a121273495f66d553603ae3af0886e4c375d0b4b29da16525a191b2ed238",
+      "profile_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "control_registry_sha256": "918c1da0353d35807c9eeee0664bc7e5e4208cfc5d1421cf79cf23ce317a6587",
+    "data_distribution": {
+      "discovery": [],
+      "inventory_complete": false,
+      "inventory_evidence_sha256": null,
+      "providers": [],
+      "replicas": []
+    },
+    "evaluation": {
+      "authors": [],
+      "authors_complete": false,
+      "inventory_complete": false,
+      "inventory_evidence_sha256": null,
+      "roster": [],
+      "roster_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "threshold": 2,
+      "total_key_slots": 3
+    },
+    "policy_sha256": "2be2526818b7db0fcdfa222ccbb4dc5f23a7bc1abdc40479c1332041be99cc2c",
+    "resources": {
+      "funding": {
+        "allocations": [],
+        "inventory_complete": false,
+        "inventory_evidence_sha256": null,
+        "total_units": null,
+        "unit": "unknown",
+        "unit_definition_sha256": null,
+        "unknown_units": null
+      },
+      "hardware": {
+        "allocations": [],
+        "inventory_complete": false,
+        "inventory_evidence_sha256": null,
+        "total_units": null,
+        "unit": "unknown",
+        "unit_definition_sha256": null,
+        "unknown_units": null
+      }
+    },
+    "schema": "trnm-decentralization-audit-v1",
+    "window": {
+      "end_unix_ms": 1793972882000,
+      "start_unix_ms": 1793972881000
+    },
+    "work_production": {
+      "facets": [
+        {
+          "evidence_sha256": null,
+          "id": "work_rule",
+          "status": "unknown"
+        },
+        {
+          "evidence_sha256": null,
+          "id": "task_admission",
+          "status": "unknown"
+        },
+        {
+          "evidence_sha256": null,
+          "id": "network_service",
+          "status": "unknown"
+        },
+        {
+          "evidence_sha256": null,
+          "id": "resource_access",
+          "status": "unknown"
+        }
+      ],
+      "inventory_complete": false,
+      "inventory_evidence_sha256": null,
+      "subjects": []
+    }
+  },
+  "registry": {
+    "aliases": [],
+    "context": {
+      "chain_source_sha256": "b417a121273495f66d553603ae3af0886e4c375d0b4b29da16525a191b2ed238",
+      "profile_sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+    },
+    "controllers": [],
+    "evidence": [],
+    "schema": "trnm-control-registry-v1",
+    "subjects": [],
+    "subjects_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "valid_from_unix_ms": 1793972881000,
+    "valid_until_unix_ms": 1793972882000
+  }
+}

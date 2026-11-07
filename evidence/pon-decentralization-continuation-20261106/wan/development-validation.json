@@ -1,0 +1,54 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_pon_wan_control_domains.py",
+        "-v"
+      ],
+      "label": "control-tests",
+      "log_bytes": 5187,
+      "log_sha256": "f98b5f23252e49cf0808d737f089c3b97fe45a44d08ab1fecbf0ac5480e821e8",
+      "returncode": 0,
+      "wall_seconds": 0.47898082500068995
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/ci/test_pon_wan_evidence.py",
+        "-v"
+      ],
+      "label": "legacy-tests",
+      "log_bytes": 4190,
+      "log_sha256": "d82b3175d9dc43ca7f6ce0900b6c4edb96c838c8c0822fc98cf09c69c063d0ca",
+      "returncode": 0,
+      "wall_seconds": 0.22420380899984593
+    }
+  ],
+  "legacy_report_comparisons": {
+    "fixture-v2-report-bytes-identical": true,
+    "fixture-v3-report-bytes-identical": true,
+    "trap-v3-report-bytes-identical": true
+  },
+  "scope": "uncommitted development validation; no deployment or final-source qualification",
+  "source_after": {
+    "scripts/ci/test_pon_wan_control_domains.py": "bfa0ef699ac62231d439f9178489cff52dd4e71c02c62ce6efbeca19c864e656",
+    "scripts/ci/test_pon_wan_evidence.py": "3e72176aefebaae6b0cd1651be1082ffec99b01bd60514d176035ee9e1f4a715",
+    "scripts/pon_decentralization_audit.py": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390",
+    "scripts/pon_wan_evidence.py": "fb83d56ce0d27ba9889a9e773b2a9bada60efecb025ecf3d69abb51f32eacbb5"
+  },
+  "source_before": {
+    "scripts/ci/test_pon_wan_control_domains.py": "bfa0ef699ac62231d439f9178489cff52dd4e71c02c62ce6efbeca19c864e656",
+    "scripts/ci/test_pon_wan_evidence.py": "3e72176aefebaae6b0cd1651be1082ffec99b01bd60514d176035ee9e1f4a715",
+    "scripts/pon_decentralization_audit.py": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390",
+    "scripts/pon_wan_evidence.py": "fb83d56ce0d27ba9889a9e773b2a9bada60efecb025ecf3d69abb51f32eacbb5"
+  },
+  "source_head": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+  "trap": {
+    "pn5_accepted": false,
+    "v3_arithmetic": true,
+    "v4_arithmetic": false,
+    "v4_joint_count": 2,
+    "v4_repair_claims": 20
+  }
+}

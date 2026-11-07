@@ -1,0 +1,38 @@
+{
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=5s",
+    "180s",
+    "/home/agent/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-mvcc-fee",
+    "--test",
+    "evaluation_quorum_v2"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 127,
+  "finished_utc": "2026-11-06T14:07:05.077925+00:00",
+  "independent_acceptance": false,
+  "label": "native-quorum-bounded",
+  "log_bytes": 137,
+  "log_file": "native-quorum-bounded.log",
+  "log_sha256": "33f07d2923773f6aa230a8496fdd42ebe00159ee1e70dee19131f045a7dfc9cd",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:07:05.040803+00:00",
+  "wall_seconds": 0.03712306299985357
+}

@@ -1,0 +1,597 @@
+{
+  "audit_sha256": "a59ec3f4f1bac22b817c7d9db90ed5d2b95a6720a35f160b3c69c2748d896c97",
+  "axes": {
+    "authority": {
+      "accounting_inventory_current": true,
+      "alternate_route_scope": "each route stands separately; one route never hides another",
+      "cross_role_control_groups": {
+        "operator-a": {
+          "roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "subjects": [
+            "eval-a"
+          ]
+        },
+        "operator-b": {
+          "roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "subjects": [
+            "eval-b"
+          ]
+        },
+        "operator-c": {
+          "roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "subjects": [
+            "eval-c"
+          ]
+        }
+      },
+      "declared_inventory_complete": true,
+      "evaluation_authority_control_overlap": [
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-a"
+          ],
+          "group": "operator-a"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-b"
+          ],
+          "group": "operator-b"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-c"
+          ],
+          "group": "operator-c"
+        }
+      ],
+      "identity_reuse_scope": "declared key fingerprints or repeated subject IDs, including unknown ownership; no control-group or acceptance credit",
+      "inventory_reference_current": true,
+      "key_fingerprint_reuse": [
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "authority_subjects": [
+            "eval-a"
+          ],
+          "evaluation_subjects": [
+            "eval-a"
+          ],
+          "key_sha256": "0428e008c7b8845311a19df49a6c924c09fe715a88921429c40e39bde95a9b19"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "authority_subjects": [
+            "eval-b"
+          ],
+          "evaluation_subjects": [
+            "eval-b"
+          ],
+          "key_sha256": "27fe3840a77f2b3259379c45f02b64a1db0a554ed1fb71bffa1a062a2a5045cd"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "authority_subjects": [
+            "eval-c"
+          ],
+          "evaluation_subjects": [
+            "eval-c"
+          ],
+          "key_sha256": "e0a388d2da469ae3181bbabc71f766461177fabe24494b7adf81671dceb68fa3"
+        }
+      ],
+      "missing_roles": [],
+      "overlap_scope": "declared control including stale relations; diagnostic, not an automatic conflict verdict",
+      "routes": [
+        {
+          "author_control_unresolved": false,
+          "author_related_subjects": [],
+          "author_separated_candidate_group_count": 3,
+          "author_separated_candidate_key_count": 3,
+          "author_separated_candidate_key_threshold_met": true,
+          "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+          "declared_group_key_weights": {
+            "operator-a": 1,
+            "operator-b": 1,
+            "operator-c": 1
+          },
+          "id": "recovery-route",
+          "identified_unique_keys": 3,
+          "independent_administration_verified": false,
+          "key_threshold": 2,
+          "known_groups_sufficient_to_approve": 2,
+          "known_groups_sufficient_to_block": 2,
+          "minimum_approving_groups": 2,
+          "minimum_blocking_groups": 2,
+          "role": "recovery",
+          "route_reference_current": true,
+          "total_key_slots": 3,
+          "unidentified_key_slots": 0,
+          "unresolved_control_key_slots": 0
+        },
+        {
+          "author_control_unresolved": false,
+          "author_related_subjects": [],
+          "author_separated_candidate_group_count": 3,
+          "author_separated_candidate_key_count": 3,
+          "author_separated_candidate_key_threshold_met": true,
+          "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+          "declared_group_key_weights": {
+            "operator-a": 1,
+            "operator-b": 1,
+            "operator-c": 1
+          },
+          "id": "release-route",
+          "identified_unique_keys": 3,
+          "independent_administration_verified": false,
+          "key_threshold": 2,
+          "known_groups_sufficient_to_approve": 2,
+          "known_groups_sufficient_to_block": 2,
+          "minimum_approving_groups": 2,
+          "minimum_blocking_groups": 2,
+          "role": "release",
+          "route_reference_current": true,
+          "total_key_slots": 3,
+          "unidentified_key_slots": 0,
+          "unresolved_control_key_slots": 0
+        },
+        {
+          "author_control_unresolved": false,
+          "author_related_subjects": [],
+          "author_separated_candidate_group_count": 3,
+          "author_separated_candidate_key_count": 3,
+          "author_separated_candidate_key_threshold_met": true,
+          "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+          "declared_group_key_weights": {
+            "operator-a": 1,
+            "operator-b": 1,
+            "operator-c": 1
+          },
+          "id": "root-route",
+          "identified_unique_keys": 3,
+          "independent_administration_verified": false,
+          "key_threshold": 2,
+          "known_groups_sufficient_to_approve": 2,
+          "known_groups_sufficient_to_block": 2,
+          "minimum_approving_groups": 2,
+          "minimum_blocking_groups": 2,
+          "role": "root",
+          "route_reference_current": true,
+          "total_key_slots": 3,
+          "unidentified_key_slots": 0,
+          "unresolved_control_key_slots": 0
+        },
+        {
+          "author_control_unresolved": false,
+          "author_related_subjects": [],
+          "author_separated_candidate_group_count": 3,
+          "author_separated_candidate_key_count": 3,
+          "author_separated_candidate_key_threshold_met": true,
+          "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+          "declared_group_key_weights": {
+            "operator-a": 1,
+            "operator-b": 1,
+            "operator-c": 1
+          },
+          "id": "upgrade-route",
+          "identified_unique_keys": 3,
+          "independent_administration_verified": false,
+          "key_threshold": 2,
+          "known_groups_sufficient_to_approve": 2,
+          "known_groups_sufficient_to_block": 2,
+          "minimum_approving_groups": 2,
+          "minimum_blocking_groups": 2,
+          "role": "upgrade",
+          "route_reference_current": true,
+          "total_key_slots": 3,
+          "unidentified_key_slots": 0,
+          "unresolved_control_key_slots": 0
+        },
+        {
+          "author_control_unresolved": false,
+          "author_related_subjects": [],
+          "author_separated_candidate_group_count": 3,
+          "author_separated_candidate_key_count": 3,
+          "author_separated_candidate_key_threshold_met": true,
+          "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+          "declared_group_key_weights": {
+            "operator-a": 1,
+            "operator-b": 1,
+            "operator-c": 1
+          },
+          "id": "witness-route",
+          "identified_unique_keys": 3,
+          "independent_administration_verified": false,
+          "key_threshold": 2,
+          "known_groups_sufficient_to_approve": 2,
+          "known_groups_sufficient_to_block": 2,
+          "minimum_approving_groups": 2,
+          "minimum_blocking_groups": 2,
+          "role": "witness",
+          "route_reference_current": true,
+          "total_key_slots": 3,
+          "unidentified_key_slots": 0,
+          "unresolved_control_key_slots": 0
+        }
+      ],
+      "subject_identity_reuse": [
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-a"
+          ],
+          "key_sha256": "0428e008c7b8845311a19df49a6c924c09fe715a88921429c40e39bde95a9b19",
+          "subject": "eval-a"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-b"
+          ],
+          "key_sha256": "27fe3840a77f2b3259379c45f02b64a1db0a554ed1fb71bffa1a062a2a5045cd",
+          "subject": "eval-b"
+        },
+        {
+          "authority_roles": [
+            "recovery",
+            "release",
+            "root",
+            "upgrade",
+            "witness"
+          ],
+          "authority_routes": [
+            "recovery-route",
+            "release-route",
+            "root-route",
+            "upgrade-route",
+            "witness-route"
+          ],
+          "evaluation_subjects": [
+            "eval-c"
+          ],
+          "key_sha256": "e0a388d2da469ae3181bbabc71f766461177fabe24494b7adf81671dceb68fa3",
+          "subject": "eval-c"
+        }
+      ]
+    },
+    "data_distribution": {
+      "accounting_inventory_current": true,
+      "declared_inventory_complete": true,
+      "discovery": {
+        "declared_group_count": 3,
+        "declared_groups": {
+          "operator-a": [
+            "eval-a"
+          ],
+          "operator-b": [
+            "eval-b"
+          ],
+          "operator-c": [
+            "eval-c"
+          ]
+        },
+        "independent_administration_verified": false,
+        "subject_count": 3,
+        "unresolved_subjects": []
+      },
+      "inventory_reference_current": true,
+      "providers": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 3,
+        "unresolved_subjects": [
+          "provider-a",
+          "provider-b",
+          "provider-c"
+        ]
+      },
+      "replicas": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 3,
+        "unresolved_subjects": [
+          "provider-a",
+          "provider-b",
+          "provider-c"
+        ]
+      }
+    },
+    "evaluation": {
+      "accounting_inventory_current": true,
+      "author_control_unresolved": false,
+      "author_related_subjects": [],
+      "author_separated_candidate_group_count": 3,
+      "author_separated_candidate_key_count": 3,
+      "author_separated_candidate_key_threshold_met": true,
+      "coalition_scope": "declared control only; full minima withheld with unknown keys or control",
+      "declared_group_key_weights": {
+        "operator-a": 1,
+        "operator-b": 1,
+        "operator-c": 1
+      },
+      "declared_inventory_complete": true,
+      "identified_unique_keys": 3,
+      "independent_administration_verified": false,
+      "inventory_reference_current": true,
+      "key_threshold": 2,
+      "known_groups_sufficient_to_approve": 2,
+      "known_groups_sufficient_to_block": 2,
+      "minimum_approving_groups": 2,
+      "minimum_blocking_groups": 2,
+      "total_key_slots": 3,
+      "unidentified_key_slots": 0,
+      "unresolved_control_key_slots": 0
+    },
+    "resources": {
+      "funding": {
+        "accounting_inventory_current": false,
+        "declared_group_share_ppm": {},
+        "declared_group_units": {},
+        "declared_inventory_complete": false,
+        "independent_administration_verified": false,
+        "inventory_reference_current": true,
+        "known_groups_sufficient_for_majority": null,
+        "largest_declared_group_share_ppm": 0,
+        "listed_units": 900,
+        "total_units": 1000,
+        "unit": "synthetic-test-units",
+        "unit_reference_current": true,
+        "unknown_owner_share_ppm": 1000000,
+        "unknown_owner_units": 1000,
+        "unresolved_listed_units": 900
+      },
+      "hardware": {
+        "accounting_inventory_current": true,
+        "declared_group_share_ppm": {},
+        "declared_group_units": {},
+        "declared_inventory_complete": true,
+        "independent_administration_verified": false,
+        "inventory_reference_current": true,
+        "known_groups_sufficient_for_majority": null,
+        "largest_declared_group_share_ppm": 0,
+        "listed_units": 10,
+        "total_units": 10,
+        "unit": "synthetic-device-hours",
+        "unit_reference_current": true,
+        "unknown_owner_share_ppm": 1000000,
+        "unknown_owner_units": 10,
+        "unresolved_listed_units": 10
+      }
+    },
+    "work_production": {
+      "accounting_inventory_current": true,
+      "declared_inventory_complete": true,
+      "facets": {
+        "network_service": {
+          "declared_status": "open",
+          "openness_verified": false,
+          "reference_current": true
+        },
+        "resource_access": {
+          "declared_status": "open",
+          "openness_verified": false,
+          "reference_current": true
+        },
+        "task_admission": {
+          "declared_status": "open",
+          "openness_verified": false,
+          "reference_current": true
+        },
+        "work_rule": {
+          "declared_status": "open",
+          "openness_verified": false,
+          "reference_current": true
+        }
+      },
+      "inventory_reference_current": true,
+      "producers": {
+        "declared_group_count": 0,
+        "declared_groups": {},
+        "independent_administration_verified": false,
+        "subject_count": 3,
+        "unresolved_subjects": [
+          "provider-a",
+          "provider-b",
+          "provider-c"
+        ]
+      }
+    }
+  },
+  "context": {
+    "chain_binary_sha256": "eded0a7dab901954edcf1a8f12fe3a941bf77e078eb88e11a38ea97e74c22627",
+    "chain_source_sha256": "dbc11d16a2ac89f5af77bd0e3a22fb44e04a3d9ae9193280b4ea20d479c977b5",
+    "genesis_sha256": "ef79c0079908c3ea5ab8e02bc93402f31dff559611c61d47d64bacd19d6bd5a7",
+    "hepta_binary_sha256": "d19bea79aca759c21d303105f9d939bd96ad4a52a9c18049685983756582a5d0",
+    "hepta_source_sha256": "2d34b777e595dfab2c9a2fe8d2682d65f456816f29eaa6bd1031f443410656f0",
+    "network_sha256": "9df1a07950750df3bb805d03d478e0dac9f67987364f2e2d4040fa7ca75c7721",
+    "parameters_sha256": "57a86200ae5c27a7757d92a781f491c3e1749047c18da75f8c5e4f07ce1388f5",
+    "profile_sha256": "bd5ad7fe4afd72ed3e0beeeb9331eb40fd9ec3c67cec2426c0c832f540501ed2"
+  },
+  "control_registry_sha256": "7b06e6b110fd7cba115f77c76e306f3c44c78360550f435df5e94796f0c97b0c",
+  "evidence_references_authenticated": false,
+  "findings": [
+    {
+      "axis": "work_production",
+      "code": "PRODUCER_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "PROVIDERS_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "data_distribution",
+      "code": "REPLICAS_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "resources",
+      "code": "FUNDING_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "resources",
+      "code": "HARDWARE_DENOMINATOR_OR_CONTROL_UNRESOLVED"
+    },
+    {
+      "axis": "all",
+      "code": "EXTERNAL_INDEPENDENCE_ACCEPTANCE_NOT_PERFORMED"
+    }
+  ],
+  "independent_administration_verified": false,
+  "missing_context_fields": [],
+  "permissionless_utility_accepted": false,
+  "policy_sha256": "2be2526818b7db0fcdfa222ccbb4dc5f23a7bc1abdc40479c1332041be99cc2c",
+  "production_activation": false,
+  "public_network_ready": false,
+  "schema": "trnm-decentralization-report-v1",
+  "status": "HOLD",
+  "window": {
+    "end_unix_ms": 2000000,
+    "start_unix_ms": 1000000
+  }
+}

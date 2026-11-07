@@ -18,7 +18,8 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ONE_ZERO_COMPARE_STEP, MAINTENANCE_RUN_STEP,
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
-                               EVALUATION_QUORUM_ORACLE, check_independent_conformance,
+                               EVALUATION_QUORUM_ORACLE, DECENTRALIZATION_EVIDENCE_CONTROLS,
+                               check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
@@ -131,6 +132,32 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
+
+    def test_control_domain_readers_cannot_be_omitted_duplicated_or_bypassed(self):
+        for command in DECENTRALIZATION_EVIDENCE_CONTROLS.splitlines(keepends=True):
+            for replacement in ('', command * 2,
+                                '    if false; then\n' + command + '    fi\n',
+                                '    true # ' + command.lstrip(),
+                                command.rstrip() + ' || true\n',
+                                command.replace('-v', '-k no_such_case -v')):
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+
+    def test_control_domain_readers_cannot_move_to_a_different_lane(self):
+        changed = self.script.replace(DECENTRALIZATION_EVIDENCE_CONTROLS, '')
+        changed = changed.replace('  repository-truth)\n',
+                                  '  repository-truth)\n' + DECENTRALIZATION_EVIDENCE_CONTROLS)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(changed, self.lanes)
+
+    def test_actual_control_commands_fail_when_the_test_file_is_missing(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-control-command-') as directory:
+            for command in DECENTRALIZATION_EVIDENCE_CONTROLS.splitlines():
+                result = subprocess.run(command.split(), cwd=directory,
+                                        capture_output=True, text=True)
+                with self.subTest(command=command):
+                    self.assertNotEqual(result.returncode, 0)
 
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (

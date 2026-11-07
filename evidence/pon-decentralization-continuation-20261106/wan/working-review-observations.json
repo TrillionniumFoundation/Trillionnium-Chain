@@ -1,0 +1,35 @@
+{
+  "core": {
+    "all_equal": true,
+    "matching_rejections": 3436,
+    "matching_returns": 4064,
+    "new_source_sha256": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390",
+    "old_source_sha256": "a93e3f92afc5683b32400d5bca0c757fb5f0b1e85ca2625a52945e8ed6a2d850",
+    "query_comparisons": 233440,
+    "quorum_comparisons": 7500,
+    "registries": 750,
+    "seed": 742004,
+    "source_unchanged_during_command": true
+  },
+  "execution_git_head": null,
+  "fresh_frozen_execution_record": "final-readonly-review.json",
+  "last_explicit_head_observation_before_reviews": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+  "scope": "Earlier working-tree review observations. The execution-time Git HEAD was not captured; these are not relabeled as execution on the later frozen commit.",
+  "wan": {
+    "alternating_path_matching": 32,
+    "max_operator_fixture": {
+      "external_independence_verified": false,
+      "joint_count": 64,
+      "operators": 64,
+      "original_v3_denominators_costs_outcomes_identical": true,
+      "physical_replica_independence_verified": false,
+      "recorded": 1024,
+      "repair_diagnostics": 256,
+      "scheduled": 1024,
+      "serialized_report_bytes": 721608
+    },
+    "operator_65_rejected": "OPERATOR_IDENTITY",
+    "source_sha256": "fb83d56ce0d27ba9889a9e773b2a9bada60efecb025ecf3d69abb51f32eacbb5",
+    "source_unchanged_during_command": true
+  }
+}

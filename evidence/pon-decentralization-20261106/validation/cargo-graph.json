@@ -1,0 +1,33 @@
+{
+  "command": [
+    "/home/agent/.cargo/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--no-deps",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T13:58:09.017842+00:00",
+  "independent_acceptance": false,
+  "label": "cargo-graph",
+  "log_bytes": 163168,
+  "log_file": "cargo-graph.log",
+  "log_sha256": "1647786db1ca9e97c4c6a05f6cb90618ff2a1c9731f07fcc775567cae2d9aca4",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "8ae7093fc6380cef063b061ed8d7fe79749acc17",
+  "source_tree": "a11d4b91519311c05b647e60a50b878b7ee9bafd",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T13:58:08.736999+00:00",
+  "wall_seconds": 0.280839374000152
+}

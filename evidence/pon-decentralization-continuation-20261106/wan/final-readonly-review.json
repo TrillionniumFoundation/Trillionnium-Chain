@@ -1,0 +1,90 @@
+{
+  "argv": [
+    "/workspace/scratch/3311c78ade40/wan-v4-review/final-readonly-review.py",
+    "--root",
+    "/workspace/scratch/3311c78ade40/chain",
+    "--expected-head",
+    "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+    "--output",
+    "/workspace/scratch/3311c78ade40/wan-v4-review/final-readonly-review.json"
+  ],
+  "completed_at_utc": "2026-11-06T15:02:22.618349+00:00",
+  "control_map_differential": {
+    "all_equal": true,
+    "baseline_commit": "73ed42284b7c0ac53e95dd1ed4bf0f058edb8ffa",
+    "baseline_source_sha256": "a93e3f92afc5683b32400d5bca0c757fb5f0b1e85ca2625a52945e8ed6a2d850",
+    "matching_rejections": 3436,
+    "matching_returns": 4064,
+    "query_comparisons": 233440,
+    "quorum_comparisons": 7500,
+    "registries": 750,
+    "seed": 742004
+  },
+  "external_independence_accepted": false,
+  "installed_material_reader_policy_checked": true,
+  "manual_material_reader_review": "Empty input does not receive byte-completeness credit; current is a declared-window condition separate from matched bytes; all authentication, deployment and independence flags remain false.",
+  "production_activation": false,
+  "reviewed_file_sha256_after": {
+    "config/pon/decentralization-audit-v1.json": "f37c211a2ec0e5aeab5087a38107a1886c9516cc9b7be38ef01fdf29e6c75b16",
+    "scripts/ci/test_pon_wan_control_domains.py": "bfa0ef699ac62231d439f9178489cff52dd4e71c02c62ce6efbeca19c864e656",
+    "scripts/ci/test_pon_wan_evidence.py": "3e72176aefebaae6b0cd1651be1082ffec99b01bd60514d176035ee9e1f4a715",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "scripts/pon_decentralization_audit.py": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390",
+    "scripts/pon_decentralization_evidence.py": "e0df7b5275c5f4c99d2d0d59b30f9e3f3ccbea459aa804e577579f855c6e0b2a",
+    "scripts/pon_wan_evidence.py": "fb83d56ce0d27ba9889a9e773b2a9bada60efecb025ecf3d69abb51f32eacbb5"
+  },
+  "reviewed_file_sha256_before": {
+    "config/pon/decentralization-audit-v1.json": "f37c211a2ec0e5aeab5087a38107a1886c9516cc9b7be38ef01fdf29e6c75b16",
+    "scripts/ci/test_pon_wan_control_domains.py": "bfa0ef699ac62231d439f9178489cff52dd4e71c02c62ce6efbeca19c864e656",
+    "scripts/ci/test_pon_wan_evidence.py": "3e72176aefebaae6b0cd1651be1082ffec99b01bd60514d176035ee9e1f4a715",
+    "scripts/ci/verify_ci_source.py": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+    "scripts/pon_decentralization_audit.py": "bfab0939ba9c901ff84d52662d5c2c0375f6c1a8d827e2f22e5774a97c0ea390",
+    "scripts/pon_decentralization_evidence.py": "e0df7b5275c5f4c99d2d0d59b30f9e3f3ccbea459aa804e577579f855c6e0b2a",
+    "scripts/pon_wan_evidence.py": "fb83d56ce0d27ba9889a9e773b2a9bada60efecb025ecf3d69abb51f32eacbb5"
+  },
+  "reviewer_script_sha256": "5e4a94dc085d9c6cbc280fb70bff494d114ee6c3920ccfd4a0ee6220cb202589",
+  "scope": "Fresh read-only internal review on the exact committed source; no deployment or independent acceptance",
+  "source_after": {
+    "base": null,
+    "candidate": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+    "tested_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1027152925,
+    "tracked_entries": 10765,
+    "tracked_worktree_verified": true
+  },
+  "source_before": {
+    "base": null,
+    "candidate": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "e7e6af3c53ac9c111bd210fedaf3f181e1bf8e6d",
+    "tested_tree": "eb93b36df0da51816a05cd4cc1a113e679bcfbdd",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 1027152925,
+    "tracked_entries": 10765,
+    "tracked_worktree_verified": true
+  },
+  "started_at_utc": "2026-11-06T15:02:17.266696+00:00",
+  "status": "PASS",
+  "wan_v4_bounds": {
+    "alternating_path_matching": 32,
+    "max_operator_fixture": {
+      "external_independence_verified": false,
+      "joint_count": 64,
+      "operators": 64,
+      "original_v3_denominators_costs_outcomes_identical": true,
+      "physical_replica_independence_verified": false,
+      "recorded": 1024,
+      "repair_diagnostics": 256,
+      "scheduled": 1024,
+      "serialized_report_bytes": 721608
+    },
+    "operator_65_rejected": "OPERATOR_IDENTITY"
+  }
+}

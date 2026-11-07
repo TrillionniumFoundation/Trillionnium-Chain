@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "-c",
+    "import hashlib,json,pathlib,subprocess\np=pathlib.Path(\"evidence/pon-decentralization-20261106\")\nraw=subprocess.check_output([\"python3\",\"scripts/pon_decentralization_audit.py\",\"--input\",str(p/\"current-input.json\")])\nassert raw==(p/\"current-assessment.json\").read_bytes(),\"retained assessment mismatch\"\nvalue=json.loads(raw)\nsource=json.loads((p/\"current-input.json\").read_text())\nassert source[\"audit\"][\"context\"][\"chain_source_sha256\"]==hashlib.sha256((p/\"source-bindings.json\").read_bytes()).hexdigest()\nassert source[\"audit\"][\"context\"][\"profile_sha256\"]==hashlib.sha256(pathlib.Path(\"config/pon/devnet-v1.json\").read_bytes()).hexdigest()\nprint(json.dumps({\"report_sha256\":hashlib.sha256(raw).hexdigest(),\"status\":value[\"status\"],\"findings\":len(value[\"findings\"]),\"configured_key_slots\":value[\"axes\"][\"evaluation\"][\"total_key_slots\"],\"key_threshold\":value[\"axes\"][\"evaluation\"][\"key_threshold\"],\"unidentified_key_slots\":value[\"axes\"][\"evaluation\"][\"unidentified_key_slots\"],\"external_acceptance\":False},sort_keys=True))\n"
+  ],
+  "cwd": "/workspace/scratch/f783dbf79043/chain",
+  "exit_code": 0,
+  "finished_utc": "2026-11-06T14:16:56.956655+00:00",
+  "independent_acceptance": false,
+  "label": "current-assessment",
+  "log_bytes": 226,
+  "log_file": "current-assessment.log",
+  "log_sha256": "9ec10fa4ef3066d021eac30b8165f0dbe6382abd6d43513de7ba2297753f4ffa",
+  "production_activation": false,
+  "schema": "trnm-local-command-receipt-v1",
+  "selected_environment": {
+    "CARGO_BUILD_JOBS": "4",
+    "CARGO_TARGET_DIR": "/workspace/scratch/f783dbf79043/validation-target"
+  },
+  "source_clean_before": true,
+  "source_commit": "41e433a79548082f6eb4d9926f309153a16960d9",
+  "source_tree": "1781f15299d9d221caa65491ee8a674bfa68fbff",
+  "source_unchanged_after": true,
+  "started_utc": "2026-11-06T14:16:56.822537+00:00",
+  "wall_seconds": 0.13411581900027159
+}

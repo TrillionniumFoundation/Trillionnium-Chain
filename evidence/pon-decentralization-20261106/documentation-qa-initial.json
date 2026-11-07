@@ -1,0 +1,19 @@
+{
+  "current_output_differs": true,
+  "disposition": "Historical source-only output preserved without rewriting. Root must execute and retain a new report after freezing the implementation; this is not a product/network test failure or a new successful source execution claim.",
+  "implementation_sha256_at_mismatch_readback": "82e4b41e3551013af108925ed8dfbd0e7ae706c68186e47161a0a342f47a0714",
+  "independent_accepted": false,
+  "initial_check_exit_code": 1,
+  "initial_failure": "AssertionError comparing retained CLI output to then-current evaluate() output after concurrent core changes.",
+  "initial_failure_implementation_before_after_not_frozen": true,
+  "new_authority_fields_at_readback": [
+    "cross_role_control_groups",
+    "evaluation_authority_control_overlap",
+    "overlap_scope"
+  ],
+  "production_activation": false,
+  "retained_original_report": "evidence/pon-decentralization-20261106/development-assessment-v1.json",
+  "retained_original_report_sha256": "3de49593f99b990d99ae75398e7c1770e260d48440ae05031492cf063cfcfafa",
+  "retained_original_report_status": "HOLD",
+  "schema": "trnm-decentralization-documentation-qa-v1"
+}
