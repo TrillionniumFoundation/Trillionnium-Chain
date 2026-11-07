@@ -1431,92 +1431,78 @@ fn dispatch_shared_with_execution_observation(
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
     context: SubmitDispatchContext<'_>,
 ) -> Result<Value> {
+    match request {
+        Request::Submit { packet } => {
+            let settings = context.packet_settings;
+            dispatch_shared_submit_with_execution_observation(
+                node,
+                || decode_hex_packet(&packet, settings),
+                progress,
+                verify,
+                control,
+                context,
+            )
+        }
+        other => {
+            let mut owner = lock_owner(node, progress)?;
+            dispatch(&mut owner, other, progress)
+        }
+    }
+}
+
+/// The caller supplies only the existing codec invocation. It runs at the
+/// original Decode boundary; all owner, State, Work and publication checks
+/// below are shared unchanged by owned and borrowed transport representations.
+fn dispatch_shared_submit_with_execution_observation(
+    node: &Mutex<Node>,
+    decode: impl FnOnce() -> Result<Packet>,
+    progress: &mut dyn FnMut(u64) -> Result<()>,
+    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
+    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    context: SubmitDispatchContext<'_>,
+) -> Result<Value> {
     use public_v3::SubmitPhase;
     let SubmitDispatchContext {
-        packet_settings,
         observation,
         public_proof_before_unowned_task,
         termination_cpu,
+        ..
     } = context;
-    match request {
-        Request::Submit { packet } => {
-            let packet = observe_submit_phase(observation, SubmitPhase::Decode, || {
-                decode_hex_packet(&packet, packet_settings)
-            })?;
-            let owner_permit = {
-                let mut owner =
-                    observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
-                        lock_owner(node, progress)
-                    })?;
-                let (existing, permit) =
-                    observe_submit_phase(observation, SubmitPhase::Context, || {
-                        let clock = now()?;
-                        // Pending activation checks do not reconstruct parent State.
-                        // Keep request cancellation without emitting a State progress
-                        // event before the ordinary proof/task prechecks below.
-                        let pending_exact =
-                            owner.pending_exact_activation_replay(&packet, clock, &mut || {
-                                progress(0)
-                            })?;
-                        let mut checkpoint = |point| {
-                            progress(0)?;
-                            (control.progress)(point)
-                        };
-                        let existing = if pending_exact.is_some() {
-                            pending_exact
-                        } else if public_proof_before_unowned_task {
-                            owner.precheck_public_admission_context_with_progress(
-                                &packet,
-                                clock,
-                                &mut checkpoint,
-                            )?
-                        } else {
-                            owner.check_admission_context_with_progress(
-                                &packet,
-                                clock,
-                                &mut checkpoint,
-                            )?
-                        };
-                        if let Some(id) = existing {
-                            return Ok((Some((id, clock)), None));
-                        }
-                        Ok((None, owner.begin_owner_work(&packet)?))
-                    })?;
-                if let Some((id, clock)) = existing {
-                    return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
-                        let active = owner.activate_observed_with_termination(
-                            id,
-                            clock,
-                            &mut || {
-                                progress(0)?;
-                                (control.progress)(
-                                    trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeOutput,
-                                )
-                            },
-                            termination_cpu,
-                        )?;
-                        Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
-                            "generation":owner.active()?.1,"physical_execution":false}))
-                    });
-                }
-                permit
+    let packet = observe_submit_phase(observation, SubmitPhase::Decode, decode)?;
+    let owner_permit = {
+        let mut owner = observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
+            lock_owner(node, progress)
+        })?;
+        let (existing, permit) = observe_submit_phase(observation, SubmitPhase::Context, || {
+            let clock = now()?;
+            // Pending activation checks do not reconstruct parent State.
+            // Keep request cancellation without emitting a State progress
+            // event before the ordinary proof/task prechecks below.
+            let pending_exact =
+                owner.pending_exact_activation_replay(&packet, clock, &mut || progress(0))?;
+            let mut checkpoint = |point| {
+                progress(0)?;
+                (control.progress)(point)
             };
-            progress(0)?;
-            let checked = observe_submit_phase(observation, SubmitPhase::Work, || verify(packet))?;
-            // Cancellation after work must not turn into a durable admission.
-            progress(0)?;
-            let (mut owner, id, clock) = admit_shared_checked(
-                node,
-                checked,
-                owner_permit,
-                progress,
-                control,
-                now,
-                observation,
-            )?;
-            observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
-                submit_result_with_progress(
-                    &mut owner,
+            let existing = if pending_exact.is_some() {
+                pending_exact
+            } else if public_proof_before_unowned_task {
+                owner.precheck_public_admission_context_with_progress(
+                    &packet,
+                    clock,
+                    &mut checkpoint,
+                )?
+            } else {
+                owner.check_admission_context_with_progress(&packet, clock, &mut checkpoint)?
+            };
+            if let Some(id) = existing {
+                return Ok((Some((id, clock)), None));
+            }
+            Ok((None, owner.begin_owner_work(&packet)?))
+        })?;
+        if let Some((id, clock)) = existing {
+            return observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+                let active = owner.activate_observed_with_termination(
                     id,
                     clock,
                     &mut || {
@@ -1526,14 +1512,38 @@ fn dispatch_shared_with_execution_observation(
                         )
                     },
                     termination_cpu,
-                )
-            })
+                )?;
+                Ok(json!({"block":hex::encode(id),"active":hex::encode(active),
+                    "generation":owner.active()?.1,"physical_execution":false}))
+            });
         }
-        other => {
-            let mut owner = lock_owner(node, progress)?;
-            dispatch(&mut owner, other, progress)
-        }
-    }
+        permit
+    };
+    progress(0)?;
+    let checked = observe_submit_phase(observation, SubmitPhase::Work, || verify(packet))?;
+    // Cancellation after work must not turn into a durable admission.
+    progress(0)?;
+    let (mut owner, id, clock) = admit_shared_checked(
+        node,
+        checked,
+        owner_permit,
+        progress,
+        control,
+        now,
+        observation,
+    )?;
+    observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+        submit_result_with_progress(
+            &mut owner,
+            id,
+            clock,
+            &mut || {
+                progress(0)?;
+                (control.progress)(trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeOutput)
+            },
+            termination_cpu,
+        )
+    })
 }
 
 struct ActiveRequestGuard {
