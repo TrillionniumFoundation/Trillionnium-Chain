@@ -7,7 +7,7 @@ use super::{Node, StateBackend};
 use crate::{ensure, Error, Result};
 use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{
     migration_inventory_v1::{self, CheckpointInventory, SourcePins},
-    CheckpointMaterial,
+    CheckpointMaterial, TrustedMigrationAnchor, TrustedPqPrecommitments,
 };
 
 impl Node {
@@ -20,6 +20,48 @@ impl Node {
     /// reverify new work, establish source finality or authorize a CLAIM. State
     /// replay and inventory retain the existing complete-State/history costs.
     pub fn inspect_pq_migration_checkpoint(&self, pins: SourcePins) -> Result<CheckpointInventory> {
+        self.with_pq_migration_checkpoint(pins, |material| {
+            Ok(migration_inventory_v1::inspect_checkpoint(
+                pins,
+                &material,
+                &self.settings.app,
+            )?)
+        })
+    }
+
+    /// Prepare a bounded new-network anchor from this actual admitted source.
+    /// The exact prior-registry commitment must be independently retained along
+    /// with the checkpoint pins; it is never derived from source account keys.
+    ///
+    /// Inventory and anchor use one complete SQLite read snapshot. Unsupported
+    /// source rows are refused by the original M06 importer, even when their
+    /// balance is zero. No source row, active tip or retirement state is changed.
+    /// This is not source-finality, prior-binding-time or source-retirement
+    /// evidence: those independent premises remain necessary before a cutover.
+    pub fn prepare_pq_migration_checkpoint(
+        &self,
+        pins: SourcePins,
+        prior_registry_commitment: [u8; 48],
+        registry: TrustedPqPrecommitments,
+    ) -> Result<(TrustedMigrationAnchor, CheckpointInventory)> {
+        ensure(
+            prior_registry_commitment != [0; 48]
+                && registry.commitment() == prior_registry_commitment,
+            "PQ_MIGRATION_REGISTRY_PIN",
+        )?;
+        self.with_pq_migration_checkpoint(pins, |material| {
+            let report =
+                migration_inventory_v1::inspect_checkpoint(pins, &material, &self.settings.app)?;
+            let anchor = registry.pin_checkpoint(pins.checkpoint, material, &self.settings.app)?;
+            Ok((anchor, report))
+        })
+    }
+
+    fn with_pq_migration_checkpoint<T>(
+        &self,
+        pins: SourcePins,
+        inspect: impl FnOnce(CheckpointMaterial) -> Result<T>,
+    ) -> Result<T> {
         ensure(
             !self.settings.app.is_pq_account_profile(),
             "PQ_INVENTORY_SOURCE_PROFILE",
@@ -58,8 +100,7 @@ impl Node {
             trace,
             state: self.state_at(pins.checkpoint)?,
         };
-        let report =
-            migration_inventory_v1::inspect_checkpoint(pins, &material, &self.settings.app)?;
+        let report = inspect(material)?;
         if tx.total_changes() != changes {
             self.invalidate_commitment();
             return Err(Error::from("PQ_INVENTORY_WRITE").local_integrity());
@@ -72,3 +113,7 @@ impl Node {
 #[cfg(test)]
 #[path = "pq_migration_inventory_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "pq_migration_handoff_tests.rs"]
+mod handoff_tests;

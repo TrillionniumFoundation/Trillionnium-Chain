@@ -1,14 +1,243 @@
 """Adversarial fixtures for the claim guard; deliberately no crypto pass tests."""
 import json
+import errno
+import io
+import mmap
+import os
 from pathlib import Path
+import signal
 import sys
 import tempfile
 import unittest
 from copy import deepcopy
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pq_chain_claim_guard import (BOUNDARY, CONFIG, CONSENSUS, CORPUS, DEVNET, GATES,
-                                  PROOF_MANIFEST, UnsafePromotion, inspect)
+                                  PROOF_MANIFEST, UnsafePromotion, inspect, safe_file)
+
+
+class DescriptorReaderControls:
+    """Shared real-filesystem attacks for both public reader wrappers.
+
+    Hooks only choose the scheduling boundary. All opens, reads, directory
+    renames, hardlinks, symlinks, writes and FIFO creation use the actual OS.
+    The io.open hook also makes these controls replayable against the old
+    pathname reader; no returned bytes or stat identities are fabricated.
+    """
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.area = Path(temp.name)
+        self.root = self.area / 'checkout-parent' / 'checkout'
+        self.relative = 'nested/source.bin'
+        self.source = self.root / self.relative
+        self.source.parent.mkdir(parents=True)
+        self.original = b'original source'
+        self.replacement = b'replaced source'
+        self.assertEqual(len(self.original), len(self.replacement))
+        self.source.write_bytes(self.original)
+
+    @staticmethod
+    def identity(path):
+        value = path.lstat()
+        return (value.st_dev, value.st_ino, value.st_mode, value.st_size,
+                value.st_mtime_ns, value.st_ctime_ns)
+
+    def exercise(self, mutation, moment='open'):
+        changed = False
+        opened = []
+        read_lengths = []
+        before = self.identity(self.source)
+        original_open, original_read, original_io_open = os.open, os.read, io.open
+
+        def change():
+            nonlocal changed
+            changed = True
+            mutation()
+
+        def is_leaf(path):
+            return (isinstance(path, (str, os.PathLike))
+                    and os.fspath(path) in (str(self.source), self.source.name))
+
+        def descriptor_open(path, flags, mode=0o777, *, dir_fd=None):
+            if moment == 'open' and is_leaf(path) and not changed:
+                change()
+            fd = original_open(path, flags, mode, dir_fd=dir_fd)
+            opened.append(fd)
+            return fd
+
+        def descriptor_read(fd, size):
+            if moment == 'read' and not changed:
+                change()
+            data = original_read(fd, size)
+            read_lengths.append(len(data))
+            return data
+
+        class WatchedFile:
+            def __init__(self, handle):
+                self.handle = handle
+
+            def __enter__(self):
+                self.handle.__enter__()
+                return self
+
+            def __exit__(self, *args):
+                return self.handle.__exit__(*args)
+
+            def __getattr__(self, name):
+                return getattr(self.handle, name)
+
+            def read(self, *args, **kwargs):
+                if moment == 'read' and not changed:
+                    change()
+                data = self.handle.read(*args, **kwargs)
+                read_lengths.append(len(data))
+                return data
+
+        def pathname_open(path, *args, **kwargs):
+            watched = is_leaf(path)
+            if watched and moment == 'open' and not changed:
+                change()
+            handle = original_io_open(path, *args, **kwargs)
+            return WatchedFile(handle) if watched else handle
+
+        try:
+            with (patch.object(os, 'open', side_effect=descriptor_open),
+                  patch.object(os, 'read', side_effect=descriptor_read),
+                  patch.object(io, 'open', side_effect=pathname_open)):
+                try:
+                    accepted = self.reader(self.root, self.relative)
+                except self.reader_error:
+                    pass
+                else:
+                    self.fail(f'filesystem race accepted {accepted!r}; '
+                              f'mutation_executed={changed}; before={before}; '
+                              f'after={self.identity(self.source)}')
+            self.assertTrue(changed, 'refusal occurred before the real attack ran')
+            return read_lengths
+        finally:
+            for fd in opened:
+                with self.assertRaises(OSError) as error:
+                    os.fstat(fd)
+                self.assertEqual(error.exception.errno, errno.EBADF,
+                                 'opened source/ancestor descriptor leaked')
+
+    def replace_leaf(self):
+        other = self.area / 'replacement.bin'
+        other.write_bytes(self.replacement)
+        other.replace(self.source)
+
+    def symlink_leaf(self):
+        other = self.area / 'replacement.bin'
+        other.write_bytes(self.replacement)
+        self.source.unlink()
+        self.source.symlink_to(other)
+
+    def test_regular_file_is_returned_unchanged(self):
+        self.assertEqual(self.reader(self.root, self.relative), self.original)
+
+    def test_leaf_symlink_between_check_and_open_is_refused(self):
+        self.exercise(self.symlink_leaf)
+
+    def test_same_length_leaf_replacement_before_open_is_refused(self):
+        self.exercise(self.replace_leaf)
+
+    def test_same_length_leaf_replacement_during_read_is_refused(self):
+        self.exercise(self.replace_leaf, 'read')
+
+    def test_leaf_symlink_during_read_is_refused(self):
+        self.exercise(self.symlink_leaf, 'read')
+
+    def test_parent_replacement_with_identical_leaf_is_refused(self):
+        # Create the extra link before the reader snapshots file ctime, so
+        # the directory check is the only reason for refusal.
+        replacement = self.area / 'replacement-directory'
+        replacement.mkdir()
+        os.link(self.source, replacement / self.source.name)
+
+        def substitute():
+            self.source.parent.rename(self.area / 'detached-directory')
+            replacement.rename(self.source.parent)
+
+        self.exercise(substitute)
+
+    def test_parent_symlink_to_same_leaf_during_read_is_refused(self):
+        def substitute():
+            detached = self.area / 'detached-directory'
+            self.source.parent.rename(detached)
+            self.source.parent.symlink_to(detached, target_is_directory=True)
+
+        self.exercise(substitute, 'read')
+
+    def test_checkout_ancestor_symlink_during_read_is_refused(self):
+        def substitute():
+            detached = self.area / 'detached-checkout-parent'
+            self.root.parent.rename(detached)
+            self.root.parent.symlink_to(detached, target_is_directory=True)
+
+        self.exercise(substitute, 'read')
+
+    def test_same_length_in_place_rewrite_is_refused(self):
+        def rewrite():
+            original = self.source.stat()
+            self.source.write_bytes(self.replacement)
+            os.utime(self.source, ns=(original.st_atime_ns,
+                                     original.st_mtime_ns + 1_000_000_000))
+
+        self.exercise(rewrite, 'read')
+
+    def test_same_length_rewrite_with_restored_mtime_is_refused(self):
+        def rewrite():
+            original = self.source.stat()
+            self.source.write_bytes(self.replacement)
+            os.utime(self.source, ns=(original.st_atime_ns, original.st_mtime_ns))
+            self.assertNotEqual(self.source.stat().st_ctime_ns, original.st_ctime_ns)
+
+        self.exercise(rewrite, 'read')
+
+    def test_same_length_mmap_rewrite_is_refused(self):
+        def rewrite():
+            with self.source.open('r+b') as source:
+                with mmap.mmap(source.fileno(), 0, access=mmap.ACCESS_WRITE) as mapping:
+                    mapping[:] = self.replacement
+                    mapping.flush()
+
+        self.exercise(rewrite, 'read')
+
+    def test_growth_during_read_is_bounded(self):
+        lengths = self.exercise(
+            lambda: self.source.write_bytes(b'x' * (self.byte_limit + 17)), 'read')
+        self.assertLessEqual(sum(lengths), self.byte_limit + 1)
+        self.assertTrue(lengths, 'growth must reach the actual bounded read')
+
+    def test_fifo_substitution_cannot_block_before_fstat(self):
+        def substitute():
+            self.source.unlink()
+            os.mkfifo(self.source)
+
+        def blocked(signum, frame):
+            raise AssertionError('reader blocked after real FIFO substitution')
+
+        previous_handler = signal.signal(signal.SIGALRM, blocked)
+        previous_timer = signal.setitimer(signal.ITIMER_REAL, 2)
+        try:
+            self.exercise(substitute)
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, previous_handler)
+            if previous_timer[0]:
+                signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+
+    def test_missing_after_check_is_wrapped_and_fds_close(self):
+        self.exercise(self.source.unlink)
+
+
+class ClaimReaderRaceTests(DescriptorReaderControls, unittest.TestCase):
+    reader = staticmethod(safe_file)
+    reader_error = UnsafePromotion
+    byte_limit = 1024 * 1024
 
 
 class TestClaimGuard(unittest.TestCase):
@@ -111,6 +340,10 @@ class TestClaimGuard(unittest.TestCase):
 
     def test_missing_proof_relation_refused(self):
         (self.root / GATES['proof_pq128'][0]).unlink()
+        self.refused()
+
+    def test_source_reader_helper_cannot_disappear(self):
+        (self.root / 'scripts/ci/pq_source_reader.py').unlink()
         self.refused()
 
     def test_missing_authority_surface_inventory_refused(self):

@@ -1,4 +1,6 @@
 //! Bounded honest-client recovery. No new admission or confirmation authority.
+#[cfg(all(target_os = "linux", feature = "pq-native-openssl"))]
+pub mod pq;
 use crate::{digest, ensure, ingress, Error, ErrorCode, Node, Packet, Result};
 use ingress::public_v3::{
     call_public_protected_v3_with_deadline, PublicClientMetrics, PublicClientStage, PublicPolicy,
@@ -604,6 +606,11 @@ pub fn submit_with_verified_parent_recovery(
     let result = (|| -> Result<()> {
         plan.validate()?;
         plan.alive()?;
+        // PQ transport owners may retain a classical account ledger. Checking
+        // only its Settings in the V3 client would still send classical
+        // credentials and bypass the owner's persisted network-only policy.
+        // Refuse before packet reads, parent recovery or any network call.
+        local_producer.require_classical_network_profile()?;
         digest(client.server_public)?;
         PublicPolicy::new(
             client.policy.bits,

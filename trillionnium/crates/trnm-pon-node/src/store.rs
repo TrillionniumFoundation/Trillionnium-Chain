@@ -23,6 +23,8 @@ pub mod native_budget;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;
+#[cfg(all(test, feature = "pq-native-openssl"))]
+mod pq_existing_owner_tests;
 mod pq_migration_inventory;
 pub(crate) mod pq_network;
 pub(crate) mod pq_rollback_witness;
@@ -470,6 +472,29 @@ fn schema(db: &Connection) -> Result<BTreeMap<String, String>> {
     }
     Ok(out)
 }
+// Only the new existing-owner path uses this additional constructor boundary.
+// It grants no authority and cannot repair or enroll an incomplete namespace.
+fn existing_owner_boundary(directory: &Path, identity: (u64, u64), owner: &File) -> Result<()> {
+    let current = fs::symlink_metadata(directory)?;
+    ensure(
+        current.is_dir() && (current.dev(), current.ino()) == identity,
+        "NAMESPACE_CHANGED",
+    )?;
+    let lock = directory.join("owner.lock");
+    plain(&lock)?;
+    let named = fs::metadata(&lock)?;
+    let held = owner.metadata()?;
+    ensure(
+        (named.dev(), named.ino()) == (held.dev(), held.ino()),
+        "OWNER_REPLACED",
+    )?;
+    match fs::symlink_metadata(directory.join("initializing.json")) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(error.into()),
+        Ok(_) => Err("PQ_EXISTING_OWNER_INITIALIZATION".into()),
+    }
+}
+
 fn plain(path: &Path) -> Result<()> {
     match fs::symlink_metadata(path) {
         Ok(m) => ensure(
@@ -1314,6 +1339,11 @@ impl StateBackend {
         hash(domain, &[self.ddl().as_bytes()])
     }
 }
+enum SelectedOpen {
+    InitializeOrRecover { growth_observation_only: bool },
+    ExistingPqOwner,
+}
+
 struct NativeOwners {
     policy: Option<OwnerPolicy>,
     mining: Option<operator_mining_owner::MiningOwner>,
@@ -1716,11 +1746,47 @@ impl Node {
         path: &Path,
         settings: Settings,
         workers: usize,
-        mut hook: Option<&mut Hook<'_>>,
+        hook: Option<&mut Hook<'_>>,
         owners: NativeOwners,
         state_backend: StateBackend,
         growth_observation_only: bool,
     ) -> Result<Self> {
+        Self::open_selected_mode(
+            path,
+            settings,
+            workers,
+            hook,
+            owners,
+            state_backend,
+            SelectedOpen::InitializeOrRecover {
+                growth_observation_only,
+            },
+        )
+    }
+
+    fn open_selected_mode(
+        path: &Path,
+        settings: Settings,
+        workers: usize,
+        mut hook: Option<&mut Hook<'_>>,
+        owners: NativeOwners,
+        state_backend: StateBackend,
+        selection: SelectedOpen,
+    ) -> Result<Self> {
+        let (growth_observation_only, existing_owner_only) = match selection {
+            SelectedOpen::InitializeOrRecover {
+                growth_observation_only,
+            } => (growth_observation_only, false),
+            SelectedOpen::ExistingPqOwner => (false, true),
+        };
+        ensure(
+            !existing_owner_only
+                || matches!(
+                    state_backend,
+                    StateBackend::PqNetworkV2 | StateBackend::PqWitnessV4
+                ),
+            "PQ_EXISTING_OWNER_BACKEND",
+        )?;
         ensure(
             !authenticated_migration_pending(path)?,
             "NATIVE_STATE_MIGRATION_PENDING",
@@ -1811,6 +1877,7 @@ impl Node {
         ensure([1, 2, 4, 8].contains(&workers), "WORKERS")?;
         settings.replay_checkpoint_tile_material()?;
         if !path.exists() {
+            ensure(!existing_owner_only, "PQ_EXISTING_OWNER_REQUIRED")?;
             fs::create_dir_all(path)?;
             fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
         }
@@ -1837,7 +1904,7 @@ impl Node {
             plain(p)?;
         }
         let owner = OpenOptions::new()
-            .create(true)
+            .create(!existing_owner_only)
             .truncate(false)
             .read(true)
             .write(true)
@@ -1847,12 +1914,20 @@ impl Node {
         owner
             .try_lock_exclusive()
             .map_err(|_| Error::from("WRITER_BUSY"))?;
+        if existing_owner_only {
+            existing_owner_boundary(&directory, (metadata.dev(), metadata.ino()), &owner)?;
+            let current = fs::symlink_metadata(&dbpath)?;
+            ensure(
+                current.is_file() && !current.file_type().is_symlink() && current.nlink() == 1,
+                "PQ_EXISTING_OWNER_REQUIRED",
+            )?;
+        }
         let ddl = state_backend.ddl();
         let schema_id = state_backend.selected_schema_id(&settings);
         let expected = canonical(
             &serde_json::json!({"schema":hex::encode(schema_id),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())}),
         )?;
-        if !dbpath.exists() && !marker.exists() {
+        if !existing_owner_only && !dbpath.exists() && !marker.exists() {
             for entry in fs::read_dir(&directory)? {
                 let name = entry?.file_name();
                 ensure(
@@ -1874,6 +1949,10 @@ impl Node {
             cut(&mut hook, "init-intent")?;
         }
         let intent = marker.exists();
+        ensure(
+            !existing_owner_only || !intent,
+            "PQ_EXISTING_OWNER_INITIALIZATION",
+        )?;
         if intent {
             ensure(
                 read_initialization_marker(&marker, expected.len())? == expected,
@@ -1885,15 +1964,28 @@ impl Node {
         let expected_schema = schema(&expected_db)?;
         let mut initialized = false;
         let mut prior_inode = None;
+        let mut retained_existing = None;
         if dbpath.exists() {
             let m = fs::metadata(&dbpath)?;
             prior_inode = Some((m.dev(), m.ino()));
+            if existing_owner_only {
+                cut(&mut hook, "existing-owner-before-open")?;
+                existing_owner_boundary(&directory, (metadata.dev(), metadata.ino()), &owner)?;
+                plain(&dbpath)?;
+            }
+            // Existing-only validates this very RW connection and retains it;
+            // it never probes one connection and later reopens with CREATE.
             let probe = Connection::open_with_flags(
                 &dbpath,
-                OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+                (if existing_owner_only {
+                    OpenFlags::SQLITE_OPEN_READ_WRITE
+                } else {
+                    OpenFlags::SQLITE_OPEN_READ_ONLY
+                }) | OpenFlags::SQLITE_OPEN_NO_MUTEX,
             )?;
             let current = schema(&probe)?;
             if current.is_empty() {
+                ensure(!existing_owner_only, "PQ_EXISTING_OWNER_INITIALIZED")?;
                 ensure(intent, "INITIALIZATION_INTENT_REQUIRED")?;
             } else {
                 ensure(current == expected_schema, "SCHEMA")?;
@@ -1969,6 +2061,17 @@ impl Node {
                 }
                 initialized = true;
             }
+            if existing_owner_only {
+                retained_existing = Some(probe);
+                cut(&mut hook, "existing-owner-validated")?;
+            }
+        }
+        if existing_owner_only {
+            ensure(
+                initialized && retained_existing.is_some(),
+                "PQ_EXISTING_OWNER_INITIALIZED",
+            )?;
+            existing_owner_boundary(&directory, (metadata.dev(), metadata.ino()), &owner)?;
         }
         for p in [
             &dbpath,
@@ -1981,7 +2084,9 @@ impl Node {
             !growth_observation_only || initialized,
             "GROWTH_PACKET_STATUS_EXISTING_STORE_REQUIRED",
         )?;
-        let mut db = if growth_observation_only {
+        let mut db = if let Some(db) = retained_existing {
+            db
+        } else if growth_observation_only {
             Connection::open_with_flags(
                 &dbpath,
                 OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,

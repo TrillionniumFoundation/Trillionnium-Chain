@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "bytes": 903,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/fixed-verifier.receipt.json",
+      "sha256": "c59cb05bc880467e3edd11e5f6412ce2c0e72f4468f008bcc7b0dfedab6d3720"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/fixed-verifier.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 460,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/fixed-verifier.stdout.log",
+      "sha256": "5870c0ac23e9bc0e383ae30cc52efd3b19f072fb6c6492d9fde3c6ca6d6bfddf"
+    },
+    {
+      "bytes": 9848,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/review.json",
+      "sha256": "fbfe9b23b05ff4c9c80df5cc241ec2bc3b87eb38a5f72cb5edf8a83ecdb93f18"
+    },
+    {
+      "bytes": 1977,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/run_fixed_verifier.py",
+      "sha256": "c2a8007d8f5b609920fb4ce31505eaf45fea8d327d950c69145f88747295b1fa"
+    },
+    {
+      "bytes": 12209,
+      "path": "/workspace/scratch/8a6ecb667c1e/terminal-evidence-review-supplement-final-20261106-v1/quantum-independent/verify_scope_preservation.py",
+      "sha256": "b72d99463b9837ea0cbebd59ec5e4475ebca8d88805d652c5cf01f0fe3c5a7e6"
+    }
+  ],
+  "native_tests_executed": 0,
+  "schema": "trnm-independent-final-archive-review-files-v1"
+}

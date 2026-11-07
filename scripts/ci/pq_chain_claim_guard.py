@@ -10,8 +10,9 @@ import argparse
 import json
 import math
 from pathlib import Path
-import stat
 import sys
+
+from pq_source_reader import SourceReadError, read_regular
 
 CONFIG = 'config/pon/post-quantum-transition-v1.json'
 CORPUS = 'config/pon/pq-cross-branch-corpus-v1.json'
@@ -36,6 +37,7 @@ GATES = {
         'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs',
         'trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs',
         'trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs',
+        'trillionnium/crates/trnm-pon-node/src/public_submit.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs',
         'trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs',
         'trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs',
@@ -81,6 +83,7 @@ GATES = {
     'independent_end_to_end': (
         'docs/security/PQ_APPLICATION_AUTHORIZATION_V6.md',
         'config/pon/pq-cross-branch-corpus-v1.json',
+        'scripts/ci/pq_source_reader.py',
     ),
 }
 
@@ -94,21 +97,10 @@ def require(ok: bool, msg: str) -> None:
 
 
 def safe_file(root: Path, relative: str) -> bytes:
-    require(not Path(relative).is_absolute() and '..' not in Path(relative).parts,
-            'unsafe source path: ' + relative)
-    path = root
-    for component in Path(relative).parts:
-        path = path / component
-        require(not path.is_symlink(), 'symlink source: ' + relative)
     try:
-        metadata = path.stat()
-        require(stat.S_ISREG(metadata.st_mode) and metadata.st_size <= 1024 * 1024,
-                'oversized/nonregular source: ' + relative)
-        data = path.read_bytes()
-        require(len(data) == metadata.st_size, 'changing source: ' + relative)
-        return data
-    except OSError as error:
-        raise UnsafePromotion('missing or unreadable source: ' + relative) from error
+        return read_regular(root, relative, 1024 * 1024)
+    except SourceReadError as error:
+        raise UnsafePromotion(str(error)) from error
 
 
 def strict_json(root: Path, relative: str) -> dict:

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "python3",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/freeze_c07_terminal_selection_v2.py",
+    "--release-qa-handoff",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/c07-terminal-reader-recovery-v2/final-v6-qa-addendum-manifest-v1.json",
+    "--tls-qa-handoff",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/tls-audit-recovery-v2/post-handoff-supplement-v2.json",
+    "--output",
+    "/workspace/scratch/chain-pq-root-recovery-20261106-v1/integration-review/final-increment-selection-v1/frozen-selection.json"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.290942907333374,
+  "stdout_sha256": "1a86dd6d98b3b01806b1b7b1218ce516e83511a3e33a17f46c04139ea41ea21d",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "native_or_project_executions": 0
+}

@@ -3,6 +3,7 @@ import base64
 import copy
 import csv
 import hashlib
+import inspect
 import io
 import json
 import os
@@ -17,7 +18,7 @@ import tempfile
 import unittest
 from unittest import mock
 import zipfile
-from packaging.markers import default_environment
+from packaging.markers import Marker, default_environment
 
 import llm_runtime_release as release
 
@@ -342,7 +343,49 @@ class RuntimeMaterialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "WHEEL_PYTHON_VERSION"):
             self.declare(self.repack_metadata("Requires-Python: >=4\n"))
 
+    def test_old_packaging_refuses_even_when_the_wheel_has_no_markers(self):
+        # A marker-free wheel must not turn an unsupported verifier into a
+        # successful declaration that would fail only on a later dependency.
+        for version in ("24.0", "24.2", "25.0rc1"):
+            with self.subTest(version=version), mock.patch("packaging.__version__", version):
+                with self.assertRaisesRegex(ValueError, "RUNTIME_PACKAGING_VERSION_REQUIRES_25"):
+                    self.declare()
+
+    def test_missing_packaging_refuses_with_the_explicit_host_dependency(self):
+        with mock.patch.dict(sys.modules, {"packaging": None}):
+            with self.assertRaisesRegex(ValueError, "RUNTIME_PACKAGING_REQUIRED"):
+                self.declare()
+
+    def test_marker_evaluation_retains_metadata_context_and_the_pinned_environment(self):
+        spec = self.repack_metadata('Provides-Extra: audit\n'
+            'Requires-Dist: pon-closure-probe; python_version >= "3.12" and extra == "audit"\n')
+        spec["wheels"][0]["extras"] = ["audit"]
+        # Bind the real supported API defaults, not only the call's keyword spelling.
+        signature = inspect.signature(Marker.evaluate)
+        self.assertEqual(signature.parameters["context"].default, "metadata")
+        with mock.patch.object(Marker, "evaluate", autospec=True,
+                               side_effect=Marker.evaluate) as evaluate:
+            result = json.loads(self.declare(spec))
+        self.assertEqual(result["python_dependencies"][0]["dependencies"], ["pon-closure-probe"])
+        observed = []
+        for call in evaluate.call_args_list:
+            bound = signature.bind(*call.args, **call.kwargs)
+            bound.apply_defaults()
+            observed.append({key: bound.arguments[key] for key in ("environment", "context")})
+        self.assertEqual(observed, [
+            dict(environment=dict(spec["marker_environment"], extra=extra), context="metadata")
+            for extra in ("", "audit")])
+        # With no supplied extra, metadata supplies the empty extra. Requirement
+        # context does not; lock-file context instead supplies the plural sets.
+        self.assertTrue(Marker('extra == ""').evaluate(environment=dict(spec["marker_environment"])))
+        # Lock-file-only sets are not silently supplied by a different context.
+        for marker in ('"audit" in extras', '"audit" in dependency_groups'):
+            with self.subTest(marker=marker), self.assertRaises(KeyError):
+                self.declare(self.repack_metadata('Requires-Dist: absent-runtime; ' + marker + '\n'))
+
     def test_metadata_markers_keep_pre25_evaluate_signature(self):
+        # This wrapper exercises call shape on the supported library. It does
+        # not authorize an actual pre-25 verifier; the version guard still refuses it.
         from packaging.markers import Marker
         original = Marker.evaluate
         observed = []

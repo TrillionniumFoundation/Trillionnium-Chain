@@ -10,9 +10,10 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import stat
 import sys
 import tomllib
+
+from pq_source_reader import SourceReadError, read_regular
 
 REL_MANIFEST = "config/pon/pq-cross-branch-corpus-v1.json"
 REQUIRED_UPSTREAM = frozenset(("base", "cell", "migration", "witness", "roster", "parity"))
@@ -59,6 +60,19 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "scripts/ci/pq_source_reader.py",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+    "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+    "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs",
+    "scripts/ci/check_cpq1_parameter_observation.py",
+    "scripts/ci/test_cpq1_parameter_observation.py",
+    "docs/security/CRYPTO_PROFILE_V1_20261104.md",
+    "evidence/crypto-profile-20261104/recompute_benchmark.py",
+    "evidence/crypto-profile-20261104/recompute_profile_ids.py",
     ".github/workflows/pon-pq-system-continuation.yml",
     "config/pon/pq-system-required-tests-v1.json",
     "scripts/ci/record_pq_native_command.py",
@@ -81,6 +95,22 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_feature_gate.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_tls_cli_witness.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs",
+    "config/pon/pq-native-tls-witness-required-tests-v1.json",
+    "docs/security/PQ_TLS_WITNESS_CLI_V2.md",
+    "config/pon/pq-native-tls-required-tests-v1.json",
+    "docs/security/NATIVE_PQ_TLS_LOOPBACK_V1.md",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs",
@@ -121,6 +151,16 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs",
     "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
     "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/differential.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_oracle.c",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+    "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+    "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+    "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21_fixture.py",
+    "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+    "docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md",
     "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/PROVENANCE.md",
     "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/LICENSE",
     "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
@@ -254,6 +294,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "config/pon/binary-diverse60-training-v3.json",
     "docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md",
     "scripts/ci/model-runtime-cpu-requirements.txt",
+    "scripts/ci/runtime-release-requirements.txt",
     "scripts/ci/run_cross_arch_cost.py",
     "scripts/llm_answer_eos_research_v3.py",
     "scripts/llm_answer_eos_task_research_v4.py",
@@ -370,6 +411,11 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/llm_neural_read_worker.py",
     "scripts/llm_python_runtime_contract.py",
+    "scripts/test_llm_neural_read_worker.py",
+    "scripts/test_llm_material_runtime_bridge.py",
+    "scripts/test_llm_material_runtime_entry.py",
+    "tests/fixtures/llm_material_runtime_bridge_v1/historical_plan.json",
+    "tests/fixtures/llm_material_runtime_bridge_v1/historical_target.json",
     "scripts/test_llm_python_runtime_contract.py",
     "formal/pon-nakamoto-v1/llm_adapter_contract.py",
     "scripts/llm_parent_material.py",
@@ -425,12 +471,21 @@ RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
     "trillionnium/crates/trnm-checkpoint-store/src/main.rs",
     "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs",
+    "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs",
     "trillionnium/crates/trnm-checkpoint-store/src/node_commit_ledger_v1.rs",
     "trillionnium/crates/trnm-checkpoint-store/tests/cross_process.rs",
     "trillionnium/crates/trnm-checkpoint-store/tests/cold_recovery.rs",
     "trillionnium/crates/trnm-release-bundle/Cargo.toml",
     "trillionnium/crates/trnm-release-bundle/src/lib.rs",
     "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/initial_root_material_tests.rs",
+    "config/pon/pq-initial-root-material-required-tests-v1.json",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+    "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
     "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
     "formal/pon-nakamoto-v1/pq_mtls_probe.c",
     "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
@@ -439,6 +494,111 @@ RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
 ))
 NATIVE_REQUIRED_PATHS |= RECOVERY_RELEASE_REQUIRED_PATHS
+
+# Bind the native release owner, ordinary callers, and original fixture drivers.
+M15_RELEASE_OWNER_REQUIRED_PATHS = frozenset((
+    "scripts/m15_isolated_native_run.py",
+    "scripts/m15_isolated_native_setup.py",
+    "scripts/m15_isolated_native_support.py",
+    "scripts/m15_native_build_support.py",
+    "scripts/m15_static_native_build.py",
+    "scripts/test_m15_native_fixture_tools.py",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs",
+    "trillionnium/crates/trnm-pon-node/src/main.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_continuous_controller.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_m15_fixture_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/bundle_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/catalog.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/clock_contract_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/codec.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/consumer.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/deployment.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/elf.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/execution_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/files.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/files_faults.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/files_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/frontier.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/frontier_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/launch.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_build_fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_consumer_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_isolation_fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_observation_fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/native_provision_fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/process_identity.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_state.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_test_keys.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/protected.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/records.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_faults.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_clock.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_configuration.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_faults.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_socket.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_store.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_test_fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/service_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/system_root.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/transaction.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/transaction_faults.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/transaction_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/trust_client.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/trust_wire.rs",
+    "trillionnium/crates/trnm-pon-node/src/release_owner/unix_transport.rs",
+))
+NATIVE_REQUIRED_PATHS |= M15_RELEASE_OWNER_REQUIRED_PATHS
+# Fixed source closure for the reviewed parent recovery and ordinary NPQ6 owner.
+# This extends source integrity only; it is not native or deployment qualification.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/recovery_request_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/shared.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/fixture.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/shared_tests/recovery_cases/proxy.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config/npq6.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/service.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_parent_cli/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/context_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/files.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/journal_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery/delivery.rs",
+    "trillionnium/crates/trnm-pon-node/src/public_submit/pq/recovery/observations.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli/support.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_cli_feature_required.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli/fixture.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_parent_npq6_cli/negative.rs",
+))
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "trillionnium/crates/trnm-pon-node/src/pq_application_local.rs",
+    "trillionnium/crates/trnm-pon-node/src/pq_application_local/config.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_existing_owner_tests.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/export.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_cli/fixture/tasks.rs",
+    "trillionnium/crates/trnm-pon-node/tests/pq_application_local_feature_off.rs",
+))
 NATIVE_FALSE = frozenset((
     "whole_native_authorization_migrated", "default_profile_migrated",
     "allow_legacy_fallback", "production_activation", "public_wan_accepted",
@@ -496,25 +656,10 @@ class IntegrityError(ValueError):
 
 
 def _safe_regular(root: Path, relative: str, ceiling: int = 4 * 1024 * 1024) -> bytes:
-    if (type(relative) is not str or not relative or "\\" in relative
-            or relative.startswith("/") or relative.split("/") != list(Path(relative).parts)
-            or any(p in ("", ".", "..") for p in relative.split("/"))):
-        raise IntegrityError("unsafe path")
-    path = root
-    for part in relative.split("/"):
-        path = path / part
-        if path.is_symlink():
-            raise IntegrityError("symlink source refused: " + relative)
     try:
-        st = path.stat()
-    except OSError as exc:
-        raise IntegrityError("missing source: " + relative) from exc
-    if not stat.S_ISREG(st.st_mode) or st.st_size > ceiling:
-        raise IntegrityError("nonregular/oversize source: " + relative)
-    data = path.read_bytes()
-    if len(data) != st.st_size:
-        raise IntegrityError("changing source: " + relative)
-    return data
+        return read_regular(root, relative, ceiling)
+    except SourceReadError as error:
+        raise IntegrityError(str(error)) from error
 
 
 def _json(root: Path, relative: str) -> dict:
@@ -612,7 +757,9 @@ def _check_pq_source_coverage(root: Path, pins: dict[str, str]) -> None:
                 # treat source enumeration as cryptographic authority.
 
 def check(root: Path) -> dict:
-    root = Path(root).resolve(strict=True)
+    # Keep the caller's pathname so descriptor traversal can reject symlinked
+    # checkout ancestors instead of silently selecting their resolved target.
+    root = Path(root).absolute()
     m = _json(root, REL_MANIFEST)
     if m.get("schema") != "trnm-pq-cross-branch-corpus-v1" or m.get("status") != "research-only-hold-no-go":
         raise IntegrityError("corpus must remain research/HOLD")

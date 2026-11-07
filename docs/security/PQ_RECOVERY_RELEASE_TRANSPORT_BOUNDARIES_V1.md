@@ -32,16 +32,52 @@ freshness.
 
 The existing V2 record and CAS wire encodings retain their identities. The new
 recovery checkpoint encoding has a distinct magic/version and rejects trailing or
-noncanonical bytes. The legacy structural `open` API remains explicitly limited;
-it cannot read or advance runtime checkpoints, serve, or export a trusted pin.
-The daemon uses the strict registration/recovery paths. Every live read, advance
-and pin export also verifies the existing journal bytes against the owner's
-retained count/root and the exact sibling head. Same-inode truncation, an equal-
-length prefix edit and an in-place old head cannot reuse cached authority. This
-is a complete O(journal records) integrity check with a fixed-size record buffer;
-it does not supply constant-time performance or independent checkpoint custody.
-Head reads retain at most one byte beyond the exact encoding so oversized or
-growing input is refused without reading the entire suffix into memory.
+noncanonical bytes. The legacy structural `open` API remains explicitly limited:
+it cannot call the direct runtime `load_checked` or `compare_and_advance_checked`
+methods either. Refusing the daemon/export path alone would leave an in-process
+bypass after a fresh checkpoint rejects an old snapshot. The direct APIs and
+daemon use the same strict registration/recovery admission.
+
+An admitted live owner also validates the actual complete log prefix and sibling
+head against its retained count and hash before returning a runtime checkpoint,
+exporting a pin or beginning a CAS. Successful CAS additionally rechecks the
+durable result before acknowledging it. This rejects in-place truncation,
+same-length earlier-record edits and old head rewrites even when device/inode,
+permissions and path identity remain unchanged. Integrity comes from the complete
+hash chain; file timestamps only detect an observed concurrent edit. Verification
+uses one fixed-size record buffer and positional reads, preserving the writer's
+append cursor. Head reads are bounded to the canonical 84 bytes plus one byte
+for rejecting trailing data, including a same-inode oversized or growing file.
+Its work is **O(journal records)** per check: this correctness
+repair does not establish constant-time access or production capacity, and it
+does not change the separate native PNQ2 witness/PoN request path.
+
+The filesystem, executing owner and independent retention service remain trusted
+within their declared domains. This is not protection against a malicious kernel,
+device that fabricates reads or simultaneous rollback of every fresh authority.
+
+### The service endpoint has its own owner
+
+Journal admission alone must not authorize replacing a different live checkpoint
+service. Startup validates the private socket parent before creating the endpoint
+lease or removing/rebinding an existing socket, and holds a separate exclusive
+`socket-owner-v1` lease. Its bounded versioned
+record identifies the socket it created; only that exact stale socket can be
+removed after its lease is obtained. An unleased socket, replaced lease or
+unrecognized record requires offline reconciliation rather than implicit adoption.
+The parent, lease and socket identities are rechecked after reading each request,
+before any journal operation. This closes local endpoint displacement; it does not
+make the listener lease an independent freshness source.
+
+The `checkpoint_fault_domain_probe` example uses the real journal owner with
+explicit synthetic checkpoint fields. It creates a complete old namespace and a
+newer journal, and accepts an externally supplied pin for recovery. A two-machine
+exercise must actually retain the fresh export on the second machine and read it
+back after restoring the first machine's complete old namespace. The matching old
+local pin remains an essential counterexample: restoring it with the old world
+can pass internal checks. Missing independent input must refuse; a same-count,
+different-root history must also refuse. The example alone supplies neither
+independent retention nor whole-Node, production custody or power-loss evidence.
 
 ### Meaning of the checkpoint
 
@@ -70,6 +106,10 @@ Prepared, claimed, entered and confirmed are different facts. A successful witne
 CAS followed by a lost reply or uncertain local commit cannot authorize a fresh
 dispatch. A restored snapshot from before intent creation must encounter the
 independent consumed state before the adapter is entered again.
+The current CAS error type does not prove that a failed call wrote nothing:
+append, sync, head publication or the final validation can fail after some or all
+durable writes. Such failures poison the live owner and require fresh recovery
+and coordination with the independent authority; a new nonce is not a retry.
 
 The cross-repository FinalUse/ProviderEffect owner integration, signed append-
 consistency protocol, provider semantics, physical power-loss testing and external
@@ -108,11 +148,14 @@ role cannot promote its own output into a new trust root.
 Re-selecting previously published content requires explicit signed rollback
 approval while the release/activation version continues to increase. Cell
 activation additionally requires that the target is the currently approved Cell
-manifest under the current root generation and that its own publication lease
-has not expired. Current activation keys cannot extend a publisher's expired
-lease or carry old publisher authority across root rotation. The publisher must
-approve the same content again at a higher manifest version. Recovery rebuilds
-those publication generations and lifetimes from the original signed events.
+manifest, whose publication has not expired and belongs to the current root
+generation. A current activation quorum cannot renew the publication role's
+expired lease or carry its authorization across a root rotation. The current
+publisher must reapprove even identical bytes at a higher manifest version first.
+Recovery retains the publication's expiry and root generation from its signed
+event rather than reconstructing authority from the content digest alone.
+The [current-publication regression record](PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md)
+documents the original failures and the accepted same-content republishing path.
 A successful role observation supplies release authenticity and version
 policy; it does not supply model-quality acceptance, FinalUse, account permissions
 or consensus activation.
@@ -152,6 +195,17 @@ no longer an available API. The CLI pins its acquisition policy for one command.
 The host still owns freshness and atomicity at a real runtime effect boundary;
 an old copied view does not establish either. This is not CURRENT or FinalUse.
 
+The independent SDK comparison pins `securesystemslib` 1.5.1 at
+`15064ca640222edba024af9f13191fa5dbad3825` and calls its actual `CryptoSigner`
+and `SSlibKey` APIs with canonical metadata. The Rust comparison calls the
+production `sign_tuf_mldsa65_v1` and `verify_tuf_mldsa65_v1` adapters, rather
+than reconstructing the pre-signing bytes in the test caller. It retains the
+older canonicalization fixture as a separate control. The upstream 1.5.0 release
+was [withdrawn](https://github.com/secure-systems-lab/securesystemslib/releases/tag/v1.5.0).
+Version 1.5.1's generic `Key.from_dict` registry does not enable this ML-DSA
+profile by default; direct signer/verifier interoperability does not establish
+that an unconfigured TUF updater can consume it.
+
 ## 3. Test the actual fixed transport provider
 
 The existing PNQ2 client's original absolute deadline covers response decoding,
@@ -173,6 +227,12 @@ exercise the selected standard groups with actual ML-DSA certificate verificatio
 and application bytes. The existing PPH1/TPQ1 peer profile retains its explicit
 ML-DSA-65 plus `X25519MLKEM768` contract; supporting other groups in a library does
 not silently broaden that peer profile.
+
+RFC 10024 specifies key exchange, not ML-DSA identity authentication. At this
+review, [ML-DSA authentication in TLS](https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/)
+is `draft-ietf-tls-mldsa-06`, in the RFC Editor queue. The fixed-provider identity
+tests are implementation evidence, not a claim that this authentication draft
+has already been published as an RFC.
 
 The mTLS controls require both endpoint identities, the allowed group, the TLS
 version, identity pins and matching exporter bytes. Classical identity, wrong PQ
@@ -200,12 +260,14 @@ or recovery device has been inspected or changed by this component work.
 | Key generation, backups and signing devices | Operator/key-custody boundary | Entropy, seed import/zeroization, backup inventory, recovery authorization and signer-device failure tests on actual deployed assets |
 
 The existing RustCrypto/OpenSSL differential path remains the canonical verifier
-plus an independent test source, with no OR fallback. A third implementation such
-as [mldsa-native v2.0.0](https://github.com/pq-code-package/mldsa-native/releases/tag/v2.0.0)
-must pin its source and prove interoperability with exact modes/contexts/encodings.
+plus an independent test source, with no OR fallback. The additional
+[mldsa-native v2.0.0](https://github.com/pq-code-package/mldsa-native/releases/tag/v2.0.0)
+comparison pins source commit `834a90d5e846ffa1e1611bd24e160bb2e9b86d35`
+and checks exact modes, contexts, encodings and the retained Wycheproof corpus.
 Its primitive or assembly proofs do not qualify the full protocol, recovery system
-or chain. Cross-architecture and hardware signing-device results remain unknown
-until they are actually executed.
+or chain. The new SDK CI repeats source-head and prospective-merge comparisons
+on x64 and ARM. This local run cannot stand in for those future hosted executions
+or for hardware signing-device results.
 
 ## 5. Reproduction and acceptance
 

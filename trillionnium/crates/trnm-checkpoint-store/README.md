@@ -42,6 +42,27 @@ canonical private directory with mode `0700`.
 The old implicit `<socket> <log>` invocation is rejected. There is no automatic
 fallback to the sibling head, empty registration, or an unanchored reopen.
 
+### Socket ownership survives journal separation
+
+A daemon validates the canonical private socket directory before changing any
+socket pathname. It retains a separate exclusive `.<socket>.socket-owner-v1`
+lease for its listener, so opening a different valid journal cannot displace a
+running daemon at the same socket. The lease records the identity of the socket
+it created. Restart may remove only that exact stale socket after obtaining the
+lease; a fresh or empty lease cannot authorize removal of an existing endpoint.
+Repeated failed starts do not convert an unleased socket into a removable one.
+Listener, lease and directory identity are checked again before a complete
+request may use the journal. The exact bounded lease record is also checked, so
+an in-place lease rewrite stops the live owner. Replacing a retained endpoint
+stops the owner.
+
+An old adapter's unleased socket requires explicit offline endpoint cleanup or
+a fresh socket pathname after its owner is stopped. A torn lease record also
+requires operator reconciliation; startup never derives its ownership record
+from the socket it would remove. This local lease is neither a recovery pin nor
+proof that a custodian resides in another failure domain. The externally pinned
+journal admission remains required on every cold restart.
+
 ### Independent retention is an external obligation
 
 The export file has a separate `TRNMCPX1`, version-1, 84-byte canonical encoding;

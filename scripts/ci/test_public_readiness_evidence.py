@@ -1257,6 +1257,72 @@ class NativeDurableSchemaTests(unittest.TestCase):
                         self.assertRaisesRegex(ValueError, 'durable backend opener'):
                     self.extract(self.replace_once(self.current,current,changed))
 
+    def test_existing_owner_split_cannot_change_ordinary_selection_or_schema_scope(self):
+        mode = ('SelectedOpen::InitializeOrRecover {\n'
+                '                growth_observation_only,\n'
+                '            },')
+        for replacement in ('SelectedOpen::ExistingPqOwner,',
+                            mode.replace('growth_observation_only,', 'growth_observation_only: true,'),
+                            mode.replace('growth_observation_only,', 'growth_observation_only: false,')):
+            with self.subTest(mode=replacement), self.assertRaisesRegex(ValueError,'durable backend selected delegation'):
+                self.extract(self.replace_once(self.current,mode,replacement))
+        call = ('Self::open_selected_mode(\n            path,\n            settings,\n'
+                '            workers,\n            hook,\n            owners,\n'
+                '            state_backend,')
+        for before,after in [('            settings,','            settings.clone(),'),
+                             ('            owners,','            other_owners,'),
+                             ('            state_backend,','            StateBackend::PqWitnessV4,')]:
+            with self.subTest(argument=before), self.assertRaisesRegex(ValueError,'durable backend selected delegation'):
+                self.extract(self.replace_once(self.current,call,call.replace(before,after)))
+        for replacement in ('(true, false)', '(false, false)', '(existing_owner_only, true)'):
+            before = 'SelectedOpen::ExistingPqOwner => (false, true),'
+            with self.subTest(flags=replacement), self.assertRaisesRegex(ValueError,'durable backend selected mode binding'):
+                self.extract(self.replace_once(self.current,before,'SelectedOpen::ExistingPqOwner => '+replacement+','))
+
+    def test_partial_split_and_rebound_mode_cannot_fall_back_to_legacy_opener(self):
+        for before,after in [
+            ('    ExistingPqOwner,',''),
+            ('    ExistingPqOwner,','    ExistingPqOwner, OtherMode,'),
+            ('fn open_selected_mode(', 'fn unrecognized_mode('),
+            ('let (growth_observation_only, existing_owner_only) = match selection {',
+             'let (growth_observation_only, existing_owner_only) = match other_selection {'),
+        ]:
+            with self.subTest(mutation=before), self.assertRaisesRegex(ValueError,'durable (?:backend|source)'):
+                self.extract(self.replace_once(self.current,before,after))
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        for statement in ('let existing_owner_only = false;',
+                          'existing_owner_only = false;',
+                          'let growth_observation_only = true;',
+                          'let alias = &mut existing_owner_only;',
+                          'let selection = SelectedOpen::ExistingPqOwner;'):
+            with self.subTest(statement=statement), self.assertRaisesRegex(ValueError,'durable backend selected mode rebound'):
+                self.extract(self.replace_once(self.current,pair,statement+'\n        '+pair))
+        for marker in ('\nfn retain(_: SelectedOpen) {}\n', '\nfn open_selected_mode() {}\n'):
+            with self.subTest(marker=marker), self.assertRaisesRegex(ValueError,'durable source body SelectedOpen'):
+                self.extract(self.historical_backend()+marker)
+
+    def test_existing_owner_split_requires_the_reviewed_executable_contract(self):
+        boundary = '        };\n        ensure(\n            !existing_owner_only'
+        redirect = ('\n        if matches!(state_backend, StateBackend::Legacy) {\n'
+                    '            return Self::open_with_authenticated_state(path, settings, workers);\n'
+                    '        }')
+        mode = 'let (growth_observation_only, existing_owner_only) = match selection {'
+        pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'
+        mutations = [
+            ('redirect-before-lock', boundary, boundary.replace('};', '};'+redirect, 1)),
+            ('disabled-enum', 'enum SelectedOpen {', '#[cfg(any())]\nenum SelectedOpen {'),
+            ('disabled-owner', 'impl Node {', '#[cfg(any())]\nimpl Node {'),
+            ('disabled-wrapper', '    fn open_selected(', '    #[cfg(any())]\n    fn open_selected('),
+            ('disabled-mode', '    fn open_selected_mode(', '    #[cfg(any())]\n    fn open_selected_mode('),
+            ('disabled-binding', mode, '#[cfg(any())]\n        '+mode),
+            ('foreign-mode-type', 'selection: SelectedOpen,', 'selection: another::SelectedOpen,'),
+            ('compound-mode-assignment', pair, 'existing_owner_only |= true;\n        '+pair),
+            ('tuple-mode-assignment', pair, '(existing_owner_only, _) = (true, ());\n        '+pair),
+        ]
+        for label,before,after in mutations:
+            with self.subTest(label=label), self.assertRaisesRegex(ValueError,'durable backend selected'):
+                self.extract(self.replace_once(self.current,before,after))
+
     def test_selected_settings_cannot_be_mutated_through_fields_or_borrowed(self):
         header = 'fn open_selected(\n        path: &Path,\n        settings: Settings,'
         pair = 'let ddl = state_backend.ddl();\n        let schema_id = state_backend.selected_schema_id(&settings);'

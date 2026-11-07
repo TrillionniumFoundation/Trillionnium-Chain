@@ -931,7 +931,7 @@ fn write_untrusted_error(
 fn hex_packet(text: &str) -> Result<Packet> {
     decode_hex_packet(text, None)
 }
-fn hex_packet_for_context(
+pub(crate) fn hex_packet_for_context(
     text: &str,
     context: &crate::pq_application_v6::PacketCodecContext,
 ) -> Result<Packet> {

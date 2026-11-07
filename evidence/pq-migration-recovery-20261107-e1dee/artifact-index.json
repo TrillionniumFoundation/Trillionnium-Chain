@@ -1,0 +1,93 @@
+{
+  "schema": "trnm-pq-migration-recovery-artifact-index-v1",
+  "archive_members_include_original_and_explicitly_identified_derived_records": true,
+  "elf_bodies_included": false,
+  "archives": [
+    {
+      "file": "integrated-local-validation.tar.gz",
+      "bytes": 84262,
+      "sha256": "94ea8cf93930a005801cdf55892befa45dd04e089ab8dfb952794917ba00a29a",
+      "payload_members": 40,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "local-validation.tar.gz",
+      "bytes": 227624,
+      "sha256": "86196470594f9a5d75701b1fff213fc9a3eaf7cf79c56e53081b6990a4c89a5f",
+      "payload_members": 77,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "native-integrated-9fb011c.tar.gz",
+      "bytes": 84068,
+      "sha256": "278b6ac2f1266f8c881d8cf114e1effa52bde7a6a530e4a72e718d480e273ff5",
+      "payload_members": 116,
+      "manifest_member": "MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "native-migration-37ef493.tar.gz",
+      "bytes": 38457,
+      "sha256": "55561d07ac18d8e1780c8843743152abf656ab4d7c4e5d321dcff528ae3e108c",
+      "payload_members": 56,
+      "manifest_member": "MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "native-recovery-2058225.tar.gz",
+      "bytes": 81937,
+      "sha256": "d6653c6c21a1c8985c4844bee6fc2b98f9e2fb51f9b67c197879276db353ea47",
+      "payload_members": 143,
+      "manifest_member": "ARCHIVE_MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "native-reintegrated-2c51e15.tar.gz",
+      "bytes": 100162,
+      "sha256": "73df6cbde2fcfb99293dbf7f68ec4678b184ae89109bc67a557f62f1c1d57b95",
+      "payload_members": 166,
+      "manifest_member": "MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "publication-stopped-before-1c14.tar.gz",
+      "bytes": 11731,
+      "sha256": "e912d780718eef7f1b90dbf5985c9a677d86ec43ea47df79ba71d3c03ae71c4c",
+      "payload_members": 21,
+      "manifest_member": "publication-final-v1/SEALED_MANIFEST.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "readbacks-and-controller-records.tar.gz",
+      "bytes": 77235,
+      "sha256": "5861176e46f25c52c16093454e5573b696dd838ef875f47d48d23afbb41fc5e2",
+      "payload_members": 71,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "reintegrated-local-validation.tar.gz",
+      "bytes": 161141,
+      "sha256": "098f6c4944525494bc1dc9171f6243b45d77e094edea382e145de58decef23c1",
+      "payload_members": 80,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    },
+    {
+      "file": "reintegrated-readbacks-and-controller.tar.gz",
+      "bytes": 8500,
+      "sha256": "9e45721111ac2467a89a7163abdbb1ce29e844f7ff942476f18d3b4dde70aa43",
+      "payload_members": 10,
+      "manifest_member": "manifest.json",
+      "all_member_hashes_checked": true
+    }
+  ],
+  "red_bundle": {
+    "file": "recovery-red.bundle",
+    "sha256": "8a7d0e61009c756ac360ae5c418a3a7cd410123027efafd5c04ef93e2333286b",
+    "required_baseline": "840522d0b65b4989f1a2a1d09c0ad51af1a1956d",
+    "red_commit": "555d2e5bb338fa67d8b08f77f2bd86d68850fbf5"
+  }
+}

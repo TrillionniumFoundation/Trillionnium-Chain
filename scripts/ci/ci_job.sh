@@ -38,7 +38,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_contract.py
     python3 scripts/ci/test_ci_execution.py
     python3 -B scripts/ci/test_llm_hosted_once.py
-    python3 scripts/test_llm_runtime_release.py
+    "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
     python3 scripts/ci/test_replay_pinned_native.py
     python3 scripts/ci/test_cross_arch_cost.py
     python3 scripts/ci/test_zero_locality_cost.py

@@ -1395,6 +1395,42 @@ impl Drop for Connection {
         self.cancelled.store(true, Ordering::Release);
     }
 }
+fn record_stage_error(
+    conn: &Connection,
+    phase: &'static str,
+    pending: Option<(PendingKind, PendingOrder)>,
+    error: &crate::Error,
+    metrics: &Mutex<PublicMetrics>,
+    stop: &AtomicBool,
+    now: Instant,
+) -> Result<()> {
+    // A late observation cannot reconstruct the ordering of shutdown and
+    // expiry. The owner's monotonic stop takes precedence for Deadline errors.
+    let expired = now >= conn.deadline
+        && ((error.is(crate::ErrorCode::PublicRequestDeadline) && !stop.load(Ordering::Acquire))
+            || error.is(crate::ErrorCode::PublicCookieExpired));
+    if let Some(record) = &conn.observation {
+        record.terminal_error(phase, error);
+    }
+    let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+    close_pending(&mut m, pending);
+    *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
+    // A stage can cross the original deadline after the reactor's scan. Keep
+    // the returned error and closure while accounting for that same expiry.
+    // The error alone is insufficient: task_alive also uses Deadline for an
+    // early stop, and cookie validation uses CookieExpired for invalid times.
+    if expired {
+        m.expired_connections += 1;
+        *m.expired_phase_counts.entry(phase.into()).or_default() += 1;
+    }
+    match phase {
+        "hello" => m.preface_refusals += 1,
+        "output" => m.response_write_failures += 1,
+        "body" => m.parse_refusals += 1,
+        _ => {}
+    }
+    Ok(())
+}
 // Completions are drained before the reactor's ordinary deadline scan. The
 // original work/total/service bounds therefore belong to this transition too;
 // worker-side response checks cannot cover settlement, send or queue delay.
@@ -2966,18 +3002,15 @@ fn serve_public_protected_v3_inner(
                     match advanced {
                         Ok(next) => conn.stage = next,
                         Err(error) => {
-                            if let Some(record) = &conn.observation {
-                                record.terminal_error(phase, &error);
-                            }
-                            let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-                            close_pending(&mut m, pending_before);
-                            *m.retained_phase_errors.entry(phase.into()).or_default() += 1;
-                            match phase {
-                                "hello" => m.preface_refusals += 1,
-                                "output" => m.response_write_failures += 1,
-                                "body" => m.parse_refusals += 1,
-                                _ => {}
-                            }
+                            record_stage_error(
+                                conn,
+                                phase,
+                                pending_before,
+                                &error,
+                                &metrics,
+                                &stop,
+                                Instant::now(),
+                            )?;
                             remove.push(*id);
                         }
                     }
@@ -7282,6 +7315,219 @@ mod tests {
             .filter(|r| !r.task_created)
             .all(|r| !r.full_work_started && r.full_work_thread_cpu_ns.is_none()));
     }
+    struct PendingErrorFixture {
+        connections: BTreeMap<u64, Connection>,
+        peer: TcpStream,
+        intake: ListenerIntake,
+        observer: PublicRequestObserver,
+        metrics: Mutex<PublicMetrics>,
+        stop: AtomicBool,
+        server: PublicServer,
+        settings: Settings,
+    }
+    impl PendingErrorFixture {
+        fn new(kind: Option<PendingKind>) -> Self {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let peer = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+            peer.set_read_timeout(Some(Duration::from_secs(5))).unwrap();
+            let (socket, address) = listener.accept().unwrap();
+            let intake = ListenerIntake::new();
+            let observer = PublicRequestObserver::new(1).unwrap();
+            let accepted = AcceptedConnection {
+                socket,
+                intake_lease: None,
+                connection_permit: Some(
+                    BufferPermit::acquire(intake.connections.clone(), 1, MAX_CONNECTIONS).unwrap(),
+                ),
+                observation: observer.connection(),
+            };
+            let mut id = 0;
+            let mut conn = accepted.into_connection(address, &mut id, &intake).unwrap();
+            conn.intake_lease.as_ref().unwrap().protect().unwrap();
+            conn.deadline = Instant::now() + Duration::from_secs(60);
+            conn.total_deadline = conn.deadline;
+            let server = server();
+            let settings = Settings::development(Some(1)).unwrap();
+            let cookie = server.cookie(&settings, hello(1, 1), address).unwrap();
+            let pending = PendingOrder::next(&mut 0).unwrap();
+            let mut metrics = PublicMetrics::default();
+            conn.stage = match kind {
+                Some(PendingKind::Challenge) => {
+                    metrics.pending_challenge_entered = 1;
+                    Stage::WaitChallenge {
+                        hello: hello(1, 1),
+                        pending,
+                    }
+                }
+                Some(PendingKind::Grant) => {
+                    metrics.pending_grant_entered = 1;
+                    Stage::WaitGrant { cookie, pending }
+                }
+                None => Stage::Solution {
+                    cookie,
+                    bytes: Vec::new(),
+                },
+            };
+            let record = conn.observation.as_ref().unwrap();
+            record.request(1, [3; 32]);
+            if let Some(kind) = kind {
+                record.pending_started(matches!(kind, PendingKind::Grant), pending.entered_at);
+            }
+            Self {
+                connections: BTreeMap::from([(id, conn)]),
+                peer,
+                intake,
+                observer,
+                metrics: Mutex::new(metrics),
+                stop: AtomicBool::new(false),
+                server,
+                settings,
+            }
+        }
+        fn finish_error(mut self, error: crate::Error, now: Instant, expired: bool) {
+            let conn = self.connections.get_mut(&1).unwrap();
+            let deadline = conn.deadline;
+            // Use the reactor's actual consumed-stage transition and error
+            // owner, then perform its original connection removal and Drop.
+            let current = std::mem::replace(&mut conn.stage, Stage::Await);
+            let phase = current.phase();
+            let pending = current.pending();
+            let cancelled = conn.cancelled.clone();
+            record_stage_error(conn, phase, pending, &error, &self.metrics, &self.stop, now)
+                .unwrap();
+            assert_eq!(
+                conn.deadline, deadline,
+                "refusal must not move the deadline"
+            );
+            drop(current);
+            drop(self.connections.remove(&1));
+            assert!(self.connections.is_empty());
+            assert!(cancelled.load(Ordering::Acquire));
+            assert_eq!(*self.intake.connections.lock().unwrap(), 0);
+            assert_eq!(*self.intake.body_pool.lock().unwrap(), 0);
+            assert_eq!(*self.intake.mutating_grants.lock().unwrap(), 0);
+            assert_eq!(*self.intake.read_grants.lock().unwrap(), 0);
+            assert_eq!(*self.intake.output_pool.lock().unwrap(), 0);
+            assert_eq!(self.peer.read(&mut [0u8; 1]).unwrap(), 0);
+            let m = self.metrics.lock().unwrap();
+            assert_eq!(m.retained_phase_errors.get(phase), Some(&1));
+            assert_eq!(m.expired_connections, u64::from(expired));
+            assert_eq!(
+                m.expired_phase_counts.get(phase).copied().unwrap_or(0),
+                u64::from(expired)
+            );
+            assert_eq!(m.pending_challenge_closed, m.pending_challenge_entered);
+            assert_eq!(m.pending_grant_closed, m.pending_grant_entered);
+            assert_eq!(m.pending_challenge_granted + m.pending_grant_granted, 0);
+            assert_eq!(m.work_started + m.tasks_enqueued + m.body_bytes_received, 0);
+            let snapshot = self.observer.snapshot();
+            assert!(snapshot.coverage_complete());
+            assert_eq!(snapshot.accepted_connections_seen, 1);
+            assert_eq!(snapshot.records.len(), 1);
+            let row = &snapshot.records[0];
+            assert_eq!(row.terminal_phase, Some(phase));
+            assert_eq!(
+                row.terminal_error_code,
+                error.code().map(crate::ErrorCode::as_str)
+            );
+            assert!(row.complete && row.connection_closed);
+            assert!(!row.task_created && !row.dispatch_started && !row.full_work_started);
+        }
+    }
+
+    #[test]
+    fn r4_pending_stage_deadline_error_counts_expiry_once_and_releases_connection() {
+        for kind in [PendingKind::Challenge, PendingKind::Grant] {
+            let mut f = PendingErrorFixture::new(Some(kind));
+            let conn = f.connections.get_mut(&1).unwrap();
+            // Deterministically enter the inner check after the original
+            // deadline. No sleep or public timeout/budget change is needed.
+            conn.deadline = Instant::now() - Duration::from_nanos(1);
+            let error = pending_alive(conn, &f.stop).unwrap_err();
+            assert!(error.is(crate::ErrorCode::PublicRequestDeadline));
+            f.finish_error(error, Instant::now(), true);
+        }
+    }
+
+    #[test]
+    fn r4_pending_early_stop_eof_and_cancelled_errors_are_not_expiry() {
+        for case in ["stop", "eof", "cancelled"] {
+            let mut f = PendingErrorFixture::new(Some(PendingKind::Grant));
+            f.stop.store(case == "stop", Ordering::Release);
+            let conn = f.connections.get_mut(&1).unwrap();
+            if case == "eof" {
+                f.peer.shutdown(std::net::Shutdown::Write).unwrap();
+                // Wait only for the actual local FIN; do not infer EOF from
+                // an unscheduled nonblocking observation.
+                conn.socket
+                    .set_read_timeout(Some(Duration::from_secs(5)))
+                    .unwrap();
+                conn.socket.set_nonblocking(false).unwrap();
+            } else if case == "cancelled" {
+                conn.deadline = Instant::now() - Duration::from_nanos(1);
+                conn.cancelled.store(true, Ordering::Release);
+            }
+            let error = pending_alive(conn, &f.stop).unwrap_err();
+            let expected = match case {
+                "stop" => crate::ErrorCode::PublicRequestDeadline,
+                "eof" => crate::ErrorCode::PublicEof,
+                _ => crate::ErrorCode::PublicRequestCancelled,
+            };
+            assert!(error.is(expected));
+            // The real stop error occurs before expiry, but the error owner
+            // may observe it after expiry. It must remain shutdown evidence.
+            let observed = if case == "stop" {
+                assert!(Instant::now() < conn.deadline);
+                conn.deadline + Duration::from_nanos(1)
+            } else {
+                Instant::now()
+            };
+            f.finish_error(error, observed, false);
+        }
+    }
+
+    #[test]
+    fn r4_cookie_time_refusal_counts_expiry_only_after_original_deadline() {
+        for expired in [false, true] {
+            let mut f = PendingErrorFixture::new(None);
+            let conn = f.connections.get_mut(&1).unwrap();
+            let Stage::Solution { cookie, .. } = &mut conn.stage else {
+                panic!("original Solution stage required")
+            };
+            if expired {
+                // Keep the issued, signed cookie and its two-second lifetime;
+                // advance only this fixture's private monotonic server epoch.
+                f.server.started = Instant::now() - Duration::from_secs(3);
+                conn.deadline = f.server.started + Duration::from_millis(cookie.expires_tick_ms);
+            } else {
+                // validate also uses CookieExpired for impossible issue times.
+                // Such a refusal must not create an expiry before the original
+                // connection deadline, even though its code is recognized.
+                cookie.issued_tick_ms = f.server.tick().unwrap() + 60_000;
+                cookie.expires_tick_ms = cookie.issued_tick_ms + f.server.policy.lifetime_ms;
+            }
+            let error = f.server.validate(cookie, &f.settings, true).unwrap_err();
+            assert!(error.is(crate::ErrorCode::PublicCookieExpired));
+            f.finish_error(error, Instant::now(), expired);
+        }
+    }
+
+    #[test]
+    fn r4_unrelated_eof_after_deadline_keeps_its_original_error_class() {
+        let mut f = PendingErrorFixture::new(None);
+        f.peer.shutdown(std::net::Shutdown::Write).unwrap();
+        let conn = f.connections.get_mut(&1).unwrap();
+        conn.stage = Stage::Hello(Vec::new());
+        conn.socket
+            .set_read_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        conn.socket.set_nonblocking(false).unwrap();
+        conn.deadline = Instant::now() - Duration::from_nanos(1);
+        let error = read_available(&mut conn.socket, &mut Vec::new(), HELLO_BYTES).unwrap_err();
+        assert!(error.is(crate::ErrorCode::PublicEof));
+        f.finish_error(error, Instant::now(), false);
+    }
+
     #[test]
     fn r4_paid_pending_eof_original_expiry_and_shutdown_never_create_body_or_work() {
         let directory = tempfile::tempdir().unwrap();
