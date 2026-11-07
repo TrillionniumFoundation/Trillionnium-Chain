@@ -1,4 +1,6 @@
 use super::fixtures::Fixture;
+#[path = "refusal_diagnostics.rs"]
+mod refusal_diagnostics;
 use openssl::pkey::{PKey, Private};
 use rustix::net::{recv, RecvFlags};
 use serde_json::{json, Value};
@@ -286,7 +288,8 @@ fn stderr_observation(mut stream: impl Read) -> Value {
     .collect();
     json!({"observed_bytes":bytes,"observed_sha256":hex::encode(digest.finalize()),
         "marker_scan_bytes":prefix.len(),"marker_scan_truncated":bytes > prefix.len() as u64,
-        "known_markers":markers,"read_error_kind":error,"raw_text_redacted":true})
+        "known_markers":markers,"read_error_kind":error,"raw_text_redacted":true,
+        "connection_refusals":refusal_diagnostics::records(&prefix)})
 }
 
 fn child_observation(status: std::io::Result<Option<ExitStatus>>) -> Value {

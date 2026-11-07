@@ -8187,3 +8187,18 @@ The first diagnostic compile at `c37405fe2e0fdb51d97e6390143244d4053d571b`
 stopped with E0061 before executing either original CLI control. Its raw
 strict-Clippy failure is retained. A separate observed accept entry now leaves
 the existing five-argument frame-boundary test entry and test bytes intact.
+
+
+## 2026-11-07: retain only fixed TLS refusal fields in CLI failure reports
+
+On `ddffae78d1a733e3a4a2acb942f0b4a12699bb40`, strict Clippy and both new
+diagnostic controls pass. Each original CLI control executes once and fails:
+witness first Head succeeds, then replay fails at ready + 2.000788 seconds;
+endpoint Head and Submit succeed, then replay fails at ready + 5.000861 seconds.
+Both retained ELF/SQLite bindings pass and both stderr summaries contain
+`PQ_WITNESS_DEADLINE`; the existing harness deliberately discarded raw stderr
+after hashing it. These are distinct from the historical first-handshake reset.
+The harness now projects only known stages, codes, categories and typed scalar
+fields from the same original 4096-byte prefix. Arbitrary child fields stay
+redacted. Producer bytes, original test bodies, windows and cleanup are unchanged.
+New projection controls and original-window diagnosis on this source are pending.
