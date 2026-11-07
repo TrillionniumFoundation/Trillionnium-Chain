@@ -24,6 +24,245 @@ fn server() -> PublicServer {
 }
 
 #[test]
+fn pq_response_reservation_owns_both_slots_and_signs_once_on_its_actual_thread() {
+    let owner = server();
+    let intake = owner.listener_intake().unwrap();
+    let response = owner.reserve_response_signing(&intake).unwrap();
+    let unused = owner.reserve_response_signing(&intake).unwrap();
+    let pending = intake.pq_authentication.usage().unwrap();
+    assert_eq!(pending.in_flight, 2);
+    assert_eq!(pending.pending_response_signatures, 2);
+    assert_eq!(pending.reserved_cpu_ns, 2 * MUTATION_CPU_START_RESERVE_NS);
+    assert_eq!(pending.known_intervals, 0);
+    assert_eq!(pending.actual_thread_cpu_ns, 0);
+    assert!(owner
+        .sign_authentication(&[4; 32])
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuBudget));
+    let mut message = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
+    message.extend_from_slice(&[7; 48]);
+    let signature = thread::scope(|scope| {
+        scope
+            .spawn(|| response.sign(&owner, &message))
+            .join()
+            .unwrap()
+            .unwrap()
+    });
+    let key = identity(71);
+    let verifier =
+        PqNativeVerifier::from_pinned_spki(key.public_spki(), digest(key.public_key()).unwrap())
+            .unwrap();
+    verifier
+        .verify_exact_message(&message, &hex::decode(signature).unwrap())
+        .unwrap();
+    drop(unused);
+    let after = intake.pq_authentication.usage().unwrap();
+    assert_eq!(after.attempts, 2);
+    assert_eq!(after.bytes, 2 * message.len() as u64);
+    assert_eq!(after.known_intervals, 1);
+    assert!(after.actual_thread_cpu_ns > 0);
+    assert_eq!(after.unknown_intervals, 0);
+    assert_eq!(after.in_flight, 0);
+    assert_eq!(after.pending_response_signatures, 0);
+    assert_eq!(after.reserved_cpu_ns, 0);
+    assert_eq!(after.unused_response_reservations, 1);
+    assert!(!after.unavailable);
+}
+
+#[test]
+fn pq_response_reservation_owns_final_attempt_and_bytes_without_second_admission() {
+    let budget = AuthenticationBudget::default();
+    let mut message = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
+    message.extend_from_slice(&[8; 48]);
+    // Controlled near-limit state, not a claim of 8191 measured signatures.
+    {
+        let mut state = budget.usage.lock().unwrap();
+        state.attempts = MAX_AUTHENTICATIONS - 1;
+        state.bytes = MAX_AUTHENTICATED_BYTES - message.len() as u64;
+    }
+    let response = budget.reserve_response().unwrap();
+    assert!(budget
+        .perform(1, || Ok(()))
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuBudget));
+    let key = identity(74);
+    let signature = response.perform(|| key.sign(&message)).unwrap();
+    let verifier =
+        PqNativeVerifier::from_pinned_spki(key.public_spki(), digest(key.public_key()).unwrap())
+            .unwrap();
+    verifier
+        .verify_exact_message(&message, &hex::decode(signature).unwrap())
+        .unwrap();
+    let after = budget.usage().unwrap();
+    assert_eq!(after.attempts, MAX_AUTHENTICATIONS);
+    assert_eq!(after.bytes, MAX_AUTHENTICATED_BYTES);
+    assert_eq!(after.known_intervals, 1);
+    assert_eq!(after.in_flight, 0);
+    assert!(budget.reserve_response().is_err());
+}
+
+#[test]
+fn pq_response_reservation_refuses_each_original_lifetime_limit_before_crypto() {
+    for boundary in [0, 1, 2] {
+        let budget = AuthenticationBudget::default();
+        {
+            let mut state = budget.usage.lock().unwrap();
+            // Deliberate boundary injection; these are not measured totals.
+            match boundary {
+                0 => state.attempts = MAX_AUTHENTICATIONS,
+                1 => state.bytes = MAX_AUTHENTICATED_BYTES,
+                _ => {
+                    state.actual_thread_cpu_ns =
+                        MAX_AUTHENTICATION_CPU_NS - MUTATION_CPU_START_RESERVE_NS + 1
+                }
+            }
+        }
+        let before = budget.usage().unwrap();
+        assert!(budget.reserve_response().is_err());
+        let after = budget.usage().unwrap();
+        assert_eq!(after.attempts, before.attempts);
+        assert_eq!(after.bytes, before.bytes);
+        assert_eq!(after.actual_thread_cpu_ns, before.actual_thread_cpu_ns);
+        assert_eq!(after.in_flight, 0);
+        assert_eq!(after.reserved_cpu_ns, 0);
+    }
+}
+
+#[test]
+fn pq_response_reservation_unknown_finish_or_unwind_never_refunds_principal() {
+    for unwind in [false, true] {
+        let budget = AuthenticationBudget::default();
+        let response = budget.reserve_response().unwrap();
+        if unwind {
+            assert!(std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                let _held = response;
+                panic!("controlled native unwind before PQ response");
+            }))
+            .is_err());
+        } else {
+            budget.fail_next_finish_for_test();
+            let key = identity(75);
+            let mut message = b"TRNM/PoN/PaidHistory/Response/PQ/v4\0".to_vec();
+            message.extend_from_slice(&[6; 48]);
+            assert!(response
+                .perform(|| key.sign(&message))
+                .unwrap_err()
+                .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+        }
+        let after = budget.usage().unwrap();
+        assert!(after.unavailable);
+        assert_eq!(after.attempts, 1);
+        assert_eq!(after.in_flight, 0);
+        assert_eq!(after.pending_response_signatures, 0);
+        assert_eq!(after.reserved_cpu_ns, MUTATION_CPU_START_RESERVE_NS);
+        assert_eq!(after.unknown_intervals, u64::from(!unwind));
+        let called = AtomicBool::new(false);
+        assert!(budget
+            .perform(1, || {
+                called.store(true, Ordering::Release);
+                Ok(())
+            })
+            .unwrap_err()
+            .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+        assert!(!called.load(Ordering::Acquire));
+    }
+}
+
+#[test]
+fn pq_response_reservation_measured_lifetime_overrun_denies_signature_and_fences_epoch() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1)).unwrap();
+    let mut node = Node::open(directory.path(), settings.clone(), 1).unwrap();
+    let original_state = node.read_active().unwrap();
+    let domain = ServiceMutationCpuDomain::standalone();
+    node.bind_public_service_cpu_domain(&domain).unwrap();
+    assert!(node.begin_ordinary_public_service_epoch().unwrap());
+    let intake = domain.shared_budget().lock().unwrap().intake.clone();
+    let response = intake.pq_authentication.reserve_response().unwrap();
+    // Actual CPU inside a deliberately expensive interval, not simulated
+    // elapsed time and not a claim about normal ML-DSA performance.
+    intake
+        .pq_authentication
+        .perform(1, || {
+            let stamp = ThreadCpuStamp::start().unwrap();
+            let deadline = Instant::now() + Duration::from_millis(WORK_MS);
+            let mut value = 1u64;
+            loop {
+                for _ in 0..100_000 {
+                    value = std::hint::black_box(
+                        value.wrapping_mul(6364136223846793005).wrapping_add(1),
+                    );
+                }
+                if stamp.clone().finish().unwrap() > MAX_AUTHENTICATION_CPU_NS {
+                    break;
+                }
+                assert!(
+                    Instant::now() < deadline,
+                    "original finite test CPU window exhausted"
+                );
+            }
+            Ok(())
+        })
+        .unwrap();
+    let debt = intake.pq_authentication.usage().unwrap();
+    assert!(debt.actual_thread_cpu_ns > MAX_AUTHENTICATION_CPU_NS);
+    assert!(!debt.unavailable);
+    let called = AtomicBool::new(false);
+    assert!(response
+        .perform(|| {
+            called.store(true, Ordering::Release);
+            Ok(())
+        })
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuBudget));
+    assert!(!called.load(Ordering::Acquire));
+    let after = intake.pq_authentication.usage().unwrap();
+    assert_eq!(after.in_flight, 0);
+    assert_eq!(after.reserved_cpu_ns, 0);
+    assert!(after.stored_credit_ns < 0);
+    assert_eq!(after.unknown_intervals, 0);
+    assert!(!domain.public_epoch_is_settled().unwrap());
+    node.finish_ordinary_public_service_epoch(true).unwrap();
+    assert_eq!(node.read_active().unwrap(), original_state);
+    assert!(node
+        .bind_public_service_cpu_domain(&domain)
+        .unwrap_err()
+        .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+    drop(node);
+    let mut reopened = Node::open(directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap(), original_state);
+    assert!(reopened
+        .bind_public_service_cpu_domain(&ServiceMutationCpuDomain::standalone())
+        .unwrap_err()
+        .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+}
+
+#[test]
+fn pq_response_reservation_controlled_known_debt_prevents_continuous_clean_close() {
+    // Existing unqualified owner/journal mechanism fixture; not production
+    // attestation or a measured CPU-overrun observation.
+    let (_native, directory, node) = Node::continuous_authentication_guard_fixture();
+    let before = node.continuous_journal_head().unwrap();
+    let state = node.read_active().unwrap();
+    let domain = node.continuous_cpu_domain().unwrap();
+    let intake = domain.shared_budget().lock().unwrap().intake.clone();
+    intake
+        .pq_authentication
+        .usage
+        .lock()
+        .unwrap()
+        .actual_thread_cpu_ns = MAX_AUTHENTICATION_CPU_NS + 1;
+    assert!(!domain.public_epoch_is_settled().unwrap());
+    assert!(node
+        .close_continuous_checkpoint()
+        .unwrap_err()
+        .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+    assert_eq!(node.continuous_journal_head().unwrap(), before);
+    assert_eq!(node.read_active().unwrap(), state);
+    assert!(directory.path().join("unavailable.json").exists());
+}
+
+#[test]
 fn pq_only_account_profile_rejects_classical_public_v3_client_before_connection() {
     use std::collections::BTreeSet;
     use trnm_mvcc_fee::pon_executor::pq_accounts_v2::{
@@ -163,11 +402,14 @@ fn pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused() {
         .unwrap();
     assert_eq!(usage.attempts, 3); // Cookie, accepted caller, rejected caller.
     assert!(usage.actual_thread_cpu_ns > 0);
+    let intake = owner.listener_intake().unwrap();
+    let mut signing = Some(owner.reserve_response_signing(&intake).unwrap());
     let bytes = response(
         &owner,
         &settings,
         &cookie,
         Ok(json!({"head":"fixture"})),
+        &mut signing,
         &|| Ok(()),
     )
     .unwrap();
@@ -562,7 +804,7 @@ fn pq_response_expiry_stop_and_cancel_do_not_start_signing() {
             Ok(json!({"head":"fixture"})),
             Err("PUBLIC_MUTATION_CPU_BUDGET".into()),
         ] {
-            let error = response(&owner, &settings, &cookie, outcome, &|| {
+            let error = response(&owner, &settings, &cookie, outcome, &mut None, &|| {
                 task_alive(deadline, &stop, &cancelled)
             })
             .unwrap_err();
@@ -597,11 +839,13 @@ fn pq_response_cancellation_between_encoding_and_signing_stops_new_work() {
         let cancelled = AtomicBool::new(false);
         let checks = Cell::new(0);
         let before = intake.pq_authentication.usage().unwrap();
+        let mut signing = Some(owner.reserve_response_signing(&intake).unwrap());
         let error = response(
             &owner,
             &settings,
             &cookie,
             Ok(json!({"head":"fixture"})),
+            &mut signing,
             &|| {
                 task_alive(deadline, &stop, &cancelled)?;
                 checks.set(checks.get() + 1);
@@ -613,8 +857,19 @@ fn pq_response_cancellation_between_encoding_and_signing_stops_new_work() {
         )
         .unwrap_err();
         assert_eq!(error.to_string(), "PUBLIC_REQUEST_CANCELLED");
+        drop(signing);
         let after = intake.pq_authentication.usage().unwrap();
-        assert_eq!(after.attempts - before.attempts, expected_signatures);
+        // The response attempt/bytes were promised before work, and remain
+        // consumed even when cancellation prevents its actual signature.
+        assert_eq!(after.attempts - before.attempts, 1);
+        assert_eq!(
+            after.known_intervals - before.known_intervals,
+            expected_signatures
+        );
+        assert_eq!(
+            after.unused_response_reservations - before.unused_response_reservations,
+            u64::from(expected_signatures == 0)
+        );
         assert!(!after.unavailable);
     }
 }

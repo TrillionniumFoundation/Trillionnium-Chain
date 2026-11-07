@@ -1200,21 +1200,28 @@ impl Node {
         let known_in_flight = match (
             o.cpu.observe(),
             o.cpu.observe_classical_authentication_cpu(),
+            o.cpu.observe_pq_authentication_cpu(),
         ) {
-            (Ok(scalar), Ok(authentication)) => {
+            (Ok(scalar), Ok(authentication), Ok(pq_authentication)) => {
                 !scalar.accounting_unavailable
                     && !authentication.unavailable
                     && authentication.unknown_intervals == 0
+                    && !pq_authentication.unavailable
+                    && pq_authentication.unknown_intervals == 0
                     && scalar.in_flight <= scalar.worker_limit
                     && authentication.in_flight <= scalar.worker_limit
-                    && (scalar.in_flight != 0 || authentication.in_flight != 0)
+                    && pq_authentication.in_flight <= scalar.worker_limit
+                    && (scalar.in_flight != 0
+                        || authentication.in_flight != 0
+                        || pq_authentication.in_flight != 0)
                     && o.cpu.observe_actual_flow().ok().flatten().is_some()
             }
             _ => false,
         };
         // A trusted local metered helper may have no listener or durable task
-        // slot yet, but still owns a real original CPU interval. Its unfinished
-        // reservation is not unknown cost. The caller must stop/join that work
+        // slot yet, but still owns a real original CPU interval or a reserved
+        // classical/PQ response. Its unfinished reservation is not unknown cost.
+        // The caller must stop/join that work
         // and retry close; no CleanClose or fault record is published now.
         // Available credit may exclude that still-owned start principal; only
         // the final fresh settled check below can certify no surviving debt.

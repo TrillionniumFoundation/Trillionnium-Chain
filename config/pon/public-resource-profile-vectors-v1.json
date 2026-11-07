@@ -1,6 +1,6 @@
 {
   "schema": "pon-public-resource-profile-vectors-v1",
-  "current_revision": "r16",
+  "current_revision": "r17",
   "transport_profile": "public-protected-development-v3",
   "hash_domain": "public-protected-profile-v3",
   "burst_ns": 2000000000,
@@ -127,13 +127,33 @@
           "policy_id": "75a918355d0172da4f4ce9319b2d4d69ba826a4543b60ba2f84462c1d5f5704b"
         }
       ]
+    },
+    "r17": {
+      "resource_contract": "resource-revision-r17/classical-auth-cpu-v2-shared-original-intake-burst2000000000-refill250000000-reserve100000000-inflight2/actual-owner-thread-crypto-completion-failed-signatures-paid-panic-clock-unknown-sticky/no-lifetime-attempt-byte-cap-nested-response-cpu-not-additive/cold-zero-same-listener-domain-no-key-reset/no-total-host-allowance-increase/response-signing-reservation-v1/authenticated-complete-body-dequeued-live-worker-before-decode-and-dispatch/read-and-mutation/shared-classical-original100ms-principal-and2-slots/pending-no-thread-clock-actual-sign-only-single-consumption/no-second-admission-or-resign/worker-owned-until-signature-settlement-or-completed-unused-cleanup/unused-healthy-principal-only-refund-no-attempt-byte-refund/unknown-panic-poison-no-refund/pq-original8192-attempts-67108864-bytes-2000000000-lifetimeCPU/new-pq100ms-principal-and2-slot-sublimit-no-refill/exact-response-message-bytes-reserved/pq-known-lifetime-overrun-denies-start-native-outcome-retained/final-owner-observes-classical-and-pq-pending-and-unknown/no-delivery-or-fairness-guarantee/startup-check-existing-domain-before-state-without-first-bind/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",
+      "vectors": [
+        {
+          "ticket_bits": 8,
+          "lifetime_ms": 2000,
+          "policy_id": "289d1facbc34468d50ec7fc1010232bd68536303845492f5f7bab703efecd330"
+        },
+        {
+          "ticket_bits": 12,
+          "lifetime_ms": 2000,
+          "policy_id": "bc5db56081aecd1161371a133a8ee84ff94d8dfa1927ea892915eda1684aa222"
+        },
+        {
+          "ticket_bits": 16,
+          "lifetime_ms": 2000,
+          "policy_id": "ac83f15c32209334f81f7e8004b4dec79936fa774f661d705ca87702522c8123"
+        }
+      ]
     }
   },
   "source_vectors_are_native_acceptance": false,
   "arithmetic_profile": {
     "work_profile": "arithmetic-facts-v1",
-    "resource_revision": "r16-arithmetic-facts-v1",
-    "base_revision": "r16",
+    "resource_revision": "r17-arithmetic-facts-v1",
+    "base_revision": "r17",
     "hash_domain": "public-protected-profile-v3-arithmetic-facts-v1",
     "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
     "resource_contract": "fresh-empty-server-local-owner/exact-challenge-and-canonical-whole-A-B-bytes/completed-trace-and-optional-completed-product-only/no-verdict-task-target-state-or-authorization-cache/current-grammar-field-task-target-and-trace-product-claims-every-call/original-cooperative-cancellation/no-publish-on-returned-cancel/bounded-final-compare-publish-tail/try-lock-no-wait-contention-does-actual-raw-math/fixed64-slots-round-robin-no-growth/software-objects-not-RSS/original-actual-thread-CPU-owner-includes-all-math-cache-work/no-added-credit-deadline-or-completion-identity/independent-per-request-arithmetic-observation",
@@ -143,17 +163,17 @@
       {
         "ticket_bits": 8,
         "lifetime_ms": 2000,
-        "policy_id": "dcb42bd05cba86e27798eabd46d5eb2fd242c9b783e644a5e6fe833dc3b764af"
+        "policy_id": "a4b8817064496f72a3d1dfc35ea5357f0b7ec9f77c24983f1a4c7ace1945af95"
       },
       {
         "ticket_bits": 12,
         "lifetime_ms": 2000,
-        "policy_id": "5bd53bb34c9246f80b4559184bc3851d65ea70080695ddb5b13610ff70238f8b"
+        "policy_id": "ca9ebbc963f5590b7c3237a97906a572dd695bdcdcd5ccf6c01444f98bc2c90f"
       },
       {
         "ticket_bits": 16,
         "lifetime_ms": 2000,
-        "policy_id": "bf938bddbbdbc1cc0b95c08a30d41fc0a92d9033908e42be9a19bcc07ce4a906"
+        "policy_id": "38453c9fca8e321bdfb3f67e265c617fe33c35819651f07d89a9ad2d0f461aa9"
       }
     ]
   },
@@ -209,6 +229,33 @@
           "ticket_bits": 16,
           "lifetime_ms": 2000,
           "policy_id": "4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f"
+        }
+      ]
+    },
+    "r16": {
+      "work_profile": "arithmetic-facts-v1",
+      "resource_revision": "r16-arithmetic-facts-v1",
+      "base_revision": "r16",
+      "hash_domain": "public-protected-profile-v3-arithmetic-facts-v1",
+      "source": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs",
+      "resource_contract": "fresh-empty-server-local-owner/exact-challenge-and-canonical-whole-A-B-bytes/completed-trace-and-optional-completed-product-only/no-verdict-task-target-state-or-authorization-cache/current-grammar-field-task-target-and-trace-product-claims-every-call/original-cooperative-cancellation/no-publish-on-returned-cancel/bounded-final-compare-publish-tail/try-lock-no-wait-contention-does-actual-raw-math/fixed64-slots-round-robin-no-growth/software-objects-not-RSS/original-actual-thread-CPU-owner-includes-all-math-cache-work/no-added-credit-deadline-or-completion-identity/independent-per-request-arithmetic-observation",
+      "slots": 64,
+      "maximum_software_bytes": 4194304,
+      "vectors": [
+        {
+          "ticket_bits": 8,
+          "lifetime_ms": 2000,
+          "policy_id": "dcb42bd05cba86e27798eabd46d5eb2fd242c9b783e644a5e6fe833dc3b764af"
+        },
+        {
+          "ticket_bits": 12,
+          "lifetime_ms": 2000,
+          "policy_id": "5bd53bb34c9246f80b4559184bc3851d65ea70080695ddb5b13610ff70238f8b"
+        },
+        {
+          "ticket_bits": 16,
+          "lifetime_ms": 2000,
+          "policy_id": "bf938bddbbdbc1cc0b95c08a30d41fc0a92d9033908e42be9a19bcc07ce4a906"
         }
       ]
     }

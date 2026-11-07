@@ -1025,30 +1025,36 @@ class ReaderTests(unittest.TestCase):
             reader.analyze(report)
 
     def test_r16_authentication_policy_preserves_paid_scope_and_cannot_relabel_history(self):
+        self.assert_authentication_policy_scope('r16')
+
+    def test_r17_reserved_response_policy_preserves_paid_scope_and_cannot_relabel_history(self):
+        self.assert_authentication_policy_scope('r17')
+
+    def assert_authentication_policy_scope(self, revision):
         report = arithmetic_report()
-        report['public_resource_policy'] = arithmetic_policy('r16')
+        report['public_resource_policy'] = arithmetic_policy(revision)
         with self.assertRaisesRegex(ValueError, 'mixed or missing phase resource policies'):
             reader.analyze(report)
         for phase in report['phases']:
-            phase['public_resource_policy'] = arithmetic_policy('r16')
+            phase['public_resource_policy'] = arithmetic_policy(revision)
         result = reader.analyze(report)
-        self.assertEqual(result['public_resource_policy']['resource_revision'], 'r16-arithmetic-facts-v1')
+        self.assertEqual(result['public_resource_policy']['resource_revision'], revision + '-arithmetic-facts-v1')
         self.assertFalse(result['native_finite_experiment_criteria_met'])
         self.assertTrue(result['scope']['cpu_excludes_reactor_authentication'])
         self.assertEqual([phase['confirmed_rounds'] for phase in result['phases']], [0, 0, 0])
         self.assertTrue(all(phase['receiver']['dispatch_cpu_scope'] ==
                             'paid-body-decode-native-dispatch-signed-response' for phase in result['phases']))
         for phase in report['phases']:
-            phase['public_resource_policy'] = observation('r16')
+            phase['public_resource_policy'] = observation(revision)
             del phase['work_profile'], phase['work_arithmetic_owner']
             for row in phase['receiver_observation']['records']:
                 row.pop('work_arithmetic', None)
         report['schema'] = 'native-public-v3-separate-process-campaign-v2'
-        report['public_resource_policy'] = observation('r16')
+        report['public_resource_policy'] = observation(revision)
         del report['work_profile']
         raw = reader.analyze(report)
         self.assertEqual([phase['public_resource_policy']['resource_revision'] for phase in raw['phases']],
-                         ['r16'] * 3)
+                         [revision] * 3)
         # The unchanged observer's paid CPU does not suddenly include the
         # newly limited reactor CPU or a sum of overlapping auth/response work.
         self.assertTrue(raw['scope']['cpu_excludes_reactor_authentication'])

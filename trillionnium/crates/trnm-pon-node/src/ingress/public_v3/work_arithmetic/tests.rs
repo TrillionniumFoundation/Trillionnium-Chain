@@ -15,11 +15,11 @@ fn arithmetic_profile_has_exact_separate_bytes_and_rejects_cross_profile_challen
     let policy = policy();
     assert_eq!(
         hex::encode(policy.id()),
-        "4abdedfb5e177f310e2fb836347cb040e647addf2405f2e4cf78b5e4baa4cd5d"
+        "289d1facbc34468d50ec7fc1010232bd68536303845492f5f7bab703efecd330"
     );
     assert_eq!(
         hex::encode(policy.arithmetic_facts_id()),
-        "dcb42bd05cba86e27798eabd46d5eb2fd242c9b783e644a5e6fe833dc3b764af"
+        "a4b8817064496f72a3d1dfc35ea5357f0b7ec9f77c24983f1a4c7ace1945af95"
     );
     let settings = Settings::development(Some(1)).unwrap();
     let raw = server();

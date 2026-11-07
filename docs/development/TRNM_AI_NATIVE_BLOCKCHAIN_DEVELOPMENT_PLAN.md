@@ -17,8 +17,37 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
-**W1 admission resource continuation, 2026-11-07 America/New_York:** Continue
-existing integration candidate #688 from `3d1b6507671ec694ce58e86d4063a125c8deeb66`.
+**Response-signing reservation continuation, 2026-11-07 America/New_York:**
+Preserve the concurrently verified integration head
+`96e1eede091153199894532c91430bfc0f8e4572` when composing the new source with the
+retained r16 implementation. That observed head still binds r14, leaving fresh
+resource revision r17 for the [R1 response-signing contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md).
+After caller authentication and complete-body queueing, the actual worker must
+reserve its eventual response signature from the original intake epoch before
+decode, reads or native mutation. Keep an unsigned reservation through the worker's
+original settlement and cleanup, including cancellation. After signing starts,
+settle its actual crypto interval without holding authentication slots until
+socket output. Return only demonstrably unused CPU principal/slots, not spent
+attempt/byte allowances. Preserve actual
+signer-thread clocks, the original classical limits and the finite PQ contract.
+Include held responses and current classical/PQ usage in last-reference and
+continuous-checkpoint settlement. Keep known live ownership as transient Busy
+and retain unknown/debt crash fences. No new Host credit, worker, queue, deadline
+or business authority is granted. Preserve r10–r14/r16 raw and r13/r14/r16
+arithmetic vectors and every retained failure. Mutation-response signing remains
+nested in mutation CPU; read-response signing has no mutation owner.
+Reserve ownership is not ACK delivery or client confirmation. Exact-source
+regressions, original fixed-Host service, three full campaigns, full History,
+capacity/churn and independent WAN remain separate obligations. Keep HOLD.
+
+PR #688 is historical and currently inaccessible; do not assume it is an existing
+submission target. The user-selected Hepta local GitHub route has verified normal
+repository authorization. No push, new PR or new hosted-CI result is claimed by
+this continuation. The earlier connector's HTTP 403 remains in the r16 record.
+
+**Retained r16 W1 admission resource continuation, 2026-11-07 America/New_York:**
+The r16 task began on the then-existing #688 integration lineage from
+`3d1b6507671ec694ce58e86d4063a125c8deeb66`.
 The [R1 admission contract](../protocol/pon-nakamoto-v1/details/ADMISSION_SECURITY.md)
 adds a shared rolling classical-signature CPU reservation to the original intake
 owner, using the original scalar constants with known-failure debit, no unknown
@@ -44,8 +73,9 @@ bind native checks to implementation `2cd7353187bb58347ae7cbf884fef7aa2d05f610`.
 All 25 added regressions, strict Clippy and formatting passed; the complete
 workspace run retained 4,344 passed, 77 failed and 70 ignored across 385 targets
 (18 failed targets). The original fixed Host/campaign gates were not executed
-locally. Current GitHub access returned account-suspended HTTP 403, so this
-candidate was not published and no new hosted CI result is claimed. Keep HOLD.
+locally. That delivery recorded account-suspended HTTP 403 through its connected
+GitHub route, no publication and no new hosted CI result. These retained results
+do not qualify the r17 successor. Keep HOLD.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
@@ -3016,11 +3046,13 @@ as separate correctness, resource and public-service contracts.
    retries, original deadlines and first-error behavior. Unknown/cancelled jobs
    retain consumed credit and require original-operation reconciliation.
 4. Rerun the unchanged public campaign: 1,024 signed seed transfers, four seed
-   blocks, 21 business blocks, three 30-second rounds in each baseline/from-zero/
+   blocks, 21 business blocks, one 30-second phase for each baseline/from-zero/
    late-product mode, 0/24/24 attackers, two workers, 2 CPU-second burst,
-   0.25 CPU-second/second refill and 100 ms start reservation. Require 3/3 timely
-   independently imported confirmations in each mode; repeat the complete frozen
-   campaign three times with all failures retained. This is a finite development
+   0.25 CPU-second/second refill and 100 ms start reservation. Each phase keeps
+   three confirmation rounds scheduled at t=1/5/9 inside its one original
+   absolute deadline. Require 3/3 timely independently imported confirmations
+   in each mode; repeat the complete frozen three-phase campaign three times,
+   preserving all 27 planned outcomes and every failure. This is a finite development
    regression under that attack envelope, not universal public fairness.
 5. After preserving that result, execute the separately preregistered I02
    capacity/churn supplement: actually produce at least 4,097 distinct complete

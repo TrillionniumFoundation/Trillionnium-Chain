@@ -29,6 +29,9 @@ EXPECTED = {
     'r16': ['4abdedfb5e177f310e2fb836347cb040e647addf2405f2e4cf78b5e4baa4cd5d',
             '8428e1b62713405142ad1aa4ac688f9b455c865c1ffc3781fa75cab5c122a082',
             '75a918355d0172da4f4ce9319b2d4d69ba826a4543b60ba2f84462c1d5f5704b'],
+    'r17': ['289d1facbc34468d50ec7fc1010232bd68536303845492f5f7bab703efecd330',
+            'bc5db56081aecd1161371a133a8ee84ff94d8dfa1927ea892915eda1684aa222',
+            'ac83f15c32209334f81f7e8004b4dec79936fa774f661d705ca87702522c8123'],
 }
 ARITHMETIC_EXPECTED = [
     '14ada27ef062b1e510b7d7ab470e83157e58e7752b8f27a754f64dac614146e3',
@@ -40,10 +43,15 @@ R14_ARITHMETIC_EXPECTED = [
     '0d462bce59800e8a2e4cfe348d0db06bf9771caa4f9a56df36a7d8b59fe3b507',
     '4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f',
 ]
-CURRENT_ARITHMETIC_EXPECTED = [
+R16_ARITHMETIC_EXPECTED = [
     'dcb42bd05cba86e27798eabd46d5eb2fd242c9b783e644a5e6fe833dc3b764af',
     '5bd53bb34c9246f80b4559184bc3851d65ea70080695ddb5b13610ff70238f8b',
     'bf938bddbbdbc1cc0b95c08a30d41fc0a92d9033908e42be9a19bcc07ce4a906',
+]
+CURRENT_ARITHMETIC_EXPECTED = [
+    'a4b8817064496f72a3d1dfc35ea5357f0b7ec9f77c24983f1a4c7ace1945af95',
+    'ca9ebbc963f5590b7c3237a97906a572dd695bdcdcd5ccf6c01444f98bc2c90f',
+    '38453c9fca8e321bdfb3f67e265c617fe33c35819651f07d89a9ad2d0f461aa9',
 ]
 
 
@@ -55,7 +63,7 @@ def observation(revision='r13'):
 
 def arithmetic_observation(revision='r13'):
     expected = {'r13': ARITHMETIC_EXPECTED, 'r14': R14_ARITHMETIC_EXPECTED,
-                'r16': CURRENT_ARITHMETIC_EXPECTED}[revision]
+                'r16': R16_ARITHMETIC_EXPECTED, 'r17': CURRENT_ARITHMETIC_EXPECTED}[revision]
     return {**observation(revision), 'policy_id': expected[0]}
 
 
@@ -67,7 +75,8 @@ class PolicyReaderTests(unittest.TestCase):
                           for bits in (8, 12, 16)], CURRENT_ARITHMETIC_EXPECTED)
         for revision, expected in (('r13', ARITHMETIC_EXPECTED),
                                    ('r14', R14_ARITHMETIC_EXPECTED),
-                                   ('r16', CURRENT_ARITHMETIC_EXPECTED)):
+                                   ('r16', R16_ARITHMETIC_EXPECTED),
+                                   ('r17', CURRENT_ARITHMETIC_EXPECTED)):
             self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000,
                                                          base_revision=revision)
                               for bits in (8, 12, 16)], expected)
@@ -113,21 +122,21 @@ class PolicyReaderTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     reader.load_profiles(path)
 
-    def test_independent_historical_and_current_r16_vectors_recompute_exactly(self):
+    def test_independent_historical_and_current_r17_vectors_recompute_exactly(self):
         config = reader.load_profiles()
         for revision, expected in EXPECTED.items():
             self.assertEqual([reader.policy_id(config, revision, bits, 2000)
                               for bits in (8, 12, 16)], expected)
             self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],
                              revision)
-        self.assertEqual(config['current_revision'], 'r16')
+        self.assertEqual(config['current_revision'], 'r17')
         self.assertNotIn('r15', config['revisions'])
 
     def test_current_rust_contract_and_independent_config_are_byte_identical(self):
         config = reader.load_profiles()
         source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'
-        contracts = re.findall(r'b"(resource-revision-r16/[^\"]+)"', source.read_text())
-        self.assertEqual(contracts, [config['revisions']['r16']['resource_contract']])
+        contracts = re.findall(r'b"(resource-revision-r17/[^\"]+)"', source.read_text())
+        self.assertEqual(contracts, [config['revisions']['r17']['resource_contract']])
         self.assertTrue(contracts[0].endswith(config['revisions']['r14']['resource_contract'].split('/', 1)[1]))
         self.assertLessEqual(reader.CONFIG.stat().st_size, 64 * 1024)
 
@@ -136,7 +145,8 @@ class PolicyReaderTests(unittest.TestCase):
         for edit in (
             lambda c: c.update(historical_arithmetic_profiles={}),
             lambda c: c['historical_arithmetic_profiles'].pop('r14'),
-            lambda c: c['historical_arithmetic_profiles'].update(r16=c['arithmetic_profile']),
+            lambda c: c['historical_arithmetic_profiles'].pop('r16'),
+            lambda c: c['historical_arithmetic_profiles'].update(r17=c['arithmetic_profile']),
             lambda c: c['historical_arithmetic_profiles']['r13'].update(base_revision='r14'),
             lambda c: c['historical_arithmetic_profiles']['r13'].update(resource_revision='r14-arithmetic-facts-v1'),
             lambda c: c['historical_arithmetic_profiles']['r13']['vectors'][0].update(policy_id=CURRENT_ARITHMETIC_EXPECTED[0]),

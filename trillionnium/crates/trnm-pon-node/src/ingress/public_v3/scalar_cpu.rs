@@ -993,6 +993,18 @@ impl ServiceMutationCpuDomain {
             .clone();
         intake.classical_authentication.observation()
     }
+    /// PQ authentication belongs to this same intake epoch. Its pending
+    /// response principal is retained until the real signer or unused owner
+    /// finishes; the observation grants no additional Host CPU allowance.
+    pub fn observe_pq_authentication_cpu(&self) -> Result<super::PqAuthenticationCpuObservation> {
+        let intake = self
+            .budget
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .intake
+            .clone();
+        intake.pq_authentication.usage()
+    }
     /// The original intake counts services before their Node startup lock.
     /// A clean continuous checkpoint must see none; this does not retire or
     /// cancel a listener and grants no new service slot.
@@ -1030,11 +1042,19 @@ impl ServiceMutationCpuDomain {
                 .is_some()
             });
         let authentication = budget.intake.classical_authentication.observation()?;
+        let pq_authentication = budget.intake.pq_authentication.usage()?;
         Ok(scalar_clean
             && authentication.in_flight == 0
+            && authentication.pending_response_signatures == 0
             && !authentication.unavailable
             && authentication.unknown_intervals == 0
-            && authentication.stored_credit_ns >= 0)
+            && authentication.stored_credit_ns >= 0
+            && pq_authentication.in_flight == 0
+            && pq_authentication.pending_response_signatures == 0
+            && pq_authentication.reserved_cpu_ns == 0
+            && !pq_authentication.unavailable
+            && pq_authentication.unknown_intervals == 0
+            && pq_authentication.stored_credit_ns >= 0)
     }
     /// Begin on the actual owner thread, after separate task-purpose authority
     /// but before expensive Native work. No ledger authority is minted here.

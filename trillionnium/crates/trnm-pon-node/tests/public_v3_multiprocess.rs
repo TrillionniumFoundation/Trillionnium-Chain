@@ -1419,7 +1419,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     assert_eq!(RawR14.policy_observation(), support::policy_observation());
     assert_eq!(
         RawR14.policy_observation()["policy_id"],
-        "4abdedfb5e177f310e2fb836347cb040e647addf2405f2e4cf78b5e4baa4cd5d"
+        "289d1facbc34468d50ec7fc1010232bd68536303845492f5f7bab703efecd330"
     );
     let mut opt_in = original;
     ArithmeticFactsV1.bind_actor_job(&mut opt_in);
@@ -1429,7 +1429,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     );
     assert_eq!(
         opt_in["public_resource_policy"]["policy_id"],
-        "dcb42bd05cba86e27798eabd46d5eb2fd242c9b783e644a5e6fe833dc3b764af"
+        "a4b8817064496f72a3d1dfc35ea5357f0b7ec9f77c24983f1a4c7ace1945af95"
     );
     let mut malformed = Vec::new();
     for key in ["work_profile", "public_resource_policy"] {

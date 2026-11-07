@@ -24,7 +24,11 @@ pub struct ClassicalAuthenticationCpuObservation {
     pub known_thread_cpu_ns: u64,
     pub known_intervals: u64,
     pub unknown_intervals: u64,
+    /// Includes both active crypto and a worker's promised response signature.
     pub in_flight: usize,
+    pub pending_response_signatures: usize,
+    pub response_reservations: u64,
+    pub unused_response_reservations: u64,
     pub stored_credit_ns: i128,
     pub unavailable: bool,
     pub interval_is_additive_to_mutation_cpu: bool,
@@ -35,6 +39,9 @@ struct AuthenticationCpuState {
     updated: Instant,
     credit_ns: i128,
     in_flight: usize,
+    pending_response_signatures: usize,
+    response_reservations: u64,
+    unused_response_reservations: u64,
     unavailable: bool,
     attempts: u64,
     input_bytes: u64,
@@ -48,6 +55,9 @@ impl AuthenticationCpuState {
             updated: now,
             credit_ns: i128::from(credit_ns),
             in_flight: 0,
+            pending_response_signatures: 0,
+            response_reservations: 0,
+            unused_response_reservations: 0,
             unavailable: false,
             attempts: 0,
             input_bytes: 0,
@@ -156,15 +166,80 @@ impl AuthenticationCpuState {
         }
         ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")
     }
+    fn reserve_response(&mut self, now: Instant) -> Result<()> {
+        let Some(count) = self.response_reservations.checked_add(1) else {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        // The classical response message is one fixed digest. Reserve its
+        // representation counters as well as the original principal and slot
+        // before native execution; later callers cannot consume them.
+        self.reserve(32, now)?;
+        self.pending_response_signatures += 1;
+        self.response_reservations = count;
+        Ok(())
+    }
+    fn start_response(&mut self) -> Result<()> {
+        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+        if self.pending_response_signatures == 0
+            || self.pending_response_signatures > self.in_flight
+            || self.in_flight > MUTATION_CPU_WORKERS
+        {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        // Already owned: no second credit/slot/attempt/byte admission here.
+        self.pending_response_signatures -= 1;
+        Ok(())
+    }
+    fn release_response(&mut self, now: Instant, normal: bool) -> Result<()> {
+        if self.pending_response_signatures == 0
+            || self.pending_response_signatures > self.in_flight
+            || self.in_flight > MUTATION_CPU_WORKERS
+        {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        }
+        if normal && !self.unavailable {
+            let _ = self.refill(now);
+        }
+        self.pending_response_signatures -= 1;
+        self.in_flight -= 1;
+        if !normal {
+            self.unavailable = true;
+        }
+        let Some(unused) = self.unused_response_reservations.checked_add(1) else {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        self.unused_response_reservations = unused;
+        // No crypto was entered, so its principal is provably unused. This is
+        // not a manufactured zero-duration crypto interval; attempts/bytes
+        // remain reserved and neither known nor unknown interval is invented.
+        if !self.unavailable {
+            let Some(credit) = self
+                .credit_ns
+                .checked_add(i128::from(MUTATION_CPU_START_RESERVE_NS))
+            else {
+                self.unavailable = true;
+                return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+            };
+            self.credit_ns = credit.min(self.ceiling());
+        }
+        ensure(!self.unavailable, "PUBLIC_MUTATION_CPU_UNAVAILABLE")
+    }
     fn observation(&self) -> ClassicalAuthenticationCpuObservation {
         ClassicalAuthenticationCpuObservation {
-            schema: "public-v3-classical-authentication-cpu-v1",
+            schema: "public-v3-classical-authentication-cpu-v2",
             attempts: self.attempts,
             authenticated_input_bytes: self.input_bytes,
             known_thread_cpu_ns: self.known_cpu_ns,
             known_intervals: self.known_intervals,
             unknown_intervals: self.unknown_intervals,
             in_flight: self.in_flight,
+            pending_response_signatures: self.pending_response_signatures,
+            response_reservations: self.response_reservations,
+            unused_response_reservations: self.unused_response_reservations,
             stored_credit_ns: self.credit_ns,
             unavailable: self.unavailable,
             interval_is_additive_to_mutation_cpu: false,
@@ -182,6 +257,9 @@ pub(super) struct AuthenticationCpuBudget {
     fail_next_start: AtomicBool,
     #[cfg(test)]
     fail_next_finish: AtomicBool,
+    #[cfg(test)]
+    response_finish_gate:
+        Mutex<Option<(std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>)>>,
 }
 impl AuthenticationCpuBudget {
     pub(super) fn new() -> Self {
@@ -197,6 +275,8 @@ impl AuthenticationCpuBudget {
             fail_next_start: AtomicBool::new(false),
             #[cfg(test)]
             fail_next_finish: AtomicBool::new(false),
+            #[cfg(test)]
+            response_finish_gate: Mutex::new(None),
         }
     }
     fn begin(&self, bytes: usize) -> Result<AuthenticationCpuInterval<'_>> {
@@ -204,6 +284,9 @@ impl AuthenticationCpuBudget {
             .lock()
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
             .reserve(bytes, Instant::now())?;
+        self.start_interval()
+    }
+    fn start_interval(&self) -> Result<AuthenticationCpuInterval<'_>> {
         // Establish RAII before sampling: an unavailable start clock consumes
         // this reserved attempt without running even one cryptographic call.
         let mut interval = AuthenticationCpuInterval {
@@ -221,6 +304,40 @@ impl AuthenticationCpuBudget {
         interval.stamp = stamp;
         ensure(interval.stamp.is_some(), "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
         Ok(interval)
+    }
+    pub(super) fn reserve_response(&self) -> Result<ResponseSigningReservation<'_>> {
+        self.state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .reserve_response(Instant::now())?;
+        Ok(ResponseSigningReservation {
+            budget: self,
+            retired: false,
+        })
+    }
+    #[cfg(test)]
+    pub(super) fn fail_next_finish_for_test(&self) {
+        self.fail_next_finish.store(true, Ordering::Release);
+    }
+    #[cfg(test)]
+    pub(super) fn pause_next_response_after_signing_for_test(
+        &self,
+    ) -> (std::sync::mpsc::Receiver<()>, std::sync::mpsc::Sender<()>) {
+        let (entered, observed) = std::sync::mpsc::channel();
+        let (release, until_release) = std::sync::mpsc::channel();
+        *self.response_finish_gate.lock().unwrap() = Some((entered, until_release));
+        (observed, release)
+    }
+    #[cfg(test)]
+    fn response_finish_checkpoint_for_test(&self) -> Result<()> {
+        let gate = self.response_finish_gate.lock().unwrap().take();
+        if let Some((entered, until_release)) = gate {
+            entered.send(()).map_err(|_| "TEST_RESPONSE_FINISH_GATE")?;
+            until_release
+                .recv_timeout(std::time::Duration::from_millis(super::WORK_MS))
+                .map_err(|_| "TEST_RESPONSE_FINISH_GATE")?;
+        }
+        Ok(())
     }
     pub(super) fn perform<T>(
         &self,
@@ -240,6 +357,48 @@ impl AuthenticationCpuBudget {
             .lock()
             .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
             .observation())
+    }
+}
+/// A worker's unique, deferred signature. It owns the original principal and
+/// concurrency slot but starts no thread-CPU clock during native work/queues.
+pub(super) struct ResponseSigningReservation<'a> {
+    budget: &'a AuthenticationCpuBudget,
+    retired: bool,
+}
+impl ResponseSigningReservation<'_> {
+    pub(super) fn belongs_to(&self, budget: &AuthenticationCpuBudget) -> bool {
+        std::ptr::eq(self.budget, budget)
+    }
+    pub(super) fn perform<T>(mut self, operation: impl FnOnce() -> Result<T>) -> Result<T> {
+        self.budget
+            .state
+            .lock()
+            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
+            .start_response()?;
+        // Transfer ownership before sampling: a failed start sample must go
+        // through interval Drop, never through the unused-response refund.
+        self.retired = true;
+        let interval = self.budget.start_interval()?;
+        let result = operation();
+        #[cfg(test)]
+        self.budget.response_finish_checkpoint_for_test()?;
+        interval.finish()?;
+        result
+    }
+}
+impl Drop for ResponseSigningReservation<'_> {
+    fn drop(&mut self) {
+        if !self.retired {
+            let mut state = match self.budget.state.lock() {
+                Ok(state) => state,
+                Err(error) => {
+                    let mut state = error.into_inner();
+                    state.unavailable = true;
+                    state
+                }
+            };
+            let _ = state.release_response(Instant::now(), !std::thread::panicking());
+        }
     }
 }
 struct AuthenticationCpuInterval<'a> {
@@ -307,6 +466,173 @@ mod tests {
             value = std::hint::black_box(value.wrapping_mul(6364136223846793005).wrapping_add(1));
         }
         std::hint::black_box(value);
+    }
+
+    #[test]
+    fn response_reservation_starts_clock_on_actual_signer_thread() {
+        let budget = AuthenticationCpuBudget::new();
+        let response = budget.reserve_response().unwrap();
+        let other = budget.reserve_response().unwrap();
+        let pending = budget.observation().unwrap();
+        assert_eq!(pending.in_flight, MUTATION_CPU_WORKERS);
+        assert_eq!(pending.pending_response_signatures, 2);
+        assert_eq!(pending.attempts, 2);
+        assert_eq!(pending.authenticated_input_bytes, 64);
+        assert_eq!(pending.known_intervals, 0);
+        assert_eq!(pending.known_thread_cpu_ns, 0);
+        assert_eq!(
+            pending.stored_credit_ns,
+            i128::from(MUTATION_CPU_BURST_NS - 2 * MUTATION_CPU_START_RESERVE_NS)
+        );
+        let called = AtomicBool::new(false);
+        assert!(budget
+            .perform(32, || {
+                called.store(true, Ordering::Release);
+                Ok(())
+            })
+            .unwrap_err()
+            .is(crate::ErrorCode::PublicMutationCpuBudget));
+        assert!(!called.load(Ordering::Acquire));
+        let identity =
+            super::super::DevelopmentIdentity::from_secret_hex(&hex::encode([91; 32])).unwrap();
+        let message = [19; 32];
+        // Real work before signing is outside the authentication interval.
+        // Moving the promise is safe because it has not sampled this thread.
+        actual_cpu();
+        let signature = thread::scope(|scope| {
+            scope
+                .spawn(|| response.perform(|| identity.sign(&message)))
+                .join()
+                .unwrap()
+                .unwrap()
+        });
+        trnm_crypto_primitives::verify_hex_strict(identity.public_key(), &message, &signature)
+            .unwrap();
+        let signed = budget.observation().unwrap();
+        assert_eq!(signed.known_intervals, 1);
+        assert!(signed.known_thread_cpu_ns > 0);
+        assert_eq!(signed.unknown_intervals, 0);
+        assert_eq!(signed.in_flight, 1);
+        assert_eq!(signed.pending_response_signatures, 1);
+        assert_eq!(signed.attempts, 2); // No second admission at signing.
+        drop(other);
+        let complete = budget.observation().unwrap();
+        assert_eq!(complete.in_flight, 0);
+        assert_eq!(complete.pending_response_signatures, 0);
+        assert_eq!(complete.unused_response_reservations, 1);
+        assert_eq!(complete.attempts, 2);
+        assert!(!complete.unavailable);
+        assert!(complete.stored_credit_ns <= i128::from(MUTATION_CPU_BURST_NS));
+    }
+
+    #[test]
+    fn response_reservation_unknown_start_or_finish_keeps_original_principal() {
+        for start_unknown in [false, true] {
+            let budget = AuthenticationCpuBudget::new();
+            let response = budget.reserve_response().unwrap();
+            let before = budget.observation().unwrap();
+            if start_unknown {
+                budget.fail_next_start.store(true, Ordering::Release);
+            } else {
+                budget.fail_next_finish_for_test();
+            }
+            let called = AtomicBool::new(false);
+            let identity =
+                super::super::DevelopmentIdentity::from_secret_hex(&hex::encode([92; 32])).unwrap();
+            let result = response.perform(|| {
+                called.store(true, Ordering::Release);
+                identity.sign(&[22; 32])
+            });
+            assert!(result
+                .unwrap_err()
+                .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+            assert_eq!(called.load(Ordering::Acquire), !start_unknown);
+            let after = budget.observation().unwrap();
+            assert!(after.unavailable);
+            assert_eq!(after.in_flight, 0);
+            assert_eq!(after.pending_response_signatures, 0);
+            assert_eq!(after.unknown_intervals, 1);
+            assert_eq!(after.unused_response_reservations, 0);
+            assert!(after.stored_credit_ns <= before.stored_credit_ns);
+        }
+    }
+
+    #[test]
+    fn response_reservation_never_bypasses_existing_unknown_or_unwind() {
+        for unwind in [false, true] {
+            let budget = AuthenticationCpuBudget::new();
+            let response = budget.reserve_response().unwrap();
+            let before = budget.observation().unwrap();
+            let called = AtomicBool::new(false);
+            if unwind {
+                assert!(catch_unwind(AssertUnwindSafe(|| {
+                    let _held = response;
+                    panic!("controlled native unwind before response crypto");
+                }))
+                .is_err());
+            } else {
+                // Explicit shared-account fault injection, not measured cost.
+                budget.state.lock().unwrap().unavailable = true;
+                assert!(response
+                    .perform(|| {
+                        called.store(true, Ordering::Release);
+                        Ok(())
+                    })
+                    .unwrap_err()
+                    .is(crate::ErrorCode::PublicMutationCpuUnavailable));
+            }
+            let after = budget.observation().unwrap();
+            assert!(!called.load(Ordering::Acquire));
+            assert!(after.unavailable);
+            assert_eq!(after.in_flight, 0);
+            assert_eq!(after.pending_response_signatures, 0);
+            assert_eq!(after.stored_credit_ns, before.stored_credit_ns);
+            assert_eq!(after.known_intervals, 0);
+            assert_eq!(after.known_thread_cpu_ns, 0);
+        }
+    }
+
+    #[test]
+    fn response_reservation_survives_another_measured_known_cpu_overrun() {
+        let budget = AuthenticationCpuBudget::new();
+        let response = budget.reserve_response().unwrap();
+        // A deliberately CPU-heavy real interval establishes known debt. It
+        // is not a claim that an ordinary signature naturally takes this long.
+        budget
+            .perform(32, || {
+                let stamp = ThreadCpuStamp::start().unwrap();
+                let deadline = Instant::now() + Duration::from_millis(super::super::WORK_MS);
+                loop {
+                    actual_cpu();
+                    if stamp.clone().finish().unwrap()
+                        > MUTATION_CPU_BURST_NS + MUTATION_CPU_START_RESERVE_NS
+                    {
+                        break;
+                    }
+                    assert!(
+                        Instant::now() < deadline,
+                        "original finite test CPU window exhausted"
+                    );
+                }
+                Ok(())
+            })
+            .unwrap();
+        let debt = budget.observation().unwrap();
+        assert!(debt.stored_credit_ns < 0);
+        assert!(!debt.unavailable);
+        assert_eq!(debt.unknown_intervals, 0);
+        assert_eq!(debt.pending_response_signatures, 1);
+        let identity =
+            super::super::DevelopmentIdentity::from_secret_hex(&hex::encode([93; 32])).unwrap();
+        let message = [33; 32];
+        let signature = response.perform(|| identity.sign(&message)).unwrap();
+        trnm_crypto_primitives::verify_hex_strict(identity.public_key(), &message, &signature)
+            .unwrap();
+        let after = budget.observation().unwrap();
+        assert_eq!(after.known_intervals, 2);
+        assert_eq!(after.in_flight, 0);
+        assert_eq!(after.pending_response_signatures, 0);
+        assert!(!after.unavailable);
     }
 
     #[test]
