@@ -1,0 +1,85 @@
+{
+  "artifacts": {
+    "aggregate_result": {
+      "bytes": 4469,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/result.json",
+      "sha256": "a8994db5a68190731c94b64bfb7b53763e3c1cbee8cdc3faebd67d7f04a517b8"
+    },
+    "archive": {
+      "bytes": 3495706,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C2-01/qualification-raw.tar.gz",
+      "sha256": "c0cbda739add31b6bc887887833990038bcf0414c4e6bf93dc79f0cfdb38113c"
+    },
+    "gate_statuses": {
+      "bytes": 5920,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/gate-job-statuses.json",
+      "sha256": "3df827d24c941c54ef6b116c9982b0a983c53d885c8ffb891e6b4f3e7aaae7d3"
+    },
+    "index": {
+      "bytes": 343720,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C2-01/qualification-raw-index.json",
+      "sha256": "0cde93ffc1832e73ac4ef8070273128e7c8e2cc0ade43cf670f4ad850ead4b91"
+    },
+    "qualification": {
+      "bytes": 226149,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/qualification.json",
+      "sha256": "01947ed12ac65cd24dc4d9364f3e12af93a6539fb6abcfac26b7b43ed3587dbb"
+    },
+    "readback": {
+      "bytes": 1790,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C2-01/archive-readback.json",
+      "sha256": "188b36708746f01c783291b74026f579fae4d28832d7458b5f191edefeef3963"
+    }
+  },
+  "counts": {
+    "aggregate_observation_successful_commands": 4,
+    "archive_members": 533,
+    "archive_uncompressed_bytes": 29229247,
+    "component_successful_commands": 67,
+    "explicitly_ignored_heavy_entries": 3,
+    "publication_map_successful_commands": 9,
+    "reported_passed_test_methods": 770,
+    "total_successful_commands": 80
+  },
+  "fresh_cargo_target": false,
+  "guest_compilation_performed": false,
+  "independent_reproducible_build_established": false,
+  "new_attestation_document_commit_qualified_by_this_evidence": false,
+  "new_full_proofs": 0,
+  "original_C1_and_C1b_five_role_pins_unchanged": true,
+  "publication_package_complete": true,
+  "qualification_complete": true,
+  "schema": "TRNM-W1-C2-PUBLICATION-RECEIPT1",
+  "scope": "Qualification applies to the exact tested C2 publication source. A later evidence-only attestation commit may reference these observations but is not claimed tested by them. Experimental records retain their original A or C1b source identity.",
+  "terminal_evidence": {
+    "aggregate": {
+      "job_id": "1a1b831cce2-12894-d70",
+      "raw": {
+        "bytes": 731,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C2-01/terminal-aggregate.raw.json",
+        "sha256": "33fbdab6aad50f1264434807d8fd8369cbf5d49b7630bc439447d49035fbbb2e"
+      }
+    },
+    "archive": {
+      "job_id": "1a1b833ec52-12894-d76",
+      "raw": {
+        "bytes": 729,
+        "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/publication-evidence-C2-01/terminal-archive.raw.json",
+        "sha256": "5065ea6996a6d80ffdff7cefe163450bb2ed5fd2962b9b39f12bfb87ce6f5eca"
+      }
+    }
+  },
+  "test_methods_reported": {
+    "backend": 22,
+    "ci": 471,
+    "m12": 10,
+    "native": 243,
+    "node": 15,
+    "owner_heavy_entries_explicitly_ignored": 3,
+    "real_receiver_controls": 7,
+    "sum": 770,
+    "verifier": 2
+  },
+  "tested_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "tested_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a"
+}
