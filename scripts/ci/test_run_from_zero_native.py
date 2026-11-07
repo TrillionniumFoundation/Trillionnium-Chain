@@ -321,6 +321,31 @@ class BinarySelectionTests(unittest.TestCase):
                 driver.validate_service_report(target)
 
 
+class FormatCopySourceTests(unittest.TestCase):
+    def test_format_copy_mirrors_relative_module_path_without_mutating_checkout(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'repo'
+            source = root / driver.SOURCE
+            support = root / driver.FORMAT_SUPPORT
+            source.parent.mkdir(parents=True)
+            support.parent.mkdir(parents=True)
+            source_bytes = b'#[path = "../examples/support/w1_from_zero.rs"]\nmod w1_from_zero;\n'
+            support_bytes = b'pub fn fixture() {}\n'
+            source.write_bytes(source_bytes)
+            support.write_bytes(support_bytes)
+            out = Path(directory) / 'observations'
+
+            copied = driver.prepare_format_copy(out, root)
+            resolved_support = (copied.parent / '../examples/support/w1_from_zero.rs').resolve()
+            expected_support = (out / driver.FORMAT_COPY_ROOT / driver.FORMAT_SUPPORT).resolve()
+
+            self.assertEqual(copied.read_bytes(), source_bytes)
+            self.assertEqual(resolved_support, expected_support)
+            self.assertEqual(resolved_support.read_bytes(), support_bytes)
+            self.assertEqual(source.read_bytes(), source_bytes)
+            self.assertEqual(support.read_bytes(), support_bytes)
+
+
 class ExecutionBoundaryTests(unittest.TestCase):
     def exercise(self, *, fail=None, zero=None, ignored=None, timeout=None,
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
@@ -332,6 +357,9 @@ class ExecutionBoundaryTests(unittest.TestCase):
             test_source = root / driver.SOURCE
             test_source.parent.mkdir(parents=True)
             test_source.write_text('// simulated source; not Rust execution\n')
+            format_support = root / driver.FORMAT_SUPPORT
+            format_support.parent.mkdir(parents=True)
+            format_support.write_text('// simulated relative module; not Rust execution\n')
             binary = root / 'fake-binary'; binary.write_bytes(b'not a real executable')
             identity = {'commit': 'a'*40, 'tree': 'b'*40, 'test_sha256': driver.digest(test_source.read_bytes())}
             after = copy.deepcopy(identity)
