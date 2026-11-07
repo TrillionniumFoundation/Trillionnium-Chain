@@ -1,0 +1,75 @@
+{
+  "schema": "trnm-throughput-reviewed-source-corrections-v1",
+  "original_source": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "corrections": [
+    {
+      "pr": 768,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/768",
+      "head": "0c084aba1fcbe56ea1661231df24d9a069bda921",
+      "base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "actual_script_blob": "54440d8968cf5eee063605aabf81ea0f4438daf0",
+      "old_script_blob_pin": "3790ce2b25faf674258b6cd9c4e1a16b4ec74817",
+      "source_integrity_checker_changed": false
+    },
+    {
+      "pr": 772,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/772",
+      "head": "1e1cc50a0367fd29f48d00db20f35134900c656e",
+      "base": "65b79a80db157a139523aa3467b32d90c8c6edf3",
+      "paths": [
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs"
+      ],
+      "scope": "Two source/test-file differences reviewed by integration owner; actual accept-loop readiness only, original client timeout unchanged. Final combined-source corpus pins must be recomputed."
+    },
+    {
+      "pr": 760,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/760",
+      "head": "4906dbad8e97c2a252a395b7b581ebbe21a59204",
+      "base": "fa1f6a89cc812c5b6daca4e22464b777eeeb3e04",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml"
+      ],
+      "scope": "Preliminary review preserved as provenance. In the pinned action, upload false means failure-only, not never. Superseded by the concurrent integration commit 271a87f831aa7e08f3c2024f738504c1422122dd, whose complete workflow and explicit never setting are retained.",
+      "initial_workflow_blob": "7d2bc2b40aff6bd2fd7418633b656b5406c5c564",
+      "superseded": true
+    },
+    {
+      "pr": 688,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/271a87f831aa7e08f3c2024f738504c1422122dd",
+      "head": "271a87f831aa7e08f3c2024f738504c1422122dd",
+      "base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json"
+      ],
+      "upstream_workflow_blob": "e4611a3f3c071de99ece39ccf25d50dc66f0f2bf",
+      "scope": "Preserve concurrent source change: identical SQLite pin plus complete CodeQL never-upload workflow, before/after source identity and always-retained artifacts. Add full worktree status and tracked worktree/index diffs before the unchanged strict after-check; no cleanup, source-guard relaxation or failure-to-success conversion. New Rust clean-source failures remain unqualified; historical e70f failures are retained separately.",
+      "source_integrity_checker_changed": false,
+      "intermediate_integrated_workflow_blob": "247e0330a49fccf2d3482c113f7fa71f5d2b65e5",
+      "subsequent_concurrent_head": "3d1b6507671ec694ce58e86d4063a125c8deeb66"
+    },
+    {
+      "pr": 688,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/3d1b6507671ec694ce58e86d4063a125c8deeb66",
+      "head": "3d1b6507671ec694ce58e86d4063a125c8deeb66",
+      "base": "271a87f831aa7e08f3c2024f738504c1422122dd",
+      "paths": [
+        ".github/workflows/codeql-real-exact-source.yml",
+        "evidence/pon-current-inbound-history-e70-20261107/README.md",
+        "evidence/pon-current-inbound-history-e70-20261107/readback.json",
+        "evidence/pon-current-inbound-history-e70-20261107/reproduce.py"
+      ],
+      "upstream_workflow_blob": "c374057ec4322039d21f64b12c062a8081259bc1",
+      "integrated_workflow_blob": "fb5236320eb9897be10f13e47ce3d39dfdb5c7a4",
+      "scope": "Preserve all four concurrent files and merge complementary full tracked-diff diagnostics. Exact later head and merge artifacts identify only a new untracked historical crypto Cargo.lock; tracked diffs are empty. A new separately indexed scan lock is derived from the retained parent dependency closure; no historical measurement manifest, runtime source, native test, original budget or source guard is changed.",
+      "historical_lock_preparation": "../codeql-lock/preparation.json",
+      "source_integrity_checker_changed": false
+    }
+  ],
+  "child_ci_results_inherited": false,
+  "production_activation": false
+}

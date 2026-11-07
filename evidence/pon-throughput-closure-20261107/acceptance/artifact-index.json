@@ -1,0 +1,805 @@
+{
+  "schema": "trnm-throughput-original-artifact-index-v1",
+  "source_commit": "e70f13448aad715286fb8eb56fc802b09db643a3",
+  "source_tree": "1fc19c44ab2d4b35672b25d0f4e4039b769cadea",
+  "observed_at_utc": "2026-11-07T10:28:40.970726+00:00",
+  "archives": [
+    {
+      "artifact_id": 13566551605,
+      "run_id": 42352433680,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433680/artifacts/13566551605",
+      "zip_bytes": 5386482,
+      "zip_sha256": "919f19bb0769e5ba354da5e222beab03ba3b83a75649e0874dc49a13d4f26458",
+      "digest_matches_github": true,
+      "members": [
+        {
+          "zip_member": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769"
+        },
+        {
+          "zip_member": "fresh-service/build.log",
+          "size_bytes": 108305,
+          "retained_path": "raw/13566551605/fresh-service/build.log.gz",
+          "raw_sha256": "7440a6bd4f04e8230323200cbad28747d5a0221ba4a5476bec792f0cd85d5ec6",
+          "gzip_sha256": "a94943a2affb026c35cf5adc8867bed0743eaa394517a59269b975969039c394"
+        },
+        {
+          "zip_member": "fresh-service/fresh/baseline/receiver/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+        },
+        {
+          "zip_member": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+          "size_bytes": 147456,
+          "retained_path": null,
+          "raw_sha256": "dc3ff57c202f49cc418d73f824ccdeb8f3413024c3818b1188e5957cc1be2d96"
+        },
+        {
+          "zip_member": "fresh-service/fresh/pressure/receiver/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+        },
+        {
+          "zip_member": "fresh-service/fresh/producer/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770"
+        },
+        {
+          "zip_member": "fresh-service/fresh/report.json",
+          "size_bytes": 6215432,
+          "retained_path": "raw/13566551605/fresh-service/fresh/report.json.gz",
+          "raw_sha256": "cde4d4aef0c4dc0224c1f1f78c78778bbe43b8e2d47f6e6ae9603a436392286f",
+          "gzip_sha256": "0fa5b2d088a4ca913818f05027a591df9b498f9e47c3819e27b891843cafeddc"
+        },
+        {
+          "zip_member": "fresh-service/fresh.log",
+          "size_bytes": 914,
+          "retained_path": "raw/13566551605/fresh-service/fresh.log.gz",
+          "raw_sha256": "610a9ee2cb90393c1ce139b5c2c3600922aa329ea2dd7143059c358a509dda67",
+          "gzip_sha256": "303af401791c1f6cf500d5961b3aec1e3143cdc43ca999df913c725adce20ec0"
+        },
+        {
+          "zip_member": "fresh-service/manifest.json",
+          "size_bytes": 8897,
+          "retained_path": "raw/13566551605/fresh-service/manifest.json.gz",
+          "raw_sha256": "cede4c16881053f29a6303b9e0975c11448e3fd59ff4637b22a7bd2ac2dfa902",
+          "gzip_sha256": "162d780492000a3e734eab5d61107b9c9b13026713767dbdc1c06397e86d510a"
+        },
+        {
+          "zip_member": "fresh-service/original/baseline/independent-client/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769"
+        },
+        {
+          "zip_member": "fresh-service/original/baseline/receiver/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+        },
+        {
+          "zip_member": "fresh-service/original/pressure/independent-client/native.sqlite",
+          "size_bytes": 196608,
+          "retained_path": null,
+          "raw_sha256": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6"
+        },
+        {
+          "zip_member": "fresh-service/original/pressure/receiver/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14"
+        },
+        {
+          "zip_member": "fresh-service/original/producer/native.sqlite",
+          "size_bytes": 499712,
+          "retained_path": null,
+          "raw_sha256": "0d5e8e88b221b194617e773a59987dbca33fde482bfe5b8edd23a976a6c2b770"
+        },
+        {
+          "zip_member": "fresh-service/original/report.json",
+          "size_bytes": 7745989,
+          "retained_path": "raw/13566551605/fresh-service/original/report.json.gz",
+          "raw_sha256": "3f3be3ea389fbfd45969220dc3c1151bd9fb5d69b96f4c885cba633911c2b868",
+          "gzip_sha256": "b4c7f99d89215cdde7f726b84bad0e43a2bfa69495f5bb99f0416f9219b8c46e"
+        },
+        {
+          "zip_member": "fresh-service/original.log",
+          "size_bytes": 420,
+          "retained_path": "raw/13566551605/fresh-service/original.log.gz",
+          "raw_sha256": "4340d649f5a23a36d0e07182dfc127440f7cb55e16503ac06f678d17aa7bf88e",
+          "gzip_sha256": "096523e74df96745eb8a322f89214f89c0254acd60bf46e9671a5d6a7a6e3c80"
+        },
+        {
+          "zip_member": "fresh-service-controls.log",
+          "size_bytes": 119,
+          "retained_path": "raw/13566551605/fresh-service-controls.log.gz",
+          "raw_sha256": "f8ca671b8bd6e2540e0b66372e2bbd255467bf9951bb8d8c555c79d9081a3cf2",
+          "gzip_sha256": "f6a756d90ee8e9e46ef8b72e6e5a9d28813f582823c0dfd37b9aa1fb7a09c0b1"
+        },
+        {
+          "zip_member": "fresh-service-host/actual-systemd-parent-after.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13566551605/fresh-service-host/actual-systemd-parent-after.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "fresh-service-host/actual-systemd-parent.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13566551605/fresh-service-host/actual-systemd-parent.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "fresh-service-host/after-provision.json",
+          "size_bytes": 1634,
+          "retained_path": "raw/13566551605/fresh-service-host/after-provision.json.gz",
+          "raw_sha256": "359d3a74fb1d2a05b8ed5ad3c6a6a41313e2db7f116c08a45c4ea6ebd08e43af",
+          "gzip_sha256": "ed8dc953e0db9ff982c2e1b5104356ea107805644bb0fe3e28151830d83e4f66"
+        },
+        {
+          "zip_member": "fresh-service-host/before-provision.json",
+          "size_bytes": 2801,
+          "retained_path": "raw/13566551605/fresh-service-host/before-provision.json.gz",
+          "raw_sha256": "fb6002bb70cced58f9ce427390fce8c61b8453e379f0cca24aedc1dbe08b7cb6",
+          "gzip_sha256": "8ed1557006d3e1f121f9d1f0de1f5230e373c650d86645cee16f2aaf793ee674"
+        },
+        {
+          "zip_member": "fresh-service-host/child-final-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13566551605/fresh-service-host/child-final-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "fresh-service-host/child-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13566551605/fresh-service-host/child-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "fresh-service-host/child-result.json",
+          "size_bytes": 353,
+          "retained_path": "raw/13566551605/fresh-service-host/child-result.json.gz",
+          "raw_sha256": "3001f96c2f29dee7ebf1e66e3e09af4b57df61208744df5286990327d0f8bc60",
+          "gzip_sha256": "9adc4197dec3012d23029345e2c3b4e58041c4059ab90e8d517783645827da7b"
+        },
+        {
+          "zip_member": "fresh-service-host/controller-result.json",
+          "size_bytes": 7701,
+          "retained_path": "raw/13566551605/fresh-service-host/controller-result.json.gz",
+          "raw_sha256": "f53475d75339c9d897043f2acb4247b10aad0d31b6a98721fd294027b0e98375",
+          "gzip_sha256": "55007823ea9e34630e947847c1aa429cc5ca10ae283e0d4e7c6a8155693d7294"
+        },
+        {
+          "zip_member": "fresh-service-host/inside-after.json",
+          "size_bytes": 1711,
+          "retained_path": "raw/13566551605/fresh-service-host/inside-after.json.gz",
+          "raw_sha256": "21a99dcaaa77e48423b1b94d9bfe3e712dbd16e1b111ecf9a8693f6700562817",
+          "gzip_sha256": "998441be255b6fae337c11e9c58c33bf4c852c0a1e2360d4e29f7c2e33522622"
+        },
+        {
+          "zip_member": "fresh-service-host/inside-before.json",
+          "size_bytes": 1700,
+          "retained_path": "raw/13566551605/fresh-service-host/inside-before.json.gz",
+          "raw_sha256": "6e578e31afa560a40cf2f83916889978a056e7f3f03f93a1a26b3f46e273c8a8",
+          "gzip_sha256": "2a08ced275162a4118109e779cc6e513722addea54939491781498b38c3250f4"
+        },
+        {
+          "zip_member": "fresh-service-host/install-reviewed-unit.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13566551605/fresh-service-host/install-reviewed-unit.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "fresh-service-host/outside-after.json",
+          "size_bytes": 1667,
+          "retained_path": "raw/13566551605/fresh-service-host/outside-after.json.gz",
+          "raw_sha256": "7be08bcf48ddfdbf18f5f1943b0f51594163425b0868f6a85efcbbdcc4825414",
+          "gzip_sha256": "4c0c779c97d9e2a4723299e011f27a575d61b6ac68d65b34e8c8054fc7ab81d6"
+        },
+        {
+          "zip_member": "fresh-service-host/parent-properties.log",
+          "size_bytes": 146,
+          "retained_path": "raw/13566551605/fresh-service-host/parent-properties.log.gz",
+          "raw_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+          "gzip_sha256": "3cf4d09669f2b0b474390f31d6c3ca77e038fd5e4ee71232d8c3515e6d62c1f3"
+        },
+        {
+          "zip_member": "fresh-service-host/prepare-build/process.json",
+          "size_bytes": 921,
+          "retained_path": "raw/13566551605/fresh-service-host/prepare-build/process.json.gz",
+          "raw_sha256": "e4251b1f5dba2a66f524dfc20e06300f719aa7750ed50663db72669398e92ff2",
+          "gzip_sha256": "aea3299c9538316b3200e286c40e943251ebad8a51ea15c8ca2d0a9542fb03ab"
+        },
+        {
+          "zip_member": "fresh-service-host/prepare-build.json",
+          "size_bytes": 3406,
+          "retained_path": "raw/13566551605/fresh-service-host/prepare-build.json.gz",
+          "raw_sha256": "ad15a61c77db74da4628fc49074ebfcda516c9383c013865cdbe37845c430915",
+          "gzip_sha256": "85a261dbfd70447738cc1caafd74e4f531f0749c823a6c59087f41c83774b318"
+        },
+        {
+          "zip_member": "fresh-service-host/seal-parent-directory.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13566551605/fresh-service-host/seal-parent-directory.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "fresh-service-host/seal-parent-receipt.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13566551605/fresh-service-host/seal-parent-receipt.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "fresh-service-host/start-fixed-parent.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13566551605/fresh-service-host/start-fixed-parent.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "fresh-service-host/systemd-reload.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13566551605/fresh-service-host/systemd-reload.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "fresh-service-host/unprovisioned-parent.json",
+          "size_bytes": 229,
+          "retained_path": "raw/13566551605/fresh-service-host/unprovisioned-parent.json.gz",
+          "raw_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+          "gzip_sha256": "b9c756c2c6c668ff52ae26f441ff989db3bb1f2c2370aef110abfcadfa0c940a"
+        },
+        {
+          "zip_member": "original-host-controls.log",
+          "size_bytes": 177,
+          "retained_path": "raw/13566551605/original-host-controls.log.gz",
+          "raw_sha256": "b4fbc0608391e7f2a623cbbe9062b87d5823937748c084d32907ddd0a08041fe",
+          "gzip_sha256": "244f31a90503bf5ea9daa9e45a246a67bde2f563a00235c4f5b5e38a0c6fa279"
+        },
+        {
+          "zip_member": "fresh-service-host/systemd-run.log",
+          "size_bytes": 540,
+          "retained_path": "raw/13566551605/fresh-service-host/systemd-run.log.gz",
+          "raw_sha256": "9d5680e5c562e0ef8bac96a9400ae50b345d683a29f459c941d71cebaa9dc43b",
+          "gzip_sha256": "91851a6ea4f26568f4feb1cbea4726e3b3c14660d8b762a365f4025f6ad69044"
+        },
+        {
+          "zip_member": "original-native-controls.log",
+          "size_bytes": 22947,
+          "retained_path": "raw/13566551605/original-native-controls.log.gz",
+          "raw_sha256": "a1bd2800a15c35e6a7639c36b4a4a5900c1c7aadfe85ea5f0ac453389c063440",
+          "gzip_sha256": "6a1e921daac0f8a11f04db694e7d941162607f4586fc9c71b5cdbd4b5b98c0d8"
+        },
+        {
+          "zip_member": "preflight.log",
+          "size_bytes": 133,
+          "retained_path": "raw/13566551605/preflight.log.gz",
+          "raw_sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+          "gzip_sha256": "886bf3fc610d0226f10766b49962d597ef7c28344609245f8589f1247a715b69"
+        },
+        {
+          "zip_member": "public-fixture-parent.json",
+          "size_bytes": 3304,
+          "retained_path": "raw/13566551605/public-fixture-parent.json.gz",
+          "raw_sha256": "72154f84146d70f3bb023d7eaec81db41239f328de1dc1ee35617d6de8ebbde7",
+          "gzip_sha256": "edd469d50d78e3df404d41ff64f4f1377f44feecba258e4818b4f0033d45059f"
+        },
+        {
+          "zip_member": "source-after.json",
+          "size_bytes": 423,
+          "retained_path": "raw/13566551605/source-after.json.gz",
+          "raw_sha256": "f611d547299be2ce8e57f3a9b851a77e5eef80b1d6384c77fb2f35d7c096abfd",
+          "gzip_sha256": "9665f76458474ff2647eace18624ef2d68d93dc24887499b15ebcefedcdad746"
+        },
+        {
+          "zip_member": "source.json",
+          "size_bytes": 423,
+          "retained_path": "raw/13566551605/source.json.gz",
+          "raw_sha256": "f611d547299be2ce8e57f3a9b851a77e5eef80b1d6384c77fb2f35d7c096abfd",
+          "gzip_sha256": "9665f76458474ff2647eace18624ef2d68d93dc24887499b15ebcefedcdad746"
+        }
+      ],
+      "member_count": 57,
+      "unretained_members": {
+        "count": 13,
+        "uncompressed_bytes": 11030888,
+        "inventory_path": "omitted-members-13566551605.json.gz",
+        "inventory_raw_sha256": "b936b29e34656536d6e61670663624297f659eb52f3aae2306d7d3d2fe4ee08f",
+        "inventory_gzip_sha256": "4809120a1110c084a48ba2e09c71a76b438572325d55a8405a4705fd77def4fe"
+      }
+    },
+    {
+      "artifact_id": 13568123690,
+      "run_id": 42352433738,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/artifacts/13568123690",
+      "zip_bytes": 51119282,
+      "zip_sha256": "14bc8eb4d062ad5fbd8cb17d088dfaffae726e2a2dc6d18d0ea09467d1afd185",
+      "digest_matches_github": true,
+      "members": [
+        {
+          "zip_member": "history-native/execution-start.json",
+          "size_bytes": 76,
+          "retained_path": "raw/13568123690/history-native/execution-start.json.gz",
+          "raw_sha256": "b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d",
+          "gzip_sha256": "6df7c90a2049c86fb6b9038f0f5dd9f2972aa4ebbce517d9c9e21947917454a7"
+        },
+        {
+          "zip_member": "history-native/build.stderr",
+          "size_bytes": 6896,
+          "retained_path": "raw/13568123690/history-native/build.stderr.gz",
+          "raw_sha256": "cdbbfe06496e60d7f54fce9c163d56f4f99bcf75e034a5c5931cf86b89c5d3a7",
+          "gzip_sha256": "3ea1f3914157b8820127dfd1891c595915ce0dfab1facabb3b2f5f3aa2a1fbee"
+        },
+        {
+          "zip_member": "history-native/history-resources.txt",
+          "size_bytes": 972,
+          "retained_path": "raw/13568123690/history-native/history-resources.txt.gz",
+          "raw_sha256": "546bcf1eadce7e7526fa0934b7f03a0952acc282035752b5984ac303d2e3b57d",
+          "gzip_sha256": "90cf6346e8f4077803d5640d2beec2727bcbf4eac8dd7080829a88289cdc1427"
+        },
+        {
+          "zip_member": "history-native/history.log",
+          "size_bytes": 11094,
+          "retained_path": "raw/13568123690/history-native/history.log.gz",
+          "raw_sha256": "a20c17fc6864a6a61e027adb7d6aa494316b016cb44326c3a4f346febb47c57c",
+          "gzip_sha256": "3f37a5dd1b18d84d6b52ca885e3a0ea8439c5799ac1295b530f53a31e753f963"
+        },
+        {
+          "zip_member": "history-native/long-history/config.json",
+          "size_bytes": 632,
+          "retained_path": "raw/13568123690/history-native/long-history/config.json.gz",
+          "raw_sha256": "4c15ce35ade478b0d18b3d51d8e17c460276f9f68996a129db694653e3067039",
+          "gzip_sha256": "94913e3144cb42c559e51b78666e742c92faa043561abeabf736de6eea56e9dc"
+        },
+        {
+          "zip_member": "history-native/long-history/confirmer/native.sqlite",
+          "size_bytes": 126537728,
+          "retained_path": null,
+          "raw_sha256": "325fb54c9c172095fae1152034d4079c28fe1449fa1abc82e8323cfc7e435440"
+        },
+        {
+          "zip_member": "history-native/long-history/source.json",
+          "size_bytes": 514,
+          "retained_path": "raw/13568123690/history-native/long-history/source.json.gz",
+          "raw_sha256": "2d31937870bf0cdd70c5d9e9870706771f20a65c800feacf8eef2bfd4f58663b",
+          "gzip_sha256": "891aafab378eb63d645e59a51f23f17abe29836fda78a343395703ff767e3f75"
+        },
+        {
+          "zip_member": "history-native/long-history/summary.json",
+          "size_bytes": 259,
+          "retained_path": "raw/13568123690/history-native/long-history/summary.json.gz",
+          "raw_sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+          "gzip_sha256": "7d2c63e9e5427eaf7fd3dce235cae3ca792f08445512c6f39d4ac6356502d0cd"
+        },
+        {
+          "zip_member": "history-native/long-history/validator/native.sqlite",
+          "size_bytes": 220684288,
+          "retained_path": null,
+          "raw_sha256": "03dafcbc7c36d7e23ec72e7f27e32714f4b4e2dfc28661a8fdc52086dfaec477"
+        },
+        {
+          "zip_member": "history-native/manifest.json",
+          "size_bytes": 4899,
+          "retained_path": "raw/13568123690/history-native/manifest.json.gz",
+          "raw_sha256": "2318b9bee506dcad179392e2ff84d1df5ba3b19c405b37b4acffae0977359adf",
+          "gzip_sha256": "9b2134223b248e626fb140f7f55c656a8f8e89f8c39a2dcedce0993c9d608819"
+        },
+        {
+          "zip_member": "history-native/preparation.json",
+          "size_bytes": 3472,
+          "retained_path": "raw/13568123690/history-native/preparation.json.gz",
+          "raw_sha256": "ed3b71bae0257fe413db1d16ce024911d5f806f9676345c36706fe0f595245a8",
+          "gzip_sha256": "7211746ee0d90990ad66e9aaf664dc65bb74f14c329c92f65be8036cf6aede8d"
+        },
+        {
+          "zip_member": "history-native-host/actual-systemd-parent-after.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13568123690/history-native-host/actual-systemd-parent-after.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "history-native-host/actual-systemd-parent.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13568123690/history-native-host/actual-systemd-parent.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "history-native-host/after-provision.json",
+          "size_bytes": 1628,
+          "retained_path": "raw/13568123690/history-native-host/after-provision.json.gz",
+          "raw_sha256": "d1fb5340a6079d0cfd3769dfe3dde76e4ad2e08004d572790c8b574e50b0f4fe",
+          "gzip_sha256": "1814af5c60249a711fd2fbc7c71004c3b96f8cb89243dc9a63a29901ff8090eb"
+        },
+        {
+          "zip_member": "history-native-host/before-provision.json",
+          "size_bytes": 2795,
+          "retained_path": "raw/13568123690/history-native-host/before-provision.json.gz",
+          "raw_sha256": "1da721fd0e0f68a827eee7f5059f628e44c42f760a8868fc391221bfee0f4ad4",
+          "gzip_sha256": "7211271a2c8b6b767b3a8e14eb01f7dc613c3ab0d3fadecb7fdaa5a80979ecc5"
+        },
+        {
+          "zip_member": "history-native-host/child-final-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13568123690/history-native-host/child-final-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "history-native-host/child-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13568123690/history-native-host/child-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "history-native-host/child-result.json",
+          "size_bytes": 335,
+          "retained_path": "raw/13568123690/history-native-host/child-result.json.gz",
+          "raw_sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "gzip_sha256": "c0b8bb42724c4f940a3eab576dae3f960b2f1ef3bc990b0856453ed20a3cda0d"
+        },
+        {
+          "zip_member": "history-native-host/controller-result.json",
+          "size_bytes": 7729,
+          "retained_path": "raw/13568123690/history-native-host/controller-result.json.gz",
+          "raw_sha256": "48caaca51c50dc63313638f0adcc23cfc429d5fe620dbc3975326e44f5bdaa95",
+          "gzip_sha256": "465bdb8cf9ad9c4c847fb74a1477cdd29280b5ef155982e210cb346fab74efae"
+        },
+        {
+          "zip_member": "history-native-host/inside-after.json",
+          "size_bytes": 1711,
+          "retained_path": "raw/13568123690/history-native-host/inside-after.json.gz",
+          "raw_sha256": "4de7f2b10855bce3379214b6085c0c388181370585a147a8cf51c0c19edb4cac",
+          "gzip_sha256": "816549d05631e6b3ac68194e8b1cf8cbaf9611b2fbd4116004fb74c1e6c0e86c"
+        },
+        {
+          "zip_member": "history-native-host/inside-before.json",
+          "size_bytes": 1688,
+          "retained_path": "raw/13568123690/history-native-host/inside-before.json.gz",
+          "raw_sha256": "6ea59d6d159fc3d364b929e8214e6926137724539c7af6edf7c866b1fa05f016",
+          "gzip_sha256": "5ab0bfec8d9863bb78fd0a82186b02ee8ad664473b44f831880bed98938927f3"
+        },
+        {
+          "zip_member": "history-native-host/install-reviewed-unit.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568123690/history-native-host/install-reviewed-unit.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/outside-after.json",
+          "size_bytes": 1673,
+          "retained_path": "raw/13568123690/history-native-host/outside-after.json.gz",
+          "raw_sha256": "16f8caa6456c2d2dd57bfaa2256a9bbcb6125a9e740139264d7baa407b94dc43",
+          "gzip_sha256": "1ec4923ee409f6c0f65e8a50e8e6a76f7a9d3b6a7fbe06b2da9597a176a7ad3d"
+        },
+        {
+          "zip_member": "history-native-host/parent-properties.log",
+          "size_bytes": 146,
+          "retained_path": "raw/13568123690/history-native-host/parent-properties.log.gz",
+          "raw_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+          "gzip_sha256": "3cf4d09669f2b0b474390f31d6c3ca77e038fd5e4ee71232d8c3515e6d62c1f3"
+        },
+        {
+          "zip_member": "history-native-host/seal-parent-directory.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568123690/history-native-host/seal-parent-directory.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/seal-parent-receipt.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568123690/history-native-host/seal-parent-receipt.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/start-fixed-parent.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568123690/history-native-host/start-fixed-parent.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/systemd-reload.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568123690/history-native-host/systemd-reload.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/systemd-run.log",
+          "size_bytes": 645,
+          "retained_path": "raw/13568123690/history-native-host/systemd-run.log.gz",
+          "raw_sha256": "c7eeaa0ed62df5cf4f77711a53ffc8557a64154739a0594457c77e8021237728",
+          "gzip_sha256": "538b7315e6f466d194189ea48b6579ec49ed822cde643803f47236cdaeabf6e6"
+        },
+        {
+          "zip_member": "history-native-host/unprovisioned-parent.json",
+          "size_bytes": 229,
+          "retained_path": "raw/13568123690/history-native-host/unprovisioned-parent.json.gz",
+          "raw_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+          "gzip_sha256": "b9c756c2c6c668ff52ae26f441ff989db3bb1f2c2370aef110abfcadfa0c940a"
+        },
+        {
+          "zip_member": "public-fixture-parent.json",
+          "size_bytes": 3221,
+          "retained_path": "raw/13568123690/public-fixture-parent.json.gz",
+          "raw_sha256": "d39229521f6d2c9079e684f36cef1678df3b9f52baebb0ef7a6d4518b1b0d5ef",
+          "gzip_sha256": "3db1da2f26f147358b6f8ea6c2c79accdd9a9b28abddc82e3b0da659d276136c"
+        },
+        {
+          "zip_member": "source.json",
+          "size_bytes": 423,
+          "retained_path": "raw/13568123690/source.json.gz",
+          "raw_sha256": "f611d547299be2ce8e57f3a9b851a77e5eef80b1d6384c77fb2f35d7c096abfd",
+          "gzip_sha256": "9665f76458474ff2647eace18624ef2d68d93dc24887499b15ebcefedcdad746"
+        }
+      ],
+      "member_count": 4140,
+      "unretained_members": {
+        "count": 4108,
+        "uncompressed_bytes": 203343455,
+        "inventory_path": "omitted-members-13568123690.json.gz",
+        "inventory_raw_sha256": "2f945ef94541f16afb533c7713c91523a571ce6b731a282c34f6f4f6f61657c5",
+        "inventory_gzip_sha256": "633ce768485b5bd247ca99febdebda154a8914e823d32746fb2315c2be6e06d3"
+      }
+    },
+    {
+      "artifact_id": 13568038035,
+      "run_id": 42352433738,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42352433738/artifacts/13568038035",
+      "zip_bytes": 61208167,
+      "zip_sha256": "68f6b619a76ce43074c2f4287210f3fc278128496b4fa01ad8f4e85091d14aac",
+      "digest_matches_github": true,
+      "members": [
+        {
+          "zip_member": "history-native/build.stderr",
+          "size_bytes": 6872,
+          "retained_path": "raw/13568038035/history-native/build.stderr.gz",
+          "raw_sha256": "7f6c9f60d9cd8e7c3d2de7b375ed55b040e7d8ae33334e9ca5f63fe39b4789f6",
+          "gzip_sha256": "cd3577c8bad4f02d766ca09893c03b7412a9d6501479a749ad3fe0361eddbea3"
+        },
+        {
+          "zip_member": "history-native/execution-start.json",
+          "size_bytes": 76,
+          "retained_path": "raw/13568038035/history-native/execution-start.json.gz",
+          "raw_sha256": "b2a501da8d3d082d9b7cba9f5721ded1be4dcc727dd72e500fc080ceea65e51d",
+          "gzip_sha256": "6df7c90a2049c86fb6b9038f0f5dd9f2972aa4ebbce517d9c9e21947917454a7"
+        },
+        {
+          "zip_member": "history-native/history-resources.txt",
+          "size_bytes": 971,
+          "retained_path": "raw/13568038035/history-native/history-resources.txt.gz",
+          "raw_sha256": "b74eb4a17e2e70fbbffaf12d28c5588c73b57d23289f64771a28b5830380a4b6",
+          "gzip_sha256": "55babc36bbba1a8a759b9676e04c68f5fd8da30a848a72149a32ddaa17d53c01"
+        },
+        {
+          "zip_member": "history-native/history.log",
+          "size_bytes": 11502,
+          "retained_path": "raw/13568038035/history-native/history.log.gz",
+          "raw_sha256": "284e26e3eddaf32ef7ca3c7a4d2e2750a91db4c571deb58897eb0a002598f10a",
+          "gzip_sha256": "ed238b02c0f3bb2175e6ebfc1d76b5986382d61ed411c193cb1e0f81b768763d"
+        },
+        {
+          "zip_member": "history-native/long-history/config.json",
+          "size_bytes": 632,
+          "retained_path": "raw/13568038035/history-native/long-history/config.json.gz",
+          "raw_sha256": "31f9e07989d0bad9e830c2b691e093715f65e2c575376ccf29da4bfd04f517b2",
+          "gzip_sha256": "a29250a33acda4d256a239ddac0666ceea1697113166002752f9f086b59d8e1c"
+        },
+        {
+          "zip_member": "history-native/long-history/confirmer/native.sqlite",
+          "size_bytes": 220864512,
+          "retained_path": null,
+          "raw_sha256": "8c09808288cefb9590d950a7fe9306b66e6481f0b15fd0d1a3a1c15a50848803"
+        },
+        {
+          "zip_member": "history-native/long-history/source.json",
+          "size_bytes": 514,
+          "retained_path": "raw/13568038035/history-native/long-history/source.json.gz",
+          "raw_sha256": "2d31937870bf0cdd70c5d9e9870706771f20a65c800feacf8eef2bfd4f58663b",
+          "gzip_sha256": "891aafab378eb63d645e59a51f23f17abe29836fda78a343395703ff767e3f75"
+        },
+        {
+          "zip_member": "history-native/long-history/summary.json",
+          "size_bytes": 245,
+          "retained_path": "raw/13568038035/history-native/long-history/summary.json.gz",
+          "raw_sha256": "9e9c49ed013f4ce17e5c0b60b7328b743866d7dfd90c985ed607cbdc826233cb",
+          "gzip_sha256": "ed8fd8881e9437976d31e1534c4f392f12b157734f3faf6c458545145521606e"
+        },
+        {
+          "zip_member": "history-native/long-history/validator/native.sqlite",
+          "size_bytes": 220717056,
+          "retained_path": null,
+          "raw_sha256": "52127691224b18ffc96a82be3d37f502180454feeb7bdb62b43b40befd83b046"
+        },
+        {
+          "zip_member": "history-native/manifest.json",
+          "size_bytes": 4885,
+          "retained_path": "raw/13568038035/history-native/manifest.json.gz",
+          "raw_sha256": "f9a0515580c04e8ecaf858b90468a08783f6ac30e675c2ae8b4742b01c88308f",
+          "gzip_sha256": "5d160fa36b71ac78a5f8624e3d29a10815e01a1ad8373954835c7d164f90ff5f"
+        },
+        {
+          "zip_member": "history-native/preparation.json",
+          "size_bytes": 3472,
+          "retained_path": "raw/13568038035/history-native/preparation.json.gz",
+          "raw_sha256": "7526be8ab6ff518b083520032d7979ce1326b2428902a92fc5dd3b99db43844d",
+          "gzip_sha256": "504b65e21f82f8384d44eaf0dbcf5781cca365e12a61ad5b178aa40a042aeb9c"
+        },
+        {
+          "zip_member": "history-native-host/actual-systemd-parent-after.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13568038035/history-native-host/actual-systemd-parent-after.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "history-native-host/actual-systemd-parent.log",
+          "size_bytes": 200,
+          "retained_path": "raw/13568038035/history-native-host/actual-systemd-parent.log.gz",
+          "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+          "gzip_sha256": "c9e84a553095e2cbb85ce271d6d26249880f14b416c3237b4d394b3056b8480a"
+        },
+        {
+          "zip_member": "history-native-host/after-provision.json",
+          "size_bytes": 1628,
+          "retained_path": "raw/13568038035/history-native-host/after-provision.json.gz",
+          "raw_sha256": "d2e33260b17d27d10a7f636df922dbd756470bd839014baf9478f7bc6548d95f",
+          "gzip_sha256": "634dfabba2b6a307e0ed50c9f7b308aa91329a708c0caba6b27a0bd492dba4ca"
+        },
+        {
+          "zip_member": "history-native-host/before-provision.json",
+          "size_bytes": 2795,
+          "retained_path": "raw/13568038035/history-native-host/before-provision.json.gz",
+          "raw_sha256": "44c7bfed7647e45e39084c71418c9adb5e52140aa81271d38b8187583e81e532",
+          "gzip_sha256": "f459f4ba02e7954b93ad30db80831003eebc956d2ce3a512ad0e9acf6a907bf7"
+        },
+        {
+          "zip_member": "history-native-host/child-final-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13568038035/history-native-host/child-final-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "history-native-host/child-load-state.log",
+          "size_bytes": 10,
+          "retained_path": "raw/13568038035/history-native-host/child-load-state.log.gz",
+          "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+          "gzip_sha256": "783c805eb171bfeb8a1b26e50e5cb493b5f4eeff11c2d60ec0e9c591bc0e0fcc"
+        },
+        {
+          "zip_member": "history-native-host/child-result.json",
+          "size_bytes": 335,
+          "retained_path": "raw/13568038035/history-native-host/child-result.json.gz",
+          "raw_sha256": "bda83e0698da3c561fc87158d9afa0e91227bc5dd4c8cc4c05edd79b3277229a",
+          "gzip_sha256": "c0b8bb42724c4f940a3eab576dae3f960b2f1ef3bc990b0856453ed20a3cda0d"
+        },
+        {
+          "zip_member": "history-native-host/controller-result.json",
+          "size_bytes": 7729,
+          "retained_path": "raw/13568038035/history-native-host/controller-result.json.gz",
+          "raw_sha256": "5539396abd38bf45d52c8db090c78d3b2b0ee723509013ba4d6eef95e8852d79",
+          "gzip_sha256": "af7c6c176aac344844e70249632c93e14c043b9de928146aca5488a31d1ca6a4"
+        },
+        {
+          "zip_member": "history-native-host/inside-after.json",
+          "size_bytes": 1711,
+          "retained_path": "raw/13568038035/history-native-host/inside-after.json.gz",
+          "raw_sha256": "175c396edf7db30fa652df27c76ff828d88bdc56a4ee187c667b9156c03982e0",
+          "gzip_sha256": "f751b499101262fc9d1075d6fbb19e8be2c526888f3686b40c0d8015be6e3396"
+        },
+        {
+          "zip_member": "history-native-host/inside-before.json",
+          "size_bytes": 1687,
+          "retained_path": "raw/13568038035/history-native-host/inside-before.json.gz",
+          "raw_sha256": "65df817b5ce297ddc6eeded96e7d7e495013f2032655a39f4f0defabd807861d",
+          "gzip_sha256": "f66bf4dbf416bc9ee7d0b95dd8e08d205b69a785f0f1ca922e803d4b67f3b0e9"
+        },
+        {
+          "zip_member": "history-native-host/install-reviewed-unit.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568038035/history-native-host/install-reviewed-unit.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/outside-after.json",
+          "size_bytes": 1673,
+          "retained_path": "raw/13568038035/history-native-host/outside-after.json.gz",
+          "raw_sha256": "5b6a2bb39f0928de905a320eb5f559abb406837b76298bd28eb2d2dd8128dbdc",
+          "gzip_sha256": "a1b41561176dc604acd36022a26d8b07830d11b7153fba17590d30e64d27a119"
+        },
+        {
+          "zip_member": "history-native-host/parent-properties.log",
+          "size_bytes": 146,
+          "retained_path": "raw/13568038035/history-native-host/parent-properties.log.gz",
+          "raw_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+          "gzip_sha256": "3cf4d09669f2b0b474390f31d6c3ca77e038fd5e4ee71232d8c3515e6d62c1f3"
+        },
+        {
+          "zip_member": "history-native-host/seal-parent-directory.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568038035/history-native-host/seal-parent-directory.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/seal-parent-receipt.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568038035/history-native-host/seal-parent-receipt.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/start-fixed-parent.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568038035/history-native-host/start-fixed-parent.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/systemd-reload.log",
+          "size_bytes": 0,
+          "retained_path": "raw/13568038035/history-native-host/systemd-reload.log.gz",
+          "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "gzip_sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        {
+          "zip_member": "history-native-host/systemd-run.log",
+          "size_bytes": 645,
+          "retained_path": "raw/13568038035/history-native-host/systemd-run.log.gz",
+          "raw_sha256": "be3e44ad17392cbb697cad6dfb6fec55b0dcc1a249ea9bbc9d98b8ed26667a8f",
+          "gzip_sha256": "95fbcae9d7d7a20614b948fa514c185de7039271e0b3848755fa6f63c51ba933"
+        },
+        {
+          "zip_member": "history-native-host/unprovisioned-parent.json",
+          "size_bytes": 229,
+          "retained_path": "raw/13568038035/history-native-host/unprovisioned-parent.json.gz",
+          "raw_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+          "gzip_sha256": "b9c756c2c6c668ff52ae26f441ff989db3bb1f2c2370aef110abfcadfa0c940a"
+        },
+        {
+          "zip_member": "public-fixture-parent.json",
+          "size_bytes": 3221,
+          "retained_path": "raw/13568038035/public-fixture-parent.json.gz",
+          "raw_sha256": "f28bb83f38f4cf3f4284ff380acaacbe4e2bc1951ebfc79b5ecf6f6dc71e4b5f",
+          "gzip_sha256": "1c6609ee705a7efe7f994585763786aeba0c9b2b3dd339421ad2fdbb8aa1b442"
+        },
+        {
+          "zip_member": "source.json",
+          "size_bytes": 423,
+          "retained_path": "raw/13568038035/source.json.gz",
+          "raw_sha256": "f611d547299be2ce8e57f3a9b851a77e5eef80b1d6384c77fb2f35d7c096abfd",
+          "gzip_sha256": "9665f76458474ff2647eace18624ef2d68d93dc24887499b15ebcefedcdad746"
+        }
+      ],
+      "member_count": 4140,
+      "unretained_members": {
+        "count": 4108,
+        "uncompressed_bytes": 203345221,
+        "inventory_path": "omitted-members-13568038035.json.gz",
+        "inventory_raw_sha256": "dc4a65482a5b7420fb8d4b30b56e15d07c0d49180b76597921894c5b424a0e41",
+        "inventory_gzip_sha256": "90b65edea4dee9850e2a444e700d1b26d58dbb85c6714006a90995df9819f824"
+      }
+    }
+  ],
+  "scope": "Complete downloaded ZIPs checked against GitHub artifact digests; selected original text retained byte-for-byte through gzip. Large original databases and executables are identified but not copied into this evidence directory. This is original-source failure evidence, not qualification of the new candidate."
+}

@@ -7,6 +7,8 @@ use super::{
     digest, elapsed_ns, ensure, hash, lock_owner, DevelopmentIdentity, Node,
     Request as NativeRequest, Result, Settings, WorkCheckedPacket,
 };
+#[cfg(test)]
+mod input_decode_tests;
 mod intake;
 mod pq_identity;
 use intake::{ConnectionLease, ListenerIntake};
@@ -1055,13 +1057,23 @@ fn canonical_request(bytes: &[u8], op: u8) -> Result<Request> {
             .and_then(|b| b.strip_suffix(br#""}"#))
             .ok_or("PUBLIC_REQUEST_CANONICAL")?;
         ensure(
-            text.len() <= 2 * MAX_PACKET
-                && text.len().is_multiple_of(2)
-                && text
-                    .iter()
-                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+            text.len() <= 2 * MAX_PACKET && text.len().is_multiple_of(2) && lower_hex(text),
             "PUBLIC_PACKET_TEXT",
         )?;
+        // The exact envelope and complete lowercase ASCII grammar already
+        // establish the same serde representation. Avoid a second JSON parse
+        // and streaming re-serialization of this potentially 2-MiB string.
+        // Nothing has established Packet, Work, current owner or State validity;
+        // those original checks still execute after this transport-only decode.
+        let packet = std::str::from_utf8(text)
+            .map_err(|_| "PUBLIC_PACKET_TEXT")?
+            .to_owned();
+        return Ok(match op {
+            1 => Request::Submit { packet },
+            6 => Request::GrowthSubmitV1 { packet },
+            7 => Request::GrowthPacketStatusV1 { packet },
+            _ => unreachable!(),
+        });
     }
     let request: Request = serde_json::from_slice(bytes)?;
     let mut writer = ExactCanonical { bytes, cursor: 0 };
@@ -1500,13 +1512,20 @@ fn read_available(socket: &mut TcpStream, bytes: &mut Vec<u8>, expected: usize) 
     if remaining == 0 {
         return Ok(true);
     }
-    let mut buffer = [0; IO_QUANTUM];
-    match socket.read(&mut buffer[..remaining.min(IO_QUANTUM)]) {
+    // Hello/Solution and paid Body already own their bounded capacity. Read
+    // into that initialized storage instead of zeroing a 64-KiB temporary for
+    // every small/idle frame and then copying each received byte a second time.
+    // Truncate on every outcome: unreceived padding never becomes input and
+    // observation counters continue to report only actual received bytes.
+    let before = bytes.len();
+    let limit = remaining.min(IO_QUANTUM);
+    bytes.resize(before + limit, 0);
+    let result = socket.read(&mut bytes[before..]);
+    let received = result.as_ref().copied().unwrap_or(0);
+    bytes.truncate(before + received);
+    match result {
         Ok(0) => Err("PUBLIC_EOF".into()),
-        Ok(n) => {
-            bytes.extend(&buffer[..n]);
-            Ok(bytes.len() == expected)
-        }
+        Ok(_) => Ok(bytes.len() == expected),
         Err(e)
             if matches!(
                 e.kind(),

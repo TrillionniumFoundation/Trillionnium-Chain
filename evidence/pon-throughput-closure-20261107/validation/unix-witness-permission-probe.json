@@ -1,0 +1,39 @@
+{
+  "access_controls_bypassed": false,
+  "created_utc": "2026-11-07T11:13:44.313815+00:00",
+  "direct_libc_socket_confirmation": {
+    "address_family": 1,
+    "bind_attempted": false,
+    "errno": 1,
+    "errno_name": "EPERM",
+    "listen_attempted": false,
+    "operation": "libc.socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)",
+    "protocol": 0,
+    "return_value": -1,
+    "socket_type": 524289
+  },
+  "directory_mode": "0o700",
+  "interpretation": "AF_UNIX socket creation itself returns EPERM. The original Python socket constructor failed before bind or listen; the direct libc socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0) confirmation also returned -1/EPERM. A normal file in the private writable scratch directory succeeded. The probe identifies a same-class environment permission restriction without identifying the enforcing security layer; it does not execute guarded NPQ6 assertions.",
+  "native_tests_rerun": false,
+  "operations": [
+    {
+      "errno": 1,
+      "errno_name": "EPERM",
+      "message": "[Errno 1] Operation not permitted",
+      "operation": "socket(AF_UNIX, SOCK_STREAM, 0)",
+      "returned": "error"
+    }
+  ],
+  "ordinary_file_create_read_succeeded": true,
+  "original_three_failures_reclassified_as_pass": false,
+  "pid": 5,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "policies_changed": false,
+  "privileges_escalated": false,
+  "qualification": false,
+  "schema": "pon-unix-witness-permission-probe-v1",
+  "scope": "Minimal AF_UNIX pathname listener operations under the current unchanged tool execution sandbox; no repository/native test execution.",
+  "socket_path_created": false,
+  "socket_path_utf8_bytes": 72,
+  "temporary_probe_directory_removed": true
+}
