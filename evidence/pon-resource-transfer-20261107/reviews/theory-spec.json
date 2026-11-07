@@ -1,0 +1,109 @@
+{
+  "schema": "pon-resource-transfer-independent-spec-review-v0",
+  "status": "PASS_SCOPED_NO_NEW_QUALIFICATION",
+  "reviewed_at_utc": "2026-11-07T14:47:37.056702+00:00",
+  "source_commit": "e95e2eb9f456a37ec8841def69db79f49fbba7cb",
+  "source_tree": "c815d3710d5f7feffc043aed1aa6e003e03d3a10",
+  "source_fingerprints": {
+    "docs/development/specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md": "b170d6e2000d516f540b1277d4dff537965cb3bab493ba12b7c820eb0409b759",
+    "docs/development/specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md": "01c8add295ae670be1cded5be6be0328c45562720f61540c34e5bfca377dde91",
+    "formal/pon-nakamoto-v1/fresh_work_resource_transfer_v0.py": "242e36017d1c844934c112cbbe0405ed0ab1d078a06bfd02869a6873d50f0dcd",
+    "formal/pon-nakamoto-v1/fresh_work_query_floor_v0.py": "1945cfe2d191355ad26a1076bca2e99490a3336d0ca49e7510d68bb91ded0001"
+  },
+  "method": "Read-only comparison of committed specifications and theorem source against existing exact-source finite reports and independent root De Moivre review. No new experiment/test/benchmark or source mutation.",
+  "checks": [
+    {
+      "name": "current_cache_scope",
+      "status": "PASS",
+      "detail": "Both specs refute a positive fresh producer business-contraction floor after lawful preparation only within the admitted fixed cache scope. Receiver recomputation remains separate."
+    },
+    {
+      "name": "classical_substitution",
+      "status": "PASS",
+      "detail": "The min of L(mu_A+B_V) and mu_A+B_V+L(q_A+B_V)(q_A+B_V+1)/(2M) substitutes a deterministic total assisting-query ceiling into the existing classical theorem, retaining its chronology, independent seeds, injective domains and once-per-candidate award premises."
+    },
+    {
+      "name": "all_assisting_sources",
+      "status": "PASS",
+      "detail": "Q_V_callbacks <= K R L applies to one owner callback scope. B_V = K R L is permitted only if those callbacks cover every assisting step query; other owners, epochs, producer services and preprocessing must be added."
+    },
+    {
+      "name": "disclosed_feedback",
+      "status": "PASS",
+      "detail": "The total-query model allows the full charged classical verifier transcript, without proving the stronger endpoint-only feedback premise or charging B_V to the attacker."
+    },
+    {
+      "name": "nonstep_cost",
+      "status": "PASS",
+      "detail": "Seed hashes and parsing, signatures, startup, preparation, transport, storage and early rejected requests remain separate costs, outside the callback step-query measure."
+    },
+    {
+      "name": "unknown_and_cache",
+      "status": "PASS",
+      "detail": "Started unknown callbacks retain maximum possible cost; historical cached receipts do not add completions or revalidate live state."
+    },
+    {
+      "name": "copied_budget",
+      "status": "PASS",
+      "detail": "Eight local budgets of 16 give aggregate 128; exact mean credit 4 exceeds the invalid local bound 128/255 and is below the aggregate bound 128/31. This is a constructed finite model control."
+    },
+    {
+      "name": "extra_bit_feedback",
+      "status": "PASS",
+      "detail": "The synthetic endpoint-bit verifier permits reconstruction with zero own chain queries; equality closure does not restore the equality-only premise. No native side channel is asserted."
+    },
+    {
+      "name": "small_target",
+      "status": "PASS",
+      "detail": "At L=64,T=1, one unqueried winning endpoint guess has expected nominal credit 32 regardless of hash length. Small probability alone cannot establish small weighted credit without an award/admission bound."
+    },
+    {
+      "name": "quantum_distribution",
+      "status": "PASS",
+      "detail": "The fixed 64-candidate, p=1/64, five-iteration strategy averages every subset by exact binomial multiplicity, retaining zero-winner worlds. Independent root De Moivre report matches the rational probability."
+    },
+    {
+      "name": "quantum_resources",
+      "status": "PASS",
+      "detail": "320 forward + 320 inverse + 64 endpoint reconstruction + 64 independent verifier = 768 abstract step calls; own calls = 704. Expected nominal credit approximately 2237.382781586351 is an ideal strategy result, not a concrete circuit or quantum lower bound."
+    },
+    {
+      "name": "authorization_and_scope",
+      "status": "PASS",
+      "detail": "Public fixture keys and single-owner journal guarantees do not establish independent operators, real demand, current consumer FinalUse, settlement or a network-wide quota."
+    },
+    {
+      "name": "offline_online",
+      "status": "PASS",
+      "detail": "Finite-domain tables shift computation to preparation/storage. A new useful relation/profile and explicit amortization horizon are needed for intrinsic useful-work claims."
+    },
+    {
+      "name": "production_boundary",
+      "status": "PASS",
+      "detail": "Both specs remain HOLD with actual chainwork zero, no production registration or quantum qualification, and no assertion that finite tests exhaust optimal adversaries."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/finite-exact-e95e2eb9/summary.json",
+      "sha256": "2be5240a9f76b63dd46d79a4cf38205752d3a964792366ae3c5ad51623387ae7"
+    },
+    {
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/finite-exact-e95e2eb9/finite-report.json",
+      "sha256": "de65db763fec18b6db598ee8c32cbd0ae122d2bb5007420df0a445188a00c983"
+    },
+    {
+      "path": "/dev/shm/chain-fresh-transfer-10a9f8f2cba0/root-review/finite-exact-independent.json",
+      "sha256": "57644657f67bee1248a79ba97f177493ea3aaff0112fbcd1455fc7737286fddb"
+    }
+  ],
+  "existing_exact_test_logs_read_and_hash_verified": [
+    "test_fresh_work_query_floor_v0.py.log",
+    "test_fresh_work_resource_transfer_v0.py.log",
+    "test_grouped_fresh_deployment_cost_v0.py.log"
+  ],
+  "prior_development_report_relabelled": false,
+  "blocking_discrepancies": [],
+  "actual_chainwork": 0,
+  "production_qualification": "HOLD"
+}
