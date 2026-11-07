@@ -17,6 +17,25 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Verifier resource transfer, 2026-11-07 America/New_York:** Continue the sealed
+grouped research from evidence checkpoint `37c1f3fe24c88476f39b0bd6e9ed32453bfc4551`
+under the [resource-transfer contract](specs/pon/GROUPED_RESOURCE_TRANSFER_V0.md).
+Replace a per-receiver cap with one explicitly trusted, immutable owner for the
+closed deployment: reserve and persist started work before full native replay,
+retain unknown work without refunds, return exact cached retries and close a
+candidate after successful equality even on a target miss. Do not export a
+reusable verification permit or expose an unmetered producer service. Measure
+the contrasting one/two/four independent-receiver fanout with all planned
+attempts, process costs and raw TCP bytes. Keep verifier queries explicit in
+the conservative classical bound; test copied-cap, extra-feedback and coherent
+search counterexamples. The current legal cache constructively refutes a
+positive fresh producer neural-contraction floor. Existing task/escrow/consumer
+owners still require an actual grouped-output join and real independent demand.
+Public-network admission, physical/quantum hardness and production qualification
+remain open; all 21 previous validation gates remain and three are added.
+Publish through the user's authorized HeptaRuntime local GitHub channel,
+preserving existing integration history and leaving chainwork/activation zero.
+
 **Fresh-query cost continuation, 2026-11-07 UTC:** Continue the prior legal-work
 source `9602cb704f97fb9c87d6fd379809bef468c3c1e8` with the
 [fresh-work floor research](specs/pon/GROUPED_FRESH_WORK_FLOOR_V0.md).

@@ -144,6 +144,21 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
                 check_independent_conformance(changed, self.lanes)
 
+    def test_resource_transfer_and_shared_authority_controls_cannot_be_omitted_or_swallowed(self):
+        theory = "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fresh_work_resource_transfer_v0.py' -v\n"
+        native = ' --test grouped_verification_authority_v0'
+        self.assertEqual(self.script.count(theory), 1)
+        self.assertEqual(self.script.count(native), 1)
+        variants = (self.script.replace(theory, ''),
+                    self.script.replace(theory, theory * 2),
+                    self.script.replace(theory, theory.rstrip() + ' || true\n'),
+                    self.script.replace(theory, '    if false; then\n' + theory + '    fi\n'),
+                    self.script.replace(native, ''),
+                    self.script.replace(native, native + ' -- --ignored'))
+        for changed in variants:
+            with self.subTest(changed=changed[-80:]), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
+
     def test_cell_host_native_handoff_cannot_skip_build_or_use_an_unbound_binary(self):
         commands = (
             '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --bin trnm-cell\n',

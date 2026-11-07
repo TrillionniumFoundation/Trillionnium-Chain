@@ -7,6 +7,13 @@ registers a production work profile. It adds an explicit security computation;
 it does not prove that useful neural arithmetic itself has an adequate minimum
 cost. No benchmark result changes that distinction.
 
+The [resource-transfer continuation](GROUPED_RESOURCE_TRANSFER_V0.md) adds an
+explicit shared verification owner, independent-receiver fanout accounting and
+classical/quantum finite counterexamples. It also strengthens one limitation:
+the lawful cached producer constructively refutes a positive fresh business
+contraction floor for the current cache scope. It retains this exact seal
+relation and does not grant production qualification.
+
 ## 1. What the relation changes
 
 The earlier audit bound candidate fields but allowed one cached correct Cell

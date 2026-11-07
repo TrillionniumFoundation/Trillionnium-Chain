@@ -5,6 +5,8 @@ pub mod consensus;
 mod error;
 /// Fresh independent research capsule; never W1 admission or consensus credit.
 pub mod grouped_fresh_admission_v0;
+/// One trusted research verification owner; no decentralized admission or credit.
+pub mod grouped_verification_authority_v0;
 /// One fixed Linux cgroup-v2 parent checker, shared by CLI and public V3 library.
 pub mod host_kernel_parent;
 pub mod ingress;

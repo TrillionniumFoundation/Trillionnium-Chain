@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Source-tracked, create-only exact-source validation for grouped fresh work.
 
-All eighteen prior fairness gates remain mandatory. Three additional gates run
-the fresh query theory, native admission tests, and release admission example.
+All eighteen original fairness gates and three fresh-floor gates remain
+mandatory. The resource-transfer continuation adds its finite theory, native
+shared-authority tests and release authority executable, for twenty-four gates.
 This uses the caller's compiler/PQ/cache environment; only the optional fuzz
 Cargo home is scoped to one metadata command. Validation is not qualification.
 """
@@ -30,7 +31,8 @@ ENVIRONMENT_KEYS = (
     'TRNM_PQ_OPENSSL', 'TRNM_PQ_OPENSSL_SHA256', 'TRNM_PQ_OPENSSL_VERSION',
     'CARGO_TARGET_DIR', 'CARGO_PROFILE_DEV_DEBUG', 'CARGO_PROFILE_TEST_DEBUG',
     'CARGO_INCREMENTAL', 'CARGO_BUILD_JOBS', 'TRNM_GROUPED_NATIVE',
-    'TRNM_GROUPED_FRESH_NATIVE', 'RUST_TEST_THREADS', 'PYTHONDONTWRITEBYTECODE')
+    'TRNM_GROUPED_FRESH_NATIVE', 'TRNM_GROUPED_AUTHORITY_NATIVE',
+    'RUST_TEST_THREADS', 'PYTHONDONTWRITEBYTECODE')
 
 
 def utc():
@@ -79,18 +81,24 @@ def commands(python, env, fuzz_cargo_home):
                                  '-p', 'trnm-crypto-primitives', '--example', 'pon_routed_int257_grouped']),
         ('fresh-native-build', cargo + ['build', '--offline', '--locked', '--release', *manifest,
                                        '-p', 'trnm-pon-node', '--example', 'grouped_fresh_admission_v0']),
+        ('authority-native-build', cargo + ['build', '--offline', '--locked', '--release', *manifest,
+                                           '-p', 'trnm-pon-node', '--example', 'grouped_verification_authority_v0']),
         ('grouped-python-and-native', [python, '-B', '-m', 'unittest', 'discover', '-s',
                                       'formal/pon-nakamoto-v1', '-p', 'test_grouped*.py', '-v']),
         ('conditional-query-bound', [python, '-B', '-m', 'unittest', 'discover', '-s',
                                     'formal/pon-nakamoto-v1', '-p', 'test_work_query_bound.py', '-v']),
         ('fresh-query-floor', [python, '-B', '-m', 'unittest', 'discover', '-s',
                               'formal/pon-nakamoto-v1', '-p', 'test_fresh_work_query_floor_v0.py', '-v']),
+        ('fresh-resource-transfer', [python, '-B', '-m', 'unittest', 'discover', '-s',
+                                    'formal/pon-nakamoto-v1', '-p', 'test_fresh_work_resource_transfer_v0.py', '-v']),
         ('native-crypto-all-targets', cargo + ['test', '--offline', '--locked', *manifest,
                                              '-p', 'trnm-crypto-primitives', '--all-targets', '--all-features']),
         ('native-header-binding', cargo + ['test', '--offline', '--locked', *manifest,
                                           '-p', 'trnm-pon-node', '--all-features', '--test', 'work_header_binding']),
         ('native-fresh-admission', cargo + ['test', '--offline', '--locked', *manifest,
                                            '-p', 'trnm-pon-node', '--all-features', '--test', 'grouped_fresh_admission_v0']),
+        ('native-verification-authority', cargo + ['test', '--offline', '--locked', *manifest,
+                                                   '-p', 'trnm-pon-node', '--all-features', '--test', 'grouped_verification_authority_v0']),
         ('source-integrity-controls', [python, '-B', 'scripts/ci/test_ci_source_integrity.py']),
         ('ci-contract-controls', [python, '-B', 'scripts/ci/test_ci_contract.py']),
         ('source-inventory', [python, '-B', 'scripts/refresh_distributed_source_inventory.py', '--check']),
@@ -104,7 +112,10 @@ def commands(python, env, fuzz_cargo_home):
         override = {'CARGO_HOME': str(fuzz_cargo_home)} if label == 'locked-fuzz-graph' and fuzz_cargo_home else {}
         command = {'ordinal': ordinal, 'label': label, 'command': argv,
                    'environment_overrides': override, 'timeout_seconds': TIMEOUT_SECONDS,
-                   'original_gate': label not in {'fresh-native-build', 'fresh-query-floor', 'native-fresh-admission'}}
+                   'original_gate': label not in {'fresh-native-build', 'fresh-query-floor', 'native-fresh-admission',
+                       'authority-native-build', 'fresh-resource-transfer', 'native-verification-authority'},
+                   'prior_fresh_floor_gate': label not in {'authority-native-build', 'fresh-resource-transfer',
+                       'native-verification-authority'}}
         command['command_sha256'] = hashlib.sha256(canonical(command)).hexdigest()
         result.append(command)
     return result
@@ -213,7 +224,8 @@ def runner_bindings(repo, out, records, runners, built):
             raise ValueError('WORKSPACE_METADATA_ROOT')
         target = Path(objects[0]['target_directory']).resolve()
         expected = {'grouped': target / 'release/examples/pon_routed_int257_grouped',
-                    'fresh': target / 'release/examples/grouped_fresh_admission_v0'}
+                    'fresh': target / 'release/examples/grouped_fresh_admission_v0',
+                    'authority': target / 'release/examples/grouped_verification_authority_v0'}
         final = {name: artifact(path) for name, path in runners.items()}
         for name, path in runners.items():
             if path != expected[name].resolve() or not final[name].get('executable'):
@@ -233,6 +245,7 @@ def main():
     parser.add_argument('--out', required=True, type=Path)
     parser.add_argument('--runner', required=True, type=Path)
     parser.add_argument('--fresh-runner', required=True, type=Path)
+    parser.add_argument('--authority-runner', required=True, type=Path)
     parser.add_argument('--fuzz-cargo-home', type=Path)
     args = parser.parse_args()
     sys.dont_write_bytecode = True
@@ -242,17 +255,20 @@ def main():
     if not all(hasattr(os, name) for name in ('waitid', 'P_PID', 'WEXITED', 'WNOHANG', 'WNOWAIT', 'killpg')):
         raise ValueError('POSIX_PROCESS_GROUP_AND_WNOWAIT_REQUIRED')
     out.mkdir(parents=True, exist_ok=False)
-    runners = {'grouped': args.runner.resolve(), 'fresh': args.fresh_runner.resolve()}
+    runners = {'grouped': args.runner.resolve(), 'fresh': args.fresh_runner.resolve(),
+               'authority': args.authority_runner.resolve()}
     env = dict(os.environ, TRNM_GROUPED_NATIVE=str(runners['grouped']),
                TRNM_GROUPED_FRESH_NATIVE=str(runners['fresh']),
+               TRNM_GROUPED_AUTHORITY_NATIVE=str(runners['authority']),
                RUST_TEST_THREADS='1', PYTHONDONTWRITEBYTECODE='1')
     fuzz_home = args.fuzz_cargo_home.resolve() if args.fuzz_cargo_home else None
     planned = commands(sys.executable, env, fuzz_home)
     driver_sha = file_sha(Path(__file__))
-    save(out / 'plan.json', {'schema': 'pon-grouped-fresh-validation-plan-v0', 'created_utc': utc(),
+    save(out / 'plan.json', {'schema': 'pon-grouped-fresh-validation-plan-v1', 'created_utc': utc(),
         'repository': str(repo), 'expected_source_sha': args.source_sha,
         'driver_relative_path': RELATIVE, 'driver_sha256': driver_sha,
-        'commands': planned, 'planned_commands': len(planned), 'original_gates': 18, 'new_gates': 3,
+        'commands': planned, 'planned_commands': len(planned), 'original_gates': 18, 'new_gates': 6,
+        'prior_fresh_floor_gates': 21, 'new_resource_transfer_gates': 3,
         'timeout_seconds_per_command': TIMEOUT_SECONDS,
         'fuzz_cargo_home_override': str(fuzz_home) if fuzz_home else None,
         'runners': {key: str(value) for key, value in runners.items()},
@@ -275,8 +291,10 @@ def main():
             else:
                 record = run_command(command, repo, env, out)
                 interrupted = bool(record.get('interrupted'))
-                if record['label'] in ('native-build', 'fresh-native-build') and record['status'] == 'PASS':
-                    name = 'grouped' if record['label'] == 'native-build' else 'fresh'
+                build_names = {'native-build': 'grouped', 'fresh-native-build': 'fresh',
+                               'authority-native-build': 'authority'}
+                if record['label'] in build_names and record['status'] == 'PASS':
+                    name = build_names[record['label']]
                     built[name] = artifact(runners[name])
                     record['built_runner'] = built[name]
             records.append(record)
@@ -298,7 +316,7 @@ def main():
     binding = runner_bindings(repo, out, records, runners, built)
     save(out / 'runner-bindings.json', binding)
     passed = not failures and binding['status'] == 'PASS' and all(row['status'] == 'PASS' for row in records)
-    summary = {'schema': 'pon-grouped-fresh-local-validation-v0', 'source': before,
+    summary = {'schema': 'pon-grouped-fresh-local-validation-v1', 'source': before,
         'status': 'PASS' if passed else 'FAIL', 'expected_source_sha': args.source_sha,
         'driver_sha256': driver_sha, 'commands_planned': len(planned), 'commands_recorded': len(records),
         'commands_passed': sum(row['status'] == 'PASS' for row in records),
@@ -307,6 +325,7 @@ def main():
         'commands_timed_out': sum(row['timed_out'] for row in records), 'source_failures': failures,
         'runner_bindings': binding, 'native_runner_sha256': binding['artifacts']['grouped'].get('sha256'),
         'fresh_native_runner_sha256': binding['artifacts']['fresh'].get('sha256'),
+        'authority_native_runner_sha256': binding['artifacts']['authority'].get('sha256'),
         'original_service_campaign_executed': False, 'full_workspace_unit_tests_executed': False,
         'minimum_legal_cost_proved': False, 'physical_resource_lower_bound_proved': False,
         'pow_qualified': False, 'chainwork_awarded': 0, 'production_activation': False}
