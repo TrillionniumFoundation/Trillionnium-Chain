@@ -1,0 +1,99 @@
+{
+  "schema": "w1-c-variant-prefixed-regression-source-v1",
+  "head": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+  "head_tree": "8c3417aa4bfec4c8ed068d615bba83583360a632",
+  "baseline_cache_blob": "a16c67726f7bba29c349c487cb42eb56467380cc",
+  "working_cache_blob": "d6a364a4ac81e66050f143817cb2cf6a6a62ab28",
+  "working_cache_sha256": "9edf8c6df637a816bab6365d5d52d168d1900a2e402e4a08c1884533c0c92e40",
+  "pon_work_blob": "ce1608248d2ee67ed8f5d82a2c5f15942689139b",
+  "regression_patch_sha256": "72fc6cb4819987d8241cf6d849f9f1a4e31e648a62491be7d1dc59095c09cc89",
+  "dirty_status": "M trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+  "selector": "pon_work::rejection_cache::tests::canonical_product_variants_reuse_the_same_negative_transcript_fact",
+  "commands": [
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::rejection_cache::tests::canonical_product_variants_reuse_the_same_negative_transcript_fact",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "cwd": "/workspace/scratch/667741fd74aa/chain/trillionnium",
+      "rust_bin": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin",
+      "cargo_home": null,
+      "cargo_target_dir": "/workspace/scratch/667741fd74aa/target",
+      "exit_code": 101,
+      "result": "missing wait-timeout in offline default registry; test not run",
+      "log": "pre-fix-c-variants.log",
+      "log_sha256": "09dd7d0695f0d6fe82c6636c03a3d133ea7ebdab5fb4f5826dbc38873e0ef0cd"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::rejection_cache::tests::canonical_product_variants_reuse_the_same_negative_transcript_fact",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "cwd": "/workspace/scratch/667741fd74aa/chain/trillionnium",
+      "rust_bin": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin",
+      "cargo_home": "/workspace/scratch/e1dee205f3d3/cargo-home",
+      "cargo_target_dir": "/workspace/scratch/667741fd74aa/target",
+      "exit_code": 101,
+      "result": "missing zeroize 1.8.2 in existing registry; test not run",
+      "log": "pre-fix-c-variants-existing-cache.log",
+      "log_sha256": "12d14a05b2c3a1c4babf2a16d20888532b7fff9ab0a5befc2fe6ec854e43c5cd"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "pon_work::rejection_cache::tests::canonical_product_variants_reuse_the_same_negative_transcript_fact",
+        "--",
+        "--exact",
+        "--nocapture"
+      ],
+      "cwd": "/workspace/scratch/667741fd74aa/chain/trillionnium",
+      "rust_bin": "/workspace/scratch/d5a18aa06915/toolchains/rust-1.95.0/bin",
+      "cargo_home": "/workspace/scratch/667741fd74aa/cargo-home",
+      "cargo_target_dir": "/workspace/scratch/667741fd74aa/target",
+      "exit_code": 101,
+      "result": "native regression FAILED as expected; same false trace with canonical C variants replays all 512 tiles each time",
+      "actual_transcript_tiles": [
+        512,
+        512,
+        512,
+        512
+      ],
+      "expected_transcript_tiles": [
+        512,
+        0,
+        0,
+        0
+      ],
+      "log": "pre-fix-c-variants-native-red.log",
+      "log_sha256": "22559e796712ba01e27e14d10dcb9a3c2fd0187781dffdee9c3b51e57d2d7366",
+      "native_tests_passed": 0,
+      "native_tests_failed": 1,
+      "native_tests_ignored": 0,
+      "native_tests_filtered_out": 150
+    }
+  ]
+}

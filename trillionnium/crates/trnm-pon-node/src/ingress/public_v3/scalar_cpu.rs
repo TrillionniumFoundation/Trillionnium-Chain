@@ -483,6 +483,9 @@ pub(super) struct LiveRequestCpuState {
     verified_completion: bool,
     wait_inside_checkpoint: bool,
     owner_thread: thread::ThreadId,
+    // Actual shared Node guards held by this request's original owner. Scoped
+    // workers see the same counter; a parent joining them still owns its guard.
+    node_owner_scopes: u32,
     termination_reserved: bool,
 }
 #[derive(Clone)]
@@ -509,6 +512,7 @@ impl LiveRequestCpu {
                 verified_completion: false,
                 wait_inside_checkpoint: true,
                 owner_thread: thread::current().id(),
+                node_owner_scopes: 0,
                 termination_reserved: false,
             }),
             #[cfg(test)]
@@ -694,14 +698,25 @@ impl LiveRequestCpu {
             let Some(request) = self.observe_sample(remove, enforce)? else {
                 return Ok(());
             };
-            // Shared History cannot suspend while owning the Node mutex.
-            // A long indivisible phase still fails under the original budget.
-            if !may_wait {
-                self.state
-                    .lock()
-                    .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?
-                    .refused = true;
-                return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
+            {
+                let mut state = match self.state.lock() {
+                    Ok(state) => state,
+                    Err(error) => {
+                        drop(error);
+                        self.unknown();
+                        return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+                    }
+                };
+                // Completion credit never permits sleeping with the only
+                // durable writer held, including a parent's guard while it
+                // joins scoped workers. The marker belongs to this original
+                // request, not to every operation sharing its CPU domain.
+                // Outside these actual guards the original refill wait stays
+                // available, with the same deadline and caller resource check.
+                if !may_wait || state.node_owner_scopes != 0 {
+                    state.refused = true;
+                    return Err("PUBLIC_MUTATION_CPU_BUDGET".into());
+                }
             }
             // An exclusive embedding has no Node mutex. Keep its exact paid
             // continuation, original absolute deadline AND caller resource
@@ -824,7 +839,11 @@ impl LiveRequestCpu {
                 return None;
             }
         };
-        if state.unavailable || !state.threads.is_empty() || state.termination_reserved {
+        if state.unavailable
+            || !state.threads.is_empty()
+            || state.node_owner_scopes != 0
+            || state.termination_reserved
+        {
             drop(state);
             self.unknown();
             None
@@ -1040,10 +1059,10 @@ impl ServiceMutationCpuOperation {
     pub fn checkpoint(&self) -> Result<()> {
         self.live.checkpoint()
     }
-    /// Bind the History scope's original absolute deadline once. Shared
-    /// callers may never wait from a checkpoint under their Node mutex. The
-    /// exclusive native embedding owns no mutex; it may continue its exact
-    /// stack under this same operation and deadline after a complete W1.
+    /// Bind the History scope's original absolute deadline once. Its explicit
+    /// native callbacks retain their Host resource check during refill waits;
+    /// generic checkpoints without that callback remain nonwaiting. An actual
+    /// shared Node guard independently prevents all owner/worker refill waits.
     pub(crate) fn bind_history_request(&self, deadline: Instant) -> Result<()> {
         self.live.bind_public_request(
             deadline,
@@ -1167,6 +1186,53 @@ impl ServiceMutationCpuCheckpoint {
     ) -> Result<()> {
         self.live
             .observe_with_control(false, true, !owns_node_mutex, resource)
+    }
+
+    // Only ingress's private wrapper calls these while owning a real
+    // MutexGuard<Node>. No public caller may assert or clear a held-lock state.
+    // Detached workers must all have ended before their original owner takes
+    // the writer again. Otherwise a child could already have decided to wait
+    // outside the lock and then sleep while its parent holds the writer and
+    // joins it. Held execution may register new children after this marker;
+    // their first checkpoint observes the same nonwaiting scope.
+    pub(in crate::ingress) fn enter_node_owner_scope(&self) -> Result<()> {
+        let result = (|| -> Result<()> {
+            let mut state = self
+                .live
+                .state
+                .lock()
+                .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            let current = thread::current().id();
+            ensure(
+                !state.unavailable
+                    && state.owner_thread == current
+                    && state.threads.len() == 1
+                    && state.threads.contains_key(&current),
+                "PUBLIC_MUTATION_CPU_UNAVAILABLE",
+            )?;
+            state.node_owner_scopes = state
+                .node_owner_scopes
+                .checked_add(1)
+                .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            Ok(())
+        })();
+        if result.is_err() {
+            self.live.unknown();
+        }
+        result
+    }
+
+    pub(in crate::ingress) fn leave_node_owner_scope(&self) {
+        let released = self.live.state.lock().ok().and_then(|mut state| {
+            if state.owner_thread != thread::current().id() {
+                return None;
+            }
+            state.node_owner_scopes = state.node_owner_scopes.checked_sub(1)?;
+            Some(())
+        });
+        if released.is_none() {
+            self.live.unknown();
+        }
     }
 
     pub(crate) fn shares_domain_with(&self, domain: &ServiceMutationCpuDomain) -> bool {

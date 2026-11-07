@@ -17,6 +17,19 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**W1 refusal-cost and actual owner-lock continuation, 2026-11-06 America/New_York:**
+Continue #688 from `0ca272d09d1522b0ffd740e441b6d3de1ed81de6` under the
+[frozen refusal-cost record](../../evidence/pon-w1-refusal-cost-20261106/README.md).
+Bind completed Transcript failures to their actual challenge/A/B/trace inputs,
+with exact C binding retained for Product failures and current cheap checks.
+Bind completion refill to the original request's actual Node mutex scope in
+Submit, History and Growth, using `r14-owner-lock-v1` with unchanged budgets.
+Compare checked rank-one preparation and finite cross-challenge fixed-material
+reuse against dense/sparse legal preparation with every attempt and loss kept.
+These expensive refusals remain invalid work, not forged consensus work.
+Fresh-claim amplification, lowest-cost proofs, hardware costs and original
+four-second service acceptance stay open. Parallel #740/#741 are not composed.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3

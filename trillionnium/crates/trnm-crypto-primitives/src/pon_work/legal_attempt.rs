@@ -37,8 +37,15 @@ pub enum Preparation {
 pub enum PreparationUsed {
     Dense,
     Sparse,
-    LeftLowRank { rank: usize },
-    RightLowRank { rank: usize },
+    /// Both operands were proved to have exact rank one, then AB was formed
+    /// as u(v^T x)y^T; this is distinct from the rank-bounded one-sided probe.
+    CheckedRankOne,
+    LeftLowRank {
+        rank: usize,
+    },
+    RightLowRank {
+        rank: usize,
+    },
     DenseAfterRankBound,
 }
 
@@ -100,6 +107,58 @@ impl Task {
             arithmetic,
             preparation_used,
         })
+    }
+
+    /// Pay for exact rank-one recognition and the factored fixed AB product.
+    /// Both matrices must have rank exactly one over the canonical field;
+    /// rank zero and other unsupported inputs return None, never a dense
+    /// fallback. Invalid lengths/words remain errors even when the other
+    /// operand is unsupported or their mathematical product would be zero.
+    /// The selected challenge transcript arithmetic is unchanged.
+    pub fn with_rank_one_preparation(
+        a: &[u32],
+        b: &[u32],
+        arithmetic: Arithmetic,
+    ) -> Result<Option<Self>, WorkError> {
+        validate(a)?;
+        validate(b)?;
+        let (Some((left_a, right_a)), Some((left_b, right_b))) = (
+            super::structured::rank_one(a),
+            super::structured::rank_one(b),
+        ) else {
+            return Ok(None);
+        };
+        // Recognition checked EVERY original word. For A=u*v^T, B=x*y^T,
+        // AB=u*(v^T*x)*y^T; the dot product has 64 canonical products and
+        // is below 2^70, within the original exact reducer's bound.
+        let scale = producer_reduce(
+            right_a
+                .iter()
+                .zip(left_b)
+                .map(|(left, right)| u128::from(*left) * u128::from(right))
+                .sum(),
+        );
+        let mut product = Vec::with_capacity(CELLS);
+        for left in left_a {
+            let scaled = producer_reduce(u128::from(left) * u128::from(scale));
+            for &right in &right_b {
+                product.push(producer_reduce(u128::from(scaled) * u128::from(right)));
+            }
+        }
+        let mut prefix = Vec::with_capacity(PROOF_BYTES);
+        prefix.extend_from_slice(b"PNW1");
+        for matrix in [a, b, product.as_slice()] {
+            prefix.extend_from_slice(&field_bytes(matrix));
+        }
+        Ok(Some(Self {
+            prepared: PreparedTask {
+                a: a.to_vec(),
+                b: b.to_vec(),
+                prefix,
+            },
+            arithmetic,
+            preparation_used: PreparationUsed::CheckedRankOne,
+        }))
     }
 
     /// Explicit new constructor, preserving the original two-arm preparation
@@ -253,6 +312,326 @@ mod tests {
 
     fn contexts() -> [Hash; 3] {
         [[0; 32], [7; 32], [255; 32]]
+    }
+
+    fn outer(left: &[u32], right: &[u32]) -> Vec<u32> {
+        left.iter()
+            .flat_map(|x| {
+                right
+                    .iter()
+                    .map(|y| producer_reduce(u128::from(*x) * u128::from(*y)))
+            })
+            .collect()
+    }
+
+    fn rank_one_pairs() -> Vec<(Vec<u32>, Vec<u32>)> {
+        let high: Vec<_> = (0..N).map(|i| Q as u32 - 1 - i as u32).collect();
+        let low: Vec<_> = (0..N).map(|i| (17 * i + 3) as u32).collect();
+        let sparse: Vec<_> = (0..N)
+            .map(|i| if i % 7 == 3 { high[i] } else { 0 })
+            .collect();
+        let mut v = vec![0; N];
+        let mut x = vec![0; N];
+        v[3] = 1;
+        v[9] = 1;
+        x[3] = 1;
+        x[9] = Q as u32 - 1;
+        vec![
+            (outer(&high, &low), outer(&low, &high)),
+            (outer(&sparse, &high), outer(&low, &sparse)),
+            // Nonzero rank-one operands whose complete AB is zero.
+            (outer(&high, &v), outer(&x, &low)),
+        ]
+    }
+
+    #[test]
+    fn checked_rank_one_preparation_matches_dense_sparse_and_independent_replay() {
+        for (a, b) in rank_one_pairs() {
+            let id = pon_work::task_id(&a, &b).unwrap();
+            for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+                let rank = Task::with_rank_one_preparation(&a, &b, arithmetic)
+                    .unwrap()
+                    .unwrap();
+                let dense = Task::new(&a, &b, arithmetic).unwrap();
+                let sparse =
+                    Task::with_preparation(&a, &b, arithmetic, Preparation::Sparse).unwrap();
+                assert_eq!(rank.proof_prefix(), dense.proof_prefix());
+                assert_eq!(rank.proof_prefix(), sparse.proof_prefix());
+                for challenge in [[0; 32], [255; 32]] {
+                    let expected = pon_work::prove(challenge, &a, &b).unwrap();
+                    let actual = rank
+                        .attempt(challenge, [255; 32], Materialization::TargetHit)
+                        .unwrap();
+                    assert_eq!(actual.proof.as_ref().unwrap(), &expected);
+                    assert_eq!(
+                        actual,
+                        dense
+                            .attempt(challenge, [255; 32], Materialization::TargetHit)
+                            .unwrap()
+                    );
+                    assert_eq!(
+                        actual,
+                        sparse
+                            .attempt(challenge, [255; 32], Materialization::TargetHit)
+                            .unwrap()
+                    );
+                    let cold = Task::with_rank_one_preparation(&a, &b, arithmetic)
+                        .unwrap()
+                        .unwrap();
+                    assert_eq!(
+                        actual,
+                        cold.attempt(challenge, [255; 32], Materialization::TargetHit)
+                            .unwrap()
+                    );
+                    for verify in [pon_work::verify, pon_work::verify_reference] {
+                        let work = verify(challenge, id, [255; 32], &expected).unwrap();
+                        assert_eq!(work.challenge(), challenge);
+                        assert_eq!(work.task(), id);
+                        assert_eq!(work.ticket(), actual.ticket);
+                        assert_eq!(
+                            field_bytes(work.product()),
+                            expected[4 + 2 * CELLS * 4..PROOF_BYTES - 32]
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn checked_rank_one_and_bounded_rank_preparation_share_bytes_but_keep_distinct_domains() {
+        for (a, b) in rank_one_pairs() {
+            let specialized = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+                .unwrap()
+                .unwrap();
+            let general = Task::with_rank_preparation(&a, &b, Arithmetic::FullLimb).unwrap();
+            assert_eq!(
+                specialized.preparation_used(),
+                PreparationUsed::CheckedRankOne
+            );
+            assert_eq!(
+                general.preparation_used(),
+                PreparationUsed::LeftLowRank { rank: 1 }
+            );
+            assert_eq!(specialized.proof_prefix(), general.proof_prefix());
+            let challenge = [0x65; 32];
+            let original = pon_work::prove(challenge, &a, &b).unwrap();
+            let mut specialized_points = Vec::new();
+            let actual = specialized
+                .attempt_with_progress(challenge, [255; 32], Materialization::TargetHit, |point| {
+                    specialized_points.push(point);
+                    Ok::<_, ()>(())
+                })
+                .unwrap();
+            let mut general_points = Vec::new();
+            let other = general
+                .attempt_with_progress(challenge, [255; 32], Materialization::TargetHit, |point| {
+                    general_points.push(point);
+                    Ok::<_, ()>(())
+                })
+                .unwrap();
+            assert_eq!(actual, other);
+            assert_eq!(actual.proof.as_ref().unwrap(), &original);
+            assert_eq!(specialized_points, general_points);
+            assert_eq!(
+                specialized_points
+                    .iter()
+                    .filter(|point| matches!(
+                        point,
+                        Progress::Replay(VerificationProgress::TranscriptTile { .. })
+                    ))
+                    .count(),
+                512
+            );
+            let id = pon_work::task_id(&a, &b).unwrap();
+            // Both independently implemented full verifiers check the actual
+            // generated bytes; constructor agreement alone is not acceptance.
+            for verify in [pon_work::verify, pon_work::verify_reference] {
+                let work =
+                    verify(challenge, id, [255; 32], actual.proof.as_ref().unwrap()).unwrap();
+                assert_eq!(work.challenge(), challenge);
+                assert_eq!(work.task(), id);
+                assert_eq!(work.ticket(), actual.ticket);
+                assert_eq!(
+                    field_bytes(work.product()),
+                    original[4 + 2 * CELLS * 4..PROOF_BYTES - 32]
+                );
+            }
+            let mut near_zero_target = [0; 32];
+            near_zero_target[31] = 1;
+            let miss = specialized
+                .attempt([0x66; 32], near_zero_target, Materialization::EveryAttempt)
+                .unwrap();
+            assert!(!miss.target_hit);
+            assert_eq!(
+                miss,
+                general
+                    .attempt([0x66; 32], near_zero_target, Materialization::EveryAttempt)
+                    .unwrap()
+            );
+            assert_eq!(
+                miss.proof.as_ref().unwrap(),
+                &pon_work::prove([0x66; 32], &a, &b).unwrap()
+            );
+        }
+        let (rank, _) = rank_one_pairs().remove(0);
+        let zero = vec![0; CELLS];
+        let identity: Vec<_> = (0..CELLS).map(|i| u32::from(i / N == i % N)).collect();
+        for (a, b, expected) in [
+            (&zero, &rank, PreparationUsed::LeftLowRank { rank: 0 }),
+            (&identity, &rank, PreparationUsed::RightLowRank { rank: 1 }),
+            (&rank, &identity, PreparationUsed::LeftLowRank { rank: 1 }),
+            (&identity, &identity, PreparationUsed::DenseAfterRankBound),
+        ] {
+            assert!(Task::with_rank_one_preparation(a, b, Arithmetic::FullLimb)
+                .unwrap()
+                .is_none());
+            let general = Task::with_rank_preparation(a, b, Arithmetic::FullLimb).unwrap();
+            assert_eq!(general.preparation_used(), expected);
+            assert_eq!(
+                general.proof_prefix(),
+                Task::new(a, b, Arithmetic::FullLimb)
+                    .unwrap()
+                    .proof_prefix()
+            );
+        }
+    }
+
+    #[test]
+    fn checked_rank_one_preparation_refuses_other_ranks_and_hidden_malformed_words() {
+        let (rank, _) = rank_one_pairs().remove(0);
+        let zero = vec![0; CELLS];
+        let identity: Vec<_> = (0..CELLS).map(|i| u32::from(i / N == i % N)).collect();
+        let mut changed = rank.clone();
+        changed[CELLS - 1] = (changed[CELLS - 1] + 1) % Q as u32;
+        for arithmetic in [Arithmetic::Transposed, Arithmetic::FullLimb] {
+            for unsupported in [&zero, &identity, &changed] {
+                for (a, b) in [(unsupported, &rank), (&rank, unsupported)] {
+                    assert!(Task::with_rank_one_preparation(a, b, arithmetic)
+                        .unwrap()
+                        .is_none());
+                }
+            }
+            let mut malformed = rank.clone();
+            malformed[CELLS - 1] = Q as u32;
+            for other in [&zero, &identity, &rank] {
+                for (a, b) in [(other, &malformed), (&malformed, other)] {
+                    assert!(matches!(
+                        Task::with_rank_one_preparation(a, b, arithmetic),
+                        Err(WorkError::Field)
+                    ));
+                }
+            }
+            for length in [0, CELLS - 1, CELLS + 1] {
+                let bad = vec![0; length];
+                for (a, b) in [(&rank, &bad), (&bad, &rank)] {
+                    assert!(matches!(
+                        Task::with_rank_one_preparation(a, b, arithmetic),
+                        Err(WorkError::Length)
+                    ));
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn checked_rank_one_preparation_preserves_complete_misses_and_cancellation() {
+        let (a, b) = rank_one_pairs().remove(1);
+        let rank = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+            .unwrap()
+            .unwrap();
+        let dense = Task::new(&a, &b, Arithmetic::FullLimb).unwrap();
+        let mut target = [0; 32];
+        target[31] = 1;
+        for mode in [Materialization::EveryAttempt, Materialization::TargetHit] {
+            let mut expected_points = Vec::new();
+            let expected = dense
+                .attempt_with_progress([3; 32], target, mode, |point| {
+                    expected_points.push(point);
+                    Ok::<_, ()>(())
+                })
+                .unwrap();
+            let mut points = Vec::new();
+            let actual = rank
+                .attempt_with_progress([3; 32], target, mode, |point| {
+                    points.push(point);
+                    Ok::<_, ()>(())
+                })
+                .unwrap();
+            assert!(!actual.target_hit);
+            assert_eq!(actual, expected);
+            assert_eq!(points, expected_points);
+            let tiles: Vec<_> = points
+                .iter()
+                .enumerate()
+                .filter_map(|(index, p)| {
+                    matches!(
+                        p,
+                        Progress::Replay(VerificationProgress::TranscriptTile { .. })
+                    )
+                    .then_some(index)
+                })
+                .collect();
+            assert_eq!(tiles.len(), 512);
+            for cut in [0, tiles[0], *tiles.last().unwrap(), points.len() - 1] {
+                let mut called = 0;
+                let result = rank.attempt_with_progress([3; 32], target, mode, |_| {
+                    let index = called;
+                    called += 1;
+                    if index == cut {
+                        Err(cut)
+                    } else {
+                        Ok(())
+                    }
+                });
+                assert_eq!(result, Err(VerificationError::Cancelled(cut)));
+                assert_eq!(called, cut + 1);
+                assert_eq!(rank.attempt([3; 32], target, mode).unwrap(), expected);
+            }
+        }
+    }
+
+    #[test]
+    fn checked_rank_one_reuse_rejects_changed_challenge_transcript_and_product() {
+        let (a, b) = rank_one_pairs().remove(0);
+        let rank = Task::with_rank_one_preparation(&a, &b, Arithmetic::FullLimb)
+            .unwrap()
+            .unwrap();
+        let id = pon_work::task_id(&a, &b).unwrap();
+        let first = rank
+            .attempt([11; 32], [255; 32], Materialization::TargetHit)
+            .unwrap();
+        let second = rank
+            .attempt([12; 32], [255; 32], Materialization::TargetHit)
+            .unwrap();
+        assert_ne!(first.trace, second.trace);
+        assert_ne!(first.ticket, second.ticket);
+        let proof = first.proof.unwrap();
+        let mut trace_mutation = proof.clone();
+        trace_mutation[PROOF_BYTES - 1] ^= 1;
+        let mut product_mutation = proof.clone();
+        let offset = PROOF_BYTES - 36;
+        let before = u32::from_le_bytes(proof[offset..offset + 4].try_into().unwrap());
+        product_mutation[offset..offset + 4]
+            .copy_from_slice(&((before + 1) % Q as u32).to_le_bytes());
+        for verify in [pon_work::verify, pon_work::verify_reference] {
+            assert_eq!(
+                verify([12; 32], id, [255; 32], &proof).unwrap_err(),
+                WorkError::Transcript
+            );
+            assert_eq!(
+                verify([11; 32], id, [255; 32], &trace_mutation).unwrap_err(),
+                WorkError::Transcript
+            );
+            assert_eq!(
+                verify([11; 32], id, [255; 32], &product_mutation).unwrap_err(),
+                WorkError::Product
+            );
+            assert_eq!(
+                verify([11; 32], [0; 32], [255; 32], &proof).unwrap_err(),
+                WorkError::Task
+            );
+        }
     }
 
     #[test]

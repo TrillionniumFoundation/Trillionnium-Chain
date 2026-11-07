@@ -59,13 +59,25 @@ impl Owner<'_> {
         control: &Control<'_>,
         action: impl FnOnce(&mut Node) -> Result<T>,
     ) -> Result<T> {
+        self.with_cpu_owner(control, None, action)
+    }
+
+    fn with_cpu_owner<T>(
+        &mut self,
+        control: &Control<'_>,
+        checkpoint: Option<&public_v3::ServiceMutationCpuCheckpoint>,
+        action: impl FnOnce(&mut Node) -> Result<T>,
+    ) -> Result<T> {
         control.check()?;
         match self {
             Self::Exclusive(node) => action(node),
             Self::Shared(node) => loop {
                 control.check()?;
                 match node.try_lock() {
-                    Ok(mut guard) => return action(&mut guard),
+                    Ok(guard) => {
+                        let mut owner = super::scope_node_owner(guard, checkpoint)?;
+                        return action(&mut owner);
+                    }
                     Err(TryLockError::Poisoned(_)) => return Err("OWNER_POISONED".into()),
                     Err(TryLockError::WouldBlock) => thread::sleep(
                         Duration::from_millis(1)
@@ -297,18 +309,21 @@ fn admit_packet(
     if let Some(tip) = activate {
         ensure(tip == packet.id()?, "PAGE_COMPLETE")?;
     }
-    let owns_node_mutex = matches!(owner, Owner::Shared(_));
     metered_observed(cpu, control, observation, |operation| {
         let progress = operation.checkpoint_handle();
         // history_checkpoint checks the original deadline and actual Host
         // before its CPU observation, then again throughout every refill wait.
         // Keep that check at every native progress boundary; a second adjacent
         // control.check() performed no ledger work and duplicated Host reads.
-        let check = || progress.history_checkpoint(owns_node_mutex, &|| control.check());
+        // A shared owner's type does not imply that its mutex is currently
+        // held. The private guard marks actual locked sections for this same
+        // operation and its children; lock-free continuations may await their
+        // original refill while still observing this actual Host callback.
+        let check = || progress.history_checkpoint(false, &|| control.check());
         check()?;
         let (existing, permit, codec) =
             super::observe_submit_phase(observation, SubmitPhase::Context, || {
-                owner.with(control, |node| {
+                owner.with_cpu_owner(control, Some(&progress), |node| {
                     let existing = node.precheck_public_admission_context_with_progress(
                         &packet,
                         clock,
@@ -333,12 +348,12 @@ fn admit_packet(
             return Ok((id, false, active));
         }
         let checked = super::observe_submit_phase(observation, SubmitPhase::Work, || {
-            verify_history_work(packet, &progress, owns_node_mutex, control)
+            verify_history_work(packet, &progress, false, control)
         })?;
         operation.history_work_verified_for_context(&checked, &codec)?;
         // Promotion changes only scheduling for this complete, unique W1.
-        // Shared owners retain nonwaiting checkpoints while holding Node;
-        // exclusive embedding has no Node mutex and keeps its exact stack.
+        // Actual held owners retain nonwaiting checkpoints. Outside those
+        // guards both embeddings retain the same paid continuation and Host.
         check()?;
         let execution_progress = |point| {
             check()?;
@@ -360,14 +375,17 @@ fn admit_packet(
                     &mut |_| check(),
                     &execution,
                     || Ok(clock),
-                    observation,
+                    super::SharedAdmissionContext {
+                        observation,
+                        owner_cpu: Some(&progress),
+                    },
                 )?;
                 drop(guard);
                 id
             }
             Owner::Exclusive(_) => {
                 super::observe_submit_phase(observation, SubmitPhase::Admission, || {
-                    owner.with(control, |node| {
+                    owner.with_cpu_owner(control, Some(&progress), |node| {
                         let checked = node.attach_owner_work(checked, permit)?;
                         super::execution_observation::run(
                             observation,
@@ -405,10 +423,10 @@ fn activate_packet(
     control: &Control<'_>,
     operation: &public_v3::ServiceMutationCpuOperation,
 ) -> Result<Hash> {
-    let owns_node_mutex = matches!(owner, Owner::Shared(_));
-    let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
+    let owner_cpu = operation.checkpoint_handle();
+    let checkpoint = || operation.history_checkpoint(false, &|| control.check());
     checkpoint()?;
-    let active = owner.with(control, |node| {
+    let active = owner.with_cpu_owner(control, Some(&owner_cpu), |node| {
         node.activate_observed_with_termination(
             tip,
             clock,

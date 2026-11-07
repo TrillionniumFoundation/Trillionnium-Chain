@@ -1,0 +1,104 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
+index 918a104be77409e88264e811ceae64a80dda89be..5f44e9f8ec517fb6348ec0860542440d706fe860 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
+@@ -755,3 +755,99 @@ fn exclusive_history_refill_observes_original_resource_cancellation_without_new_
+         serde_json::json!({"schema":"history-resource-cancellation-real-refill-v1", "receipt":receipt, "flow":flow})
+     );
+ }
++
++#[test]
++fn shared_submit_cpu_refill_never_waits_while_holding_native_owner() {
++    use std::sync::{atomic::AtomicUsize, TryLockError};
++    use trnm_mvcc_fee::pon_executor::ExecutionControl;
++
++    let (directory, settings, packet) = packet();
++    let node = Mutex::new(
++        Node::open(&directory.path().join("held-cpu-receiver"), settings, 1).unwrap(),
++    );
++    let before = node.lock().unwrap().read_active().unwrap();
++    let packet_id = packet.id().unwrap();
++    let domain = ServiceMutationCpuDomain::standalone();
++    let operation = domain.begin().unwrap();
++    bind(&operation, Duration::from_secs(5));
++    let checkpoint = operation.checkpoint_handle();
++    let verified = AtomicBool::new(false);
++    let injected = AtomicBool::new(false);
++    let wait_checks = AtomicUsize::new(0);
++    let execution_progress = |_| {
++        if verified.load(Ordering::Acquire)
++            && matches!(node.try_lock(), Err(TryLockError::WouldBlock))
++            && !injected.swap(true, Ordering::AcqRel)
++        {
++            // Deterministic scheduling control, NOT a measured cost sample.
++            // Real full W1 created the private completion capability. Only
++            // the available allowance is forced here; actual CPU still settles.
++            let mut budget = domain.budget.lock().unwrap();
++            budget.credit_ns = -i128::from(MUTATION_CPU_BURST_NS);
++            budget.updated = Instant::now();
++            budget.flow = None;
++        }
++        if injected.load(Ordering::Acquire) {
++            // The second resource check precedes the refill sleep. Refuse it
++            // deterministically so the old bug cannot hang this regression.
++            operation.history_checkpoint(false, &|| {
++                ensure(
++                    wait_checks.fetch_add(1, Ordering::AcqRel) == 0,
++                    "TEST_REFILL_WAIT_UNDER_OWNER",
++                )
++            })
++        } else {
++            operation.checkpoint()
++        }
++    };
++    let result = crate::ingress::dispatch_shared_with_execution_observation(
++        &node,
++        crate::ingress::Request::Submit {
++            packet: hex::encode(packet.encode().unwrap()),
++        },
++        &mut |_| operation.checkpoint(),
++        |packet| {
++            let checked = WorkCheckedPacket::verify_with_progress(packet, &mut |_| {
++                operation.checkpoint()
++            })?;
++            operation.live.work_verified(&checked)?;
++            verified.store(true, Ordering::Release);
++            Ok(checked)
++        },
++        &ExecutionControl::new(&execution_progress, operation.worker_accounting()),
++        crate::ingress::SubmitDispatchContext {
++            public_proof_before_unowned_task: true,
++            termination_cpu: Some(&checkpoint),
++            ..crate::ingress::SubmitDispatchContext::default()
++        },
++    );
++    let receipt = operation.finish();
++    let error = result.expect_err("a held-owner deficit must refuse without waiting");
++    println!(
++        "{}",
++        serde_json::json!({"schema":"native-submit-owner-cpu-wait-control-v1",
++            "real_full_w1_verified":verified.load(Ordering::Acquire),
++            "injected_credit_deficit":injected.load(Ordering::Acquire),
++            "resource_checks":wait_checks.load(Ordering::Acquire),
++            "result":error.to_string(),"receipt":receipt,
++            "service_qualified":false})
++    );
++    assert!(verified.load(Ordering::Acquire));
++    assert!(injected.load(Ordering::Acquire));
++    assert!(
++        error.is(crate::ErrorCode::PublicMutationCpuBudget),
++        "shared native owner entered the refill-wait path: {error}"
++    );
++    assert_eq!(wait_checks.load(Ordering::Acquire), 1);
++    assert!(!receipt.accounting_unavailable);
++    assert!(receipt.live_refused);
++    assert!(receipt.total_cpu_ns.is_some_and(|paid| paid > 0));
++    assert_eq!(domain.observe().unwrap().in_flight, 0);
++    assert_eq!(
++        domain.observe_completion_work().unwrap().retained_identities,
++        1
++    );
++    let owner = node.try_lock().expect("refusal must release the actual writer");
++    assert_eq!(owner.read_active().unwrap(), before);
++    assert!(owner.packet(packet_id).is_err());
++}

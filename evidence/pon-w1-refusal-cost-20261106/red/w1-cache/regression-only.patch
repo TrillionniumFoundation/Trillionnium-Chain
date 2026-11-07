@@ -1,0 +1,47 @@
+diff --git a/trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs b/trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs
+index a16c67726..d6a364a4a 100644
+--- a/trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs
++++ b/trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs
+@@ -521,6 +521,42 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn canonical_product_variants_reuse_the_same_negative_transcript_fact() {
++        let cache = RejectionCache::new(64, Duration::from_secs(30)).unwrap();
++        let zeros = vec![0; CELLS];
++        let task = task_id(&zeros, &zeros).unwrap();
++        let challenge = [83; 32];
++        // No producer or legal transcript is used to create this fake claim.
++        // The same challenge/task/trace already meets this explicit target;
++        // changing only canonical C bytes requires no fresh ticket search.
++        let fake = hash(b"w1-negative-cache-c-variant-v1", &[&challenge]);
++        let mut wire = vec![0u8; PROOF_BYTES];
++        wire[..4].copy_from_slice(b"PNW1");
++        wire[PROOF_BYTES - 32..].copy_from_slice(&fake);
++        let mut replay_counts = Vec::new();
++        for word in [None, Some(0), Some(CELLS / 2), Some(CELLS - 1)] {
++            let mut variant = wire.clone();
++            if let Some(word) = word {
++                let start = 4 + (2 * CELLS + word) * 4;
++                variant[start..start + 4].copy_from_slice(&1_u32.to_le_bytes());
++            }
++            let (result, points) = observed(Some(&cache), challenge, task, &variant, None);
++            assert_eq!(result, Err(VerificationError::Relation(WorkError::Transcript)));
++            replay_counts.push(
++                points
++                    .iter()
++                    .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
++                    .count(),
++            );
++        }
++        assert_eq!(
++            replay_counts,
++            vec![512, 0, 0, 0],
++            "C is not an input to the challenge/A/B transcript and must not defeat its negative fact"
++        );
++    }
++
+     #[test]
+     fn local_cancellation_cannot_use_a_cached_fact_as_a_verdict() {
+         let cache = RejectionCache::new(1, Duration::from_secs(1)).unwrap();

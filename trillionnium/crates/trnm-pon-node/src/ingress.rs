@@ -1193,6 +1193,45 @@ fn lock_owner<'a>(
     }
 }
 
+// Field order is deliberate: release the actual Node mutex before clearing
+// this request's held-owner marker. No caller can separate the two guards.
+struct CpuScopedNodeOwner<'a> {
+    owner: MutexGuard<'a, Node>,
+    _cpu_scope: Option<NodeOwnerCpuScope>,
+}
+struct NodeOwnerCpuScope(public_v3::ServiceMutationCpuCheckpoint);
+impl Drop for NodeOwnerCpuScope {
+    fn drop(&mut self) {
+        self.0.leave_node_owner_scope();
+    }
+}
+impl std::ops::Deref for CpuScopedNodeOwner<'_> {
+    type Target = Node;
+    fn deref(&self) -> &Self::Target {
+        &self.owner
+    }
+}
+impl std::ops::DerefMut for CpuScopedNodeOwner<'_> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.owner
+    }
+}
+fn scope_node_owner<'a>(
+    owner: MutexGuard<'a, Node>,
+    checkpoint: Option<&public_v3::ServiceMutationCpuCheckpoint>,
+) -> Result<CpuScopedNodeOwner<'a>> {
+    let cpu_scope = checkpoint
+        .map(|checkpoint| {
+            checkpoint.enter_node_owner_scope()?;
+            Ok::<_, Error>(NodeOwnerCpuScope(checkpoint.clone()))
+        })
+        .transpose()?;
+    Ok(CpuScopedNodeOwner {
+        owner,
+        _cpu_scope: cpu_scope,
+    })
+}
+
 fn submit_result_with_progress(
     node: &mut Node,
     id: Hash,
@@ -1294,6 +1333,12 @@ struct SubmitDispatchContext<'a> {
     termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
 }
 
+#[derive(Default)]
+struct SharedAdmissionContext<'a> {
+    observation: Option<&'a public_v3::request_observation::TaskObservation>,
+    owner_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
+}
+
 #[path = "ingress/execution_observation.rs"]
 mod execution_observation;
 
@@ -1320,13 +1365,17 @@ fn admit_shared_checked<'a>(
     progress: &mut dyn FnMut(u64) -> Result<()>,
     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
     clock: impl Fn() -> Result<u64>,
-    observation: Option<&public_v3::request_observation::TaskObservation>,
-) -> Result<(MutexGuard<'a, Node>, Hash, u64)> {
+    context: SharedAdmissionContext<'_>,
+) -> Result<(CpuScopedNodeOwner<'a>, Hash, u64)> {
     use crate::store::{DetachedExecutionLease, PreparedSharedAdmission};
     use public_v3::SubmitPhase;
     use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+    let SharedAdmissionContext {
+        observation,
+        owner_cpu,
+    } = context;
     let wait_end = Instant::now() + Duration::from_secs(2);
-    let (mut owner, lease): (MutexGuard<'a, Node>, Option<DetachedExecutionLease>) =
+    let (mut owner, lease): (CpuScopedNodeOwner<'a>, Option<DetachedExecutionLease>) =
         observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || loop {
             progress(0)?;
             (control.progress)(ExecutionProgress::BeforeParentBinding)?;
@@ -1335,7 +1384,7 @@ fn admit_shared_checked<'a>(
                 (control.progress)(ExecutionProgress::BeforeParentBinding)?;
                 ensure(Instant::now() < wait_end, "PUBLIC_QUEUE_BUSY")
             };
-            let owner = lock_owner(node, &mut acquisition)?;
+            let owner = scope_node_owner(lock_owner(node, &mut acquisition)?, owner_cpu)?;
             acquisition(0)?;
             // Authorized non-ordinary modes keep their original verified path.
             // They cannot manufacture an unsupported detached capability.
@@ -1409,7 +1458,7 @@ fn admit_shared_checked<'a>(
                             progress(amount)?;
                             (control.progress)(ExecutionProgress::BeforeParentBinding)
                         };
-                        lock_owner(node, &mut reacquisition)
+                        scope_node_owner(lock_owner(node, &mut reacquisition)?, owner_cpu)
                     })?;
                 let observed_now = clock()?;
                 let id = observe_submit_phase(observation, SubmitPhase::Commit, || {
@@ -1446,7 +1495,7 @@ fn dispatch_shared_with_execution_observation(
             let owner_permit = {
                 let mut owner =
                     observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
-                        lock_owner(node, progress)
+                        scope_node_owner(lock_owner(node, progress)?, termination_cpu)
                     })?;
                 let (existing, permit) =
                     observe_submit_phase(observation, SubmitPhase::Context, || {
@@ -1512,7 +1561,10 @@ fn dispatch_shared_with_execution_observation(
                 progress,
                 control,
                 now,
-                observation,
+                SharedAdmissionContext {
+                    observation,
+                    owner_cpu: termination_cpu,
+                },
             )?;
             observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
                 submit_result_with_progress(

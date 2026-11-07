@@ -53,9 +53,14 @@ class FixedRootPhaseHostControls(unittest.TestCase):
         self.job.write_text(json.dumps(value))
 
     def test_exact_job_and_raw_bytes_are_bound(self):
-        value, digest = host.validate_job(self.job, self.binary)
-        self.assertEqual(value, self.value)
-        self.assertEqual(digest, hashlib.sha256(self.job.read_bytes()).hexdigest())
+        # The parser preserves historical job bytes. The current Rust owner
+        # requires the explicit owner-lock label before it can execute a phase.
+        for profile in ("raw-r14", "raw-r14-owner-lock-v1"):
+            expected = dict(self.value, work_profile=profile)
+            self.write(expected)
+            value, digest = host.validate_job(self.job, self.binary)
+            self.assertEqual(value, expected)
+            self.assertEqual(digest, hashlib.sha256(self.job.read_bytes()).hexdigest())
 
     def test_changed_binary_is_not_the_original_test_program(self):
         self.binary.write_bytes(b"\x7fELFchanged")

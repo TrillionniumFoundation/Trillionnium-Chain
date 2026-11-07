@@ -533,6 +533,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_one_reuse_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_one_reuse_v1.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rejection_variants_v1.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rejection_variants_v1.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
