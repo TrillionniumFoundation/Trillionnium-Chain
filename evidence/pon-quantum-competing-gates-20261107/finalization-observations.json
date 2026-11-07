@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-competing-evidence-finalization-observations-v1",
+  "implementation": "a56889a54aac5f14141bb45fb602141dd6a37645",
+  "original_failed_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 2,
+    "stdout": "evidence/pon-quantum-competing-gates-20261107/README.md:283: new blank line at EOF.\n",
+    "stderr": "",
+    "readme_sha256_before": "2d14db742d2acf20b640a55781ee112871aa98fda5d024d7391929b9a67b9c4b"
+  },
+  "resolution": "Trimmed the generated README trailing blank line; original experimental evidence bytes unchanged.",
+  "subsequent_same_check_exit_code": 0,
+  "original_logs_retained": true
+}

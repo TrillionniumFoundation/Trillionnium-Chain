@@ -1,0 +1,78 @@
+{
+  "files": [
+    {
+      "file": "combined-validation.json",
+      "sha256": "7051ab5f5cfa6d672b0610d426de527bc0a451558cc45af030a9d0223c4073d7",
+      "size_bytes": 14033
+    },
+    {
+      "file": "frozen-validation.tar.xz",
+      "sha256": "88e4dd15ce7b2c9f73e06c7704648903ffaca0ba4aa8c3538c87eca31c4ad510",
+      "size_bytes": 1187116
+    },
+    {
+      "file": "frozen-validation.tar.xz.index.json",
+      "sha256": "177a83a86ceba26d0f5336c0181b6fc0f6c537c8c886830bcc4350e57402e35d",
+      "size_bytes": 70467
+    },
+    {
+      "file": "full-source-identity.json",
+      "sha256": "dc04515d3d6040de1991d685f7370ee89c5f775f8730b9b3fdb0855ee4a2e86e",
+      "size_bytes": 640
+    },
+    {
+      "file": "fuzz-graph-result.json",
+      "sha256": "6259caf4988c0a737a1158fbb58eab5489addf6d81fc6b7623c9ba098340f066",
+      "size_bytes": 5033
+    },
+    {
+      "file": "machine-cache-summary.json",
+      "sha256": "d3d465fa35a8cd4ed2ae582737c332cb6b6844fc4d8cae7f4a2ea6650b64f4f2",
+      "size_bytes": 807548
+    },
+    {
+      "file": "native-competition-summary.json",
+      "sha256": "35688363f214fe560e7669053264a5aa7f371a1b595c947e9bc7df0183d1f8da",
+      "size_bytes": 274851
+    },
+    {
+      "file": "native-test-elf.json",
+      "sha256": "d23a01eef6887ae9b6835ebb4d0ddfcac038a51ef28aa96bc947e9398331ab31",
+      "size_bytes": 2342
+    },
+    {
+      "file": "original-driver-result.json",
+      "sha256": "40d02e34cad7c283d5a4eff0446dc9f3dc0f130b04239c8db0e2aababc020771",
+      "size_bytes": 11096
+    },
+    {
+      "file": "preparation-receipt.json",
+      "sha256": "71dba989c756d8a468a90a41e04c4b357067a606110516bf9075864cd5b06ed6",
+      "size_bytes": 2178
+    },
+    {
+      "file": "preparation-script.py",
+      "sha256": "e8cd0cd88ec4e492cde2484ec3f7699acd12f235a1e332263c9edbbebb7ecd48",
+      "size_bytes": 18694
+    },
+    {
+      "file": "supplemental-validation.tar.xz",
+      "sha256": "d4db7e2e5d3d8e3d5e9fb8d6991be5318ae6c1554b302684348398032922036f",
+      "size_bytes": 304712
+    },
+    {
+      "file": "supplemental-validation.tar.xz.index.json",
+      "sha256": "4d1154d417bb186e444c7afef43759e15dd8dfdc289ef386c4883092b6921215",
+      "size_bytes": 19072
+    },
+    {
+      "file": "whole-node-inventory-result.json",
+      "sha256": "e4d5d7ac05f470599494b4b12fd141275cfc87f153095e4a9a1f5fca6e4bc3cd",
+      "size_bytes": 2214
+    }
+  ],
+  "index_excludes_itself": true,
+  "maximum_archive_part_bytes": 8388608,
+  "schema": "trnm-prepared-public-evidence-files-v1",
+  "source_head": "a56889a54aac5f14141bb45fb602141dd6a37645"
+}

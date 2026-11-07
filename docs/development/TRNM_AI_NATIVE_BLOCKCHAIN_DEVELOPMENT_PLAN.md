@@ -8399,3 +8399,50 @@ complete frozen source checks run on a fully materialized checkout. Publication
 uses the user-authorized existing HeptaRuntime local GitHub channel, preserves the
 old connector failure, and requires exact object/ref readback with no force update.
 All four general safety gates remain HOLD until their missing evidence is supplied.
+
+### 2026-11-07 — frozen competing-schedule evidence outcome (research / HOLD)
+
+Implementation a56889a54aac5f14141bb45fb602141dd6a37645 (tree
+b4e64c82d2646b9f32124feb510edc3349a375d0) completed the declared remote
+observation pipeline. This outcome updates the pending validation state in the
+preceding continuation entry; the original observations remain immutable.
+
+- All 696 Python tests, exact-source/inventory/link/CI/PQ checks, formatting,
+  main locked/offline dependency graph and strict workspace Clippy passed.
+- The full native Node outer suite returned exit 0 with 1250 passed, 0 failed
+  and 37 ignored. Root/sealed targeted groups passed 6/6 and 7/7.
+  An external driver parser rejected legitimate nested libtest summaries;
+  its original FAIL is retained. An independent checker matched the complete
+  same-ELF inventory and every outer result, recognizing all child output.
+- Four explicit native bridge tests passed. Both source-bound Python observe
+  and verify campaigns passed. Eight continuing-competition replays retain
+  sixteen fresh honest blocks, seventy-two honest attempts (fifty-six misses),
+  eight private checks (four misses), and eight matching authenticated reopens.
+  Only the late-arrival observer-advice classical control briefly replaces the
+  public tip; all eight runs end with honest work 51.
+- Eight finite certificates complete. The late classical finite replacement
+  probability is 1/64 and horizon survival is zero; early classical and the
+  declared serial quantum lifecycle have zero ideal replacement/survival.
+  Fault perturbations bound only private-machine faults under the exact
+  prescribed honest/receiver trajectory.
+- All 54 declared service configurations construct; twelve q0 configurations
+  complete within four modeled seconds, all thirty-six positive-q configurations
+  do not. These service cells are separate from the serial competition action
+  configuration. Physical calibration is absent.
+- Three empty-cache capacities each materialize sixteen complete native-matching
+  proofs, including fourteen target misses. The 262144-byte payload cap computes
+  AB once and reuses it fifteen times; noise, trace, ticket and full independent
+  checks remain charged. Payload limits and CPU timings do not certify complete
+  physical memory, unbiased speed, equal real resources or a quantum advantage.
+- The first optional fuzz graph check failed because three locked archives were
+  absent. A separate cache and complete online/offline graph replay passed with
+  identical metadata, 149 packages/nodes and all 136 registry checksums verified.
+  The original failed row and main result were not rewritten.
+
+All four general quantum gates remain HOLD: no calibrated complete machine,
+minimum legal cost/lower bound, QPU mining execution or general mixed-network
+settlement theorem is claimed. Production activation remains false.
+
+Evidence, full raw outputs, exact source/ELF identities, independent reviews and
+supplemental reconciliations are retained at
+[evidence/pon-quantum-competing-gates-20261107](../../evidence/pon-quantum-competing-gates-20261107/README.md).

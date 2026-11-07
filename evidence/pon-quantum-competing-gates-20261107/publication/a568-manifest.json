@@ -1,0 +1,216 @@
+{
+  "schema": "trnm-exact-git-object-publication-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "fix/chain-quantum-closure-api-20261107-c9b4",
+  "expected_remote_head": "b45545e241c16ebc9ea0b22d8169d78123d8d166",
+  "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+  "commits": [
+    {
+      "sha": "a56889a54aac5f14141bb45fb602141dd6a37645",
+      "raw_commit_base64": "dHJlZSBiNGU2NGM4MmQyNjQ2YjlmMzIxMjRmZWI1MTBlZGMzMzQ5YTM3NWQwCnBhcmVudCBiNDU1NDVlMjQxYzE2ZWJjOWVhMGIyMmQ4MTY5ZDc4MTIzZDhkMTY2CmF1dGhvciBDb2RleCA8Y29kZXhAb3BlbmFpLmNvbT4gMTc5NDA2MTY2NyAtMDUwMApjb21taXR0ZXIgQ29kZXggPGNvZGV4QG9wZW5haS5jb20+IDE3OTQwNjE2NjcgLTA1MDAKCnJlc2VhcmNoKHBvbik6IGJpbmQgY29udGludWluZyBob25lc3QgY29tcGV0aXRpb24gYW5kIHNlcnZpY2UgcmV1c2UgZXZpZGVuY2UK",
+      "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0",
+      "parent": "b45545e241c16ebc9ea0b22d8169d78123d8d166",
+      "entries": [
+        {
+          "path": "config/pon/pq-cross-branch-corpus-v1.json",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "37f5816e01f797a87e6d95930dcecd60dd2e07d2"
+        },
+        {
+          "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4d8949bdb094b1bba21f6f70c1b01ba2a9faf519"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/FINITE_QUANTUM_CONSENSUS.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "f62618f41f0e70d9463f207c40ed9c91906dcc38"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/MACHINE_SERVICE_AND_REUSE.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "325eede27079a030588ebaa1b5e4a505cc8d0637"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/test_w1_native_competition.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "82c483ab83701f7942130dc0261064630b4bef5a"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/test_w1_preprocessing_cache_campaign.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "02eb2ad958ba5ffdeffb971f493933d45695a979"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/test_w1_service_architecture_frontier.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "23dc59f0b650e238c73f87669bb51cc55020fbce"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/w1_native_competition.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4a96f962f463414254cbdf058908ed9e86262c9a"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/w1_preprocessing_cache_campaign.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "36216e71a078b59efaa8b93730e31d6822ee000a"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/experiments/w1_service_architecture_frontier.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "9655ffc639edd0366294c157a86ef49cda33f463"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/test_w1_competing_consensus.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "fa2b746c0ae1d2bec579d90973817fb0331215c1"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/test_w1_machine_architecture.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "c7809e151478d46e07d4a012fc77cc4e8a5aca44"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/test_w1_preprocessing_cache.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "46dc5e85309a4decb5f677fd5909a7ace991cd8e"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_competing_consensus.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "12bfc4bb3df2ca9e5e54af68bad4cd2246a5fbb4"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_finite_consensus.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "0b5606404aa58e5dd4ede0828963b5d1a80a19c7"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_machine_architecture.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "18ddb159e77cd27edbc0e121966b8bc54269fcb0"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_machine_envelope.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "3a41810898c953279a219a1d9fc6fdd0f0198999"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_preprocessing_cache.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "c391e7e8ecf055d1c40087d7c9fbfb40b130549e"
+        },
+        {
+          "path": "scripts/ci/check_ci_contract.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "3f5f5a3d0066f6f13e36a3de63a48412c4a4b9ac"
+        },
+        {
+          "path": "scripts/ci/ci_job.sh",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "02f2309cf296a2e45b418903ec240741ebd3cd7e"
+        },
+        {
+          "path": "scripts/ci/test_ci_contract.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "f3c19a4fd7ed7368a75c93d2edf41b8c3deb1d58"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a33f2f649b8eaab139bf98a6c78de9666e3f8cf3"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "9854f3856fc85648aecb875e0a4ab5dcd4e5e4dc"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/quantum_native_bridge_tests/competition.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "3525ab1767a0a4be327cd650767105b17de80c92"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/proof_wire.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a412af947195a3545a950ca330bb3ba65357fe96"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/root_separation_tests.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4c1c0d123b516c218f9a29217227d4d5ce807d17"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4f4bad097d0c21544b33d3c5a465e02761e90128"
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "0829ca96e221897b875f79b2af98a10ad7a87cf6"
+        }
+      ],
+      "parent_tree": "075685457cba333ac8f01fccf31149c0716990d8"
+    }
+  ],
+  "blobs": {
+    "02eb2ad958ba5ffdeffb971f493933d45695a979": 8422,
+    "02f2309cf296a2e45b418903ec240741ebd3cd7e": 31151,
+    "0829ca96e221897b875f79b2af98a10ad7a87cf6": 7977,
+    "0b5606404aa58e5dd4ede0828963b5d1a80a19c7": 52479,
+    "12bfc4bb3df2ca9e5e54af68bad4cd2246a5fbb4": 18221,
+    "18ddb159e77cd27edbc0e121966b8bc54269fcb0": 17969,
+    "23dc59f0b650e238c73f87669bb51cc55020fbce": 3226,
+    "325eede27079a030588ebaa1b5e4a505cc8d0637": 10688,
+    "3525ab1767a0a4be327cd650767105b17de80c92": 28337,
+    "36216e71a078b59efaa8b93730e31d6822ee000a": 17097,
+    "37f5816e01f797a87e6d95930dcecd60dd2e07d2": 128465,
+    "3a41810898c953279a219a1d9fc6fdd0f0198999": 33981,
+    "3f5f5a3d0066f6f13e36a3de63a48412c4a4b9ac": 72791,
+    "46dc5e85309a4decb5f677fd5909a7ace991cd8e": 12442,
+    "4a96f962f463414254cbdf058908ed9e86262c9a": 20067,
+    "4c1c0d123b516c218f9a29217227d4d5ce807d17": 8897,
+    "4d8949bdb094b1bba21f6f70c1b01ba2a9faf519": 631825,
+    "4f4bad097d0c21544b33d3c5a465e02761e90128": 10519,
+    "82c483ab83701f7942130dc0261064630b4bef5a": 17874,
+    "9655ffc639edd0366294c157a86ef49cda33f463": 7620,
+    "9854f3856fc85648aecb875e0a4ab5dcd4e5e4dc": 38682,
+    "a33f2f649b8eaab139bf98a6c78de9666e3f8cf3": 378019,
+    "a412af947195a3545a950ca330bb3ba65357fe96": 7041,
+    "c391e7e8ecf055d1c40087d7c9fbfb40b130549e": 22411,
+    "c7809e151478d46e07d4a012fc77cc4e8a5aca44": 14855,
+    "f3c19a4fd7ed7368a75c93d2edf41b8c3deb1d58": 97060,
+    "f62618f41f0e70d9463f207c40ed9c91906dcc38": 19209,
+    "fa2b746c0ae1d2bec579d90973817fb0331215c1": 13429
+  }
+}

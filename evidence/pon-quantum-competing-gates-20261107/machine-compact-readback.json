@@ -1,0 +1,1448 @@
+{
+  "cache": {
+    "capacities": [
+      {
+        "actual_cpu_stage_observations": {
+          "independent_full_relation_check": {
+            "completed_stages": 16,
+            "cpu_ns": 737719838,
+            "cpu_seconds": "0.737719838",
+            "wall_ns": 738618545,
+            "wall_seconds": "0.738618545"
+          },
+          "producer": {
+            "completed_stages": 16,
+            "cpu_ns": 892916545,
+            "cpu_seconds": "0.892916545",
+            "wall_ns": 893645619,
+            "wall_seconds": "0.893645619"
+          }
+        },
+        "attempts": 16,
+        "cache_event_counters": {
+          "evictions": 0,
+          "hits": 0,
+          "insertion_refusals": 96,
+          "insertions": 0,
+          "key_and_value_bytes_evicted": 0,
+          "key_and_value_bytes_written": 0,
+          "key_bytes_compared": 0,
+          "lookups": 96,
+          "misses": 96,
+          "value_bytes_read": 0
+        },
+        "capacity_is_total_physical_or_process_memory": false,
+        "capacity_payload_bytes": 0,
+        "complete_proofs": 16,
+        "complete_relation_checks": 16,
+        "failed_execution_stages": 0,
+        "initial_cache": "empty",
+        "lru_state_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "noise_exhaustions": 0,
+        "peak_resident_payload_bytes": 0,
+        "per_capacity_exclusive_process_memory_observed": false,
+        "resident_entries": 0,
+        "resident_payload_bytes": 0,
+        "target_hits": 2,
+        "target_misses": 14,
+        "work_unit_cost_components": {
+          "ab_field_multiply_add_pairs": 4194304,
+          "ab_products_computed": 16,
+          "ab_products_reused": 0,
+          "cached_challenge_sha_compressions_reused": 0,
+          "challenge_sha_compressions": 96,
+          "low_rank_field_multiply_add_pairs": 1048576,
+          "noise_hashes": 4096,
+          "noise_raw_words_checked": 32768,
+          "offset_field_additions": 131072,
+          "proof_bytes_materialized": 787008,
+          "ticket_input_bytes_hashed": 1440,
+          "trace_field_multiply_add_pairs": 4194304,
+          "trace_input_bytes_hashed": 2097920,
+          "trace_prefix_words": 524288
+        }
+      },
+      {
+        "actual_cpu_stage_observations": {
+          "independent_full_relation_check": {
+            "completed_stages": 16,
+            "cpu_ns": 736936351,
+            "cpu_seconds": "0.736936351",
+            "wall_ns": 737166473,
+            "wall_seconds": "0.737166473"
+          },
+          "producer": {
+            "completed_stages": 16,
+            "cpu_ns": 883944293,
+            "cpu_seconds": "0.883944293",
+            "wall_ns": 884512716,
+            "wall_seconds": "0.884512716"
+          }
+        },
+        "attempts": 16,
+        "cache_event_counters": {
+          "evictions": 0,
+          "hits": 15,
+          "insertion_refusals": 16,
+          "insertions": 9,
+          "key_and_value_bytes_evicted": 0,
+          "key_and_value_bytes_written": 2369,
+          "key_bytes_compared": 5887,
+          "lookups": 40,
+          "misses": 25,
+          "value_bytes_read": 480
+        },
+        "capacity_is_total_physical_or_process_memory": false,
+        "capacity_payload_bytes": 4096,
+        "complete_proofs": 16,
+        "complete_relation_checks": 16,
+        "failed_execution_stages": 0,
+        "initial_cache": "empty",
+        "lru_state_sha256": "a0c662b92c416515f653094dcf034c2d67c544f24ac738f5cdb13b7abbbdb666",
+        "noise_exhaustions": 0,
+        "peak_resident_payload_bytes": 2369,
+        "per_capacity_exclusive_process_memory_observed": false,
+        "resident_entries": 9,
+        "resident_payload_bytes": 2369,
+        "target_hits": 2,
+        "target_misses": 14,
+        "work_unit_cost_components": {
+          "ab_field_multiply_add_pairs": 4194304,
+          "ab_products_computed": 16,
+          "ab_products_reused": 0,
+          "cached_challenge_sha_compressions_reused": 71,
+          "challenge_sha_compressions": 25,
+          "low_rank_field_multiply_add_pairs": 1048576,
+          "noise_hashes": 4096,
+          "noise_raw_words_checked": 32768,
+          "offset_field_additions": 131072,
+          "proof_bytes_materialized": 787008,
+          "ticket_input_bytes_hashed": 1440,
+          "trace_field_multiply_add_pairs": 4194304,
+          "trace_input_bytes_hashed": 2097920,
+          "trace_prefix_words": 524288
+        }
+      },
+      {
+        "actual_cpu_stage_observations": {
+          "independent_full_relation_check": {
+            "completed_stages": 16,
+            "cpu_ns": 736248540,
+            "cpu_seconds": "0.73624854",
+            "wall_ns": 736363385,
+            "wall_seconds": "0.736363385"
+          },
+          "producer": {
+            "completed_stages": 16,
+            "cpu_ns": 728497688,
+            "cpu_seconds": "0.728497688",
+            "wall_ns": 728563303,
+            "wall_seconds": "0.728563303"
+          }
+        },
+        "attempts": 16,
+        "cache_event_counters": {
+          "evictions": 0,
+          "hits": 30,
+          "insertion_refusals": 0,
+          "insertions": 10,
+          "key_and_value_bytes_evicted": 0,
+          "key_and_value_bytes_written": 51547,
+          "key_bytes_compared": 497797,
+          "lookups": 40,
+          "misses": 10,
+          "value_bytes_read": 246240
+        },
+        "capacity_is_total_physical_or_process_memory": false,
+        "capacity_payload_bytes": 262144,
+        "complete_proofs": 16,
+        "complete_relation_checks": 16,
+        "failed_execution_stages": 0,
+        "initial_cache": "empty",
+        "lru_state_sha256": "fbd7357d4eec76ad368088115f75180b31c95462908df3e3a453a33388b28f42",
+        "noise_exhaustions": 0,
+        "peak_resident_payload_bytes": 51547,
+        "per_capacity_exclusive_process_memory_observed": false,
+        "resident_entries": 10,
+        "resident_payload_bytes": 51547,
+        "target_hits": 2,
+        "target_misses": 14,
+        "work_unit_cost_components": {
+          "ab_field_multiply_add_pairs": 262144,
+          "ab_products_computed": 1,
+          "ab_products_reused": 15,
+          "cached_challenge_sha_compressions_reused": 71,
+          "challenge_sha_compressions": 25,
+          "low_rank_field_multiply_add_pairs": 1048576,
+          "noise_hashes": 4096,
+          "noise_raw_words_checked": 32768,
+          "offset_field_additions": 131072,
+          "proof_bytes_materialized": 787008,
+          "ticket_input_bytes_hashed": 1440,
+          "trace_field_multiply_add_pairs": 4194304,
+          "trace_input_bytes_hashed": 2097920,
+          "trace_prefix_words": 524288
+        }
+      }
+    ],
+    "claims": {
+      "CPU_sample_maximum_is_runtime_upper_bound": false,
+      "QPU_or_GPU_executed": false,
+      "complete_energy_capital_or_network_cost": false,
+      "exclusive_host_cpu_calibration": false,
+      "minimum_legal_attacker_cost_proved": false,
+      "native_node_executed_by_this_reader": false,
+      "production_activation": false,
+      "quantum_mining_qualified": false,
+      "same_total_resource_advantage_proved": false
+    },
+    "comparison_claims": {
+      "all_legal_caches_or_algorithms_enumerated": false,
+      "minimum_attacker_cost_proved": false,
+      "native_block_admission_executed": false,
+      "physical_costs_calibrated": false,
+      "production_activation": false,
+      "quantum_hardware_executed": false,
+      "quantum_mining_qualified": false,
+      "quantum_oracle_cost_reduced_by_ab_cache_proved": false,
+      "same_total_economic_budget_proved": false
+    },
+    "input_sha256": "801c7f4b701eacd61bb5fe5e1a13e5392bc55ddb8fcb9bfd708a28195787564b",
+    "journal": {
+      "completed_stages": 96,
+      "events": 194,
+      "failed_stages": 0,
+      "full_event_binding_checked": true,
+      "started_stages": 96,
+      "unmatched_started_stages": 0
+    },
+    "journal_sha256": "f36ad7f4f6d22681fd19d822091f7bb27355279f6f94fd23dd6a198c4f8ac368",
+    "native_fixture_equivalence": {
+      "actual_native_fixture_proof_identities_checked": 48,
+      "full_proofs_match_retained_native_packets": true,
+      "same_packet_new_node_execution_claimed": false
+    },
+    "native_fixture_sha256": "71e5dbf551305c1c716eb846abe4e72fb2a6dbe409e95977d05fa6b50e7fb983",
+    "observed_at_utc": "2026-11-07T15:06:52.142718+00:00",
+    "process_clock_seconds": {
+      "accounted_stage_cpu_ns": "4.716263255",
+      "accounted_stage_wall_ns": "4.718870041",
+      "cpu_ns": "6.275263428",
+      "other_observation_cpu_ns": "1.559000173",
+      "other_observation_wall_ns": "1.757047749",
+      "wall_ns": "6.47591779"
+    },
+    "process_observation": {
+      "accounted_stage_cpu_ns": 4716263255,
+      "accounted_stage_wall_ns": 4718870041,
+      "cpu_ns": 6275263428,
+      "other_observation_cpu_ns": 1559000173,
+      "other_observation_wall_ns": 1757047749,
+      "process_high_water_rss_bytes_after": 165289984,
+      "process_high_water_rss_bytes_before": 165289984,
+      "scope": "this observation function including source/fixture checks and all capacities; excludes interpreter startup, imports and final report serialization; RSS is process-wide high-water, not isolated cache usage",
+      "wall_ns": 6475917790
+    },
+    "report_sha256": "e4378ab2cb73bfb2786adf5d2f72f6d5d6f4ab552166039ffc64c8abbc50ca36",
+    "runtime": {
+      "executable": "/usr/bin/python3",
+      "logical_cpus_reported": 32,
+      "platform": "Linux-7.0.0-42-generic-x86_64-with-glibc2.43",
+      "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]"
+    },
+    "schema": "trnm-w1-native-preprocessing-cache-cpu-observation-v1",
+    "status": "PASS"
+  },
+  "frozen_source": {
+    "head": "a56889a54aac5f14141bb45fb602141dd6a37645",
+    "inventory_sha256": "a1f7fa55fccc079391b874a86b2bdd5ae667615777aa305ad355d55b66c99424",
+    "tracked_files": 11030,
+    "tree": "b4e64c82d2646b9f32124feb510edc3349a375d0"
+  },
+  "limitations": [
+    "18/54 cells enumerate declared conditional machines, not all legal algorithms or a lower bound.",
+    "Frontier q=0 retains the modeled quantum-machine lifecycle; CPU proof observations are separate.",
+    "Constructed, deadline-feasible delivery slot, positive ideal probability and actual machine completion are different.",
+    "All physical calibration and quantum-execution qualification flags remain false.",
+    "Cache capacity is key/value payload only; process RSS includes other allocations and is not per-capacity exclusive memory.",
+    "Capacity groups run sequentially in one warmed process/OS environment; CPU times are descriptive observations.",
+    "Target misses retain complete proofs and independent full relation checks; cache lookup misses are a different count.",
+    "This extraction reruns no model, proof, native node, test or compiler and does not replace verification receipts."
+  ],
+  "model_test_native_or_compilation_executed": false,
+  "original18": {
+    "calibration_statuses": [],
+    "cells_with_a_time_feasible_delivery_slot": [],
+    "claims": {
+      "energy_or_capital_prices_calibrated": false,
+      "minimum_attacker_cost_proved": false,
+      "native_blocks_admitted_by_this_comparison": 0,
+      "parallel_hardware_measured": false,
+      "physical_parameters_calibrated": false,
+      "production_activation": false,
+      "quantum_hardware_executed": false,
+      "quantum_mining_qualified": false,
+      "same_total_economic_budget_proved": false
+    },
+    "counts": {
+      "all_trial_checks_time_feasible_cells": 0,
+      "candidate_check_time_feasible_cells": 0,
+      "conditional_delivery_lower_positive_cells": 0,
+      "conditional_delivery_upper_positive_cells": 18,
+      "constructed_under_declared_bounds": 18,
+      "delivery_slot_time_feasible_cells": 0,
+      "full_reserved_plan_fits_horizon_cells": 0,
+      "ideal_delivery_lower_positive_cells": 0,
+      "ideal_delivery_upper_positive_cells": 0,
+      "refusal_reasons": {},
+      "refused_cells": 0,
+      "retained_cells": 18
+    },
+    "declared_grid": {
+      "horizon_seconds": "4",
+      "iterations": [
+        0,
+        1,
+        2
+      ],
+      "physical_qubit_budget": 10000000000000000,
+      "predicates": [
+        "full",
+        "prefix-restricted"
+      ],
+      "processors": [
+        1,
+        2,
+        4
+      ],
+      "trials": 2
+    },
+    "domain_sha256": "c210226214537436524b003c6afb910dc57a26a583af65bfbee5d5768c0e5d6c",
+    "groups": [
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "original-serial",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 12,
+        "constructed_under_declared_bounds": 12,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q-positive",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 12
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "original-serial",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 6,
+        "constructed_under_declared_bounds": 6,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q0",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 6
+      }
+    ],
+    "input_sha256": "a259c5ee026c573c32ae0f243e04b3f1941fe4dfc483fbe90ca2a495c40b3f12",
+    "native_fixture_sha256": "71e5dbf551305c1c716eb846abe4e72fb2a6dbe409e95977d05fa6b50e7fb983",
+    "report_sha256": "f0d0749dd0b8cf7151f34787ee705d3c4de018d51f9ca4fb74a860ccadb2a846",
+    "schema": "trnm-w1-constructed-machine-frontier-v1",
+    "undominated_cell_count": 18,
+    "undominated_cell_names": [
+      "full-p1-q0",
+      "full-p1-q1",
+      "full-p1-q2",
+      "full-p2-q0",
+      "full-p2-q1",
+      "full-p2-q2",
+      "full-p4-q0",
+      "full-p4-q1",
+      "full-p4-q2",
+      "prefix-restricted-p1-q0",
+      "prefix-restricted-p1-q1",
+      "prefix-restricted-p1-q2",
+      "prefix-restricted-p2-q0",
+      "prefix-restricted-p2-q1",
+      "prefix-restricted-p2-q2",
+      "prefix-restricted-p4-q0",
+      "prefix-restricted-p4-q1",
+      "prefix-restricted-p4-q2"
+    ]
+  },
+  "original_reports_modified": false,
+  "schema": "trnm-machine-compact-readback-v1",
+  "service54": {
+    "calibration_statuses": [
+      "MISSING_EXTERNAL_EVIDENCE"
+    ],
+    "cells_with_a_time_feasible_delivery_slot": [
+      {
+        "code_distance": 29,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+            "numerator": 530879329350621400243171529229988868212621903228594849684303250854961460847224950308223455404125938835313409668539575643177219933774793
+          },
+          "upper": {
+            "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+            "numerator": 544198146894724620824400765442864385285767935444036927067691517607658637319252303474597741366245476737166590331460424356822780066225207
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 326699467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 876699467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 261152787
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 326699467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 481152787
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 200000000,
+          "numerator": 481152787
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 64,
+            "numerator": 15
+          },
+          "upper": {
+            "denominator": 64,
+            "numerator": 15
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-full-p1-q0",
+        "processors": 1,
+        "whole_plan_failure_union_upper": {
+          "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+          "numerator": 6659408772051610290614618106437758536573016107721038691694133376348588236013676583187142981059768950926590331460424356822780066225207
+        }
+      },
+      {
+        "code_distance": 29,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+            "numerator": 467886508476870656821243465092441620814435730886286562858194187801549661954035345404992659164942373018246136880644603472842408463606729
+          },
+          "upper": {
+            "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+            "numerator": 481205326020973877402472701298436642039611548566896177555676193731857143458557855200154178608901142291833863119355396527157591536393271
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 163363467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 438363467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 130583987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 163363467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 240583987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 100000000,
+          "numerator": 240583987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 4096,
+            "numerator": 1695
+          },
+          "upper": {
+            "denominator": 4096,
+            "numerator": 1695
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-full-p2-q0",
+        "processors": 2,
+        "whole_plan_failure_union_upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 6659408772051610290614618102997510612587908840304807348741002965153740752261254897580759721979384636793863119355396527157591536393271
+        }
+      },
+      {
+        "code_distance": 31,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 375647673374815817758226295720504759283938941888177524970023376620454370605648428415237692479160583406339024525846774279497817669928947
+          },
+          "upper": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 377068348198975190402355239074604624720302412434006101063779830022922584321795178070558084500412331506940975474153225720502182330071053
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 87131717
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 224631717
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 69648587
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 87131717
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 124648587
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 50000000,
+          "numerator": 124648587
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          },
+          "upper": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-full-p4-q0",
+        "processors": 4,
+        "whole_plan_failure_union_upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 710337412079686322064471677049932718181735272914288046878226701234106858073374827660196010625874050300975474153225720502182330071053
+        }
+      },
+      {
+        "code_distance": 29,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+            "numerator": 531012220531171829493160223658574660409615562549445625996977691539375963413995073363883878237764738436299519055627706573895247249927893
+          },
+          "upper": {
+            "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+            "numerator": 544065255714174191574412071014278593088774276123186150755017076923244134752482180418937318532606677136180480944372293426104752750072107
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 323429467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 873429467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 258536787
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 323429467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 478536787
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 200000000,
+          "numerator": 478536787
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 64,
+            "numerator": 15
+          },
+          "upper": {
+            "denominator": 64,
+            "numerator": 15
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-prefix-restricted-p1-q0",
+        "processors": 1,
+        "whole_plan_failure_union_upper": {
+          "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+          "numerator": 6526517591501181040625923677851966339579356786870262379019692691934085669243553527526720147420969349940480944372293426104752750072107
+        }
+      },
+      {
+        "code_distance": 29,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+            "numerator": 468019399657421086071232159521027413011429390207137339170868628485964164520805468460653081998581172619232246267732734403560435779759829
+          },
+          "upper": {
+            "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+            "numerator": 481072434840423448152484006869850849842617889246045401243001753047442640891787732144493755775262342690847753732267265596439564220240171
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 161728467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 436728467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 129275987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 161728467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 239275987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 100000000,
+          "numerator": 239275987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 4096,
+            "numerator": 1695
+          },
+          "upper": {
+            "denominator": 4096,
+            "numerator": 1695
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-prefix-restricted-p2-q0",
+        "processors": 2,
+        "whole_plan_failure_union_upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 6526517591501181040625923674411718415594249519454031036066562280739238185491131841920336888340585035807753732267265596439564220240171
+        }
+      },
+      {
+        "code_distance": 31,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 375661848438853031519976498102214501099461931349868575251924877296896021221833326677692068561860630982343239041074907699305810806394547
+          },
+          "upper": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 377054173134937976640605036692894882904779422972315050781878329346480933705610279808103708417712283930936760958925092300694189193605453
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 86259717
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 223759717
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 68950987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 86259717
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 123950987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 50000000,
+          "numerator": 123950987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          },
+          "upper": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-1024-readout-8-v1-prefix-restricted-p4-q0",
+        "processors": 4,
+        "whole_plan_failure_union_upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 696162348042472560314269295340190902658745811223237764976726024792456241888476565205819927925826474296760958925092300694189193605453
+        }
+      },
+      {
+        "code_distance": 25,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 132030561880440106703880082025768168818239904000604261061460353198862246533318468940428148285122289149540454718100931164167642338032539
+          },
+          "upper": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 136738807180896398563012991642445144556357555667553683126538338916792778008300844505277150907470564743579545281899068835832357661967461
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 5113467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 555113467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 3883987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 5113467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 223883987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 200000000,
+          "numerator": 223883987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 64,
+            "numerator": 15
+          },
+          "upper": {
+            "denominator": 64,
+            "numerator": 15
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-full-p1-q0",
+        "processors": 1,
+        "whole_plan_failure_union_upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 2354122650228145929566454808338487869058825833474711032538992858965265737491187782424501311174137797019545281899068835832357661967461
+        }
+      },
+      {
+        "code_distance": 25,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 116282356662002420848398065991381356968693360915027189354933087435509296810021067714620449225326397695273636521127188121583939470490523
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 120990601962458712707530975606338208744818458948268495748534507947842404543127232436666260218134481132246363478872811878416060529509477
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 2570467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 277570467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 1949587
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 2570467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 111949587
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 100000000,
+          "numerator": 111949587
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 4096,
+            "numerator": 1695
+          },
+          "upper": {
+            "denominator": 4096,
+            "numerator": 1695
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-full-p2-q0",
+        "processors": 2,
+        "whole_plan_failure_union_upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 2354122650228145929566454807478425888062549016620653196800710256166553866553082361022905496404041718486363478872811878416060529509477
+        }
+      },
+      {
+        "code_distance": 27,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+            "numerator": 18767193594810256836664348486092310344288629724680422103999775189123986534246090629233366573257738142962289929579688691037726689375153
+          },
+          "upper": {
+            "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+            "numerator": 18868607483879293571364728253663158855923437991428759197690385143044861212126089695056422275720907602701710070420311308962273310624847
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 1387217
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 138887217
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 1052987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 1387217
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 56052987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 50000000,
+          "numerator": 56052987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          },
+          "upper": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-full-p4-q0",
+        "processors": 4,
+        "whole_plan_failure_union_upper": {
+          "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+          "numerator": 50706944534518367350189883785424255817404133374168546845304976960437338939999532911527851231584729869710070420311308962273310624847
+        }
+      },
+      {
+        "code_distance": 25,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 132073861133645286553560369310501959101572610172741468238490643377969053753836785044419722729630545879930835584721882997899110274558109
+          },
+          "upper": {
+            "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+            "numerator": 136695507927691218713332704357711354273024849495416475949508048737685970787782528401285576462962308013189164415278117002100889725441891
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 5074467
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 555074467
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 3852787
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 500000000,
+              "numerator": 5074467
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 200000000,
+              "numerator": 223852787
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 200000000,
+          "numerator": 223852787
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 64,
+            "numerator": 15
+          },
+          "upper": {
+            "denominator": 64,
+            "numerator": 15
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-prefix-restricted-p1-q0",
+        "processors": 1,
+        "whole_plan_failure_union_upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 2310823397022966079886167523604697585726119661337503855508702679858458516972871678432926866665881066629164415278117002100889725441891
+        }
+      },
+      {
+        "code_distance": 25,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 116325655915207600698078353276115147252026067087164396531963377614616104030539383818612023669834654425664017387748139955315407407016093
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 120947302709253532857850688321604418461485752776131288571504217768735597322608916332674685773626224401855982612251860044684592592983907
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 2550967
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 277550967
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 1933987
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 250000000,
+              "numerator": 2550967
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 100000000,
+              "numerator": 111933987
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 100000000,
+          "numerator": 111933987
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 4096,
+            "numerator": 1695
+          },
+          "upper": {
+            "denominator": 4096,
+            "numerator": 1695
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-prefix-restricted-p2-q0",
+        "processors": 2,
+        "whole_plan_failure_union_upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 2310823397022966079886167522744635604729842844483446019770420077059746646034766257031331051895784988095982612251860044684592592983907
+        }
+      },
+      {
+        "code_distance": 27,
+        "conditional_delivery_probability": {
+          "lower": {
+            "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+            "numerator": 18768126221678337489679581172483841681210022467602464240628762791943795947768763591691411153496779806731224441194406520743309827461517
+          },
+          "upper": {
+            "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+            "numerator": 18867674857011212918349495567271627519002045248506717061061397540225051798603416732598377695481865938932775558805593479256690172538483
+          }
+        },
+        "deadline_branches": [
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 1376717
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 0,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 138876717
+            }
+          },
+          {
+            "all_failure_path_checks_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 1044587
+            },
+            "all_failure_path_start_seconds_exact": {
+              "denominator": 125000000,
+              "numerator": 1376717
+            },
+            "delivery_complete_by_deadline": true,
+            "schedule_index": 1,
+            "search_complete_by_deadline": true,
+            "winning_branch_delivery_finish_seconds_exact": {
+              "denominator": 50000000,
+              "numerator": 56044587
+            }
+          }
+        ],
+        "full_reserved_plan_seconds_exact": {
+          "denominator": 50000000,
+          "numerator": 56044587
+        },
+        "ideal_delivery_probability": {
+          "lower": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          },
+          "upper": {
+            "denominator": 16777216,
+            "numerator": 11012415
+          }
+        },
+        "iterations": 0,
+        "name": "declared-reset-65536-readout-64-v1-prefix-restricted-p4-q0",
+        "processors": 4,
+        "whole_plan_failure_union_upper": {
+          "denominator": 28668732699875893895135261191276086759957062364603514046719860492336535951106060100875231913876571081932800000000000000000000000000000,
+          "numerator": 49774317666437714334957197393892918896011390452126410216317374140627925417326570453483270992543066100775558805593479256690172538483
+        }
+      }
+    ],
+    "claims": {
+      "compiled_physical_layout": false,
+      "complete_energy_or_capital_cost": false,
+      "minimum_attacker_cost_proved": false,
+      "physical_parameters_calibrated": false,
+      "production_activation": false,
+      "quantum_hardware_executed": false,
+      "quantum_mining_qualified": false,
+      "same_total_economic_budget_proved": false
+    },
+    "counts": {
+      "all_trial_checks_time_feasible_cells": 12,
+      "candidate_check_time_feasible_cells": 12,
+      "conditional_delivery_lower_positive_cells": 12,
+      "conditional_delivery_upper_positive_cells": 54,
+      "constructed_under_declared_bounds": 54,
+      "delivery_slot_time_feasible_cells": 12,
+      "full_reserved_plan_fits_horizon_cells": 12,
+      "ideal_delivery_lower_positive_cells": 12,
+      "ideal_delivery_upper_positive_cells": 12,
+      "refusal_reasons": {},
+      "refused_cells": 0,
+      "retained_cells": 54
+    },
+    "declared_grid": {
+      "architectures": [
+        {
+          "classical_controller_cores": 1,
+          "classical_controller_memory_bytes": 1048576,
+          "controller_patches": 8,
+          "initialization_ports": 1,
+          "name": "declared-reset-1-readout-1-v1",
+          "patches_per_initialization_port": 2,
+          "patches_per_readout_port": 2,
+          "readout_ports": 1
+        },
+        {
+          "classical_controller_cores": 1,
+          "classical_controller_memory_bytes": 1048576,
+          "controller_patches": 8,
+          "initialization_ports": 1024,
+          "name": "declared-reset-1024-readout-8-v1",
+          "patches_per_initialization_port": 2,
+          "patches_per_readout_port": 2,
+          "readout_ports": 8
+        },
+        {
+          "classical_controller_cores": 1,
+          "classical_controller_memory_bytes": 1048576,
+          "controller_patches": 8,
+          "initialization_ports": 65536,
+          "name": "declared-reset-65536-readout-64-v1",
+          "patches_per_initialization_port": 2,
+          "patches_per_readout_port": 2,
+          "readout_ports": 64
+        }
+      ],
+      "horizon_seconds": "4",
+      "iterations": [
+        0,
+        1,
+        2
+      ],
+      "physical_qubit_budget": 10000000000000000,
+      "predicates": [
+        "full",
+        "prefix-restricted"
+      ],
+      "processors": [
+        1,
+        2,
+        4
+      ],
+      "trials": 2
+    },
+    "domain_sha256": "c210226214537436524b003c6afb910dc57a26a583af65bfbee5d5768c0e5d6c",
+    "groups": [
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "declared-reset-1-readout-1-v1",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 12,
+        "constructed_under_declared_bounds": 12,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q-positive",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 12
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "declared-reset-1-readout-1-v1",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 6,
+        "constructed_under_declared_bounds": 6,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q0",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 6
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "declared-reset-1024-readout-8-v1",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 12,
+        "constructed_under_declared_bounds": 12,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q-positive",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 12
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 6,
+        "architecture": "declared-reset-1024-readout-8-v1",
+        "candidate_check_time_feasible_cells": 6,
+        "conditional_delivery_lower_positive_cells": 6,
+        "conditional_delivery_upper_positive_cells": 6,
+        "constructed_under_declared_bounds": 6,
+        "delivery_slot_time_feasible_cells": 6,
+        "execution_kind": "conditional-machine-q0",
+        "full_reserved_plan_fits_horizon_cells": 6,
+        "ideal_delivery_lower_positive_cells": 6,
+        "ideal_delivery_upper_positive_cells": 6,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 6
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 0,
+        "architecture": "declared-reset-65536-readout-64-v1",
+        "candidate_check_time_feasible_cells": 0,
+        "conditional_delivery_lower_positive_cells": 0,
+        "conditional_delivery_upper_positive_cells": 12,
+        "constructed_under_declared_bounds": 12,
+        "delivery_slot_time_feasible_cells": 0,
+        "execution_kind": "conditional-machine-q-positive",
+        "full_reserved_plan_fits_horizon_cells": 0,
+        "ideal_delivery_lower_positive_cells": 0,
+        "ideal_delivery_upper_positive_cells": 0,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 12
+      },
+      {
+        "all_trial_checks_time_feasible_cells": 6,
+        "architecture": "declared-reset-65536-readout-64-v1",
+        "candidate_check_time_feasible_cells": 6,
+        "conditional_delivery_lower_positive_cells": 6,
+        "conditional_delivery_upper_positive_cells": 6,
+        "constructed_under_declared_bounds": 6,
+        "delivery_slot_time_feasible_cells": 6,
+        "execution_kind": "conditional-machine-q0",
+        "full_reserved_plan_fits_horizon_cells": 6,
+        "ideal_delivery_lower_positive_cells": 6,
+        "ideal_delivery_upper_positive_cells": 6,
+        "refusal_reasons": {},
+        "refused_cells": 0,
+        "retained_cells": 6
+      }
+    ],
+    "input_sha256": "168fda25a4419c42c74eeb97259a7fbba0e58c1067513ddb7c598aa15fa634af",
+    "native_fixture_sha256": "71e5dbf551305c1c716eb846abe4e72fb2a6dbe409e95977d05fa6b50e7fb983",
+    "report_sha256": "3e70dacc49e241b79e97a98b6187c1d5357bfc7b8d6120fcdb55edcb6917e71c",
+    "schema": "trnm-w1-service-architecture-frontier-v1",
+    "undominated_cell_count": 30,
+    "undominated_cell_names": [
+      "declared-reset-1-readout-1-v1-full-p1-q0",
+      "declared-reset-1-readout-1-v1-full-p1-q1",
+      "declared-reset-1-readout-1-v1-full-p1-q2",
+      "declared-reset-1-readout-1-v1-full-p2-q0",
+      "declared-reset-1-readout-1-v1-full-p2-q1",
+      "declared-reset-1-readout-1-v1-full-p2-q2",
+      "declared-reset-1-readout-1-v1-full-p4-q0",
+      "declared-reset-1-readout-1-v1-full-p4-q1",
+      "declared-reset-1-readout-1-v1-full-p4-q2",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p1-q0",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p1-q1",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p1-q2",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p2-q0",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p2-q1",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p2-q2",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p4-q0",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p4-q1",
+      "declared-reset-1-readout-1-v1-prefix-restricted-p4-q2",
+      "declared-reset-1024-readout-8-v1-full-p1-q0",
+      "declared-reset-1024-readout-8-v1-full-p2-q0",
+      "declared-reset-1024-readout-8-v1-full-p4-q0",
+      "declared-reset-1024-readout-8-v1-prefix-restricted-p1-q0",
+      "declared-reset-1024-readout-8-v1-prefix-restricted-p2-q0",
+      "declared-reset-1024-readout-8-v1-prefix-restricted-p4-q0",
+      "declared-reset-65536-readout-64-v1-full-p1-q0",
+      "declared-reset-65536-readout-64-v1-full-p2-q0",
+      "declared-reset-65536-readout-64-v1-full-p4-q0",
+      "declared-reset-65536-readout-64-v1-prefix-restricted-p1-q0",
+      "declared-reset-65536-readout-64-v1-prefix-restricted-p2-q0",
+      "declared-reset-65536-readout-64-v1-prefix-restricted-p4-q0"
+    ]
+  },
+  "source_binding": "matched supplied outer tracked-source inventory",
+  "source_report": {
+    "bytes": 807548,
+    "path": "/home/qian-qi/work/trnm-quantum-four-gates-20261107-c9b4/readback-competing-a56889a-v2/machine-cache-summary.json",
+    "sha256": "d3d465fa35a8cd4ed2ae582737c332cb6b6844fc4d8cae7f4a2ea6650b64f4f2"
+  },
+  "status": "READBACK_ONLY"
+}

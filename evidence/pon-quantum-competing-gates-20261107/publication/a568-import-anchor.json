@@ -1,0 +1,32 @@
+[
+  {
+    "argv": [
+      "rev-parse",
+      "b45545e241c16ebc9ea0b22d8169d78123d8d166^{tree}"
+    ],
+    "exit_code": 0,
+    "stdout": "075685457cba333ac8f01fccf31149c0716990d8\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "update-ref",
+      "refs/heads/local-import-a568-base-c9b4",
+      "b45545e241c16ebc9ea0b22d8169d78123d8d166",
+      "0000000000000000000000000000000000000000"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "bundle",
+      "verify",
+      "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-a56889a.bundle"
+    ],
+    "exit_code": 0,
+    "stdout": "The bundle contains this ref:\na56889a54aac5f14141bb45fb602141dd6a37645 HEAD\nThe bundle requires this ref:\nec3a939706592c6ec9dd677b70589a7e8860cdfd \nThe bundle uses this hash algorithm: sha1\n",
+    "stderr": "/Users/qianqi/work/chain-quantum-publish-20261107-c9b4/continuation-a56889a.bundle is okay\n"
+  }
+]

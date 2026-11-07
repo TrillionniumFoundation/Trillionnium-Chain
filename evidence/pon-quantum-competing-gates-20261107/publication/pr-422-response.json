@@ -1,0 +1,1 @@
+{"message":"Validation Failed","errors":[{"resource":"PullRequest","code":"custom","message":"A pull request already exists for TrillionniumFoundation:fix/chain-quantum-closure-api-20261107-c9b4."}],"documentation_url":"https://docs.github.com/rest/pulls/pulls#create-a-pull-request","status":"422"}
