@@ -17,6 +17,27 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Funded demand and continuous-upgrade evidence, 2026-11-07 America/New_York:**
+Continue the existing #688 candidate at `3d1b6507671ec694ce58e86d4063a125c8deeb66`
+with the [demand/evaluation composition contract](specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md).
+Reuse V5 complete-model evaluation, native zero-credit maintenance and the M12
+funding/payment owners. Port only PR744's Task/Contribution and completed NoGain
+service-fee observation repair, preserving positive-only improvement and mining
+reward boundaries. Add an owner-pinned, bounded evidence observer that binds
+request/model/input/output/deadlines to funding, delivery, dispute, provenance,
+evaluation, retention, adoption and exact gross/net payment records. Separate
+external-attested, project-budget, related-party and unknown origins; deduplicate
+business outputs and improvement receipts without denying legitimate repeated
+service purchases. No transfer or dispatch capability is introduced.
+Add a separately versioned conditional upgrade reference with frozen four-control
+paired net-utility tests, all declared costs, cumulative alpha spending including
+failed/cancelled attempts, fresh-window requirements, observed canary and explicit
+NoUpdate. All real independence, native adoption, payment and activation flags
+remain false. Native export/reconciliation, funded dispute enforcement, actual
+external customers/evaluators, persistent global evidence ownership and ordinary
+Hepta installation/next-task/rollback remain acceptance gates. Existing HOLD,
+work-security, service-capacity, PQ and independent-operation decisions remain.
+
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
 `b173c1f52d927522af67df30dd08ecfb2e3a1bb0`. Add an explicitly selected TCQ3/TCS3
