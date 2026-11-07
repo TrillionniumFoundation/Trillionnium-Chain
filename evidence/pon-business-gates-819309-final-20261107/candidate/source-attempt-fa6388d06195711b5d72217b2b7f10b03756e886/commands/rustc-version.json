@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/rustc",
+    "+1.95.0",
+    "--version",
+    "--verbose"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:51:06.674196+00:00",
+  "exit_code": 0,
+  "log": "logs/rustc-version.log",
+  "log_bytes": 196,
+  "log_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+  "name": "rustc-version",
+  "pid": 1866476,
+  "start_utc": "2026-11-07T21:51:06.637245+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 36963928
+}

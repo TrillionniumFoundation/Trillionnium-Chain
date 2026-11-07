@@ -1,0 +1,183 @@
+{
+  "schema": "trnm-native-node-history-failure-scope-v1",
+  "created_utc": "2026-11-07T20:50:53.522613+00:00",
+  "source_commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "source_tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "original_log": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-native-validation-20261107/runs/819309fd312298e099642e1253b1d4ba07113e98/full-node/records/node-full.log",
+    "bytes": 7509531,
+    "sha256": "ebb47cb5562e58b5e9b11058a6878802db8347109a9beb15d66fef3020031b7a"
+  },
+  "failure_excerpt": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/native-node-history-scope-v1/original-full-failure.log",
+    "bytes": 648,
+    "sha256": "563cd54d62393054142456d897987d0a2a189c887f58c91e290e82fb91719c61"
+  },
+  "original_lines": [
+    2042,
+    2048
+  ],
+  "original_byte_start": 7431980,
+  "original_byte_end_exclusive": 7432628,
+  "source_evidence": [
+    {
+      "kind": "test",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+      "bytes": 59539,
+      "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98",
+      "ranges": [
+        {
+          "lines": [
+            1351,
+            1432
+          ],
+          "sha256": "511a991071b1307ce69a8399a966c0047685d847c216a7a0ce3ef99158511dc1"
+        }
+      ]
+    },
+    {
+      "kind": "settings",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "bytes": 33372,
+      "sha256": "1f42a30d859ca726a5b2cdbaf4ce8291d0b2b62d4def3bbf47310dadd0c3e215",
+      "ranges": [
+        {
+          "lines": [
+            292,
+            339
+          ],
+          "sha256": "05a8aa7e110b14ebf78f51d74023351f602553715e8015b506bd7158b5c7bd09"
+        }
+      ]
+    },
+    {
+      "kind": "store",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 374585,
+      "sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99",
+      "ranges": [
+        {
+          "lines": [
+            1556,
+            1567
+          ],
+          "sha256": "b2f606f2477e0b968478aafb46fd1440ae7d33de666a9a64bbef058420f2cfcf"
+        },
+        {
+          "lines": [
+            1713,
+            1736
+          ],
+          "sha256": "e77d099da0232ebd97e1c63946017f21de4183e1ee219af5db4aee8665d4c793"
+        },
+        {
+          "lines": [
+            2871,
+            2900
+          ],
+          "sha256": "ae6d06b7462f0422363f72b333f12e27cdcf371c8585783d8fd2398f0f8610d7"
+        },
+        {
+          "lines": [
+            5154,
+            5159
+          ],
+          "sha256": "95213e7bf83670192f4a4743a988a3b8a9fcf20b21d39ff80fb1c94653c78027"
+        }
+      ]
+    },
+    {
+      "kind": "sync",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "bytes": 217185,
+      "sha256": "40572400a127fecb6a2b69b7bb8d8fafecde8f2ae1b6aef634284dfd440567b2",
+      "ranges": [
+        {
+          "lines": [
+            2499,
+            2531
+          ],
+          "sha256": "679f034a96aee277524d1f9f0b7b665e54961229fb2da990f351d80661026398"
+        },
+        {
+          "lines": [
+            2652,
+            2707
+          ],
+          "sha256": "ff1d02855430e882c88024400f019396df727900da529bfa7d07fe8bf3cc7968"
+        }
+      ]
+    },
+    {
+      "kind": "history",
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22763,
+      "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+      "ranges": [
+        {
+          "lines": [
+            288,
+            398
+          ],
+          "sha256": "e59428dc5fcc6d63376c90148450ab998cf4a60eed0f6de199eccd5ed4067fb7"
+        },
+        {
+          "lines": [
+            401,
+            420
+          ],
+          "sha256": "5924875f1953d0e36f1fc1a4ad5cebde23a0badb806a428c93a73a4744213bd2"
+        },
+        {
+          "lines": [
+            438,
+            540
+          ],
+          "sha256": "7d5f195820b6f1d46d28b243be669ade680fcc1fbdaa541df6483eeb818175fb"
+        }
+      ]
+    }
+  ],
+  "actual_configuration": {
+    "state_backend": "Legacy",
+    "settings": "Settings::development(Some(now-200))",
+    "evaluation_policy": "legacy-first-two-v3",
+    "task_profile": "LEGACY_TASK_PROFILE",
+    "pq_profile": false,
+    "growth_profile": false,
+    "workers": 4,
+    "blocks": 12,
+    "classical_signed_transfers_per_block": 256,
+    "server_lifetime_seconds": 120,
+    "page_budget_per_sync_call": 1
+  },
+  "actual_failure_operation": {
+    "operation": "ingress::sync_from on final complete History page",
+    "line": "tests/native_node.rs:1407",
+    "error": "PUBLIC_MUTATION_CPU_BUDGET",
+    "catch_unwind_rethrow_line": 1432
+  },
+  "call_path": [
+    "ingress::sync_from",
+    "receive_page_from_before",
+    "history_import::receive / receive_observed with Owner::Exclusive",
+    "admit_packet / metered_observed",
+    "node.admit_work_checked_with_control",
+    "persist_admission_execution",
+    "check_active_before_commit_with_readback (819 passes None for final-root arithmetic)",
+    "for complete final packet: activate_packet -> activate_observed_with_termination, within same CPU operation"
+  ],
+  "proposed_legacy_final_admission_fence_applies": true,
+  "failure_stage_measured": false,
+  "limits": [
+    "The final-page import covers decode, W1, ordinary admission and final activation; the retained error alone does not identify the exact stage where CPU refusal arose.",
+    "The receiver remains at genesis before final complete-page activation, so this candidate cannot be assumed to remove the dominant cost of the 12-block replay.",
+    "No native attempt, reexecution, timing measurement, resource change or source edit was performed in this scope review.",
+    "All original 819 failures remain unchanged regardless of future supplemental result."
+  ],
+  "qualification": {
+    "native_pass": false,
+    "business_pass": false,
+    "performance": false
+  }
+}

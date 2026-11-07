@@ -1,0 +1,217 @@
+{
+  "schema": "trnm-admission-fence-controls-runner-adaptation-v1",
+  "prepared_utc": "2026-11-07T21:35:34.898934+00:00",
+  "state": "PREPARED_NOT_EXECUTED_WAITING_EXPLICIT_FROZEN_HEAD_TREE_WINDOW",
+  "worktree": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "expected_head": null,
+  "expected_tree": null,
+  "original_runner": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/run-final-controls-v3.py",
+    "bytes": 17911,
+    "sha256": "27bde97006593d37a7fbae3b93d10d81c0178c9342659e8671f585c4c3b09c81"
+  },
+  "runner": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-source-controls-preparation-20261107/run-final-controls-v3-admission-fence.py",
+    "bytes": 17919,
+    "sha256": "09573875a35c49c4fcffcef2eae8da1e5fbd80e07d262e2235965a802e4edc0c"
+  },
+  "only_changed_assignment": "ROOT",
+  "inverse_replacement_equals_original_bytes": true,
+  "original_roster": {
+    "path": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/prepared-test-roster-v3.json",
+    "bytes": 225337,
+    "sha256": "950e9ceff839a8c599f4ebdb4a1b6d72bd7719f48557c76c832b74b8518aed72"
+  },
+  "original_source_verifier_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "actual_static_suite_count": 17,
+  "actual_static_name_total": 666,
+  "roster_rows": [
+    {
+      "path": "scripts/ci/test_pq_research_integration.py",
+      "sha256": "3f1d929a2da0e255b528f2a31701e8ddd65ce5b5a4a94fbcf612842608494c13",
+      "expected": 37,
+      "actual_static_names": 37,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_ci_source_integrity.py",
+      "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+      "expected": 43,
+      "actual_static_names": 43,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_integration_push_source.py",
+      "sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+      "expected": 13,
+      "actual_static_names": 13,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_run_from_zero_native.py",
+      "sha256": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b",
+      "expected": 149,
+      "actual_static_names": 149,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_run_w1_fresh_service_v1.py",
+      "sha256": "4bcad9c87197e3334d912ecfe3257439959c4a04658ef7c762d98070d8334f62",
+      "expected": 29,
+      "actual_static_names": 29,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_from_zero_host_ci.py",
+      "sha256": "dacbf0878bbdae540de1b2338a70ce7810608be221d4c2479a55a739302b32a3",
+      "expected": 79,
+      "actual_static_names": 79,
+      "names_equal": true,
+      "imports": [
+        {
+          "path": "scripts/ci/test_architecture_host_ci.py",
+          "class": "ArchitectureAdapterControls",
+          "sha256": "a44a2a0780b5ab4151a7761aff362f6ca0c1e325ab362555f8a4137e1ab4f943",
+          "static_methods": 17
+        },
+        {
+          "path": "scripts/ci/test_public_fixture_process.py",
+          "class": "PublicFixtureProcessControls",
+          "sha256": "c6738dd79fda62118343190ab58545944c6780a2ec3103f221f28cd3d3cab86e",
+          "static_methods": 7
+        },
+        {
+          "path": "scripts/ci/test_public_fixture_lease.py",
+          "class": "PublicFixtureLeaseControls",
+          "sha256": "358eab1a5da14c607604461fb62a77a82e4ded3cc68cff053dde0672b36048f8",
+          "static_methods": 12
+        },
+        {
+          "path": "scripts/ci/test_public_fixture_lease.py",
+          "class": "PublicFixtureLockControls",
+          "sha256": "358eab1a5da14c607604461fb62a77a82e4ded3cc68cff053dde0672b36048f8",
+          "static_methods": 6
+        }
+      ]
+    },
+    {
+      "path": "scripts/ci/test_ci_observation_process.py",
+      "sha256": "52cd36b22d529406365b05b431dd943c3b7526ff942a0438555d30467c284720",
+      "expected": 7,
+      "actual_static_names": 7,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_record_pq_native_command.py",
+      "sha256": "8ff5a8b900675862511321a7c913d79f9b56185f1db9aac8f231f0fb705b528e",
+      "expected": 4,
+      "actual_static_names": 4,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "a1ef5e4405c0a4fe1bd0822b7b2d83fbe593d5ce001defad9e11ede2bf73da29",
+      "expected": 103,
+      "actual_static_names": 103,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py",
+      "sha256": "73358b259307ad1c2bbf2df9ac26853a0cab484e09eda5c240a2a68215a52795",
+      "expected": 20,
+      "actual_static_names": 20,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "sha256": "fb629eeb16792e3d3714a9a1ad7c82304a127d394aa861272c259551175e975e",
+      "expected": 47,
+      "actual_static_names": 47,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py",
+      "sha256": "10e4a10e58a7573790204a1c53a5a0743adabb305d34a07f9d4481043c616ae3",
+      "expected": 34,
+      "actual_static_names": 34,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py",
+      "sha256": "6ed1a512a29600fdbc0c53621bebfc095c2750fb3e7105145fc247cc185162f1",
+      "expected": 11,
+      "actual_static_names": 11,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py",
+      "sha256": "a96e7b50d5582beec2c8d520ddca17b6f90765083c37e472c3c09b219a9cce46",
+      "expected": 11,
+      "actual_static_names": 11,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+      "sha256": "f9e95ff81abb61f31994c5c2d97bd60e32db922de35c48f709cf5d565304433d",
+      "expected": 20,
+      "actual_static_names": 20,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_execution_v3.py",
+      "sha256": "23ef7ade9d5ee2e9a80b7e4f71986dfd31af8dbdd8ad45707c8cfefe1c21aa2c",
+      "expected": 34,
+      "actual_static_names": 34,
+      "names_equal": true,
+      "imports": []
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_useful_cell_multimodal_relation_v3.py",
+      "sha256": "9fbd40ea0426db09cd6323ad7ce0065572882c47179b66bcf1b17dbfb48ee1e8",
+      "expected": 25,
+      "actual_static_names": 25,
+      "names_equal": true,
+      "imports": []
+    }
+  ],
+  "static_names_are_not_test_execution": true,
+  "unchanged": [
+    "all commands and timeouts",
+    "original roster file",
+    "original Python/runtime checks",
+    "original Cell child 30-second bound",
+    "strict denominator/OK reader",
+    "complete source verifier before and after",
+    "failure preservation and no rerun behavior",
+    "PREP/output safety constraints"
+  ],
+  "future_output_pattern": "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/FULL_FROZEN_HEAD",
+  "future_argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-source-controls-preparation-20261107/run-final-controls-v3-admission-fence.py",
+    "--expected-head",
+    "FULL_FROZEN_HEAD",
+    "--output",
+    "/home/qian-qi/chain-throughput-local-admin-20261107/final-source-validation-20261107/admission-fence/FULL_FROZEN_HEAD",
+    "--execute"
+  ],
+  "tests_executed": 0,
+  "cargo_commands_executed": 0,
+  "runner_imported_or_executed": false,
+  "source_mutations": false
+}

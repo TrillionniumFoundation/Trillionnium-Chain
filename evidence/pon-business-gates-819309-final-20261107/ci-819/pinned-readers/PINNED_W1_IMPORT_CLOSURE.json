@@ -1,0 +1,961 @@
+{
+  "schema": "trnm-final819-pinned-w1-import-closure-v1",
+  "candidate": "819309fd312298e099642e1253b1d4ba07113e98",
+  "roots": [
+    "scripts/ci/run_w1_false_trace_reuse_v1.py",
+    "scripts/ci/run_w1_rank_batch_v5.py"
+  ],
+  "files": [
+    {
+      "path": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "git_blob": "d9c1a971c23fbea8a91468db6c968f942c2aadbb",
+      "bytes": 13611,
+      "sha256": "78ae176962c1e008c12b8737934e355c2ec97dd4d12a7c7cb0f1c4fb5ab8a08a",
+      "functions": [
+        "legal_strategy_reader",
+        "legal_strategy_v3_reader",
+        "legal_campaign",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/ci/run_w1_rank_batch_v5.py",
+      "git_blob": "c8137ee9c36a8fe6e58f51c51b0d632518b85856",
+      "bytes": 14881,
+      "sha256": "9fcbb715ddd95874f17940f8e9902e93f6e1e0527bb5ce215c741df2740114fb",
+      "functions": [
+        "discover_tool",
+        "capture",
+        "checked_source",
+        "write_json",
+        "host",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/ci/ci_observation.py",
+      "git_blob": "9ee54850767a1fce3848483660860dd8d976c777",
+      "bytes": 8837,
+      "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a",
+      "functions": [
+        "tool_versions",
+        "tool_root",
+        "receipt_root",
+        "_source_error",
+        "run",
+        "checked",
+        "source",
+        "digest",
+        "pin_source",
+        "finish"
+      ]
+    },
+    {
+      "path": "scripts/ci/check_cross_arch_cost.py",
+      "git_blob": "5fbdbbf4c1ace9af059c3fbcb85ea9977e27f4ea",
+      "bytes": 41098,
+      "sha256": "f8f0f99c1f4a48d16d51f9257472645532626fc5202faa08c1453eaab9f4984f",
+      "functions": [
+        "rejection_job_budget_seconds",
+        "cost_job_budget_seconds",
+        "require",
+        "natural",
+        "hash_text",
+        "unique",
+        "read_json",
+        "elf_machine",
+        "validate_files",
+        "benchmark_arguments",
+        "winning_challenge",
+        "deterministic_projection",
+        "projection_digest",
+        "validate_raw_report",
+        "suite_contract",
+        "validate_artifact",
+        "implemented_strategy_envelope",
+        "compare_artifacts",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/ci/run_cross_arch_cost.py",
+      "git_blob": "8d2fb7d1624d82138ca1d54efbad9107c175e048",
+      "bytes": 16803,
+      "sha256": "647533d30fcd18c89a9127d750646f19c17b237e1d09bbdea3589daa97636d66",
+      "functions": [
+        "build_environment_overrides",
+        "cargo_configuration_snapshot",
+        "require_cargo_configuration",
+        "capture",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "git_blob": "eeacb22e5b57f423dfcab4bdb4d358c5f670ca05",
+      "bytes": 18163,
+      "sha256": "7455227a2acfec76505c480e4513acbbb9764b59cc1e6a3d8bdaf70d2f9f409c",
+      "functions": [
+        "challenge",
+        "measured",
+        "summary",
+        "analyze",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "git_blob": "9b4d275da31548ba614104a8aea965bad1815083",
+      "bytes": 25773,
+      "sha256": "a316920b50d1ca3ecc1c4ef76dc1f09e3b7b2f133ae5b24071a0f5b1f4be10c3",
+      "functions": [
+        "require_profile",
+        "challenge",
+        "measured",
+        "dispatch_probes",
+        "fraction",
+        "product_last",
+        "summary",
+        "analyze_shard",
+        "analyze",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "git_blob": "f740317811f3d0ae035d25985f7069fd2ace28e8",
+      "bytes": 30562,
+      "sha256": "88657a45b22a350c140ae8bcbe7f294544e8d9788c86592238cc9c6437bd58ff",
+      "functions": [
+        "challenge",
+        "measured",
+        "factors",
+        "fraction",
+        "product_last",
+        "rate_diagnostic",
+        "summary",
+        "analyze_shard",
+        "analyze",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_legal_strategy_reader_v2.py",
+      "git_blob": "4c8f72922c645a7525856588a8a30150b0a691a5",
+      "bytes": 1301,
+      "sha256": "81318207c8bb1db70efb202122ca4f56e5836e8abba92ad91c4ae9c67d8d7b39",
+      "functions": [
+        "challenge",
+        "analyze_shard",
+        "analyze"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "git_blob": "9cc4a0a59a3e5dd0d0e2acbcd380ad685c9be287",
+      "bytes": 24504,
+      "sha256": "03b34de9bd63616d8a243cae0c9e226c21102aca4bef7c52904cf7d20f364f26",
+      "functions": [
+        "fixed",
+        "timing",
+        "positive_timing",
+        "add_times",
+        "challenge",
+        "ranked",
+        "material",
+        "supported",
+        "selection",
+        "analyze",
+        "grid",
+        "campaign",
+        "main"
+      ]
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/bounded_process.py",
+      "git_blob": "b8579d1ea76e8c84214570f3f08d84595bfc77b6",
+      "bytes": 8627,
+      "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356",
+      "functions": [
+        "_wait_without_reaping",
+        "_darwin_only_exited_leader",
+        "run_bounded"
+      ]
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "bytes": 11231,
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+      "functions": [
+        "_canonical_merge_tree",
+        "_fingerprint",
+        "_tracked_blob",
+        "verify",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/ci/check_zero_locality_cost.py",
+      "git_blob": "af98787a3b13f76776c5a25fa2c967deb44ef56b",
+      "bytes": 10831,
+      "sha256": "4c118e22783b7acd434c6853ed0110c8ce1ac6c9aa999980e2fc58dd1f24697f",
+      "functions": [
+        "winning_challenge",
+        "_validate_zero_report",
+        "validate_zero_v1_report",
+        "validate_zero_v2_report",
+        "validate_zero_report"
+      ]
+    },
+    {
+      "path": "scripts/ci/check_maintenance_cost.py",
+      "git_blob": "39ff4dd4e85d6a3bf6e4dc3ce61454999342809f",
+      "bytes": 12489,
+      "sha256": "373b83538fa1fbf50c4c203e7fb90b21eeb33c5b0c7df171a3e64783177e9f96",
+      "functions": [
+        "winning_challenge",
+        "validate_maintenance_report",
+        "validate_maintenance_v1_report",
+        "validate_maintenance_v2_report",
+        "validate_maintenance_v3_report",
+        "validate_maintenance_v4_report"
+      ]
+    },
+    {
+      "path": "scripts/ci/check_one_zero_locality_cost.py",
+      "git_blob": "376ebd12c524bb91aa545afbb9b2e95120b89d8f",
+      "bytes": 10321,
+      "sha256": "8285a801bc71703594cd375df8e90b07e55a22d443bee427d5eacfd5634b4eb1",
+      "functions": [
+        "winning_challenge",
+        "validate_one_zero_report"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_cost_matrix_reader.py",
+      "git_blob": "fe710e05048916145180cf1cf8870bc31a94dec8",
+      "bytes": 35800,
+      "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa",
+      "functions": [
+        "require",
+        "exact",
+        "integer",
+        "hex_bytes",
+        "sha",
+        "pon_hash",
+        "challenge",
+        "unique_object",
+        "reject_number",
+        "decode",
+        "timing",
+        "intervals",
+        "_rank",
+        "_full_rank",
+        "material",
+        "supported",
+        "_trials",
+        "distribution",
+        "fraction",
+        "mean",
+        "combined",
+        "compare",
+        "cache_costs",
+        "cost_summary",
+        "analyze",
+        "main"
+      ]
+    },
+    {
+      "path": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "git_blob": "7c08d876d51be7226f958f2c6c4509cb072f60d1",
+      "bytes": 35294,
+      "sha256": "b4314bcf354dc24a7a2a4c8381ead3811010db4470bedaeaf4c8b75e7ab2682d",
+      "functions": [
+        "challenge",
+        "measured",
+        "factors",
+        "fraction",
+        "product_last",
+        "material_from_bytes",
+        "material",
+        "rate_diagnostic",
+        "summary",
+        "analyze_shard",
+        "analyze",
+        "main"
+      ]
+    }
+  ],
+  "local_import_edges": [
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "ci_observation",
+      "to": "scripts/ci/ci_observation.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "run_cross_arch_cost",
+      "to": "scripts/ci/run_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "pon_w1_false_trace_reuse_reader_v1",
+      "to": "scripts/pon_w1_false_trace_reuse_reader_v1.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "pon_w1_legal_strategy_reader_v1",
+      "to": "scripts/pon_w1_legal_strategy_reader_v1.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "pon_w1_legal_strategy_reader_v3",
+      "to": "scripts/pon_w1_legal_strategy_reader_v3.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "pon_w1_legal_strategy_reader_v2",
+      "to": "scripts/pon_w1_legal_strategy_reader_v2.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "ci_observation",
+      "to": "scripts/ci/ci_observation.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "run_cross_arch_cost",
+      "to": "scripts/ci/run_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "pon_w1_rank_batch_reader_v5",
+      "to": "scripts/pon_w1_rank_batch_reader_v5.py"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "bounded_process",
+      "to": "formal/pon-nakamoto-v1/bounded_process.py"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "verify_ci_source",
+      "to": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "verify_ci_source",
+      "to": "scripts/ci/verify_ci_source.py"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "ci_observation",
+      "to": "scripts/ci/ci_observation.py"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "check_zero_locality_cost",
+      "to": "scripts/ci/check_zero_locality_cost.py"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "check_maintenance_cost",
+      "to": "scripts/ci/check_maintenance_cost.py"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "check_one_zero_locality_cost",
+      "to": "scripts/ci/check_one_zero_locality_cost.py"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "ci_observation",
+      "to": "scripts/ci/ci_observation.py"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "pon_w1_cost_matrix_reader",
+      "to": "scripts/pon_w1_cost_matrix_reader.py"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "pon_w1_cost_matrix_reader",
+      "to": "scripts/pon_w1_cost_matrix_reader.py"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "pon_w1_cost_matrix_reader",
+      "to": "scripts/pon_w1_cost_matrix_reader.py"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v2.py",
+      "import": "pon_w1_legal_strategy_reader_v1",
+      "to": "scripts/pon_w1_legal_strategy_reader_v1.py"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "pon_w1_cost_matrix_reader",
+      "to": "scripts/pon_w1_cost_matrix_reader.py"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "pon_w1_preparation_strategy_reader_v4",
+      "to": "scripts/pon_w1_preparation_strategy_reader_v4.py"
+    },
+    {
+      "from": "scripts/ci/check_zero_locality_cost.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/check_maintenance_cost.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/ci/check_one_zero_locality_cost.py",
+      "import": "check_cross_arch_cost",
+      "to": "scripts/ci/check_cross_arch_cost.py"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "pon_w1_cost_matrix_reader",
+      "to": "scripts/pon_w1_cost_matrix_reader.py"
+    }
+  ],
+  "ambiguous": [],
+  "unresolved_nonrepository_imports": [
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "os"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "platform"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "re"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "shutil"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "scripts/ci/run_w1_false_trace_reuse_v1.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "datetime"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "os"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "platform"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "resource"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "shutil"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "signal"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/ci/run_w1_rank_batch_v5.py",
+      "import": "time"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "os"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "signal"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "time"
+    },
+    {
+      "from": "scripts/ci/ci_observation.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "re"
+    },
+    {
+      "from": "scripts/ci/check_cross_arch_cost.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "os"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "platform"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "shutil"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "signal"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "stat"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "time"
+    },
+    {
+      "from": "scripts/ci/run_cross_arch_cost.py",
+      "import": "tomllib"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_false_trace_reuse_reader_v1.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "dataclasses"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v1.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v3.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/pon_w1_legal_strategy_reader_v2.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "functools"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "gzip"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "struct"
+    },
+    {
+      "from": "scripts/pon_w1_rank_batch_reader_v5.py",
+      "import": "sys"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "__future__"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "math"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "os"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "selectors"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "signal"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "sys"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "time"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "dataclasses"
+    },
+    {
+      "from": "formal/pon-nakamoto-v1/bounded_process.py",
+      "import": "ctypes"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "os"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "re"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "stat"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "subprocess"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "tempfile"
+    },
+    {
+      "from": "scripts/ci/verify_ci_source.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/ci/check_zero_locality_cost.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/check_zero_locality_cost.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/ci/check_zero_locality_cost.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/check_maintenance_cost.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/check_maintenance_cost.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/ci/check_maintenance_cost.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/ci/check_one_zero_locality_cost.py",
+      "import": "__future__"
+    },
+    {
+      "from": "scripts/ci/check_one_zero_locality_cost.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/ci/check_one_zero_locality_cost.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "fractions"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "functools"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "re"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "struct"
+    },
+    {
+      "from": "scripts/pon_w1_cost_matrix_reader.py",
+      "import": "sys"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "argparse"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "collections"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "gzip"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "hashlib"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "functools"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "struct"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "json"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "pathlib"
+    },
+    {
+      "from": "scripts/pon_w1_preparation_strategy_reader_v4.py",
+      "import": "sys"
+    }
+  ]
+}

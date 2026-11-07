@@ -207,10 +207,11 @@ schema, genesis, reward, rollback or root rule changes. This removes repeated Ru
 packet materialization but does not turn the complete-state root into persistent
 incremental authenticated storage or qualify physical power loss.
 
-### Complete-State arithmetic during Legacy reorganization
+### Complete-State arithmetic during Legacy persistence
 
-The Legacy owner's staging, pre-COMMIT active-State and final publication root
-checks can reuse the existing M06 `FullRootArithmetic`. Its single retained
+The classical Legacy owner's staging, reorganization pre-COMMIT and final
+publication root checks, plus ordinary admission's final current-active-State
+fence, can reuse the existing M06 `FullRootArithmetic`. Its single retained
 mathematical payload remains bounded to 2 MiB; every invocation supplies the complete
 current State. Reuse requires the complete current leaf inputs for a partition to
 match, with original canonical grammar, limits and collision checks. A contention,
@@ -219,10 +220,11 @@ block id, expected root, cursor, cached State or validation verdict supplies the
 answer. All actual SQL rows, including keys untouched by the block, are still read
 and checked at their original transactional boundaries.
 
-This choice is limited to classical Legacy reorganization validation. Ordinary
-admission and direct append keep their existing root path; PQ profiles retain
-their complete account-State validation, and authenticated storage and the distinct
-Growth commitment keep their own relations. Original before-images,
+The ordinary-admission extension is restricted to that final active-State fence;
+the generic readback wrapper and other direct-append call sites keep their
+existing root paths. PQ profiles retain their complete account-State validation,
+and authenticated storage and the distinct Growth commitment keep their own
+relations. Original before-images,
 step/cursor transactions, generation/slot checks, cancellation callbacks and one
 atomic active/events publication remain. Signed-history process-cut, cold-resume,
 untouched-corruption and original-error controls exercise this composition. Every
@@ -230,6 +232,13 @@ current State row and its bytes are still traversed, and the complete leaf set
 is sorted. This is not touched-set authenticated execution or a COW storage
 migration, and it does not qualify the original 4,105-block deadline,
 four-second hostile-load screen, physical power loss or production throughput.
+
+The ordinary-admission regression requires warmed arithmetic to reject both a
+changed untouched active cell and a changed current stored root claim, after a
+matched no-op trigger control succeeds. Its complete callback trace, SQL rollback,
+child absence and cold reopen must preserve the original State and ROOT/owner-stop
+semantics. [The source-bound continuation record](../../../../evidence/pon-business-gates-819309-final-20261107/README.md)
+keeps prior native/CI failures and the new-source verification scope separate.
 
 ### Same-writer Legacy admission prefix
 

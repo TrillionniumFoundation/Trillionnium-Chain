@@ -1,0 +1,18 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3.15s
+     Running tests/public_v3_request_accounting.rs (/home/runner/work/_temp/target-priority/release/deps/public_v3_request_accounting-8a06aee407b1d71f)
+
+running 1 test
+test actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen ... ok
+
+successes:
+
+---- actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen stdout ----
+{"passed":true,"schema":"public-v3-actual-local-replay-depletion-v1"}
+
+
+successes:
+    actual_depletion::actual_replay_depletion_public_recovery_and_same_epoch_reopen
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 4.25s
+

@@ -1,0 +1,7 @@
+{
+  "schema": "proposal-receipt-newline-correction-v1",
+  "original_sha256": "a0d7d91fb5452166e0b25e40f3066540d84e217f5a0c9db46e4fadf02071d8f4",
+  "semantic_fields_changed": false,
+  "correction_required": false,
+  "production_patch_unchanged": true
+}

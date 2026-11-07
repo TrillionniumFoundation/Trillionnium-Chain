@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "formal/pon-nakamoto-v1/test_useful_cell_source_guard_v2.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T21:55:53.433801+00:00",
+  "exit_code": 0,
+  "log": "logs/15-test_useful_cell_source_guard_v2.log",
+  "log_bytes": 3336,
+  "log_sha256": "6bb9039ca3929be3a5eb09d37f37b582d3fc50d55d3b73fa9d003016bb38d709",
+  "name": "15-test_useful_cell_source_guard_v2",
+  "pid": 1883537,
+  "start_utc": "2026-11-07T21:55:35.882581+00:00",
+  "supervisor_timeout_seconds": 1800,
+  "timed_out": false,
+  "wall_ns": 17551230074
+}

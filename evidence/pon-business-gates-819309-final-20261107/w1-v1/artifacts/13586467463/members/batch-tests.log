@@ -1,0 +1,17 @@
+   Compiling trnm-crypto-primitives v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-crypto-primitives)
+    Finished `release` profile [optimized] target(s) in 7.74s
+     Running unittests examples/pon_w1_rank_batch_v5.rs (/home/runner/work/_temp/target-w1-rank-batch/release/examples/pon_w1_rank_batch_v5-f588cb39e27b852c)
+
+running 9 tests
+test tests::all_existing_producers_keep_the_same_complete_legal_proof_and_prefix ... ok
+test tests::batch_retains_every_post_winner_attempt_and_every_materialized_buffer ... ok
+test tests::changed_task_and_challenge_are_not_a_cross_challenge_trace_cache ... ok
+test tests::declaration_is_fixed_and_rejects_resource_or_domain_overrides ... ok
+test tests::parallel_workers_really_overlap_and_keep_declared_order_after_error_or_panic ... ok
+test tests::partial_last_batch_obeys_total_attempt_limit_and_never_skips_complete_misses ... ok
+test tests::rank_materials_have_exact_field_ranks_and_preserve_full_rank_partners ... ok
+test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok
+test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

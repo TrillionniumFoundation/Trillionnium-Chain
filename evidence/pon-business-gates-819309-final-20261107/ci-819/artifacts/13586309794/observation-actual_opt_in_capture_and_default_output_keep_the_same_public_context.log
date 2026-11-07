@@ -1,0 +1,14 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2.30s
+     Running tests/public_v3_observation_cli.rs (/home/runner/work/_temp/target-priority/release/deps/public_v3_observation_cli-03d243b353c374c2)
+
+running 1 test
+test actual_opt_in_capture_and_default_output_keep_the_same_public_context ... ok
+
+successes:
+
+successes:
+    actual_opt_in_capture_and_default_output_keep_the_same_public_context
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.04s
+

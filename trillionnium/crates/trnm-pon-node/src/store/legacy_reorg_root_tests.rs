@@ -141,7 +141,7 @@ fn legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors() {
     let cfg = Settings::development(Some(1)).unwrap();
     let node = Node::open(directory.path(), cfg.clone(), 1).unwrap();
     let original = node.read_active().unwrap();
-    let arithmetic = node.legacy_reorg_root_arithmetic().unwrap();
+    let arithmetic = node.legacy_persisted_root_arithmetic().unwrap();
     for _ in 0..2 {
         node.check_active_before_commit_with_root_arithmetic(
             &mut || Ok(()),
@@ -276,11 +276,11 @@ fn legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback() {
 fn legacy_reorg_root_never_selects_the_growth_or_authenticated_relation() {
     let directory = tempfile::tempdir().unwrap();
     let legacy = Node::open(&directory.path().join("legacy"), settings(), 1).unwrap();
-    assert!(legacy.legacy_reorg_root_arithmetic().is_some());
+    assert!(legacy.legacy_persisted_root_arithmetic().is_some());
     let authenticated =
         Node::open_with_authenticated_state(&directory.path().join("native"), settings(), 1)
             .unwrap();
-    assert!(authenticated.legacy_reorg_root_arithmetic().is_none());
+    assert!(authenticated.legacy_persisted_root_arithmetic().is_none());
     let growth = Settings::development_with_profiles(
         Some(1),
         "native-public-evaluation-dev-v1",
@@ -289,7 +289,7 @@ fn legacy_reorg_root_never_selects_the_growth_or_authenticated_relation() {
     .unwrap();
     let growth = Node::open(&directory.path().join("growth"), growth, 1).unwrap();
     assert_eq!(growth.state_backend, StateBackend::Legacy);
-    assert!(growth.legacy_reorg_root_arithmetic().is_none());
+    assert!(growth.legacy_persisted_root_arithmetic().is_none());
     let actual = growth.read_active().unwrap();
     assert_eq!(
         growth.settings.state_root(&actual.2).unwrap(),
@@ -346,12 +346,12 @@ fn legacy_reorg_root_preserves_pq_v2_and_v6_state_validation() {
         let mut node =
             Node::open_with_pq_network(directory.path(), cfg.clone(), 1, &policy).unwrap();
         assert_eq!(node.state_backend, StateBackend::PqNetworkV2);
-        assert!(node.legacy_reorg_root_arithmetic().is_none());
+        assert!(node.legacy_persisted_root_arithmetic().is_none());
         assert!(node.legacy_admission_readback_schema().is_none());
         // Isolate the defensive profile predicate. The normal Legacy constructor
         // already refuses PQ, and no SQL operation runs with this test-only tag.
         node.state_backend = StateBackend::Legacy;
-        assert!(node.legacy_reorg_root_arithmetic().is_none());
+        assert!(node.legacy_persisted_root_arithmetic().is_none());
         node.legacy_admission_schema = Some(BTreeMap::new());
         assert!(node.legacy_admission_readback_schema().is_none());
         node.legacy_admission_schema = None;
@@ -389,7 +389,7 @@ fn legacy_reorg_root_preserves_pq_v2_and_v6_state_validation() {
             .check_active_before_commit_with_root_arithmetic(
                 &mut || Ok(()),
                 None,
-                node.legacy_reorg_root_arithmetic(),
+                node.legacy_persisted_root_arithmetic(),
             )
             .unwrap_err();
         assert_eq!(refusal.to_string(), expected);

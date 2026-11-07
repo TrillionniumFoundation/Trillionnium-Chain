@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qian-qi/chain-throughput-local-admin-20261107/work-admission-fence-819309-20261107",
+  "end_utc": "2026-11-07T22:03:42.740993+00:00",
+  "exit_code": 0,
+  "log": "logs/repository-links-and-contracts.log",
+  "log_bytes": 307,
+  "log_sha256": "8249eb05ff5fbd078be4fcf1fc80a9262b3b5f1d12feba30af6ff89b1605a398",
+  "name": "repository-links-and-contracts",
+  "pid": 1899514,
+  "start_utc": "2026-11-07T22:02:03.387106+00:00",
+  "supervisor_timeout_seconds": 600,
+  "timed_out": false,
+  "wall_ns": 99353899585
+}

@@ -1,0 +1,210 @@
+{
+  "schema": "trnm-legacy-history-sql-cow-readonly-addendum-v1",
+  "source_root": "/home/qian-qi/chain-throughput-local-admin-20261107/work-final-business-20261107",
+  "commit": "819309fd312298e099642e1253b1d4ba07113e98",
+  "tree": "f9d63abb9e2931fd78e26ccb87e3a7955068f267",
+  "scope": {
+    "read_only_source_review": true,
+    "production_changes": false,
+    "tests_executed": false,
+    "cargo_executed": false,
+    "performance_measured": false,
+    "business_gates_qualified": false,
+    "complete_source_verifier": false,
+    "older_readonly_package_modified": false
+  },
+  "findings": {
+    "history_reconstruction": "Inactive state_at replays the actual suffix after a retained validated snapshot; ordinary intact cadence bounds this suffix, missing snapshots retain original longer fallback. Every actual delta before-image, complete State root and continuity obligation remains.",
+    "active_state": "Complete active KV size and retained block count are separate variables.",
+    "postwrite_prefix": "Already limited to one original writer, post-write complete non-active parent check and one child consumption; no pre-execution or active-KV substitution.",
+    "activation": "Final complete-page activation retains original request budget/deadline, full observed-time history, ordered actual steps, per-step complete state/active fences and atomic final publication.",
+    "already_prepared": [
+      "record",
+      "metadata",
+      "active",
+      "slot",
+      "KV scan",
+      "snapshot lookup",
+      "delta scan",
+      "header projection/batch",
+      "ancestry shape/header/jump",
+      "delta INSERT",
+      "apply-delta KV",
+      "current reorg step",
+      "reorg row"
+    ],
+    "unmeasured_compile_candidates": [
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+        "line": 418,
+        "sql": "INSERT INTO ancestry_jump VALUES(?,?,?,?,?,?,?)",
+        "scope": "at original budget-charge/call site only"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "lines": [
+          6066,
+          6074
+        ],
+        "sql": "INSERT INTO steps VALUES(?,0,?) / INSERT INTO steps VALUES(?,1,?)",
+        "scope": "original branch/callback/order unchanged"
+      },
+      {
+        "file": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "line": 6313,
+        "sql": "UPDATE reorg SET cursor=? WHERE singleton=1",
+        "scope": "actual step transaction and full readbacks unchanged"
+      }
+    ],
+    "excluded_optimizations": [
+      "row/State/root/authorization verdict cache",
+      "less frequent Host callbacks",
+      "fresh PRAGMA or schema RESET removal",
+      "changed original budgets/deadlines",
+      "activation before complete page",
+      "skipping actual attach/event/cursor transactions"
+    ],
+    "minimal_future_controls": [
+      "original uncached differential at capacities 0/1/default",
+      "complete progress/charge and actual SQL parity",
+      "trigger omitted/changed rows",
+      "warm DDL and schema RESET",
+      "same-connection write and rollback",
+      "parameter rebinding",
+      "original Error and owner-stop precedence",
+      "cancellation"
+    ],
+    "cow_boundary": "New profile/root, exact authenticated parent/aggregates, complete touched-account and mandatory ranges, single-writer COW atomic commit, source-preserving migration and explicit untouched-corruption/audit model; not a transparent cache change.",
+    "performance": "No SQL-prepare CPU, snapshot-hit ratio or gate improvement measured; no cost attributed from block counts."
+  },
+  "read_processes": [
+    {
+      "job_id": "1a1b7bb6f53-12894-c0e",
+      "exit_code": 0,
+      "purpose": "source locator and STATE_RECOVERY references"
+    },
+    {
+      "job_id": "1a1b7bf4bb9-12894-c1d",
+      "exit_code": 0,
+      "purpose": "state_at/postwrite source excerpts",
+      "retained_child_rg_exit": 2,
+      "preparation_error": "wrong src/history_import.rs path; corrected to src/ingress/history_import.rs"
+    },
+    {
+      "job_id": "1a1b7c0bb04-12894-c24",
+      "exit_code": 0,
+      "purpose": "parent/ancestry and locked rusqlite paths"
+    },
+    {
+      "job_id": "1a1b7c2c88b-12894-c2d",
+      "exit_code": 0,
+      "purpose": "activation and SQL-cache references",
+      "retained_child_rg_exit": 2,
+      "preparation_error": "wrong src/native_authenticated path; corrected to src/store/native_authenticated"
+    },
+    {
+      "job_id": "1a1b7c44eb7-12894-c38",
+      "exit_code": 0,
+      "purpose": "locked actual execute/query_row/prepare and activation boundaries"
+    }
+  ],
+  "read_process_status": "All listed process exits were read from authoritative terminal statuses, complete/durable/synced and untruncated. A wrapper exit0 does not hide the two recorded child rg errors. No test commands executed.",
+  "prior_package": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/read-only-review-v1/README.md",
+      "bytes": 14746,
+      "sha256": "ecbebd08c2fc8b8871ae0f985dc0114d63f51947118fe53105eea054a925247c"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/read-only-review-v1/REVIEW.json",
+      "bytes": 23998,
+      "sha256": "1d21e2730915b48f6516eea28e1b3d2f90e093cae207cf67fe6a9a4e4baa5794"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/read-only-review-v1/PROVENANCE.json",
+      "bytes": 7736,
+      "sha256": "2e9c994d6876c93938489eb87f170cc026c9c4ee03ebd4a909d1b2d9ca6b6406"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/read-only-review-v1/SOURCE_SHA256.json",
+      "bytes": 7118,
+      "sha256": "90b604baa085a055d7694a55469052597160c2f238ba16652b455e8a516be260"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/admission-fence-followup-819309-20261107/read-only-review-v1/SHA256SUMS",
+      "bytes": 321,
+      "sha256": "a4b53216f1173ebe77eca22562cd8ffd49d2a9c8ce8d6d8388dc709a29a2c3b2"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "bytes": 374585,
+      "sha256": "3d00e1e40f87947b2c0605dd3a3077c82a1dc92b130e7c89bb07eedf765b5a99",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "bytes": 22763,
+      "sha256": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback.rs",
+      "bytes": 4265,
+      "sha256": "06f9e42e43a26d2dfd7f6cb263bba6bc8200bc4446cb7bb8c47c883934df55a2",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "bytes": 13852,
+      "sha256": "8e76975d35f8b11ba0d803d6675894f5fdc429255b4d398fce151158709bc160",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "docs/protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md",
+      "bytes": 23247,
+      "sha256": "f7a48437055217bcbe237b035d434ffbd2c27b560174ef4953f2a5025bfb1c2a",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+      "bytes": 34815,
+      "sha256": "c7018524cefd74961862150893bd593b01e720c6fdaa84350b4fc1c54bc378ef",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "bytes": 40044,
+      "sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/readbacks/retained-sql-core-v1.json",
+      "bytes": 11382,
+      "sha256": "a689f57ad11ca6ce97f490c2660e3d513d3c7ba8293b0ef515e1e242414039a3",
+      "exact_git_blob_bytes_equal": true
+    },
+    {
+      "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/readbacks/native-outcome-core-v1.json",
+      "bytes": 21142,
+      "sha256": "03167540743bba95b362641161336cf6e1ad87b04e69da1dc143d988c015a47d",
+      "exact_git_blob_bytes_equal": true
+    }
+  ],
+  "dependency_files": [
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rusqlite-0.39.0/src/lib.rs",
+      "bytes": 78687,
+      "sha256": "a8f28de91bafba4e9daa9c5117af2b76eb917a7b3fbe29d47eef51f661b4a8ec",
+      "provenance": "local locked rusqlite 0.39.0 source, read only; no dependency changes"
+    },
+    {
+      "path": "/home/qian-qi/chain-throughput-local-admin-20261107/local-build/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rusqlite-0.39.0/src/cache.rs",
+      "bytes": 10242,
+      "sha256": "2c0ed157b14753e10c14f22f019f403e496f6450961e5c07430129f90a4a3b96",
+      "provenance": "local locked rusqlite 0.39.0 source, read only; no dependency changes"
+    }
+  ],
+  "created_utc": "2026-11-07T21:26:27.238597+00:00"
+}
