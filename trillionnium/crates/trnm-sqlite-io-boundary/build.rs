@@ -165,12 +165,11 @@ fn pin_text(path: &Path, expected_bytes: u64, expected_sha256: &str) -> Result<(
     Ok(())
 }
 
-// Cargo 1.95 injects loader paths into build-script processes even when the
-// parent variable is absent. Require the exact three observed normal
-// directories derived from this real OUT_DIR and the actual RUSTC binary,
-// and admit only the optional base profile output Cargo adds for build/test.
-// This is a path constraint, not a magic qualification token or a claim that
-// this process can recover the parent's original environment provenance.
+// Cargo 1.95's actual build-script loader list requires the host rustlib
+// directory and target deps. The canonical toolchain/lib directory is an
+// exact known optional entry: Cargo may omit it from LD_LIBRARY_PATH because
+// rustc carries its own loader configuration. The base profile output is
+// also optional. This is a path constraint, not a provenance claim.
 fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
     let target = env::var_os("CARGO_TARGET_DIR");
     let mut paths = LoaderPaths::capture(target.as_deref())?;
@@ -220,7 +219,7 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
     }
     let toolchain = bin.parent().ok_or("missing compiler toolchain root")?;
     let target_deps = paths.target_directory(&profile.join("deps"))?;
-    let required: BTreeSet<PathBuf> = [
+    let required_paths: BTreeSet<PathBuf> = [
         target_deps.clone(),
         canonical_directory(
             &toolchain
@@ -229,20 +228,23 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
                 .join(required("HOST")?)
                 .join("lib"),
         )?,
-        canonical_directory(&toolchain.join("lib"))?,
     ]
     .into_iter()
     .collect();
-    if required.len() != 3 {
-        return Err("loader directory identities overlap".into());
+    if required_paths.len() != 2 {
+        return Err("required loader directory identities overlap".into());
     }
-    // Cargo's base profile output is an actual observed fourth directory in
-    // build/test mode. This is one exact derived path, not any target subtree
-    // or arbitrary native dependency build output.
-    let mut allowed = required.clone();
+    // The toolchain root library and base profile directories are optional
+    // exact paths. They remain the only optional entries; arbitrary directories
+    // and duplicate spellings are still refused below.
+    let mut allowed = required_paths.clone();
+    let toolchain_lib = canonical_directory(&toolchain.join("lib"))?;
+    if !allowed.insert(toolchain_lib) {
+        return Err("toolchain library directory overlaps required loader set".into());
+    }
     let target_profile = paths.target_directory(profile)?;
     if !allowed.insert(target_profile.clone()) {
-        return Err("base profile directory overlaps required loader set".into());
+        return Err("base profile directory overlaps allowed loader set".into());
     }
     let value = env::var_os("LD_LIBRARY_PATH").ok_or("missing normal Cargo loader paths")?;
     let mut seen = BTreeSet::new();
@@ -270,8 +272,8 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
             return Err(format!("unknown or duplicate Cargo loader directory: observed={path:?}; derived_normal={allowed:?}"));
         }
     }
-    if !required.is_subset(&seen) {
-        let missing: Vec<_> = required
+    if !required_paths.is_subset(&seen) {
+        let missing: Vec<_> = required_paths
             .difference(&seen)
             .map(|path| path.display().to_string())
             .collect();
