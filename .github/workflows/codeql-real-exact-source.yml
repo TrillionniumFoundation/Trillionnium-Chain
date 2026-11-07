@@ -1,5 +1,5 @@
-# Generate exact-source local CodeQL SARIF for independent review.
-# The repository default Code Scanning setup owns official uploads; this workflow retains artifacts only.
+# Generate and upload exact-source CodeQL SARIF with distinct head/merge categories.
+# The read-only exporter consumes the resulting official analyses; no synthetic checks are accepted.
 name: CodeQL exact-source SARIF retention
 on:
   push:
@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +60,7 @@ jobs:
           output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
           ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
           sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-          upload: never
+          upload: always
       - name: Verify generated SARIF is present and parseable
         shell: bash
         env:
