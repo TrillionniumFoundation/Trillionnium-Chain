@@ -8199,3 +8199,20 @@ fresh recovery anchors, custody/revocation, long WAN and malicious-cost
 qualification, PQ finality and quantum-work/DAA/fork economics remain open.
 PR #723 remains Draft. No protected-main merge, self-approval, force push,
 production activation or whole-chain PQ acceptance is performed.
+
+### M15 cold replay and native continuation, 2026-11-07
+
+The [sealed M15 follow-through](../../evidence/pq-m15-native-followthrough-20261107/README.md)
+binds exact `1c14fab4` / tree `cd446a4d`: targeted 14 native cases and readers,
+the complete Node library result 1249 passed / 0 failed / 33 ignored, 29 original
+cost/interoperability command records, and three separate default-feature NPQ6
+migration integration cases with their original readers. These overlapping
+scopes are not added together. The actual complete-run ELF is a library harness.
+Original failures and the later hosted confirmation/Cell failures remain sealed.
+The exact840 exporter was built and listed only; fresh paired execution is a
+separate gate with its original 300-second expiry. Publication preserves
+concurrent `83bb1c4e` history without relabelling any native observation as a
+complete test of that later source. The hosted original pressure and Cell
+deadline gates, complete lineage signoff, independent custody/currentness,
+deployed migration, whole-directory rollback, WAN and quantum work/fork/DAA
+qualification remain HOLD / NO-GO. No budget, retry or activation is relaxed.
