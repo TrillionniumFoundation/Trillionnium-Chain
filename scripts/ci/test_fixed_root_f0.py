@@ -23,6 +23,57 @@ import fixed_root_f0_ownership as owner
 import run_fixed_root_phase_host as phase_launcher
 
 
+
+class F0PaidWaitControls(unittest.TestCase):
+    """No native experiment: fail closed on cost-scope substitution."""
+
+    @staticmethod
+    def settled_fixture():
+        # Deliberately synthetic disjoint intervals: 20 owner CPU + 30 wait CPU.
+        flow = dict(schema='public-v3-local-actual-cpu-flow-admission-wait-v3',
+                    balance_identity_verified=True, initial_credit_ns=2_000_000_000,
+                    credited_refill_ns=0, discarded_refill_ns=0,
+                    live_debited_cpu_ns=17, settlement_residual_cpu_ns=3,
+                    settled_full_cpu_ns=20, admission_wait_cpu_ns=30,
+                    paid_cpu_debit_ns=50, settlement_discard_ns=0,
+                    unsettled_known_live_cpu_ns=0, booked_reservation_ns=0,
+                    live_owners=0, remaining_paid_credit_ns=1_999_999_950,
+                    stored_credit_ns=1_999_999_950)
+        metrics = dict(mutation_cpu_charged_ns=20,
+                       mutation_cpu_charged_scope='owner-and-scoped-workers-excluding-admission-wait',
+                       mutation_cpu_admission_wait_ns=30,
+                       mutation_cpu_admission_wait_observations=1,
+                       mutation_cpu_admission_wait_unknown=0)
+        return flow, metrics
+
+
+    def test_owner_settlement_excludes_wait_and_listener_projection_can_be_a_subset(self):
+        flow, metrics = self.settled_fixture()
+        self.assertEqual(runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics), 30)
+        metrics['mutation_cpu_admission_wait_ns'] = 11
+        self.assertEqual(runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics), 30)
+
+    def test_adding_wait_to_owner_or_charged_metric_does_not_pass(self):
+        flow, metrics = self.settled_fixture()
+        for owner, reported, charged in ((50, 20, 20), (20, 50, 20), (20, 20, 50)):
+            with self.subTest(values=(owner, reported, charged)), self.assertRaisesRegex(ValueError, 'GLOBAL_PAID'):
+                runner.settled_owner_cpu(flow, owner, reported, charged, service_metrics=metrics)
+
+    def test_incomplete_or_unknown_listener_wait_cannot_claim_closed_accounting(self):
+        flow, metrics = self.settled_fixture()
+        for key, value in (('mutation_cpu_admission_wait_unknown', 1),
+                           ('mutation_cpu_admission_wait_ns', 31),
+                           ('mutation_cpu_admission_wait_observations', 0),
+                           ('mutation_cpu_admission_wait_ns', True),
+                           ('mutation_cpu_charged_scope', 'includes-wait')):
+            changed = dict(metrics, **{key: value})
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, 'GLOBAL_PAID'):
+                runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=changed)
+        del metrics['mutation_cpu_admission_wait_ns']
+        with self.assertRaises(KeyError):
+            runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics)
+
+
 class F0DenominatorControls(unittest.TestCase):
     @staticmethod
     def report():

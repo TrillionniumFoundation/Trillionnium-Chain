@@ -23,6 +23,7 @@ from run_pon_w1_native_campaign import (
     validate_build_environment, validate_resources, validate_source, write_new,
 )
 from read_original_native_campaign import depletion, integer
+from pon_w1_budget_reader import settled_owner_cpu
 
 SELECTOR = 'separate_process_root_rejection_and_signed_confirmation_supplement'
 INPUTS = {'seed_transfers': 1024, 'seed_blocks': 4, 'business_blocks': 21,
@@ -213,11 +214,9 @@ def check_report(value, cgroup):
     owner_cpu = sum(integer(row['dispatch_thread_cpu_ns']) for row in observer['records']
                     if row['operation'] == 1 and row['dispatch_started'] is True)
     flow = pressure['final_actual_flow']
-    require(owner_cpu > 0 and flow['balance_identity_verified'] is True
-            and flow['live_owners'] == flow['booked_reservation_ns'] == flow['unsettled_known_live_cpu_ns'] == 0
-            and owner_cpu == flow['paid_cpu_debit_ns'] == flow['settled_full_cpu_ns']
-                == root['mutation_owner_cpu_ns'] == pressure['service_outcome']['Ok']['mutation_cpu_charged_ns'],
-            'GLOBAL_PAID_SETTLEMENT_REQUIRED')
+    settled_owner_cpu(flow, owner_cpu, root['mutation_owner_cpu_ns'],
+                      pressure['service_outcome']['Ok']['mutation_cpu_charged_ns'],
+                      service_metrics=pressure['service_outcome']['Ok'])
     depleted = checked_depletion_samples(pressure)
     for index, row in enumerate(pressure['confirmations']):
         require(row['round'] == index and row['started_ns'] >= (1 + 4 * index) * 1_000_000_000

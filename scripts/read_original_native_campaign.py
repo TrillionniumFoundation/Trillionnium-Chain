@@ -21,6 +21,7 @@ import sys
 import zlib
 
 import pon_public_v3_phase_read as phase_reader
+from pon_w1_budget_reader import actual_cpu_flow
 from pon_w1_cost_matrix_reader import material as work_material
 from run_pon_w1_native_campaign import validate_resources
 
@@ -317,18 +318,7 @@ def depletion(snapshot):
     if flow is None:
         require(snapshot['depleted'] is False, 'missing actual flow cannot prove depletion')
         return False
-    for key, value in flow.items():
-        if key.endswith('_ns') or key == 'live_owners':
-            integer(value, signed=key in ('remaining_paid_credit_ns', 'stored_credit_ns'))
-    require(flow['schema'] == 'public-v3-local-actual-cpu-flow-v1'
-            and flow['balance_identity_verified'] is True
-            and flow['paid_cpu_debit_ns'] == flow['live_debited_cpu_ns'] + flow['settlement_residual_cpu_ns']
-            and flow['remaining_paid_credit_ns'] == flow['initial_credit_ns'] + flow['credited_refill_ns']
-                - flow['paid_cpu_debit_ns'] - flow['settlement_discard_ns']
-            and flow['stored_credit_ns'] == flow['remaining_paid_credit_ns'] - flow['booked_reservation_ns']
-            and flow['booked_reservation_ns'] == flow['live_owners'] * meter['start_reserve_ns']
-            and flow['unsettled_known_live_cpu_ns'] == flow['paid_cpu_debit_ns'] - flow['settled_full_cpu_ns'],
-            'actual paid CPU balance identity mismatch')
+    actual_cpu_flow(flow, "actual paid CPU balance identity mismatch")
     actual = (flow['initial_credit_ns'] == meter['burst_ns']
               and flow['remaining_paid_credit_ns'] < meter['start_reserve_ns']
               and flow['paid_cpu_debit_ns'] > meter['burst_ns'] - meter['start_reserve_ns']

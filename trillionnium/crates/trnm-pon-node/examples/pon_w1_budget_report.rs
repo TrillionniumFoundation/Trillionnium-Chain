@@ -18,7 +18,7 @@ use trnm_pon_node::ingress::public_v3::ServiceMutationCpuDomain;
 use trnm_protocol::pon_wire::{hash, Hash};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-const SCHEMA: &str = "pon-w1-same-target-budget-v1";
+const SCHEMA: &str = "pon-w1-same-target-budget-v2";
 const CLASSES: [&str; 4] = ["dense", "zero", "rank-one", "sparse"];
 
 struct Options {
@@ -377,8 +377,8 @@ fn raw_diagnostic(options: &Options, candidate: &Candidate) -> Result<()> {
 fn receiver_campaign(options: &Options, candidates: &[Candidate]) -> Result<()> {
     let domain = ServiceMutationCpuDomain::standalone();
     emit(
-        json!({"schema":SCHEMA,"kind":"receiver-domain-start","domain_count":1,"state":domain.observe()?,
-        "scope":"one explicit local domain for the entire receiver phase; original reserve/refill/debit semantics; no per-case or per-key reset"}),
+        json!({"schema":SCHEMA,"kind":"receiver-domain-start","domain_count":1,"state":domain.observe()?,"actual_flow":domain.observe_actual_flow()?,
+        "scope":"one explicit local domain for the entire receiver phase; original reserve/refill limits plus actual pre-reservation CPU debit; no per-case or per-key reset"}),
     )?;
     let wall = Instant::now();
     let mut attempts = 0u64;
@@ -391,13 +391,15 @@ fn receiver_campaign(options: &Options, candidates: &[Candidate]) -> Result<()> 
         for candidate in candidates {
             attempts += 1;
             let before = domain.observe()?;
+            let actual_flow_before = domain.observe_actual_flow()?;
             let operation = match domain.begin() {
                 Ok(operation) => operation,
                 Err(error) => {
                     start_refusals += 1;
                     emit(
                         json!({"schema":SCHEMA,"kind":"receiver","case":candidate.case,"round":round,
-                        "status":"not-started","error":error.to_string(),"before":before,"after":domain.observe()?}),
+                        "status":"not-started","error":error.to_string(),"before":before,"after":domain.observe()?,
+                        "actual_flow_before":actual_flow_before,"actual_flow_after":domain.observe_actual_flow()?}),
                     )?;
                     continue;
                 }
@@ -424,7 +426,8 @@ fn receiver_campaign(options: &Options, candidates: &[Candidate]) -> Result<()> 
             emit(
                 json!({"schema":SCHEMA,"kind":"receiver","case":candidate.case,"round":round,"status":"started",
                 "outcome":result,"checkpoints":checkpoints,"settlement":settlement,"before":before,"after":domain.observe()?,
-                "scope":"production W1 verifier plus cooperative checkpoint accounting; original live + residual charge once; no block admission claim"}),
+                "actual_flow_before":actual_flow_before,"actual_flow_after":domain.observe_actual_flow()?,
+                "scope":"production W1 verifier plus cooperative checkpoint accounting; paid admission wait separate from once-settled live + residual owner CPU; no block admission claim"}),
             )?;
         }
     }

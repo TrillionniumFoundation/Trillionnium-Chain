@@ -1,12 +1,15 @@
 //! Shared original scalar CPU accounting. A clone is the same volatile epoch.
 //! Metering is separate from task/packet authority; Native outcomes remain intact.
+#[path = "cpu_start_billing.rs"]
+mod cpu_start_billing;
 use super::request_observation::ThreadCpuStamp;
 use crate::{ensure, Result};
+pub(super) use cpu_start_billing::AdmissionWaitCpu;
 use std::{
     collections::HashMap,
     sync::{
         atomic::{AtomicBool, AtomicU64, Ordering},
-        Arc, Mutex,
+        Arc, Mutex, Weak,
     },
     thread,
     time::{Duration, Instant},
@@ -58,6 +61,7 @@ struct CpuFlow {
     credited_refill_ns: u64,
     discarded_refill_ns: u64,
     booked_reservation_ns: u64,
+    admission_wait_cpu_ns: u64,
     live_debited_cpu_ns: u64,
     settlement_residual_cpu_ns: u64,
     settled_full_cpu_ns: u64,
@@ -77,7 +81,8 @@ impl CpuFlow {
         }
     }
     fn paid(&self) -> Option<u64> {
-        self.live_debited_cpu_ns
+        self.admission_wait_cpu_ns
+            .checked_add(self.live_debited_cpu_ns)?
             .checked_add(self.settlement_residual_cpu_ns)
     }
     fn snapshot(
@@ -104,20 +109,20 @@ impl CpuFlow {
             return None;
         }
         Some(ServiceMutationCpuFlowObservation {
-            schema: if termination_reserved_ns == 0 {
-                "public-v3-local-actual-cpu-flow-v1"
-            } else {
-                "public-v3-local-actual-cpu-flow-reorg-reserve-v2"
-            },
+            schema: "public-v3-local-actual-cpu-flow-admission-wait-v3",
             termination_reserved_ns,
             initial_credit_ns: self.initial_credit_ns,
             credited_refill_ns: self.credited_refill_ns,
             discarded_refill_ns: self.discarded_refill_ns,
             booked_reservation_ns: self.booked_reservation_ns,
+            admission_wait_cpu_ns: self.admission_wait_cpu_ns,
             live_debited_cpu_ns: self.live_debited_cpu_ns,
             settlement_residual_cpu_ns: self.settlement_residual_cpu_ns,
             settled_full_cpu_ns: self.settled_full_cpu_ns,
-            unsettled_known_live_cpu_ns: paid.checked_sub(self.settled_full_cpu_ns)?,
+            unsettled_known_live_cpu_ns: self
+                .live_debited_cpu_ns
+                .checked_add(self.settlement_residual_cpu_ns)?
+                .checked_sub(self.settled_full_cpu_ns)?,
             paid_cpu_debit_ns: paid,
             settlement_discard_ns: self.settlement_discard_ns,
             remaining_paid_credit_ns: remaining,
@@ -137,6 +142,9 @@ pub struct ServiceMutationCpuFlowObservation {
     pub credited_refill_ns: u64,
     pub discarded_refill_ns: u64,
     pub booked_reservation_ns: u64,
+    /// Known, already debited pre-reservation CPU, including refused attempts.
+    /// This has no outstanding principal and is never unsettled live-owner CPU.
+    pub admission_wait_cpu_ns: u64,
     pub live_debited_cpu_ns: u64,
     pub settlement_residual_cpu_ns: u64,
     pub settled_full_cpu_ns: u64,
@@ -177,6 +185,10 @@ pub(super) struct PaidMutationCpuBudget {
     pub(super) updated: Instant,
     pub(super) in_flight: usize,
     pub(super) unavailable: bool,
+    // The original two live owners, not another queue or thread registry.
+    cpu_scopes: [Weak<Mutex<LiveRequestCpuState>>; MUTATION_CPU_WORKERS],
+    #[cfg(test)]
+    scope_snapshot_reached: Option<Arc<AtomicBool>>,
     termination_reserved_ns: u64,
     cpu_starts: cpu_start_order::CpuStartOrder,
     // A full W1 success can protect only its existing public request. This is
@@ -196,6 +208,9 @@ impl PaidMutationCpuBudget {
             updated: Instant::now(),
             in_flight: 0,
             unavailable: false,
+            cpu_scopes: std::array::from_fn(|_| Weak::new()),
+            #[cfg(test)]
+            scope_snapshot_reached: None,
             termination_reserved_ns: 0,
             cpu_starts: cpu_start_order::CpuStartOrder::default(),
             verified_completions: 0,
@@ -335,6 +350,17 @@ impl PaidMutationCpuBudget {
     pub(super) fn queued_start_count(&self) -> usize {
         self.cpu_starts.len()
     }
+    /// Retire only this exact state identity. A stale handle cannot clear a
+    /// newer owner occupying the same fixed slot or actual thread.
+    fn retire_cpu_scope(&mut self, state: &Arc<Mutex<LiveRequestCpuState>>) {
+        let expected = Arc::downgrade(state);
+        for scope in &mut self.cpu_scopes {
+            if Weak::ptr_eq(scope, &expected) {
+                *scope = Weak::new();
+            }
+        }
+    }
+
     pub(super) fn completion_pending(&self) -> bool {
         self.verified_completions != 0
     }
@@ -405,6 +431,25 @@ impl PaidMutationCpuBudget {
         }
         !self.unavailable
     }
+    /// Debit newly sampled admission CPU without creating a live owner or
+    /// returning a reserve. Debt changes later start eligibility; this method
+    /// grants no native execution or new time to wait for a refill.
+    pub(super) fn charge_admission_wait(&mut self, now: Instant, measured: u64) -> Result<()> {
+        self.refill(now);
+        let Some(credit) = self.credit_ns.checked_sub(i128::from(measured)) else {
+            self.unavailable = true;
+            return Err("PUBLIC_MUTATION_CPU_UNAVAILABLE".into());
+        };
+        self.credit_ns = credit;
+        self.flow_update(|flow| {
+            flow.admission_wait_cpu_ns = flow.admission_wait_cpu_ns.checked_add(measured)?;
+            Some(())
+        });
+        // This records known consumption even after a poisoned/unknown account.
+        // The typed waiting scope separately refuses all new work when unavailable.
+        Ok(())
+    }
+
     /// Charge a known newly observed interval immediately. The start reserve
     /// remains outstanding until settlement; it is not charged a second time.
     pub(super) fn charge_live(&mut self, now: Instant, measured: u64) -> Result<()> {
@@ -495,7 +540,7 @@ impl PaidMutationCpuBudget {
 /// progress authority is cached. Locks are released before any native work.
 pub(super) struct LiveRequestCpu {
     pub(super) budget: Arc<Mutex<PaidMutationCpuBudget>>,
-    pub(super) state: Mutex<LiveRequestCpuState>,
+    pub(super) state: Arc<Mutex<LiveRequestCpuState>>,
     #[cfg(test)]
     pub(super) fail_next_sample: AtomicBool,
 }
@@ -509,6 +554,7 @@ pub(super) struct LiveRequestCpuState {
     wait_inside_checkpoint: bool,
     node_owner_scopes: u32,
     owner_thread: thread::ThreadId,
+    owner_finished: bool,
     termination_reserved: bool,
 }
 
@@ -551,10 +597,45 @@ impl PublicRequestDeadline {
     }
 }
 impl LiveRequestCpu {
+    // Slot-filling controls retain their direct construction helper. Actual
+    // admission constructs and registers under its typed original-account lock.
+    #[cfg(test)]
     pub(super) fn new(budget: Arc<Mutex<PaidMutationCpuBudget>>, owner: ThreadCpuStamp) -> Self {
+        let value = Self::unregistered(budget, owner);
+        let registered = match value.budget.lock() {
+            Ok(mut account) => {
+                match account
+                    .cpu_scopes
+                    .iter()
+                    .position(|scope| scope.strong_count() == 0)
+                {
+                    Some(slot) => {
+                        account.cpu_scopes[slot] = Arc::downgrade(&value.state);
+                        true
+                    }
+                    None => {
+                        account.unavailable = true;
+                        false
+                    }
+                }
+            }
+            Err(error) => {
+                drop(error);
+                false
+            }
+        };
+        if !registered {
+            value.unknown();
+        }
+        value
+    }
+    pub(super) fn unregistered(
+        budget: Arc<Mutex<PaidMutationCpuBudget>>,
+        owner: ThreadCpuStamp,
+    ) -> Self {
         Self {
             budget,
-            state: Mutex::new(LiveRequestCpuState {
+            state: Arc::new(Mutex::new(LiveRequestCpuState {
                 threads: [(thread::current().id(), owner)].into_iter().collect(),
                 charged_ns: 0,
                 refused: false,
@@ -564,8 +645,9 @@ impl LiveRequestCpu {
                 wait_inside_checkpoint: true,
                 node_owner_scopes: 0,
                 owner_thread: thread::current().id(),
+                owner_finished: false,
                 termination_reserved: false,
-            }),
+            })),
             #[cfg(test)]
             fail_next_sample: AtomicBool::new(false),
         }
@@ -716,7 +798,7 @@ impl LiveRequestCpu {
             }
         };
         let id = thread::current().id();
-        if state.threads.contains_key(&id) {
+        if state.owner_finished || state.threads.contains_key(&id) {
             drop(state);
             self.unknown();
             return;
@@ -814,6 +896,9 @@ impl LiveRequestCpu {
             measured
         };
         if remove {
+            if id == state.owner_thread && state.threads.contains_key(&id) {
+                state.owner_finished = true;
+            }
             state.threads.remove(&id);
         }
         let Some(measured) = measured else {
@@ -832,6 +917,9 @@ impl LiveRequestCpu {
                 .budget
                 .lock()
                 .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
+            if remove && state.owner_finished && state.threads.is_empty() {
+                budget.retire_cpu_scope(&self.state);
+            }
             if enforce {
                 budget.charge_request_live(Instant::now(), measured, total)?;
                 // A probe already running when another request finishes W1
@@ -891,7 +979,8 @@ impl LiveRequestCpu {
                 return None;
             }
         };
-        if state.unavailable
+        if !state.owner_finished
+            || state.unavailable
             || !state.threads.is_empty()
             || state.termination_reserved
             || state.node_owner_scopes != 0
@@ -1054,24 +1143,15 @@ impl ServiceMutationCpuDomain {
     /// Begin on the actual owner thread, after separate task-purpose authority
     /// but before expensive Native work. No ledger authority is minted here.
     pub fn begin(&self) -> Result<ServiceMutationCpuOperation> {
-        let stamp = ThreadCpuStamp::start();
-        let mut budget = self
-            .budget
-            .lock()
-            .map_err(|_| "PUBLIC_MUTATION_CPU_UNAVAILABLE")?;
-        if stamp.is_none() {
-            budget.unavailable = true;
-        }
-        budget.reserve(Instant::now())?;
+        // Immediate local/History starts use the same measured boundary. A
+        // refused retry is still CPU consumption, with no booked principal.
+        let mut waiting = AdmissionWaitCpu::new(self.budget.clone(), ThreadCpuStamp::start())?;
+        let mut budget = waiting.lock_and_sample()?;
+        let (stamp, live) = budget.reserve_owner(None)?;
         drop(budget);
-        let owner = stamp
-            .as_ref()
-            .ok_or("PUBLIC_MUTATION_CPU_UNAVAILABLE")?
-            .clone();
-        let live = Arc::new(LiveRequestCpu::new(self.budget.clone(), owner));
         Ok(ServiceMutationCpuOperation {
             budget: self.budget.clone(),
-            stamp,
+            stamp: Some(stamp),
             live: live.clone(),
             settled: false,
             workers: ScopedWorkerCpu {
@@ -1616,7 +1696,18 @@ mod request_owned_reserve_tests {
     fn termination_cannot_borrow_another_live_owners_start_quantum() {
         let domain = ServiceMutationCpuDomain::standalone();
         let first = domain.begin().unwrap();
-        let second = domain.begin().unwrap();
+        let second_domain = domain.clone();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (finish_tx, finish_rx) = std::sync::mpsc::channel();
+        // These are two actual CPU owners on different threads. Nesting a
+        // second interval on the first owner's thread would count CPU twice.
+        let second = thread::spawn(move || {
+            let second = second_domain.begin().unwrap();
+            ready_tx.send(()).unwrap();
+            finish_rx.recv().unwrap();
+            second.finish()
+        });
+        ready_rx.recv().unwrap();
         let original_credit = -i128::from(MUTATION_CPU_START_RESERVE_NS)
             + i128::from(REORG_TERMINATION_RESERVE_NS / 2);
         {
@@ -1635,7 +1726,8 @@ mod request_owned_reserve_tests {
             .is(crate::ErrorCode::PublicMutationCpuBudget));
         assert_eq!(domain.budget.lock().unwrap().termination_reserved_ns, 0);
         let first = first.finish();
-        let second = second.finish();
+        finish_tx.send(()).unwrap();
+        let second = second.join().unwrap();
         assert!(!first.accounting_unavailable && !second.accounting_unavailable);
         let budget = domain.budget.lock().unwrap();
         assert_eq!(budget.in_flight, 0);

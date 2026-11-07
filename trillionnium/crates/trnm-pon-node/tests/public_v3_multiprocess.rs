@@ -74,7 +74,7 @@ impl CampaignConfiguration {
 
 fn campaign_server(work_profile: support::WorkProfile) -> (PublicServer, Option<Value>) {
     let server = PublicServer::new(support::identity(71), support::policy()).unwrap();
-    if work_profile == support::WorkProfile::RawR16 {
+    if work_profile == support::WorkProfile::RawR17 {
         assert_eq!(server.resource_profile(), support::policy().id());
         assert!(server.arithmetic_facts_software_bytes().is_none());
         return (server, None);
@@ -1291,8 +1291,9 @@ fn phase(
                 && f.booked_reservation_ns == 0
                 && f.unsettled_known_live_cpu_ns == 0
                 && f.paid_cpu_debit_ns > 0
-                && f.paid_cpu_debit_ns == f.settled_full_cpu_ns
-                && Some(f.paid_cpu_debit_ns) == owner_cpu
+                && Some(f.settled_full_cpu_ns) == owner_cpu
+                && Some(f.paid_cpu_debit_ns)
+                    == owner_cpu.and_then(|owner| owner.checked_add(f.admission_wait_cpu_ns))
                 && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == owner_cpu
         });
         let membership = root_readiness.len() == ATTACKERS
@@ -1395,12 +1396,12 @@ fn phase(
             "controller_cgroup":controller_cgroup,"actor_readiness":root_readiness,"aggregate_membership_verified":membership,
             "checked_acquisitions_complete":acquisition_complete,"acquisitions":root_acquisitions,
             "whole_domain_paid_reconciled":settled,"mutation_owner_cpu_ns":owner_cpu,
-            "aggregate_scoped_cpu_ns":flow.as_ref().zip(owner_cpu).and_then(|(f,c)|f.paid_cpu_debit_ns.checked_sub(c)),
+            "aggregate_scoped_cpu_ns":flow.as_ref().zip(owner_cpu).and_then(|(f,c)|f.settled_full_cpu_ns.checked_sub(c)),
             "hostile_packet_ids":root_packet_ids.iter().map(hex::encode).collect::<Vec<_>>(),
             "hostile_packets_absent_live":live_absent,"hostile_packets_absent_cold":cold_absent,
             "cold_state_equal":cold_equal,"expected_legal_counts_and_tip":expected_counts,"final_stats":final_stats,
             "final_state_rows":actual.2.iter().map(|(k,v)|(hex::encode(k),hex::encode(serde_json::to_vec(v).unwrap()))).collect::<Vec<_>>(),
-            "scope":"whole-domain paid CPU includes honest and hostile Submit; known zero scoped CPU from one M06 worker; ROOT reply evidence and observer refusal evidence are separate; cold reopen is after the window",
+            "scope":"whole-domain paid CPU includes original-account admission wait plus settled honest and hostile Submit; owner and scoped CPU exclude admission wait; known zero scoped CPU from one M06 worker; ROOT reply evidence and observer refusal evidence are separate; cold reopen is after the window",
             "round_snapshot_scope":"live observer snapshots are non-atomic; ROOT round end follows the last after snapshot and must remain before the fixed phase end",
             "original_campaign_qualified":false});
     }
@@ -1409,17 +1410,17 @@ fn phase(
 
 #[test]
 fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_jobs() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR16};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR17};
     let original = json!({"kind":"attack","mode":"from-zero","worker":0});
     let original_bytes = serde_json::to_vec(&original).unwrap();
     let mut raw = original.clone();
-    RawR16.bind_actor_job(&mut raw);
+    RawR17.bind_actor_job(&mut raw);
     assert_eq!(serde_json::to_vec(&raw).unwrap(), original_bytes);
-    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR16));
-    assert_eq!(RawR16.policy_observation(), support::policy_observation());
+    assert_eq!(support::WorkProfile::from_actor_job(&raw), Ok(RawR17));
+    assert_eq!(RawR17.policy_observation(), support::policy_observation());
     assert_eq!(
-        RawR16.policy_observation()["policy_id"],
-        "9a266e6e8d87c882ac052ca94119227b27cf0a4be99ba081cd7a5597b9d20658"
+        RawR17.policy_observation()["policy_id"],
+        "c25a91118266f63379927d0a9ee12ce038ea949b3e0e79d4347ce24397542a4b"
     );
     let mut opt_in = original;
     ArithmeticFactsV1.bind_actor_job(&mut opt_in);
@@ -1429,7 +1430,7 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     );
     assert_eq!(
         opt_in["public_resource_policy"]["policy_id"],
-        "3d2064a0eae79ead4658a17770eede1c4c11fe29554b934b9019f92bc8cf87a0"
+        "97d8078ea6b4648eff20608d6e38a453165da7eace04611e93a5fa861f03066f"
     );
     let mut malformed = Vec::new();
     for key in ["work_profile", "public_resource_policy"] {
@@ -1443,8 +1444,15 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
     let mut unknown = opt_in.clone();
     unknown["work_profile"] = json!("raw-r13");
     malformed.push(unknown);
+    let mut old_raw = opt_in.clone();
+    old_raw["work_profile"] = json!("raw-r16");
+    malformed.push(old_raw);
+    let mut old_arithmetic = opt_in.clone();
+    old_arithmetic["public_resource_policy"]["policy_id"] =
+        json!("3d2064a0eae79ead4658a17770eede1c4c11fe29554b934b9019f92bc8cf87a0");
+    malformed.push(old_arithmetic);
     let mut wrong_policy = opt_in.clone();
-    wrong_policy["public_resource_policy"] = RawR16.policy_observation();
+    wrong_policy["public_resource_policy"] = RawR17.policy_observation();
     malformed.push(wrong_policy);
     let mut wrong_bits = opt_in.clone();
     wrong_bits["public_resource_policy"]["ticket_bits"] = json!(7);
@@ -1462,14 +1470,14 @@ fn arithmetic_campaign_profile_binding_preserves_raw_and_rejects_partial_actor_j
 
 #[test]
 fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
-    use support::WorkProfile::{ArithmeticFactsV1, RawR16};
+    use support::WorkProfile::{ArithmeticFactsV1, RawR17};
     for backend in [
         StateBackendChoice::LegacyV2,
         StateBackendChoice::AuthenticatedV1,
     ] {
-        let raw = CampaignConfiguration::new(backend, RawR16).unwrap();
+        let raw = CampaignConfiguration::new(backend, RawR17).unwrap();
         assert_eq!(raw.state_backend.label(), backend.label());
-        assert_eq!(raw.work_profile, RawR16);
+        assert_eq!(raw.work_profile, RawR17);
     }
     assert!(matches!(
         CampaignConfiguration::new(StateBackendChoice::LegacyV2, ArithmeticFactsV1),
@@ -1483,7 +1491,7 @@ fn arithmetic_campaign_configuration_requires_the_original_measured_backend() {
 
 #[test]
 fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
-    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR16);
+    let (raw, no_arithmetic) = campaign_server(support::WorkProfile::RawR17);
     let (opt_in, arithmetic) = campaign_server(support::WorkProfile::ArithmeticFactsV1);
     assert!(no_arithmetic.is_none());
     assert!(raw.arithmetic_facts_software_bytes().is_none());
@@ -1511,7 +1519,7 @@ fn arithmetic_campaign_server_routing_does_not_change_cpu_capacity() {
 #[test]
 #[ignore = "explicit finite 3x30 second separate-process local campaign and producer cost; see retained report"]
 fn separate_process_work_and_signed_confirmation_campaign() {
-    run_campaign(support::WorkProfile::RawR16);
+    run_campaign(support::WorkProfile::RawR17);
 }
 
 #[test]
@@ -1814,7 +1822,7 @@ fn separate_process_root_rejection_and_signed_confirmation_supplement() {
     for mode in [None, Some("valid-work-root")] {
         let name = mode.unwrap_or("baseline");
         let configuration =
-            CampaignConfiguration::new(backend, support::WorkProfile::RawR16).unwrap();
+            CampaignConfiguration::new(backend, support::WorkProfile::RawR17).unwrap();
         let result = std::panic::catch_unwind(||phase(&output.join(name),&settings,&seed,&business,mode,0,configuration))
             .unwrap_or_else(|error|json!({"mode":name,"startup_or_campaign_error":error.downcast_ref::<String>()
                 .cloned().or_else(||error.downcast_ref::<&str>().map(|s|s.to_string())).unwrap_or_else(||"non-string panic".to_owned())}));
@@ -2116,24 +2124,26 @@ fn root_replay_component_cost(signed_seed: bool) {
             let client_cost = client_started.finish(epoch);
             // Native dispatch joins M06 workers and finishes the paid permit
             // after response signing, before delivery. No other mutation uses this domain.
+            // Settled full CPU is owner plus workers; wait remains in the separate flow field.
             let after = domain.observe_actual_flow().unwrap();
-            let paid_cpu_ns = before
+            let owner_and_scoped_cpu_ns = before
                 .as_ref()
                 .zip(after.as_ref())
-                .and_then(|(a, b)| b.paid_cpu_debit_ns.checked_sub(a.paid_cpu_debit_ns));
+                .and_then(|(a, b)| b.settled_full_cpu_ns.checked_sub(a.settled_full_cpu_ns));
             let quiescent = [&before, &after].iter().all(|flow| {
                 flow.as_ref().is_some_and(|f| {
                     f.balance_identity_verified
                         && f.live_owners == 0
                         && f.booked_reservation_ns == 0
                         && f.unsettled_known_live_cpu_ns == 0
-                        && f.paid_cpu_debit_ns == f.settled_full_cpu_ns
+                        && Some(f.paid_cpu_debit_ns)
+                            == f.settled_full_cpu_ns.checked_add(f.admission_wait_cpu_ns)
                 })
             });
             calls.push(
                 json!({"ordinal":index,"reuse":if index == 0 {"first"} else {"warm"},
                 "call":response,"client_thread_cost":client_cost,"flow_before":before,"flow_after":after,
-                "quiescent":quiescent,"paid_owner_plus_scoped_worker_cpu_ns":paid_cpu_ns,
+                "quiescent":quiescent,"paid_owner_plus_scoped_worker_cpu_ns":owner_and_scoped_cpu_ns,
                 "native_stats_after":owner.lock().unwrap().stats().unwrap()}),
             );
         }
@@ -2198,25 +2208,26 @@ fn root_replay_component_cost(signed_seed: bool) {
                 && row["call"]["response"]["public_network_ready"] == false
                 && (accepted || row["call"]["response"]["value"]["error"] == "ROOT")
         });
-        let total_paid = initial_flow
+        let total_owner_and_scoped_cpu_ns = initial_flow
             .as_ref()
             .zip(final_flow.as_ref())
-            .and_then(|(a, b)| b.paid_cpu_debit_ns.checked_sub(a.paid_cpu_debit_ns));
+            .and_then(|(a, b)| b.settled_full_cpu_ns.checked_sub(a.settled_full_cpu_ns));
         let sum = calls.iter().try_fold(0_u64, |sum, call| {
             sum.checked_add(call["paid_owner_plus_scoped_worker_cpu_ns"].as_u64()?)
         });
         let settled = final_meter.in_flight == 0
             && !final_meter.accounting_unavailable
-            && total_paid.is_some_and(|ns| ns > 0)
-            && total_paid == sum
-            && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == total_paid
+            && total_owner_and_scoped_cpu_ns.is_some_and(|ns| ns > 0)
+            && total_owner_and_scoped_cpu_ns == sum
+            && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64()
+                == total_owner_and_scoped_cpu_ns
             && service_outcome["Ok"]["mutation_cpu_clock_failures"] == 0;
         let encoding_measured = encoding_cost["cpu_ns"].as_u64().is_some_and(|ns| ns > 0)
             && encoding_cost["wall_ns"].as_u64().is_some_and(|ns| ns > 0);
         let result = json!({"calls":calls,"body_digest":hex::encode(digest),"observer":captured,
             "request_encoding_cost":encoding_cost,"encoding_measured":encoding_measured,
             "initial_flow":initial_flow,"final_flow":final_flow,"final_meter":final_meter,
-            "total_paid_owner_plus_scoped_worker_cpu_ns":total_paid,"service":service_outcome,
+            "total_paid_owner_plus_scoped_worker_cpu_ns":total_owner_and_scoped_cpu_ns,"service":service_outcome,
             "stages_match":stages_match,"replies_match":replies_match,"settled":settled});
         support::write_new(&output.join(format!("{label}.json")), &result);
         let node = Arc::try_unwrap(owner)

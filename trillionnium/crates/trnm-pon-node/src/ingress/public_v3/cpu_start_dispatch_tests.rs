@@ -32,13 +32,43 @@ fn actual_shared_server_starts_follow_oldest_waiter_across_listener_owners() {
     let held_metrics = Mutex::new(PublicMetrics::default());
     let old_metrics = Mutex::new(PublicMetrics::default());
     let new_metrics = Mutex::new(PublicMetrics::default());
-    // Two actual measured reservations occupy the original two worker slots.
-    let held_one = PaidMutationCpuPermit::acquire(&first, &held_metrics).unwrap();
-    let held_two = PaidMutationCpuPermit::acquire(&first, &held_metrics).unwrap();
+    // Two actual owner threads occupy the original two worker slots. Each
+    // creates and settles its permit on its own thread; the controller holds none.
+    let (held_ready_tx, held_ready_rx) = mpsc::channel();
+    let (release_one_tx, release_one_rx) = mpsc::channel();
+    let (release_two_tx, release_two_rx) = mpsc::channel();
     let (granted_tx, granted_rx) = mpsc::channel();
     let (release_old_tx, release_old_rx) = mpsc::channel();
     thread::scope(|scope| {
         let first_ref = &first;
+        let held_metrics_ref = &held_metrics;
+        let first_ready = held_ready_tx.clone();
+        let held_one = scope.spawn(move || {
+            let permit = PaidMutationCpuPermit::acquire(first_ref, held_metrics_ref).unwrap();
+            first_ready.send(thread::current().id()).unwrap();
+            release_one_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+            permit.finish(
+                &MutationCpuMeasurement::default(),
+                first_ref,
+                held_metrics_ref,
+            );
+        });
+        let held_two = scope.spawn(move || {
+            let permit = PaidMutationCpuPermit::acquire(first_ref, held_metrics_ref).unwrap();
+            held_ready_tx.send(thread::current().id()).unwrap();
+            release_two_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+            permit.finish(
+                &MutationCpuMeasurement::default(),
+                first_ref,
+                held_metrics_ref,
+            );
+        });
+        let first_owner = held_ready_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+        let second_owner = held_ready_rx.recv_timeout(Duration::from_secs(3)).unwrap();
+        assert_ne!(first_owner, second_owner);
+        assert_ne!(first_owner, thread::current().id());
+        assert_ne!(second_owner, thread::current().id());
+        assert_eq!(domain.observe().unwrap().in_flight, 2);
         let old_metrics_ref = &old_metrics;
         let old_granted = granted_tx.clone();
         let old = scope.spawn(move || {
@@ -78,7 +108,8 @@ fn actual_shared_server_starts_follow_oldest_waiter_across_listener_owners() {
             );
         });
         wait_for_waiters(&first, 2);
-        held_one.finish(&MutationCpuMeasurement::default(), &first, &held_metrics);
+        release_one_tx.send(()).unwrap();
+        held_one.join().unwrap();
         assert_eq!(granted_rx.recv_timeout(Duration::from_secs(3)).unwrap(), 1);
         assert!(granted_rx.try_recv().is_err());
         assert_eq!(domain.observe().unwrap().in_flight, 2);
@@ -86,8 +117,9 @@ fn actual_shared_server_starts_follow_oldest_waiter_across_listener_owners() {
         assert_eq!(granted_rx.recv_timeout(Duration::from_secs(3)).unwrap(), 2);
         old.join().unwrap();
         new.join().unwrap();
+        release_two_tx.send(()).unwrap();
+        held_two.join().unwrap();
     });
-    held_two.finish(&MutationCpuMeasurement::default(), &first, &held_metrics);
     assert_eq!(domain.observe().unwrap().in_flight, 0);
     assert!(domain.accounting_available());
     assert_eq!(first.mutation_cpu.lock().unwrap().queued_start_count(), 0);

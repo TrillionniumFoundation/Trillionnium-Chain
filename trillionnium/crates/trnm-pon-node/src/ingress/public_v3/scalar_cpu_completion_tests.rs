@@ -62,7 +62,12 @@ fn complete_actual_w1_blocks_new_probes_without_new_credit_and_releases_once() {
     let flow = domain.observe_actual_flow().unwrap().unwrap();
     assert!(flow.balance_identity_verified);
     assert_eq!(flow.booked_reservation_ns, 0);
-    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(
+        Some(flow.paid_cpu_debit_ns),
+        flow.admission_wait_cpu_ns
+            .checked_add(receipt.total_cpu_ns.unwrap())
+    );
     assert!(flow.remaining_paid_credit_ns <= i128::from(MUTATION_CPU_BURST_NS));
     assert!(!domain.begin().unwrap().finish().accounting_unavailable);
 }
@@ -105,7 +110,12 @@ fn actual_w1_cpu_completion_waits_for_original_refill_and_preserves_balance_iden
     let flow = domain.observe_actual_flow().unwrap().unwrap();
     assert_eq!(flow.initial_credit_ns, 0);
     assert_eq!(flow.booked_reservation_ns, 0);
-    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(
+        Some(flow.paid_cpu_debit_ns),
+        flow.admission_wait_cpu_ns
+            .checked_add(receipt.total_cpu_ns.unwrap())
+    );
     assert_eq!(
         flow.remaining_paid_credit_ns,
         i128::from(flow.credited_refill_ns)
@@ -748,7 +758,12 @@ fn exclusive_history_refill_observes_original_resource_cancellation_without_new_
     let flow = domain.observe_actual_flow().unwrap().unwrap();
     assert_eq!(flow.initial_credit_ns, 0);
     assert_eq!(flow.booked_reservation_ns, 0);
-    assert_eq!(flow.paid_cpu_debit_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(flow.settled_full_cpu_ns, receipt.total_cpu_ns.unwrap());
+    assert_eq!(
+        Some(flow.paid_cpu_debit_ns),
+        flow.admission_wait_cpu_ns
+            .checked_add(receipt.total_cpu_ns.unwrap())
+    );
     assert!(flow.balance_identity_verified);
     println!(
         "{}",

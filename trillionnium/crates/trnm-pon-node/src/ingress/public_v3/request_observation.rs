@@ -1095,6 +1095,7 @@ impl Drop for TaskObservation {
 }
 
 #[derive(Clone)]
+#[cfg_attr(test, derive(Debug, PartialEq, Eq))]
 pub(in crate::ingress) struct ThreadCpuStamp {
     thread: ThreadId,
     ns: u64,
@@ -1105,6 +1106,9 @@ impl ThreadCpuStamp {
             thread: thread::current().id(),
             ns: thread_cpu_ns()?,
         })
+    }
+    pub(super) fn belongs_to_current_thread(&self) -> bool {
+        self.thread == thread::current().id()
     }
     pub(in crate::ingress) fn finish(self) -> Option<u64> {
         if self.thread != thread::current().id() {

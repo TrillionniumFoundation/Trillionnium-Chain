@@ -8283,3 +8283,66 @@ The fixed quarter-CPU, 2-GiB, no-swap, 256-PID, four-second/depth-six service
 contract is unchanged. ACK is not confirmation. Fresh native controls, full
 source checks, strict quality gates and original hosted service observations
 must be bound to this exact candidate before any acceptance decision.
+
+## 2026-11-07: charge shared admission waiting and preserve completed-work evidence
+
+The preceding `724bf149659ed65346e8ae1afa3985d35b6cddb2` source is retained as
+its own qualification checkpoint. Its original seventeen local commands and
+401 Python controls pass, with no skipped controls; the original full build
+announces all 390 targets in 26 members. Strict formatting and Clippy pass.
+The Node library records 1,241 passed / zero failed / 32 ignored. The complete
+workspace runtime still fails at the original fixed-Host architecture delivery
+boundary, and its now-retained complete report does not establish an independent
+confirmation. The separate documentation command passes.
+
+The first release authenticated attempt on that source omitted the required
+external cost-output variable: retain its 122 passed / one failed result.
+With the original workflow's fresh output destination supplied, the same source
+records 123 passed / zero failed / zero ignored and both original roster guards
+pass. Keep all 32 cost observations / sixteen pairs, the initial setup failure,
+and the corrected readback's initial footer-parsing failure. Neither an evidence
+reader correction nor an ignored test is a new native success.
+
+Same-connection ordinary State controls on 724bf149 retain exact results while
+reducing complete measured SQLite progress from 2,891 and 2,890 steps to 2,718.
+These observations include the existing scope/schema fences and start after a
+completed History receipt; they do not measure first-history cost, CPU or TPS.
+Original hosted x64, ARM64 and protocol confirmation attempts still fail the
+pressure-phase confirmation target. Each baseline completes one depth-six
+transaction in its original four-second window; the pressure phases complete
+none. Preserve their failed or unattempted history work and full original
+artifacts rather than counting Submit ACKs as confirmation.
+
+The implementation following this checkpoint introduces signed resource policy
+r17 and explicit accounting semantics for admission waiting:
+
+- A rolling actual thread-CPU stamp begins before account/scope lookup. Waiting,
+  cancellation, refusal, deadline and abandoned attempts debit only newly
+  observed CPU in the same shared account, without reserving an execution slot,
+  refunding a reservation or widening the original resource envelope.
+- Successful reservation, live-scope registration and transfer of that exact
+  stamp retain one account and one atomic budget boundary. Existing owner and
+  worker settlement retains its original meaning; separate wait-debit and
+  covered-observation fields avoid an invented whole-pipeline CPU total.
+- The original two owner slots also hold bounded weak references to their live
+  scopes. A same-account, same-thread nested attempt covered by a live owner or
+  worker is refused without charging its CPU twice. Slot retirement binds the
+  same state identity and completed threads. Missing clocks, poison, wrong
+  threads and inconsistent slot state remain fail-closed.
+- A normal third attempt while both actual owners are active remains an ordinary
+  capacity refusal. It must not disable the account or prevent those owners from
+  settling. Early owner completion with live workers remains an unknown-cost
+  failure under the existing lifecycle contract.
+- Versioned raw producers/readers retain prior schemas and policy commitments.
+  New flow rows separate admission-wait debit from owner/live/residual CPU,
+  preserve actual before/after observations and reject absent or unknown values
+  where qualification requires measured accounting. Historical bytes are not
+  relabelled as current-source performance.
+
+Native controls and exact committed-source gates for this r17 continuation
+remain pending at this implementation checkpoint. The original FIFO limits,
+deterministic state commit, live authorization/revocation/frontier checks,
+quarter-CPU / 2-GiB / no-swap / 256-PID / four-second / depth-six contract and
+independent data-availability requirements remain in force. Keep draft PR #736
+on HOLD until its stated gates are actually observed; no release, service,
+independent-user or whole-chain PQ capacity claim follows from this source.

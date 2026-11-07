@@ -30,7 +30,7 @@ class PhaseHostControls(unittest.TestCase):
             "controller_cgroup": "/system.slice/unique-campaign.service",
             "binary_sha256": host.digest(self.binary),
             "state_backend": "authenticated-v1",
-            "work_profile": "raw-r16",
+            "work_profile": "raw-r17",
             "mode": None,
             "method": 0,
             "seed": ["00"] * 4,
@@ -45,6 +45,13 @@ class PhaseHostControls(unittest.TestCase):
         value, digest = host.validate_job(self.job, self.binary)
         self.assertEqual(value, self.value)
         self.assertEqual(digest, hashlib.sha256(self.job.read_bytes()).hexdigest())
+
+    def test_r16_raw_job_cannot_be_relabelled_as_current_r17(self):
+        self.assertEqual(self.value["work_profile"], "raw-r17")
+        previous = dict(self.value, work_profile="raw-r16")
+        self.write(previous)
+        with self.assertRaises(ValueError):
+            host.validate_job(self.job, self.binary)
 
     def test_changed_binary_is_not_the_original_test_program(self):
         self.binary.write_bytes(b"\x7fELFchanged")

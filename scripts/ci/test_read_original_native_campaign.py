@@ -28,6 +28,125 @@ def encoded(value):
     return (json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + '\n').encode()
 
 
+
+class ActualCpuFlowSchemaTests(unittest.TestCase):
+    """Synthetic accounting controls; no report, workload or native evidence."""
+
+    @staticmethod
+    def snapshot(*, wait=None, live=1_950_000_001, settled=None, owners=0, termination=0):
+        paid = live + (0 if wait is None else wait)
+        remaining = 2_000_000_000 - paid
+        flow = dict(schema='public-v3-local-actual-cpu-flow-v1',
+                    balance_identity_verified=True, initial_credit_ns=2_000_000_000,
+                    credited_refill_ns=0, discarded_refill_ns=0,
+                    live_debited_cpu_ns=live, settlement_residual_cpu_ns=0,
+                    paid_cpu_debit_ns=paid, settlement_discard_ns=0,
+                    settled_full_cpu_ns=live if settled is None else settled,
+                    unsettled_known_live_cpu_ns=0 if settled is None else live-settled,
+                    booked_reservation_ns=owners*100_000_000, live_owners=owners,
+                    remaining_paid_credit_ns=remaining,
+                    stored_credit_ns=remaining-owners*100_000_000-termination)
+        if termination:
+            flow.update(schema='public-v3-local-actual-cpu-flow-reorg-reserve-v2',
+                        termination_reserved_ns=termination)
+        if wait is not None:
+            flow.update(schema='public-v3-local-actual-cpu-flow-admission-wait-v3',
+                        admission_wait_cpu_ns=wait)
+        return dict(depleted=remaining < 100_000_000 and paid > 1_900_000_000,
+                    actual_flow=flow, clock_failures=0,
+                    meter=dict(schema='public-v3-local-stored-cpu-budget-v1',
+                               burst_ns=2_000_000_000, start_reserve_ns=100_000_000,
+                               refill_ns_per_second=250_000_000, worker_limit=2,
+                               accounting_unavailable=False))
+
+    def test_legacy_flow_keeps_original_paid_depletion_formula(self):
+        value = self.snapshot()
+        self.assertTrue(reader.depletion(value))
+        value['actual_flow']['termination_reserved_ns'] = 0
+        self.assertTrue(reader.depletion(value))
+
+    def test_admission_wait_depletion_does_not_invent_a_live_owner(self):
+        value = self.snapshot(wait=1_950_000_001, live=0)
+        self.assertTrue(reader.depletion(value))
+        self.assertEqual(value['actual_flow']['unsettled_known_live_cpu_ns'], 0)
+        self.assertEqual(value['actual_flow']['settled_full_cpu_ns'], 0)
+
+    def test_unsettled_live_excludes_wait_even_while_an_owner_is_active(self):
+        value = self.snapshot(wait=50_000_001, live=1_900_000_000,
+                              settled=1_800_000_000, owners=1)
+        self.assertTrue(reader.depletion(value))
+        value['actual_flow']['unsettled_known_live_cpu_ns'] += 50_000_001
+        with self.assertRaisesRegex(ValueError, 'unsettled live'):
+            reader.depletion(value)
+
+    def test_termination_reserve_cannot_substitute_for_actual_paid_depletion(self):
+        for wait in (None, 5):
+            value = self.snapshot(wait=wait, live=1_800_000_000, termination=200_000_000)
+            self.assertFalse(reader.depletion(value))
+            value['depleted'] = True
+            with self.assertRaisesRegex(ValueError, 'depletion contradicts'):
+                reader.depletion(value)
+
+    def test_new_wait_field_is_required_and_has_exact_u64_type(self):
+        for bad in (None, True, -1, 1.0, 2**64):
+            value = self.snapshot(wait=7)
+            value['actual_flow']['admission_wait_cpu_ns'] = bad
+            with self.subTest(bad=bad), self.assertRaises(ValueError):
+                reader.depletion(value)
+        value = self.snapshot(wait=0)
+        del value['actual_flow']['admission_wait_cpu_ns']
+        with self.assertRaisesRegex(ValueError, 'missing fields'):
+            reader.depletion(value)
+
+    def test_legacy_schemas_cannot_silently_acquire_new_wait_semantics(self):
+        for termination in (0, 1):
+            value = self.snapshot(termination=termination)
+            value['actual_flow']['admission_wait_cpu_ns'] = 0
+            with self.subTest(termination=termination), self.assertRaisesRegex(ValueError, 'another accounting generation'):
+                reader.depletion(value)
+
+    def test_missing_or_double_charged_wait_is_rejected_even_with_adjusted_credit(self):
+        for factor in (0, 2):
+            value = self.snapshot(wait=70, live=1_950_000_001)
+            flow = value['actual_flow']
+            flow['paid_cpu_debit_ns'] = flow['live_debited_cpu_ns'] + factor*70
+            flow['remaining_paid_credit_ns'] = flow['stored_credit_ns'] = 2_000_000_000-flow['paid_cpu_debit_ns']
+            with self.subTest(factor=factor), self.assertRaisesRegex(ValueError, 'paid debit'):
+                reader.depletion(value)
+
+    def test_null_flow_remains_unknown_and_cannot_prove_depletion(self):
+        value = self.snapshot(wait=7)
+        value['actual_flow'] = None
+        value['depleted'] = False
+        self.assertFalse(reader.depletion(value))
+        value['depleted'] = True
+        with self.assertRaisesRegex(ValueError, 'missing actual flow'):
+            reader.depletion(value)
+
+    def test_clock_failure_and_unavailable_meter_never_prove_depletion(self):
+        for key, bad in (('clock_failures', 1), ('clock_failures', True)):
+            value = self.snapshot(wait=7)
+            value[key] = bad
+            value['depleted'] = False
+            self.assertFalse(reader.depletion(value))
+        value = self.snapshot(wait=7)
+        value['meter']['accounting_unavailable'] = True
+        value['depleted'] = False
+        self.assertFalse(reader.depletion(value))
+
+    def test_missing_common_field_unknown_schema_and_boolean_counter_are_rejected(self):
+        for key, bad in (('schema', 'unknown-flow-v99'), ('live_owners', True),
+                         ('initial_credit_ns', 2**127), ('discarded_refill_ns', 2**64)):
+            value = self.snapshot(wait=7)
+            value['actual_flow'][key] = bad
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                reader.depletion(value)
+        value = self.snapshot(wait=7)
+        del value['actual_flow']['discarded_refill_ns']
+        with self.assertRaisesRegex(ValueError, 'missing fields'):
+            reader.depletion(value)
+
+
 class ActualArtifactReaderTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -261,6 +380,18 @@ class ActualArtifactReaderTests(unittest.TestCase):
                     unsettled_known_live_cpu_ns=0, live_owners=20, booked_reservation_ns=2_000_000_000)
         flow['remaining_paid_credit_ns'] = flow['initial_credit_ns'] + flow['credited_refill_ns'] - flow['settlement_discard_ns']
         flow['stored_credit_ns'] = flow['remaining_paid_credit_ns'] - flow['booked_reservation_ns']
+        with self.assertRaisesRegex(ValueError, 'live_owners: above allowed maximum'):
+            reader.depletion(value)
+        # Keep the original depletion counterexample inside the real two-owner
+        # limit: booked principal can hide start credit, but it is not paid CPU.
+        value = copy.deepcopy(original)
+        flow = value['actual_flow']
+        flow.update(initial_credit_ns=2_000_000_000, credited_refill_ns=0,
+                    settlement_discard_ns=0, paid_cpu_debit_ns=1_850_000_000,
+                    live_debited_cpu_ns=1_850_000_000, settlement_residual_cpu_ns=0,
+                    settled_full_cpu_ns=0, unsettled_known_live_cpu_ns=1_850_000_000,
+                    live_owners=2, booked_reservation_ns=200_000_000,
+                    remaining_paid_credit_ns=150_000_000, stored_credit_ns=-50_000_000)
         with self.assertRaisesRegex(ValueError, 'reported depletion'):
             reader.depletion(value)
         value = copy.deepcopy(original)

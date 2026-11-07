@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read retained pon-w1-same-target-budget-v1 JSONL; never run or modify a node.
+"""Read retained pon-w1-same-target-budget-v1/v2 JSONL; never run or modify a node.
 
 Usage: python3 scripts/pon_w1_budget_reader.py A.jsonl B.jsonl exhausted.jsonl budget.jsonl
 Writes one JSON summary to stdout. Exit 2 means malformed/inconsistent input;
@@ -21,6 +21,7 @@ import sys
 sys.dont_write_bytecode = True
 
 SCHEMA = "pon-w1-same-target-budget-v1"
+WAIT_SCHEMA = "pon-w1-same-target-budget-v2"
 CLASSES = ("dense", "zero", "rank-one", "sparse")
 ARMS = ("generic", "structured", "blocked-zero", "from-zero-false-trace")
 KERNELS = ("production", "scalar-reference", "limb")
@@ -159,6 +160,139 @@ def state(row, label, parameters=None):
     return constants
 
 
+FLOW_V1 = "public-v3-local-actual-cpu-flow-v1"
+FLOW_V2 = "public-v3-local-actual-cpu-flow-reorg-reserve-v2"
+FLOW_V3 = "public-v3-local-actual-cpu-flow-admission-wait-v3"
+FLOW_COUNTERS = (
+    "credited_refill_ns", "discarded_refill_ns", "booked_reservation_ns",
+    "live_debited_cpu_ns", "settlement_residual_cpu_ns", "settled_full_cpu_ns",
+    "unsettled_known_live_cpu_ns", "paid_cpu_debit_ns", "settlement_discard_ns",
+)
+
+
+def actual_cpu_flow(flow, label="actual flow"):
+    """Validate one explicit accounting generation and return already-paid wait CPU.
+
+    Legacy schemas have no wait billing. A v3 snapshot must carry its wait debit,
+    including an explicit zero. Phase-observer CpuWait spans are not ledger entries.
+    """
+    require(isinstance(flow, dict), label + ": known flow object required")
+    schema = flow.get("schema")
+    require(schema in (FLOW_V1, FLOW_V2, FLOW_V3), label + ": unsupported schema")
+    required = {"schema", "balance_identity_verified", "initial_credit_ns",
+                "remaining_paid_credit_ns", "stored_credit_ns", "live_owners", *FLOW_COUNTERS}
+    if schema == FLOW_V3:
+        required.add("admission_wait_cpu_ns")
+    require(required <= set(flow) <= required | {"termination_reserved_ns"},
+            label + ": missing fields or fields from another accounting generation")
+    require(flow["balance_identity_verified"] is True, label + ": balance not verified")
+    integer(flow["initial_credit_ns"], label + ".initial_credit_ns", maximum=2**127 - 1)
+    for key in ("remaining_paid_credit_ns", "stored_credit_ns"):
+        integer(flow[key], label + "." + key, minimum=-(2**127), maximum=2**127 - 1)
+    for key in FLOW_COUNTERS:
+        integer(flow[key], label + "." + key, maximum=2**64 - 1)
+    owners = integer(flow["live_owners"], label + ".live_owners",
+                     maximum=ORIGINAL_RECEIVER_PARAMETERS["worker_limit"])
+    termination = integer(flow.get("termination_reserved_ns", 0),
+                          label + ".termination_reserved_ns", maximum=2**64 - 1)
+    require((schema != FLOW_V1 or termination == 0)
+            and (schema != FLOW_V2 or termination > 0),
+            label + ": termination reserve/schema mismatch")
+    wait = (integer(flow["admission_wait_cpu_ns"], label + ".admission_wait_cpu_ns",
+                    maximum=2**64 - 1) if schema == FLOW_V3 else 0)
+    owner_debit = flow["live_debited_cpu_ns"] + flow["settlement_residual_cpu_ns"]
+    require(flow["paid_cpu_debit_ns"] == wait + owner_debit,
+            label + ": paid debit double count or missing admission wait")
+    require(flow["unsettled_known_live_cpu_ns"] == owner_debit - flow["settled_full_cpu_ns"],
+            label + ": already-paid admission wait is not unsettled live CPU")
+    require(flow["remaining_paid_credit_ns"] == flow["initial_credit_ns"]
+            + flow["credited_refill_ns"] - flow["paid_cpu_debit_ns"]
+            - flow["settlement_discard_ns"]
+            and flow["booked_reservation_ns"] == owners * ORIGINAL_RECEIVER_PARAMETERS["start_reserve_ns"]
+            and flow["stored_credit_ns"] == flow["remaining_paid_credit_ns"]
+            - flow["booked_reservation_ns"] - termination,
+            label + ": original shared budget conservation mismatch")
+    return wait
+
+
+def settled_owner_cpu(flow, owner_cpu, reported_owner_cpu, service_charged_cpu, *, service_metrics=None):
+    """Require a fully settled owner cohort without counting paid wait twice."""
+    wait = actual_cpu_flow(flow, "GLOBAL_PAID_SETTLEMENT_REQUIRED")
+    for value in (owner_cpu, reported_owner_cpu, service_charged_cpu):
+        integer(value, "GLOBAL_PAID_SETTLEMENT_REQUIRED owner CPU", 1, 2**64 - 1)
+    require(flow["live_owners"] == flow["booked_reservation_ns"]
+            == flow["unsettled_known_live_cpu_ns"] == flow.get("termination_reserved_ns", 0) == 0
+            and owner_cpu == flow["settled_full_cpu_ns"] == reported_owner_cpu == service_charged_cpu
+            and flow["paid_cpu_debit_ns"] == wait + owner_cpu,
+            "GLOBAL_PAID_SETTLEMENT_REQUIRED")
+    if flow["schema"] == FLOW_V3:
+        require(isinstance(service_metrics, dict)
+                and service_metrics.get("mutation_cpu_charged_scope")
+                == "owner-and-scoped-workers-excluding-admission-wait",
+                "GLOBAL_PAID_SETTLEMENT_REQUIRED explicit service CPU scope")
+        for key in ("mutation_cpu_admission_wait_ns", "mutation_cpu_admission_wait_observations",
+                    "mutation_cpu_admission_wait_unknown"):
+            integer(service_metrics[key], "GLOBAL_PAID_SETTLEMENT_REQUIRED " + key, maximum=2**64 - 1)
+        require(service_metrics["mutation_cpu_admission_wait_unknown"] == 0
+                and service_metrics["mutation_cpu_admission_wait_observations"] > 0
+                and service_metrics["mutation_cpu_admission_wait_ns"] <= wait,
+                "GLOBAL_PAID_SETTLEMENT_REQUIRED complete listener admission wait")
+        # History and other listeners can share the account: this listener's
+        # projection is a subset, never an assumed equality with the global flow.
+    return wait
+
+
+def receiver_flow_snapshot(flow, observed_state, initial_credit, label):
+    """Sequential v2 boundaries have no live owner or outstanding reserve."""
+    if flow is None:
+        return
+    actual_cpu_flow(flow, label)
+    require(flow["schema"] == FLOW_V3, label + ": v2 campaign requires admission-wait flow")
+    require(observed_state["accounting_unavailable"] is False
+            and flow["initial_credit_ns"] == initial_credit
+            and flow["stored_credit_ns"] == observed_state["stored_credit_ns"],
+            label + ": flow/state/epoch mismatch")
+    require(flow["live_owners"] == flow["booked_reservation_ns"]
+            == flow["unsettled_known_live_cpu_ns"] == flow.get("termination_reserved_ns", 0) == 0,
+            label + ": sequential owner/reserve not released")
+
+
+def receiver_flow_transition(row, initial_credit):
+    """Validate this request's actual debit; a final aggregate alone is insufficient."""
+    before, after = row["actual_flow_before"], row["actual_flow_after"]
+    receiver_flow_snapshot(before, row["before"], initial_credit, "before actual flow")
+    receiver_flow_snapshot(after, row["after"], initial_credit, "after actual flow")
+    require(before is not None or after is None, "unknown actual flow was reset to known")
+    if before is None or after is None:
+        return None
+    cumulative = ("credited_refill_ns", "discarded_refill_ns", "admission_wait_cpu_ns",
+                  "live_debited_cpu_ns", "settlement_residual_cpu_ns", "settled_full_cpu_ns",
+                  "settlement_discard_ns", "paid_cpu_debit_ns")
+    delta = {key: after[key] - before[key] for key in cumulative}
+    require(all(value >= 0 for value in delta.values()), "actual flow cumulative counters reset")
+    change = (delta["credited_refill_ns"] - delta["admission_wait_cpu_ns"]
+              - delta["live_debited_cpu_ns"] - delta["settlement_residual_cpu_ns"]
+              - delta["settlement_discard_ns"]
+              - (after["booked_reservation_ns"] - before["booked_reservation_ns"])
+              - (after.get("termination_reserved_ns", 0) - before.get("termination_reserved_ns", 0)))
+    require(row["after"]["stored_credit_ns"] - row["before"]["stored_credit_ns"] == change,
+            "row credit change differs from its own wait/refill/owner/reservation flow")
+    if row["status"] == "not-started":
+        require(all(delta[key] == 0 for key in
+                    ("live_debited_cpu_ns", "settlement_residual_cpu_ns",
+                     "settled_full_cpu_ns", "settlement_discard_ns")),
+                "refused start fabricated an owner settlement")
+    else:
+        require(row["status"] == "started", "unknown receiver status")
+        settlement = row["settlement"]
+        for flow_key, row_key in (("live_debited_cpu_ns", "live_paid_cpu_ns"),
+                                  ("settlement_residual_cpu_ns", "residual_cpu_ns"),
+                                  ("settled_full_cpu_ns", "total_cpu_ns")):
+            require(settlement[row_key] is not None and delta[flow_key] == settlement[row_key],
+                    "row actual flow differs from once-settled owner CPU: " + flow_key)
+    return delta["admission_wait_cpu_ns"]
+
+
 def outcome(row, label):
     require(isinstance(row, dict) and set(row) == {"kind", "error"}, f"{label}: outcome object")
     require(row["kind"] in ("verified-work", "relation-error", "local-cancellation"), f"{label}: unknown outcome")
@@ -189,13 +323,17 @@ def analyze(path):
     raw = path.read_bytes()
     require(raw and raw.endswith(b"\n"), "empty or truncated JSONL (missing final newline)")
     rows = []
+    input_schema = None
     for number, line in enumerate(raw.splitlines(), 1):
         require(line.strip(), f"line {number}: empty record")
         try:
             row = json.loads(line, object_pairs_hook=unique_object, parse_constant=reject_constant, parse_float=finite_float)
         except (ValueError, UnicodeError) as error:
             raise ValueError(f"line {number}: {error}") from error
-        require(isinstance(row, dict) and row.get("schema") == SCHEMA, f"line {number}: schema")
+        require(isinstance(row, dict) and row.get("schema") in (SCHEMA, WAIT_SCHEMA), f"line {number}: schema")
+        if input_schema is None:
+            input_schema = row["schema"]
+        require(row["schema"] == input_schema, f"line {number}: mixed accounting generations")
         rows.append(row)
     position = 0
 
@@ -297,6 +435,16 @@ def analyze(path):
     require(parameters == ORIGINAL_RECEIVER_PARAMETERS, "original receiver budget parameters were substituted")
     require(domain["state"]["stored_credit_ns"] == parameters["burst_ns"] and domain["state"]["accounting_unavailable"] is False, "standalone initial budget mismatch")
     previous = domain["state"]
+    wait_billing = input_schema == WAIT_SCHEMA
+    wait_samples = []
+    if wait_billing:
+        previous_flow = domain["actual_flow"]
+        receiver_flow_snapshot(previous_flow, previous, previous["stored_credit_ns"], "initial actual flow")
+        if previous_flow is not None:
+            require(all(previous_flow[key] == 0 for key in (*FLOW_COUNTERS, "admission_wait_cpu_ns")),
+                    "initial actual flow is not a fresh standalone epoch")
+    else:
+        require("actual_flow" not in domain, "legacy campaign cannot carry v2 boundary evidence")
     counts, receiver_by_arm, settlements = Counter(), defaultdict(Counter), []
     refused_errors, cancel_errors = Counter(), Counter()
     first_budget_denial = None
@@ -315,10 +463,19 @@ def analyze(path):
             counts["requested_replays"] += 1
             receiver_by_arm[arm]["requested"] += 1
             status = row["status"]
+            if wait_billing:
+                require(row["actual_flow_before"] == previous_flow,
+                        "actual flow changed/reset between sequential requests")
+                wait_samples.append(receiver_flow_transition(row, domain["state"]["stored_credit_ns"]))
+                previous_flow = row["actual_flow_after"]
+            else:
+                require("actual_flow_before" not in row and "actual_flow_after" not in row,
+                        "legacy campaign cannot carry v2 boundary evidence")
             if status == "not-started":
                 require(isinstance(row["error"], str) and row["error"], "start refusal error missing")
                 require("settlement" not in row and "outcome" not in row, "refused request fabricated verification/settlement")
-                require(row["after"]["stored_credit_ns"] >= row["before"]["stored_credit_ns"], "refused start lost credit without a started operation")
+                if not wait_billing:
+                    require(row["after"]["stored_credit_ns"] >= row["before"]["stored_credit_ns"], "refused start lost credit without a started operation")
                 if row["error"] == "PUBLIC_MUTATION_CPU_BUDGET":
                     require(not row["after"]["accounting_unavailable"] and
                             row["after"]["stored_credit_ns"] < parameters["start_reserve_ns"],
@@ -372,18 +529,24 @@ def analyze(path):
         integer(summary["wall_ns"], "receiver wall")
     flow = summary["actual_flow"]
     known_charge = distribution([settlement["total_cpu_ns"] for settlement in settlements])
+    if wait_billing:
+        require(flow == previous_flow, "summary actual flow changed/reset after the final request")
     if flow is not None:
-        require(flow["schema"] == "public-v3-local-actual-cpu-flow-v1" and flow["balance_identity_verified"] is True, "actual flow schema/balance")
+        wait = actual_cpu_flow(flow)
+        require(flow["schema"] == (FLOW_V3 if wait_billing else FLOW_V1), "campaign/actual flow generation mismatch")
         require(previous["accounting_unavailable"] is False, "known actual flow contradicts unavailable accounting")
-        for key, value in flow.items():
-            if key in ("schema", "balance_identity_verified"):
-                continue
-            integer(value, "flow." + key, minimum=-(2**127) if key in ("initial_credit_ns", "remaining_paid_credit_ns", "stored_credit_ns") else 0)
         require(flow["initial_credit_ns"] == domain["state"]["stored_credit_ns"], "flow initial epoch mismatch")
-        require(flow["booked_reservation_ns"] == flow["live_owners"] == 0, "original reservation/owner not released")
-        require(flow["live_debited_cpu_ns"] + flow["settlement_residual_cpu_ns"] == flow["paid_cpu_debit_ns"], "paid debit double count")
-        require(flow["initial_credit_ns"] + flow["credited_refill_ns"] - flow["paid_cpu_debit_ns"] - flow["settlement_discard_ns"] == flow["remaining_paid_credit_ns"] == flow["stored_credit_ns"] == previous["stored_credit_ns"], "original shared budget conservation mismatch")
-        require(flow["unsettled_known_live_cpu_ns"] == 0 and flow["settled_full_cpu_ns"] == flow["paid_cpu_debit_ns"] == known_charge["all_observations_sum"], "full actual flow differs from once-settled row CPU")
+        require(flow["booked_reservation_ns"] == flow["live_owners"] == flow.get("termination_reserved_ns", 0) == 0,
+                "original reservation/owner not released")
+        require(flow["remaining_paid_credit_ns"] == flow["stored_credit_ns"] == previous["stored_credit_ns"],
+                "original shared budget conservation mismatch")
+        require(flow["unsettled_known_live_cpu_ns"] == 0 and
+                flow["settled_full_cpu_ns"] == known_charge["all_observations_sum"] and
+                flow["paid_cpu_debit_ns"] == wait + flow["settled_full_cpu_ns"],
+                "full actual flow differs from once-settled owner and admission CPU")
+        if wait_billing:
+            require(distribution(wait_samples)["all_observations_sum"] == wait,
+                    "full admission wait differs from this cohort's request deltas")
         for flow_key, row_key in (("live_debited_cpu_ns", "live_paid_cpu_ns"), ("settlement_residual_cpu_ns", "residual_cpu_ns")):
             require(all(s[row_key] is not None for s in settlements) and flow[flow_key] == sum(s[row_key] for s in settlements), "flow settlement cohort mismatch: " + flow_key)
     grouped = defaultdict(list)
@@ -401,7 +564,7 @@ def analyze(path):
                        "raw_full_verify_cpu_over_full_producer_cpu": {kernel: distribution([
                            row["receiver_cpu_over_full_producer_search_cpu"] for row in diagnostics
                            if row["case"] in cases and row["kernel"] == kernel]) for kernel in KERNELS}})
-    return {"input": str(path.resolve()), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw), "records": len(rows),
+    result = {"input": str(path.resolve()), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw), "records": len(rows),
             "record_consistency": "PASS", "semantic_alerts": alerts,
             "campaign": campaign, "producer_cases_offered": len(producers),
             "producer_status_counts": dict(Counter(row["status"] for row in producers)),
@@ -422,6 +585,17 @@ def analyze(path):
             "verification_scope": "original record/hash/stream/count/accounting consistency only; native verifier outcome is reported evidence, full native proofs are not reverified here",
             "native_verification_performed_by_reader": False, "unique_confirmed_business_transactions_measured": False,
             "independent_operators": False, "production_qualification": False}
+
+    if wait_billing:
+        result["receiver_admission_wait_cpu_ns"] = distribution(wait_samples)
+        result["receiver_paid_cpu_ns"] = None if flow is None else flow["paid_cpu_debit_ns"]
+        result["receiver_paid_cpu_unavailable_reason"] = (
+            "actual flow unavailable; owner settlement totals cannot substitute for admission wait" if flow is None else None)
+        result["cost_scope"] = (
+            "producer total once; setup/search/trials are nested and never added again; public material construction separate; "
+            "raw diagnostics separate; each requested receiver attempt includes its paid admission wait plus once-settled owner CPU; "
+            "CpuWait observation spans are not added to these disjoint ledger intervals; JSONL output/transport/signature/M06/SQLite not priced")
+    return result
 
 
 def main():
@@ -445,7 +619,9 @@ def main():
                                 "same_target_campaign_comparison_eligible": all(equal.values()),
                                 "host_and_build_identity_verified": False,
                                 "scope": "seed changes dense/sparse material; zero/rank-one task material stays the same; fresh seed changes challenges; source/compiler/host identity requires separately retained run evidence"})
-    output = {"schema": "pon-w1-readonly-accounting-summary-v1", "inputs": results, "comparisons": comparisons,
+    output_schema = ("pon-w1-readonly-accounting-summary-admission-wait-v2" if any(
+        result["campaign"]["schema"] == WAIT_SCHEMA for result in valid) else "pon-w1-readonly-accounting-summary-v1")
+    output = {"schema": output_schema, "inputs": results, "comparisons": comparisons,
               "reader_wrote_input_files": False, "reader_ran_native_code": False,
               "result_interpretation": "internally consistent JSONL does not authenticate the producing host or establish hardness, anonymous fairness, independent operators, business throughput or production readiness"}
     print(json.dumps(output, ensure_ascii=False, indent=2, allow_nan=False))

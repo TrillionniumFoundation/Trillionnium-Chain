@@ -15,6 +15,64 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import run_pon_root_supplement as runner
 
 
+
+class RootPaidWaitControls(unittest.TestCase):
+    """Synthetic service/flow boundaries; no native pressure result is created."""
+
+    @staticmethod
+    def settled_fixture():
+        # Deliberately synthetic disjoint intervals: 20 owner CPU + 30 wait CPU.
+        flow = dict(schema='public-v3-local-actual-cpu-flow-admission-wait-v3',
+                    balance_identity_verified=True, initial_credit_ns=2_000_000_000,
+                    credited_refill_ns=0, discarded_refill_ns=0,
+                    live_debited_cpu_ns=17, settlement_residual_cpu_ns=3,
+                    settled_full_cpu_ns=20, admission_wait_cpu_ns=30,
+                    paid_cpu_debit_ns=50, settlement_discard_ns=0,
+                    unsettled_known_live_cpu_ns=0, booked_reservation_ns=0,
+                    live_owners=0, remaining_paid_credit_ns=1_999_999_950,
+                    stored_credit_ns=1_999_999_950)
+        metrics = dict(mutation_cpu_charged_ns=20,
+                       mutation_cpu_charged_scope='owner-and-scoped-workers-excluding-admission-wait',
+                       mutation_cpu_admission_wait_ns=30,
+                       mutation_cpu_admission_wait_observations=1,
+                       mutation_cpu_admission_wait_unknown=0)
+        return flow, metrics
+
+
+    def test_legacy_owner_settlement_remains_strict_without_new_scope_fields(self):
+        flow, _metrics = self.settled_fixture()
+        flow['schema'] = 'public-v3-local-actual-cpu-flow-v1'
+        del flow['admission_wait_cpu_ns']
+        flow['paid_cpu_debit_ns'] = 20
+        flow['remaining_paid_credit_ns'] = flow['stored_credit_ns'] = 1_999_999_980
+        self.assertEqual(runner.settled_owner_cpu(flow, 20, 20, 20), 0)
+        flow['admission_wait_cpu_ns'] = 0
+        with self.assertRaises(ValueError):
+            runner.settled_owner_cpu(flow, 20, 20, 20)
+
+    def test_wait_is_already_settled_and_must_not_appear_as_live_cpu(self):
+        flow, metrics = self.settled_fixture()
+        self.assertEqual(runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics), 30)
+        flow['unsettled_known_live_cpu_ns'] = 30
+        with self.assertRaisesRegex(ValueError, 'unsettled live'):
+            runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics)
+
+    def test_live_owner_reserve_unknown_flow_and_missing_wait_fail_closed(self):
+        for field in ('live-owner', 'termination', 'missing-wait', 'unknown-flow'):
+            flow, metrics = self.settled_fixture()
+            if field == 'live-owner':
+                flow.update(live_owners=1, booked_reservation_ns=100_000_000,
+                            stored_credit_ns=flow['stored_credit_ns']-100_000_000)
+            elif field == 'termination':
+                flow.update(termination_reserved_ns=1, stored_credit_ns=flow['stored_credit_ns']-1)
+            elif field == 'missing-wait':
+                del flow['admission_wait_cpu_ns']
+            else:
+                flow = None
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                runner.settled_owner_cpu(flow, 20, 20, 20, service_metrics=metrics)
+
+
 class RootSupplementTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
@@ -128,7 +186,7 @@ class RootSupplementTests(unittest.TestCase):
 
     def test_depletion_uses_original_numeric_thresholds_and_whole_sample(self):
         flow = dict(schema='public-v3-local-actual-cpu-flow-v1', balance_identity_verified=True,
-                    initial_credit_ns=2_000_000_000, credited_refill_ns=0, paid_cpu_debit_ns=1_950_000_001,
+                    initial_credit_ns=2_000_000_000, credited_refill_ns=0, discarded_refill_ns=0, paid_cpu_debit_ns=1_950_000_001,
                     live_debited_cpu_ns=1_950_000_001, settlement_residual_cpu_ns=0,
                     remaining_paid_credit_ns=49_999_999, settlement_discard_ns=0,
                     stored_credit_ns=49_999_999, booked_reservation_ns=0, live_owners=0,

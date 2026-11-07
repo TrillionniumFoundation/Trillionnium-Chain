@@ -298,6 +298,164 @@ class ActualLogCounterexamples(unittest.TestCase):
             reader.analyze(CounterexampleInput(altered))
 
 
+    def wait_billed_rows(self, *, refuse_last=False):
+        """Explicitly synthetic v2 accounting over copied legacy record structure.
+
+        No new CPU observation is asserted: 11 ns/request and the optional last
+        refusal debit are invented parser controls held only in memory.
+        """
+        rows = [json.loads(line) for line in self.original['w1-seed1.jsonl'].splitlines()]
+        for row in rows:
+            row['schema'] = reader.WAIT_SCHEMA
+        domain = next(row for row in rows if row['kind'] == 'receiver-domain-start')
+        summary = rows[-1]
+        initial = domain['state']['stored_credit_ns']
+        previous = copy.deepcopy(domain['state'])
+        flow = dict(schema=reader.FLOW_V3, balance_identity_verified=True,
+                    initial_credit_ns=initial, remaining_paid_credit_ns=initial,
+                    stored_credit_ns=initial, live_owners=0, admission_wait_cpu_ns=0,
+                    **dict.fromkeys(reader.FLOW_COUNTERS, 0))
+        domain['actual_flow'] = copy.deepcopy(flow)
+        receivers = [row for row in rows if row['kind'] == 'receiver']
+        for number, row in enumerate(receivers):
+            original_settlement = row['settlement']
+            refill = (row['after']['stored_credit_ns'] - row['before']['stored_credit_ns']
+                      + original_settlement['total_cpu_ns'])
+            self.assertGreaterEqual(refill, 0)
+            row['before'] = copy.deepcopy(previous)
+            row['actual_flow_before'] = copy.deepcopy(flow)
+            flow['credited_refill_ns'] += refill
+            refused = refuse_last and number == len(receivers)-1
+            wait = previous['stored_credit_ns'] + refill - 99_000_000 if refused else 11
+            flow['admission_wait_cpu_ns'] += wait
+            if refused:
+                self.assertEqual(row['outcome']['kind'], 'relation-error')
+                row.update(status='not-started', error='PUBLIC_MUTATION_CPU_BUDGET')
+                for key in ('outcome', 'checkpoints', 'settlement'):
+                    del row[key]
+                summary['start_refusals'] += 1
+                summary['started_replays'] -= 1
+                summary['relation_errors'] -= 1
+            else:
+                flow['live_debited_cpu_ns'] += original_settlement['live_paid_cpu_ns']
+                flow['settlement_residual_cpu_ns'] += original_settlement['residual_cpu_ns']
+                flow['settled_full_cpu_ns'] += original_settlement['total_cpu_ns']
+            if number == len(receivers)-1:
+                flow['discarded_refill_ns'] = summary['actual_flow']['discarded_refill_ns']
+            flow['paid_cpu_debit_ns'] = (flow['admission_wait_cpu_ns'] +
+                                        flow['live_debited_cpu_ns'] + flow['settlement_residual_cpu_ns'])
+            flow['remaining_paid_credit_ns'] = initial + flow['credited_refill_ns'] - flow['paid_cpu_debit_ns']
+            flow['stored_credit_ns'] = flow['remaining_paid_credit_ns']
+            previous = dict(previous, stored_credit_ns=flow['stored_credit_ns'])
+            row['after'] = copy.deepcopy(previous)
+            row['actual_flow_after'] = copy.deepcopy(flow)
+        summary['actual_flow'] = copy.deepcopy(flow)
+        summary['final_state'] = copy.deepcopy(previous)
+        return rows
+
+    @staticmethod
+    def input_rows(rows):
+        return CounterexampleInput(b''.join(json.dumps(row, allow_nan=False).encode() + b'\n' for row in rows))
+
+    def test_v2_retains_separate_paid_wait_and_once_settled_owner_cost(self):
+        rows = self.wait_billed_rows()
+        result = reader.analyze(self.input_rows(rows))
+        count = result['receiver_counts_recomputed']['requested_replays']
+        self.assertEqual(result['receiver_admission_wait_cpu_ns']['all_observations_sum'], 11*count)
+        self.assertEqual(result['receiver_paid_cpu_ns'],
+                         result['receiver_settled_cpu_ns']['all_observations_sum'] + 11*count)
+        self.assertIsNone(result['receiver_paid_cpu_unavailable_reason'])
+        self.assertFalse(result['native_verification_performed_by_reader'])
+        for legacy in self.validated.values():
+            self.assertNotIn('receiver_admission_wait_cpu_ns', legacy)
+
+    def test_v2_refused_request_loses_only_its_proved_wait_debit_and_keeps_denominator(self):
+        rows = self.wait_billed_rows(refuse_last=True)
+        row = [row for row in rows if row['kind'] == 'receiver'][-1]
+        self.assertLess(row['after']['stored_credit_ns'], row['before']['stored_credit_ns'])
+        result = reader.analyze(self.input_rows(rows))
+        self.assertEqual(result['receiver_counts_recomputed']['start_refusals'], 1)
+        self.assertEqual(result['receiver_admission_wait_cpu_ns']['observations'], 33)
+        self.assertEqual(result['receiver_settled_cpu_ns']['observations'], 32)
+        self.assertGreater(result['receiver_admission_wait_cpu_ns']['known_sum'], 1_000_000_000)
+
+    def test_v2_cannot_use_only_a_final_aggregate_or_a_mixed_legacy_header(self):
+        for target in ('domain', 'before', 'after', 'mixed-header', 'all-legacy'):
+            rows = self.wait_billed_rows()
+            domain = next(row for row in rows if row['kind'] == 'receiver-domain-start')
+            receiver = next(row for row in rows if row['kind'] == 'receiver')
+            if target == 'domain':
+                del domain['actual_flow']
+            elif target in ('before', 'after'):
+                del receiver['actual_flow_' + target]
+            elif target == 'mixed-header':
+                rows[0]['schema'] = reader.SCHEMA
+            else:
+                for row in rows:
+                    row['schema'] = reader.SCHEMA
+            with self.subTest(target=target), self.assertRaises((KeyError, ValueError)):
+                reader.analyze(self.input_rows(rows))
+
+    def test_v2_null_flow_retains_unknown_wait_without_downgrading_to_legacy(self):
+        rows = self.wait_billed_rows(refuse_last=True)
+        receivers = [row for row in rows if row['kind'] == 'receiver']
+        receivers[-1]['actual_flow_after'] = None
+        rows[-1]['actual_flow'] = None
+        result = reader.analyze(self.input_rows(rows))
+        self.assertIsNone(result['receiver_paid_cpu_ns'])
+        self.assertIsNone(result['receiver_admission_wait_cpu_ns']['all_observations_sum'])
+        self.assertEqual(result['receiver_admission_wait_cpu_ns']['unavailable'], 1)
+        self.assertEqual(result['receiver_admission_wait_cpu_ns']['known_sum'], 32*11)
+        self.assertIn('unavailable', result['receiver_paid_cpu_unavailable_reason'])
+        self.assertGreater(result['receiver_settled_cpu_ns']['all_observations_sum'], 0)
+
+    def test_v2_unknown_flow_cannot_reset_to_known_on_the_next_request(self):
+        rows = self.wait_billed_rows()
+        receivers = [row for row in rows if row['kind'] == 'receiver']
+        receivers[0]['actual_flow_after'] = None
+        receivers[1]['actual_flow_before'] = None
+        with self.assertRaisesRegex(ValueError, 'unknown actual flow was reset'):
+            reader.analyze(self.input_rows(rows))
+
+    def test_v2_refusal_cannot_fabricate_owner_cpu_even_when_total_balance_matches(self):
+        rows = self.wait_billed_rows(refuse_last=True)
+        row = [row for row in rows if row['kind'] == 'receiver'][-1]
+        flow = row['actual_flow_after']
+        for key in ('live_debited_cpu_ns', 'settled_full_cpu_ns', 'paid_cpu_debit_ns'):
+            flow[key] += 1
+        for key in ('remaining_paid_credit_ns', 'stored_credit_ns'):
+            flow[key] -= 1
+        row['after']['stored_credit_ns'] -= 1
+        rows[-1]['actual_flow'] = copy.deepcopy(flow)
+        rows[-1]['final_state'] = copy.deepcopy(row['after'])
+        with self.assertRaisesRegex(ValueError, 'refused start fabricated'):
+            reader.analyze(self.input_rows(rows))
+
+    def test_v2_cohort_and_row_credit_cannot_borrow_a_later_wait_debit(self):
+        rows = self.wait_billed_rows()
+        row = next(row for row in rows if row['kind'] == 'receiver')
+        row['actual_flow_after']['admission_wait_cpu_ns'] = 0
+        with self.assertRaisesRegex(ValueError, 'paid debit'):
+            reader.analyze(self.input_rows(rows))
+        rows = self.wait_billed_rows()
+        row = next(row for row in rows if row['kind'] == 'receiver')
+        row['after']['stored_credit_ns'] -= 1
+        with self.assertRaisesRegex(ValueError, 'flow/state/epoch'):
+            reader.analyze(self.input_rows(rows))
+
+    def test_v2_every_known_boundary_requires_its_explicit_wait_field(self):
+        for boundary in ('initial', 'before', 'after', 'summary'):
+            rows = self.wait_billed_rows()
+            domain = next(row for row in rows if row['kind'] == 'receiver-domain-start')
+            row = next(row for row in rows if row['kind'] == 'receiver')
+            flow = {'initial': domain['actual_flow'], 'before': row['actual_flow_before'],
+                    'after': row['actual_flow_after'], 'summary': rows[-1]['actual_flow']}[boundary]
+            del flow['admission_wait_cpu_ns']
+            with self.subTest(boundary=boundary), self.assertRaises((KeyError, ValueError)):
+                reader.analyze(self.input_rows(rows))
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--raw-dir', required=True, type=Path)

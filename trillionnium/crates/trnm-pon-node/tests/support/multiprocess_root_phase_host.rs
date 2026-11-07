@@ -236,7 +236,7 @@ impl RootPhaseJob {
         require(
             self.schema == PROFILE
                 && self.state_backend == "authenticated-v1"
-                && self.work_profile == "raw-r16"
+                && self.work_profile == "raw-r17"
                 && self.method == 0
                 && matches!(self.mode.as_deref(), None | Some("valid-work-root")),
             "EXACT_FIXED_ROOT_JOB_PROFILE",
@@ -414,7 +414,7 @@ fn fixed_phase(
     placement.controller.verify().unwrap();
     let configuration = CampaignConfiguration::new(
         StateBackendChoice::AuthenticatedV1,
-        support::WorkProfile::RawR16,
+        support::WorkProfile::RawR17,
     )
     .unwrap();
     let CampaignConfiguration {
@@ -898,8 +898,9 @@ fn fixed_phase(
                 && f.booked_reservation_ns == 0
                 && f.unsettled_known_live_cpu_ns == 0
                 && f.paid_cpu_debit_ns > 0
-                && f.paid_cpu_debit_ns == f.settled_full_cpu_ns
-                && Some(f.paid_cpu_debit_ns) == owner_cpu
+                && Some(f.settled_full_cpu_ns) == owner_cpu
+                && Some(f.paid_cpu_debit_ns)
+                    == owner_cpu.and_then(|owner| owner.checked_add(f.admission_wait_cpu_ns))
                 && service_outcome["Ok"]["mutation_cpu_charged_ns"].as_u64() == owner_cpu
         });
         let membership = root_readiness.len() == ATTACKERS
@@ -1003,12 +1004,12 @@ fn fixed_phase(
             "controller_cgroup":controller_cgroup,"actor_readiness":root_readiness,"aggregate_membership_verified":membership,
             "checked_acquisitions_complete":acquisition_complete,"acquisitions":root_acquisitions,
             "whole_domain_paid_reconciled":settled,"mutation_owner_cpu_ns":owner_cpu,
-            "aggregate_scoped_cpu_ns":flow.as_ref().zip(owner_cpu).and_then(|(f,c)|f.paid_cpu_debit_ns.checked_sub(c)),
+            "aggregate_scoped_cpu_ns":flow.as_ref().zip(owner_cpu).and_then(|(f,c)|f.settled_full_cpu_ns.checked_sub(c)),
             "hostile_packet_ids":root_packet_ids.iter().map(hex::encode).collect::<Vec<_>>(),
             "hostile_packets_absent_live":live_absent,"hostile_packets_absent_cold":cold_absent,
             "cold_state_equal":cold_equal,"expected_legal_counts_and_tip":expected_counts,"final_stats":final_stats,
             "final_state_rows":actual.2.iter().map(|(k,v)|(hex::encode(k),hex::encode(serde_json::to_vec(v).unwrap()))).collect::<Vec<_>>(),
-            "scope":"whole-domain paid CPU includes honest and hostile Submit; known zero scoped CPU from one M06 worker; ROOT reply evidence and observer refusal evidence are separate; cold reopen is after the window",
+            "scope":"whole-domain paid CPU includes original-account admission wait plus settled honest and hostile Submit; owner and scoped CPU exclude admission wait; known zero scoped CPU from one M06 worker; ROOT reply evidence and observer refusal evidence are separate; cold reopen is after the window",
             "round_snapshot_scope":"live observer snapshots are non-atomic; ROOT round end follows the last after snapshot and must remain before the fixed phase end",
             "original_campaign_qualified":false});
     }
@@ -1031,7 +1032,7 @@ fn run_phase(
     let method = 0;
     let configuration = CampaignConfiguration::new(
         StateBackendChoice::AuthenticatedV1,
-        support::WorkProfile::RawR16,
+        support::WorkProfile::RawR17,
     )
     .unwrap();
     assert_eq!(settings.network(), support::settings().network());
@@ -1071,7 +1072,7 @@ fn run_phase(
         binary_sha256: binary_sha(),
         state_backend: configuration.state_backend.label().to_owned(),
         work_profile: match configuration.work_profile {
-            support::WorkProfile::RawR16 => "raw-r16",
+            support::WorkProfile::RawR17 => "raw-r17",
             support::WorkProfile::ArithmeticFactsV1 => "arithmetic-facts-v1",
         }
         .to_owned(),
@@ -1522,7 +1523,7 @@ fn fixed_root_job_requires_its_exact_profile_and_complete_workload() {
             "boot_id":"00000000-0000-0000-0000-000000000001","cgroup":"/fixture",
             "executable":{"device":1,"inode":2,"bytes":3,"modified_seconds":4,"modified_nanoseconds":5}},
             "cgroup":{"device":1,"inode":2,"uid":0,"gid":0,"mode":493}},
-        "binary_sha256":"a".repeat(64),"state_backend":"authenticated-v1","work_profile":"raw-r16",
+        "binary_sha256":"a".repeat(64),"state_backend":"authenticated-v1","work_profile":"raw-r17",
         "mode":null,"method":0,"seed":vec!["00";4],"business":vec!["00";21]});
     let job: RootPhaseJob = serde_json::from_value(value.clone()).unwrap();
     job.validate_shape().unwrap();
@@ -1530,6 +1531,7 @@ fn fixed_root_job_requires_its_exact_profile_and_complete_workload() {
         ("schema", json!("fixed-public-phase-external-actors-v1")),
         ("state_backend", json!("legacy-v2")),
         ("work_profile", json!("arithmetic-facts-v1")),
+        ("work_profile", json!("raw-r16")),
         ("mode", json!("from-zero")),
         ("method", json!(1)),
         ("seed", json!(vec!["00"; 3])),

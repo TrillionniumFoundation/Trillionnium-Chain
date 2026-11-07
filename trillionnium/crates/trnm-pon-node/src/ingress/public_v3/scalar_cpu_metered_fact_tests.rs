@@ -104,6 +104,41 @@ fn assert_paid(domain: &ServiceMutationCpuDomain, receipt: &ServiceMutationCpuSe
         .unwrap();
     assert!(flow.balance_identity_verified);
 }
+fn assert_exact_frozen_debit(
+    before: &ServiceMutationCpuFlowObservation,
+    after: &ServiceMutationCpuFlowObservation,
+    expected_settled_cpu_ns: u64,
+) -> u64 {
+    for flow in [before, after] {
+        assert!(flow.balance_identity_verified);
+        assert_eq!(flow.live_owners, 0);
+        assert_eq!(flow.booked_reservation_ns, 0);
+        assert_eq!(flow.termination_reserved_ns, 0);
+        assert_eq!(flow.credited_refill_ns, 0);
+        assert_eq!(flow.discarded_refill_ns, 0);
+        assert_eq!(flow.settlement_discard_ns, 0);
+        assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
+    }
+    let wait_cpu_ns = after
+        .admission_wait_cpu_ns
+        .checked_sub(before.admission_wait_cpu_ns)
+        .unwrap();
+    let settled_cpu_ns = after
+        .settled_full_cpu_ns
+        .checked_sub(before.settled_full_cpu_ns)
+        .unwrap();
+    let paid_cpu_ns = after
+        .paid_cpu_debit_ns
+        .checked_sub(before.paid_cpu_debit_ns)
+        .unwrap();
+    assert_eq!(settled_cpu_ns, expected_settled_cpu_ns);
+    assert_eq!(Some(paid_cpu_ns), wait_cpu_ns.checked_add(settled_cpu_ns));
+    assert_eq!(
+        Some(after.stored_credit_ns),
+        before.stored_credit_ns.checked_sub(i128::from(paid_cpu_ns))
+    );
+    wait_cpu_ns
+}
 #[test]
 fn exhausted_domain_refuses_before_cold_or_warm_math_and_state() {
     let (_dir, node, p) = fixture(2);
@@ -155,6 +190,7 @@ fn failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning() {
     let before = node.lock().unwrap().read_active().unwrap();
     let mut bad = p.clone();
     bad.proof[4 + 8 * 4096] ^= 1;
+    let fail_before = domain.observe_actual_flow().unwrap().unwrap();
     let fail = ingress::dispatch_shared_with_metered_work_facts(
         &node,
         request(&bad),
@@ -165,7 +201,11 @@ fn failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning() {
     .unwrap();
     assert_eq!(fail.native.err().unwrap().to_string(), "WORK:Product");
     assert_paid(&domain, &fail.cpu);
+    let fail_after = domain.observe_actual_flow().unwrap().unwrap();
+    let fail_wait =
+        assert_exact_frozen_debit(&fail_before, &fail_after, fail.cpu.total_cpu_ns.unwrap());
     assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    let success_before = domain.observe_actual_flow().unwrap().unwrap();
     let success = ingress::dispatch_shared_with_metered_work_facts(
         &node,
         request(&p),
@@ -176,12 +216,26 @@ fn failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning() {
     .unwrap();
     assert!(success.native.is_ok());
     assert_paid(&domain, &success.cpu);
+    let success_after = domain.observe_actual_flow().unwrap().unwrap();
+    let success_wait = assert_exact_frozen_debit(
+        &success_before,
+        &success_after,
+        success.cpu.total_cpu_ns.unwrap(),
+    );
     assert_eq!(facts.counters().full_replays, 1);
+    let total_paid = fail
+        .cpu
+        .total_cpu_ns
+        .unwrap()
+        .checked_add(success.cpu.total_cpu_ns.unwrap())
+        .and_then(|paid| paid.checked_add(fail_wait))
+        .and_then(|paid| paid.checked_add(success_wait))
+        .unwrap();
     assert_eq!(
         domain.budget.lock().unwrap().credit_ns,
         i128::from(MUTATION_CPU_BURST_NS)
-            - i128::from(fail.cpu.total_cpu_ns.unwrap())
-            - i128::from(success.cpu.total_cpu_ns.unwrap())
+            .checked_sub(i128::from(total_paid))
+            .unwrap()
     );
 }
 #[test]
@@ -191,6 +245,7 @@ fn cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain() {
     let domain = ServiceMutationCpuDomain::standalone();
     freeze(&domain, i128::from(MUTATION_CPU_BURST_NS));
     let before = node.lock().unwrap().read_active().unwrap();
+    let cancelled_before = domain.observe_actual_flow().unwrap().unwrap();
     let cancelled = ingress::dispatch_shared_with_metered_work_facts(
         &node,
         request(&p),
@@ -210,12 +265,18 @@ fn cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain() {
         "METERED_TEST_CANCEL"
     );
     assert_paid(&domain, &cancelled.cpu);
-    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    let cancelled_after = domain.observe_actual_flow().unwrap().unwrap();
     let paid = cancelled.cpu.total_cpu_ns.unwrap();
+    let cancelled_wait = assert_exact_frozen_debit(&cancelled_before, &cancelled_after, paid);
+    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     assert_eq!(
         domain.budget.lock().unwrap().credit_ns,
-        i128::from(MUTATION_CPU_BURST_NS) - i128::from(paid)
+        i128::from(MUTATION_CPU_BURST_NS)
+            .checked_sub(i128::from(paid))
+            .and_then(|credit| credit.checked_sub(i128::from(cancelled_wait)))
+            .unwrap()
     );
+    let retry_before = domain.observe_actual_flow().unwrap().unwrap();
     let retry = ingress::dispatch_shared_with_metered_work_facts(
         &node,
         request(&p),
@@ -226,11 +287,19 @@ fn cancellation_keeps_spent_cpu_and_retry_does_not_reset_domain() {
     .unwrap();
     assert!(retry.native.is_ok());
     assert_paid(&domain, &retry.cpu);
+    let retry_after = domain.observe_actual_flow().unwrap().unwrap();
+    let retry_wait =
+        assert_exact_frozen_debit(&retry_before, &retry_after, retry.cpu.total_cpu_ns.unwrap());
+    let total_paid = paid
+        .checked_add(retry.cpu.total_cpu_ns.unwrap())
+        .and_then(|paid| paid.checked_add(cancelled_wait))
+        .and_then(|paid| paid.checked_add(retry_wait))
+        .unwrap();
     assert_eq!(
         domain.budget.lock().unwrap().credit_ns,
         i128::from(MUTATION_CPU_BURST_NS)
-            - i128::from(paid)
-            - i128::from(retry.cpu.total_cpu_ns.unwrap())
+            .checked_sub(i128::from(total_paid))
+            .unwrap()
     );
 }
 #[test]
@@ -265,15 +334,23 @@ fn shared_listener_reconstruction_never_refills_debt_or_replaces_domain() {
     let (_dir, node, p) = fixture(1);
     let facts = WorkFactCache::new(1).unwrap();
     let domain = ServiceMutationCpuDomain::standalone();
-    freeze(&domain, -123456789);
+    let initial_credit = -123456789;
+    freeze(&domain, initial_credit);
+    let initial_flow = domain.observe_actual_flow().unwrap().unwrap();
     for seed in 70..78 {
+        let before = domain.observe_actual_flow().unwrap().unwrap();
         let identity = DevelopmentIdentity::from_secret_hex(&hex::encode([seed; 32])).unwrap();
         let server =
             PublicServer::with_continuous_domain(identity, PublicPolicy::development(), &domain)
                 .unwrap();
         let cloned = server.mutation_cpu_domain();
         assert!(cloned.shares_domain_with(&domain));
-        assert_eq!(cloned.observe().unwrap().stored_credit_ns, -123456789);
+        assert_eq!(
+            cloned.observe().unwrap().stored_credit_ns,
+            before.stored_credit_ns
+        );
+        assert_eq!(cloned.observe_actual_flow().unwrap().unwrap(), before);
+        assert_eq!(domain.observe_actual_flow().unwrap().unwrap(), before);
         let error = ingress::dispatch_shared_with_metered_work_facts(
             &node,
             request(&p),
@@ -284,9 +361,29 @@ fn shared_listener_reconstruction_never_refills_debt_or_replaces_domain() {
         .err()
         .unwrap();
         assert_eq!(error.to_string(), "PUBLIC_MUTATION_CPU_BUDGET");
+        let after = cloned.observe_actual_flow().unwrap().unwrap();
+        assert_exact_frozen_debit(&before, &after, 0);
+        assert_eq!(after.live_debited_cpu_ns, 0);
+        assert_eq!(after.settlement_residual_cpu_ns, 0);
+        assert_eq!(after.settled_full_cpu_ns, 0);
+        drop(cloned);
+        assert_eq!(domain.observe_actual_flow().unwrap().unwrap(), after);
         drop(server);
+        assert_eq!(domain.observe_actual_flow().unwrap().unwrap(), after);
+        assert_eq!(
+            domain.observe().unwrap().stored_credit_ns,
+            after.stored_credit_ns
+        );
     }
-    assert_eq!(domain.observe().unwrap().stored_credit_ns, -123456789);
+    let final_flow = domain.observe_actual_flow().unwrap().unwrap();
+    let total_wait = final_flow
+        .admission_wait_cpu_ns
+        .checked_sub(initial_flow.admission_wait_cpu_ns)
+        .unwrap();
+    assert_eq!(
+        domain.observe().unwrap().stored_credit_ns,
+        initial_credit.checked_sub(i128::from(total_wait)).unwrap()
+    );
     assert_eq!(facts.counters().full_replays, 0);
 }
 #[test]

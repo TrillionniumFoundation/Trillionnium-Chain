@@ -117,7 +117,7 @@ def validate_job(job_path, binary):
     )
     require(
         value["state_backend"] == "authenticated-v1"
-        and value["work_profile"] == "raw-r16",
+        and value["work_profile"] == "raw-r17",
         "ORIGINAL_PHASE_PROFILE",
     )
     require(

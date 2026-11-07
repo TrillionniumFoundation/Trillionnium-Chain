@@ -198,6 +198,44 @@ NATIVE_REQUIRED_PATHS = frozenset((
 # not make TCD content addressing, M12 readback or a migration rehearsal a PQ
 # authorization scheme. They retain their original independently selected owners.
 CONVERGENCE_REQUIRED_PATHS = frozenset((
+    # r17 waiting, live-scope ownership and raw cost readers remain exact-source
+    # inputs. These identities confer no service or independent-user acceptance.
+    "config/pon/applicability-v1.json",
+    "config/pon/public-resource-profile-vectors-v1.json",
+    "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/run_fixed_root_phase_host.py",
+    "scripts/ci/run_native_phase_host.py",
+    "scripts/ci/test_fixed_root_f0.py",
+    "scripts/ci/test_fixed_root_phase_host.py",
+    "scripts/ci/test_native_phase_host.py",
+    "scripts/ci/test_pon_public_v3_phase_read.py",
+    "scripts/ci/test_pon_public_v3_policy_read.py",
+    "scripts/ci/test_pon_w1_budget_readers.py",
+    "scripts/ci/test_read_original_native_campaign.py",
+    "scripts/ci/test_run_pon_root_supplement.py",
+    "scripts/pon_public_v3_phase_read.py",
+    "scripts/pon_public_v3_policy_read.py",
+    "scripts/pon_w1_budget_reader.py",
+    "scripts/read_original_native_campaign.py",
+    "scripts/run_fixed_host_root_f0.py",
+    "scripts/run_pon_root_supplement.py",
+    "trillionnium/crates/trnm-pon-node/examples/pon_w1_budget_report.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/cpu_billing_scope_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/cpu_start_billing.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/cpu_start_billing_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/cpu_start_dispatch_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_flow_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_metered_fact_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs",
+    "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
     # The existing History readback owner is now part of this candidate too.
     # Its SQLite observer and exact dependency graph are security-relevant even
     # though neither is a PQ signature implementation or a release approval.

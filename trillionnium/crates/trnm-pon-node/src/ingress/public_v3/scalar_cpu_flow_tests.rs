@@ -130,7 +130,10 @@ fn actual_cpu_flow_optional_read_preserves_old_observation_json_and_credit() {
     let two = domain.observe_actual_flow().unwrap().unwrap();
     assert_eq!(one, two);
     assert_eq!(before, domain.observe().unwrap());
-    assert_eq!(one.schema, "public-v3-local-actual-cpu-flow-v1");
+    assert_eq!(
+        one.schema,
+        "public-v3-local-actual-cpu-flow-admission-wait-v3"
+    );
     assert!(one.balance_identity_verified);
 }
 
