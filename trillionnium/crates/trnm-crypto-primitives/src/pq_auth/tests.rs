@@ -60,6 +60,40 @@ fn default_backend_authenticates_all_six_purposes_and_every_bound_field() {
 }
 
 #[test]
+fn signing_entry_points_reject_a_backend_key_that_disagrees_with_the_pinned_verifier() {
+    let expected_signer = signer(17);
+    let mismatched = PqNativeSigningKey {
+        key: OwnedSigningBackend::RustCrypto(
+            SigningKey::<MlDsa65>::new_from_slice(&[18; 32]).unwrap(),
+        ),
+        verifier: PqNativeVerifier::from_pinned_spki(
+            expected_signer.public_spki(),
+            expected_signer.public_key_id(),
+        )
+        .unwrap(),
+    };
+    assert!(matches!(
+        mismatched.sign_exact_message(b"TRNM/Test/PQ/v2\0self-check"),
+        Err(PqNativeError::SignatureRejected)
+    ));
+    let expected = PqFrameExpectation {
+        purpose: 1,
+        network: [1; 32],
+        owner_context: [2; 32],
+        signer_key_id: expected_signer.public_key_id(),
+        owner_generation: 4,
+        operation_sequence: 9,
+        expires_at: 100,
+        now: 99,
+        payload: b"cell manifest",
+    };
+    assert!(matches!(
+        mismatched.sign_statement(&statement(&expected), &expected),
+        Err(PqNativeError::SignatureRejected)
+    ));
+}
+
+#[test]
 fn canonical_key_algorithm_parameters_lengths_and_independent_pin_are_required() {
     let signer = signer(11);
     let spki = signer.public_spki();

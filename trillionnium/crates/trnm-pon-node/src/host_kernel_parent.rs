@@ -280,7 +280,7 @@ mod kernel_parent {
                 match openat(
                     &self.file,
                     name,
-                    OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+                    OFlags::RDONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC | OFlags::NONBLOCK,
                     Mode::empty(),
                 ) {
                     Err(error) if error == rustix::io::Errno::INTR => continue,
@@ -288,7 +288,22 @@ mod kernel_parent {
                 }
             }
             .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
-            read_limit_text(&mut fs::File::from(fd), bytes)
+            let mut file = fs::File::from(fd);
+            // cgroup-v2 limits are regular files. Refuse the actual opened
+            // object before reading: a FIFO must neither block at open nor
+            // lend buffered limit text or a writer-free EOF to this check.
+            if !file
+                .metadata()
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?
+                .file_type()
+                .is_file()
+            {
+                return Err("PUBLIC_HOST_KERNEL_UNAVAILABLE".into());
+            }
+            let text = read_limit_text(&mut file, bytes)?;
+            #[cfg(test)]
+            relative_tests::after_limit_read(name);
+            Ok(text)
         }
 
         fn read_limits(&self) -> Result<Limits> {

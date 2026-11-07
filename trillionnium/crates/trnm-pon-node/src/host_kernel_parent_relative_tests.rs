@@ -124,6 +124,150 @@ fn relative_limits_never_follow_replacement_symlinks() {
     }
 }
 
+const LIMIT_CHILD_PARENT: &str = "TRNM_TEST_HOST_LIMIT_CHILD_PARENT";
+const LIMIT_CHILD_SELECTOR: &str =
+    "host_kernel_parent::kernel_parent::relative_tests::relative_limit_child_probe";
+
+#[test]
+fn relative_limit_child_probe() {
+    let Some(parent) = std::env::var_os(LIMIT_CHILD_PARENT) else {
+        return;
+    };
+    let parent = PathBuf::from(parent);
+    let directory =
+        ParentDirectory::open(&parent, &fs::symlink_metadata(&parent).unwrap()).unwrap();
+    let expected = validate_limits("25000 100000", "0", "268435456", "0", "32").unwrap();
+    directory.verify_path(&parent).unwrap();
+    eprintln!("host_limit_child_started_v1");
+    assert_eq!(
+        directory
+            .verify_limits(&parent, expected)
+            .unwrap_err()
+            .to_string(),
+        "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+    );
+    eprintln!("host_limit_child_rejected_v1");
+}
+
+fn assert_limit_probe_finishes(parent: &Path, name: &str, kind: &str) {
+    use std::{
+        process::{Child, Command, Stdio},
+        thread,
+        time::{Duration, Instant},
+    };
+    struct ReapChild(Option<Child>);
+    impl Drop for ReapChild {
+        fn drop(&mut self) {
+            if let Some(child) = self.0.as_mut() {
+                let _ = child.kill();
+                let _ = child.wait();
+            }
+        }
+    }
+    let mut guard = ReapChild(Some(
+        Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                LIMIT_CHILD_SELECTOR,
+                "--nocapture",
+                "--test-threads=1",
+            ])
+            .env(LIMIT_CHILD_PARENT, parent)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap(),
+    ));
+    let child = guard.0.as_mut().unwrap();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let completed = loop {
+        if child.try_wait().unwrap().is_some() {
+            break true;
+        }
+        if Instant::now() >= deadline {
+            // A regressed blocking open/read is killed and reaped before
+            // this assertion can fail; no test thread is left on the FIFO.
+            child.kill().unwrap();
+            break false;
+        }
+        thread::sleep(Duration::from_millis(10));
+    };
+    let output = guard.0.take().unwrap().wait_with_output().unwrap();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        completed,
+        "{name} / {kind}: limit child exceeded five seconds and was reaped\n{stdout}\n{stderr}"
+    );
+    assert!(
+        output.status.success(),
+        "{name} / {kind}: limit child failed\n{stdout}\n{stderr}"
+    );
+    assert!(
+        stdout.contains("test result: ok. 1 passed;")
+            && stderr.contains("host_limit_child_started_v1")
+            && stderr.contains("host_limit_child_rejected_v1"),
+        "{name} / {kind}: the exact native child must execute its assertion\n{stdout}\n{stderr}"
+    );
+}
+
+#[test]
+fn relative_limits_refuse_nonregular_children_in_bounded_native_processes() {
+    use std::{io::Write, os::unix::fs::OpenOptionsExt};
+    for (name, original) in LIMIT_FIXTURE {
+        for kind in ["fifo-empty", "fifo-buffered", "directory", "symlink"] {
+            let (_temporary, parent, directory, initial) = fixture();
+            directory.verify_limits(&parent, initial).unwrap();
+            let path = parent.join(name);
+            let detached = parent.join("detached-limit");
+            fs::rename(&path, &detached).unwrap();
+            let mut fifo_reader = None;
+            match kind {
+                "fifo-empty" | "fifo-buffered" => {
+                    let name = std::ffi::CString::new(name).unwrap();
+                    rustix::fs::mkfifoat(
+                        &directory.file,
+                        name.as_c_str(),
+                        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+                    )
+                    .unwrap();
+                    if kind == "fifo-buffered" {
+                        // Retain only a reader so the FIFO keeps this valid
+                        // payload after its writer closes. Without the FD
+                        // type check, a nonblocking reader could accept these
+                        // exact limit bytes and their real EOF.
+                        let reader = fs::OpenOptions::new()
+                            .read(true)
+                            .custom_flags(libc::O_NONBLOCK)
+                            .open(&path)
+                            .unwrap();
+                        let mut writer = fs::OpenOptions::new()
+                            .write(true)
+                            .custom_flags(libc::O_NONBLOCK)
+                            .open(&path)
+                            .unwrap();
+                        writer.write_all(original.as_bytes()).unwrap();
+                        drop(writer);
+                        fifo_reader = Some(reader);
+                    }
+                }
+                "directory" => fs::create_dir(&path).unwrap(),
+                "symlink" => symlink(&detached, &path).unwrap(),
+                _ => unreachable!(),
+            }
+            assert_limit_probe_finishes(&parent, name, kind);
+            drop(fifo_reader);
+            if kind == "directory" {
+                fs::remove_dir(&path).unwrap();
+            } else {
+                fs::remove_file(&path).unwrap();
+            }
+            fs::rename(&detached, &path).unwrap();
+            directory.verify_limits(&parent, initial).unwrap();
+        }
+    }
+}
+
 #[test]
 fn held_parent_refuses_renamed_recreated_and_symlink_paths_then_rechecks_restore() {
     let (temporary, parent, directory, initial) = fixture();
@@ -218,63 +362,75 @@ enum LateChange {
     Permissions,
 }
 
-fn change_after_last_open(change: LateChange, malformed_cpu: bool) -> String {
-    use std::{
-        io::Write,
-        os::unix::fs::OpenOptionsExt,
-        thread,
-        time::{Duration, Instant},
-    };
+type AfterLimitRead = Box<dyn FnOnce()>;
+std::thread_local! {
+    static AFTER_LAST_LIMIT_READ: std::cell::RefCell<Option<AfterLimitRead>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+pub(super) fn after_limit_read(name: &CStr) {
+    if name == c"pids.max" {
+        let hook = AFTER_LAST_LIMIT_READ.with(|slot| slot.borrow_mut().take());
+        if let Some(hook) = hook {
+            hook();
+        }
+    }
+}
+
+fn with_after_last_limit_read<T>(hook: impl FnOnce() + 'static, action: impl FnOnce() -> T) -> T {
+    struct ResetHook;
+    impl Drop for ResetHook {
+        fn drop(&mut self) {
+            AFTER_LAST_LIMIT_READ.with(|slot| {
+                let _ = slot.borrow_mut().take();
+            });
+        }
+    }
+    let _reset = ResetHook;
+    AFTER_LAST_LIMIT_READ.with(|slot| {
+        let mut pending = slot.borrow_mut();
+        assert!(pending.is_none(), "only one scoped final-read mutation");
+        *pending = Some(Box::new(hook));
+    });
+    action()
+}
+
+fn change_after_last_read(change: LateChange, malformed_cpu: bool) -> String {
+    use std::{cell::Cell, rc::Rc};
     let (temporary, parent, directory, initial) = fixture();
     if malformed_cpu {
         fs::write(parent.join("cpu.max"), "malformed").unwrap();
     }
-    let last = parent.join("pids.max");
-    fs::remove_file(&last).unwrap();
-    rustix::fs::mkfifoat(
-        &directory.file,
-        c"pids.max",
-        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
-    )
-    .unwrap();
     directory.verify_path(&parent).unwrap();
-    let writer_parent = parent.clone();
+    let changed_parent = parent.clone();
     let detached = temporary.path().join("detached-parent");
-    let writer = thread::spawn(move || {
-        // Opening the last FIFO synchronizes with the real fifth fresh open.
-        // The writer changes the parent before closing, so the reader cannot
-        // observe EOF and enter its final fence until after the actual change.
-        // Nonblocking retries bound a failed test whose reader never gets here.
-        let deadline = Instant::now() + Duration::from_secs(10);
-        let mut file = loop {
-            match fs::OpenOptions::new()
-                .write(true)
-                .custom_flags(libc::O_NONBLOCK)
-                .open(&last)
-            {
-                Ok(file) => break file,
-                Err(error) if error.raw_os_error() == Some(libc::ENXIO) => {
-                    assert!(Instant::now() < deadline, "last limit was never opened");
-                    thread::sleep(Duration::from_millis(1));
+    let observed = Rc::new(Cell::new(false));
+    let changed = observed.clone();
+    let result = with_after_last_limit_read(
+        move || {
+            // The production helper has opened all five current regular
+            // files and read the fifth through EOF. Mutate the actual parent
+            // before parsing/final-fencing; a FIFO is no longer an admissible
+            // synchronization fixture. The hook is thread-local and test-only.
+            assert!(!changed.replace(true));
+            match change {
+                LateChange::Rename => {
+                    fs::rename(&changed_parent, &detached).unwrap();
+                    fs::create_dir(&changed_parent).unwrap();
+                    write_limits(&changed_parent);
                 }
-                Err(error) => panic!("last limit writer: {error}"),
+                LateChange::Permissions => {
+                    fs::set_permissions(&changed_parent, fs::Permissions::from_mode(0o777))
+                        .unwrap();
+                }
             }
-        };
-        file.write_all(b"32\n").unwrap();
-        match change {
-            LateChange::Rename => {
-                fs::rename(&writer_parent, &detached).unwrap();
-                fs::create_dir(&writer_parent).unwrap();
-                write_limits(&writer_parent);
-            }
-            LateChange::Permissions => {
-                fs::set_permissions(&writer_parent, fs::Permissions::from_mode(0o777)).unwrap();
-            }
-        }
-        drop(file);
-    });
-    let result = directory.verify_limits(&parent, initial);
-    writer.join().unwrap();
+        },
+        || directory.verify_limits(&parent, initial),
+    );
+    assert!(
+        observed.get(),
+        "the actual fifth complete read must run the cut"
+    );
     result.unwrap_err().to_string()
 }
 
@@ -282,7 +438,7 @@ fn change_after_last_open(change: LateChange, malformed_cpu: bool) -> String {
 fn held_parent_production_final_fence_observes_change_after_actual_fifth_open() {
     for change in [LateChange::Rename, LateChange::Permissions] {
         assert_eq!(
-            change_after_last_open(change, false),
+            change_after_last_read(change, false),
             "PUBLIC_HOST_KERNEL_REPLACED"
         );
     }
@@ -292,7 +448,7 @@ fn held_parent_production_final_fence_observes_change_after_actual_fifth_open() 
 fn held_parent_final_fence_does_not_replace_an_earlier_limit_parse_error() {
     for change in [LateChange::Rename, LateChange::Permissions] {
         assert_eq!(
-            change_after_last_open(change, true),
+            change_after_last_read(change, true),
             "PUBLIC_HOST_KERNEL_LIMITS"
         );
     }

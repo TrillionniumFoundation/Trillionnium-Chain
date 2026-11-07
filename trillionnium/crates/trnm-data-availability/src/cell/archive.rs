@@ -851,6 +851,31 @@ impl CellReleaseRetentionStoreV2 {
         check_deadline(deadline)
     }
 
+    /// Read the immutable physical member identity for an external native
+    /// effect owner. Catalog membership and complete-release service remain
+    /// separate obligations; this read grants no funding or new copy authority.
+    pub fn object_contract(
+        &self,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<CellRetentionContractV1> {
+        self.check(deadline)?;
+        let result = self.retention.contract(object_operation)?;
+        check_deadline(deadline)?;
+        Ok(result)
+    }
+
+    /// Historical physical-GC readback, including after its arena slot is reused.
+    /// Callers must still check their original native owner and rooted GC fences.
+    pub fn retired_object_readback(
+        &self,
+        object_operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<Option<CellRetentionReadbackV1>> {
+        self.check(deadline)?;
+        self.retention.retired_readback(object_operation, deadline)
+    }
+
     /// GC of one physical object. Hold the catalog writer transaction through
     /// the original arena retirement so a new root cannot race the decision.
     /// All active roots, including pending/expired roots, protect their objects.

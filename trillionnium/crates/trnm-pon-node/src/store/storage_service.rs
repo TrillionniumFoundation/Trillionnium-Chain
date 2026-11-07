@@ -15,8 +15,8 @@ use trnm_data_availability::cell::{
 };
 use trnm_protocol::pon_wire::{hash, Hash};
 use trnm_service_settlement::native_budget::{
-    NativeBudgetClaimV1, NativeBudgetEffectCheckV1, NativeBudgetPolicyV1, NativeBudgetReplayV1,
-    NativeBudgetResourcesV1, NativeBudgetStoreV1, NativeFundingSourceV1,
+    NativeBudgetAnchorV1, NativeBudgetClaimV1, NativeBudgetEffectCheckV1, NativeBudgetPolicyV1,
+    NativeBudgetReplayV1, NativeBudgetResourcesV1, NativeBudgetStoreV1, NativeFundingSourceV1,
 };
 
 mod release;
@@ -390,6 +390,40 @@ impl Node {
         })
     }
 
+    // The mandatory successor's local ACK is insufficient to authorize native
+    // reclamation. The same original journal must retain its exact completed
+    // physical effect, observed under the same current native owner. This checks
+    // admitted effect ownership, not current coin locking or future service.
+    fn check_retirement_successor(
+        &mut self,
+        budgets: &NativeBudgetStoreV1,
+        expected: (Hash, Hash),
+        store_id: Hash,
+        contract: &CellRetentionContractV1,
+        current: NativeBudgetAnchorV1,
+        deadline: Instant,
+    ) -> Result<()> {
+        storage_deadline(deadline)?;
+        ensure(
+            expected == (store_id, contract.operation),
+            "NATIVE_CELL_SUCCESSOR_BINDING",
+        )?;
+        let effect = contract.commitment(store_id);
+        let receipt = hash(b"trnm.native-cell-initial-readback.v1\0", &[&effect]);
+        let observed = budgets
+            .reobserve_completed_effect(
+                self,
+                contract.funding_operation,
+                contract.operation,
+                effect,
+                Some((contract.retain_from_height, contract.retain_until_height)),
+                receipt,
+            )
+            .map_err(owner_error)?;
+        ensure(observed == current, "NATIVE_CELL_SUCCESSOR_ANCHOR_CHANGED")?;
+        storage_deadline(deadline)
+    }
+
     /// Only the original journal's current native chain height can release this
     /// completed local obligation. An unrelated Node's height, unknown intent
     /// or supplied receipt cannot free its physical capacity.
@@ -398,7 +432,7 @@ impl Node {
         budgets: &NativeBudgetStoreV1,
         retention: &mut CellRetentionStoreV1,
         operation: Hash,
-        successor: Option<&mut CellRetentionStoreV1>,
+        mut successor: Option<&mut CellRetentionStoreV1>,
         deadline: Instant,
     ) -> Result<CellRetentionReadbackV1> {
         storage_deadline(deadline)?;
@@ -420,6 +454,28 @@ impl Node {
             )
             .map_err(owner_error)?;
         storage_deadline(deadline)?;
+        if let Some(expected) = contract.successor {
+            // A committed retirement is readback-only. Do not require or adopt
+            // a new successor after the old physical slot has already gone.
+            if retention
+                .retired_readback(operation, deadline)
+                .map_err(owner_error)?
+                .is_none()
+            {
+                let next = successor
+                    .as_deref_mut()
+                    .ok_or("NATIVE_CELL_SUCCESSOR_REQUIRED")?;
+                let next_contract = next.contract(expected.1).map_err(owner_error)?;
+                self.check_retirement_successor(
+                    budgets,
+                    expected,
+                    next.store_id(),
+                    &next_contract,
+                    current,
+                    deadline,
+                )?;
+            }
+        }
         retention
             .retire(operation, current.height, successor, deadline)
             .map_err(owner_error)

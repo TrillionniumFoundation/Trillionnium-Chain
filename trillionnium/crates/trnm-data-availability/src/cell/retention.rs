@@ -890,6 +890,28 @@ impl CellRetentionStoreV1 {
         self.readback(&row)
     }
 
+    /// Read only an already committed retirement. The original bytes may have
+    /// been reused, so this is historical operation readback, never live custody
+    /// or permission for a new retirement. Funding owners can preserve exact
+    /// retry semantics without requiring a successor that was needed only at GC.
+    pub fn retired_readback(
+        &self,
+        operation: CellDigestV1,
+        deadline: Instant,
+    ) -> CellResultV1<Option<CellRetentionReadbackV1>> {
+        check_deadline(deadline)?;
+        validate_schema(&self.connection)?;
+        let row = self.required_row(operation)?;
+        check_deadline(deadline)?;
+        let result = if row.status == 2 {
+            Some(self.readback(&row)?)
+        } else {
+            None
+        };
+        check_deadline(deadline)?;
+        Ok(result)
+    }
+
     /// The caller supplies its current locally verified chain height. Reorgs do
     /// not undo retirement or other physical facts. A required successor must
     /// be opened and freshly read here; a supplied receipt cannot satisfy it.

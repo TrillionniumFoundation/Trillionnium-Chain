@@ -8543,3 +8543,45 @@ the original four-second/depth-six/resource envelope, Cell shared-resource
 isolation, complete cost coverage and service acceptance remain open. No
 merge, deployment, activation or change to existing services is authorized
 by the evidence publication.
+
+
+### 2026-11-06 — one cross-repository candidate, e0c10 runtime freeze
+
+The isolated integration branch composes the exact 62cb191 PQ/TLS,
+630cd5e throughput, 0ca272d baseline-shard and e49b191 W1 failure-classification
+histories. Parent records remain historical observations. No parent PASS is
+transferred to this candidate; all activation and whole-system acceptance flags
+remain false.
+
+This source revision closes three concrete code gaps for native evaluation:
+fresh Host limit reads open nonblocking and reject non-regular opened objects;
+TPQ1 signing verifies the final exported frame once without repeating the same
+canonical signature verification beforehand; first native cell/member GC requires
+the designated successor's exact completed effect in the original M12 journal
+under the same current anchor. The latter establishes admitted effect ownership,
+not live coin locking, payment, future availability, an independently controlled
+domain, or a cross-journal handover protocol. Completed GC remains historical
+readback after slot reuse and successor loss.
+
+The original Host checkpoint frequency, current-authority observations, request
+deadlines, attack inputs, resource caps and all failure denominators are retained.
+The original final-fence test selector is retained while its synchronization moves
+to a test-only hook after the fifth regular-file read. New bounded native children
+cover five limits against empty/buffered FIFOs, directories and symlinks.
+Independent native tests must still establish the patch behavior.
+
+Original failures remain open: pressure confirmation/history under the original
+four-second profile; F0 zero of six planned four-second service rounds; Chain
+87/89 native PQ/TLS controls with first witness connect and endpoint Submit replay
+failed; Hepta's two original 60-second daemon preparations reaching only 17/31
+and 16/31 recovery cycles. The older ROG job 1a1b15074fd-fc05-77b1 remains UNKNOWN
+without replacement or inherited success. Full PQ entrypoint/custody coverage,
+W1 and quantum independent acceptance, a positive unseen-task model loop, and
+storage renewal/repair/GC/payment under one budget remain acceptance obligations.
+
+The first native build is frozen before execution, with one controlled target,
+Rust 1.95.0, two Cargo build workers, unchanged Cargo.lock and profiles, canonical
+RustCrypto ML-DSA-65 and the exact OpenSSL 3.5.9 differential provider bytes.
+Hepta source/dependency pins, actual executable hashes and reobtained model bytes
+must be bound after their actual observations. The old 272,189,990-byte / 35-second
+cold cohort is not interchangeable with 272,190,131 bytes or the V13 replay profile.

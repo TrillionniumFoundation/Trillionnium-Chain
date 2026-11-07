@@ -8,6 +8,8 @@ mod height_window;
 mod release;
 #[path = "replay_owner_tests.rs"]
 mod replay_owner;
+#[path = "successor_owner_tests.rs"]
+mod successor_owner;
 use crate::development_public;
 use crate::store::StateBackend;
 use std::{
