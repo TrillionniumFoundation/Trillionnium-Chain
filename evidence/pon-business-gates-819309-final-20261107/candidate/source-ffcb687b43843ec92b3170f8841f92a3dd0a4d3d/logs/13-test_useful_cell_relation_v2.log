@@ -1,0 +1,16 @@
+test_complete_masked_stateful_training_relation (__main__.StatefulCellRelationTests.test_complete_masked_stateful_training_relation) ... ok
+test_every_state_component_is_recomputed (__main__.StatefulCellRelationTests.test_every_state_component_is_recomputed) ... ok
+test_forward_backward_loss_and_clipping_trace_are_replayed (__main__.StatefulCellRelationTests.test_forward_backward_loss_and_clipping_trace_are_replayed) ... ok
+test_issued_deadline_and_parent_are_independently_bound (__main__.StatefulCellRelationTests.test_issued_deadline_and_parent_are_independently_bound) ... ok
+test_live_completion_and_clock_regression (__main__.StatefulCellRelationTests.test_live_completion_and_clock_regression) ... ok
+test_malformed_deep_and_cyclic_objects_fail_closed (__main__.StatefulCellRelationTests.test_malformed_deep_and_cyclic_objects_fail_closed) ... ok
+test_new_execution_loaded_code_is_guarded (__main__.StatefulCellRelationTests.test_new_execution_loaded_code_is_guarded) ... ok
+test_preprocessing_cannot_be_self_certified_by_rehashing_features (__main__.StatefulCellRelationTests.test_preprocessing_cannot_be_self_certified_by_rehashing_features) ... ok
+test_updated_model_cannot_change_a_frozen_parameter (__main__.StatefulCellRelationTests.test_updated_model_cannot_change_a_frozen_parameter) ... ok
+test_valid_v1_challenge_transcript_is_not_a_v2_proof (__main__.StatefulCellRelationTests.test_valid_v1_challenge_transcript_is_not_a_v2_proof) ... ok
+test_witness_and_output_closed_schemas (__main__.StatefulCellRelationTests.test_witness_and_output_closed_schemas) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 27.251s
+
+OK

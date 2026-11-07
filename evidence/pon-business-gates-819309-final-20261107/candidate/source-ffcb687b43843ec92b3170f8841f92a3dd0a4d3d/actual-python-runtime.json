@@ -1,0 +1,10 @@
+{
+  "cryptography": "41.0.7",
+  "cryptography_file": "/usr/lib/python3/dist-packages/cryptography/__init__.py",
+  "executable": "/usr/bin/python3",
+  "implementation": "CPython",
+  "numpy": "1.26.4",
+  "numpy_file": "/usr/lib/python3/dist-packages/numpy/__init__.py",
+  "python": "3.12.3",
+  "version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+}

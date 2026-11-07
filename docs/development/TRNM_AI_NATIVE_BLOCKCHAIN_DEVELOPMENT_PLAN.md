@@ -1,5 +1,8 @@
 **Final 819 readback and ordinary-admission root continuation, 2026-11-07 UTC — HOLD:**
 
+> Corrected execution source ffcb687b43843ec92b3170f8841f92a3dd0a4d3d: all original static controls plus 17 suites / 666 methods passed; strict all-workspace Clippy and actual 67-harness inventory passed; 16 declared library exacts passed, including the original >8 MiB Legacy/Auth schedule. The separate transaction-History integration still failed 0/1 with PUBLIC_MUTATION_CPU_BUDGET. [Complete C2 results and original logs](../../evidence/pon-business-gates-819309-final-20261107/README.md#9-corrected-c2-local-validation-16-library-passes-separate-history-failure) preserve both outcomes. This publication child changes evidence and this plan only; it must run its own source controls, and does not inherit C2's native execution identity. Original business gates remain HOLD.
+
+
 > Frozen candidate fa6388d completed 666/666 named controls but its overall source check failed on one stale workflow blob binding. The full failed attempt and source-before/after are retained in [the final evidence record](../../evidence/pon-business-gates-819309-final-20261107/README.md#8-first-frozen-candidate-source-control-failure-retained). The follow-up fixes that one corpus pin without changing the checker, workflow or production Rust. Native validation starts only on the corrected frozen commit; original business gates remain HOLD.
 
 

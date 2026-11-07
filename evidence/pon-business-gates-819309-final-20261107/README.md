@@ -175,3 +175,56 @@ Candidate fa6388d06195711b5d72217b2b7f10b03756e886 (tree 4bb21bcd9a931eac6d56aa4
 The [entire original source attempt](candidate/source-attempt-fa6388d06195711b5d72217b2b7f10b03756e886/summary.json), original error log and authoritative failed/exit-1 terminal remain intact. [WORKFLOW_BINDING_FIX.json](WORKFLOW_BINDING_FIX.json) records the concrete correction: the workflow's internal store.rs pin had been updated, but the corpus still named the workflow's previous Git blob. All 576 existing manifest entries were compared with the frozen candidate tree: 575 matched, one differed, none was missing.
 
 The follow-up changes only that corpus field to actual workflow blob 3468dab27c330c086ac8b05f59675d7afe88445a. It does not change the workflow, checker, production Rust, test budget or original failure. The follow-up commit requires its own complete source-control invocation and the declared native validation; the failed candidate's 666 method passes are not an overall green result.
+
+## 9. Corrected C2 local validation: 16 library passes, separate History failure
+
+The corrected frozen execution source is **ffcb687b43843ec92b3170f8841f92a3dd0a4d3d**, tree **73dcb40e7021bb7f18d1ddb75fd26a53d0e1201a**. The [complete C2 source controls](candidate/source-ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/summary.json) passed every original static command and all seventeen suites / **666 named methods**. The earlier fa6388d overall failure remains in section 8.
+
+The [actual main native manifest](candidate/native-c2/admission-fence-followup-819309-20261107/native-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/targeted/manifest.json) passed locked/offline metadata, formatting, strict workspace/all-target/all-feature Clippy and the full linked Node inventory. It then ran each declared library selector exactly once, with its original required reader and actual executable binding.
+
+| Actual library selector | Outer passed / expected | Original libtest seconds |
+| --- | ---: | ---: |
+| ordinary_admission_final_root_rechecks_warm_active_state_and_claim | 1/1 | 4.35 |
+| legacy_reorg_root_keeps_signed_history_cursor_and_cold_publication | 1/1 | 1.20 |
+| legacy_reorg_root_rechecks_untouched_rows_root_claims_and_original_errors | 1/1 | 0.67 |
+| legacy_reorg_root_keeps_all_tail_cancellation_boundaries_and_rollback | 1/1 | 0.13 |
+| legacy_reorg_root_never_selects_the_growth_or_authenticated_relation | 1/1 | 0.30 |
+| legacy_reorg_root_preserves_pq_v2_and_v6_state_validation | 1/1 | 2.43 |
+| legacy_pair_matches_full_replays_snapshot_cadence_and_cold_publication | 1/1 | 179.64 |
+| legacy_pair_rereads_snapshot_and_every_intermediate_delta_after_warm_use | 1/1 | 0.93 |
+| legacy_pair_child_snapshot_and_active_parent_keep_distinct_sql_sources | 1/1 | 0.93 |
+| legacy_pair_ineligible_schema_keeps_original_reads_and_refuses_bad_delta_writes | 1/1 | 0.91 |
+| legacy_pair_selection_excludes_authenticated_and_growth_state_relations | 1/1 | 0.27 |
+| legacy_pair_cancellation_at_every_commit_callback_rolls_back_all_rows | 1/1 | 1.26 |
+| legacy_pair_rejects_writes_ddl_and_transaction_aba_through_last_callback | 1/1 | 8.64 |
+| admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner | 1/1 | 47.39 |
+| authenticated_large_parent_original_schedule_supplementary_denominator | 1/1 | 29.22 |
+| large_parent_root_arithmetic_keeps_current_sql_and_original_read_checkpoints | 1/1 | 16.62 |
+
+All sixteen outer results completed; none failed or was ignored. The first entry is one test containing two corruption subcases, not two outer tests. Native bodies used the original unoptimized/debug-zero profile and unchanged internal budgets. No full-package rerun or paired performance benchmark is implied.
+
+Actual linked inventory was 67 native harnesses, including 65 integrations; library 1,205 / ignored 33; total 1,574 / default bodies 1,517 / ignored 57. Inventory is not execution coverage.
+
+### Original large-State CPU case
+
+The original >8 MiB held-schedule test completed Legacy and Authenticated arms in their original order. Legacy settled 2,343,488,995 ns paid CPU with +228,230,326 ns remaining credit. Its Authenticated arm settled 1,997,744,956 ns with +528,580,782 ns remaining. The separately declared Authenticated supplement settled 1,955,495,817 ns with +533,360,312 ns remaining. All three observations completed both workers and retained live_refused=false.
+
+The original 2,000,000,000 ns burst and 250,000,000 ns/s refill did not change. These exact attempts do not replace 819's complete-package failure or establish a paired speedup. The Legacy arithmetic observer's zero value does not measure savings in the commitment-root calculation.
+
+### Independent transaction-History integration still fails
+
+The [separate History manifest](candidate/native-c2/admission-fence-followup-819309-20261107/history-supplement-validation/runs/ffcb687b43843ec92b3170f8841f92a3dd0a4d3d/history-supplement/manifest.json) retains its original single invocation of test_full_transaction_pages_use_byte_limits_and_recover_all_native_state. Native exit was 101; the required reader exited 1. Its complete outer result is **0 passed / 1 failed / 0 ignored / 30 filtered**, 7.19 original libtest seconds.
+
+The original sync_from unwrap at tests/native_node.rs:1407:37 returned PUBLIC_MUTATION_CPU_BUDGET, followed by the thread-join unwrap. This is a real original assertion failure, not supervisor timeout or a child summary. The log identifies the call expression but does not identify its internal exhausted phase. This Legacy test's twelve blocks with 256 signed transactions each do not change the PQ V6 command limit or replace the original 4,105-block History gate.
+
+### Execution identity and publication scope
+
+All four complete main/supplement source receipts are byte-identical: SHA256 1bf17f697e533ba4608a576fd5bd7b051980a0887d5e5daf1245ad1b63ed6721, 14,593 tracked entries / 1,642,289,032 bytes. Every registered actual binary matched before/after. The [full closure](candidate/native-c2/admission-fence-followup-819309-20261107/native-validation/closure-ffcb687b43843ec92b3170f8841f92a3dd0a4d3d-v1.json) preserves authoritative success for the sixteen-library phase and authoritative failure for the independent integration, with complete durable logs and no timeout or truncation.
+
+The [native whitelist](candidate/native-c2/ARCHIVE_WHITELIST.json) retains 265 complete UTF-8 evidence files / 2,331,215 bytes; its own bytes are separately included. Executables and target directories remain externally preserved with exact identities.
+
+This publication worktree is an evidence/documentation child of C2. It does not claim native execution on the child. C2's frozen worktree and outputs remain unchanged. The child requires its own complete source controls before normal publication; all native source and dependency files must remain byte-identical to C2. Git commit and worktree identities are different. The earlier PUBLICATION_PREPARATION_COPY.json is explicitly a historical preparation snapshot, not the final validation result.
+
+The [publication material review](publication-review/REVIEW_CORE.json) checked all four fixed CI/W1 packages, including original core ZIP members, gzip streams and SQLite bytes, without changing their seals. All identified credential-pattern candidates were classified as templates or synthetic controls; no identifiable real credential finding remained in that fixed scope. This read-only packaging check is not a business/native test.
+
+**Qualification remains HOLD.** The independent History CPU refusal, 819 complete-package failures, original four-second pressure gate and original 4,105-import/cold-activation requirements remain separate retained facts. No confirmed TPS, p95/p99, WAN or production activation claim follows.
