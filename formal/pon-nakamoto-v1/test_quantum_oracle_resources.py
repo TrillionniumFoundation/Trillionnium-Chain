@@ -137,6 +137,32 @@ class ResourceAccounting(unittest.TestCase):
             self.assertLessEqual(Decimal(row["quantum_wall_seconds_ideal_overlap_lower_bound"]),
                                  Decimal(row["quantum_wall_seconds_serial_magic_delivery_schedule"]))
 
+    def test_full_decomposition_depth_cannot_be_shorter_than_t_layers(self):
+        # A sequential X;Toffoli;X stage needs the declared T layers between
+        # its two Clifford steps. Accepting total decomposition depth 1 with
+        # T depth 3 makes max(3*1, 1*3) charge only three data layers. A total
+        # decomposition depth must cover its own T-layer declaration before
+        # any gate budget can be converted into a conditional clock.
+        request = q.example(True)
+        model = replace(request.physical_models[0], toffoli_decomposition_depth=1,
+                        t_depth_per_toffoli=3)
+        stage = q.Circuit(3, 3, 3, 1, 1, 0, 0, "serial-x-toffoli-x-control")
+        changed = replace(request, physical_models=(model,),
+                          circuits={key: stage for key in q.STAGES})
+        with self.assertRaisesRegex(ValueError, "TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH"):
+            q.account(changed)
+        with self.assertRaisesRegex(ValueError, "TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH"):
+            q.load_request(wire(changed))
+        counts = {key: getattr(stage, key) for key in (
+            "gate_count", "gate_depth", "toffoli_count", "toffoli_depth",
+            "direct_t_count", "direct_t_depth")}
+        with self.assertRaisesRegex(ValueError, "TOFFOLI_DECOMPOSITION_BELOW_T_DEPTH"):
+            q.physical_estimate(counts, stage.logical_qubits, 1, model)
+        # Equality is a valid conservative declaration and remains accepted.
+        valid = replace(model, toffoli_decomposition_depth=3)
+        self.assertEqual(q.account(replace(changed, physical_models=(valid,)))["status"],
+                         "CALLER_CONDITIONAL_ACCOUNTING_ONLY")
+
     def test_surface_code_union_formula_independent(self):
         request = q.example(True)
         report = q.account(request)

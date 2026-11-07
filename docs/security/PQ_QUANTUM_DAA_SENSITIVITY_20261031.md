@@ -2,6 +2,45 @@
 
 **Status: HOLD / no production activation / not quantum-resistance evidence.**
 
+## Current continuation and the scope of this historical table
+
+The table below preserves the original 2026-10-31 sensitivity calculation.
+The current [quantum research implementation](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md)
+also has a fixed-public-context hierarchical W1 reversible construction,
+a cheaper legal prefix-restricted construction, literal nonce censuses, and
+resource-derived conditional event experiments. Native-size macro execution,
+reduced actual leaf-gate execution, declared hardware resources, and real native
+Node packet execution remain separate evidence classes. None is an observed
+fault-tolerant quantum miner or a universal quantum-cost lower bound.
+
+The 2026-11-06 continuation repairs binary64 measurement sampling in both the
+network and literal-domain paths: an exact integer draw samples the represented
+probability, including probabilities below `2^-53`. Grover amplitudes remain
+floating-point approximations. New v2 measurement/campaign namespaces prevent
+old seeded traces from being reinterpreted as runs of the corrected sampler.
+The resource model also refuses a declared complete Toffoli decomposition depth
+smaller than its own T-layer depth. A new explicit single-quantum-miner policy
+finishes the current Grover iteration after an adopted competing tip, then pays
+readout, verification and any proof on the original header. Paired seeded
+scenarios retain equal declared time/resource inputs; they do not establish
+real quantum production rates or multi-miner correlated-fork security.
+
+The [native DAA controls](../../trillionnium/crates/trnm-pon-node/tests/daa_adversarial_schedule.rs)
+exercise complete PNW1 packets, shorter/harder versus longer/easier forks, and
+equal-work active-tip preservation across authenticated reopen. Their logical
+timestamps do not establish a real-time attacker resource share or an economic
+advantage. The [independent reader](../../scripts/pon_daa_schedule_reader.py)
+recomputes full proof transcripts/products and required chainwork; it does not
+itself execute native database admission or authenticate the execution host.
+
+Bailey--Sattath's [v2 paper](https://arxiv.org/html/2403.08023v2) uses an idealized
+search model and provides a variant respecting bounded difficulty adjustment.
+A four-fold clamp alone is therefore not a quantum security argument. Applying
+that attack to W1 still requires changed-target challenges and actual marked
+sets, paid preprocessing and mining, admissible publication, and real fork
+selection under the same elapsed-time and resource budgets. The original
+qualification obligations below remain open at that end-to-end level.
+
 The repository's existing [development reference arithmetic](../../formal/pon-nakamoto-v1/reference.py) defines work as \`floor(2^256/(target+1))\`, a 16-block retarget with an approximately 4-fold bounded change, and 11-ancestor median-time / future deferral. This new sensitivity exercise imports those exact reference functions and the current [devnet configuration](../../config/pon/devnet-v1.json); it does not edit consensus.
 
 Run on a full checkout:

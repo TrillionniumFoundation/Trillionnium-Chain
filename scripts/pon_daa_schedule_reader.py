@@ -54,7 +54,9 @@ def load_report(raw):
 
 
 def analyze_report(report, packet_bytes):
-    require(report['schema'] == 'pon-native-daa-bounds-v1', 'unsupported native DAA report')
+    require(report['schema'] in ('pon-native-daa-bounds-v1', 'pon-native-daa-fork-choice-v1'),
+            'unsupported native DAA report')
+    fork_choice = report['schema'] == 'pon-native-daa-fork-choice-v1'
     exact = {'interval': 16, 'spacing_seconds': 10, 'median_window': 11,
              'future_skew_seconds': 120, 'desired_span_seconds': 150,
              'clamped_span_lower_seconds': 38, 'clamped_span_upper_seconds': 600}
@@ -62,10 +64,15 @@ def analyze_report(report, packet_bytes):
         require(integer(report[key], key) == value, 'original DAA profile changed: ' + key)
     for key in ('default_consensus_rules_changed', 'wall_clock_cadence_measured',
                 'attacker_work_fraction_measured', 'timestamp_attack_profitability_measured',
-                'public_network_qualification', 'lower_work_branch_replaces_harder_branch'):
+                'public_network_qualification'):
         require(report[key] is False, 'unsupported qualification: ' + key)
-    for key in ('same_packet_clock_retry_admitted', 'logical_validation_clock_schedule'):
-        require(report[key] is True, 'required retained scope: ' + key)
+    controls = ('longer_lower_work_replaces_harder_branch', 'equal_work_replaces_active_tip') if fork_choice else (
+        'lower_work_branch_replaces_harder_branch',)
+    for key in controls:
+        require(report[key] is False, 'unsupported fork-choice claim: ' + key)
+    require(report['logical_validation_clock_schedule'] is True, 'required retained logical-clock scope')
+    if not fork_choice:
+        require(report['same_packet_clock_retry_admitted'] is True, 'required exact-packet retry scope')
     network = hexadecimal(report['network'], 32)
     parameters = hexadecimal(report['parameters'], 32)
     genesis = hexadecimal(report['genesis'], 32)
@@ -75,10 +82,12 @@ def analyze_report(report, packet_bytes):
     genesis_work = int.from_bytes(hexadecimal(report['genesis_chainwork_hex'], 64), 'big')
     require(genesis_work == 0, 'genesis cannot acquire packet work')
     rows = report['records']
-    require(isinstance(rows, list) and len(rows) == 85, 'complete finite 85-observation grid required')
-    require(Counter(row['schedule'] for row in rows) == {
-        'common-compressed': 31, 'ordinary': 17, 'lower-clamp': 17, 'upper-clamp': 17,
-        'time-boundary-negative': 2, 'future-clock-retry': 1}, 'schedule observations were dropped or duplicated')
+    counts = ({'common-compressed': 31, 'lower-clamp': 16, 'upper-clamp': 16,
+               'equal-work-hard-sibling': 2, 'longer-easier': 2} if fork_choice else
+              {'common-compressed': 31, 'ordinary': 17, 'lower-clamp': 17, 'upper-clamp': 17,
+               'time-boundary-negative': 2, 'future-clock-retry': 1})
+    require(isinstance(rows, list) and len(rows) == sum(counts.values()), 'complete finite ' + str(sum(counts.values())) + '-observation grid required')
+    require(Counter(row['schedule'] for row in rows) == counts, 'schedule observations were dropped or duplicated')
     admitted = {genesis: {'height': 0, 'timestamp': genesis_time, 'target': limit.to_bytes(32, 'big'),
                          'work': genesis_work, 'parent': None}}
     grid, proofs, seen_rows, negatives = {}, {}, set(), []
@@ -171,15 +180,33 @@ def analyze_report(report, packet_bytes):
                 offset, clock = header['height'], header['height'] * 10
             else:
                 height = header['height']
-                require(32 <= height <= 48, 'branch period height')
+                require(32 <= height <= (47 if fork_choice else 48), 'branch period height')
                 offset = height * 10 if schedule == 'ordinary' else height
                 if schedule == 'upper-clamp':
                     offset = {32: 27, 47: 627, 48: 628}.get(height, height * 10)
                 clock = 508 if height == 48 else 507 if schedule == 'upper-clamp' and height == 47 else height * 10
             require(header['timestamp'] == genesis_time + offset and now == genesis_time + clock,
                     'declared finite logical timestamp/clock schedule changed')
+        elif fork_choice:
+            require(outcome['kind'] == 'admitted', 'fork-choice control requires full admitted packets')
+            height = header['height']
+            if schedule == 'equal-work-hard-sibling':
+                require(height == 48 and header['timestamp'] == genesis_time + 48,
+                        'hard siblings must share height and timestamp')
+                parent = hexadecimal(grid[('lower-clamp', 47)]['id'], 32)
+            else:
+                require(schedule == 'longer-easier' and height in (48, 49), 'unknown fork-choice schedule')
+                require(header['timestamp'] == genesis_time + 580 + height, 'longer branch timestamp changed')
+                parent_key = ('upper-clamp', 47) if height == 48 else ('longer-easier', 48)
+                parent = hexadecimal(grid[parent_key]['id'], 32)
+                require((schedule, height) not in grid, 'duplicate longer-branch height')
+                grid[(schedule, height)] = row
+            require(header['parent'] == parent and now == genesis_time + 509,
+                    'fork-choice packet changed its declared branch or logical clock')
     require(set(packet_bytes) == {'packets/' + identifier.hex() + '.pnk' for identifier in proofs},
             'missing or extra retained packet file')
+    if fork_choice:
+        return analyze_fork_choice(report, rows, admitted, proofs, grid)
     require(len(proofs) == 84 and len(admitted) == 84, 'unique proof/accepted-packet denominator mismatch')
     period_target = int.from_bytes(hexadecimal(report['branch_period_target'], 32), 'big')
     require(period_target * 4 < limit, 'upper boundary must be visible below pow_limit')
@@ -219,17 +246,84 @@ def analyze_report(report, packet_bytes):
             'retained reopen changed the selected native state/generation/work')
     require(selected['stored_blocks'] == 83 and reopened['stored_blocks'] == 84,
             'rejected blocks cannot be stored; one deferred retry adds exactly one packet')
-    for identifier, args in proofs.items():
-        try:
-            work_oracle.verify(*args)
-        except ValueError as error:
-            raise ValueError('full Python PNW1 replay ' + identifier.hex() + ': ' + str(error)) from error
+    verify_proofs(proofs)
     return {
         'schema': 'pon-native-daa-bounds-reader-v1', 'record_and_oracle_consistency': 'PASS',
         'observations': len(rows), 'unique_full_python_verified_proofs': len(proofs),
         'unique_native_admitted_packets_observed': len(admitted) - 1,
         'native_time_rejections_observed': len(negatives),
         'next_targets': report['next_targets'], 'selected_required_chainwork': last_work,
+        'reader_performed_native_admission': False, 'reader_reopened_native_database': False,
+        'host_and_source_provenance_checked_by_reader': False,
+        'full_python_transcript_and_product_recomputed': True,
+        'proof_hardness_or_timestamp_attack_profitability_qualified': False,
+        'public_network_qualification': False,
+    }
+
+
+def verify_proofs(proofs):
+    for identifier, args in proofs.items():
+        try:
+            work_oracle.verify(*args)
+        except ValueError as error:
+            raise ValueError('full Python PNW1 replay ' + identifier.hex() + ': ' + str(error)) from error
+
+
+def analyze_fork_choice(report, rows, admitted, proofs, grid):
+    require(len(proofs) == 67 and len(admitted) == 68, 'unique fork-choice proof/admission denominator mismatch')
+    period_target = int.from_bytes(hexadecimal(report['branch_period_target'], 32), 'big')
+    limit = int.from_bytes(hexadecimal(report['pow_limit'], 32), 'big')
+    require(period_target * 4 < limit, 'fork-choice upper clamp must remain below pow_limit')
+    for name in ('lower-clamp', 'upper-clamp'):
+        require(hexadecimal(grid[(name, 47)]['target'], 32) == period_target.to_bytes(32, 'big'),
+                'fork-choice period target mismatch')
+    siblings = [row for row in rows if row['schedule'] == 'equal-work-hard-sibling']
+    sibling_ids = {hexadecimal(row['id'], 32) for row in siblings}
+    hard_target = max(1, period_target * 38 // 150)
+    require(len(sibling_ids) == 2 and all(int.from_bytes(admitted[key]['target'], 'big') == hard_target
+                                       for key in sibling_ids), 'two genuine equal-target hard siblings required')
+    longer = report['longer_easier_selected']
+    selected = report['shorter_harder_selected']
+    chosen_id = hexadecimal(selected['tip'], 32)
+    equal_id = hexadecimal(report['equal_work_candidate'], 32)
+    easy_id = hexadecimal(longer['tip'], 32)
+    require(easy_id == hexadecimal(grid[('longer-easier', 49)]['id'], 32), 'longer branch selection mismatch')
+    require({chosen_id, equal_id} == sibling_ids and equal_id < chosen_id,
+            'selected hard sibling must oppose recovery id ordering')
+    hard, easy = admitted[chosen_id], admitted[easy_id]
+    require(hard['work'] == admitted[equal_id]['work'] and hard['parent'] == admitted[equal_id]['parent'],
+            'equal-work candidate is not the actual same-parent sibling')
+    require(hard['height'] == 48 < easy['height'] == 49 and hard['work'] > easy['work'],
+            'shorter harder branch must strictly outwork the longer easier branch')
+    require(int.from_bytes(easy['target'], 'big') == period_target * 4,
+            'longer branch must retain actual upper-clamp target')
+    for stats, header, generation in ((longer, easy, 32), (selected, hard, 33)):
+        require(integer(stats['height'], 'active height') == header['height']
+                and integer(stats['generation'], 'active generation') == generation,
+                'fork-choice active height or generation mismatch')
+        require(int.from_bytes(hexadecimal(stats['chainwork_hex'], 64), 'big') == header['work'],
+                'fork-choice selected cumulative work mismatch')
+        require(hexadecimal(stats['state_root'], 32) == header['state'], 'fork-choice selected state-root mismatch')
+        require(integer(stats['stored_blocks'], 'stored blocks') == 68, 'all admitted fork-choice packets must remain stored')
+    attempts = report['non_winning_candidates']
+    require(isinstance(attempts, list) and len(attempts) == 4, 'both candidates must be retried before and after reopen')
+    for attempt, (stage, candidate) in zip(attempts, (
+            ('before-reopen', easy_id), ('before-reopen', equal_id),
+            ('after-reopen', easy_id), ('after-reopen', equal_id))):
+        require(attempt['stage'] == stage and hexadecimal(attempt['candidate'], 32) == candidate,
+                'non-winning activation grid changed')
+        require(hexadecimal(attempt['returned_tip'], 32) == chosen_id and attempt['stats'] == selected,
+                'lower or equal work changed the recorded active state or generation')
+    require(report['after_authenticated_reopen'] == selected, 'authenticated reopen changed recorded active state')
+    verify_proofs(proofs)
+    return {
+        'schema': 'pon-native-daa-fork-choice-reader-v1', 'record_and_oracle_consistency': 'PASS',
+        'observations': len(rows), 'unique_full_python_verified_proofs': len(proofs),
+        'unique_native_admitted_packets_observed': len(admitted) - 1,
+        'longer_easier_height': easy['height'], 'longer_easier_required_chainwork': easy['work'],
+        'shorter_harder_height': hard['height'], 'shorter_harder_required_chainwork': hard['work'],
+        'non_winning_activation_attempts_observed': len(attempts),
+        'selected_larger_id_equal_work_sibling': True,
         'reader_performed_native_admission': False, 'reader_reopened_native_database': False,
         'host_and_source_provenance_checked_by_reader': False,
         'full_python_transcript_and_product_recomputed': True,
@@ -246,15 +340,17 @@ def read_bounded(path, maximum):
     return raw
 
 
-def analyze(raw_dir, expected_sha256):
+def analyze(raw_dir, expected_sha256, report_kind='bounds'):
     hexadecimal(expected_sha256, 32)
-    raw = read_bounded(raw_dir / 'daa-bounds.json', 2 * 1024 * 1024)
+    require(report_kind in ('bounds', 'fork-choice'), 'unsupported retained report kind')
+    raw = read_bounded(raw_dir / ('daa-' + report_kind + '.json'), 2 * 1024 * 1024)
     require(sha(raw) == expected_sha256, 'exact externally recorded DAA report digest required')
     report = load_report(raw)
+    require(report['schema'] == 'pon-native-daa-' + report_kind + '-v1', 'report kind does not match retained schema')
     directory = raw_dir / 'packets'
     require(not directory.is_symlink(), 'packet directory cannot be a symbolic link')
     files = list(directory.iterdir())
-    require(len(files) == 84, 'complete bounded native packet inventory required')
+    require(len(files) == (67 if report_kind == 'fork-choice' else 84), 'complete bounded native packet inventory required')
     packets = {}
     for path in files:
         require(re.fullmatch('[0-9a-f]{64}\\.pnk', path.name) is not None, 'unexpected retained packet file')
@@ -269,11 +365,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--raw-dir', required=True, type=Path)
     parser.add_argument('--expected-report-sha256', required=True)
+    parser.add_argument('--report-kind', choices=('bounds', 'fork-choice'), default='bounds')
     args = parser.parse_args()
     try:
-        result = analyze(args.raw_dir, args.expected_report_sha256)
+        result = analyze(args.raw_dir, args.expected_report_sha256, args.report_kind)
     except (OSError, ValueError, TypeError, KeyError, StopIteration) as error:
-        print(json.dumps({'schema': 'pon-native-daa-bounds-reader-v1', 'result': 'FAIL', 'error': str(error)}))
+        print(json.dumps({'schema': 'pon-native-daa-' + args.report_kind + '-reader-v1', 'result': 'FAIL', 'error': str(error)}))
         return 2
     print(json.dumps(result, indent=2, allow_nan=False))
     return 0

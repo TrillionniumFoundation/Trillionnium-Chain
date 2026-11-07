@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Seeded conditional network observations with source-bound replay receipts."""
+"""Seeded conditional network observations with source-bound replay receipts.
+
+V2 retains the ten original scenarios and adds a single-miner tip-policy pair
+with identical declared clocks, processor count, resource caps and horizon.
+Different realized costs are observations, not proof of a hardware advantage.
+"""
 from __future__ import annotations
 
 import argparse
@@ -19,11 +24,11 @@ ROOT = FORMAL.parents[1]
 sys.path.insert(0, str(FORMAL))
 
 from quantum_network_sim import (  # noqa: E402
-    ASSUMPTIONS, WORK_MAX, run_network_scenario, standard_network_scenarios,
+    ASSUMPTIONS, WORK_MAX, NetworkScenario, run_network_scenario, standard_network_scenarios,
 )
 from quantum_daa_model import common_history  # noqa: E402
 
-SCHEMA = "trnm-quantum-network-campaign-v1"
+SCHEMA = "trnm-quantum-network-campaign-v2"
 SOURCE_FILES = (
     "config/pon/devnet-v1.json",
     "trillionnium/crates/trnm-pon-node/src/consensus.rs",
@@ -103,7 +108,22 @@ def cases_for(seeds: list[int] | tuple[int, ...]) -> list:
         raise ValueError("SEED_VALUE")
     if len(set(seeds)) != len(seeds):
         raise ValueError("DUPLICATE_SEED")
-    return [replace(case, seed=seed) for seed in seeds for case in standard_network_scenarios()]
+    # Freeze the domain between retries; its sampled marked count is not known
+    # to the policy. All stages have explicit nonzero costs. The pair's sole
+    # behavioral difference is what happens to one in-flight trial at a new tip.
+    restart = NetworkScenario(
+        "single_quantum_tip_restart_control", duration_seconds=300,
+        classical_block_rate_at_initial_target=.1, classical_proof_seconds=.1,
+        quantum_fixed_iterations=16, quantum_max_iterations=16, quantum_processors=1,
+        quantum_prepare_seconds=.25, quantum_iteration_seconds=.5,
+        quantum_measure_seconds=.05, quantum_candidate_check_seconds=.25,
+        quantum_proof_seconds=.75, quantum_domain_size=4096,
+        quantum_domain_setup_seconds=.25, quantum_clock_rounding="upward",
+        propagation_seconds=.25)
+    measurement = replace(restart, name="single_quantum_tip_measurement_control",
+                          quantum_tip_policy="measure-at-next-iteration")
+    cases = [*standard_network_scenarios(), restart, measurement]
+    return [replace(case, seed=seed) for seed in seeds for case in cases]
 
 
 def write_rows(path: Path, rows: list[dict]) -> None:
@@ -244,8 +264,13 @@ def verify_campaign(out: Path) -> dict:
         raise ValueError("OBSERVATION_INVENTORY")
     for case, record in zip(cases, records):
         filename = f"{case.name}_s{case.seed}.jsonl.gz"
-        if canonical(record.get("parameters")) != canonical(asdict(case)) or record.get("trace_file") != filename:
+        if (not isinstance(record, dict) or canonical(record.get("parameters")) != canonical(asdict(case))
+                or record.get("trace_file") != filename):
             raise ValueError("SCENARIO_SUBSTITUTION")
+    # Validate the complete fixed inventory, including both comparison arms,
+    # before spending replay work on any observation.
+    for case, record in zip(cases, records):
+        filename = f"{case.name}_s{case.seed}.jsonl.gz"
         rows = read_rows(out / filename)
         check_trace_arithmetic(rows)
         summary, replay = run_network_scenario(case)

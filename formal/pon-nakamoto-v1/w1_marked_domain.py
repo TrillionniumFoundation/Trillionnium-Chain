@@ -20,11 +20,11 @@ import hashlib
 import random
 import struct
 
-from quantum_adversarial_search import TrialCosts, batch_success, upward_float
+from quantum_adversarial_search import TrialCosts, batch_success, sample_binary_probability, upward_float
 from w1_quantum_oracle import FixedTemplate, canonical, h_bytes, template_from_spec
 
 SCHEMA = "trnm-w1-literal-marked-domain-v1"
-SEARCH_SCHEMA = "trnm-w1-literal-domain-measurements-v1"
+SEARCH_SCHEMA = "trnm-w1-literal-domain-measurements-v2"
 MAX_NATIVE_NONCE_BITS = 6
 MAX_REDUCED_NONCE_BITS = 12
 MAX_DOMAINS = 16
@@ -312,7 +312,7 @@ def simulate_measurements(domains, schedule, processors, seed, costs):
         probability = batch_success(len(marked) / domain["domain_size"], iterations)
         sampled = []
         for _ in range(processors):
-            success = rng.random() < probability
+            success = sample_binary_probability(rng, probability)
             nonce = rng.choice(marked if success else unmarked)
             sampled.append({"nonce": nonce, "winner": domain["outcomes"][nonce]["winner"]})
         success = any(row["winner"] for row in sampled)
@@ -352,6 +352,7 @@ def simulate_measurements(domains, schedule, processors, seed, costs):
         "plan_sha256": _digest(canonical(plan)),
         "strategy_reads_marked_count": False,
         "domain_sampler": "literal-census-no-Bernoulli-resampling",
+        "measurement_sampler": "exact-dyadic-Bernoulli-of-binary64-probability",
         "template_setup_policy": "single-resident-template",
         "candidate_check_policy": "all-processor-measurements-serial",
         "domain_setup_charges": setup_charges,

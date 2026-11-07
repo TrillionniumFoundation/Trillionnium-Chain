@@ -8168,3 +8168,37 @@ fresh recovery anchors, custody/revocation, long WAN and malicious-cost
 qualification, PQ finality and quantum-work/DAA/fork economics remain open.
 PR #723 remains Draft. No protected-main merge, self-approval, force push,
 production activation or whole-chain PQ acceptance is performed.
+
+### 2026-11-06 quantum miner and DAA continuation
+
+Continue this sole plan from the published PQ integration source
+`840522d0b65b4989f1a2a1d09c0ad51af1a1956d`. Preserve the native development
+profile, integer cumulative required work, strict greater-work selection,
+original validation budgets and all historical failures.
+
+The [research continuation](../../formal/pon-nakamoto-v1/QUANTUM_DAA_RESEARCH.md)
+repairs the rare-event measurement law in both synthetic network and literal
+W1-domain experiments. Exact dyadic draws replace the 53-bit comparison; new
+v2 receipts keep changed seeded trajectories distinct from historical runs.
+An explicit single-miner competing-tip policy completes the current Grover
+iteration before measuring the original candidate, retaining all readout,
+verification, proof and interrupted-work charges. Paired campaign scenarios
+compare this with restart under equal declared inputs, without profitability
+or multi-quantum-miner security claims.
+The physical-model owner rejects an internally impossible complete Toffoli
+decomposition depth below its stated T-layer depth.
+
+The existing native DAA suite gains a complete-PNW1 shorter/harder versus
+longer/easier fork and an equal-work sibling that opposes recovery id ordering.
+It verifies strict work choice, active-root/generation preservation, exact
+packet retention and authenticated reopen. The existing whole-workspace CI
+command now exports this separate 67-packet scope and independently rechecks
+both original bounds and new fork-choice evidence using exact report digests.
+No old command, denominator or threshold is removed or weakened.
+
+These implementation and evidence controls do not establish a calibrated
+fault-tolerant W1 miner, a least-cost legal algorithm, a bound on every competing
+strategy, equivalent real-time production budgets, or a mixed quantum/classical
+DAA and reorganization theorem. Fixed-context circuit construction already
+exists; physical execution, adaptive-domain binding, independent full-cost
+qualification and production acceptance remain separate open gates.

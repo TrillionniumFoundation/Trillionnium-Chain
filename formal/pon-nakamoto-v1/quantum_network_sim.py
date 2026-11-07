@@ -7,7 +7,7 @@ physical qubits, fault correction and useful-work soundness are not simulated.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from fractions import Fraction
 import hashlib
 import heapq
@@ -24,7 +24,8 @@ from reference import retarget, timestamp_state, work
 from quantum_adversarial_search import (
     ADVERSARIAL_ASSUMPTIONS, MAX_CLOCK_SECONDS, MAX_DOMAIN_SIZE,
     MAX_EXACT_BINOMIAL_SIZE, TrialCosts, bounded_throughput_choice,
-    finite_domain_success, sample_marked_count, upward_float, validate_candidates,
+    finite_domain_success, sample_binary_probability, sample_marked_count,
+    upward_float, validate_candidates,
 )
 
 WORK_MAX = (1 << 512) - 1
@@ -34,11 +35,14 @@ UNAVAILABLE_BACKENDS = {
     "fast-daa-2026": "UNIMPLEMENTED: full parallel-chain protocol and parameter mapping required",
 }
 ASSUMPTIONS = {
-    "schema": "trnm-quantum-network-assumptions-v1",
+    "schema": "trnm-quantum-network-assumptions-v2",
     "model": "finite discrete events; arithmetic prefix; abstract successful lottery predicates",
     "classical": "independent Poisson winner arrivals; query equivalents are assumed rate times elapsed",
     "quantum": "finite Grover trials with float64 sin^2 probability; no monotone success approximation",
+    "measurement_sampler": "exact dyadic Bernoulli of the binary64 probability; no 53-bit random() floor",
     "quantum_trial_policy": "fixed iterations or capped first probability peak; not optimal cost/throughput or cheapest miner",
+    "quantum_tip_policy": "default restart; optional one-miner measurement at the next complete Grover iteration after an adopted tip; unfinished preparation restarts",
+    "tip_measurement_scope": "one quantum miner with synchronous processors and equal link delays; not correlated multi-miner forks, optimal revenue or an attack qualification",
     "timing_inputs": "synthetic conditional rate and latency premises, not W1/hardware measurements",
     "private_future_parents": "private mining may continue on time-deferred parents; each receiver independently defers future imports",
     "marked_fraction_assumed_equal_uniform_ticket_probability": True,
@@ -48,7 +52,7 @@ ASSUMPTIONS = {
     "quantum_parallelism": "independent synchronous processors, at most one block per successful batch",
     "shock_semantics": "classical clocks resample; quantum speed changes cancel and restart coherent trials",
     "proof_semantics": "one post-success proof per batch; serial with mining; stale proofs still finish",
-    "candidate_recheck": "every measured quantum candidate is checked, failed candidates too; P parallel checks charge P processor-seconds; stale partial checks cancel",
+    "candidate_recheck": "every measured quantum candidate is checked, failed candidates too; P parallel checks charge P processor-seconds; tip-measurement policy preserves ongoing readout/check; other cancellations retain partial charges",
     "network": "fixed delay per receiver; complete ancestor bundle; no bandwidth, eclipse or W1 validation model",
     "transaction": "one public probe, frozen into a candidate at search start; private miner may omit it",
     "fork_choice": "strictly greater compatible integer required work; ties retain current tip; checked u512",
@@ -130,6 +134,7 @@ class NetworkScenario:
     quantum_max_iterations: int = 1_000_000
     quantum_processors: int = 1
     quantum_trial_policy: str = "first-peak"
+    quantum_tip_policy: str = "restart"
     quantum_iteration_candidates: tuple[int, ...] = ()
     quantum_domain_size: int | None = None
     quantum_domain_marked_count: int | None = None
@@ -182,6 +187,10 @@ class NetworkScenario:
             raise ValueError("CLASSICAL_SHARE_SUM")
         if self.quantum_strategy not in ("honest-tip", "private-branch"):
             raise ValueError("QUANTUM_STRATEGY")
+        if self.quantum_tip_policy not in ("restart", "measure-at-next-iteration"):
+            raise ValueError("QUANTUM_TIP_POLICY")
+        if self.quantum_tip_policy != "restart" and self.quantum_strategy != "honest-tip":
+            raise ValueError("TIP_MEASUREMENT_REQUIRES_HONEST_TIP")
         if self.quantum_timestamp_mode not in ("wall", "compressed", "mtp-min",
                                                "future-bound", "retarget-extremes"):
             raise ValueError("TIMESTAMP_MODE")
@@ -328,6 +337,7 @@ class Trial:
     iteration_seconds: float
     domain_setup_seconds: float = 0.0
     domain_id: str | None = None
+    tip_measurement_requested: bool = False
 
 
 @dataclass
@@ -425,6 +435,7 @@ class Simulator:
             "candidate_check_seconds": 0.0, "candidate_check_processor_seconds": 0.0,
             "searches_cancelled": 0, "searches_censored": 0,
             "cancelled_on_tip": 0, "cancelled_on_shock": 0,
+            "tip_measurements_requested": 0,
             "private_public_tip_updates_ignored": 0,
             "proofs_started": 0, "proofs_completed": 0, "proofs_censored": 0,
             "blocks_created": 0, "stale_proofs_completed": 0,
@@ -566,9 +577,68 @@ class Simulator:
             if self.blocks[candidate].miner != "q":
                 self.counts["q"]["private_public_tip_updates_ignored"] += 1
         else:
-            self._cancel(recipient, "tip")
-            self._start_miner(recipient)
+            retained = (recipient == "q"
+                        and self.case.quantum_tip_policy == "measure-at-next-iteration"
+                        and self._measure_on_tip(candidate))
+            if not retained:
+                self._cancel(recipient, "tip")
+                self._start_miner(recipient)
         self._sample_prefix()
+
+    def _measure_on_tip(self, candidate: str) -> bool:
+        """Keep one old candidate and measure only at a complete iteration.
+
+        This policy never rewinds a partially executed Grover iteration. It
+        finishes that iteration, then pays readout, every candidate check, and
+        any successful proof on the original header. Subsequent tips neither
+        draw again nor restart those stages. A resource shock can still cancel
+        the trial under the separately declared existing shock policy.
+        """
+        trial = self.active.get("q")
+        if trial is None:
+            return False
+        if trial.tip_measurement_requested:
+            return True
+        started = Fraction.from_float(float(trial.started))
+        now = Fraction.from_float(float(self.now))
+        prepared = (started + Fraction.from_float(float(trial.domain_setup_seconds))
+                    + Fraction.from_float(float(self.case.quantum_prepare_seconds)))
+        if now < prepared:
+            return False
+        iteration_time = Fraction.from_float(trial.iteration_seconds)
+        grover_end = prepared + trial.iterations * iteration_time
+        iterations = min(trial.iterations, math.ceil((now - prepared) / iteration_time))
+        success = trial.success_probability
+        if iterations != trial.iterations:
+            if trial.domain_id is None:
+                success = grover_success(float(probability(trial.target)), iterations,
+                                         self.case.quantum_processors)
+            else:
+                domain = self.quantum_domain
+                if domain is None or domain.domain_id != trial.domain_id:
+                    raise ValueError("ACTIVE_DOMAIN_MISMATCH")
+                success = finite_domain_success(self.case.quantum_domain_size, domain.marked_count,
+                                                iterations, self.case.quantum_processors)
+        boundary = prepared + iterations * iteration_time
+        finish = upward_float(boundary + Fraction.from_float(float(self.case.quantum_measure_seconds))
+                              + Fraction.from_float(float(self.case.quantum_candidate_check_seconds)))
+        # An already started readout/check keeps its existing completion time,
+        # except that an earlier nearest-rounded deadline must round upward.
+        if iterations == trial.iterations:
+            finish = max(finish, trial.finishes)
+        retained = replace(trial, finishes=finish, iterations=iterations,
+                           success_probability=success, tip_measurement_requested=True)
+        self.active["q"] = retained
+        if finish != trial.finishes:
+            self._schedule(finish, "search", ("q", trial.serial))
+        self.counts["q"]["tip_measurements_requested"] += 1
+        self._emit("quantum-tip-measurement", trial=trial.serial, adopted_tip=candidate,
+                   parent=trial.parent, target_hex=f"{trial.target:064x}",
+                   previous_iterations=trial.iterations, measurement_iterations=iterations,
+                   phase_at_request="readout-or-check" if now >= grover_end else "coherent-search",
+                   measurement_boundary_seconds=upward_float(boundary),
+                   previous_finish_seconds=trial.finishes, scheduled_finish_seconds=finish)
+        return True
 
     def _is_ancestor(self, ancestor: str, tip: str) -> bool:
         height = self.blocks[ancestor].height
@@ -819,7 +889,7 @@ class Simulator:
                 if domain is None or domain.domain_id != trial.domain_id:
                     raise ValueError("ACTIVE_DOMAIN_MISMATCH")
                 domain.setup_remaining_seconds = max(Fraction(0), domain.setup_remaining_seconds - setup_elapsed)
-            if self.case.quantum_clock_rounding == "upward":
+            if self.case.quantum_clock_rounding == "upward" or trial.tip_measurement_requested:
                 exact_prepare = (Fraction.from_float(float(self.case.quantum_prepare_seconds))
                                  + Fraction.from_float(float(trial.domain_setup_seconds)))
                 logical = min(trial.iterations, max(0, (exact_elapsed - exact_prepare)
@@ -830,7 +900,7 @@ class Simulator:
                     / trial.iteration_seconds + 1e-9))))
             logical *= self.case.quantum_processors
             counts["logical_iterations_completed"] += logical
-            if self.case.quantum_clock_rounding == "upward":
+            if self.case.quantum_clock_rounding == "upward" or trial.tip_measurement_requested:
                 # Use the same exact stage boundaries as the resource-derived
                 # search clock. Nearest-rounded sums can invent a candidate
                 # check before readout ends, or omit one already in progress.
@@ -873,7 +943,7 @@ class Simulator:
 
     def _search_done(self, miner: str, serial: int) -> None:
         trial = self.active.get(miner)
-        if trial is None or trial.serial != serial:
+        if trial is None or trial.serial != serial or self.now < trial.finishes:
             self.obsolete_events += 1
             return
         del self.active[miner]
@@ -882,7 +952,7 @@ class Simulator:
             if self.quantum_domain is None or self.quantum_domain.domain_id != trial.domain_id:
                 raise ValueError("ACTIVE_DOMAIN_MISMATCH")
             self.quantum_domain.completed_batches += 1
-        won = miner != "q" or self.rngs[miner].random() < trial.success_probability
+        won = miner != "q" or sample_binary_probability(self.rngs[miner], trial.success_probability)
         if not won:
             self.counts[miner]["searches_failed"] += 1
             self._charge_search(trial, "failed")
@@ -891,7 +961,7 @@ class Simulator:
         self._charge_search(trial, "won")
         duration = self.case.quantum_proof_seconds if miner == "q" else self.case.classical_proof_seconds
         finish = self.now + duration
-        if miner == "q" and self.case.quantum_clock_rounding == "upward":
+        if miner == "q" and (self.case.quantum_clock_rounding == "upward" or trial.tip_measurement_requested):
             finish = upward_float(Fraction.from_float(float(self.now)) + Fraction.from_float(float(duration)))
         self.proof_completed.discard(miner)
         self.proofs[miner] = (trial, self.now, finish)
@@ -1085,7 +1155,8 @@ class Simulator:
             "quantum_hardware_executed": False, "production_consensus_activation": False,
             "release_ready": False,
         }
-        if (self.case.quantum_trial_policy != "first-peak" or self.case.quantum_domain_size is not None
+        if (self.case.quantum_trial_policy != "first-peak" or self.case.quantum_tip_policy != "restart"
+                or self.case.quantum_domain_size is not None
                 or self.case.private_release_policy != "scheduled"
                 or self.case.quantum_timestamp_mode not in ("wall", "compressed")):
             summary["adversarial"] = {
@@ -1098,6 +1169,12 @@ class Simulator:
                 "quantum_observed_public_tip": self.public_q_tip,
                 "quantum_last_published_private_tip": self.last_published_private_tip,
                 "iteration_candidates_are_global_optimum": False,
+            }
+        if self.case.quantum_tip_policy != "restart":
+            summary["tip_measurement_policy"] = {
+                "policy": self.case.quantum_tip_policy,
+                "scope": ASSUMPTIONS["tip_measurement_scope"],
+                "profitability_or_security_claimed": False,
             }
         return summary, self.trace
 
