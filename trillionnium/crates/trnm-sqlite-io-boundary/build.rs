@@ -271,7 +271,15 @@ fn validate_cargo_loader_paths() -> Result<LoaderPaths, String> {
         }
     }
     if !required.is_subset(&seen) {
-        return Err("normal Cargo loader directory set incomplete".into());
+        let missing: Vec<_> = required
+            .difference(&seen)
+            .map(|path| path.display().to_string())
+            .collect();
+        let observed: Vec<_> = seen.iter().map(|path| path.display().to_string()).collect();
+        let allowed: Vec<_> = allowed.iter().map(|path| path.display().to_string()).collect();
+        return Err(format!(
+            "normal Cargo loader directory set incomplete: missing={missing:?}; observed={observed:?}; allowed={allowed:?}"
+        ));
     }
     paths.validate()?;
     Ok(paths)
