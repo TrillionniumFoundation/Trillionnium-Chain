@@ -1,0 +1,760 @@
+{
+  "cells": [
+    {
+      "code_distance": 35,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 4088676409976575843353698747025890293718255338513912047536491182780746617295454303311154308841433325908226833632500397274553403637483
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "full-p1-q0",
+      "predicate": "full",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 44506236,
+        "initialized_patches": 44506224,
+        "physical_qubits": 54520369400,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+        "numerator": 4088676409976575843353698747025890293718255338513912047536491182780746617295454303311154308841433325908226833632500397274553403637483
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "full-p1-q1",
+      "predicate": "full",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 1222623241398,
+        "initialized_patches": 44506224,
+        "physical_qubits": 98314690616,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 74196418856
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+        "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 4586997231980143023221641790604173881593129978336562247475177678773845752176969616140037106220251373109248000000000000000000000000000000,
+          "numerator": 12592540476364472760819015033301022094781973224816769974581032861472994262444016687885656065214445860398076429925753519188640604507739
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "full-p1-q2",
+      "predicate": "full",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 2445201976558,
+        "initialized_patches": 44506224,
+        "physical_qubits": 98314690616,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 148392837712
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 4586997231980143023221641790604173881593129978336562247475177678773845752176969616140037106220251373109248000000000000000000000000000000,
+        "numerator": 12592540476364472760819015033301022094781973224816769974581032861472994262444016687885656065214445860398076429925753519188640604507739
+      }
+    },
+    {
+      "code_distance": 35,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 114674930799503575580541044765104347039828249458414056186879441969346143804424240403500927655506284327731200000000000000000000000000000,
+          "numerator": 817735281995315168670739749061153266345140340961159275211985195436664575083848692101592535860248233768372645515997296488391827744303
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "full-p2-q0",
+      "predicate": "full",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 89012472,
+        "initialized_patches": 89012448,
+        "physical_qubits": 109040738800,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 114674930799503575580541044765104347039828249458414056186879441969346143804424240403500927655506284327731200000000000000000000000000000,
+        "numerator": 817735281995315168670739749061153266345140340961159275211985195436664575083848692101592535860248233768372645515997296488391827744303
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 787035142664980428599641465573959076405218006501678243997392306898027293534719340959037426830525077646391275777535371913611301529003
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "full-p2-q1",
+      "predicate": "full",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 2445246482796,
+        "initialized_patches": 89012448,
+        "physical_qubits": 196629381232,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 148392837712
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 787035142664980428599641465573959076405218006501678243997392306898027293534719340959037426830525077646391275777535371913611301529003
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+          "numerator": 12592540476364472760819015026420526246811758689984307288674772039083299294939173316672889547053677232132622005715697859858263544843867
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "full-p2-q2",
+      "predicate": "full",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 4890403953116,
+        "initialized_patches": 89012448,
+        "physical_qubits": 196629381232,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 296785675424
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+        "numerator": 12592540476364472760819015026420526246811758689984307288674772039083299294939173316672889547053677232132622005715697859858263544843867
+      }
+    },
+    {
+      "code_distance": 37,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 431582510140450989675494558739358199087527079568935063549129311614443273184287182602821877382296443625068392337150803025539935951031
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "full-p4-q0",
+      "predicate": "full",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 178024944,
+        "initialized_patches": 178024896,
+        "physical_qubits": 243717177824,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 431582510140450989675494558739358199087527079568935063549129311614443273184287182602821877382296443625068392337150803025539935951031
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 143343663499379469475676305956380433799785311823017570233599302461682679755530300504376159569382855409664000000000000000000000000000000,
+          "numerator": 787035142664980428599641465143928085907079598074649326128251005498671358065666630258239519445477038379800374264406893205462735300011
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "full-p4-q1",
+      "predicate": "full",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 4890492965592,
+        "initialized_patches": 178024896,
+        "physical_qubits": 393258762464,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 296785675424
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 143343663499379469475676305956380433799785311823017570233599302461682679755530300504376159569382855409664000000000000000000000000000000,
+        "numerator": 787035142664980428599641465143928085907079598074649326128251005498671358065666630258239519445477038379800374264406893205462735300011
+      }
+    },
+    {
+      "code_distance": 49,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 328183279022093286299636009094125467853922106788058358735568289698296379720386754698463315916732402891339287109259605426724869475639
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "full-p4-q2",
+      "predicate": "full",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 9780807906232,
+        "initialized_patches": 178024896,
+        "physical_qubits": 427439696096,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 593571350848
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 328183279022093286299636009094125467853922106788058358735568289698296379720386754698463315916732402891339287109259605426724869475639
+      }
+    },
+    {
+      "code_distance": 35,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 4007056799935036620798761825396183868049033795403179296930377922614660654334271725695478521168841968623056086442553637143468979987947
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "prefix-restricted-p1-q0",
+      "predicate": "prefix-restricted",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 44059772,
+        "initialized_patches": 44059760,
+        "physical_qubits": 53973451000,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+        "numerator": 4007056799935036620798761825396183868049033795403179296930377922614660654334271725695478521168841968623056086442553637143468979987947
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 1427170620579254034870333338282281704694225750161512563503976808969644517585636715242465694580213837456945264833082729266454303041723
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "prefix-restricted-p1-q1",
+      "predicate": "prefix-restricted",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 1120562805014,
+        "initialized_patches": 44059760,
+        "physical_qubits": 97328451640,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 68033400456
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+        "numerator": 1427170620579254034870333338282281704694225750161512563503976808969644517585636715242465694580213837456945264833082729266454303041723
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 36695977855841144185773134324833391052745039826692497979801421430190766017415756929120296849762010984873984000000000000000000000000000,
+          "numerator": 91338748749307323026485331111632214457134314864212963790565942628831099779967817339463096823558035189897431477525942207466122237183
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "prefix-restricted-p1-q2",
+      "predicate": "prefix-restricted",
+      "processors": 1,
+      "resources": {
+        "controller_commands": 2241081550254,
+        "initialized_patches": 44059760,
+        "physical_qubits": 97328451640,
+        "planned_input_bytes": 22933,
+        "planned_t_states": 136066800912
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 36695977855841144185773134324833391052745039826692497979801421430190766017415756929120296849762010984873984000000000000000000000000000,
+        "numerator": 91338748749307323026485331111632214457134314864212963790565942628831099779967817339463096823558035189897431477525942207466122237183
+      }
+    },
+    {
+      "code_distance": 35,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+          "numerator": 4007056799935036620798761823676059906056480161695063625453812717017236912458060882892286891628649811556692480390039722310874715071979
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "prefix-restricted-p2-q0",
+      "predicate": "prefix-restricted",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 88119544,
+        "initialized_patches": 88119520,
+        "physical_qubits": 107946902000,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 573374653997517877902705223825521735199141247292070280934397209846730719022121202017504638277531421638656000000000000000000000000000000,
+        "numerator": 4007056799935036620798761823676059906056480161695063625453812717017236912458060882892286891628649811556692480390039722310874715071979
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 114674930799503575580541044765104347039828249458414056186879441969346143804424240403500927655506284327731200000000000000000000000000000,
+          "numerator": 285434124115850806974066667312431548540334423290679378405482320674444155141885174487854813008004336078116331756113762886772007625151
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "prefix-restricted-p2-q1",
+      "predicate": "prefix-restricted",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 2241125610028,
+        "initialized_patches": 88119520,
+        "physical_qubits": 194656903280,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 136066800912
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 114674930799503575580541044765104347039828249458414056186879441969346143804424240403500927655506284327731200000000000000000000000000000,
+        "numerator": 285434124115850806974066667312431548540334423290679378405482320674444155141885174487854813008004336078116331756113762886772007625151
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+          "numerator": 11417343593663415378310666382073530959171574823194157787914482006214192504991133796220120584783985770471724510480687116602888219984003
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "prefix-restricted-p2-q2",
+      "predicate": "prefix-restricted",
+      "processors": 2,
+      "resources": {
+        "controller_commands": 4482163100508,
+        "initialized_patches": 88119520,
+        "physical_qubits": 194656903280,
+        "planned_input_bytes": 45866,
+        "planned_t_states": 272133601824
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 2293498615990071511610820895302086940796564989168281123737588839386922876088484808070018553110125686554624000000000000000000000000000000,
+        "numerator": 11417343593663415378310666382073530959171574823194157787914482006214192504991133796220120584783985770471724510480687116602888219984003
+      }
+    },
+    {
+      "code_distance": 37,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 57337465399751787790270522382552173519914124729207028093439720984673071902212120201750463827753142163865600000000000000000000000000000,
+          "numerator": 84593421371259494794165637573781918901894091325505150798211167914412283170010266443933259744260687094680385924887585922641102460299
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 0,
+      "name": "prefix-restricted-p4-q0",
+      "predicate": "prefix-restricted",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 176239088,
+        "initialized_patches": 176239040,
+        "physical_qubits": 241272340960,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 0
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 57337465399751787790270522382552173519914124729207028093439720984673071902212120201750463827753142163865600000000000000000000000000000,
+        "numerator": 84593421371259494794165637573781918901894091325505150798211167914412283170010266443933259744260687094680385924887585922641102460299
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 1427170620579254034870333335702095761705395299599339056289129000573508904771320451037678250269925601857399855754311857017562905667771
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 1,
+      "name": "prefix-restricted-p4-q1",
+      "predicate": "prefix-restricted",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 4482251220056,
+        "initialized_patches": 176239040,
+        "physical_qubits": 389313806560,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 272133601824
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 1427170620579254034870333335702095761705395299599339056289129000573508904771320451037678250269925601857399855754311857017562905667771
+      }
+    },
+    {
+      "code_distance": 47,
+      "conditional_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+          "numerator": 11417343593663415378310666378633283035186467555777926444961351595019345021238712110613737325703601456338997298375659286937699690152067
+        }
+      },
+      "ideal_delivery_probability": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 1,
+          "numerator": 0
+        }
+      },
+      "iterations": 2,
+      "name": "prefix-restricted-p4-q2",
+      "predicate": "prefix-restricted",
+      "processors": 4,
+      "resources": {
+        "controller_commands": 8964326201016,
+        "initialized_patches": 176239040,
+        "physical_qubits": 389313806560,
+        "planned_input_bytes": 91732,
+        "planned_t_states": 544267203648
+      },
+      "status": "CONSTRUCTED",
+      "whole_plan_failure_union_upper": {
+        "denominator": 1146749307995035755805410447651043470398282494584140561868794419693461438044242404035009276555062843277312000000000000000000000000000000,
+        "numerator": 11417343593663415378310666378633283035186467555777926444961351595019345021238712110613737325703601456338997298375659286937699690152067
+      }
+    }
+  ],
+  "claims": {
+    "energy_or_capital_prices_calibrated": false,
+    "minimum_attacker_cost_proved": false,
+    "native_blocks_admitted_by_this_comparison": 0,
+    "parallel_hardware_measured": false,
+    "physical_parameters_calibrated": false,
+    "production_activation": false,
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "same_total_economic_budget_proved": false
+  },
+  "declared_grid": {
+    "horizon_seconds": "4",
+    "iterations": [
+      0,
+      1,
+      2
+    ],
+    "physical_qubit_budget": 10000000000000000,
+    "predicates": [
+      "full",
+      "prefix-restricted"
+    ],
+    "processors": [
+      1,
+      2,
+      4
+    ],
+    "trials": 2
+  },
+  "input_sha256": "e05abc8232ea315024986ebbb54f9947844318bfc2a45a5b0e4de17ce6946921",
+  "interpretation": "All ideal deliveries are zero under the fixed serial lifecycle, while all conditional upper bounds remain positive; no interval-certified dominance is established. These are constructions, not cheapest-cost lower bounds.",
+  "schema": "trnm-w1-four-gates-frontier-summary-v1",
+  "source_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "undominated_with_certified_interval_order": [
+    "full-p1-q0",
+    "full-p1-q1",
+    "full-p1-q2",
+    "full-p2-q0",
+    "full-p2-q1",
+    "full-p2-q2",
+    "full-p4-q0",
+    "full-p4-q1",
+    "full-p4-q2",
+    "prefix-restricted-p1-q0",
+    "prefix-restricted-p1-q1",
+    "prefix-restricted-p1-q2",
+    "prefix-restricted-p2-q0",
+    "prefix-restricted-p2-q1",
+    "prefix-restricted-p2-q2",
+    "prefix-restricted-p4-q0",
+    "prefix-restricted-p4-q1",
+    "prefix-restricted-p4-q2"
+  ]
+}

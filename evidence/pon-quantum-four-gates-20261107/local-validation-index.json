@@ -1,0 +1,319 @@
+{
+  "archive": {
+    "bytes": 189652,
+    "members": [
+      {
+        "bytes": 3722,
+        "mode": 420,
+        "path": "drivers/derive_economics_summary.py",
+        "sha256": "0180f4e8699e2a44c99de5e3dda7cdad2f16746f726cc29034bc94f1fed274c2"
+      },
+      {
+        "bytes": 3641,
+        "mode": 420,
+        "path": "drivers/package_four_gates_helpers.py",
+        "sha256": "01ad9a0cd4c15beb63d17305356b133dd05b10d07c506ca99fdc0da0cc391df2"
+      },
+      {
+        "bytes": 6902,
+        "mode": 420,
+        "path": "drivers/run_four_gates_validation.py",
+        "sha256": "9b50e1fa25cc5c8a684a99fef0cbb3c4da733ce08f7dada6b432d2818511611e"
+      },
+      {
+        "bytes": 117,
+        "mode": 420,
+        "path": "frozen/economics/00.log",
+        "sha256": "533d60fd8023e3a6bb096eb2cb86114b461843588f0d72b87f01b0a1e7b529bb"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "frozen/economics/01.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 1114,
+        "mode": 420,
+        "path": "frozen/economics/commands.json",
+        "sha256": "9374b91f25ccc9e152ff4ad1397090242ef156b1e86a8db366eeb4d8e5395cba"
+      },
+      {
+        "bytes": 1748412,
+        "mode": 420,
+        "path": "frozen/economics/observed-economics.json",
+        "sha256": "60e6aca3957fe66b8d377bac7c7eb697b3f16be7f29779788c80e348e66ffcc9"
+      },
+      {
+        "bytes": 419,
+        "mode": 420,
+        "path": "frozen/economics/result.json",
+        "sha256": "a7028912f6c4c726cbc64579b236a04695bd81113386ddb469f4a0c8923af887"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/economics/source-after.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/economics/source-before.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 5781,
+        "mode": 420,
+        "path": "frozen/economics/summary.json",
+        "sha256": "f8b840d4e9aad49daba34e78f0db0816ec0696e9b397770e7dc54ee58255efe4"
+      },
+      {
+        "bytes": 173,
+        "mode": 420,
+        "path": "frozen/fuzz/00.log",
+        "sha256": "b26d8a40d7cb90f33140fe1a8dfd45ea0e9d7b88206db15c34c586fd8235559f"
+      },
+      {
+        "bytes": 36,
+        "mode": 420,
+        "path": "frozen/fuzz/01.log",
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      {
+        "bytes": 707428,
+        "mode": 420,
+        "path": "frozen/fuzz/02.log",
+        "sha256": "fd99da378224cea574923318f2b95c4fe5d64116bb7921f37d94f1e083318852"
+      },
+      {
+        "bytes": 1163,
+        "mode": 420,
+        "path": "frozen/fuzz/commands.json",
+        "sha256": "5fe7d06d6ee0c82f857f5e1d07cba06af6e073543acbe6b88ef53aee1028ae94"
+      },
+      {
+        "bytes": 414,
+        "mode": 420,
+        "path": "frozen/fuzz/result.json",
+        "sha256": "112c61e0e3beaecbdd81d22ad235961242b415b37bb5dd2c451ec60d1d9a1a96"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/fuzz/source-after.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/fuzz/source-before.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 26362,
+        "mode": 420,
+        "path": "frozen/quantum/00.log",
+        "sha256": "84e0eb627bdfcfff64e732d75073c3a4146e5348950fd81df451ccdb7ef8c257"
+      },
+      {
+        "bytes": 27680,
+        "mode": 420,
+        "path": "frozen/quantum/01.log",
+        "sha256": "10e1218fc47db433305a75ec3b8ebb7f7a22c3299332c793b2df8193d91865ce"
+      },
+      {
+        "bytes": 2841,
+        "mode": 420,
+        "path": "frozen/quantum/02.log",
+        "sha256": "cff5436a6dd00ddfbb3aa2e725b1f7dbd08ea06dfd0149063403c707b969f1ad"
+      },
+      {
+        "bytes": 1917,
+        "mode": 420,
+        "path": "frozen/quantum/03.log",
+        "sha256": "52555858ef282a48fa90f933744cf9e00a7ce7d832f310b992650e5948fd5ccd"
+      },
+      {
+        "bytes": 6091,
+        "mode": 420,
+        "path": "frozen/quantum/04.log",
+        "sha256": "c065cbef6758a4d3842b89308612a5772bda423c67cb7bfa8f007974dd1ecf74"
+      },
+      {
+        "bytes": 7958,
+        "mode": 420,
+        "path": "frozen/quantum/05.log",
+        "sha256": "4a6fb68f159e10a749517df1a6077469268095ae896100165f258dd2c6373f1d"
+      },
+      {
+        "bytes": 3243,
+        "mode": 420,
+        "path": "frozen/quantum/commands.json",
+        "sha256": "6289dbfbbd120868c0f05b92cf721a66dd8d81661afeae2f646346c20e3766dc"
+      },
+      {
+        "bytes": 417,
+        "mode": 420,
+        "path": "frozen/quantum/result.json",
+        "sha256": "718a48e9651cfb133dbf83f6e143393d497e6dcc931644803a3057be260ec5e2"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/quantum/source-after.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/quantum/source-before.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 173,
+        "mode": 420,
+        "path": "frozen/repository/00.log",
+        "sha256": "b26d8a40d7cb90f33140fe1a8dfd45ea0e9d7b88206db15c34c586fd8235559f"
+      },
+      {
+        "bytes": 6898,
+        "mode": 420,
+        "path": "frozen/repository/01.log",
+        "sha256": "d6c1b7e379e6e9c5257f451b8778b0fef09a8c7e6166eb5a09e8daad0f5d5b46"
+      },
+      {
+        "bytes": 18094,
+        "mode": 420,
+        "path": "frozen/repository/02.log",
+        "sha256": "32892d4da6131329b60e6bbff3b2860b5aec6839ce30c2a2acedf624dbf92b21"
+      },
+      {
+        "bytes": 138,
+        "mode": 420,
+        "path": "frozen/repository/03.log",
+        "sha256": "7b97b7770583e26262219148baa7330ef30478114bf60ef4cab6ffe7ce0a7154"
+      },
+      {
+        "bytes": 557,
+        "mode": 420,
+        "path": "frozen/repository/04.log",
+        "sha256": "2b026ff2da40cb1d0c0c9ef9f79a5bf2f6121966780ccf027bccd5e45eca3603"
+      },
+      {
+        "bytes": 307,
+        "mode": 420,
+        "path": "frozen/repository/05.log",
+        "sha256": "0c2c3ed39c498e181988182f41bfb6cdb8f0388e0a79e8b72d2455a1cccd72cb"
+      },
+      {
+        "bytes": 35,
+        "mode": 420,
+        "path": "frozen/repository/06.log",
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "frozen/repository/07.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 3334,
+        "mode": 420,
+        "path": "frozen/repository/commands.json",
+        "sha256": "dbcf4b129df8c4de9937c7a626c26144b5fef2de700c0daa95c760e33643a15e"
+      },
+      {
+        "bytes": 420,
+        "mode": 420,
+        "path": "frozen/repository/result.json",
+        "sha256": "1929051111b911ff525c2d7492bac073ec2d8f096dea9213b0e93233481093e5"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/repository/source-after.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/repository/source-before.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 173,
+        "mode": 420,
+        "path": "frozen/rust/00.log",
+        "sha256": "b26d8a40d7cb90f33140fe1a8dfd45ea0e9d7b88206db15c34c586fd8235559f"
+      },
+      {
+        "bytes": 36,
+        "mode": 420,
+        "path": "frozen/rust/01.log",
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      {
+        "bytes": 36,
+        "mode": 420,
+        "path": "frozen/rust/02.log",
+        "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+      },
+      {
+        "bytes": 63,
+        "mode": 420,
+        "path": "frozen/rust/03.log",
+        "sha256": "ce02e695a9cdef937642d2397d874af20e0dbca21e9f43e0395d6809813a0547"
+      },
+      {
+        "bytes": 864674,
+        "mode": 420,
+        "path": "frozen/rust/04.log",
+        "sha256": "78a3f6253acfcfa1ee0c6af5999132f947529481e7370926f0bcfb2e931bc537"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "frozen/rust/05.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 182,
+        "mode": 420,
+        "path": "frozen/rust/06.log",
+        "sha256": "a8ab20a323d8128795dc064a9d7651da103c53bc1254bfa406ed0e770dfeca7f"
+      },
+      {
+        "bytes": 2864,
+        "mode": 420,
+        "path": "frozen/rust/commands.json",
+        "sha256": "aea3c7774d6a52a3df258a43fd2ee1d02e8002854724f220c4e7ec874557d390"
+      },
+      {
+        "bytes": 414,
+        "mode": 420,
+        "path": "frozen/rust/result.json",
+        "sha256": "042be13892ac3ebc03cea589dee0ada43e69aa0a4d40d1b8b1f9b20408d2e787"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/rust/source-after.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      },
+      {
+        "bytes": 227,
+        "mode": 420,
+        "path": "frozen/rust/source-before.json",
+        "sha256": "f6beee97228cc86b36afa3951826684e66c6cb371b16aa0c3ba095fb55495d24"
+      }
+    ],
+    "scope": "Actual local executions on frozen ec3a939; complete before/after committed byte checks. Includes 619 distinct Python tests, main/fuzz locked offline graphs, fmt, strict all-target all-feature workspace Clippy, and historical V4 CPU reparse. No native Node run or quantum hardware is claimed by this archive.",
+    "sha256": "d13d2d04a51ad4e826dcde487b221e6cefe291116e5ba18dd75fc3325975d721",
+    "uncompressed_tar_bytes": 3502080
+  },
+  "schema": "trnm-w1-four-gates-archive-index-v1",
+  "source_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "source_tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+}

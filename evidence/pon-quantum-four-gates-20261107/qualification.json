@@ -1,0 +1,245 @@
+{
+  "conditional_finite_models": {
+    "classical": {
+      "conditional_bounds": {
+        "all_paths_covered_by_reserved_events": true,
+        "census_advised_action_envelope": {
+          "lower": {
+            "denominator": 62500000000000000000000000000,
+            "numerator": 976562499999999999999999999
+          },
+          "upper": {
+            "denominator": 62500000000000000000000000000,
+            "numerator": 976562500000000000000000001
+          }
+        },
+        "common_quantum_code_distance_used": false,
+        "coupling_premise": "the actual timed trace equals the ideal trace outside the reserved history-conditional fault-event union",
+        "failure_union_upper": {
+          "denominator": 62500000000000000000000000000,
+          "numerator": 1
+        },
+        "fixed_q_policies": {
+          "0": {
+            "lower": {
+              "denominator": 62500000000000000000000000000,
+              "numerator": 976562499999999999999999999
+            },
+            "upper": {
+              "denominator": 62500000000000000000000000000,
+              "numerator": 976562500000000000000000001
+            }
+          }
+        },
+        "hardware_calibration_or_network_security_claimed": false
+      },
+      "ideal_risk": {
+        "denominator": 64,
+        "numerator": 1
+      },
+      "states": 7
+    },
+    "quantum": {
+      "conditional_bounds": {
+        "all_paths_covered_by_reserved_events": true,
+        "census_advised_action_envelope": {
+          "lower": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+          }
+        },
+        "common_quantum_code_distance_used": true,
+        "coupling_premise": "the actual timed trace equals the ideal trace outside the reserved history-conditional fault-event union",
+        "failure_union_upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+        },
+        "fixed_q_policies": {
+          "0": {
+            "lower": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "upper": {
+              "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+              "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+            }
+          },
+          "1": {
+            "lower": {
+              "denominator": 1,
+              "numerator": 0
+            },
+            "upper": {
+              "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+              "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+            }
+          }
+        },
+        "hardware_calibration_or_network_security_claimed": false
+      },
+      "ideal_risk": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "states": 1
+    }
+  },
+  "implementation": {
+    "commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+    "parent": "5d7ca0f5e260b65f5a2b8ab09dfd038718129346",
+    "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+  },
+  "independent_reviews": {
+    "finite": "PASS",
+    "machine": "PASS",
+    "machine_assertions": 3813,
+    "source_receipts": "PASS"
+  },
+  "local_validation": {
+    "distinct_python_tests": 619,
+    "groups": {
+      "economics": {
+        "commands": 2,
+        "group": "economics",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+          "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+          "tracked_files": 10997,
+          "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "fuzz": {
+        "commands": 3,
+        "group": "fuzz",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+          "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+          "tracked_files": 10997,
+          "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "quantum": {
+        "commands": 6,
+        "group": "quantum",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+          "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+          "tracked_files": 10997,
+          "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "repository": {
+        "commands": 8,
+        "group": "repository",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+          "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+          "tracked_files": 10997,
+          "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      },
+      "rust": {
+        "commands": 7,
+        "group": "rust",
+        "native_quantum_execution": false,
+        "production_activation": false,
+        "source": {
+          "head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+          "inventory_sha256": "5afb7fbd7443dd5dc6d77659be93b937e25794d93fc1775866b3dda21622d5b4",
+          "tracked_files": 10997,
+          "tree": "94a2dd1ebda9ce4eb262b6887b739e623616f08a"
+        },
+        "status": "PASS",
+        "whole_chain_qualified": false
+      }
+    },
+    "python_unit_counts": {
+      "economics": 18,
+      "fuzz": 0,
+      "quantum": 412,
+      "repository": 189,
+      "rust": 0
+    }
+  },
+  "native_execution": {
+    "authenticated_reopens_equal": 4,
+    "binary_sha256": "bfb1087323f1760046ddd7303d8fcdaa13cfa95cda7b7324c6636e8d9f817c2b",
+    "candidate_checks_replayed": 4,
+    "candidate_misses": 2,
+    "candidate_winners": 2,
+    "cross_host_python_replay": {
+      "log_sha256": "abe962f4f42c2faa33833e0445b87f5ff7e8571f426025d9fe2e9a509951af13",
+      "native_node_executed": false,
+      "status": "command_succeeded"
+    },
+    "diagnostics": {
+      "diagnostic-expired-root-replay": {
+        "exit_code": 101,
+        "log_sha256": "d8a12b6ee7b3a3f8cb23257b3e917b8f249ef3b379a0041687316db051956bb2",
+        "source_unchanged": true
+      },
+      "diagnostic-sealed-copy": {
+        "exit_code": 101,
+        "log_sha256": "4fab8ff9921cbd67776c517657bfe06482a31e388717ddd2c5905641fb88e951",
+        "source_unchanged": true
+      }
+    },
+    "exclusive_host_cpu_calibration": false,
+    "explicit_bridge_tests": {
+      "executed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "passed": 2
+    },
+    "fixed_seed_reorganization_successes": 0,
+    "full_node_regression": {
+      "exit_code": 101,
+      "failed": 2,
+      "ignored": 35,
+      "log_sha256": "9ebdde1726a90093293aa95e5f9ac683ab8c3115eafebeb6dffb5ab7e72bd37e",
+      "original_scope_and_failures_retained": true,
+      "passed": 1243,
+      "total": 1280
+    },
+    "quantum_measurements_completed": 0,
+    "real_time_search_budget_verified": false,
+    "receiver_admissions": 2,
+    "reorganization_path_kind": "observer-advice-classical-existential-witness",
+    "reorganizations": 1,
+    "source_unchanged": true
+  },
+  "production_activation": false,
+  "quantum_hardware_executed": false,
+  "quantum_mining_qualified": false,
+  "remaining_gates": {
+    "all_native_regression_tests_passed": false,
+    "calibrated_complete_machine_cost_closed": false,
+    "equal_real_total_resource_advantage_proved": false,
+    "general_mixed_network_consensus_security_proved": false,
+    "minimum_legal_attacker_cost_proved": false,
+    "native_quantum_mining_execution_qualified": false
+  },
+  "schema": "trnm-w1-four-gates-qualification-v1",
+  "status": "RESEARCH_HOLD"
+}

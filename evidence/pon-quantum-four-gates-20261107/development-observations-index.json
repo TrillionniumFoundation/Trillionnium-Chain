@@ -1,0 +1,287 @@
+{
+  "archive": {
+    "bytes": 154396,
+    "members": [
+      {
+        "bytes": 5319,
+        "mode": 420,
+        "path": "development/ci-registration-complete-02.log",
+        "sha256": "354baca0f6f8da9ac773479082caa165a55558f3f09107f7d57b986a048b8df9"
+      },
+      {
+        "bytes": 378,
+        "mode": 420,
+        "path": "development/ci-registration-incomplete-01.json",
+        "sha256": "b507c4f0c2ed6d5c2846b90d09e241af67e5535c2f599bf131e4c03bc054b07e"
+      },
+      {
+        "bytes": 124036,
+        "mode": 420,
+        "path": "development/ci-registration-incomplete-01.log",
+        "sha256": "013120f9f4f4e9e77db70cd7296fd70f5e95d2cb647164dddde37a6c6675e889"
+      },
+      {
+        "bytes": 1748345,
+        "mode": 420,
+        "path": "development/economics-development-01.json",
+        "sha256": "3a148e7d9040c7096d945a85c863454eb924060bc86df29d04257cab4be820e0"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "development/economics-development-01.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 439,
+        "mode": 420,
+        "path": "development/implementation-freeze.json",
+        "sha256": "be8ea31bf2b075b392b84557409d2c1c549a64e43aed0f821c9a6c8c2e225cc4"
+      },
+      {
+        "bytes": 554,
+        "mode": 420,
+        "path": "development/local-build-cache-reclamation.json",
+        "sha256": "dc2b137a3a6f580f457f867c7ff1bb9ae370977eed4932824f0a1761361be616"
+      },
+      {
+        "bytes": 500,
+        "mode": 420,
+        "path": "development/native-bridge-build-01.json",
+        "sha256": "c911cc1445b6bdfb433d400cff46c12c07cf64da3447e69ce96d19f432325cf6"
+      },
+      {
+        "bytes": 6488,
+        "mode": 420,
+        "path": "development/native-bridge-build-01.log",
+        "sha256": "17e0df6358fc3ab790ca059c4a1e2e2275b71dcd30e41746d5457e8d860cad66"
+      },
+      {
+        "bytes": 357,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-01.json",
+        "sha256": "b2823dbaaa9a012dfbfb0182ff66e367a66421634c21b2ff0df5339a558ea624"
+      },
+      {
+        "bytes": 182,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-01.log",
+        "sha256": "3c6268abf1b602f23f933beed6d99195259a32942b174768783a9d0350d450aa"
+      },
+      {
+        "bytes": 471,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-02.json",
+        "sha256": "7d74ca5d12aa03e97c934431ea202c355fe87eb6556062571a31e0be50c00a0d"
+      },
+      {
+        "bytes": 182,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-02.log",
+        "sha256": "c5f2a4b282236ed410dfaa780577edd70c732e27e9210891111286f8c9180cf5"
+      },
+      {
+        "bytes": 635,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-development-01.json",
+        "sha256": "b009ccfddd9a3552c6a450104dcadde4be8d13ea1493897f1a9ae8b164f3052b"
+      },
+      {
+        "bytes": 1234,
+        "mode": 420,
+        "path": "development/native-bridge-clippy-development-01.log",
+        "sha256": "1927d27e02235c577144823d83f2927513ba484b6db6a97bdb4cfe7bc9f927ba"
+      },
+      {
+        "bytes": 747,
+        "mode": 420,
+        "path": "development/native-bridge-enospc-recovery-01.json",
+        "sha256": "8cf72aee5ec8975c9f181402392698321937d7f6a65429b68aed28bc9675355a"
+      },
+      {
+        "bytes": 553,
+        "mode": 420,
+        "path": "development/native-bridge-environment-preparation.json",
+        "sha256": "06befe421594074a8672b3a719f638b916bc38d5f0e55e4392bb7a8f5451b1db"
+      },
+      {
+        "bytes": 7028,
+        "mode": 420,
+        "path": "development/native-bridge-independent-review.json",
+        "sha256": "f7d2ce35c6747a744bca27ea489df464f2bed58ff6f1019a3f8107d5edd15e9f"
+      },
+      {
+        "bytes": 263,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-01.json",
+        "sha256": "fdb091834495daee2b6ee691a556d1f6da02f9cd7f7dd9b2f90e1bd3b940ad7d"
+      },
+      {
+        "bytes": 4704,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-01.log",
+        "sha256": "9dfa9cc2928364106067ae742ee6837d49ab2599d70966da6940a8dd8da9c525"
+      },
+      {
+        "bytes": 173,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-02.json",
+        "sha256": "cc6954068aecc49d5e73b1a8cd4c198c7b8abe43837eb60b2d49caeb64b511c8"
+      },
+      {
+        "bytes": 2507,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-02.log",
+        "sha256": "82e569ba3cb163944e59b8d19207ae9fda7e86e820900e8f6ff49242db0b60a7"
+      },
+      {
+        "bytes": 187,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-03.json",
+        "sha256": "3de86fe63b9cb5145be54c67a57fcc2435bdcb66651e54e2e16efd72b5d60b07"
+      },
+      {
+        "bytes": 2685,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-03.log",
+        "sha256": "b55a2966b2b6b02a7cb6f170d1183153f4b6f320224650a63e72c10a3064f8c4"
+      },
+      {
+        "bytes": 2685,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-04.log",
+        "sha256": "75577c7d9dc0e5a79d8ea02fbf1b11f2c0d142433d448c9650275d1166073aaa"
+      },
+      {
+        "bytes": 119,
+        "mode": 420,
+        "path": "development/native-bridge-python-unit-05.log",
+        "sha256": "c9a502b2c889ebefbffc077691ecab3872c048f02e1b02e4f43d10ce424f3c71"
+      },
+      {
+        "bytes": 922,
+        "mode": 420,
+        "path": "development/native-bridge-source-ready-01.json",
+        "sha256": "e1ab358099fcf46782a44559f2ea94d5400ad3f520da03495989cd50e1723512"
+      },
+      {
+        "bytes": 1466,
+        "mode": 420,
+        "path": "development/native-bridge-source-ready-02.json",
+        "sha256": "a3c7f611563003b1cb2f66565a45751d0eb5ad357d1dedd083ffd30ce15b1b96"
+      },
+      {
+        "bytes": 4090,
+        "mode": 420,
+        "path": "development/oracle-independent-review-tests.log",
+        "sha256": "77b2f9bdbb0a45168491554f8c6b759cffdc39afb31dbefdb392961d5cc7930e"
+      },
+      {
+        "bytes": 11194,
+        "mode": 420,
+        "path": "development/oracle-independent-review.json",
+        "sha256": "9e5d51a8c35302adbb26245d893b311a5d97f2d718161c2846a1fcd9448fc806"
+      },
+      {
+        "bytes": 14810,
+        "mode": 420,
+        "path": "development/oracle_independent_review.py",
+        "sha256": "ee13f16a8e92b60c78d409e6dc7ea72765cd1f86c783e8b0b533e7a1d0dac2e7"
+      },
+      {
+        "bytes": 371,
+        "mode": 420,
+        "path": "development/publication-blocked-github-403.json",
+        "sha256": "b306e425aad31ce748c68a604d886913d814d060a0502f0737a93b0beccac0cd"
+      },
+      {
+        "bytes": 1430,
+        "mode": 420,
+        "path": "development/rog-cached-incomplete-loader-node-lib-all-features-normal-loader.json",
+        "sha256": "7530690c9ae5801bfa42af1608cae462cd8343666ccd031dfd7e51e99ee63485"
+      },
+      {
+        "bytes": 255,
+        "mode": 420,
+        "path": "development/rog-cached-incomplete-loader-node-lib-all-features-normal-loader.log",
+        "sha256": "dea5d1689f5fe7744cc80c920c145894e0e4f3b13a77b960ffb1065c839e7b86"
+      },
+      {
+        "bytes": 2480,
+        "mode": 420,
+        "path": "development/rog-cargo-fetch-main.json",
+        "sha256": "dfa23e6d503f6560fd2b98052aa7a43bdd70cd9b7aa9919e9cf799f800e520a5"
+      },
+      {
+        "bytes": 5019,
+        "mode": 420,
+        "path": "development/rog-cargo-fetch-main.log",
+        "sha256": "baf5d8ce7c4e852ca9ced6756872e125ea4192c3c9e21353b81aedc9b8317b8a"
+      },
+      {
+        "bytes": 1416,
+        "mode": 420,
+        "path": "development/rog-incomplete-loader-node-lib-all-features.json",
+        "sha256": "a55804f2084596af0d3a6ff59d6f004821a3e0fa9ac3791a48de533b559facd1"
+      },
+      {
+        "bytes": 4490,
+        "mode": 420,
+        "path": "development/rog-incomplete-loader-node-lib-all-features.log",
+        "sha256": "e15c8b51b22e3f2c1be3ebb36bd582717e25d331ae56bcbba00a12d6325a60d3"
+      },
+      {
+        "bytes": 7147,
+        "mode": 420,
+        "path": "development/rog-native-cached-incomplete-loader-cancelled.json",
+        "sha256": "1877c48cd7a0f0a66c5a205400d3e8d2f2776cfcb6f80815a4dead891be2fa68"
+      },
+      {
+        "bytes": 3160,
+        "mode": 420,
+        "path": "development/rog-native-incomplete-loader-cancelled.json",
+        "sha256": "f4dd5c9f7d74827875116bfb7204808ef09cf462343c2e6eb4ec538cb8946bae"
+      },
+      {
+        "bytes": 6995,
+        "mode": 420,
+        "path": "development/rog-source-import-01.json",
+        "sha256": "a70297fab8dc93effdb86db7d23bbb2164eff1eb02127b10e1907f02d0d49e24"
+      },
+      {
+        "bytes": 2883,
+        "mode": 420,
+        "path": "finite-independent/probability_crosscheck.py",
+        "sha256": "8b8ab44f090598955fe53db264bc57203a3bdaab60a018a9c1af98abaec317a4"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "finite-independent/probability_crosscheck.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 1904,
+        "mode": 420,
+        "path": "finite-independent/probability_crosscheck.stdout.json",
+        "sha256": "e646f53eae2228f1f5addbbeb28d1f922d3a1fcaeeeab683f6ef144169a2ae77"
+      },
+      {
+        "bytes": 129169,
+        "mode": 420,
+        "path": "fuzz-vendor-restore/receipt.json",
+        "sha256": "e47f75a70461487d8c334b3c48eae113e81e8ce187ffa24d2f37e5f8807baa76"
+      },
+      {
+        "bytes": 10796,
+        "mode": 420,
+        "path": "fuzz-vendor-restore/restore_exact_vendor.py",
+        "sha256": "bc0da538ca2f10ba0e7dae703b8a0708290f913e9ff9560e1c72403f10253baa"
+      }
+    ],
+    "scope": "Original development-source observations and real unsuccessful attempts, including incomplete CI registration, local SIGKILL, ENOSPC recovery, cancelled unqualified-loader builds and independent mathematical controls. These are not relabelled as final-source executions. Unrelated read-only host discovery is not part of this archive.",
+    "sha256": "423e2119e569f8d006eed41f310baca225deb62a0f159a076de8b13c95f2b95a",
+    "uncompressed_tar_bytes": 2160640
+  },
+  "schema": "trnm-w1-four-gates-archive-index-v1"
+}

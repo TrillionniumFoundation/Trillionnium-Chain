@@ -1,0 +1,142 @@
+{
+  "aggregation_note": "A transient exploratory console calculation added both aggregate and sample hit/proof/byte counts. This retained summary checks their equality and counts each cohort only once.",
+  "archive_readback": {
+    "all_original_stdout_rows_reparsed": true,
+    "archive_sha256": "d1bd6dcb0d2cc4a1bfa0255c7461bcf1c42e16ea060a47ef3136db9851b1b3cc",
+    "index_sha256": "5472439b12005e1a0643328158347be36370166ea2863fa5cc108b794e36e2f1",
+    "raw_bytes": 954889727,
+    "total_decompressed_bytes_including_headers_and_padding": 955023360,
+    "verified_members": 197,
+    "verified_parts": 16
+  },
+  "cheapest_legal_implementation_proved": false,
+  "cost_grid_cells": 36,
+  "counted_once_totals": {
+    "Accepted": 56064,
+    "Product": 56064,
+    "actual_searches": 28032,
+    "actual_setup_calls": 1152,
+    "attempts": 464320,
+    "exhausted_searches": 0,
+    "proof_materializations": 246176,
+    "serialized_proof_bytes": 12108905088,
+    "target_hits": 28032
+  },
+  "excluded_from_cpu_budget": [
+    "separately timed verification",
+    "network propagation",
+    "attempt-evidence writing",
+    "energy and capital costs"
+  ],
+  "execution_source": {
+    "current_declared_source_matches": false,
+    "current_source_mismatches": [
+      {
+        "current_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+        "observed_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+        "path": "trillionnium/Cargo.lock"
+      },
+      {
+        "current_sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
+        "observed_sha256": "3f06e812783fc7fa5037ecfb4550a58edea0ef68675b4062115e4b06088d6b24",
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+      },
+      {
+        "current_sha256": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227",
+        "observed_sha256": "19f4aab9534761342378a70631c52891d24c1ad82d0670f9f3254afeb52e36e5",
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs"
+      },
+      {
+        "current_sha256": "6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421",
+        "observed_sha256": "4f4984ff8d902e9f52c4568438dbb2b2a88e2d07d70e46ed8cb06a00240e4c9f",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs"
+      },
+      {
+        "current_sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
+        "observed_sha256": "2ed59c0c6adeda7c27b503d7465680bc08b02139d2d19ec9f5d4f44c1e02477b",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs"
+      },
+      {
+        "current_sha256": "91bc17c392f5a56cbebc92ca8d2954f5eefeb4294f50d2f5c99927543e70483a",
+        "observed_sha256": "98f1a0ee417eb117c7a5a425de49160b21c4a147a756db0a0fa815ec9dbdeb7b",
+        "path": "trillionnium/crates/trnm-pon-node/Cargo.toml"
+      },
+      {
+        "current_sha256": "4e55287c0c05534bb6462fca60aed1590fc831868c4d8b042d0eb1393d6212a0",
+        "observed_sha256": "73948f7e8300ffb36cc831185170e31e94b43f8e7edc40d6150f02827cbe5a75",
+        "path": "trillionnium/crates/trnm-protocol/src/lib.rs"
+      },
+      {
+        "current_sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
+        "observed_sha256": "e1d95756a2aad8b45349a92ef2bf834e204f456ec717177b6bac94bc1508fecd",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs"
+      },
+      {
+        "current_sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f",
+        "observed_sha256": "97590751be4683e965c99d6f67f48ad2a97e9aad96c64b47267ff1cdef8b7b62",
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs"
+      }
+    ],
+    "declared_source_files": 95,
+    "fresh_measurement_on_current_source": false,
+    "native_binary_sha256": "9bf4706966ece8bb5762ef8afe333f076f8c2c160a4917261ad0d81911027beb",
+    "observed_base_commit": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+    "observed_working_tree_dirty": true
+  },
+  "failed_nonce_attempts": 436288,
+  "fixed_cpu_budget_cohort_termination_counts": {
+    "1000000": {
+      "budget-censored": 144
+    },
+    "10000000": {
+      "budget-censored": 132,
+      "recorded-schedule-exhausted": 12
+    },
+    "100000000": {
+      "budget-censored": 76,
+      "recorded-schedule-exhausted": 68
+    },
+    "1000000000": {
+      "budget-censored": 24,
+      "recorded-schedule-exhausted": 120
+    }
+  },
+  "fresh_measurement_on_current_source": false,
+  "input_sha256": "60e6aca3957fe66b8d377bac7c7eb697b3f16be7f29779788c80e348e66ffcc9",
+  "posthoc_fastest_observed_cohort_cells": {
+    "full-limb/every-attempt": 14,
+    "full-limb/target-hit": 22
+  },
+  "quantum_hardware_executed": false,
+  "schema": "pon-w1-observed-economics-summary-v1",
+  "scope": "Historical retained producer CPU records; posthoc cohort comparisons are descriptive, not an executable per-sample oracle or an optimal-cost proof.",
+  "semantic_alert_count": 0,
+  "separate_control_shards": 12,
+  "setup_share_of_producer_cpu_range": [
+    {
+      "approximate_display_only": 6.0990630795613704e-05,
+      "denominator": 2891050604,
+      "numerator": 176327
+    },
+    {
+      "approximate_display_only": 0.37312286656445864,
+      "denominator": 1811339,
+      "numerator": 675852
+    }
+  ],
+  "source_reader_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "strategy_cohorts": 144,
+  "unique_cost_search_streams": 6144,
+  "within_cell_slowest_to_fastest_cohort_cpu_ratio_range": [
+    {
+      "approximate_display_only": 1.0323822761596997,
+      "denominator": 25737289,
+      "numerator": 26570721
+    },
+    {
+      "approximate_display_only": 1.9427228107123424,
+      "denominator": 2841358,
+      "numerator": 5519971
+    }
+  ]
+}

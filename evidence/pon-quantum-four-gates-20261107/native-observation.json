@@ -1,0 +1,211 @@
+{
+  "schema": "trnm-quantum-four-gates-native-observation-summary-v1",
+  "utc": "2026-11-07T12:53:45.735601+00:00",
+  "source_head": "ec3a939706592c6ec9dd677b70589a7e8860cdfd",
+  "native_binary_sha256": "bfb1087323f1760046ddd7303d8fcdaa13cfa95cda7b7324c6636e8d9f817c2b",
+  "core_directory": "/workspace/scratch/c9b48df754d6/validation-four-gates/rog-native-ec3a939",
+  "core_archive_sha256": "1bf5f798819449369b1cd517b4635ba4853333edd749ccfd9e13f3998b58aa25",
+  "input_sha256": {
+    "native-evidence-ec3a939/native-fixture.json": "b4779dee435faf6748657d0780450f697b81fcb1fd5001d91ee54f06fe806e65",
+    "native-evidence-ec3a939/finite-certificate.json": "f9b22040c860f60dd7c5a78c3d218d8fab99f4dfdaec1b3a91ca112c109563db",
+    "native-evidence-ec3a939/classical-certificate.json": "1e5b416bc58925a28107fb24e9744282fc5896b2d2e48f749c7b86a00f0d4a63",
+    "native-evidence-ec3a939/bridge-samples.json": "516696642a026779d595e1d4a329e8a1af12ba7115c2e60eea50001c1f1fe21b",
+    "native-evidence-ec3a939/native-replay.json": "d4ca9788fe56ba6b193d8a9a40fa1e8668619545b82e6e6531cd433005dc0179",
+    "machine-frontier.json": "e05abc8232ea315024986ebbb54f9947844318bfc2a45a5b0e4de17ce6946921"
+  },
+  "native_dag": {
+    "contexts": 2,
+    "nonce_domain_size_each": 8,
+    "native_full_checks": 16,
+    "native_winners": 2,
+    "prefix_height": 15,
+    "prefix_chainwork": 30,
+    "public_height": 16,
+    "public_chainwork": 37
+  },
+  "runs": [
+    {
+      "name": "fixed-q0-seed9",
+      "observation_kind": "seeded-no-Grover-baseline",
+      "completed_candidate_checks": 0,
+      "native_misses": 0,
+      "native_winners": 0,
+      "nonces": [],
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "authenticated_reopen_equal": true,
+      "logical_elapsed_seconds_exact": {
+        "denominator": 1,
+        "numerator": 4
+      }
+    },
+    {
+      "name": "fixed-q1-seed9",
+      "observation_kind": "seeded-conditional-Grover-model",
+      "completed_candidate_checks": 0,
+      "native_misses": 0,
+      "native_winners": 0,
+      "nonces": [],
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "authenticated_reopen_equal": true,
+      "logical_elapsed_seconds_exact": {
+        "denominator": 1,
+        "numerator": 4
+      }
+    },
+    {
+      "name": "classical-q0-seed9",
+      "observation_kind": "seeded-classical-uniform-nonce-baseline",
+      "completed_candidate_checks": 2,
+      "native_misses": 2,
+      "native_winners": 0,
+      "nonces": [
+        7,
+        5
+      ],
+      "receiver_admissions": 0,
+      "reorganized": false,
+      "authenticated_reopen_equal": true,
+      "logical_elapsed_seconds_exact": {
+        "denominator": 250000,
+        "numerator": 263
+      }
+    },
+    {
+      "name": "observer-advice-classical-positive-path",
+      "observation_kind": "advice-selected-classical-existential-witness",
+      "completed_candidate_checks": 2,
+      "native_misses": 0,
+      "native_winners": 2,
+      "nonces": [
+        6,
+        1
+      ],
+      "receiver_admissions": 2,
+      "reorganized": true,
+      "authenticated_reopen_equal": true,
+      "logical_elapsed_seconds_exact": {
+        "denominator": 500000,
+        "numerator": 1101031
+      }
+    }
+  ],
+  "quantum_model": {
+    "status": "COMPLETE",
+    "states": 1,
+    "ideal_risk": {
+      "denominator": 1,
+      "numerator": 0
+    },
+    "fixed_policy_ideal_risks": {
+      "0": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "1": {
+        "denominator": 1,
+        "numerator": 0
+      }
+    },
+    "conditional_machine_risk_bounds": {
+      "all_paths_covered_by_reserved_events": true,
+      "census_advised_action_envelope": {
+        "lower": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "upper": {
+          "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+          "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+        }
+      },
+      "common_quantum_code_distance_used": true,
+      "coupling_premise": "the actual timed trace equals the ideal trace outside the reserved history-conditional fault-event union",
+      "failure_union_upper": {
+        "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+        "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+      },
+      "fixed_q_policies": {
+        "0": {
+          "lower": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+          }
+        },
+        "1": {
+          "lower": {
+            "denominator": 1,
+            "numerator": 0
+          },
+          "upper": {
+            "denominator": 286687326998758938951352611912760867599570623646035140467198604923365359511060601008752319138765710819328000000000000000000000000000000,
+            "numerator": 787035142664980428599641466434021057401494823355736079735674909696739164472824762360633241600621156179573078803792329329908433986987
+          }
+        }
+      },
+      "hardware_calibration_or_network_security_claimed": false
+    },
+    "scope": "only declared serial lifecycle and finite DAG; no lower bound or hardware calibration"
+  },
+  "classical_model": {
+    "status": "COMPLETE",
+    "states": 7,
+    "ideal_risk": {
+      "denominator": 64,
+      "numerator": 1
+    },
+    "fixed_policy_ideal_risks": {
+      "0": {
+        "denominator": 64,
+        "numerator": 1
+      }
+    },
+    "qpu_required": false,
+    "positive_path_is_observer_advice_not_seeded_sample": true
+  },
+  "frontier": {
+    "planned_cells": 18,
+    "observed_cells": 18,
+    "constructed": 18,
+    "refused": 0,
+    "all_ideal_delivery_intervals_zero": true
+  },
+  "native_bridge_named_tests": {
+    "export": "PASS: one exact ignored test executed",
+    "replay": "PASS: one exact ignored test executed"
+  },
+  "retained_full_regression": {
+    "passed": 1243,
+    "failed": 2,
+    "ignored": 35,
+    "total": 1280,
+    "exit_code": 101,
+    "log_sha256": "9ebdde1726a90093293aa95e5f9ac683ab8c3115eafebeb6dffb5ab7e72bd37e",
+    "original_scope_and_failures_retained": true
+  },
+  "host_cpu_context": {
+    "kernel": "7.0.0-42-generic",
+    "machine": "x86_64",
+    "logical_cpus": 32,
+    "cpu_model": "AMD RYZEN AI MAX+ 395 w/ Radeon 8060S",
+    "cpu_timings_are_not_quantum_hardware_calibration": true,
+    "exclusive_host_cpu_calibration": false,
+    "concurrent_full_regression_job_at_launch": "1a1b5facc11-12894-1ab"
+  },
+  "claims": {
+    "quantum_hardware_executed": false,
+    "quantum_mining_qualified": false,
+    "physical_clock_calibrated": false,
+    "whole_chain_security_proved": false,
+    "minimum_attacker_cost_proved": false,
+    "native_public_ingress_executed": false,
+    "original_service_profile_requalified": false,
+    "all_native_regression_tests_passed": false,
+    "production_activation": false
+  }
+}

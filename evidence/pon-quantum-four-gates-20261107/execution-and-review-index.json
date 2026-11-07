@@ -1,0 +1,252 @@
+{
+  "archive": {
+    "bytes": 80400,
+    "members": [
+      {
+        "bytes": 19604,
+        "mode": 420,
+        "path": "drivers/finish_four_gates_evidence.py",
+        "sha256": "1da71cbb09b0aa1a6e18358a8dc9022faa1a1153b9fb331e77b8e5d447d254d1"
+      },
+      {
+        "bytes": 13004,
+        "mode": 420,
+        "path": "drivers/four_gates_README.template.md",
+        "sha256": "5340b71a9580afa8cbb6534972d7759ef63f8715c41671540d01ffab4b7f1f51"
+      },
+      {
+        "bytes": 3641,
+        "mode": 420,
+        "path": "drivers/package_four_gates_helpers.py",
+        "sha256": "01ad9a0cd4c15beb63d17305356b133dd05b10d07c506ca99fdc0da0cc391df2"
+      },
+      {
+        "bytes": 4171,
+        "mode": 420,
+        "path": "finite-native-review/check_native_receipts.py",
+        "sha256": "fe0db044bbb7a8ed16cff4243942e97c2702ced4453b432d1f08adbad5145d72"
+      },
+      {
+        "bytes": 766,
+        "mode": 420,
+        "path": "finite-native-review/command.sh",
+        "sha256": "b328bac04bc7b8d1ff5bfdad1844be0a8cd1092f1003b017f593acaaf6da4a73"
+      },
+      {
+        "bytes": 27028,
+        "mode": 420,
+        "path": "finite-native-review/review.json",
+        "sha256": "8e1b2fb4e1ee704e6be10e2271937565491857f525b0e7477e84700bfae1006c"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "finite-native-review/review.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 403,
+        "mode": 420,
+        "path": "finite-native-review/review.stdout.json",
+        "sha256": "eaa2aeb413581a56a422e69a74f89e2f6e6187d0b13d9a7fb8a610bba403be7c"
+      },
+      {
+        "bytes": 55195,
+        "mode": 420,
+        "path": "finite-native-review/review_native.py",
+        "sha256": "dfed3c59e24d24461891cc177a7bdf81e7896d0b280a9849bc1cc3dfe847639d"
+      },
+      {
+        "bytes": 19095,
+        "mode": 420,
+        "path": "finite-native-review/source-receipts-review.json",
+        "sha256": "706b900acc7cb8f6ccfc29c8dcbdd6ac649fc7c08dcecaae987a6d9c142c94f5"
+      },
+      {
+        "bytes": 0,
+        "mode": 420,
+        "path": "finite-native-review/source-receipts-review.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 201,
+        "mode": 420,
+        "path": "finite-native-review/source-receipts-review.stdout.json",
+        "sha256": "1a77be21830afd805c8c2aa6c81bfa7f4c4f29b8a496b84c0a9a31f36ca8fce1"
+      },
+      {
+        "bytes": 2109,
+        "mode": 420,
+        "path": "local-native-verification/local-native-bridge-verification.json",
+        "sha256": "9edcdb02742a182a9a43ba34f9d58f2aad55f19b85540d8f32dfe05aa8b800bd"
+      },
+      {
+        "bytes": 3381,
+        "mode": 420,
+        "path": "local-native-verification/local-native-bridge-verification.log",
+        "sha256": "abe962f4f42c2faa33833e0445b87f5ff7e8571f426025d9fe2e9a509951af13"
+      },
+      {
+        "bytes": 14658,
+        "mode": 420,
+        "path": "records/machine-observation-review.json",
+        "sha256": "8fdfa9e08ff6f8b2e65de89f3743bac25c9189aec7c4f744c3e49d66fcd87b11"
+      },
+      {
+        "bytes": 27749,
+        "mode": 420,
+        "path": "records/machine_observation_review.py",
+        "sha256": "206056ae6415070fbe489b3ab932bd671f6a1f4098e15d9cf5fe287dbb3eb9fe"
+      },
+      {
+        "bytes": 19132,
+        "mode": 420,
+        "path": "records/rog-bridge-pipeline-job.json",
+        "sha256": "de7a0a6db264deeed48df1cab5c574746325a798698f4e451cb952ec0e22fae9"
+      },
+      {
+        "bytes": 372,
+        "mode": 420,
+        "path": "records/rog-native-core-download.json",
+        "sha256": "149bef292c8a7b983bbf2ef68ad232194b91c059a1db8f089a16ba94edde268b"
+      },
+      {
+        "bytes": 14724,
+        "mode": 420,
+        "path": "records/rog-native-final-job.json",
+        "sha256": "d723a2e354126c3b12582d4a7406634c1c26a93a9db5b59eaf5bf7112164492a"
+      },
+      {
+        "bytes": 5964,
+        "mode": 420,
+        "path": "records/rog-retained-failure-diagnostic-job.json",
+        "sha256": "b6514b3040c2bd84de6241c3850be7b63d240d18b6b2c3dd2429d1cf05e6a3ee"
+      },
+      {
+        "bytes": 2119,
+        "mode": 420,
+        "path": "remote-execution/base-preparation.json",
+        "sha256": "5c27523cfa245936c48773cea0e08a157097134a899e1d32662c6d6677936918"
+      },
+      {
+        "bytes": 1790,
+        "mode": 420,
+        "path": "remote-execution/build-environment-normal-loader-fresh-target.json",
+        "sha256": "e997245b8004f49da3cf8f1805934a0ddcdb910a205034f9382a2c4e3adeb4a4"
+      },
+      {
+        "bytes": 1776,
+        "mode": 420,
+        "path": "remote-execution/build-environment-normal-loader.json",
+        "sha256": "795f5a80d1bfba8944b488087093806b70fb2e3d5b65e88f2e2f4d755286dd10"
+      },
+      {
+        "bytes": 1683,
+        "mode": 420,
+        "path": "remote-execution/build-environment.json",
+        "sha256": "f1b13587124195e4f5675a8740fd3a5050a29362f3b28ed2e96037d08a96a06d"
+      },
+      {
+        "bytes": 2636,
+        "mode": 420,
+        "path": "remote-execution/commands/diagnostic-expired-root-replay.json",
+        "sha256": "4ea3a14aa20257dd0a4eddda4e94f6fdbfb95993b384805cb986ae81416fe7cf"
+      },
+      {
+        "bytes": 800,
+        "mode": 420,
+        "path": "remote-execution/commands/diagnostic-expired-root-replay.log",
+        "sha256": "d8a12b6ee7b3a3f8cb23257b3e917b8f249ef3b379a0041687316db051956bb2"
+      },
+      {
+        "bytes": 2619,
+        "mode": 420,
+        "path": "remote-execution/commands/diagnostic-sealed-copy.json",
+        "sha256": "06e7fab50c1217d1935f099c6f94c60f1584b0059f3b71a1c3b15513fd7501d0"
+      },
+      {
+        "bytes": 743,
+        "mode": 420,
+        "path": "remote-execution/commands/diagnostic-sealed-copy.log",
+        "sha256": "4fab8ff9921cbd67776c517657bfe06482a31e388717ddd2c5905641fb88e951"
+      },
+      {
+        "bytes": 2638,
+        "mode": 420,
+        "path": "remote-execution/commands/node-lib-all-features-normal-loader-fresh.json",
+        "sha256": "013a10cf4ebfad38d8a6c353106fc89ff8a13c80ec19b725f08b9b5c1fbc0875"
+      },
+      {
+        "bytes": 162450,
+        "mode": 420,
+        "path": "remote-execution/commands/node-lib-all-features-normal-loader-fresh.log",
+        "sha256": "9ebdde1726a90093293aa95e5f9ac683ab8c3115eafebeb6dffb5ab7e72bd37e"
+      },
+      {
+        "bytes": 2603,
+        "mode": 420,
+        "path": "remote-execution/commands/sqlite-normal-loader-build-check.json",
+        "sha256": "417a5a910f05d75fb6e2e85a0b900bab08ac41ca4ec9f0874b07c4898ca32fad"
+      },
+      {
+        "bytes": 1297,
+        "mode": 420,
+        "path": "remote-execution/commands/sqlite-normal-loader-build-check.log",
+        "sha256": "81a2be93a3aef8cb4e4b7d44284943cfed78f2a3f952ebffda9b6d3122363c53"
+      },
+      {
+        "bytes": 5169,
+        "mode": 420,
+        "path": "remote-execution/fresh-sqlite-loader-output.txt",
+        "sha256": "159875ab1dc20cd1d450c3a3c4a740de8f651157ed52111a11d8e4d5bce4341f"
+      },
+      {
+        "bytes": 9743,
+        "mode": 420,
+        "path": "remote-execution/native-job-result-v3.json",
+        "sha256": "856fa378f15aedbb9533ab4916da706b6e10cf47729bded30fb94371a129c28a"
+      },
+      {
+        "bytes": 2063,
+        "mode": 420,
+        "path": "remote-execution/native-job-start-v2.json",
+        "sha256": "badee6b0ab3381cf801c2bcd887ed0d132c8593f576259b324c8d552e6ef57d2"
+      },
+      {
+        "bytes": 2150,
+        "mode": 420,
+        "path": "remote-execution/native-job-start-v3.json",
+        "sha256": "1a071841d46e08ca266233af3266328c36a43cffbf1f214406273a88016d45a8"
+      },
+      {
+        "bytes": 1685,
+        "mode": 420,
+        "path": "remote-execution/native-job-start.json",
+        "sha256": "7a02f92fc26c388bbc2788f0cfa57eed5cd73373d9c1cb36b2cca761db5398a4"
+      },
+      {
+        "bytes": 953,
+        "mode": 420,
+        "path": "remote-execution/retained-failure-diagnostics.json",
+        "sha256": "04086484f13483402cd94b287db99d6644bffddca0dabfc4b3250cb6bab0a44e"
+      },
+      {
+        "bytes": 4261,
+        "mode": 420,
+        "path": "remote-execution/source-preparation-v2.json",
+        "sha256": "d0d9cf8eb92c1d634ab3dc8cddd1cbe89c0abd0ed591945c92ceeb6650fba50b"
+      },
+      {
+        "bytes": 3149,
+        "mode": 420,
+        "path": "remote-execution/source-preparation.json",
+        "sha256": "1fab043c4c0fc1cdc0959fa7b56ec1865b5dcf6c9e1439c7855948087c3b41e9"
+      }
+    ],
+    "scope": "Exact ec3 native build/full regression including two real failures; independent failed-test diagnostics; source and runtime records; local cross-host reader replay and independent mathematical/machine reviews. No new native executions are attributed to independent reviewers.",
+    "sha256": "bb3574abc075292c0bf86cdc91a699a261a2932c4d7d1e9afa5d0c68e50da98e",
+    "uncompressed_tar_bytes": 481280
+  },
+  "schema": "trnm-w1-four-gates-archive-index-v1",
+  "source_commit": "ec3a939706592c6ec9dd677b70589a7e8860cdfd"
+}

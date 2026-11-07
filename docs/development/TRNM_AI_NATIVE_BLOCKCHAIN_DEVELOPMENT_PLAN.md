@@ -8296,3 +8296,56 @@ coverage. Hardware calibration, least-cost bounds, profitable native quantum
 attacks, general mixed quantum/classical consensus security and production
 activation remain separately unqualified. Final execution receipts must name
 their actual frozen source; no green result is inferred from this plan entry.
+
+
+### 2026-11-07 quantum four-gate observations — exact-source research / HOLD
+
+The continuation was frozen at `ec3a939706592c6ec9dd677b70589a7e8860cdfd`, tree
+`94a2dd1ebda9ce4eb262b6887b739e623616f08a`, with published parent
+`5d7ca0f5e260b65f5a2b8ab09dfd038718129346`. Its complete evidence is in
+[the four-gate record](../../evidence/pon-quantum-four-gates-20261107/README.md).
+The later evidence-only continuation does not imply rerunning executable suites
+at a different source SHA.
+
+- Frozen local validation passed 412 quantum/W1/reversible/DAA tests, 18 observed
+  economics tests, 43 source-integrity negatives, 108 CI contracts and 38 PQ
+  integration controls: 619 distinct Python tests. Main/fuzz locked offline
+  graphs, formatting, strict workspace all-target/all-feature Clippy, 688 source
+  pins and 3,597 local links passed with complete committed-byte checks.
+- The same source was imported by a verified incremental Git bundle into an
+  isolated HeptaRuntime checkout. Rust/Cargo 1.95.0 and static OpenSSL 3.5.9
+  generated the actual all-feature ELF `bfb1087323f1760046ddd7303d8fcdaa13cfa95cda7b7324c6636e8d9f817c2b`.
+  Its full Node library suite finished with **1,243 passed / 2 failed / 35 ignored**.
+  Both failed release-owner tests reproduce in exact-selector diagnostics:
+  root cold replay reports invalid type string "1", expected u8, and sealed-copy final
+  recheck rejects changed identity/seals. These failures remain unresolved;
+  the unchanged release-owner directory was not rewritten to obtain a green run.
+- The two exact ignored native bridge tests separately executed and passed.
+  There are two native contexts, 16 complete nonce checks and two legal winners.
+  Seed9's independent classical sample draws 7 then 5 and both miss. Only the
+  explicitly labelled observer-advice path 6 then 1 generates two receiver
+  admissions and a real branch replacement, from public work 37 to private work
+  44. All four authenticated receiver reopens agree. Completed misses are
+  freshly proved/verified and timed rather than removed from the denominator.
+- Under the declared complete serial lifecycle and four-second modeled window,
+  q0/q1 both stop during initialization. The ideal quantum-class risk is zero,
+  but its conditional fault-union upper bound remains about 0.00274527357349.
+  The separate no-QPU classical finite class has exact ideal risk 1/64 and an
+  assumed host-fault bound 1.6e-29. These are conditional finite statements, not
+  calibrated hardware or network-security results. All 18 fixed frontier cells
+  are retained; no interval-certified dominance is established.
+- Historical CPU ledgers were fully reparsed: 16 parts, 197 members, 36 cost
+  shards and 12 controls, with 464,320 nonce attempts including 436,288 misses.
+  Nine of the historical 95 source inputs differ from this candidate; the
+  report explicitly refuses to relabel old timings as fresh measurements.
+- Independent reviewers verified the finite probabilities, actual nonce/parent
+  paths, source/receipt bindings and full machine arithmetic. The machine review
+  passed 3,813 assertions; this is not an additional native execution. Native
+  CPU probes ran concurrently with the full regression and are not exclusive
+  machine calibration.
+- The GitHub connector returned HTTP 403 (account suspended), so the new commits
+  could not be published through that connection. Exact local source and
+  evidence commits are delivered as an incremental Git bundle. No replacement
+  credential, force push, merge, production activation or qualification upgrade
+  was performed. All physical-cost, cheapest-attacker, real quantum execution
+  and general mixed-consensus gates remain HOLD.
