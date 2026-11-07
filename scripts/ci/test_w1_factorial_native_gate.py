@@ -11,7 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-w1-work-security.yml'
 SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs'
-COUNTS = {'factorial-kernel-tests': (9, 0), 'factorial-example-tests': (6, 0),
+RANK_SOURCE = SOURCE.parent / 'legal_attempt/low_rank.rs'
+COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (6, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
           'history-import-tests': (28, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
@@ -28,6 +29,10 @@ class NativeGateTests(unittest.TestCase):
         self.names = ['pon_work::legal_attempt::tests::' + n for n in
                       re.findall(r'#\[test\]\s+fn (\w+)', SOURCE.read_text())]
         self.assertEqual(len(self.names), 9)
+        rank_names = ['pon_work::legal_attempt::low_rank::tests::' + n for n in
+                      re.findall(r'#\[test\]\s+fn (\w+)', RANK_SOURCE.read_text())]
+        self.assertEqual(len(rank_names), 5)
+        self.names += rank_names
         self.logs = {name: f'test result: ok. {passed} passed; 0 failed; {ignored} ignored;\n'
                      for name, (passed, ignored) in COUNTS.items()}
         self.logs['factorial-kernel-tests'] += ''.join(f'test {n} ... ok\n' for n in self.names)

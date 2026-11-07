@@ -1,0 +1,88 @@
+# Generate and upload real Code Scanning analyses for immutable source-head and prospective-merge SHAs.
+# The local SARIF artifact is retained separately for independent review.
+name: CodeQL exact-source analysis and SARIF retention
+on:
+  push:
+    branches:
+      - main
+      - fix/chain-six-axis-performance-20261103
+      - fix/chain-native-codeql-source-scan-20261106-gpt6
+  pull_request:
+    branches:
+      - main
+      - fix/chain-six-axis-performance-20261103
+permissions:
+  contents: read
+jobs:
+  codeql:
+    # Same-repository PRs are scanned independently at immutable head and prospective merge.
+    # Push events have only a branch head; no untrusted fork code is executed.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    name: CodeQL local SARIF (${{ matrix.language }}, ${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [rust, python, actions]
+        source: ${{ github.event_name == 'pull_request' && fromJSON('["head","prospective-merge"]') || fromJSON('["head"]') }}
+    steps:
+      - name: Checkout exact event source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.source == 'head' && github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Refuse any other source identity
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          SOURCE_KIND: ${{ matrix.source }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
+          test -z "$(git status --porcelain)"
+          printf 'CODEQL_EVENT_SHA=%s CODEQL_SOURCE_SHA=%s CODEQL_SOURCE_KIND=%s CODEQL_LANGUAGE=%s\n' "$GITHUB_SHA" "$(git rev-parse HEAD)" "$SOURCE_KIND" '${{ matrix.language }}'
+      - name: Initialize pinned official CodeQL
+        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+      - name: Generate local exact-source SARIF for exact source SHA
+        id: codeql
+        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        with:
+          category: /language:${{ matrix.language }}/source:${{ matrix.source }}
+          output: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
+          ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
+          sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+          upload: always
+      - name: Verify generated SARIF is present and parseable
+        shell: bash
+        env:
+          SARIF_DIR: ${{ steps.codeql.outputs.sarif-output }}
+        run: |
+          set -euo pipefail
+          python3 - "$SARIF_DIR" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          files = sorted(root.glob('*.sarif'))
+          if not files:
+              raise SystemExit('CODEQL_SARIF_MISSING')
+          for path in files:
+              value = json.loads(path.read_text(encoding='utf-8'))
+              if value.get('version') != '2.1.0' or not isinstance(value.get('runs'), list) or not value['runs']:
+                  raise SystemExit(f'CODEQL_SARIF_INVALID:{path.name}')
+          print(f'CODEQL_SARIF_FILES={len(files)} CODEQL_LANGUAGE=${{ matrix.language }}')
+          PY
+      - name: Retain exact-source local SARIF for independent review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: codeql-sarif-${{ matrix.language }}-${{ matrix.source }}-${{ github.sha }}
+          path: ${{ steps.codeql.outputs.sarif-output }}/
+          if-no-files-found: error
+          retention-days: 14

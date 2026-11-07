@@ -321,7 +321,7 @@ jobs:
           root = Path(sys.argv[1])
           # The one ignored History entry is the existing subprocess fixture;
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
-          expected = {"factorial-kernel-tests": (9, 0), "factorial-example-tests": (6, 0),
+          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (6, 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
               "history-import-tests": (28, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
@@ -331,6 +331,11 @@ jobs:
                   raise SystemExit(name + ': exact native controls did not execute')
           kernel = (root / 'factorial-kernel-tests.log').read_text()
           kernel_expected = {
+              'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
+              'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',
+              'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',
+              'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',
+              'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',
               'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',
               'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',
               'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
@@ -455,5 +460,98 @@ jobs:
         with:
           name: w1-fresh-service-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/w1-fresh-service-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+  rank-batch-v5:
+    name: W1 paid rank and batch v5 (${{ matrix.arch }}, ${{ matrix.source }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        source: [head, prospective-merge]
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Checkout exact measured source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reserve records and verify ordered source identity
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/w1-rank-batch-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-w1-rank-batch\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-w1-rank-batch\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$out/source-before.json"
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$out/preflight.log"
+      - name: Install exact original compiler and tools
+        run: rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+      - name: Require reader and real process-owner failure controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py 2>&1 | tee "$OUT/reader-controls.log"
+          python3 scripts/ci/test_run_w1_rank_batch_v5.py 2>&1 | tee "$OUT/runner-controls.log"
+      - name: Verify actual locked graph and formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
+      - name: Execute complete kernel and actual batch controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib pon_work::legal_attempt:: -- --test-threads=1 2>&1 | tee "$OUT/kernel-tests.log"
+          cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_w1_rank_batch_v5 -- --test-threads=1 2>&1 | tee "$OUT/batch-tests.log"
+          python3 - "$OUT" <<'PYRANK'
+          import re, sys
+          from pathlib import Path
+          for name, count in [('kernel-tests', 14), ('batch-tests', 9)]:
+              raw = (Path(sys.argv[1]) / (name + '.log')).read_text()
+              rows = re.findall(r'^test result: ok\. ([0-9]+) passed; 0 failed; ([0-9]+) ignored;', raw, re.M)
+              if rows != [(str(count), '0')]:
+                  raise SystemExit(name + ': original and new native controls must all execute')
+          PYRANK
+          cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --all-targets -- -D warnings 2>&1 | tee "$OUT/clippy.log"
+      - name: Execute all sixty-six shards with the original command budgets
+        if: always() && steps.source.outcome == 'success'
+        run: env -u CARGO_INCREMENTAL python3 scripts/ci/run_w1_rank_batch_v5.py --arch "${{ matrix.arch }}" --expected-commit "$EXPECTED_SOURCE" --output "$OUT/campaign"
+      - name: Verify measured source after execution
+        if: always() && steps.source.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$OUT/source-after.json"
+      - name: Retain every cost, binary and failed attempt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-rank-batch-v5-${{ matrix.source }}-${{ matrix.arch }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/w1-rank-batch-${{ matrix.source }}-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30
