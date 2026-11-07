@@ -17,6 +17,70 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Exact-source native acceptance observation, 2026-11-07 America/New_York:**
+The native funded-contract/evidence/prospective-operation implementation is
+`690f710c1b6808787996e86aa4c36bd53e1f3939`, tree
+`b9ff2e5c4ca6e465b86cb4b2bd466ad831147899`, in
+[draft PR #779](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/779),
+stacked on #777 and the existing #688 integration lineage. The
+[actual acceptance record](../../evidence/pon-native-demand-acceptance-20261107/README.md)
+separates tested implementation from later evidence-only publication commits.
+New HeptaRuntime desktop execution passed the three core crates with 388 passed
+and 10 ignored, workspace warnings-as-errors Clippy, formatting, exact locked
+root/fuzz Cargo graphs and the 52/131/103 Python groups. The original complete
+Node attempt reached its process limit after 30 complete targets, one interrupted
+target and 60 unstarted targets. It retained eight failures and lacks its original
+closing source-after receipt. A separately bound continuation covers the remaining
+61 targets and ended with exit 101. The complete 91-target cross-run coverage
+records 1,548 passed, 15 failed and 55 ignored; it remains separate from a
+successful original complete command. Complete Node qualification is not granted.
+The original refusals include two CPU-budget cases, three PQ witness transport
+cases and three fixed host-parent prerequisite cases; detailed observations and
+unresolved causes are retained without widening original budgets or deadlines.
+
+Hepta [draft PR #5318](https://github.com/TrillionniumFoundation/hepta-private-ci/pull/5318)
+continues #5316 with the original evaluated-NoUpdate owner and full selection-bundle
+identity. Its exact implementation `e0a3bd2bde77c58a0ae7d211214f326371a72a4a`
+passed the original 60-test selector; 662 other tests were outside that selector.
+The Chain archive retains only the verified Hepta interoperability handoff; it
+does not combine independent repository test counts into deployment qualification.
+Actual external customer/control and funding evidence, independent prospective
+cost-matched evaluation, production learning-owner recovery, and real canary,
+installation, next-task use, withdrawal and rollback remain acceptance obligations.
+Owner cost declarations are not independent physical meters; consumer-epoch
+reconciliation is not a network-epoch proof. Honest NoGain service fees do not
+qualify an improvement bonus. No main merge or production activation follows.
+
+
+**Native funded Task admission and owner reconciliation, 2026-11-07 America/New_York:**
+Continue the published demand/evaluation candidate through the user-selected
+HeptaRuntime local GitHub channel. The prior evidence continuation is retained in
+[PR #777](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/777),
+targeting the existing #688 integration branch. Extend the original M06 Task
+escrow with an explicitly selected fresh classical development context for
+[frozen service contracts and enforceable arbitration](specs/pon/FUNDED_SERVICE_TASK_V1.md).
+Request, model, input, output specification, work-reference, evaluation, fee and
+dispute terms are frozen before delivery; real payer acceptance or the frozen
+arbitrator settles or refunds through the original native monetary transition.
+Add typed M12 journal export and
+[Node-owned reconciliation](specs/pon/NATIVE_TASK_EVIDENCE_V1.md) of actual retained
+funding, delivery and exact replayed payments. Keep historical operation/cost and
+payment facts across restart and reorganization while rechecking their current
+branch status. Source commitments, local resource declarations and distinct
+account keys do not prove useful work, truthful physical cost or independent
+business control. Use the separate
+[V2 prospective operation owner](specs/pon/NATIVE_TASK_OPERATION_V2.md) for unknown
+outputs: immutable task/operation binding, one durable begin, original provider
+receipt replay, first-delivery identity and a Node-retained journal prefix.
+V1's already-known output subject must not be retrospectively described as a
+training authorization. Historical active snapshots require the original
+generation's actual activation event; retained side branches alone are insufficient.
+Run exact-source native integration, full Node qualification and the ordinary
+Hepta owner gates with retained failures. Real external funding/control evidence,
+independent future cost-matched evaluation and actual product adoption retain
+their separate acceptance gates. No default-chain or production activation is
+authorized by component test results.
+
 **Funded demand and continuous-upgrade evidence, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate at `3d1b6507671ec694ce58e86d4063a125c8deeb66`
 with the [demand/evaluation composition contract](specs/pon/DEMAND_EVALUATION_UPGRADE_V1.md).

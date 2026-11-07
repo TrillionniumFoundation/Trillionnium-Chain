@@ -1,0 +1,80 @@
+{
+  "artifacts": [
+    {
+      "bytes": 104100,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/remainder-failure-diagnosis-v2.json",
+      "sha256": "fcd2d6662fd287811255316aec063cbff80531cc09969d0dd2f0d99888d1c281"
+    },
+    {
+      "bytes": 4844,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/remainder-failure-diagnosis-v2.md",
+      "sha256": "94d6fc842badf93b4bec960695d48ecdf502c07c937b24d9ce214a5bd2825b56"
+    },
+    {
+      "bytes": 4256,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-compact-summary-v1.json",
+      "sha256": "34a9aaad943465667b63a33b01d24e281afddd261659d428c28b6864a683bc02"
+    }
+  ],
+  "inputs": {
+    "frozen_source_files": {
+      "native_node": {
+        "bytes": 59539,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/native_node.rs",
+        "sha256": "b4e22a0ce007d613e8e53656641c48150c0f0ed6b952c4a16ea27ec0c6475d98"
+      },
+      "public_pool_cli": {
+        "bytes": 37556,
+        "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/chain-source-bounded/trillionnium/crates/trnm-pon-node/tests/public_pool_cli.rs",
+        "sha256": "d2c3f9ff4f5826beef9427abf6ad995cb09bcd15892eb4688cd2f57d548b23db"
+      }
+    },
+    "full_coverage_summary": {
+      "bytes": 31715,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-union-finalization-v1/coverage-summary.json",
+      "sha256": "36f17f8123241259fb76012b8cf70c550c4d7a0a833641bddefc4d037859bf1a"
+    },
+    "initial_classification": {
+      "bytes": 122521,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-failure-classification-v1/failure-classification.json",
+      "sha256": "775f6d170d3d67bd19c7f752013a730d892d157cf02d7af55353ee3f9e56baa4"
+    },
+    "inventory": {
+      "bytes": 33120,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-target-inventory-recovery-v1.json",
+      "sha256": "e7e2f7e0717cfaa4dc1278f0ef0bec449796c7a738def2fb093ea8b2a38300e5"
+    },
+    "remainder_raw_log": {
+      "bytes": 50255,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-receipts/remaining-node-690f710c-v1/remaining-node.log",
+      "sha256": "eae7dc4120c3fdfe32fea20a563bc6df929b944107c74fba59cdfeae80c35e3e"
+    },
+    "union": {
+      "bytes": 918710,
+      "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/node-cross-run-coverage-v1.json",
+      "sha256": "e858131ad9b7e9e0ceb83a57d5c2bb665adbac6b395fedacd59f2d8a3e6ddde2"
+    }
+  },
+  "observed_unix_seconds": 1794068899.4684606,
+  "original_or_remainder_receipts_modified": false,
+  "qualification": false,
+  "schema": "pon-native-evidence-closeout-v1",
+  "script": {
+    "bytes": 15512,
+    "path": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/recovery-evidence-tools/seal_remainder_diagnosis_recovery_v2.py",
+    "sha256": "e5f26b0496a89b2088fbcb5ce51c222ac5e286815ddbe7984cdad84fffed960d"
+  },
+  "source_after": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_before": {
+    "commit": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+    "status": "",
+    "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+  },
+  "source_unchanged": true,
+  "tests_started": false,
+  "union_modified": false
+}

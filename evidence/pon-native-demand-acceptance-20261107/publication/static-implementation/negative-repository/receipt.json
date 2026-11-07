@@ -1,0 +1,27 @@
+{
+  "command": [
+    "python3",
+    "scripts/ci/test_repository.py"
+  ],
+  "elapsed_seconds": 271.33589911460876,
+  "exit_code": 0,
+  "head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "independent_business_acceptance": false,
+  "label": "negative-repository",
+  "schema": "pon-publication-static-gate-v1",
+  "started_unix_seconds": 1794067711.641122,
+  "stderr": {
+    "bytes": 5345,
+    "sha256": "4ef2ad8ff6484faaedc57b749cb95706b0277b0e7c54822fa10cc5d8b67ac690"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "unittest_summaries": [
+    [
+      "50",
+      "271.209s"
+    ]
+  ]
+}

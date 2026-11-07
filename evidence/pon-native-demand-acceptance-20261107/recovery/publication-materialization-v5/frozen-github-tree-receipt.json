@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/b9ff2e5c4ca6e465b86cb4b2bd466ad831147899?recursive=1"
+  ],
+  "exit_code": 0,
+  "stderr_bytes": 0,
+  "stdout_bytes": 3741226,
+  "stdout_sha256": "b1027c523d7b1465b3a9a9fcef4c49c77c7ce9eda3195243563e310519accd0d",
+  "tree": "b9ff2e5c4ca6e465b86cb4b2bd466ad831147899"
+}

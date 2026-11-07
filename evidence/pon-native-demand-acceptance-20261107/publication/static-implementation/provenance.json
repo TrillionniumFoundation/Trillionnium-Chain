@@ -1,0 +1,8 @@
+{
+  "checked_head": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "implementation_source": "690f710c1b6808787996e86aa4c36bd53e1f3939",
+  "production_activation": false,
+  "recorder_sha256": "a1bd1aa6bb4ef2ef4c6c563be5e1aa8f02a25d148b626c42238a2359db59e269",
+  "schema": "pon-publication-static-provenance-v1",
+  "source_canonical_sha256": "d9feaa7187b3b6564c441129221d106af2dd5ce58f9a94c0966ea9a82acfb324"
+}

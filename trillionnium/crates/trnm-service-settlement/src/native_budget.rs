@@ -13,6 +13,9 @@
 //! to dispatch again. An operator restoring this entire database from an old copy
 //! is outside its anti-rollback guarantee; the Node/target must retain their fences.
 
+pub mod evidence;
+pub mod task_operation_v2;
+
 use borsh::{BorshDeserialize, BorshSerialize};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use serde_json::Value;

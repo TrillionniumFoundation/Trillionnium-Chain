@@ -12,6 +12,10 @@ impl Settings {
     /// its context-bound bootstrap records are regenerated for the new network.
     pub fn with_permanent_account_growth_v2(mut self, namespace: &str) -> Result<Self> {
         ensure(
+            !trnm_mvcc_fee::pon_executor::funded_service_v1::enabled(&self.app),
+            "GROWTH_SERVICE_CONTRACT_UNSUPPORTED",
+        )?;
+        ensure(
             self.app.task_profile() == continuity_v1::PROFILE
                 && self.app.params.get("state_profile").is_none()
                 && self.operator_bootstrap.is_none()

@@ -349,6 +349,17 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                 with self.subTest(command=name, change=label), self.assertRaisesRegex(ValueError, 'demand evidence'):
                     check_independent_conformance(changed, self.lanes)
 
+    def test_native_demand_controls_cannot_be_omitted_duplicated_moved_or_swallowed(self):
+        from check_ci_contract import NATIVE_DEMAND_CONTRACTS
+        command = NATIVE_DEMAND_CONTRACTS
+        for label, changed in [('omitted', self.script.replace(command, '')),
+                               ('duplicated', self.script.replace(command, command * 2)),
+                               ('swallowed', self.script.replace(command, command.rstrip() + ' || true\n')),
+                               ('moved', self.script.replace(command, '').replace(
+                                   '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command))]:
+            with self.subTest(change=label), self.assertRaisesRegex(ValueError, 'native demand'):
+                check_independent_conformance(changed, self.lanes)
+
     def test_parent_material_checks_cannot_be_omitted_duplicated_or_moved(self):
         for command in ('    python3 scripts/test_llm_parent_material.py\n',
                         '    python3 scripts/test_llm_runtime_parent_step.py\n'):
