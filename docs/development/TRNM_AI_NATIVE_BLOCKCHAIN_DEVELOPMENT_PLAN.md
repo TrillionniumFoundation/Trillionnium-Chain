@@ -7503,3 +7503,71 @@ existing zero-work controls; missing binaries fail. CI mutation controls retain
 the actual commands and backends. Full remote CI and original capacity gates
 remain their own observations; all production and whole-chain security flags
 remain HOLD.
+
+### 2026-11-07 actual-certificate continuation: local observation and lifetime accounting
+
+The [actual-certificate record](../../evidence/pon-actual-certificates-20261107/README.md)
+extends the existing candidate without activation or a consensus-rule change.
+The native owner now has an opt-in, bounded diagnostic that checks the exact
+source schema, enumerates all current admitted PNP1 rows in one read snapshot,
+replays full W1/application transitions and compares retained states/deltas.
+It refuses incomplete budgets, cancellation, unsupported owners/profiles,
+namespace changes, schema substitution and changing snapshots. Owner-local
+attempt numbers and `Instant` intervals survive chain reorganization; they
+grant no remote inventory, global readiness or physical-clock authority.
+
+The independent [score bridge](../../formal/pon-nakamoto-v1/NATIVE_OWNER_SCORE_BRIDGE_V1.md)
+binds actual confirmation outputs to native settings/tip/generation/time and
+recomputes 512-bit scores, all-ancestor eligibility and the six-successor AND.
+Two actual fresh owners exercise unseen confirmation, a private competing
+branch, admitted heavier candidates, future ancestry, strict ties and real
+reorganization. Full local score deficits remain in the deterministic witness.
+The complete competing suffix is not relabelled as newly produced adversarial
+work, because this observer cannot assign its first world-ready time or origin.
+
+The [signed WLC1 observation ledger](../../formal/pon-nakamoto-v1/WORK_LIFECYCLE_CERTIFICATE_V1.md)
+uses actual ML-DSA-65 verification, independently supplied key/end-point pins,
+complete event ordering and public-source DAG checks. Full W1/MU1 artifact
+validity is checked separately from declaration signatures. The old unkeyed
+native-work digest can be recomputed without the claimed execution and cannot
+authenticate resource consumption. Neither WLC1 signatures nor a valid log
+prove an honest recorder, a globally complete lifecycle budget or a physical
+all-algorithm lower bound.
+
+For ideal-oracle analysis, a globally fixed finite classical-help alphabet of
+size `D` gives `min(1, D*B)` from a uniform no-help bound `B`, provided every
+forced-transcript strategy satisfies the same complete query/output caps and
+all help channels are covered. Observed message counts, per-oracle singleton
+support and unrecorded quantum advice do not meet that premise. Large actual
+payload alphabets may correctly make this bound one. Initial residual quantum
+state authenticity and actual SHA-256/resource reductions remain separate.
+
+The [observability and repeated-origin certificate](../../formal/pon-nakamoto-v1/CERTIFICATE_OBSERVABILITY_V1.md)
+gives explicit indistinguishable local views with different hidden world states.
+It also supplies a pathwise interval-packing rule: window multipliers with total
+coverage at most one at every causal cut yield a lower bound on one shared
+unique-work total. Adaptively selected starts can therefore share a single
+fixed-threshold lifetime tail without double-counting outputs. A separate exact
+finite joint-law checker rejects unsupported conditional risks and overspent
+predictable budgets. These are mathematical reductions, not an actual network
+law inferred from the example schedule.
+
+| Actual obligation | New concrete coverage | Remaining qualification boundary |
+| --- | --- | --- |
+| Work certificate | Actual signed observation/checkpoint validation; full work artifacts; public-help source graph; fixed finite-help reduction; explicit digest and advice counterexamples | All legal algorithms' physical resource loss/minimum cost; actual initial joint state; truthful complete public-help/lifetime budgets |
+| Native execution certificate | Source-schema-bound complete current local census; full native replay; actual confirmation/reorg and independent deficit bridge; shared-lifetime repeated-window accounting | Authenticated execution/export and all-world view coverage; physical clock/adoptability envelopes; joint inventory/honest-progress probability; justified actual conditional/global budget law |
+
+The preceding three-candidate qualification table remains in force. In
+particular fixed probability with varying units is still conditional research,
+and the existing six-successor failure probability is still unknown. New actual
+checks run in protocol-contract after current native builds and retain fresh
+artifacts; pure finite-law controls run in repository-truth. Missing backends
+fail, and original failures and remote capacity/CI requirements remain separate.
+
+The local broad retained-node validation is not all green: the unchanged
+authenticated CLI sync control refuses `PUBLIC_HOST_KERNEL_PARENT` because
+the current host lacks its required fixed cgroup parent. Its original guard
+and refusal are retained. The unexecuted work-header target and subsequent
+component gates are run separately, without treating those passes as removal
+of the host qualification failure. Research publication does not promote this
+record to release, host-resource or whole-chain acceptance.

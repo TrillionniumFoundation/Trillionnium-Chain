@@ -19,6 +19,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                MAINTENANCE_COMPARE_STEP, REJECTION_RUN_STEP, REJECTION_COMPARE_STEP,
                                PAIRED_WORK_ORACLE, ZERO_WORK_ORACLE, MODEL_WINDOW_ORACLE,
                                MANDATORY_UNITS_NATIVE, WORK_NATIVE_MODEL_COMMANDS,
+                               WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE,
                                EVALUATION_QUORUM_ORACLE, check_independent_conformance,
                                MODEL_EVOLUTION_ORACLES, COST_BOUNDARY_READERS,
                                ORIGINAL_CAMPAIGN_READER,
@@ -925,6 +926,21 @@ class CiContractTests(unittest.TestCase):
                     self.rejected('scripts/ci/ci_job.sh', line, replacement)
             changed = original.replace(line, '').replace('  protocol-contract)\n',
                                                         '  protocol-contract)\n' + line)
+            self.rejected('scripts/ci/ci_job.sh', original, changed)
+
+    def test_actual_certificates_require_current_binaries_fresh_outputs_and_full_controls(self):
+        original = (self.root / 'scripts/ci/ci_job.sh').read_text()
+        for block in (WORK_LIFECYCLE_NATIVE, NATIVE_OWNER_SCORE_BRIDGE):
+            for replacement in ('', '    true # omitted actual certificate execution\n',
+                                block.replace('realpath -e', 'printf %s'),
+                                block.splitlines(keepends=True)[0], block * 2,
+                                block.replace('/native-owner-score-bridge', '/historical-native-owner')
+                                if block == NATIVE_OWNER_SCORE_BRIDGE else
+                                block.replace('/work-lifecycle"', '/historical-lifecycle"')):
+                with self.subTest(block=block[:70], replacement=replacement[:100]):
+                    self.rejected('scripts/ci/ci_job.sh', block, replacement)
+            changed = original.replace(block, '').replace('  repository-truth)\n',
+                                                          '  repository-truth)\n' + block)
             self.rejected('scripts/ci/ci_job.sh', original, changed)
 
     def test_paired_and_model_window_oracles_cannot_move_to_another_lane(self):

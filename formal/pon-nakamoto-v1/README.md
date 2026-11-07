@@ -174,6 +174,35 @@ python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution
 MU1_NATIVE_WORK=/absolute/path/to/release/examples/pon_work_io MU1_NATIVE_PREPARED=/absolute/path/to/release/examples/pon_zero_io python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v
 ```
 
+## Actual local observations and remaining scientific certificates
+
+[Native owner census](NATIVE_OWNER_OBSERVATION_V1.md) is an opt-in diagnostic
+over a held native PNP1 owner. It enumerates the complete current admitted
+relation in a consistent read snapshot and replays native W1, application state,
+receipts and deltas. Its [independent score bridge](NATIVE_OWNER_SCORE_BRIDGE_V1.md)
+recomputes 512-bit work, ancestor timestamp eligibility, the actual confirmation
+AND and full local comparison deficits from fresh native executions.
+
+[WLC1](WORK_LIFECYCLE_CERTIFICATE_V1.md) authenticates bounded observation
+fragments with externally pinned ML-DSA-65 keys and first/last checkpoints.
+It verifies full work artifacts and public-help source links, while keeping
+signature validity separate from the truth or completeness of resource reports.
+Its fixed finite classical-help theorem requires a global complete transcript
+alphabet and admits a vacuous bound when that alphabet is too large.
+
+[Observability and repeated starts](CERTIFICATE_OBSERVABILITY_V1.md) prove
+why local records alone cannot determine hidden world inventory or correlated
+initial advice. A shared-lifetime interval-packing witness avoids counting the
+same work repeatedly across adaptively chosen windows. Predictable risk spending
+is checked against an explicitly supplied full joint law, never a fresh-reset
+assumption at a selected start.
+
+These components narrow the two actual-certificate obligations. They do not
+establish all-algorithm physical work costs, authentic global budgets, physical
+clock and availability envelopes, or a native common-prefix failure probability.
+The three candidate qualifications and the unknown six-successor risk remain
+as recorded in the sole development plan.
+
 The repository-truth and protocol-contract lanes retain these controls alongside
 the existing checks. [Source and raw evidence](../../evidence/pon-work-native-certificates-20261107/README.md)
 separate the previously delivered abstract models from new complete native W1/MU1

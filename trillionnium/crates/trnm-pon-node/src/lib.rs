@@ -52,6 +52,10 @@ pub use store::native_budget::{
     NativeBudgetInventoryV1, NativeBudgetLaneV1, NativeBudgetLocalRecordV1,
     NativeBudgetObservationV1, NativeBudgetRequestV1, NativeContributionClaimV1,
 };
+pub use store::native_owner_observation::{
+    OwnerCensus, OwnerCensusBlock, OwnerCensusLimits, OwnerCensusProgress, MAX_CENSUS_BLOCKS,
+    MAX_CENSUS_PACKET_BYTES,
+};
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{
     native_cell_release_repair_subject_v2, native_cell_repair_subject_v1,

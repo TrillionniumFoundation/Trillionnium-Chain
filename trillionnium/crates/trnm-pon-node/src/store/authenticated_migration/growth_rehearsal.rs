@@ -351,6 +351,7 @@ fn read_only_archive(directory: &Path, settings: Settings, backend: StateBackend
         commitment_observation: RefCell::new(None),
         history_read_counters: Cell::new(super::super::HistoryReadCounters::default()),
         history_page_read_counters: Cell::new(super::super::HistoryPageReadCounters::default()),
+        native_owner_observer: RefCell::new(None),
         owner_policy: None,
         mining_owner: None,
         continuous_owner: None,

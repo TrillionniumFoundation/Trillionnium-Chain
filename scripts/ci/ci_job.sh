@@ -21,6 +21,7 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v
     python3 formal/pon-nakamoto-v1/mandatory_units_tests.py ContextContractTests QueryCertificateTests -v
+    python3 formal/pon-nakamoto-v1/certificate_observability_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
@@ -89,6 +90,9 @@ case "${1:?required job}" in
     TRNM_ZERO_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" TRNM_ZERO_WORK_OUTPUT="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/zero-work" python3 formal/pon-nakamoto-v1/test_zero_work.py -v
     # Complete MU1 envelopes use the existing full W1 producer and verifier; missing binaries fail.
     MU1_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" MU1_NATIVE_PREPARED="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_zero_io")" python3 formal/pon-nakamoto-v1/mandatory_units_tests.py -v
+    # Actual W1 and ML-DSA-65 evidence authenticates declarations, not global resources.
+    WLC_NATIVE_WORK="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" WLC_NATIVE_PQ="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" python3 formal/pon-nakamoto-v1/work_lifecycle_tests.py -v
+    python3 formal/pon-nakamoto-v1/work_lifecycle_observe.py --native-work "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io")" --native-pq "$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pq_message_oracle")" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/work-lifecycle"
     TRNM_GROUPED_NATIVE="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_routed_int257_grouped")" python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_grouped*.py' -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
@@ -101,6 +105,9 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/test_state_witness_oracle.py -v
     python3 scripts/ci/run_account_execution_conformance.py
     python3 -B formal/pon-nakamoto-v1/test_gsc2_native_readback_synthetic.py --source-root "$(pwd -P)"
+    # Execute two fresh owners and retain complete local views; no world-risk qualification.
+    TRNM_NATIVE_OWNER_OBSERVATION="$(realpath -e "${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/native_owner_observation_v1")" TRNM_NATIVE_OWNER_RECORD_DIR="${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge" python3 formal/pon-nakamoto-v1/test_native_owner_score_bridge.py -v
+    python3 formal/pon-nakamoto-v1/certificate_observability_evidence.py --native-owner-json "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/native.json" --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/native-owner-score-bridge/observability.json"
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test qualified_tasks --test protected_ingress --test task_lifecycle --test task_lifecycle_v3 --test task_lifecycle_v4 --test public_evaluation --test public_intake_v2 --test public_cli --test local_mempool --test pool_mining --test public_pool_v3 --test public_pool_cli --test public_v3_observer --test pinned_peer_polling --test ancestry_long_sync --test distributed_roles
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
