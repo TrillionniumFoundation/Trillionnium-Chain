@@ -460,9 +460,86 @@ HISTORY_HOST_STEPS = '''      - name: Build the original long-history test separ
         if: ${{ !cancelled() && steps.history_build.outcome == 'success' && matrix.campaign == 'history' }}
         run: python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_history_native.py --out "$TRNM_CI_RECEIPT_DIR/history-native"
 '''
-HISTORY_EXPECTED_SOURCE = (
-    "      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && "
-    "github.event.pull_request.head.sha || github.sha }}\n")
+PUSH_SOURCE_HEAD = "${{ github.event_name == 'push' && needs.push-source-context.outputs.head || github.event.pull_request.head.sha }}"
+PUSH_SOURCE_BASE = "${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}"
+PUSH_SOURCE_MERGE = "${{ github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha }}"
+PUSH_SOURCE_SELECTED = ("${{ matrix.source == 'head' && (github.event_name == 'push' && "
+    "needs.push-source-context.outputs.head || github.event.pull_request.head.sha) || "
+    "(github.event_name == 'push' && needs.push-source-context.outputs.merge || github.sha) }}")
+PUSH_SOURCE_JOB_GUARD = (
+    "    needs: push-source-context\n"
+    "    if: ${{ !cancelled() && (github.event_name == 'pull_request' || "
+    "needs.push-source-context.result == 'success') }}\n")
+HISTORY_EXPECTED_SOURCE = "      TRNM_EXPECTED_SOURCE_SHA: " + PUSH_SOURCE_SELECTED + "\n"
+PUSH_SOURCE_LANES = {
+    'pon-priority-acceptance.yml': {
+        'native-priorities': '$RUNNER_TEMP/priority-observations'},
+    'pon-w1-work-security.yml': {
+        'false-trace-reuse': '$RUNNER_TEMP/w1-security-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'legal-strategy': '$RUNNER_TEMP/$LEGAL_CAPTURE_PREFIX-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'legal-factorial': '$RUNNER_TEMP/w1-legal-factorial-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'fresh-challenge-service': '$RUNNER_TEMP/w1-fresh-service-$SOURCE_KIND-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT',
+        'rank-batch-v5': '$RUNNER_TEMP/w1-rank-batch-$SOURCE_KIND-${{ matrix.arch }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT'},
+}
+
+
+def check_integration_push_workflow(text: str, name: str) -> None:
+    """The added event must preserve PR sources and every original native lane."""
+    header, body = text.split('\njobs:\n', 1)
+    events = header.split('on:\n', 1)[1].split('\npermissions:', 1)[0]
+    require(re.findall(r'(?m)^  ([a-z_]+):', events) == ['push', 'pull_request']
+            and events.startswith('  push:\n    branches:\n      - fix/chain-six-axis-performance-20261103\n'),
+            'only the original integration push is added alongside pull_request')
+    require(all(value not in text for value in ('pull_request_target', 'continue-on-error',
+                'contents: write', 'GITHUB_EVENT_NAME=', 'GITHUB_SHA=')),
+            'push cannot gain writes, hide failures or impersonate a PR event')
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs, lanes = dict(pairs), PUSH_SOURCE_LANES[name]
+    retained = {'retained-pressure-failure'} if name == 'pon-priority-acceptance.yml' else set()
+    require(len(jobs) == len(pairs) and set(jobs) == set(lanes) | retained | {'push-source-context'},
+            'all original jobs and one push resolver remain explicit')
+    resolver = jobs['push-source-context']
+    require("    if: github.event_name == 'push'\n" in resolver
+            and '          ref: ${{ github.sha }}\n' in resolver
+            and '          fetch-depth: 0\n' in resolver
+            and '          persist-credentials: false\n' in resolver
+            and 'integration_push_source.py resolve --output "$RUNNER_TEMP/integration-push-source/context.json"' in resolver
+            and 'python3 scripts/ci/test_integration_push_source.py' in resolver
+            and 'verify_ci_source.py --kind head --expected-head "$GITHUB_SHA"' in resolver
+            and '        if: always()\n' in resolver,
+            'one real push resolver freezes and retains independently checked source')
+    for key in ('head', 'base', 'merge', 'context', 'context_sha256'):
+        require(f'      {key}: ${{{{ steps.resolve.outputs.{key} }}}}\n' in resolver,
+                'source outputs come only from the resolver')
+    for lane, output in lanes.items():
+        block = jobs[lane]
+        require(PUSH_SOURCE_JOB_GUARD in block and 'source: [head, prospective-merge]\n' in block,
+                'native head and merge lanes require their push resolver without skipping PRs')
+        for key, expression in (('HEAD', PUSH_SOURCE_HEAD), ('BASE', PUSH_SOURCE_BASE),
+                                ('MERGE', PUSH_SOURCE_MERGE)):
+            require('      EXPECTED_' + key + ': ' + expression + '\n' in block,
+                    'native lane preserves PR inputs and exact frozen push outputs')
+        selected_key = 'TRNM_EXPECTED_SOURCE_SHA' if lane == 'native-priorities' else 'EXPECTED_SOURCE'
+        require('      ' + selected_key + ': ' + PUSH_SOURCE_SELECTED + '\n' in block,
+                'selected head or merge is bound to its source context')
+        require("        if: github.event_name == 'push'\n" in block
+                and 'PUSH_SOURCE_CONTEXT: ${{ needs.push-source-context.outputs.context }}\n' in block
+                and 'PUSH_SOURCE_CONTEXT_SHA256: ${{ needs.push-source-context.outputs.context_sha256 }}\n' in block
+                and block.count('integration_push_source.py materialize --kind "$SOURCE_KIND" --context-json "$PUSH_SOURCE_CONTEXT" --context-sha256 "$PUSH_SOURCE_CONTEXT_SHA256" --output "$RUNNER_TEMP/integration-push-context.json"') == 1
+                and block.count('python3 scripts/ci/verify_ci_source.py "${args[@]}"') == 2,
+                'each push lane reproduces the real merge before both original source checks')
+        require("        if: always() && github.event_name == 'push'\n" in block
+                and '          push_context_out="' + output + '"\n' in block
+                and '          cp "$RUNNER_TEMP/integration-push-context.json" "$push_context_out/push-source-context.json"\n' in block,
+                'each lane retains its context even after native or materialization failure')
+        if lane == 'native-priorities':
+            require('runner: [ubuntu-24.04, ubuntu-24.04-arm]\n' in block
+                    and 'campaign: [service-model, state, history]\n' in block,
+                    'all twelve original priority lanes remain')
+        elif lane != 'fresh-challenge-service':
+            require('arch: [x64, arm64]\n' in block, 'both original W1 architectures remain')
+    require('version: [v1, v2]\n' in jobs.get('legal-strategy', '')
+            or name == 'pon-priority-acceptance.yml', 'both original legal-strategy versions remain')
 
 
 def check_history_host_call(text: str) -> str:
@@ -478,6 +555,8 @@ def check_history_host_call(text: str) -> str:
 
 
 def check_from_zero_host_callsites(root: Path) -> None:
+    for name in PUSH_SOURCE_LANES:
+        check_integration_push_workflow((root / '.github/workflows' / name).read_text(), name)
     command = ('python3 scripts/ci/run_from_zero_host.py -- '
                'python3 scripts/ci/run_from_zero_native.py --out ')
     workflow_command = '        run: ' + command + '"$TRNM_CI_RECEIPT_DIR/from-zero-native"\n'

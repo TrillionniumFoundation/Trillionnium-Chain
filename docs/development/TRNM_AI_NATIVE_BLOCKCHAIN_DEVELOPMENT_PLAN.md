@@ -47,6 +47,15 @@ These changes do not complete touched-set migration or close the original
 baseline 1/1 at 3.098539910 seconds, pressure 0/1, x64 2,362/4,105 and ARM
 4,104/4,105 with all rows but active genesis and cancelled cursor 3,404.
 
+Preserve the existing PR path and add a separate real push source entry only
+for the same integration branch. Freeze the pushed head and resolver-observed
+main, reproduce the canonical ordered-parent merge in every worker, and retain
+both success and attempted/unverified failure contexts. The original complete
+source verifier, 54 native command scripts and all 34 original priority/W1
+matrix lanes remain required. The two workflows may contribute to one merged
+result only when their head, base and merge identities all agree. These source
+controls do not substitute for original-resource business observations.
+
 **Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate from
 `e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct

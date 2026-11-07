@@ -83,10 +83,28 @@ not establish a service, fresh-work or History business run. The existing PR
 422 stating that a pull request already exists. The integration branch is
 preserved; no replacement branch is used to evade that response.
 
-A real push entry is being implemented for the existing original workflows.
-It must preserve the pull-request route, all original architecture/source/workload
-lanes and resources, and freeze the actual pushed head plus observed main base.
-Every prospective merge must reproduce the canonical Git combination with the
-ordered base/head parents and pass the original complete source verifier. A push
-run must identify itself as a push; no event environment is rewritten as a PR.
-Until source-bound business receipts exist, the original gates remain open.
+A real push entry is implemented for the two existing original workflows, only
+on the existing integration branch. Each resolver freezes the actual pushed
+head H and the main base B observed when that resolver runs. Every worker
+reproduces the same canonical Git merge M with ordered B/H parents, imports the
+actual object closure, and passes the original complete source verifier. The
+original verifier is unchanged. The event remains a push and the generated
+commit is not represented as a GitHub PR merge.
+
+The [independent source-entry review](ci-source-entry/independent-review/REVIEW.md)
+compares all 54 original run scripts and 34 original native matrix lanes
+(priority 12, W1 22), including their PR route, runners, timeouts, business/Host
+commands and retained failures. New source-context controls passed 13/13, the
+original source controls 43/43 and Host/History adapters 78/78. The complete CI
+contract also passes its 26 literal source pins after updating the changed
+store.rs pin to the actual frozen blob. The original pin mismatch and the
+initial CLI negative-fixture failure remain in
+[implementation controls](ci-source-entry/implementation-controls/).
+
+Failures retain bounded attempted/unverified context, independent expected
+head/base/merge values and actual event/run/attempt identity. Each whole workflow
+must be rerun after failure; an old resolver output cannot qualify a new attempt.
+The two workflows resolve B/M independently, so their results may be combined
+only after H, B and M agree. Context digests contain different run IDs and need
+not agree. Until source-bound business receipts exist, the original gates
+remain open; these local source controls grant no native performance result.

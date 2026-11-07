@@ -3,8 +3,93 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 5706,
-      "sha256": "9334f7ec3f47e12697d9a6a27ae62565656e7d8dfd49d569d4f02d549873554d"
+      "bytes": 6873,
+      "sha256": "7242e7f319728c259b68489bd66f065747b26004ef84b974326e1cfe609af09e"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/ci-contract-after-root-pin.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/ci-contract.log",
+      "bytes": 1085,
+      "sha256": "734403552f131f525d1f991821be4c9670112102904884e056fe62ae12897b10"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/host-adapter.log",
+      "bytes": 14034,
+      "sha256": "9842b96f56f342502fe94e94f44fea85196a293470c3a1d9942b92c4d59a654b"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/push-source-final.log",
+      "bytes": 1989,
+      "sha256": "77fb70cad3c85c5936bc87e6444f3a4ee7febdf18c3b7d33d1cb6b4bc3f2a762"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/push-source-receipt-final.log",
+      "bytes": 2176,
+      "sha256": "b1f424ed45ebabba793be203e48bd328ce3df60b772300353a5d4ac109b4d683"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/push-source-receipt-review.log",
+      "bytes": 2995,
+      "sha256": "04403bc37775e981e86914381d83af2f07be4504b5cb4f10461d360351773eee"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/push-source.log",
+      "bytes": 1989,
+      "sha256": "2146a985aed50d216ee173248650773445e727d199737b12a9580d579e3a44f8"
+    },
+    {
+      "path": "ci-source-entry/implementation-controls/source-integrity.log",
+      "bytes": 6922,
+      "sha256": "fdd4628e93d16954c916cf53b89478124ec2f17756af8c8b7d19407d19b90daf"
+    },
+    {
+      "path": "ci-source-entry/independent-review/INDEX.json",
+      "bytes": 1316,
+      "sha256": "6e167f34e53d1ca8c633c917e3bcc38812f373caee13fc200fe49e37a9bc7658"
+    },
+    {
+      "path": "ci-source-entry/independent-review/REVIEW.md",
+      "bytes": 6122,
+      "sha256": "7fb93560cf7e734509d3ddcbdb928084b470377c59c5e209cd002cf3c420a48b"
+    },
+    {
+      "path": "ci-source-entry/independent-review/check_ci_contract.log",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "path": "ci-source-entry/independent-review/compare_workflows.py",
+      "bytes": 6019,
+      "sha256": "47772cf811c435f441964aecff1c415c8f7e5209d3f53ae4e94728bf2808cef0"
+    },
+    {
+      "path": "ci-source-entry/independent-review/controls.json",
+      "bytes": 2975,
+      "sha256": "905723e6c92aaaec514e4f485bc4cf37a2ef540921fcc7a063e23c17dc6a1dc4"
+    },
+    {
+      "path": "ci-source-entry/independent-review/preflight.log",
+      "bytes": 164,
+      "sha256": "b3b641455432479a55bb47c549d9b1e249372a22e4a4188fd4d9949879d180dc"
+    },
+    {
+      "path": "ci-source-entry/independent-review/test_ci_source_integrity.log",
+      "bytes": 6898,
+      "sha256": "ac61a3f03d2f175f831eda011d7fc15658dc358a0c7bff6dff64c086d8c349c0"
+    },
+    {
+      "path": "ci-source-entry/independent-review/test_integration_push_source.log",
+      "bytes": 112,
+      "sha256": "2a340471ee08a9c1c0feffe663138bff75d3db73529f6486f061654ea4b1e238"
+    },
+    {
+      "path": "ci-source-entry/independent-review/workflow-preservation.json",
+      "bytes": 7404,
+      "sha256": "b81933622c8ea0d9f5635e1834968d363e1de5d8c07744f01a5fadf59ef12c33"
     },
     {
       "path": "development/admin-ci-readback-96e1-20261107.json",
