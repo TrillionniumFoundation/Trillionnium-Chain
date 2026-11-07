@@ -242,6 +242,14 @@ by itself a native implementation or acceptance of this Python relation.
 
 ## Reproduction and qualification
 
+The [retained execution and failure record](../../../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
+binds the tested source, all seven cases, attack repair and local gates.
+It also records the blocked GitHub publication and keeps native/full-system
+qualification separate. The supplemental [late readback](../../../../evidence/pon-useful-cell-stateful-v2-20261107/late-historical-live-check.json)
+uses the same retained proof and expected context after the real deadline:
+historical replay still succeeds and live verification refuses the expired
+window. It is another check of an existing proof, not additional work.
+
 Run from the repository root with all frozen source objects available:
 
 ```bash

@@ -32,6 +32,8 @@ The finite integer source-router profile is not ordinary multimodal Hepta,
 a native Node work entry, a succinct proof, a training-quality result or work
 hardness qualification. Existing service, History, recovery and PQ gates remain
 independent and their failed evidence remains retained.
+The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
+contains the complete local replay, counterexample/repair and source-pinned gates.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
