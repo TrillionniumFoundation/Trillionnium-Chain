@@ -1,0 +1,162 @@
+{
+  "files": [
+    {
+      "file_bytes": 36607,
+      "file_sha256": "a247c14aa7213a93275fc6a6089f37ebb7841da70d0ed08f4a62deb2d34de661",
+      "git_blob": "80431c483d76b827df22eb543e78575a73a58cd5",
+      "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+      "ranges": [
+        {
+          "first_line": 626,
+          "last_line": 652,
+          "text": "                91,\n                Request::History {\n                    tip: hex::encode(tip),\n                    after: hex::encode(after),\n                },\n            );\n            if row[\"ok\"] == true {\n                let result = serde_json::from_value::<ingress::Page>(row[\"reply\"][\"value\"].clone())\n                    .map_err(|error| error.to_string())\n                    .and_then(|page| {\n                        ingress::receive_public_page_from(\n                            &mut verifier,\n                            address,\n                            page,\n                            tip,\n                            after,\n                            ingress::now().unwrap(),\n                        )\n                        .map_err(|error| error.to_string())\n                    });\n                match result {\n                    Ok(next) => after = next,\n                    Err(error) => errors.push(error),\n                }\n            }\n            history_calls.push(row);\n            if after == tip || !errors.is_empty() {\n"
+        },
+        {
+          "first_line": 674,
+          "last_line": 698,
+          "text": "            row.confirmed && row.depth == Some(6) && !row.finalized && !row.execution_authority\n        });\n    let metrics = service.finish();\n    let receiver = Arc::try_unwrap(owner).ok().unwrap().into_inner().unwrap();\n    let before = receiver.read_active().unwrap();\n    let client = verifier.read_active().unwrap();\n    let state_equal = before.0 == client.0 && before.2 == client.2;\n    drop(receiver);\n    let reopened = Node::open(&path.join(\"receiver\"), settings.clone(), 1).unwrap();\n    let restart_equal = before == reopened.read_active().unwrap();\n    let full_cpu = cpu\n        .zip(process_cpu())\n        .and_then(|(before, after)| after.checked_sub(before));\n    json!({\"mode\": MODES[mode], \"signed_transaction_count\": 32, \"application_payload_bytes\": packets[0].transactions.iter().map(Vec::len).sum::<usize>(),\n        \"cold_proof_acquisition_wall_ns\": acquisition_wall_ns, \"cold_proof_acquisition_process_cpu_ns\": acquisition_process_cpu_ns,\n        \"work_attempts_including_target_misses\": acquired_attempts,\n        \"dissemination\": dissemination_report, \"pool_calls\": pool_calls, \"block_submissions\": submit_calls,\n        \"history_calls\": history_calls, \"independent_confirmations\": confirmations, \"confirmed_transactions\": if confirmed { 32 } else { 0 },\n        \"full_business_latency_ns\": latency, \"whole_trial_wall_ns_including_cold_reopen\": elapsed(start), \"whole_trial_process_cpu_ns\": full_cpu,\n        \"cpu_scope\": \"trial process interval including proposer threads, relay, native pool, full W1, writer, independent client and cold reopen; excludes final report construction/serialization and separately measured source-workload preparation; no per-actor allocation\",\n        \"service\": metrics, \"errors\": errors, \"native_state_equal\": state_equal, \"cold_reopen_equal\": restart_equal,\n        \"finite_business_target_met\": confirmed && pool_admitted && admitted && state_equal && restart_equal && errors.is_empty(),\n        \"consensus_profile\": \"unchanged-pon-nakamoto-v1\", \"dag_consensus_implemented\": false, \"committee_bft_implemented\": false,\n        \"ghast_implemented\": false, \"quorum_data_availability_qualified\": false, \"wan_tested\": false,\n        \"independent_operators\": false, \"work_profile_qualified\": false, \"production_activation\": false})\n"
+        },
+        {
+          "first_line": 702,
+          "last_line": 711,
+          "text": "fn signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract() {\n    if current_elf_host::execute_in_fixed_host(\n        \"architecture_delivery_compare\",\n        \"signed_dag_delivery_comparison_uses_same_native_business_and_confirmation_contract\",\n        None,\n    ) {\n        return;\n    }\n    let temporary = tempfile::tempdir().unwrap();\n    let output = std::env::var_os(\"TRNM_ARCHITECTURE_COMPARE_DIR\")\n"
+        },
+        {
+          "first_line": 782,
+          "last_line": 797,
+          "text": "        serde_json::to_vec_pretty(&report).unwrap(),\n    )\n    .unwrap();\n    // Keep the complete failing sample report in the existing CI artifact\n    // directory. The default TempDir is removed when this test exits, and\n    // a console-only report_path cannot be independently replayed.\n    if let Some(receipt_dir) = std::env::var_os(\"TRNM_CI_RECEIPT_DIR\") {\n        let receipt_dir = std::path::PathBuf::from(receipt_dir);\n        fs::create_dir_all(&receipt_dir).unwrap();\n        fs::copy(\n            output.join(\"report.json\"),\n            receipt_dir.join(\"architecture-delivery-comparison.json\"),\n        )\n        .unwrap();\n    }\n    println!(\n"
+        },
+        {
+          "first_line": 831,
+          "last_line": 840,
+          "text": "                \"error_count\": raw_errors.map(Vec::len), \"error_limit\": 4, \"error_text_limit_chars\": 96, \"errors\": errors})\n        );\n    }\n    assert!(\n        samples\n            .iter()\n            .all(|sample| sample[\"cold_reopen_equal\"] == true && sample[\"errors\"] == json!([])),\n        \"retained native delivery/replay invariants failed\"\n    );\n}\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 2996,
+      "file_sha256": "ef7582a4f8e00c0bb3162a951b3bfbe9f322e56c13244942b005e34398f9354e",
+      "git_blob": "243f28fca0fb179927a0fabedc8f480bebfeffb8",
+      "path": "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs",
+      "ranges": [
+        {
+          "first_line": 7,
+          "last_line": 37,
+          "text": "pub fn execute_in_fixed_host(target: &str, selector: &str, cli_binary: Option<&str>) -> bool {\n    let budget = require_host_kernel_budget(\n        \"127.0.0.1:0\".parse().unwrap(),\n        Some(FIXED_PUBLIC_KERNEL_PARENT),\n    );\n    let in_original_host = matches!(&budget, Ok(Some(actual)) if actual.verify().is_ok());\n    let child = std::env::var_os(\"TRNM_PUBLIC_FIXTURE_HOST_CHILD\");\n    if let Some(value) = &child {\n        assert_eq!(\n            value,\n            &std::ffi::OsString::from(format!(\"{target}::{selector}\")),\n            \"wrong public fixture child identity\"\n        );\n        assert!(\n            in_original_host,\n            \"public fixture child must satisfy the actual original kernel checks\"\n        );\n        assert_eq!(\n            cli_binary.map(|path| Path::new(path).canonicalize().unwrap()),\n            std::env::var_os(\"TRNM_PUBLIC_FIXTURE_CLI_BINARY\").map(PathBuf::from),\n            \"public fixture must bind the CLI path compiled into this exact test\"\n        );\n    }\n    if in_original_host\n        || std::env::var(\"GITHUB_ACTIONS\").as_deref() != Ok(\"true\")\n        || std::env::var(\"CI\").as_deref() != Ok(\"true\")\n    {\n        // Local callers retain the original refusal. No marker creates a Host.\n        return false;\n    }\n    assert!(child.is_none(), \"public fixture Host recursion refused\");\n"
+        },
+        {
+          "first_line": 40,
+          "last_line": 74,
+          "text": "        .nth(3)\n        .unwrap()\n        .canonicalize()\n        .unwrap();\n    let receipts = PathBuf::from(\n        std::env::var_os(\"TRNM_CI_RECEIPT_DIR\").expect(\"current CI receipt directory required\"),\n    );\n    let output = receipts.join(\"public-fixtures\").join(target).join(selector);\n    let executable = std::env::current_exe().unwrap().canonicalize().unwrap();\n    let mut command = std::process::Command::new(\"python3\");\n    command\n        .current_dir(root)\n        .arg(\"scripts/ci/run_public_fixture_native.py\")\n        .arg(\"--launch\")\n        .arg(\"--target\")\n        .arg(target)\n        .arg(\"--selector\")\n        .arg(selector)\n        .arg(\"--binary\")\n        .arg(executable)\n        .arg(\"--parent-pid\")\n        .arg(std::process::id().to_string())\n        .arg(\"--out\")\n        .arg(&output);\n    if let Some(binary) = cli_binary {\n        command\n            .arg(\"--cli-binary\")\n            .arg(Path::new(binary).canonicalize().unwrap());\n    }\n    let status = command.status().expect(\"public Host fixture must execute\");\n    assert!(\n        status.success(),\n        \"source-bound public Host fixture failed; retained receipts: {}\",\n        output.display()\n    );\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 60778,
+      "file_sha256": "55669358d7a92178edf661350ab7443f03d8504540e94302539599acaa48c2d5",
+      "git_blob": "fafef7d039bca16067bcbf088d210d50a452836b",
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "ranges": [
+        {
+          "first_line": 525,
+          "last_line": 550,
+          "text": "            if !in_parent_cgroup(&self.parent_relative)? {\n                return Err(\"PUBLIC_HOST_KERNEL_CONTEXT\".into());\n            }\n            self.directory.verify_limits(&self.parent, self.limits)\n        }\n        fn open(path: &str) -> Result<Self> {\n            let user_path = Path::new(path);\n            if !user_path.is_absolute() {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n            let parent = fs::canonicalize(user_path)\n                .map_err(|_| crate::Error::from(\"PUBLIC_HOST_KERNEL_PARENT\"))?;\n            // A strict systemd-owned *single parent*, not the common cgroup\n            // root, any child/service, or a caller-created user.slice.\n            if !approved_parent_path(&parent) || parent != user_path {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n            if !Path::new(\"/sys/fs/cgroup/cgroup.controllers\").is_file() {\n                return Err(\"PUBLIC_HOST_KERNEL_UNSUPPORTED\".into());\n            }\n            let meta = fs::symlink_metadata(&parent)?;\n            if !meta.is_dir() || meta.uid() != 0 || meta.permissions().mode() & 0o022 != 0 {\n                return Err(\"PUBLIC_HOST_KERNEL_PARENT\".into());\n            }\n            let boot = fs::read_to_string(\"/proc/sys/kernel/random/boot_id\")\n                .map_err(|_| crate::Error::from(\"PUBLIC_HOST_KERNEL_CONTEXT\"))?;\n"
+        },
+        {
+          "first_line": 1403,
+          "last_line": 1415,
+          "text": "/// The public V3 library and development CLI use the EXACT same eligibility.\npub const FIXED_PUBLIC_KERNEL_PARENT: &str = \"/sys/fs/cgroup/trnmponpublic.slice\";\n/// Direct library callers cannot bypass the CLI's kernel-parent requirement.\n/// A loopback test service needs no administrator privileges; an externally\n/// reachable service must already be placed under the one fixed parent.\npub fn require_for_listener(\n    address: std::net::SocketAddr,\n) -> crate::Result<Option<HostKernelBudget>> {\n    require_host_kernel_budget(\n        address,\n        (!address.ip().is_loopback()).then_some(FIXED_PUBLIC_KERNEL_PARENT),\n    )\n}\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 217368,
+      "file_sha256": "4ee4efc6cc1f5fac5ee78710a2620cc7acba6034e9bfaf3aed5e602efdec002e",
+      "git_blob": "ca6ac60b53cef412b1e8c65719ad9a0c15eb1428",
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+      "ranges": [
+        {
+          "first_line": 2566,
+          "last_line": 2609,
+          "text": "pub fn receive_public_page_from_before_observed(\n    node: &mut Node,\n    source: SocketAddr,\n    page: Page,\n    tip: Hash,\n    after: Hash,\n    clock: u64,\n    deadline: Instant,\n    observation: Option<&HistoryImportObserver>,\n) -> Result<Hash> {\n    use history_import::{observe_host, HistoryHostPhase};\n    // The ORIGINAL fixed administrator-owned Host parent is required even\n    // for a loopback source: a caller's socket address is not provenance.\n    let kernel = observe_host(observation, HistoryHostPhase::Resolve, || {\n        crate::host_kernel_parent::require_host_kernel_budget(\n            source,\n            Some(crate::host_kernel_parent::FIXED_PUBLIC_KERNEL_PARENT),\n        )?\n        .ok_or_else(|| crate::Error::from(\"PUBLIC_HOST_KERNEL_REQUIRED\"))\n    })?;\n    observe_host(observation, HistoryHostPhase::Initial, || kernel.verify())?;\n    let native = history_import::receive_observed(\n        history_import::Owner::Exclusive(node),\n        page,\n        tip,\n        after,\n        clock,\n        history_import::Control {\n            deadline,\n            resource: &|| {\n                observe_host(observation, HistoryHostPhase::Checkpoint, || {\n                    kernel.verify()\n                })\n            },\n        },\n        observation,\n    );\n    // Do not convert an already committed block into an invalid work proof\n    // when the last local Host owner observation fails.\n    history_import::finish_with_resource(native, deadline, || {\n        observe_host(observation, HistoryHostPhase::Final, || kernel.verify())\n    })\n}\n\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 29037,
+      "file_sha256": "23e7a41ab61e0266483b51e51e58cac80be6d06fd2977835bd76c50c76f35df8",
+      "git_blob": "253fbc7806b6631f5a29220ea42b0711f853f278",
+      "path": "scripts/ci/run_public_fixture_native.py",
+      "ranges": [
+        {
+          "first_line": 148,
+          "last_line": 160,
+          "text": "def prepare(out: Path, binary: Path, pid: int, *, target: str = TARGET,\n            selector: str = SELECTOR, cli_binary: Path | None = None) -> dict:\n    spec = configuration(out)\n    require(spec == fixture(target, selector), 'PUBLIC_FIXTURE_OUTPUT_SELECTOR_CHANGED')\n    require((cli_binary is not None) == spec['cli_required'], 'PUBLIC_FIXTURE_EXACT_CLI_REQUIRED')\n    require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true'\n            and os.getuid() != 0, 'PUBLIC_FIXTURE_HOSTED_CI_ONLY')\n    require(Path.cwd().resolve() == ROOT and os.getppid() == pid and CHILD not in os.environ,\n            'PUBLIC_FIXTURE_DIRECT_WORKSPACE_PARENT_REQUIRED')\n    out.parent.mkdir(parents=True, exist_ok=True)\n    out.mkdir(exist_ok=False)\n    result = {'schema': PREPARATION_SCHEMA, **spec, 'job': None, 'parent_pid': pid,\n              'supervisors': [], 'source_before': None, 'source_after': None,\n"
+        },
+        {
+          "first_line": 322,
+          "last_line": 351,
+          "text": "def report_observation(path: Path) -> tuple[dict, dict]:\n    observed, raw = history.file_observation(path, business.REPORT_LIMIT, retain=True)\n    value = json_load(raw)\n    require(type(value) is dict and value.get('schema') == REPORT_SCHEMA\n            and value.get('samples_per_workload_and_mode') == 3\n            and type(value.get('samples')) is list and len(value['samples']) == 18\n            and type(value.get('workloads')) is list and len(value['workloads']) == 2,\n            'ARCHITECTURE_COMPLETE_NATIVE_REPORT_REQUIRED')\n    scenarios = ('disjoint-recipients', 'hot-recipient')\n    require([row.get('scenario') for row in value['workloads']] == list(scenarios),\n            'ARCHITECTURE_ORIGINAL_WORKLOADS_REQUIRED')\n    expected = [(scenario, sample, position, business.MODES[(sample + position) % 3])\n                for scenario in scenarios for sample in range(3) for position in range(3)]\n    for row, identity in zip(value['samples'], expected, strict=True):\n        require(type(row) is dict and type(row.get('sample')) is int\n                and type(row.get('position')) is int\n                and (row.get('scenario'), row['sample'], row['position'], row.get('mode')) == identity\n                and row.get('cold_reopen_equal') is True and row.get('errors') == [],\n                'ARCHITECTURE_ORIGINAL_NATIVE_INVARIANTS_REQUIRED')\n    # Keep the original libtest predicate separate from the stronger business gate.\n    result = {'native_invariants_passed': True, 'samples': 18, 'business_reader': None,\n              'business_reader_failure': None, 'business_acceptance_is_separate': True}\n    try:\n        result['business_reader'] = business.validate_report(path)\n    except (OSError, ValueError, KeyError, TypeError) as error:\n        result['business_reader_failure'] = type(error).__name__ + ':' + str(error)\n    after, _ = history.file_observation(path, business.REPORT_LIMIT)\n    require(after == observed, 'ARCHITECTURE_REPORT_CHANGED_DURING_READ')\n    return result, observed\n\n"
+        },
+        {
+          "first_line": 465,
+          "last_line": 489,
+          "text": "def launch(out: Path, binary: Path, pid: int, *, target: str, selector: str,\n           cli_binary: Path | None) -> dict:\n    prepared = prepare(out, binary, pid, target=target, selector=selector, cli_binary=cli_binary)\n    require(prepared['completed'], 'PUBLIC_FIXTURE_PREPARATION_FAILED')\n    import run_from_zero_host as host\n    command = ['python3', SCRIPT, '--out', str(out)]\n    result = {'schema': 'trnm-ci-public-fixture-host-launch-v1', 'passed': False,\n              'host_exit': None, 'binding': None, 'failures': []}\n    try:\n        with (out / 'launcher.log').open('x') as stream, contextlib.redirect_stdout(stream):\n            result['host_exit'] = host.outer(command)\n        controller, _ = history.load_object(out.with_name(out.name + '-host') / 'controller-result.json')\n        require(result['host_exit'] == 0 and controller.get('passed') is True\n                and controller.get('command_argv') == command, 'PUBLIC_FIXTURE_HOST_EXECUTION_REQUIRED')\n        result['binding'] = bind_execution(prepared, out)\n        result['passed'] = True\n    except BaseException as error:\n        result['failures'].append(type(error).__name__ + ':' + str(error))\n    finally:\n        write_new(out / 'launch.json', result)\n    return result\n\n\nclass FixtureSignal(Exception):\n    pass\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 24743,
+      "file_sha256": "b159afa51b96d5cd01c9f6cc2e29dafe83e5d42d3e4dba298063d13abf2f8791",
+      "git_blob": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "path": "scripts/ci/run_from_zero_host.py",
+      "ranges": [
+        {
+          "first_line": 282,
+          "last_line": 290,
+          "text": "def outer(command: list[str]) -> int:\n    validate_command(command)\n    require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true',\n            'HOSTED_CI_ONLY_NO_LOCAL_PROVISION')\n    require(Path.cwd().resolve() == ROOT and os.getuid() != 0,\n            'ORIGINAL_UNPRIVILEGED_RUNNER_REQUIRED')\n    with lease.parent_lock():\n        return outer_owned(command)\n\n"
+        },
+        {
+          "first_line": 334,
+          "last_line": 350,
+          "text": "def outer_owned(command: list[str]) -> int:\n    output = validate_command(command)\n    require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true',\n            'HOSTED_CI_ONLY_NO_LOCAL_PROVISION')\n    require(Path.cwd().resolve() == ROOT, 'ORIGINAL_WORKING_DIRECTORY')\n    uid, gid = os.getuid(), os.getgid()\n    require(uid != 0, 'ORIGINAL_UNPRIVILEGED_RUNNER_REQUIRED')\n    run, attempt, job = (os.environ.get(key, '') for key in (\n        'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_JOB'))\n    require(run.isdecimal() and attempt.isdecimal()\n            and re.fullmatch(r'[A-Za-z0-9_-]{1,80}', job), 'BOUNDED_JOB_IDENTITY')\n    service = f'trnm-from-zero-{run}-{attempt}-{job}-{os.getpid()}.service'\n    receipts = output.with_name(output.name + '-host')\n    receipts.mkdir(parents=True, exist_ok=False)\n    result = {'schema': 'trnm-ci-original-public-host-controller-v2',\n              'service': service, 'command_argv': command, 'uid': uid, 'gid': gid,\n              'cwd': str(ROOT), 'systemd_run_exit': None, 'failure': None,\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 11040,
+      "file_sha256": "792c1c599082b0ce67e128e6dbbf0c99f583dd41f4af0091838cc10adcc98d70",
+      "git_blob": "69ecbe1183ef9e6123d3014376f9c50a3f43a063",
+      "path": "scripts/ci/public_fixture_host_lease.py",
+      "ranges": [
+        {
+          "first_line": 69,
+          "last_line": 90,
+          "text": "\ndef workflow_source() -> dict:\n    expected = os.environ.get('TRNM_EXPECTED_SOURCE_SHA', '')\n    require(re.fullmatch('[0-9a-f]{40}', expected) is not None,\n            'FIXTURE_PARENT_EXPECTED_SOURCE_REQUIRED')\n    value, _ = history.load_object(Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'source.json')\n    require(value.get('schema') == 'trnm-ci-source-v1'\n            and value.get('tested_commit') == expected\n            and value.get('tracked_worktree_verified') is True\n            and value.get('tests_executed_by_identity_check') is False,\n            'FIXTURE_PARENT_WORKFLOW_SOURCE_REQUIRED')\n    actual = verify_source(value.get('kind'), value.get('candidate'), value.get('base'),\n                           value.get('prospective_merge'), root=ROOT)\n    require(actual == value, 'FIXTURE_PARENT_SOURCE_CHANGED')\n    return actual\n\n\ndef context() -> dict:\n    require(os.environ.get('GITHUB_ACTIONS') == 'true' and os.environ.get('CI') == 'true'\n            and os.getuid() != 0 and Path.cwd().resolve() == ROOT,\n            'FIXTURE_PARENT_HOSTED_CONTEXT_REQUIRED')\n    mirror, _ = paths()\n"
+        }
+      ]
+    },
+    {
+      "file_bytes": 35332,
+      "file_sha256": "1cb75c13bea9e7f9913985ff4c0210ff73a3f61ba72ae3584c34ee9476e0579d",
+      "git_blob": "4d8a23542b730786c8e9055ca8485cf6da2c1b8c",
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "ranges": [
+        {
+          "first_line": 1,
+          "last_line": 20,
+          "text": "name: trnm-required-baseline\non:\n  pull_request:\n  push:\n    branches: [main]\n  workflow_dispatch:\npermissions:\n  contents: read\nconcurrency:\n  group: portable-${{ github.workflow }}-${{ github.ref }}\n  # Preserve running head/merge evidence when a successor enters the queue.\n  cancel-in-progress: false\nenv:\n  CI: \"true\"\n  CARGO_INCREMENTAL: \"0\"\n  CARGO_BUILD_JOBS: \"2\"\n  RUST_TEST_THREADS: \"1\"\n  CARGO_TERM_COLOR: never\n  PYTHONDONTWRITEBYTECODE: \"1\"\n  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}\n"
+        },
+        {
+          "first_line": 326,
+          "last_line": 365,
+          "text": "  rust-baseline-shards:\n    name: rust-baseline shard (${{ matrix.shard }})\n    runs-on: ubuntu-24.04\n    timeout-minutes: 180\n    strategy:\n      fail-fast: false\n      matrix:\n        shard: [runtime, quality]\n    steps:\n      - name: Checkout exact candidate\n        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n        with:\n          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}\n          fetch-depth: 0\n          persist-credentials: false\n      - name: Verify immutable source identity\n        run: python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\" --output \"$RUNNER_TEMP/ci-observations/source.json\"\n      - name: Set isolated Cargo paths after runner allocation\n        shell: bash\n        run: |\n          set -euo pipefail\n          printf 'CARGO_HOME=%s/cargo-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'CARGO_TARGET_DIR=%s/target-%s\\n' \"$RUNNER_TEMP\" \"$GITHUB_JOB\" >> \"$GITHUB_ENV\"\n          printf 'TRNM_CI_RECEIPT_DIR=%s/ci-observations\\n' \"$RUNNER_TEMP\" >> \"$GITHUB_ENV\"\n      - name: Install pinned compiler and tools in isolated hosted runner\n        run: |\n          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy\n      - name: Install pinned dependency auditor\n        run: bash scripts/ci/install_ci_tools.sh supply-chain\n      - name: Install isolated signed-state oracle Python environment\n        run: |\n          python3 -m venv \"$RUNNER_TEMP/pon-state-env\"\n          \"$RUNNER_TEMP/pon-state-env/bin/python\" -m pip install --disable-pip-version-check --only-binary=:all: -r formal/pon-nakamoto-v1/requirements.txt\n          echo \"$RUNNER_TEMP/pon-state-env/bin\" >> \"$GITHUB_PATH\"\n      - name: Prepare pinned OpenSSL 3.5.9 PQ provider\n        shell: bash\n        run: bash scripts/ci/prepare_pq_provider.sh\n      - name: Run retained Rust shard\n        run: python3 scripts/ci/rust_baseline_shards.py run --kind head --candidate \"$TRNM_EXPECTED_SOURCE_SHA\" --tested \"$TRNM_EXPECTED_SOURCE_SHA\" --shard \"${{ matrix.shard }}\" --output \"$RUNNER_TEMP/ci-observations/rust-shard.json\"\n      - name: Verify source remained unchanged\n"
+        }
+      ]
+    }
+  ],
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "native_tests_executed": false,
+  "schema": "trnm-exact-committed-source-excerpts-v1",
+  "source_from_git_objects": true
+}

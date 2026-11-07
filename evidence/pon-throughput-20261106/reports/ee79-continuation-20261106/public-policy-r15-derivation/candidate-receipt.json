@@ -1,0 +1,43 @@
+{
+  "base_blob": "fc778471a5b656768f44a340c6f4038ec6d38c26",
+  "base_head": "516382d87bbfdba85fbf34b6aa7b62edbc5759bb",
+  "base_tree": "473434f61c82d9b8daa76dff98ab3bdedbba13ca",
+  "branch": "fix/chain-public-policy-r15-oracle-20261106-ee79",
+  "candidate_blob": "9d1512725917d2f76c45df06977767145a3ad6ef",
+  "candidate_file": {
+    "bytes": 387311,
+    "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/public-policy-r15-oracle-candidate/worktree/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+    "sha256": "13d591ca6c819fc3f4bc5a0af88aab0b67434685d7a5fb13b14ed0aded860a9c"
+  },
+  "changed_files": [
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ],
+  "commit_created": false,
+  "derivation": {
+    "bytes": 9740,
+    "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/public-policy-r15-oracle-candidate/derivation-before.json",
+    "sha256": "71868184cc514ad4f4d5e2a6b4adedfebedc8ce2496f24754957d45a8a6993fa"
+  },
+  "derivation_script": {
+    "bytes": 5472,
+    "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/public-policy-r15-oracle-candidate/derive_policy_vectors.py",
+    "sha256": "9d52f2539051c15a6c9628bcc34c3520889e35cd08b6d3ddf7f43b93504b0f3b"
+  },
+  "git_diff_check_exit_code": 0,
+  "historical_vectors_unchanged": true,
+  "native_execution": false,
+  "only_existing_test_function_changed": true,
+  "patch": {
+    "bytes": 1014,
+    "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/public-policy-r15-oracle-candidate/minimal.patch",
+    "sha256": "6759de30650dcba5ce8a6451f303391be90c5636052a014d4b4fdb81e59d0339"
+  },
+  "preimage": {
+    "bytes": 4526,
+    "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/public-policy-r15-oracle-candidate/current-r15-preimage.bin",
+    "sha256": "465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c"
+  },
+  "production_and_all_other_test_bytes_unchanged": true,
+  "schema": "trnm-public-policy-test-only-fix-candidate-v1",
+  "test_count_change": 0
+}

@@ -20,6 +20,8 @@ mod legacy_reorg_observation_tests;
 pub mod mempool;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
+#[cfg(test)]
+mod observed_history;
 mod operator_continuous_owner;
 mod operator_mining_owner;
 pub mod pinned_account_query;

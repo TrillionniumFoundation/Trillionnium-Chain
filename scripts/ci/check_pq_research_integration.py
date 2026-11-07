@@ -444,6 +444,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/read_w1_full_v2_disposition.py",
     "scripts/pon_w1_preparation_strategy_reader_v4.py",
     "scripts/ci/test_six_workpackage_native_rosters.py",
+    "scripts/ci/test_authenticated_suite_count.py",
     "scripts/ci/test_w1_full_v2_disposition.py",
     "scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py",
     "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs",
@@ -451,6 +452,23 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
     "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
     "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
+))
+# Shared-domain scheduling, bounded live counter reads and adjacent ancestry
+# material reuse keep their owners and adversarial controls in this same source
+# contract. Cost readback is observational and never grants current authority.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "docs/protocol/pon-nakamoto-v1/details/PUBLIC_POOL_INTAKE_V3.md",
+    "scripts/ci/throughput_cost_coverage.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake/shared_readiness_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake_domain_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/observed_history.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/observed_history/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_record_tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((

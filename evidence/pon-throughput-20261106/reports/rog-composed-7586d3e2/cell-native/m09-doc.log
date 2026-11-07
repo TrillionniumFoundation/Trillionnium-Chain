@@ -1,0 +1,17 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+   Doc-tests trnm_data_availability
+
+running 10 tests
+test crates/trnm-data-availability/src/cell/pq.rs - cell::pq::VerifiedCellPqReleaseV2 (line 353) - compile fail ... ok
+test crates/trnm-data-availability/src/cell/residency/tensor.rs - cell::residency::tensor::CellResidentTensorModelV1 (line 21) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 16) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 24) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 29) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 39) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 46) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 51) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 58) - compile fail ... ok
+test crates/trnm-data-availability/src/lib.rs - (line 9) - compile fail ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+

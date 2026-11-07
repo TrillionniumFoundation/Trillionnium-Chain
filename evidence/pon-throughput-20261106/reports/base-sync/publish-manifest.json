@@ -1,0 +1,977 @@
+{
+  "parents": [
+    "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+    "1f723bba961ec5f8d7e25e7b33db222dac7ef50c"
+  ],
+  "tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "base_tree": "1e6b82410a9adebab710b275d9f5cf211fb380ec",
+  "entries": [
+    {
+      "path": ".github/workflows/pon-fixed-host-root-f0.yml",
+      "mode": "100644",
+      "sha": "38c85df40e46dfe5204d273cd57dece9b950118a",
+      "already_published": true,
+      "bytes": 17261
+    },
+    {
+      "path": ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      "mode": "100644",
+      "sha": "2b2876876ebac8ea843a786f3c6dcd71a40bd2ea",
+      "already_published": true,
+      "bytes": 30918
+    },
+    {
+      "path": ".github/workflows/pon-pq-system-continuation.yml",
+      "mode": "100644",
+      "sha": "80eb054235746c258682a59e354fe17fee63b9f5",
+      "already_published": true,
+      "bytes": 31334
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "mode": "100644",
+      "sha": "92914636328bb34535eda888b16d28ba11763ecf",
+      "already_published": true,
+      "bytes": 35802
+    },
+    {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "mode": "100644",
+      "sha": "5fb14aa25294a79b4d996221659dd5194f98ceed",
+      "already_published": true,
+      "bytes": 24022
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "mode": "100644",
+      "sha": "ddcae2a777ff806e4e0581d5bd5cc3eef11dfa57",
+      "already_published": false,
+      "bytes": 108387
+    },
+    {
+      "path": "config/pon/pq-native-tls-required-tests-v1.json",
+      "mode": "100644",
+      "sha": "e42d5d14c6a288a15c73b66e9580f1186f40b803",
+      "already_published": true,
+      "bytes": 1792
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "sha": "f425bd770fd39c595244f935bd33013394be26a5",
+      "already_published": false,
+      "bytes": 580331
+    },
+    {
+      "path": "docs/security/CRYPTO_PROFILE_V1_20261104.md",
+      "mode": "100644",
+      "sha": "964059f57832afbe879d361ff80496803aa433da",
+      "already_published": true,
+      "bytes": 21620
+    },
+    {
+      "path": "docs/security/NATIVE_PQ_TLS_LOOPBACK_V1.md",
+      "mode": "100644",
+      "sha": "3aafc70fe720b478264a53f60042fcfb36512311",
+      "already_published": true,
+      "bytes": 8178
+    },
+    {
+      "path": "docs/security/PQ_CELL_ACTIVATION_CURRENT_PUBLICATION_V1.md",
+      "mode": "100644",
+      "sha": "8f1f3e45aa372164630cc6132acb8a558a62d3cb",
+      "already_published": true,
+      "bytes": 5145
+    },
+    {
+      "path": "docs/security/PQ_RECOVERY_RELEASE_TRANSPORT_BOUNDARIES_V1.md",
+      "mode": "100644",
+      "sha": "d787a83029193bfaffed59baef77c48885906a58",
+      "already_published": true,
+      "bytes": 17703
+    },
+    {
+      "path": "docs/security/PQ_RELEASE_CURRENT_AUTHORITY_AND_TAP21_V1.md",
+      "mode": "100644",
+      "sha": "e653efd73f7050514468809c4da3c26df9c8b195",
+      "already_published": true,
+      "bytes": 17696
+    },
+    {
+      "path": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+      "mode": "100644",
+      "sha": "5e99d0151f3b5c122b82de8900f20519030f9436",
+      "already_published": true,
+      "bytes": 11584
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/README.md",
+      "mode": "100644",
+      "sha": "4af4160b2798d7664925bc01d30cd09497155688",
+      "already_published": true,
+      "bytes": 15500
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/README.md",
+      "mode": "100644",
+      "sha": "d18c32b0ef3c6b08386bf016043d9b283d45c949",
+      "already_published": true,
+      "bytes": 10316
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/ac240-compare-metadata.json",
+      "mode": "100644",
+      "sha": "321534988edead06caa384a97e647e2f84490e47",
+      "already_published": true,
+      "bytes": 141126
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/continuation-loss-notice.json",
+      "mode": "100644",
+      "sha": "587109e99b3d87dbe6949f91693ede4af8a60e8e",
+      "already_published": true,
+      "bytes": 902
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/current-source-comparison.json",
+      "mode": "100644",
+      "sha": "7c543305253cb32d3fa3accae8eab285d9b35443",
+      "already_published": true,
+      "bytes": 134509
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/current-source-comparison.md",
+      "mode": "100644",
+      "sha": "8190d39d9ff80490289b2a65bb663453a6d5e72b",
+      "already_published": true,
+      "bytes": 4106
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/current-source-gates-summary.json",
+      "mode": "100644",
+      "sha": "6335a36ae49b6064b80433051e7fb618dcc12405",
+      "already_published": true,
+      "bytes": 18343
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/current-to-publication-comparison.json",
+      "mode": "100644",
+      "sha": "29f2aa25141323fa6aeb6ff79f63429cce590a7e",
+      "already_published": true,
+      "bytes": 48258
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/current-to-publication-comparison.md",
+      "mode": "100644",
+      "sha": "4541be8541e39e9958c7f7134d095b087ba6e14b",
+      "already_published": true,
+      "bytes": 2900
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/parameter-observations.jsonl",
+      "mode": "100644",
+      "sha": "bd6108f3fdec05c420bcbe9b9899c39662ec3694",
+      "already_published": true,
+      "bytes": 296115
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/raw-observations.tar.gz",
+      "mode": "100644",
+      "sha": "89d6273cf27b4e1b06ae367edf3084661981fd7d",
+      "already_published": true,
+      "bytes": 340569
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/continuation-59f75acd/reproduction.json",
+      "mode": "100644",
+      "sha": "b52310b1fcfd4cdc44c9a25a3e14f9800faa867d",
+      "already_published": true,
+      "bytes": 144307
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/cpq1-owner-continuation/REPRODUCE.md",
+      "mode": "100644",
+      "sha": "a7bdbbe1c02569361238555293f29cf8a0b335ae",
+      "already_published": true,
+      "bytes": 12271
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/cpq1-owner-continuation/RESULTS.json",
+      "mode": "100644",
+      "sha": "b17b13e8d8a5103f549bac545a06526f04dd2f23",
+      "already_published": true,
+      "bytes": 34653
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/cpq1-owner-continuation/verify_openssl_fixtures.py",
+      "mode": "100644",
+      "sha": "4587e5ffcff98dbcc807a21e7024857d1caf741e",
+      "already_published": true,
+      "bytes": 22234
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/parameter-observations.jsonl",
+      "mode": "100644",
+      "sha": "c96012fb8d50422b0924e46f2454201df60f74aa",
+      "already_published": true,
+      "bytes": 295215
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/raw-observations.tar.gz",
+      "mode": "100644",
+      "sha": "dabded05de2852e251a36e9fc85d67d6a4af63fc",
+      "already_published": true,
+      "bytes": 271371
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_benchmark.py",
+      "mode": "100644",
+      "sha": "e9a873baa73d60f578b9723a9cf11cdf84a44c15",
+      "already_published": true,
+      "bytes": 7180
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/recompute_profile_ids.py",
+      "mode": "100644",
+      "sha": "ca5334fba301046c9f89132b62a4e10872c8d5cd",
+      "already_published": true,
+      "bytes": 10500
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/reproduction.json",
+      "mode": "100644",
+      "sha": "199332d125ec5cc3b00e03396f22b947b379c29e",
+      "already_published": true,
+      "bytes": 147593
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/README.md",
+      "mode": "100644",
+      "sha": "0f5935c17a553dccb0b4b604c1dd4f004ba24e8e",
+      "already_published": true,
+      "bytes": 24337
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/archive-review.json",
+      "mode": "100644",
+      "sha": "87072fd13f312038f834b7834426b642f79fdf11",
+      "already_published": true,
+      "bytes": 110297
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/parameter-observations.jsonl",
+      "mode": "100644",
+      "sha": "d86b89e2f53e6461d549e32d84feafbbe301ac3c",
+      "already_published": true,
+      "bytes": 296038
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/raw-observations.tar.gz",
+      "mode": "100644",
+      "sha": "3f2b9084d007b0fb43ef3da00266f526fa10ff85",
+      "already_published": true,
+      "bytes": 830679
+    },
+    {
+      "path": "evidence/crypto-profile-20261104/retirement-53a90ad6/reproduction.json",
+      "mode": "100644",
+      "sha": "7a939f1a0ba3af47543dfd8d5d4f28135a242957",
+      "already_published": true,
+      "bytes": 231447
+    },
+    {
+      "path": "evidence/pon-pq-owner-composition-20261105/README.md",
+      "mode": "100644",
+      "sha": "179cb3082e0eb43659d531c3e6c17d4025239d73",
+      "already_published": true,
+      "bytes": 4475
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/README.md",
+      "mode": "100644",
+      "sha": "23f799640967c94edd5102638ed22d77c5c0b145",
+      "already_published": true,
+      "bytes": 11442
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/SHA256SUMS",
+      "mode": "100644",
+      "sha": "601447562e73dc881fb15eb85092b34b208a90e0",
+      "already_published": true,
+      "bytes": 1210
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/hepta-artifact-manifest.json",
+      "mode": "100644",
+      "sha": "3792812fc82c421dc91a88e296144bfad002bffd",
+      "already_published": true,
+      "bytes": 541
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/hepta-pq4729-native-20261104.tar.xz",
+      "mode": "100644",
+      "sha": "55734cc8c132680569e12fed1b4260182a3360f6",
+      "already_published": true,
+      "bytes": 783340
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/hepta-summary.json",
+      "mode": "100644",
+      "sha": "13dd082225eab70c5c0592b0e2217a67aa969530",
+      "already_published": true,
+      "bytes": 6813
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/local-validation-manifest.json",
+      "mode": "100644",
+      "sha": "37d1741e47c31a65b01affa7071f16cae0dd6901",
+      "already_published": true,
+      "bytes": 14045
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/local-validation.tar.gz",
+      "mode": "100644",
+      "sha": "154cc9ec8c084632da7ba34064ee49fd5f2c1465",
+      "already_published": true,
+      "bytes": 168494
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/pq-composed-60dae3-20261104-validation-evidence.tar.gz",
+      "mode": "100644",
+      "sha": "20f74b7c64813398bec395f6cbc2af718a79a223",
+      "already_published": true,
+      "bytes": 172084
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/source-equivalence.json",
+      "mode": "100644",
+      "sha": "bfd7885148780e50308c20df95556a29854414ca",
+      "already_published": true,
+      "bytes": 1416
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/summary.json",
+      "mode": "100644",
+      "sha": "39f42e475230ed7bb8c35a35055f1d298f5bf35d",
+      "already_published": true,
+      "bytes": 12092
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/x230-local-verification.json",
+      "mode": "100644",
+      "sha": "abd297399ff346c8e6464a8218064393702ec981",
+      "already_published": true,
+      "bytes": 4468
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/x230-terminal-status.json",
+      "mode": "100644",
+      "sha": "1dbedd141b15d9bbfd76876c7f5e0c43057d2090",
+      "already_published": true,
+      "bytes": 483
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/x230-transfer-receipt.json",
+      "mode": "100644",
+      "sha": "e329eac46e8fc34dd2777327f91476349721964b",
+      "already_published": true,
+      "bytes": 5044
+    },
+    {
+      "path": "evidence/pon-pq-system-continuation-20261101/validation-20261104/x230-transport-recovery.json",
+      "mode": "100644",
+      "sha": "1a74e98b98e27f9ff12e51b200038ffa1e43845a",
+      "already_published": true,
+      "bytes": 533
+    },
+    {
+      "path": "evidence/pon-throughput-20261106/README.md",
+      "mode": "100644",
+      "sha": "caeac269eb96865b02a3f2c53e6356abddd9e74f",
+      "already_published": true,
+      "bytes": 8801
+    },
+    {
+      "path": "evidence/pq-recovery-release-sdk-v1/REPRODUCE.md",
+      "mode": "100644",
+      "sha": "d454f65b10d7fcb2b4bb027f7cbf03afbd7ad54d",
+      "already_published": true,
+      "bytes": 11665
+    },
+    {
+      "path": "evidence/pq-recovery-release-sdk-v1/committed-source-checks.json",
+      "mode": "100644",
+      "sha": "9a8a6ef12aa6d39c1339eefbd7c2d173cacceffa",
+      "already_published": true,
+      "bytes": 18421
+    },
+    {
+      "path": "evidence/pq-recovery-release-sdk-v1/reproduction.json",
+      "mode": "100644",
+      "sha": "5a7f925e7ff18766d6e7eecdb49926f151dbaaec",
+      "already_published": true,
+      "bytes": 19329
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pq_mtls_probe.py",
+      "mode": "100644",
+      "sha": "3d02f8f0f5806273dce54cc1b4bf8e306f53c4c0",
+      "already_published": true,
+      "bytes": 17858
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "mode": "100644",
+      "sha": "9550d89c6a0e8b65ab483efd4f39f2c16e127d5b",
+      "already_published": true,
+      "bytes": 13357
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "mode": "100644",
+      "sha": "5b81ea50b2fee2a1e3e82189a68acbe0bf746e07",
+      "already_published": true,
+      "bytes": 28049
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_native_cost/Cargo.lock",
+      "mode": "100644",
+      "sha": "8e24d9743a340996ddccea81fa1a555e0daa1ac1",
+      "already_published": true,
+      "bytes": 15508
+    },
+    {
+      "path": "scripts/ci/check_cpq1_parameter_observation.py",
+      "mode": "100644",
+      "sha": "335f25c09eeac7123f58af53b60f2d0943fab3cc",
+      "already_published": true,
+      "bytes": 22736
+    },
+    {
+      "path": "scripts/ci/check_pq_research_integration.py",
+      "mode": "100644",
+      "sha": "8d595dfda97ebb33d68a66ad61f3892ab362b1cc",
+      "already_published": false,
+      "bytes": 43106
+    },
+    {
+      "path": "scripts/ci/pq_authority_surface_scan.py",
+      "mode": "100644",
+      "sha": "6df25bea817bbb491d5549364bbe7a7c486f7b9a",
+      "already_published": true,
+      "bytes": 9848
+    },
+    {
+      "path": "scripts/ci/pq_chain_claim_guard.py",
+      "mode": "100644",
+      "sha": "cfdeb87aeddae68d16b7ae1cc9755035ae373aba",
+      "already_published": true,
+      "bytes": 11578
+    },
+    {
+      "path": "scripts/ci/test_ci_contract.py",
+      "mode": "100644",
+      "sha": "2918e252cda9ec89624e3645ed9a348398f1adf9",
+      "already_published": true,
+      "bytes": 100002
+    },
+    {
+      "path": "scripts/ci/test_cpq1_parameter_observation.py",
+      "mode": "100644",
+      "sha": "7d7007600f8576318b3869b154ad7edeb311833f",
+      "already_published": true,
+      "bytes": 22047
+    },
+    {
+      "path": "scripts/ci/test_read_original_native_campaign.py",
+      "mode": "100644",
+      "sha": "84d011df6d90809a369c93be481d8f4bc1e1c875",
+      "already_published": true,
+      "bytes": 26800
+    },
+    {
+      "path": "scripts/llm_neural_read_worker.py",
+      "mode": "100644",
+      "sha": "143992cec9a3d0e06bab3e8c6b5d084363f9b495",
+      "already_published": true,
+      "bytes": 24515
+    },
+    {
+      "path": "scripts/llm_python_runtime_contract.py",
+      "mode": "100644",
+      "sha": "94f4e0d5e3ca47444ed87f5d087189765f39d584",
+      "already_published": true,
+      "bytes": 22751
+    },
+    {
+      "path": "scripts/read_original_native_campaign.py",
+      "mode": "100644",
+      "sha": "cea0aea8243cd28c7c40036aca8d558dd0d68c40",
+      "already_published": true,
+      "bytes": 53880
+    },
+    {
+      "path": "scripts/test_llm_material_runtime_bridge.py",
+      "mode": "100644",
+      "sha": "2ba1335e66585b666ab7010b0e0f01190ff7e3a6",
+      "already_published": true,
+      "bytes": 9547
+    },
+    {
+      "path": "scripts/test_llm_material_runtime_entry.py",
+      "mode": "100644",
+      "sha": "af1ed0281f1e7ee796641919d12fdaf20257a969",
+      "already_published": true,
+      "bytes": 10435
+    },
+    {
+      "path": "scripts/test_llm_neural_read_worker.py",
+      "mode": "100644",
+      "sha": "4c6dc50e5bddb3630f5aa751a7c393cd8be82b9a",
+      "already_published": true,
+      "bytes": 10410
+    },
+    {
+      "path": "scripts/test_llm_python_runtime_contract.py",
+      "mode": "100644",
+      "sha": "45de8576c96f130787c4bd2444e634990e66bb13",
+      "already_published": true,
+      "bytes": 19269
+    },
+    {
+      "path": "tests/fixtures/llm_material_runtime_bridge_v1/historical_plan.json",
+      "mode": "100644",
+      "sha": "bf170fbf14bb7357889e3cab59bb8f92d5a93df7",
+      "already_published": true,
+      "bytes": 10739
+    },
+    {
+      "path": "tests/fixtures/llm_material_runtime_bridge_v1/historical_target.json",
+      "mode": "100644",
+      "sha": "2f3c2aed7ff8e546c7cd2569f3b27bdeb9d30d30",
+      "already_published": true,
+      "bytes": 56809
+    },
+    {
+      "path": "tests/fuzz/Cargo.lock",
+      "mode": "100644",
+      "sha": "bd16198beb269fca436d74f54aa33e66ac5d517b",
+      "already_published": true,
+      "bytes": 33645
+    },
+    {
+      "path": "trillionnium/Cargo.lock",
+      "mode": "100644",
+      "sha": "7fe3d5ac2c79c4a73f5b3a8217ae7dc1af109d4b",
+      "already_published": true,
+      "bytes": 40044
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "mode": "100644",
+      "sha": "e61445e9442b74c0ffa4f62a155c675a69ef73ca",
+      "already_published": true,
+      "bytes": 924
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+      "mode": "100644",
+      "sha": "a8a6f872fd354fccdd1f1f28609f487719c4fdaf",
+      "already_published": true,
+      "bytes": 3938
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+      "mode": "100644",
+      "sha": "3d3c56ce1b8db9122b51ffba4cadd36028dc5b2c",
+      "already_published": true,
+      "bytes": 18697
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs",
+      "mode": "100644",
+      "sha": "ba7f2d4f4dafe64bef5b7cf1d2ffd59a363d36f1",
+      "already_published": true,
+      "bytes": 29053
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+      "mode": "100644",
+      "sha": "e67b801d5ffdaa0a820560c45d1befdedc7ba7d7",
+      "already_published": true,
+      "bytes": 8037
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+      "mode": "100644",
+      "sha": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+      "already_published": true,
+      "bytes": 12902
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+      "mode": "100644",
+      "sha": "3bb34ab8ff2b44eadc86a40829fb1e84543c941c",
+      "already_published": true,
+      "bytes": 7158
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+      "mode": "100644",
+      "sha": "a5c8c6ba0ecedee4922137ebaa106ddf91fe4c75",
+      "already_published": true,
+      "bytes": 19075
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+      "mode": "100644",
+      "sha": "9ab0df1e3c69b38e290cc5f2113983f56ec23862",
+      "already_published": true,
+      "bytes": 11609
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "mode": "100644",
+      "sha": "bcdfe71cacef62d81644027a21e9db56ffc1409e",
+      "already_published": true,
+      "bytes": 18941
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py",
+      "mode": "100644",
+      "sha": "3139f70e31719cecfb601dd18e9fe417de1245df",
+      "already_published": true,
+      "bytes": 13166
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_oracle.c",
+      "mode": "100644",
+      "sha": "22e7464e2cd7cd254f704056e05df760c3dcce12",
+      "already_published": true,
+      "bytes": 3330
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py",
+      "mode": "100644",
+      "sha": "e3b9315f18339dcb84b2fb16834cdb3c882724c5",
+      "already_published": true,
+      "bytes": 7074
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_tuf_sdk_source.py",
+      "mode": "100644",
+      "sha": "41197a6708924fc698bcb2116e25435acfa7292f",
+      "already_published": true,
+      "bytes": 2807
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/tuf_sdk_differential.py",
+      "mode": "100644",
+      "sha": "a60707d620330d123007f799d2ce57554860e1a0",
+      "already_published": true,
+      "bytes": 14735
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+      "mode": "100644",
+      "sha": "4b1757d2b7cc55124694882ee07e49bbfa461661",
+      "already_published": true,
+      "bytes": 6132
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21_fixture.py",
+      "mode": "100644",
+      "sha": "cfe8f08c1bca7c6e692e9fca3b15694ecf97c7b9",
+      "already_published": true,
+      "bytes": 5185
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "mode": "100644",
+      "sha": "41a78bc09f03d7c5f2416ef98ce9f6675c89f17a",
+      "already_published": true,
+      "bytes": 1196
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "mode": "100644",
+      "sha": "21686bd003356ea434efa0ff254f65df54ba042d",
+      "already_published": true,
+      "bytes": 15114
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "mode": "100644",
+      "sha": "61e8ff02976ebc79e2dc9f5a71ae531884cba5dc",
+      "already_published": true,
+      "bytes": 41699
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "mode": "100644",
+      "sha": "1173d2e58182e3d277ecc8634a53037f09886480",
+      "already_published": true,
+      "bytes": 1794
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "mode": "100644",
+      "sha": "be36b2b151bd72347c34a0b0cfb58096152f17d1",
+      "already_published": false,
+      "bytes": 353119
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+      "mode": "100644",
+      "sha": "41a6e7fdcac7c90c2eacec829a02b8719c5a94b9",
+      "already_published": true,
+      "bytes": 57606
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+      "mode": "100644",
+      "sha": "ae10808ad5d2882765dfe2f6d95dc58ea3934301",
+      "already_published": true,
+      "bytes": 17325
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "mode": "100644",
+      "sha": "b2c66941d10b09814aab060c7a254c1fda10e62c",
+      "already_published": true,
+      "bytes": 36046
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+      "mode": "100644",
+      "sha": "2882767d02ed8be8ceacfb974e2626ee248e623a",
+      "already_published": true,
+      "bytes": 36514
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "mode": "100644",
+      "sha": "82fdfed3af0184da1f4c3b8fc4c2cbdb20f6e981",
+      "already_published": true,
+      "bytes": 4551
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs",
+      "mode": "100644",
+      "sha": "b7b5eeae63d7bc3f55dc41775082686c890c8f9b",
+      "already_published": true,
+      "bytes": 7305
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
+      "mode": "100644",
+      "sha": "b9b04f09a45da6dede9fae886b8ecc9365f1acfb",
+      "already_published": true,
+      "bytes": 6388
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+      "mode": "100644",
+      "sha": "0cedc7817262b66e03f3ae6f21a41c1e5966bc52",
+      "already_published": true,
+      "bytes": 6804
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
+      "mode": "100644",
+      "sha": "658766b6eb92dde75b5c7373b008f728bba2f459",
+      "already_published": true,
+      "bytes": 26881
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs",
+      "mode": "100644",
+      "sha": "a54f9d2f2b946f7499a8341748d0c256538c29a1",
+      "already_published": true,
+      "bytes": 6060
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+      "mode": "100644",
+      "sha": "00263889f8d2c55ed6fe9fb627315a5781fc6694",
+      "already_published": true,
+      "bytes": 125104
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
+      "mode": "100644",
+      "sha": "7937b2c05d8cf30c7850a02130e38bdca228f150",
+      "already_published": true,
+      "bytes": 6667
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/public_submit.rs",
+      "mode": "100644",
+      "sha": "4f8d707e7e3f403119c6030a06be5b22b3fb6d8d",
+      "already_published": true,
+      "bytes": 27309
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "mode": "100644",
+      "sha": "cae5ccefe2d7575df9e62de6e9f065fa67dc9ae5",
+      "already_published": true,
+      "bytes": 96680
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback.rs",
+      "mode": "100644",
+      "sha": "661aa39fa792c50186effe9ffb5710069a7556b4",
+      "already_published": true,
+      "bytes": 16726
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_tests.rs",
+      "mode": "100644",
+      "sha": "80b35db4e9b26256e5aebbd1ddc26c15360fa792",
+      "already_published": true,
+      "bytes": 22448
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
+      "mode": "100644",
+      "sha": "96452989a4ad747c4b1213a21fb4a42a097ba9d3",
+      "already_published": true,
+      "bytes": 23716
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "mode": "100644",
+      "sha": "90ef1689174448e2e5f22e6b7c208b68d8a5f025",
+      "already_published": true,
+      "bytes": 24959
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_cli.rs",
+      "mode": "100644",
+      "sha": "750704a673eaad7223c6bff2f855e8f9e54503a2",
+      "already_published": true,
+      "bytes": 8741
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/pq_tls_feature_gate.rs",
+      "mode": "100644",
+      "sha": "7667534b36bb26bde4fdec0951113587f9e76640",
+      "already_published": true,
+      "bytes": 474
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs",
+      "mode": "100644",
+      "sha": "af2da0c290045a250c3bc1d7995d69561df0e912",
+      "already_published": true,
+      "bytes": 66086
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+      "mode": "100644",
+      "sha": "7531b167fb21a3497c24e7b555d92203b84a2e1f",
+      "already_published": true,
+      "bytes": 41595
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+      "mode": "100644",
+      "sha": "50c33ad2c1a2bd2e1fc6ca3fb803a8d07d760707",
+      "already_published": true,
+      "bytes": 59988
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "mode": "100644",
+      "sha": "daae244780e8d777a5505113e85a6c125d8d8029",
+      "already_published": true,
+      "bytes": 15714
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+      "mode": "100644",
+      "sha": "07537462b6a2a57f8b29b2bb59c16862b770aa91",
+      "already_published": true,
+      "bytes": 13891
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+      "mode": "100644",
+      "sha": "fd42e648e19fe792e6f392f411181c1c49f37a59",
+      "already_published": true,
+      "bytes": 1856
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "mode": "100644",
+      "sha": "0b9109e5b1028dbcba96b44bd61b4f711a940542",
+      "already_published": true,
+      "bytes": 26325
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "mode": "100644",
+      "sha": "670ec449dee3fe69562f938753dfbd3621dd2e90",
+      "already_published": true,
+      "bytes": 523
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release.rs",
+      "mode": "100644",
+      "sha": "376baa7c1103f80a1f854900d81f8086d4edc8a3",
+      "already_published": true,
+      "bytes": 30830
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum.rs",
+      "mode": "100644",
+      "sha": "d1d010efcc81c70659031b530f754d9451493b7d",
+      "already_published": true,
+      "bytes": 1732
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/bundle_quorum_tests.rs",
+      "mode": "100644",
+      "sha": "12588e1f41e270e181dddeeb32cf741d6aea1fe7",
+      "already_published": true,
+      "bytes": 7081
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/current_tests.rs",
+      "mode": "100644",
+      "sha": "2e4adc88d48ae0597582a8898818d9b0b97b6a0b",
+      "already_published": true,
+      "bytes": 7988
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/retained_verifier_tests.rs",
+      "mode": "100644",
+      "sha": "fee2cae6de928f618168a7d774265783a452e6a6",
+      "already_published": true,
+      "bytes": 8618
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/tests.rs",
+      "mode": "100644",
+      "sha": "6880d4baf9a0aa42d19e253d7eec5a6845dffa92",
+      "already_published": true,
+      "bytes": 30170
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/src/pq_release/validated_root_tests.rs",
+      "mode": "100644",
+      "sha": "cc39b708545fdb0d28b86ea1e0ad113f323a2833",
+      "already_published": true,
+      "bytes": 4807
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/Cargo.toml",
+      "mode": "100644",
+      "sha": "bb2eedd7188f7866d854f97d5aff19e2e92ae922",
+      "already_published": true,
+      "bytes": 426
+    }
+  ],
+  "local_commit": "ed1010f11fb8928a6458c66fb484535cb9882576"
+}

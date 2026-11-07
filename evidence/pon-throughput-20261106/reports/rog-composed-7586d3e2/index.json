@@ -1,0 +1,608 @@
+{
+  "actual_runner_and_helpers": [
+    {
+      "archive_member": "validation/run_exact_selected_controls.py",
+      "bytes": 28107,
+      "sha256": "a8f8656fe25038fb67939b360b42631b6856dab9bd302365cd53591be2108e55"
+    },
+    {
+      "archive_member": "validation/run_pq_required_controls_v2.py",
+      "bytes": 19396,
+      "sha256": "94bccecdc9a33ac140633ab677af3b17f600c1483377c5b94083bcbed7bc3680"
+    },
+    {
+      "archive_member": "validation/run_composed_cell_controls.py",
+      "bytes": 18968,
+      "sha256": "4ed5320de1668893212dde62970a8ed53adb25717237f7cc74b42a3e623f905e"
+    },
+    {
+      "archive_member": "validation/run_composed_native_validation.py",
+      "bytes": 9239,
+      "sha256": "f210388a49e176df7beb3935a68c421bab7d345d9cf78422bb55e4c3a027a6fc"
+    },
+    {
+      "archive_member": "validation/run_sampler_release_validation.py",
+      "bytes": 18592,
+      "sha256": "12989500334c0bc1a8ff41211113328eee87c5bb9a4cfef88983510c1c9069be"
+    }
+  ],
+  "build_attempts": [
+    {
+      "no_wrapper_exit_inferred_from_partial_cargo_output": true,
+      "prefix": "rog-composed-7586-component-build",
+      "records": {
+        "-source-after.json": {
+          "archive_member": "validation/rog-composed-7586-component-build-source-after.json",
+          "bytes": 423,
+          "present": true,
+          "sha256": "e8e64ae82d9a4394c10a22dd6f8a2687a09618d86aa4eaac7f7aa3241f71fd8a"
+        },
+        "-source-before.json": {
+          "archive_member": "validation/rog-composed-7586-component-build-source-before.json",
+          "bytes": 423,
+          "present": true,
+          "sha256": "e8e64ae82d9a4394c10a22dd6f8a2687a09618d86aa4eaac7f7aa3241f71fd8a"
+        },
+        ".json": {
+          "archive_member": "validation/rog-composed-7586-component-build.json",
+          "bytes": 1232,
+          "present": true,
+          "sha256": "d2cdc5552155701424cac1ca2faa7c7fa9ef4d57205e620c88b89e8357f198a4"
+        },
+        ".jsonl": {
+          "archive_member": "validation/rog-composed-7586-component-build.jsonl",
+          "bytes": 128640,
+          "present": true,
+          "sha256": "8d118b227723bdc89ef220c0af92b454a67897d99af1d5e2082cc6d7586f119c"
+        },
+        ".stderr": {
+          "archive_member": "validation/rog-composed-7586-component-build.stderr",
+          "bytes": 209,
+          "present": true,
+          "sha256": "06c9bc4f6b43860bd0217880422aeb78a2d1db7bf3eefb37db97e6bb6f080689"
+        }
+      },
+      "scope_as_recorded": "Node/M06 components only; not complete-workspace build",
+      "wrapper_exit_code_as_recorded": 0
+    }
+  ],
+  "created_utc": "2026-11-06T09:57:27.248079+00:00",
+  "earlier_2859_build_attempts_included": false,
+  "exclusions": [],
+  "expected_head": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+  "expected_tree": "fc0e51b1235470b972de41f2d677f6d5948f4868",
+  "gates": [
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T09:31:34.326272+00:00",
+      "gate": {
+        "archive_member": "validation/rog-composed-7586-native-suite/controls-80.gate.json",
+        "bytes": 3508,
+        "sha256": "a80130437172906588131100552de61f73f34c20c480ff6d18ec78865ef890bf"
+      },
+      "label": "controls-80",
+      "observed_as_reported": {
+        "confirmed_named_execution_count": 80,
+        "passed_selector_count": 80
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-7586-native-suite/controls-80/summary.json",
+        "bytes": 554299,
+        "sha256": "6e7b21d806848e01234182b5f5c45691167a3deda511392c31451419c8198dad"
+      }
+    },
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T09:47:08.164924+00:00",
+      "full_library_as_reported": {
+        "counts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 32,
+          "measured": 0,
+          "passed": 1177
+        },
+        "harness_seconds": "894.59",
+        "harness_status": "ok",
+        "passed": true,
+        "registry_count": 1209,
+        "running": 1209,
+        "scope": "full original libtest invocation, including its ordinary child harness entries; not a substitute for the 52 meaningful required controls"
+      },
+      "gate": {
+        "archive_member": "validation/rog-composed-7586-native-suite/pq-full-and-required.gate.json",
+        "bytes": 4268,
+        "sha256": "ab635950309c14f2ff569619f6ccc1f6fe0ec5b6f079992855e4af2e95188470"
+      },
+      "label": "pq-full-and-required",
+      "observed_as_reported": {
+        "confirmed_named_execution_count": 52,
+        "dispatched_selector_count": 52,
+        "passed_selector_count": 52
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-7586-native-suite/pq-full-and-required/summary.json",
+        "bytes": 381898,
+        "sha256": "66a567727e073bec9f9cf066098d6a861b66574845504aa34bf4d33e48399717"
+      }
+    },
+    {
+      "child_passed_as_reported": true,
+      "collector_errors_as_reported": [],
+      "driver_native_exit": 0,
+      "finished_utc": "2026-11-06T09:48:01.056568+00:00",
+      "gate": {
+        "archive_member": "validation/rog-composed-7586-native-suite/cell-controls.gate.json",
+        "bytes": 3425,
+        "sha256": "4cf9596c16a43cf9e1e259736b790f5852afc5f791c9c9dc587019a24882c1fe"
+      },
+      "label": "cell-controls",
+      "observed_as_reported": {
+        "executed_component_commands": 3,
+        "native_failed_component_commands": 0,
+        "passed_component_commands": 3
+      },
+      "passed_as_reported": true,
+      "summary": {
+        "archive_member": "validation/rog-composed-7586-native-suite/cell-controls/summary.json",
+        "bytes": 88538,
+        "sha256": "dc12e9dd980143c37444c5dbfff01490474444352e21c242fb4af15a4091cb7a"
+      }
+    },
+    {
+      "driver_native_exit": 0,
+      "gate": {
+        "archive_member": "validation/rog-composed-7586-native-suite/strict-workspace-clippy.gate.json",
+        "bytes": 6441,
+        "sha256": "fcb73096d36c14fdb7f98394c725b67c533ede0214c64344d9e8d347a4d2b5d1"
+      },
+      "label": "strict-workspace-clippy",
+      "native_exit_as_reported": 0,
+      "passed_as_reported": true,
+      "receipt": {
+        "archive_member": "validation/rog-composed-7586-native-suite/clippy/strict-workspace-clippy.json",
+        "bytes": 2585,
+        "sha256": "db042af0f6bb242c3df774e892e91c304c97949fdbd5e2ba2020bdc9fd854db4"
+      },
+      "status_as_reported": "command_succeeded"
+    }
+  ],
+  "provider_receipt": {
+    "archive_member": "validation/rog-provider/pq-provider/provider.json",
+    "bytes": 3049,
+    "sha256": "8f38de77d89c99060882aaa73551c71faceacd5bba4375887c311131dbd9be73"
+  },
+  "provider_status_as_reported": "PREPARED_AND_SMOKE_VERIFIED",
+  "sampler": {
+    "argv_as_reported": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--example",
+      "pon_w1_preparation_strategy_v4",
+      "--",
+      "--test-threads=1"
+    ],
+    "captures": [
+      {
+        "capture_errors_as_reported": {},
+        "label": "recorder_execution",
+        "log_exit_as_reported": 0,
+        "native_exit_as_reported": 0,
+        "recorded": true,
+        "result": {
+          "archive_member": "validation/rog-composed-7586-sampler/recorder/v4-sampler-release.result.json",
+          "bytes": 2680,
+          "sha256": "69881c9783b96f64ebf645af88881db637562b8a69749f79939032b4897fff5c"
+        },
+        "spawn_error_as_reported": null
+      },
+      {
+        "capture_errors_as_reported": {},
+        "label": "registry",
+        "log_exit_as_reported": 0,
+        "native_exit_as_reported": 0,
+        "recorded": true,
+        "result": {
+          "archive_member": "validation/rog-composed-7586-sampler/registry.result.json",
+          "bytes": 1434,
+          "sha256": "4acb4a4b1f9df80caaaf4c188c459b83856ccb8329d966af0cb6e040a979e67e"
+        },
+        "spawn_error_as_reported": null
+      }
+    ],
+    "elf_identity_as_reported": {
+      "identity_after_registry": {
+        "fingerprint": [
+          66306,
+          45748326,
+          33216,
+          1347624,
+          1793958937391321725,
+          1793958937391321725
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+        "sha256": "daedc548aaca43422925b00ccd093ed011c4e1700ed441a70d99a09fe5935671",
+        "size": 1347624
+      },
+      "identity_after_source_check": {
+        "fingerprint": [
+          66306,
+          45748326,
+          33216,
+          1347624,
+          1793958937391321725,
+          1793958937391321725
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+        "sha256": "daedc548aaca43422925b00ccd093ed011c4e1700ed441a70d99a09fe5935671",
+        "size": 1347624
+      },
+      "identity_before_registry": {
+        "fingerprint": [
+          66306,
+          45748326,
+          33216,
+          1347624,
+          1793958937391321725,
+          1793958937391321725
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+        "sha256": "daedc548aaca43422925b00ccd093ed011c4e1700ed441a70d99a09fe5935671",
+        "size": 1347624
+      },
+      "scope": "post-original-command byte identity of Cargo-announced executable; no pre-execution loader attestation",
+      "unchanged_across_registry": true
+    },
+    "errors_as_reported": [],
+    "final_file_receipt": {
+      "archive_member": "validation/rog-composed-7586-sampler/receipt-sha256.json",
+      "bytes": 14105,
+      "sha256": "dc9b7dc773371792f196147f9b5d8e716852652ed85b2075957d576d7fe0be05"
+    },
+    "finished_utc": "2026-11-06T09:55:38.761168+00:00",
+    "harness_as_reported": {
+      "announced_elf_paths": [
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd"
+      ],
+      "announcements": [
+        "unittests examples/pon_w1_preparation_strategy_v4.rs (/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd)"
+      ],
+      "counts": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 9
+      },
+      "named_results": [
+        [
+          "tests::all_six_structures_match_full_limb_and_independent_scalar_replay",
+          "ok"
+        ],
+        [
+          "tests::both_preparations_reject_noncanonical_material_even_in_zero_products",
+          "ok"
+        ],
+        [
+          "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+          "ok"
+        ],
+        [
+          "tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance",
+          "ok"
+        ],
+        [
+          "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+          "ok"
+        ],
+        [
+          "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+          "ok"
+        ],
+        [
+          "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+          "ok"
+        ],
+        [
+          "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+          "ok"
+        ],
+        [
+          "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values",
+          "ok"
+        ]
+      ],
+      "passed": true,
+      "running": [
+        9
+      ],
+      "scope": "one actual Cargo example harness; nine exact names, no ignored/filtered credit or library-count substitution",
+      "summaries": [
+        [
+          "ok",
+          "9",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0.04"
+        ]
+      ]
+    },
+    "native": {
+      "log": {
+        "archive_member": "validation/rog-composed-7586-sampler/native/v4-sampler-release.log",
+        "bytes": 5245,
+        "sha256": "db88268a1ea4e5b16ef5a6ffb27c695db904fe6dac89ab3c62e50b0c0609890f"
+      },
+      "native_exit_as_reported": 0,
+      "passed_as_reported": true,
+      "receipt": {
+        "archive_member": "validation/rog-composed-7586-sampler/native/v4-sampler-release.json",
+        "bytes": 2618,
+        "sha256": "dc89ca4b6df571cc4c8dbad19fb0642c5e3e7010a033b6e30aec858d4ca1bfd6"
+      },
+      "status_as_reported": "command_succeeded"
+    },
+    "no_counts_combined_with_node_library_or_four_gate_results": true,
+    "original_contract_as_reported": {
+      "archive": {
+        "fingerprint": [
+          66306,
+          45744457,
+          33152,
+          28640,
+          1793957123153353958,
+          1793957123153353958
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/evidence/pon-six-workpackages-20261106/composition/native-validation.tar.gz",
+        "sha256": "e1428cef1eb47be13788b7c8c24404033f37e8858695198006b13a3fc1736caf",
+        "size": 28640
+      },
+      "names": [
+        "tests::all_six_structures_match_full_limb_and_independent_scalar_replay",
+        "tests::both_preparations_reject_noncanonical_material_even_in_zero_products",
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance",
+        "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "original_argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--example",
+        "pon_w1_preparation_strategy_v4",
+        "--",
+        "--test-threads=1"
+      ],
+      "original_measured_source": {
+        "base": null,
+        "candidate": "361825dd1f924770562705d7a68c78170f0375c3",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "361825dd1f924770562705d7a68c78170f0375c3",
+        "tested_tree": "92f8fbdc5b722498ede9dd85040d4716aa6a182e",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1026202569,
+        "tracked_entries": 10646,
+        "tracked_worktree_verified": true
+      },
+      "scope": "retained original recipe only; its execution is not credited to the new source"
+    },
+    "original_file_identities_verified": 38,
+    "passed_as_reported": true,
+    "registry_as_reported": {
+      "execution": {
+        "argv": [
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+          "--list"
+        ],
+        "capture_errors": {},
+        "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/registry.command.json",
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/trillionnium/crates/trnm-pon-node",
+        "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/registry.streams.jsonl",
+        "finished_utc": "2026-11-06T09:55:38.096687+00:00",
+        "log_exit": 0,
+        "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/registry.log",
+        "native_argv": [
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/examples/pon_w1_preparation_strategy_v4-f420cf2c320bcbbd",
+          "--list"
+        ],
+        "native_exit": 0,
+        "observed_stream_bytes": {
+          "log": 775,
+          "stderr": 0,
+          "stdout": 775
+        },
+        "pid": 856572,
+        "resources_path": null,
+        "spawn_error": null,
+        "started_utc": "2026-11-06T09:55:38.095819+00:00",
+        "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/registry.stderr",
+        "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/registry.stdout",
+        "wall_ns": 867337
+      },
+      "names": [
+        "tests::all_six_structures_match_full_limb_and_independent_scalar_replay",
+        "tests::both_preparations_reject_noncanonical_material_even_in_zero_products",
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::external_raw_material_is_exact_bounded_and_never_promoted_to_provenance",
+        "tests::factorial_search_keeps_every_miss_and_identical_complete_winners",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "passed": true
+    },
+    "scope_verbatim": "original nine sampler controls under release/default features; no SQLite boundary, production throughput or service-SLO qualification",
+    "sqlite_as_reported": {
+      "after": {
+        "candidate_outputs": [
+          {
+            "contains_unqualified": false,
+            "declares_expected_amalgamation": true,
+            "declares_expected_fence": true,
+            "declares_layout_witness": true,
+            "existed_before_original_command": false,
+            "output": {
+              "copy": {
+                "fingerprint": [
+                  66306,
+                  45748324,
+                  33152,
+                  5118,
+                  1793958938097645606,
+                  1793958938097645606
+                ],
+                "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/sqlite/after/00-output.txt",
+                "sha256": "a981cb53d0d72c6e54cb7bcc5c7ab46b89acfac0ffbcedc8b5badc1f7c97d4aa",
+                "size": 5118
+              },
+              "input": {
+                "fingerprint": [
+                  66306,
+                  45748246,
+                  33152,
+                  5118,
+                  1793958869178289076,
+                  1793958869744289509
+                ],
+                "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/output",
+                "sha256": "a981cb53d0d72c6e54cb7bcc5c7ab46b89acfac0ffbcedc8b5badc1f7c97d4aa",
+                "size": 5118
+              }
+            },
+            "output_identity_changed_during_command": true,
+            "output_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/output",
+            "selected_for_actual_elf_verified": false,
+            "symbols": {
+              "trnm-witness-symbols.stderr": {
+                "copy": {
+                  "fingerprint": [
+                    66306,
+                    45748328,
+                    33152,
+                    0,
+                    1793958938097764339,
+                    1793958938097764339
+                  ],
+                  "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/sqlite/after/00-trnm-witness-symbols.stderr",
+                  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "size": 0
+                },
+                "input": {
+                  "fingerprint": [
+                    66306,
+                    45748245,
+                    33152,
+                    0,
+                    1793958869743289508,
+                    1793958869743289508
+                  ],
+                  "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out/trnm-witness-symbols.stderr",
+                  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "size": 0
+                }
+              },
+              "trnm-witness-symbols.stdout": {
+                "copy": {
+                  "fingerprint": [
+                    66306,
+                    45748325,
+                    33152,
+                    220,
+                    1793958938097764339,
+                    1793958938097764339
+                  ],
+                  "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-7586-sampler/sqlite/after/00-trnm-witness-symbols.stdout",
+                  "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b",
+                  "size": 220
+                },
+                "input": {
+                  "fingerprint": [
+                    66306,
+                    45748244,
+                    33152,
+                    220,
+                    1793958869743289508,
+                    1793958869743289508
+                  ],
+                  "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out/trnm-witness-symbols.stdout",
+                  "sha256": "37f7d8a71c793ab01ae5dd4a1308e269c5644c0e6501b498c5df9748c63aed8b",
+                  "size": 220
+                }
+              }
+            },
+            "witness_archive_identity": {
+              "fingerprint": [
+                66306,
+                45748243,
+                33152,
+                6336,
+                1793958869597289396,
+                1793958869597289396
+              ],
+              "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859/release/build/trnm-sqlite-io-boundary-cd854cfa907b39ea/out/libtrnm_sqlite_layout_witness.a",
+              "sha256": "1326940a15e14c0f49193bc2695c49d72cfda9afb9c0827e57c63d308f524843",
+              "size": 6336
+            }
+          }
+        ],
+        "inspection_errors": [],
+        "scope": "read-only release-directory observations; no cache cleanup, rebuild or selected-unit qualification inferred"
+      },
+      "before": {
+        "candidate_outputs": [],
+        "inspection_errors": [],
+        "scope": "read-only release-directory observations; no cache cleanup, rebuild or selected-unit qualification inferred"
+      },
+      "current_cargo_unqualified_warning_lines": [],
+      "explanation": "The original plain Cargo command does not bind a selected SQLite build-script OUT_DIR to this ELF. Fresh or cached candidate outputs and absence of warnings are not qualification. Sampler tests grant none.",
+      "qualified_by_this_run": false,
+      "selected_unit_binding_verified": false,
+      "status": "UNKNOWN_SELECTED_RELEASE_UNIT_BINDING"
+    },
+    "sqlite_qualification_granted_by_packaging": false,
+    "summary": {
+      "archive_member": "validation/rog-composed-7586-sampler/summary.json",
+      "bytes": 29544,
+      "sha256": "3db483cb62cb7dfa1974901c133f423f8a352dc0d385d3f2e296674ab7c4ab48"
+    }
+  },
+  "schema": "trnm-composed-rog-evidence-index-v1",
+  "scope": "Lossless evidence packaging only. Four-gate and independent release/default sampler failures remain their original results; SQLite UNKNOWN/UNQUALIFIED remains unqualified by this run. Earlier 2859 build failures stay in their separate archive. No native execution, build, source modification, network call, or new performance acceptance.",
+  "suite": {
+    "archive_member": "validation/rog-composed-7586-native-suite/summary.json",
+    "bytes": 28091,
+    "sha256": "c2eed33c0b743a243539aab5f3f83b5c1a596f690c99b8e95cdc8448c90cd6d0"
+  },
+  "suite_errors_as_reported": [],
+  "suite_passed_as_reported": true,
+  "suite_scope_verbatim": "80 exact semantic controls; full Node plus original PQ52; original Cell/M12 selections; strict workspace Clippy. Not the complete workspace native test suite, business SLO, public throughput or production qualification."
+}

@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-base-sync-independent-review-message-record-v1",
+  "record_kind": "packaging-time transcription of actual collaboration messages",
+  "record_created_for": "throughput-final-evidence-tree assembly on 2026-11-06",
+  "reviewer": "/root/ci_acceptance",
+  "recipient": "/root/storage_hotpath",
+  "review_scope": "read-only independent parent composition and source-authority review",
+  "parents": [
+    "1986fa080b69bbab3a44f270ab8477adc5a01ea4",
+    "1f723bba961ec5f8d7e25e7b33db222dac7ef50c"
+  ],
+  "reviewed_composed_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "subsequently_published_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "original_review_conclusion_message_verbatim": "独立 merge authority 审查通过：582实际pins、501 required精确并集，非集合字段四方同值；inventory1268精确并集且每一label/include绑定与唯一性通过。checker/inventory/plan对两父均仅增无删；唯一4个合成文件就是这3+corpus，其余运行时代码精确取各对应父源。Workspace80/PQ52/F0/recent-batch/CI105/requiredmanifest blob均保留1986。已告诉root可commit/publish，无源写入/测试执行。",
+  "packaging_time_existence_check_message_verbatim": "确认：我对本次 1986 + 1f723 → 合成 tree ce074eb1 / 发布285982 的独立审查只保留在会话里的实际只读工具 stdout 与 collaboration messages，没有单独落盘文件。请不要将 ci-validation/merge-semantic-review.json、merge-corpus-review.json 归到本次；它们确实属于较早 b173 + cad4 的3e676合成审查。本次独立核对的结论已发root，但不存在可逐字节加入归档的独立review文件；不必为此新造历史记录。",
+  "limitations": [
+    "This file was created during final packaging, not at the original review time.",
+    "It records the actual reviewer messages; it does not reconstruct or claim to preserve historical tool stdout.",
+    "No standalone contemporaneous review file exists for this composition.",
+    "The earlier b173+cad4 review files remain in their own development-history scope.",
+    "No source review, native test, build, or network API was rerun to create this transcription."
+  ]
+}

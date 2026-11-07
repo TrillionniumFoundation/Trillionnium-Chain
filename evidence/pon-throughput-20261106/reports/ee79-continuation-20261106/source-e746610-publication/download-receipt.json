@@ -1,0 +1,454 @@
+{
+  "complete_stderr": true,
+  "complete_stdout": true,
+  "files": [
+    {
+      "bytes": 15728,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-ledger.jsonl",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/publication-ledger.jsonl",
+      "remote_version": "66306:47842229:15728:1793984935652559436:1793984935652559436",
+      "sha256": "4676c3199fd459533993e10388d1f4ac302686f0e0c19cad2593d0c27a140115"
+    },
+    {
+      "bytes": 791,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-result.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/publication-result.json",
+      "remote_version": "66306:47842286:791:1793984935651559447:1793984935651559447",
+      "sha256": "2974f1beea302afc04df8f8692e953da3fd4fe12cc00541acdc040a9ca9157fb"
+    },
+    {
+      "bytes": 423,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/source-before-516382.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/source-before-516382.json",
+      "remote_version": "66306:47842239:423:1793984919495060282:1793984919495060282",
+      "sha256": "7a7ead6a6515209452b7bcfd2ede4f29a7e03413cc16cf6a2072e441849671a3"
+    },
+    {
+      "bytes": 423,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/source-e746.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/source-e746.json",
+      "remote_version": "66306:47842270:423:1793984923419873520:1793984923419873520",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 54,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-branch.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-branch.log",
+      "remote_version": "66306:47842230:54:1793984918766759621:1793984918766759621",
+      "sha256": "6da7278ab9405a87b2a938fcb87fb26103662e4a401a37e52c0752778fda4e11"
+    },
+    {
+      "bytes": 313,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-branch.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-branch.json",
+      "remote_version": "66306:47842231:313:1793984918768954934:1793984918768954934",
+      "sha256": "9a1923f7339f8c12b3f1ca7aca734a326f0f1fce78c01a5c77fbc9008b4c92fc"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-head.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-head.log",
+      "remote_version": "66306:47842232:41:1793984918769759585:1793984918769759585",
+      "sha256": "85ce20c7c9615c8375d46de3e84e1f1bfcdd2cb1493f3d5d7a97ad95714c1052"
+    },
+    {
+      "bytes": 293,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-head.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-head.json",
+      "remote_version": "66306:47842233:293:1793984918772177660:1793984918772177660",
+      "sha256": "7da0a4a2f0e912f4229e118c85559b5a45930201bdc2ec53b4acaacbe3835f2a"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-status.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-status.log",
+      "remote_version": "66306:47842234:0:1793984918772177660:1793984918772177660",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 330,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-status.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-status.json",
+      "remote_version": "66306:47842235:330:1793984918789587208:1793984918789587208",
+      "sha256": "e08506d1e9a0c14ec58400e5e4a1213b609e3955cb26774d9fa5b33723c5e44a"
+    },
+    {
+      "bytes": 173,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-preflight.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-preflight.log",
+      "remote_version": "66306:47842236:173:1793984918810759097:1793984918810759097",
+      "sha256": "ef0f0b1ad170199289e13253d578881ff6e87707c21f832137ea09280aad3d5e"
+    },
+    {
+      "bytes": 307,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-preflight.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-preflight.json",
+      "remote_version": "66306:47842237:307:1793984918823190266:1793984918823190266",
+      "sha256": "bda907db974f2806494f0e680cc2b45c7cc3333743606b3d27c2b564c105d85f"
+    },
+    {
+      "bytes": 423,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-source.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-source.log",
+      "remote_version": "66306:47842238:423:1793984919495060282:1793984919495060282",
+      "sha256": "7a7ead6a6515209452b7bcfd2ede4f29a7e03413cc16cf6a2072e441849671a3"
+    },
+    {
+      "bytes": 549,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/initial-source.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/initial-source.json",
+      "remote_version": "66306:47842240:549:1793984919545121515:1793984919545121515",
+      "sha256": "c9950f0a4d6fd0dcbc314842447062e931572b25525eedb6563d0a96d6dea385"
+    },
+    {
+      "bytes": 95,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-before-local-update.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-before-local-update.log",
+      "remote_version": "66306:47842241:95:1793984922526714870:1793984922526714870",
+      "sha256": "4be8e204180de55aacf32d3379adeda8e913b9c16881a2a18ba27f2c6fe4731d"
+    },
+    {
+      "bytes": 389,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-before-local-update.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-before-local-update.json",
+      "remote_version": "66306:47842242:389:1793984922541871186:1793984922541871186",
+      "sha256": "efd925ea424604f099f13bb598b8519ffed60c29e5774a349c30016ddc19328e"
+    },
+    {
+      "bytes": 273,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-verify.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-verify.log",
+      "remote_version": "66306:47842243:273:1793984922546865414:1793984922546865414",
+      "sha256": "e0a13cc490b8cc9174001bc32b93a37d0f68c82d71e2e158f08536d91004474e"
+    },
+    {
+      "bytes": 376,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-verify.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-verify.json",
+      "remote_version": "66306:47842244:376:1793984922547714620:1793984922547714620",
+      "sha256": "45bcbf490c5d58a9d94fbfc7d1db43b6103cb4ab3d5e6576318ed39e15c8bdcf"
+    },
+    {
+      "bytes": 46,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-heads.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-heads.log",
+      "remote_version": "66306:47842245:46:1793984922549869463:1793984922549869463",
+      "sha256": "9a5d983ab34b3ddbf7235573379bbb2d71c4e5c02d3843597455a3f90528a267"
+    },
+    {
+      "bytes": 378,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-heads.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-heads.json",
+      "remote_version": "66306:47842246:378:1793984922551578950:1793984922551578950",
+      "sha256": "b668f30db0701b2b5e58402514fba684fca63d201934b38c72384143917f2637"
+    },
+    {
+      "bytes": 128,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-fetch.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-fetch.log",
+      "remote_version": "66306:47842247:128:1793984922585714168:1793984922585714168",
+      "sha256": "c0bd3f6f5f9a1216f31bec38fb6c9dfeb2681d9e96133fbc6c8f412782963fee"
+    },
+    {
+      "bytes": 420,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-fetch.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/bundle-fetch.json",
+      "remote_version": "66306:47842248:420:1793984922618087258:1793984922618087258",
+      "sha256": "eec2cb32cd3579ae9987ac3cf692ec888eb100f666b1b288f88644cf0b1da9f2"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/fetched-head.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/fetched-head.log",
+      "remote_version": "66306:47842249:41:1793984922618713776:1793984922618713776",
+      "sha256": "a67e95f123e3b6a24b45370e12e9a037ffb63b6571ba3ef41daf51775a7b5c69"
+    },
+    {
+      "bytes": 299,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/fetched-head.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/fetched-head.json",
+      "remote_version": "66306:47842250:299:1793984922621579617:1793984922621579617",
+      "sha256": "92cd340c6695477effcb8e034681bdf8d73c4ac091cdbecd87a0b27ef0202d11"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-head.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-head.log",
+      "remote_version": "66306:47842251:41:1793984922623094120:1793984922623094120",
+      "sha256": "85ce20c7c9615c8375d46de3e84e1f1bfcdd2cb1493f3d5d7a97ad95714c1052"
+    },
+    {
+      "bytes": 295,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-head.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-head.json",
+      "remote_version": "66306:47842252:295:1793984922624835886:1793984922624835886",
+      "sha256": "7659285906831cf089dab9f66b73eb73e7629105a2bc506b16521f6fbbc0fbec"
+    },
+    {
+      "bytes": 54,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-branch.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-branch.log",
+      "remote_version": "66306:47842253:54:1793984922625713693:1793984922625713693",
+      "sha256": "6da7278ab9405a87b2a938fcb87fb26103662e4a401a37e52c0752778fda4e11"
+    },
+    {
+      "bytes": 315,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-branch.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-branch.json",
+      "remote_version": "66306:47842254:315:1793984922628157146:1793984922628157146",
+      "sha256": "0190850cc5af1ec1a89589685671ed34d0652bad027dc255d1e524fe5e555030"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-status.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-status.log",
+      "remote_version": "66306:47842255:0:1793984922628157146:1793984922628157146",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 332,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/before-ff-status.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/before-ff-status.json",
+      "remote_version": "66306:47842256:332:1793984922645626996:1793984922645626996",
+      "sha256": "593d4fad7c13af4b3017cbaa200f38a8a32ffb97113e23ad33dca49fc07f64d4"
+    },
+    {
+      "bytes": 298,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/fast-forward.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/fast-forward.log",
+      "remote_version": "66306:47842257:298:1793984922659713289:1793984922659713289",
+      "sha256": "82781ce6c74c7c58ee30e79684001be6e4a3a50f5784d61ab5f57ccfb3189356"
+    },
+    {
+      "bytes": 343,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/fast-forward.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/fast-forward.json",
+      "remote_version": "66306:47842258:343:1793984922663186514:1793984922663186514",
+      "sha256": "005e2d9a0da1b445364ac250dce2d8933122da0b67dfc249b1202740bb4d565a"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-head.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-head.log",
+      "remote_version": "66306:47842259:41:1793984922663713241:1793984922663713241",
+      "sha256": "a67e95f123e3b6a24b45370e12e9a037ffb63b6571ba3ef41daf51775a7b5c69"
+    },
+    {
+      "bytes": 293,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-head.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-head.json",
+      "remote_version": "66306:47842260:293:1793984922666550213:1793984922666550213",
+      "sha256": "bcc4eef9056a4c8b462041e7e4c26936d37b183540987a5cd6f1921301a4dace"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-tree.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-tree.log",
+      "remote_version": "66306:47842261:41:1793984922668208524:1793984922668208524",
+      "sha256": "79325f05ce52d2ab8eb53af4245ce71fd8e77d67c6e34f9b93899a25f726ac3d"
+    },
+    {
+      "bytes": 300,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-tree.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-tree.json",
+      "remote_version": "66306:47842262:300:1793984922669785403:1793984922669785403",
+      "sha256": "450ba9b1ff0b91ffbe7008eb70a1f6901e5c6b3e286325e994c3893eaeefae16"
+    },
+    {
+      "bytes": 54,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-branch.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-branch.log",
+      "remote_version": "66306:47842263:54:1793984922671302971:1793984922671302971",
+      "sha256": "6da7278ab9405a87b2a938fcb87fb26103662e4a401a37e52c0752778fda4e11"
+    },
+    {
+      "bytes": 313,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-branch.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-branch.json",
+      "remote_version": "66306:47842264:313:1793984922673009742:1793984922673009742",
+      "sha256": "23e15269cca81201e6f39da1fbafba9957012b492a092f459f6628bec0a7f246"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-status.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-status.log",
+      "remote_version": "66306:47842265:0:1793984922673009742:1793984922673009742",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 330,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/checked-status.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/checked-status.json",
+      "remote_version": "66306:47842266:330:1793984922706479303:1793984922706479303",
+      "sha256": "ccbb96e50bbfdbffc88b6ad564cc1eb2d90e4b8353fccea74db3784a4c8fc149"
+    },
+    {
+      "bytes": 173,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-preflight.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-preflight.log",
+      "remote_version": "66306:47842267:173:1793984922727712480:1793984922727712480",
+      "sha256": "ef0f0b1ad170199289e13253d578881ff6e87707c21f832137ea09280aad3d5e"
+    },
+    {
+      "bytes": 305,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-preflight.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-preflight.json",
+      "remote_version": "66306:47842268:305:1793984922740128588:1793984922740128588",
+      "sha256": "58ef5858522fefefd09210131ec223d7ab43a08f7163b4434dc042cd6d1db55a"
+    },
+    {
+      "bytes": 423,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-source.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-source.log",
+      "remote_version": "66306:47842269:423:1793984923419873520:1793984923419873520",
+      "sha256": "e33f1f4d55ffeaf714ccda65526a218fbd5715a48e1b36efe4fe95bde6cba352"
+    },
+    {
+      "bytes": 538,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-source.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-source.json",
+      "remote_version": "66306:47842271:538:1793984923460247580:1793984923460247580",
+      "sha256": "d4ca119f486c378415ae4e7df877816d5b6830f21e990dbf5bf91cf4d33689e4"
+    },
+    {
+      "bytes": 95,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-immediately-before-push.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-immediately-before-push.log",
+      "remote_version": "66306:47842272:95:1793984926665665725:1793984926665665725",
+      "sha256": "4be8e204180de55aacf32d3379adeda8e913b9c16881a2a18ba27f2c6fe4731d"
+    },
+    {
+      "bytes": 393,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-immediately-before-push.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-immediately-before-push.json",
+      "remote_version": "66306:47842273:393:1793984926706665239:1793984926706665239",
+      "sha256": "baee8247fa7fa1e033bff64f1e34ccf84b433ecdc5996019815d5d20e70b3e08"
+    },
+    {
+      "bytes": 599,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/nonforce-push.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/nonforce-push.log",
+      "remote_version": "66306:47842274:599:1793984932651594865:1793984932651594865",
+      "sha256": "c0ef74f4ce909bba74f70b3b35dd4876bda05493aa88df2541f66a37a33f164b"
+    },
+    {
+      "bytes": 400,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/nonforce-push.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/nonforce-push.json",
+      "remote_version": "66306:47842275:400:1793984932676661008:1793984932676661008",
+      "sha256": "9024720d857234eeef8739853d01fbf23daca06bfc2d03fedc47a8745a0c2ef9"
+    },
+    {
+      "bytes": 95,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-after-push.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-after-push.log",
+      "remote_version": "66306:47842276:95:1793984935613559896:1793984935613559896",
+      "sha256": "31b44b94df378f70e5a3664564267eaa47203a60ab01acafaa7f8debb3c2bb37"
+    },
+    {
+      "bytes": 380,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/remote-after-push.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/remote-after-push.json",
+      "remote_version": "66306:47842277:380:1793984935620052505:1793984935620052505",
+      "sha256": "9f159a52c1b72933e7198938e93abc17fad6effde2783a1065e708fe64bdecff"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-head.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-head.log",
+      "remote_version": "66306:47842278:41:1793984935621559801:1793984935621559801",
+      "sha256": "a67e95f123e3b6a24b45370e12e9a037ffb63b6571ba3ef41daf51775a7b5c69"
+    },
+    {
+      "bytes": 291,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-head.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-head.json",
+      "remote_version": "66306:47842279:291:1793984935624131678:1793984935624131678",
+      "sha256": "6d8dfad733fd817513ff1955fb61915a5a3ac6408f741fdfe0e49652014566fe"
+    },
+    {
+      "bytes": 41,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-tree.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-tree.log",
+      "remote_version": "66306:47842280:41:1793984935625559754:1793984935625559754",
+      "sha256": "79325f05ce52d2ab8eb53af4245ce71fd8e77d67c6e34f9b93899a25f726ac3d"
+    },
+    {
+      "bytes": 298,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-tree.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-tree.json",
+      "remote_version": "66306:47842281:298:1793984935630000006:1793984935630000006",
+      "sha256": "60a8cb8c7e61982e93b50066f0d563805b11f067bdf3e0417027ce4fa7ad9bbb"
+    },
+    {
+      "bytes": 54,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-branch.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-branch.log",
+      "remote_version": "66306:47842282:54:1793984935630559695:1793984935630559695",
+      "sha256": "6da7278ab9405a87b2a938fcb87fb26103662e4a401a37e52c0752778fda4e11"
+    },
+    {
+      "bytes": 311,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-branch.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-branch.json",
+      "remote_version": "66306:47842283:311:1793984935633494770:1793984935633494770",
+      "sha256": "9ed7dc855e59a6f7e2ba84e95ea289a0484fef067fe3025caef1524560617123"
+    },
+    {
+      "bytes": 0,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-status.log",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-status.log",
+      "remote_version": "66306:47842284:0:1793984935633559660:1793984935633559660",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 328,
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/final-status.json",
+      "remote_path": "/home/qian-qi/work/chain-throughput-20261106-ee79/raw/e746-existing-repo-publish-v1/final-status.json",
+      "remote_version": "66306:47842285:328:1793984935651183420:1793984935651183420",
+      "sha256": "3e8153004ac124fabedba1cbf9b31e493bcb6374e0c0274bf431c03b11a63b29"
+    },
+    {
+      "bytes": 11519,
+      "origin": "original MCP shell_start result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-job-launch.json",
+      "sha256": "709d795da41007c1a1e5799aba966b287b0d299efd01ca7db11273ce1d9d166a"
+    },
+    {
+      "bytes": 733,
+      "origin": "original authoritative terminal MCP process_status result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-job-status.json",
+      "sha256": "a2e546f85f7c1a6687a6043efe14bfbf5cf790fdef40bc2426d70613a844798f"
+    },
+    {
+      "bytes": 11233,
+      "origin": "original terminal process_read stdout bytes",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-job.stdout",
+      "sha256": "dc75aad6a77ce1dbf4977200149b7d1133fc958ea7ae0bb8ee593128543fe10b"
+    },
+    {
+      "bytes": 0,
+      "origin": "original terminal process_read stderr bytes",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8673,
+      "origin": "exact submitted guarded publication helper",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/publication-script.py",
+      "sha256": "658f0d835da6beed298cb7508fa9606ab0af0285224d794a1b0da42f38667d14"
+    },
+    {
+      "bytes": 187,
+      "origin": "original create-only bundle upload result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/rog-e746-publication/bundle-upload-receipt.json",
+      "sha256": "eac3666121558f7017d4796a224b5afdaef494f6b4732b0bb5817414337d91da"
+    }
+  ],
+  "host": "rog",
+  "job_id": "1a1b1d56ce8-fc05-7b0d",
+  "schema": "trnm-original-publication-download-v1",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+  "verified_original_remote_files": 58
+}

@@ -7644,6 +7644,38 @@ locked graphs, formatting, strict Clippy, original performance/business gates,
 independent custody/rollback/WAN evidence and quantum work/proof qualification
 require their own unchanged acceptance. There is no production activation.
 
+### 2026-11-06 throughput continuation on composed performance and PQ sources
+
+Continue the fixed #688 performance source
+`b173c1f52d927522af67df30dd08ecfb2e3a1bb0` with the fixed #723 PQ source
+`cad4c18fe146b7d742ac7fa8872044cd4136c22b`, retaining both histories.
+The [throughput continuation record](../../evidence/pon-throughput-20261106/README.md)
+distinguishes original failures, candidate safety controls, finite component
+measurements and new exact-source CI acceptance. No production TPS is established.
+
+Correct the original Workspace selector's stale 23 count to its actual 25
+controls and retain the composed 52-control PQ roster. Add actual workflow-builder
+negative controls, twelve separate history-reuse controls and eight Host
+directory/limit controls. Route production runtime/configuration/toolchain edits
+through the original F0 diagnostic without changing its six scheduled slots,
+42 packet exposures, fixed resource parent, budgets or cleanup requirements.
+
+Reduce repeated completed-history work only after the original writer's last
+write and inside its live zero-new-write transaction, binding the exact immutable
+Settings and starting Record. Retain full verification before sealing, fresh
+starting-row validation, cancellation, mutation/ABA fences and all cold paths.
+Keep only the original Host parent directory FD, freshly open/read/close all five
+limits at every existing checkpoint, and bind those reads with absolute directory
+identity/permission checks. This is no cached resource verdict or relaxed Host
+budget. Validate each change before treating it as a retained improvement.
+
+Use the pinned toolchain/provider and qualified SQLite witness. Retain failed
+build-environment attempts as unqualified, run real registered controls and the
+predeclared finite component comparisons, and preserve original campaign/F0
+business denominators. Whole-state scans, recovery, PQ cost, malicious-load
+fairness, data-plane isolation and useful-work economics remain separate work;
+no component result qualifies public throughput or production activation.
+
 
 ### 2026-11-06 fixed owner composition and TLS local certificate admission
 
@@ -7845,6 +7877,76 @@ acceptance. The separate Hepta V13 publication is
 `fa1c0592e7d1dea60cd8d8459a4e2b18fdfbab61`. All six user workpackages remain
 HOLD / NO-GO; original failures, full-Cell and economic/adoption gates remain.
 
+
+### 2026-11-06 throughput continuation: final source and unchanged service vetoes
+
+The throughput continuation in [draft PR #736](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/736)
+retains both concurrent integration histories. Its final implementation is
+`7586d3e209b38246402e34cf73a27aa9b907bc9c`, tree
+`fc0e51b1235470b972de41f2d677f6d5948f4868`, with ordered parents
+`285982d78a4f62a064841cb0f106d18c865e19c5` and
+`56897f125df27994efa1dda935f2c62eceb36de9`.
+The [source-specific execution record](../../evidence/pon-throughput-20261106/README.md)
+keeps the original b173 and 9e50 failures, the corrected 1986 test, completed
+285 CI/native observations and the separately executed 7586 source. A later
+evidence-only commit does not change those measured identities.
+
+The Workspace and PQ roster errors are repaired without dropping required
+controls. The Workspace selector retains the original 25 post-write controls,
+adds 12 history and eight Host controls, and executes 80 selected controls;
+PQ retains all 52 required controls. Actual workflow-builder fixtures reject
+stale, missing, duplicate, extra and empty registries. The old b173 registry
+remains unchanged; the current-builder compatibility fixture explicitly uses
+20 synthetic Rust declarations and grants no native-execution credit.
+
+AuthenticatedV1 now reuses only a fully completed history suffix for four
+nominated records inside the original no-new-write writer scope. Connection,
+schema, immutable settings and record identity remain bound; errors and
+cancellation seal no receipt, and writes disable reuse or refuse publication.
+Each new scope still pays its first full history walk, while ordinary queries,
+cold recovery and full-state/non-account work retain their existing costs.
+The Host change holds an identity-checked parent directory and freshly opens
+and reads all five limits on every check, with absolute identity/permission
+fences before and after. It caches neither limit bytes nor a successful verdict.
+
+Fresh checks on exact committed 7586 pass 334 Python controls across 11 suites,
+the 593-pin/512-path corpus and 1,271-entry inventory, formatting, Markdown and
+all three offline locked Cargo graphs. Native execution passes 80 selected
+controls, the complete Node library with **1,177 passed / 0 failed / 32 ignored**,
+52 required PQ controls, 387 original M09 all-target controls, ten M09 doc
+controls and 35 selected M12 budget controls (11 filtered), plus strict workspace,
+all-target, all-feature Clippy with `-D warnings`. The independent original
+release/default sampler passes all nine named controls; its SQLite selected
+release-unit binding remains **UNKNOWN**, and that run grants no SQLite
+boundary qualification. Counts from overlapping commands are not summed.
+
+The latest completed original CI is bound to 285: all four Workspace matrices
+execute 80/80 controls, all 16 PQ jobs pass, and all four large-state CPU
+matrices pass. The three original campaigns still fail: first no-attack
+confirmations take 21.205759120 / 21.203138983 / 21.305650019 seconds and neither
+attack phase confirms a transaction. Original F0 still completes **0/6 planned
+slots within four seconds**; its only baseline confirmation is late at
+24.901798841 seconds from the scheduled slot. The original quarter-CPU,
+2-GiB, no-swap and 256-PID public envelope and all failure denominators remain.
+
+The single declared release/default-feature A/B/B/A experiment compares restored
+baseline `a93f906d` (tree `51fd2b87`) with candidate `9e50ca8e`. It retains all
+four original observations, with two samples per arm. Mean legal-call CPU is
+2.578% higher and mean refusal
+CPU is 1.918% lower in the candidate; this demonstrates no end-to-end gain or
+stable causal regression. The temporary-file Host comparison's approximately
+1.015% CPU reduction does not qualify real cgroup kernfs or the original F0.
+Interrupted, cancelled, failed and unknown attempts are preserved with their
+original source, profile, command and storage observations.
+
+**Production TPS remains unestablished; performance and the six workpackages
+remain HOLD / NO-GO.** Continue carrying existing Growth/COW/witness work into
+ordinary entry, query, recovery and PQ configuration; prepare stateless work
+before deterministic state commit; isolate model payload resources from
+consensus control; measure honest completion under hostile/cold/recovery load;
+and report confirmation TPS, useful-work rate, Cell bandwidth, model-load
+latency and quality per actual cost separately. Component success does not
+close the original service, full-Cell, economic, task-supply or adoption gates.
 
 ### 2026-11-06 preserve the advancing integration target
 
@@ -8168,3 +8270,276 @@ fresh recovery anchors, custody/revocation, long WAN and malicious-cost
 qualification, PQ finality and quantum-work/DAA/fork economics remain open.
 PR #723 remains Draft. No protected-main merge, self-approval, force push,
 production activation or whole-chain PQ acceptance is performed.
+### 2026-11-06 shared-domain throughput continuation
+
+Compose throughput source `9eda0ada15be1702269e08e527917568c710f4d3` and
+PQ source `5bb29d6ae39fa0c71f9151f3dce31fa1a3ab1800` in the existing
+throughput candidate. The composition checkpoint is
+`e98c195396315c3eac247e3c7cba29d83e006f3b`; it preserves both parent histories,
+the original service failures, dynamic authority checks and the false production
+activation flags. Neither parent's earlier native results qualify this source.
+
+Continue the six requested priorities through the actual existing owners:
+
+1. Evaluate repeated parent projection work within one bounded SQLite statement.
+   The adjacent-row candidate initially appeared cheaper, but read a boundary
+   parent's packet outside the original scope. The corrected two-arm candidate
+   uses 5,012 versus the original 4,632 SQLite VM steps for the same 64-row
+   synthetic batch. Keep it test-only with differential and refusal controls;
+   retain the original runtime reader. No incremental-history performance gain
+   is established, and no cross-transaction validation cache is authorized.
+2. Retain the existing 1/2/4/8-worker stateless preparation and canonical ordered
+   application. Revalidate reverse completion, dependent transactions, worker
+   cancellation/panic, actual durable rows and cold reopening on the composition.
+3. Order complete challenge and grant readiness across all listeners of one
+   shared CPU domain. Use the existing bounded connection owner and independent
+   read/mutation lanes, preserve their current budgets, and retire expired or
+   cancelled heads without returning somebody else's live permit. A caller key
+   does not create a fairness entitlement or an additional quota.
+4. Acquire each current Host counter through the held directory with bounded
+   reads and unchanged full checks before and after sampling. Boot, membership,
+   current limits, authorization and revocation verdicts remain freshly checked.
+5. Retain the existing independent Cell transfer/closure owner and its current
+   transfer, cancellation and resource-bound controls. Component tests cannot
+   establish shared CPU, disk or network isolation from public consensus load.
+6. Read real successful and failed campaign observations with explicit source
+   and epoch bindings. Preserve unknown process/thread, physical-network, disk,
+   recovery and model costs; do not sum nested phases or distinct measurement
+   windows into an invented total.
+
+The acceptance record must bind the new exact committed source, original Cargo
+profiles and lockfiles, actual named tests, source-integrity negative controls,
+formatting and strict Clippy. Preserve all intermediate failures. The original
+four-second/six-confirmation target, quarter-CPU/2-GiB/no-swap/256-PID envelope,
+hostile-worker count, F0 slots and business denominators remain unchanged.
+Whole-chain PQ, public throughput, data-plane isolation and model adoption stay
+unqualified until their own original end-to-end gates pass.
+
+The implementation checkpoint is `54ea3ef36671cd1d9a82b3fcd06c7ab26437598e`.
+The actual target then advanced to
+`513e92dfc27044ef3e0c9d62e7ae504fa5bea38f`; preserve that target's packaging
+metadata compatibility work and controls in the composition. Its older
+packaging observations retain their historical source, while the combined
+candidate retains the PQ branch's explicit minimum-version refusal boundary.
+The interrupted local compiler/Clippy attempts and environment restart are
+failed or incomplete development observations, not source-bound acceptance.
+
+Exact source `c4693ef2c748e96cec22dd819f6ca2e6e03c6f80` passes the complete
+workspace formatting and strict all-target/all-feature Clippy checks on an
+isolated Linux checkout, with unchanged before/after source receipts. Its CI
+contract and applicability controls expose stale inline source pins, a roster
+fixture missing the new controls, an ambiguous PQ heredoc selector, and a
+generated profile table still naming the old current revision. Correct those
+owners while retaining all original controls and exact rejection requirements.
+Preserve the initial disk-full runtime-material attempt (zero tests) and its
+separate 25-test successful rerun under the same original source. These
+development and source checks do not replace the new source's native execution
+or the original fixed-Host business acceptance.
+
+The subsequent exact `97aaf286ba01316a527ae07782120fd47724efc9` source
+passes 374 Python controls, including the full 37-test applicability suite,
+and its three locked graphs, workspace formatting and strict Clippy. An
+additional retained-fixture compatibility run still fails three of ten tests:
+the newly composed historical guard expects 97 authenticated tests where the
+current source has 109, and treats a historical 60-control registry as the new
+105-control selection. Preserve this failed execution. Correct the current
+guard to require all 97 retained tests and all 12 history controls, and keep
+historical executions separate from explicitly synthetic reader inputs.
+The ten original compatibility test methods remain; add a missing-group
+counterexample and bind this reader in the source corpus. The four separate
+recent-batch compatibility tests also pass on `97aaf`; none of these reader
+checks substitutes for the in-progress native execution or service gates.
+
+### 2026-11-06 completed-history start binding and preserved qualification failure
+
+The original `97aaf286ba01316a527ae07782120fd47724efc9` native qualification
+has now finished its build and selected controls. All three locked Cargo
+graphs, complete workspace formatting, strict all-target/all-feature Clippy
+and the original all-target/all-feature no-run build pass. The build retains
+all 26 workspace members and actual compiler artifacts for all 390 metadata
+targets. All 105 selected controls execute: **104 pass and one fails**.
+The full workspace runtime and documentation stages are not run on that
+failed candidate; their absence is not a passing observation.
+
+The failure is the test-only adjacent-history corruption oracle. In a
+64-header batch starting at height 70, height 6 is a boundary parent whose
+metadata is required but whose packet is outside the current batch. Both
+readers correctly accept damage limited to that boundary packet. Repair the
+oracle to compare both complete results with the healthy baseline, then
+require both readers to reject the same damage when a later batch starts at
+height 6. Keep all other corruption/type/error-order cases and the original
+runtime JOIN unchanged. Preserve the failed log; do not reclassify the old
+104/105 execution after correcting its assertion.
+
+The separate native cost control also confirms that this adjacent-row SQL
+candidate is not a runtime improvement: its 64-header fixture executes
+5,012 VM steps against the actual original reader's 4,629. The earlier
+4,632 reference was a Python prototype observation, not that native execution.
+Both statements run once; neither removes Host checkpoints or changes the
+linear complete-history cost. Keep this candidate test-only.
+
+Continue from published `af1441ef62e036eca60f4bd756b7a332b685f8c9` with a
+separate, history-only optimization. A successfully completed tip-to-genesis
+history receipt may prove the starting Record's already-verified block,
+parent and deltas only after a fresh complete Record load matches one of
+the same four nominations, the exact immutable Settings borrow and the
+original connection/writer/no-new-write/schema epoch. Account graph receipts
+cannot authorize this use. Preserve the final callback, second scope fence,
+full fallback after a write, consumed receipt and final transaction-replacement
+check. Defer an early probe error until after the original material and height
+checks, retaining its original source instead of losing it when the probe
+clears disabled receipts. State verification and cross-scope reuse are unchanged.
+
+Retain the twelve existing history controls and add nine named Record-binding
+controls. The current workflow must require all **21 history / 118 authenticated
+/ 114 selected workspace controls**; historical 97-test and 60-control logs
+remain historical, and synthetic roster fixtures grant no native credit.
+Measure both material statement execution and all SQLite progress ticks,
+including fresh schema/scope fences and finalization. Predicted SQL savings
+are not evidence until those controls execute on the new committed source.
+Ordinary admission can reuse an already-completed parent or genesis check;
+the final reorganization activation performs its first history check in a
+new scope and is not expected to gain from this change. No activation, Host
+checkpoint-count, confirmation-latency or production-throughput gain is claimed.
+
+An executor restart erased the local scratch workspace after `af1441` was
+published. Restore code from that exact remote commit and retain the original
+remote native/publication archives. The earlier local Python successes and
+failures are tool-observed historical results with a lost raw-log provenance
+gap; do not manufacture replacement receipts. The in-progress `af1441`
+applicability run is incomplete. Execute fresh source-bound checks on the
+new committed candidate and archive their actual outputs separately. The
+four-second/six-confirmation service target and every resource, authority,
+revocation, external-frontier and failure-denominator gate remain unchanged.
+
+### 2026-11-06 measured history reuse and actual PQ worker controls
+
+Exact `0bca28ebf59058b6aba9db5eb956c4479556e9ee` passes all 114 selected
+native controls, including the nine new history Record-binding cases and the
+repaired boundary-packet oracle. Its original P1 cost output measures all
+SQLite progress ticks, including scope fences: 1,882 to 1,818 for the empty
+genesis fixture and 1,990 to 1,818 for the height-three/two-delta fixture.
+These are reductions of repeated work within one qualified connection scope;
+they do not establish faster first-history traversal, first activation,
+Host checkpoint processing or complete business confirmation.
+
+That source also passes all three locked graphs, complete formatting, strict
+Clippy, the original full no-run build and documentation tests. Its first full
+workspace runtime attempt fails because a temporary journal is below the
+pre-existing group-writable `/home/qq/work` ancestor. Preserve the original
+failure. A separate full runtime retry uses a new private temporary directory
+directly below the existing safe home ancestor, with unchanged journal checks
+and unchanged permissions on existing directories. Its result must be read
+from its own terminal receipt; a running retry does not qualify the source.
+
+The ordinary PQ M06 owner already runs bounded signature preparation with
+1/2/4/8 workers and applies state serially. The retained one-transaction PQ
+control cannot demonstrate multiple actual workers. Add three M06 controls
+using eight real ML-DSA transactions, actual thread identities and worker
+lifetimes, forced reverse preparation completion, dependent funding/nonces,
+canonical error precedence, cancellation/panic/partial-spawn joins and the
+unchanged 64-verification limit. Add one Node control for canonical application,
+seven durable chain tables, actual PNQ2 socket submission and exact replay,
+and serial cold reopening. Socket accounting retains its existing meaning;
+these controls do not measure physical CPU overlap, change public operation
+permissions, or convert an acknowledgement into confirmation.
+
+Require all **118 selected workspace controls**, while retaining all **21
+history / 118 authenticated controls** and the original historical registries.
+The two new modules are test-only; production worker count, defaults, queue
+limits, profiles and budgets are unchanged. Bind the new modules, current
+roster readers and generated source inventory in the same source corpus.
+Formatting and review of a candidate are not native execution evidence.
+
+The independent Cell owner already transfers and verifies large material
+outside ordinary Node admission, activation and recovery. Remaining critical
+paths are explicit: native model/evidence operations still keep their small
+complete models in M06 state; the fixed W1 proof remains in the checked packet;
+and the explicitly selected operator-checkpoint profile reopens and hashes its
+checkpoint material, up to 512 MiB, before replay/open. That profile-specific
+cold check is not an ordinary per-admission fetch. Its current material,
+identity, authorization and resource checks cannot be discarded on an earlier
+constructor's success. Cell transfer quotas do not yet prove CPU, disk or
+network isolation under simultaneous public consensus load.
+
+### 2026-11-06 retain the full-runtime r14 fixture failure
+
+The independent full workspace retry on `0bca28ebf59058b6aba9db5eb956c4479556e9ee`
+passes the former temporary-directory ancestry boundary but still fails. Its
+Node library records **1,214 passed / one failed / 32 ignored**: the retained
+`paid_envelope_resource_profile_has_fresh_exact_signed_commitment` control
+still expects revision 14 even though the runtime and independent current
+profile vectors are revision 15. Preserve that original Cargo exit 101 and
+the complete failed denominator. It is not another environment failure.
+
+Independently recompute all eighteen r10-through-r15 policy vectors from the
+length-framed SHA-256 preimages. For development bits 16 / lifetime 2,000 ms,
+the r15 commitment is `465805ad4ba2703e39eaf3cb8ca64881f5fb5f200f56397121ec674608db2f7c`;
+the retired r14 value remains an explicit negative assertion. Correct only
+the stale test comment and current expected value, adding that negative
+assertion without changing the signed runtime domain, policy numbers or any
+prior rejection. The 118 selected / 118 authenticated / 21 history counts
+are unchanged. Exact `516382d87bbfdba85fbf34b6aa7b62edbc5759bb` already passes
+its own 389 Python controls and all 17 source/reader commands; the new fixture
+correction requires its own exact-source native and source qualification.
+
+### 2026-11-06 close component evidence and retain the fixed-Host runtime refusal
+
+Exact implementation/test source `e7466106a2a647c8032556273101440384d88b70`,
+tree `63e03dc848eeb92d747fe2c7926c2f758b277cef`, now passes all 389 Python
+controls across fourteen suites and all 17 original local commands. Its
+615-pin / 534-required-path corpus, source inventory and repository/Markdown
+checks pass. The three locked Cargo graphs, complete workspace formatting,
+strict all-target/all-feature Clippy and the full original no-run build also
+pass, retaining all 390 metadata targets in all 26 members.
+
+All **118 selected native controls execute and pass**, including the four
+new actual PQ worker/application controls. The separate original release
+authenticated prefix also records **118 passed / zero failed / zero ignored**,
+with its original summary and complete-roster guards. These overlapping
+selections are not 236 unique tests. Keep their distinct profiles, providers,
+announced ELF identities and unchanged before/after source receipts.
+
+The complete original workspace runtime command remains **failed**, Cargo
+exit 101. The Node library completes **1,216 passed / zero failed / 32 ignored**;
+the subsequent architecture delivery target records **12 passed / one failed**.
+All eighteen samples in that failed test report `PUBLIC_HOST_KERNEL_PARENT`
+when the independently syncing client imports public history. Cold reopening
+still matches, but the refused client import cannot establish equal native
+state or a passing replay invariant. Keep the test predicate and its failure.
+The separately executed original documentation command passes with exit zero.
+Do not credit later runtime targets after Cargo stopped.
+
+A separate readonly Host observation finds no fixed administrator parent on
+the development machine. The original current-ELF adapter and provisioning
+lease explicitly require the genuine hosted CI job, exact source and waiting
+native parent; a manually chosen environment marker cannot grant that
+authority. No Rust or oracle change is justified by this missing environment.
+Do not fabricate GitHub job identity, install a global parent on this machine,
+weaken the public importer, or turn a component success into whole-workspace
+acceptance. The real source-specific GitHub workflows are still pending or
+queued in the retained observation, so their fixed-Host result is unobserved.
+
+The external runtime wrapper did not export the original report-retention
+variable to this full-workspace command. Its temporary complete architecture
+report was deleted with the fixture; preserve the original bounded eighteen
+failure rows in stdout and the actual failed readback attempts. Do not
+reconstruct the missing report and label it original. Future original runtime
+executions must use their own fresh, recorded report destination; retention
+does not itself satisfy the fixed-Host authority contract.
+
+Both 0bca and e746610 history controls preserve the transaction trace while
+measuring all-SQL work of 1,882 to 1,818 and 1,990 to 1,818 in their two
+same-connection fixtures. The existing retained-delta release comparison
+keeps all 32 observations / 16 pairs / four fixtures, including slower narrow
+rows and faster wide rows. It is not an isolated measurement of this P1/PQ
+change. No first-history, full-State, activation, Host-checkpoint or business
+TPS improvement follows from these finite observations.
+
+Publish the source-specific original carriers, manifests, failed observations
+and the earlier executor-loss provenance gap in the continuation evidence.
+An evidence-only child does not relabel any execution. Keep PR #736 in draft;
+the original four-second/depth-six/resource envelope, Cell shared-resource
+isolation, complete cost coverage and service acceptance remain open. No
+merge, deployment, activation or change to existing services is authorized
+by the evidence publication.

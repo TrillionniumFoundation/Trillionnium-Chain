@@ -1,4 +1,143 @@
 use super::*;
+
+#[test]
+fn shared_ready_fifo_two_live_listeners_preserves_order_and_original_grants() {
+    fn wait_until(mut predicate: impl FnMut() -> bool) {
+        let deadline = Instant::now() + Duration::from_secs(2);
+        while !predicate() {
+            assert!(
+                Instant::now() < deadline,
+                "shared readiness reactor stalled"
+            );
+            thread::sleep(Duration::from_millis(1));
+        }
+    }
+    struct Stop(Arc<AtomicBool>);
+    impl Drop for Stop {
+        fn drop(&mut self) {
+            self.0.store(true, Ordering::Release);
+        }
+    }
+    let dir = tempfile::tempdir().unwrap();
+    let clock = super::super::now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let owner = super::tests::shared(Node::open(dir.path(), settings.clone(), 2).unwrap());
+    let domain = ServiceMutationCpuDomain::standalone();
+    let first = server(&domain, 71);
+    let intake = first.listener_intake().unwrap();
+    let seven =
+        BufferPermit::acquire(intake.mutating_grants.clone(), 7, MAX_MUTATING_GRANTS).unwrap();
+    let last =
+        BufferPermit::acquire(intake.mutating_grants.clone(), 1, MAX_MUTATING_GRANTS).unwrap();
+    let policy = PublicPolicy::new(8, Duration::from_secs(2)).unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    thread::scope(|scope| {
+        let mut listeners = Vec::new();
+        for service in [first, server(&domain, 71)] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = listener.local_addr().unwrap();
+            let counters = Arc::new(Mutex::new(PublicMetrics::default()));
+            let local = counters.clone();
+            let node = owner.clone();
+            let signal = stop.clone();
+            let worker = scope.spawn(move || {
+                serve_public_protected_v3_with_metrics(
+                    listener,
+                    node,
+                    Duration::from_secs(8),
+                    signal,
+                    service,
+                    local,
+                )
+            });
+            listeners.push((address, counters, worker));
+        }
+        let guard = Stop(stop.clone());
+        let mut pending = Vec::new();
+        for (index, (address, counters, _)) in listeners.iter().enumerate() {
+            let caller =
+                DevelopmentIdentity::from_secret_hex(&hex::encode([80 + index as u8; 32])).unwrap();
+            let hello = Hello {
+                op: 1,
+                len: 1,
+                caller: digest(caller.public_key()).unwrap(),
+                digest: [3; 32],
+                client_nonce: [4 + index as u8; 32],
+            };
+            pending
+                .push(super::tests::paid_solution_only(*address, hello, &caller, policy).unwrap());
+            wait_until(|| counters.lock().unwrap().pending_grant_entered == 1);
+        }
+        // Real Head traffic still traverses the read lane while both distinct
+        // listeners wait for the original mutation capacity.
+        let expected = DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap();
+        let caller = DevelopmentIdentity::from_secret_hex(&hex::encode([90; 32])).unwrap();
+        let read = call_public_protected_v3(
+            listeners[1].0,
+            &Request::Head,
+            &settings,
+            expected.public_key(),
+            &caller,
+            policy,
+        )
+        .unwrap();
+        assert!(read.ok);
+        assert_eq!(read.value["height"], 0);
+        drop(last);
+        let (mut older, older_cookie, _, older_deadline) = pending.remove(0);
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut older, 256, older_deadline).unwrap())
+                .unwrap();
+        assert_eq!(
+            ready["cookie_digest"],
+            hex::encode(older_cookie.id().unwrap())
+        );
+        assert_eq!(*intake.mutating_grants.lock().unwrap(), MAX_MUTATING_GRANTS);
+        let (mut newer, newer_cookie, _, newer_deadline) = pending.remove(0);
+        newer.set_nonblocking(true).unwrap();
+        assert_eq!(
+            newer.peek(&mut [0; 1]).unwrap_err().kind(),
+            std::io::ErrorKind::WouldBlock
+        );
+        newer.set_nonblocking(false).unwrap();
+        // The later listener gets the slot only after the real older socket
+        // and its paid grant are released. No request body or fake W1 is sent.
+        drop(older);
+        let ready: Value =
+            serde_json::from_slice(&client_frame(&mut newer, 256, newer_deadline).unwrap())
+                .unwrap();
+        assert_eq!(
+            ready["cookie_digest"],
+            hex::encode(newer_cookie.id().unwrap())
+        );
+        drop((newer, seven));
+        wait_until(|| {
+            *intake.mutating_grants.lock().unwrap() == 0
+                && *intake.read_grants.lock().unwrap() == 0
+                && *intake.body_pool.lock().unwrap() == 0
+        });
+        drop(guard);
+        let mut grant_total = 0;
+        for (_, _, worker) in listeners {
+            let result = worker.join().unwrap().unwrap();
+            grant_total += result.pending_grant_granted;
+            assert_eq!(result.work_started, 0);
+            assert_eq!(result.mutation_cpu_reservations, 0);
+            assert_eq!(result.paid_body_reserved_bytes_after_shutdown, 0);
+            assert_eq!(result.mutating_grants_after_shutdown, 0);
+            assert_eq!(result.read_grants_after_shutdown, 0);
+            assert_eq!(
+                result.pending_grant_entered,
+                result.pending_grant_granted + result.pending_grant_closed
+            );
+        }
+        assert_eq!(grant_total, 3); // Two authenticated paid submits plus Head.
+    });
+    assert_eq!(*intake.connections.lock().unwrap(), 0);
+    assert_eq!(*intake.listeners.lock().unwrap(), 0);
+    assert_eq!(owner.lock().unwrap().stats().unwrap()["height"], 0);
+}
+
 fn server(domain: &ServiceMutationCpuDomain, key: u8) -> PublicServer {
     PublicServer::with_continuous_domain(
         DevelopmentIdentity::from_secret_hex(&hex::encode([key; 32])).unwrap(),

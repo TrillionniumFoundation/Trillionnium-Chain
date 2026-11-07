@@ -1,0 +1,61 @@
+{
+  "comparison_start": "54ea3ef36671cd1d9a82b3fcd06c7ab26437598e",
+  "files": [
+    {
+      "bytes": 1011,
+      "origin": "exact remote read-only history probe source",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/history-probe.py",
+      "sha256": "f4c90b751559d6c169376689c8124f6837ee699e39e45700510f09449ecde40a"
+    },
+    {
+      "bytes": 2409,
+      "origin": "original MCP shell_start result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/history-job-launch.json",
+      "sha256": "082b6bfbaf6882f33cb80f335de033ca20c6a884aa4868bfdda03a2191642fa8"
+    },
+    {
+      "bytes": 731,
+      "origin": "original authoritative process_status result",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/history-job-terminal.json",
+      "sha256": "7d926aca0586ea479e91e1be654911acd874acf01c050352d8ee6e4657061305"
+    },
+    {
+      "bytes": 1523,
+      "origin": "original full read-only probe stdout bytes",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/history-job.stdout",
+      "sha256": "8f836f66de654965cca0f5e44364fa896ff887ab5c516f208f64beaee68a7502"
+    },
+    {
+      "bytes": 0,
+      "origin": "original full read-only probe stderr bytes",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/history-job.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 369,
+      "origin": "original local git identity/status/blob read command output",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/local-source-identity.stdout",
+      "sha256": "d534cbcbbd29f762807143fe2c537b66544110806601c60050ac08921036ac32"
+    },
+    {
+      "bytes": 1331,
+      "origin": "original local status/history/test invariant search output",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/local-initial-source-history.stdout",
+      "sha256": "9784ca9c25643762302df36c3448efe891b6f539053454fd66116497f1a51998"
+    },
+    {
+      "bytes": 1408,
+      "origin": "original local change list and selected source history output",
+      "path": "/workspace/scratch/ee79b3ed025e/throughput-20261106-ee79/raw/e746-architecture-host-diagnosis/local-af144-to-e746-stat.stdout",
+      "sha256": "ce287fdec528eb1d42956054b8aecd2f97513851c1b73e49656ea76af9015c6d"
+    }
+  ],
+  "host_provisioned": false,
+  "native_tests_executed": false,
+  "rog_history_read_job": "1a1b1f40193-fc05-7bb5",
+  "schema": "trnm-architecture-host-readonly-diagnosis-originals-v1",
+  "scope": "exact source/history observation only; original AI runtime failure logs are separately retained by runtime owner; no missing full architecture report reconstructed",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_modified": false,
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

@@ -14,6 +14,10 @@ on:
       - scripts/ci/test_fixed_root_phase_host.py
       - scripts/ci/test_fixed_root_resources.py
       - scripts/ci/fixtures/fixed_root_f0_legacy_resource_counterexample.json
+      - trillionnium/**
+      - config/**
+      - .cargo/**
+      - rust-toolchain.toml
       - trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs
       - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host.rs
       - trillionnium/crates/trnm-pon-node/tests/support/multiprocess_root_phase_host_resources.rs

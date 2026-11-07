@@ -1,0 +1,312 @@
+{
+  "attempted_commands": 2,
+  "commands": [
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features"
+      ],
+      "command_exit_code": 101,
+      "command_status": "command_failed",
+      "label": "runtime-tests",
+      "passed": false,
+      "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-tests.json",
+      "recorder": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "e7466106a2a647c8032556273101440384d88b70",
+          "--tested",
+          "e7466106a2a647c8032556273101440384d88b70",
+          "--label",
+          "runtime-tests",
+          "--output",
+          "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features"
+        ],
+        "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "elapsed_ns": 1136326602703,
+        "exit_code": 101,
+        "finished_utc": "2026-11-06T17:36:55.462591+00:00",
+        "log": {
+          "bytes": 160,
+          "fingerprint": [
+            66306,
+            48130676,
+            33152,
+            160,
+            1793986615455045729,
+            1793986615455045729
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-tests-recorder.log",
+          "sha256": "4fa444df9dd0a0ffc101a3d124cddd14cb24c28a1482a44cf54fe1b00c23f364"
+        },
+        "log_file": "runtime-tests-recorder.log",
+        "schema": "trnm-native-runner-child-command-v1",
+        "started_utc": "2026-11-06T17:17:59.135916+00:00",
+        "status": "command_failed"
+      },
+      "source": {
+        "base": null,
+        "candidate": "e7466106a2a647c8032556273101440384d88b70",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+        "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1045782996,
+        "tracked_entries": 10905,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--doc",
+        "--all-features"
+      ],
+      "command_exit_code": 0,
+      "command_status": "command_succeeded",
+      "label": "runtime-docs",
+      "passed": true,
+      "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-docs.json",
+      "recorder": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "e7466106a2a647c8032556273101440384d88b70",
+          "--tested",
+          "e7466106a2a647c8032556273101440384d88b70",
+          "--label",
+          "runtime-docs",
+          "--output",
+          "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw",
+          "--",
+          "cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--doc",
+          "--all-features"
+        ],
+        "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+        "elapsed_ns": 79421404415,
+        "exit_code": 0,
+        "finished_utc": "2026-11-06T17:38:14.885209+00:00",
+        "log": {
+          "bytes": 160,
+          "fingerprint": [
+            66306,
+            48142330,
+            33152,
+            160,
+            1793986694878613004,
+            1793986694878613004
+          ],
+          "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-docs-recorder.log",
+          "sha256": "a8c81852b4b9806a612ceb73f0ea1714d5e60c001d7e865148c81b8c6920c991"
+        },
+        "log_file": "runtime-docs-recorder.log",
+        "schema": "trnm-native-runner-child-command-v1",
+        "started_utc": "2026-11-06T17:36:55.463739+00:00",
+        "status": "command_succeeded"
+      },
+      "source": {
+        "base": null,
+        "candidate": "e7466106a2a647c8032556273101440384d88b70",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+        "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1045782996,
+        "tracked_entries": 10905,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_BUILD_RUSTC": null,
+    "CARGO_BUILD_RUSTC_WORKSPACE_WRAPPER": null,
+    "CARGO_BUILD_RUSTC_WRAPPER": null,
+    "CARGO_BUILD_RUSTDOC": null,
+    "CARGO_BUILD_RUSTFLAGS": null,
+    "CARGO_BUILD_TARGET": null,
+    "CARGO_ENCODED_RUSTDOCFLAGS": null,
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/home/qq/work/chain-throughput-20261106-ee79/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-throughput-20261106-ee79/target",
+    "CI": "true",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "PATH": "/home/qq/.cargo/bin:/home/qq/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin",
+    "PYTHONOPTIMIZE": null,
+    "RUSTC": null,
+    "RUSTC_BOOTSTRAP": null,
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTDOC": null,
+    "RUSTDOCFLAGS": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "finished_utc": "2026-11-06T17:38:14.891510+00:00",
+  "head": "e7466106a2a647c8032556273101440384d88b70",
+  "planned_commands": [
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features"
+      ],
+      "label": "runtime-tests"
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--doc",
+        "--all-features"
+      ],
+      "label": "runtime-docs"
+    }
+  ],
+  "preflight": {
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "command_exit_code": 0,
+    "command_status": "command_succeeded",
+    "label": "runtime-preflight",
+    "passed": true,
+    "receipt": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-preflight.json",
+    "recorder": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qq/work/chain-throughput-20261106-ee79/repo/scripts/ci/record_pq_native_command.py",
+        "--kind",
+        "head",
+        "--candidate",
+        "e7466106a2a647c8032556273101440384d88b70",
+        "--tested",
+        "e7466106a2a647c8032556273101440384d88b70",
+        "--label",
+        "runtime-preflight",
+        "--output",
+        "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw",
+        "--",
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+      "elapsed_ns": 1278901173,
+      "exit_code": 0,
+      "finished_utc": "2026-11-06T17:17:59.130602+00:00",
+      "log": {
+        "bytes": 165,
+        "fingerprint": [
+          66306,
+          48130658,
+          33152,
+          165,
+          1793985479123654567,
+          1793985479123654567
+        ],
+        "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/runtime-preflight-recorder.log",
+        "sha256": "7fa3140912f5492fda61ec7d1a676bbd85ba8e6d21f18f0f7cd2a301950b6b5d"
+      },
+      "log_file": "runtime-preflight-recorder.log",
+      "schema": "trnm-native-runner-child-command-v1",
+      "started_utc": "2026-11-06T17:17:57.851649+00:00",
+      "status": "command_succeeded"
+    },
+    "source": {
+      "base": null,
+      "candidate": "e7466106a2a647c8032556273101440384d88b70",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "e7466106a2a647c8032556273101440384d88b70",
+      "tested_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1045782996,
+      "tracked_entries": 10905,
+      "tracked_worktree_verified": true
+    }
+  },
+  "production_qualified": false,
+  "repo": "/home/qq/work/chain-throughput-20261106-ee79/repo",
+  "runner": {
+    "bytes": 26709,
+    "fingerprint": [
+      66306,
+      48124879,
+      33152,
+      26709,
+      1793984958905490978,
+      1793984958905490978
+    ],
+    "path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/run_native_qualification.py",
+    "sha256": "da7dc56e80384b2d5b44ae84d11024a36fa28e94a6ba7c0cf7684937cc322fb2"
+  },
+  "schema": "trnm-native-qualification-stage-v1",
+  "scope": "only the original named command group; no whole-chain or service qualification",
+  "stage": "runtime",
+  "started_utc": "2026-11-06T17:17:57.851516+00:00",
+  "status": "failed",
+  "unattempted_commands": 0
+}

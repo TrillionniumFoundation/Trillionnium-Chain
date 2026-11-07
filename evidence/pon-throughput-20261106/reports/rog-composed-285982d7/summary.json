@@ -1,0 +1,640 @@
+{
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/home/qian-qi/work/chain-throughput-20261106-1eed/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+    "CI": "true",
+    "LD_LIBRARY_PATH": null,
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+    "OPENSSL_MODULES": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": "1",
+    "TMPDIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/compiler-temp-2859",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "errors": [],
+  "expected_head": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "finished_utc": "2026-11-06T09:05:53.991186+00:00",
+  "helpers": {
+    "run_composed_cell_controls.py": {
+      "fingerprint": [
+        66306,
+        44616586,
+        33152,
+        18968,
+        1793954872541563123,
+        1793954872541563123
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_composed_cell_controls.py",
+      "sha256": "4ed5320de1668893212dde62970a8ed53adb25717237f7cc74b42a3e623f905e",
+      "size": 18968
+    },
+    "run_exact_selected_controls.py": {
+      "fingerprint": [
+        66306,
+        44614769,
+        33152,
+        28107,
+        1793950250121686310,
+        1793950250121686310
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_exact_selected_controls.py",
+      "sha256": "a8f8656fe25038fb67939b360b42631b6856dab9bd302365cd53591be2108e55",
+      "size": 28107
+    },
+    "run_pq_required_controls_v2.py": {
+      "fingerprint": [
+        66306,
+        44614775,
+        33152,
+        19396,
+        1793950956078065402,
+        1793950956078065402
+      ],
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_pq_required_controls_v2.py",
+      "sha256": "94bccecdc9a33ac140633ab677af3b17f600c1483377c5b94083bcbed7bc3680",
+      "size": 19396
+    }
+  },
+  "passed": true,
+  "retry_policy": "none; continue independent planned gates after native failure while source remains identical",
+  "runner": {
+    "fingerprint": [
+      66306,
+      44616585,
+      33152,
+      9239,
+      1793954872541496218,
+      1793954872541496218
+    ],
+    "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_composed_native_validation.py",
+    "sha256": "f210388a49e176df7beb3935a68c421bab7d345d9cf78422bb55e4c3a027a6fc",
+    "size": 9239
+  },
+  "schema": "trnm-composed-native-validation-v1",
+  "scope": "80 exact semantic controls; full Node plus original PQ52; original Cell/M12 selections; strict workspace Clippy. Not the complete workspace native test suite, business SLO, public throughput or production qualification.",
+  "source_after": {
+    "execution": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "--output",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.json"
+      ],
+      "capture_errors": {},
+      "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.command.json",
+      "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.streams.jsonl",
+      "finished_utc": "2026-11-06T09:05:53.990907+00:00",
+      "log_exit": 0,
+      "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.log",
+      "native_argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "--output",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.json"
+      ],
+      "native_exit": 0,
+      "observed_stream_bytes": {
+        "log": 422,
+        "stderr": 0,
+        "stdout": 422
+      },
+      "pid": 614922,
+      "resources_path": null,
+      "spawn_error": null,
+      "started_utc": "2026-11-06T09:05:53.362162+00:00",
+      "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.stderr",
+      "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-after.stdout",
+      "wall_ns": 628760286
+    },
+    "passed": true,
+    "receipt": {
+      "base": null,
+      "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 992948649,
+      "tracked_entries": 10535,
+      "tracked_worktree_verified": true
+    }
+  },
+  "source_before": {
+    "execution": {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "--output",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.json"
+      ],
+      "capture_errors": {},
+      "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.command.json",
+      "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+      "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.streams.jsonl",
+      "finished_utc": "2026-11-06T08:47:53.267704+00:00",
+      "log_exit": 0,
+      "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.log",
+      "native_argv": [
+        "/usr/bin/python3",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "285982d78a4f62a064841cb0f106d18c865e19c5",
+        "--output",
+        "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.json"
+      ],
+      "native_exit": 0,
+      "observed_stream_bytes": {
+        "log": 422,
+        "stderr": 0,
+        "stdout": 422
+      },
+      "pid": 522726,
+      "resources_path": null,
+      "spawn_error": null,
+      "started_utc": "2026-11-06T08:47:52.616643+00:00",
+      "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.stderr",
+      "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/source-before.stdout",
+      "wall_ns": 651069626
+    },
+    "passed": true,
+    "receipt": {
+      "base": null,
+      "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 992948649,
+      "tracked_entries": 10535,
+      "tracked_worktree_verified": true
+    }
+  },
+  "started_utc": "2026-11-06T08:47:52.616048+00:00",
+  "steps": [
+    {
+      "child_passed": true,
+      "collector_errors": [],
+      "execution": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_exact_selected_controls.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--build-jsonl",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.jsonl",
+          "--build-stderr",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.stderr",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/controls-80"
+        ],
+        "capture_errors": {},
+        "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/controls-80.command.json",
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+        "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/controls-80.streams.jsonl",
+        "finished_utc": "2026-11-06T08:48:07.650944+00:00",
+        "log_exit": 0,
+        "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/controls-80.log",
+        "native_argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_exact_selected_controls.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--build-jsonl",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.jsonl",
+          "--build-stderr",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.stderr",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/controls-80"
+        ],
+        "native_exit": 0,
+        "observed_stream_bytes": {
+          "log": 33490,
+          "stderr": 0,
+          "stdout": 33490
+        },
+        "pid": 522806,
+        "resources_path": null,
+        "spawn_error": null,
+        "started_utc": "2026-11-06T08:47:53.268049+00:00",
+        "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/controls-80.stderr",
+        "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/controls-80.stdout",
+        "wall_ns": 14382907827
+      },
+      "label": "controls-80",
+      "observed": {
+        "confirmed_named_execution_count": 80,
+        "passed_selector_count": 80
+      },
+      "passed": true,
+      "source_bound": true,
+      "summary_identity": {
+        "fingerprint": [
+          66306,
+          45139962,
+          33152,
+          554331,
+          1793954887616780447,
+          1793954887616780447
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/controls-80/summary.json",
+        "sha256": "e277e71d2641860c8cd7992b4073c35768a2fe5a6b8b92a615052b513994550c",
+        "size": 554331
+      }
+    },
+    {
+      "child_passed": true,
+      "collector_errors": [],
+      "execution": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_pq_required_controls_v2.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--build-jsonl",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.jsonl",
+          "--build-stderr",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.stderr",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--target-dir",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/pq-full-and-required"
+        ],
+        "capture_errors": {},
+        "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/pq-full-and-required.command.json",
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+        "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/pq-full-and-required.streams.jsonl",
+        "finished_utc": "2026-11-06T09:03:31.862381+00:00",
+        "log_exit": 0,
+        "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/pq-full-and-required.log",
+        "native_argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_pq_required_controls_v2.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--build-jsonl",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.jsonl",
+          "--build-stderr",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.stderr",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--target-dir",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/pq-full-and-required"
+        ],
+        "native_exit": 0,
+        "observed_stream_bytes": {
+          "log": 12642,
+          "stderr": 0,
+          "stdout": 12642
+        },
+        "pid": 523554,
+        "resources_path": null,
+        "spawn_error": null,
+        "started_utc": "2026-11-06T08:48:08.298834+00:00",
+        "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/pq-full-and-required.stderr",
+        "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/pq-full-and-required.stdout",
+        "wall_ns": 923563559815
+      },
+      "full_library": {
+        "counts": {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 32,
+          "measured": 0,
+          "passed": 1172
+        },
+        "harness_seconds": "884.43",
+        "harness_status": "ok",
+        "passed": true,
+        "registry_count": 1204,
+        "running": 1204,
+        "scope": "full original libtest invocation, including its ordinary child harness entries; not a substitute for the 52 meaningful required controls"
+      },
+      "label": "pq-full-and-required",
+      "observed": {
+        "confirmed_named_execution_count": 52,
+        "dispatched_selector_count": 52,
+        "passed_selector_count": 52
+      },
+      "passed": true,
+      "source_bound": true,
+      "summary_identity": {
+        "fingerprint": [
+          66306,
+          45401435,
+          33152,
+          381929,
+          1793955811827033994,
+          1793955811827033994
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/pq-full-and-required/summary.json",
+        "sha256": "a989ddcad635fa3f5f143dfe55ea817604ab9ce179c38b839328f543840e247d",
+        "size": 381929
+      }
+    },
+    {
+      "child_passed": true,
+      "collector_errors": [],
+      "execution": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_composed_cell_controls.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--cargo-proxy",
+          "/home/qian-qi/.cargo/bin/cargo",
+          "--provider-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-provider/pq-provider/provider.json",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/cell-controls"
+        ],
+        "capture_errors": {},
+        "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/cell-controls.command.json",
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+        "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/cell-controls.streams.jsonl",
+        "finished_utc": "2026-11-06T09:05:06.834625+00:00",
+        "log_exit": 0,
+        "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/cell-controls.log",
+        "native_argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/run_composed_cell_controls.py",
+          "--repo-root",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+          "--expected-head",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--cargo-proxy",
+          "/home/qian-qi/.cargo/bin/cargo",
+          "--provider-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-provider/pq-provider/provider.json",
+          "--build-receipt",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-component-build-attempt2.json",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/cell-controls"
+        ],
+        "native_exit": 0,
+        "observed_stream_bytes": {
+          "log": 1619,
+          "stderr": 0,
+          "stdout": 1619
+        },
+        "pid": 575366,
+        "resources_path": null,
+        "spawn_error": null,
+        "started_utc": "2026-11-06T09:03:32.479971+00:00",
+        "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/cell-controls.stderr",
+        "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/cell-controls.stdout",
+        "wall_ns": 94354664231
+      },
+      "label": "cell-controls",
+      "observed": {
+        "executed_component_commands": 3,
+        "native_failed_component_commands": 0,
+        "passed_component_commands": 3
+      },
+      "passed": true,
+      "source_bound": true,
+      "summary_identity": {
+        "fingerprint": [
+          66306,
+          45659509,
+          33152,
+          88535,
+          1793955906825289088,
+          1793955906825289088
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/cell-controls/summary.json",
+        "sha256": "65ce3a366d1229c57dea3718768eed08962c617b9dbbe0c660738e6e071e14ab",
+        "size": 88535
+      }
+    },
+    {
+      "execution": {
+        "argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--tested",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--label",
+          "strict-workspace-clippy",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/clippy",
+          "--",
+          "/home/qian-qi/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "capture_errors": {},
+        "command_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/strict-workspace-clippy.command.json",
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+        "events_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/strict-workspace-clippy.streams.jsonl",
+        "finished_utc": "2026-11-06T09:05:53.361618+00:00",
+        "log_exit": 0,
+        "log_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/strict-workspace-clippy.log",
+        "native_argv": [
+          "/usr/bin/python3",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986/scripts/ci/record_pq_native_command.py",
+          "--kind",
+          "head",
+          "--candidate",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--tested",
+          "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "--label",
+          "strict-workspace-clippy",
+          "--output",
+          "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/clippy",
+          "--",
+          "/home/qian-qi/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "native_exit": 0,
+        "observed_stream_bytes": {
+          "log": 190,
+          "stderr": 0,
+          "stdout": 190
+        },
+        "pid": 599128,
+        "resources_path": null,
+        "spawn_error": null,
+        "started_utc": "2026-11-06T09:05:07.454960+00:00",
+        "stderr_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/strict-workspace-clippy.stderr",
+        "stdout_path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/driver/strict-workspace-clippy.stdout",
+        "wall_ns": 45906667628
+      },
+      "label": "strict-workspace-clippy",
+      "log_identity": {
+        "fingerprint": [
+          66306,
+          45659515,
+          33152,
+          6207,
+          1793955952699940157,
+          1793955952699940157
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/clippy/strict-workspace-clippy.log",
+        "sha256": "ac6efb2080eb9278ff59eb47ddd142ff454d3015d362237fe4a900350306a220",
+        "size": 6207
+      },
+      "passed": true,
+      "receipt": {
+        "after": {
+          "base": null,
+          "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 992948649,
+          "tracked_entries": 10535,
+          "tracked_worktree_verified": true
+        },
+        "argv": [
+          "/home/qian-qi/.cargo/bin/cargo",
+          "+1.95.0",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "--workspace",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "before": {
+          "base": null,
+          "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "285982d78a4f62a064841cb0f106d18c865e19c5",
+          "tested_tree": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 992948649,
+          "tracked_entries": 10535,
+          "tracked_worktree_verified": true
+        },
+        "cwd": "/home/qian-qi/work/chain-throughput-20261106-1eed/corrected-1986",
+        "elapsed_ns": 45874484219,
+        "environment": {
+          "CARGO_BUILD_JOBS": "2",
+          "CARGO_ENCODED_RUSTFLAGS": null,
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/target-components-2859",
+          "GITHUB_RUN_ATTEMPT": null,
+          "GITHUB_RUN_ID": null,
+          "OPENSSL_DIR": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+          "OPENSSL_STATIC": "1",
+          "RUNNER_ARCH": null,
+          "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+          "RUSTC_WORKSPACE_WRAPPER": null,
+          "RUSTC_WRAPPER": null,
+          "RUSTFLAGS": null,
+          "RUST_TEST_THREADS": "1",
+          "TRNM_PQ_OPENSSL": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+          "TRNM_PQ_OPENSSL_SHA256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+          "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+        },
+        "exit_code": 0,
+        "log_bytes": 6207,
+        "log_file": "strict-workspace-clippy.log",
+        "log_sha256": "ac6efb2080eb9278ff59eb47ddd142ff454d3015d362237fe4a900350306a220",
+        "schema": "trnm-pq-native-command-v1",
+        "started_utc": "2026-11-06T09:05:07.480303+00:00",
+        "status": "command_succeeded",
+        "whole_chain_quantum_security_qualified": false
+      },
+      "receipt_identity": {
+        "fingerprint": [
+          66306,
+          45659514,
+          33152,
+          2584,
+          1793955953355001082,
+          1793955953355001082
+        ],
+        "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/validation/rog-composed-2859-native-suite/clippy/strict-workspace-clippy.json",
+        "sha256": "c18f59fc4d3cab43288a7480dc93e6aba8be5b78802c46d546cc1b684b63c929",
+        "size": 2584
+      }
+    }
+  ]
+}

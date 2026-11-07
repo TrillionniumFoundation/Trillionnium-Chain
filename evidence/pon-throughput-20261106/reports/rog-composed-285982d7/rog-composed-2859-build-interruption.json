@@ -1,0 +1,16 @@
+{
+  "original_job": "1a1afe5a464-fc05-6c8e",
+  "observed_terminal_state": "cancelled",
+  "exit_code": -15,
+  "timed_out": false,
+  "terminal_at_unix_ms": 1793952720601,
+  "terminal_exit_record_sha256": "71afb50b89458eb3cd9e525add2fb4cabc0d7d752b04192b066b0f0bdacfc127",
+  "cause": "not stated by the retained terminal record",
+  "original_wrapper_completion_receipt_present": false,
+  "original_build_stderr_sha256": "2480e2921a52bed305a19e0b9df2648fef762e51c9b3c9a1e2081e8f2d0083aa",
+  "retained_scope": "original partial logs and original source-before are preserved; no successful build or test credit",
+  "recovery_source_checked_later": "285982d78a4f62a064841cb0f106d18c865e19c5",
+  "recovery_tree_checked_later": "ce074eb1857a92c9b47ea317b841777fcfc63c04",
+  "recovery_checked_utc": "2026-11-06T08:19:27.203882+00:00",
+  "new_attempt": "same exact source and original command/profile/resource quota, new invocation after confirmed terminal cancellation"
+}

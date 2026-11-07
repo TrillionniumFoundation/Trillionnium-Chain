@@ -1,0 +1,1102 @@
+{
+  "all_historical_failures_ignored_controls_and_source_identities_preserved": true,
+  "created_utc": "2026-11-06T10:07:35.679160+00:00",
+  "files": [
+    {
+      "bytes": 35750,
+      "git_blob_sha": "cfe59cb2e1d38645926a7475749b49f4d2ee0d55",
+      "path": "README.md",
+      "sha256": "f24a9c257d6306db66ea44c859554d3541024964114d3b278e4e6aa1eef15593"
+    },
+    {
+      "bytes": 1222620,
+      "git_blob_sha": "f6016713005555be5720d62631987c0e00e5ffe2",
+      "path": "records/base-sync.tar.xz",
+      "sha256": "7b976ccb971cef41a8cab2c76f5fba2d34cfdfd61095fdeb588c21a3a70f5587"
+    },
+    {
+      "bytes": 39887,
+      "git_blob_sha": "abf88104eeb6ddc1ccbf8defc393d24f42244cbe",
+      "path": "records/ci-source-evidence.SHA256SUMS",
+      "sha256": "4c71915029604ab6b21d01b8ebcaedc86622e181aded313bda1a73f397732b63"
+    },
+    {
+      "bytes": 3635,
+      "git_blob_sha": "37d3e536454a9e5d50d020c0ad547ff6b2e48566",
+      "path": "records/ci-source-evidence.existing-manifests.json",
+      "sha256": "198a26ce8fb73847dc291d25f3fce529d2b687a34a4527d059c1d7292c505f8e"
+    },
+    {
+      "bytes": 23462,
+      "git_blob_sha": "628d1a9f62e0cec99d73c65f9698728e2abc779e",
+      "path": "records/ci-source-evidence.index.json",
+      "sha256": "e15eba7acfda16821df7f5cb717e675fe7bb883db5f03a2f0791c1ab7b841049"
+    },
+    {
+      "bytes": 71421,
+      "git_blob_sha": "831911ad65a4e472b63bf95a6f82686a2a763815",
+      "path": "records/ci-source-evidence.manifest.json",
+      "sha256": "3654e386dc5e34ca2218b8cf9ac3b7b76020f66cc6334e653437847b7dbcd35e"
+    },
+    {
+      "bytes": 985,
+      "git_blob_sha": "5636e71c20d16273b42483e4de4b3d46c82fb8b1",
+      "path": "records/ci-source-evidence.package-attempt1.json",
+      "sha256": "d8e5d72969832bb26e349a7bff4fbe95ff409de40c23467dfa1eb849c4fd7c19"
+    },
+    {
+      "bytes": 1625,
+      "git_blob_sha": "cabb8b2faf34e6dd2d6cf1679e760366fae332c7",
+      "path": "records/ci-source-evidence.package-receipt.json",
+      "sha256": "3e6e3775a31b5b8649d50f4a9c104f3aeb920829b5988be24c107e54056c4f1f"
+    },
+    {
+      "bytes": 576072,
+      "git_blob_sha": "a8d410cbc49583b710869f594259867758247d37",
+      "path": "records/ci-source-evidence.tar.gz",
+      "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199"
+    },
+    {
+      "bytes": 756936,
+      "git_blob_sha": "51b744a7856d7234cbb945b48c662fbdaef36241",
+      "path": "records/current-ci-285982d7.tar.xz",
+      "sha256": "bd7c5e0152530fc48a86eabef21cce212bfb3bd0187a821bf24e302d85cf0cfc"
+    },
+    {
+      "bytes": 59564,
+      "git_blob_sha": "33688fe824104d0573516318c1cb2f143b0567d5",
+      "path": "records/development-records.tar.xz",
+      "sha256": "54d3bbe7bf77aeb3fb6cd304a3b20de711ad08118d1a0753d6a5c10402876c4d"
+    },
+    {
+      "bytes": 201536,
+      "git_blob_sha": "d7a2bd6b5b4e906e223f4550ffd07b0d590256a9",
+      "path": "records/final-source-7586d3e2.tar.xz",
+      "sha256": "dbca01863e2a55227c7d289df937fb0d948de4af1d70a961487774c55c4f3663"
+    },
+    {
+      "bytes": 956164,
+      "git_blob_sha": "1b1a4d94699a9e4d45d47d89f50e7dc972e15fcf",
+      "path": "records/original-ci-20261106T081354Z.tar.xz",
+      "sha256": "04d901ed56db55937cdebf681859b2badf650dba508f79af5765b3c219fb8ec5"
+    },
+    {
+      "bytes": 599728,
+      "git_blob_sha": "5824aff7c920c9c925ba038891827911830cae63",
+      "path": "records/rog-composed-2859-native-evidence.tar.xz",
+      "sha256": "31a099caeb48a7261537e1d507b013d03e666726ab9905e0c287463596ac12b9"
+    },
+    {
+      "bytes": 593512,
+      "git_blob_sha": "742d9228d8c25ae97620d3d1cb1580754492a1f9",
+      "path": "records/rog-composed-7586-native-evidence.tar.xz",
+      "sha256": "0d0092d47890a1ae0f08ab1cba07ad3847b13d052ec8a48fbfba070772d5b045"
+    },
+    {
+      "bytes": 367708,
+      "git_blob_sha": "0d3983725914a2d5c575e79b99e9264ba91f370a",
+      "path": "records/rog-default-evidence.tar.xz",
+      "sha256": "c3d175279630dfebd11f871eef01104767fa6de973935ab1e799ba5eeabd8567"
+    },
+    {
+      "bytes": 520788,
+      "git_blob_sha": "9d9563ce6d10884eb449ef755883ee66e999b416",
+      "path": "records/rog-pq-and-counter-evidence.tar.xz",
+      "sha256": "86b7de54b4e33680e77433818dba346ab68defcf7921bac5be3fcc62e90057ad"
+    },
+    {
+      "bytes": 8278,
+      "git_blob_sha": "ae1de471450a53a982276fe90584c540f36437d0",
+      "path": "reports/archive-provenance.json",
+      "sha256": "8ea703fb4f8e812ba8b91d12f5ac8d4107e3417123467c02347be3ab0c470f4d"
+    },
+    {
+      "bytes": 1011187,
+      "git_blob_sha": "c2002d55ae942a25346ff3a72b9bd9b16f0a0083",
+      "path": "reports/assembly-inputs.json",
+      "sha256": "d6a2929e0e70a73d1ff1e77a58ec5d8168fd46fb577c46b2dcf279ea4560093d"
+    },
+    {
+      "bytes": 1573,
+      "git_blob_sha": "b2fbac11bc076ebca9bd4d1084a9b5b4726b644f",
+      "path": "reports/assembly-status-at-packaging.json",
+      "sha256": "81d48b21238ac979be32420906485c22d271993cbecb3f825c690fd68215339f"
+    },
+    {
+      "bytes": 2215,
+      "git_blob_sha": "b4968a0b00d824c6dd2c4a965425ee97e69cdfb7",
+      "path": "reports/base-sync/independent-review-message-record.json",
+      "sha256": "709e271cab795cf6cf51cf167d530ff2e388379ce437ff2c01dcf9b19f9cb767"
+    },
+    {
+      "bytes": 32063,
+      "git_blob_sha": "2f3ea52a5c4c2855d634afe871ebc0f9eb4fd137",
+      "path": "reports/base-sync/publish-manifest.json",
+      "sha256": "6da5504a6711ad14c1c6cbb72d1d5bff2fb21fc40dd2620f6f9b8f8494d6814c"
+    },
+    {
+      "bytes": 1319,
+      "git_blob_sha": "750653bcddc9be7ecb169ba1b8ab2aeae78cd70d",
+      "path": "reports/base-sync/summary.json",
+      "sha256": "bbd74f4f8c130add2e37b8362d8316076f74e4efc2bc905db901cd3c2ca00057"
+    },
+    {
+      "bytes": 10303,
+      "git_blob_sha": "b573f4c3606fc18bfa96f247b3b9fc36e4d69fc9",
+      "path": "reports/base-sync-7586/source-review.json",
+      "sha256": "db7a6422866e5b040c9d79d1a8fcefe870350c37a55f37e7a639b37770196f62"
+    },
+    {
+      "bytes": 5392,
+      "git_blob_sha": "de37be035f9f108bd3175000003b63fb5693d1d5",
+      "path": "reports/base-sync-7586/summary.json",
+      "sha256": "8a82d8336383b65a7fa323353610fdb98ebe27ff721146daea371fbfb9038e2b"
+    },
+    {
+      "bytes": 4564,
+      "git_blob_sha": "6cdbc48cfb16e423fabeef6cdf085427c85b010d",
+      "path": "reports/current-ci-285982d7/bundle-README.md",
+      "sha256": "dcec0b2a4203c24b1f28b3f9f50ea328598a52308d31bb05298d056d978901e1"
+    },
+    {
+      "bytes": 5696,
+      "git_blob_sha": "68f18aa19a691da397c55a1b543c31b7e8e7f543",
+      "path": "reports/current-ci-285982d7/bundle-index.json",
+      "sha256": "7842c3d580c93baba6e07d335d3b359ba4d12ece9b29316be3a0c829cf8a0a5a"
+    },
+    {
+      "bytes": 1156,
+      "git_blob_sha": "493a67f42afcfc33312eb2038c9f6961c3e80819",
+      "path": "reports/current-ci-285982d7/bundle-readback.json",
+      "sha256": "54169e4f140bcb9c2dfcdaa6aad47000e032a8fa70cfe493514cf9bb911f0be8"
+    },
+    {
+      "bytes": 90424,
+      "git_blob_sha": "73a4d988286aba751bfe3f53b2a9a4e25cdfcee1",
+      "path": "reports/current-ci-285982d7/campaign-budget-readback.json",
+      "sha256": "190862c7201f7fc1b74c252c13e678638133e762710afab39dc858292f27ba1f"
+    },
+    {
+      "bytes": 16420,
+      "git_blob_sha": "bffe991bb0ac8997530f88918982a2b5edb28c4f",
+      "path": "reports/current-ci-285982d7/campaign-business-summary.json",
+      "sha256": "b47f3d46cbde7b44053a62637a499266af46dffbb554fae482098f2102a1ecb0"
+    },
+    {
+      "bytes": 22299,
+      "git_blob_sha": "7be4b527c290609c6a8f8e18db9e902d1ff99be7",
+      "path": "reports/current-ci-285982d7/f0-budget-readback.json",
+      "sha256": "b8266f796a7d1d8a568221a8ffea658132bc2e84d05e97e11790260963453a89"
+    },
+    {
+      "bytes": 27534,
+      "git_blob_sha": "94775cf677eba6d8a126c127859b1c6ea89f92f7",
+      "path": "reports/current-ci-285982d7/f0-business-summary.json",
+      "sha256": "0f9d39e6b092411a3412cea928dbce8c6ce47801ea9ab0007dcaaeb8e0d60f7a"
+    },
+    {
+      "bytes": 40466,
+      "git_blob_sha": "fcb1af8057b124f130ce54b6356d4dffb808ee0b",
+      "path": "reports/current-ci-285982d7/large-cpu-all-matrices-summary.json",
+      "sha256": "26cbc26fad40ee1409309609d06e60880e90f6e4f81dee366dda37300b33473d"
+    },
+    {
+      "bytes": 149165,
+      "git_blob_sha": "0c9bb7167a04d2dabd17142e520939d580fbd992",
+      "path": "reports/current-ci-285982d7/large-cpu-api-snapshot.json",
+      "sha256": "294d5d759c7dd3e0ea13d295ecef21d31a5503613bb3e5a7197ddb23790bb54e"
+    },
+    {
+      "bytes": 1862063,
+      "git_blob_sha": "b19e8f753c92a51f89f3245830a45e196abb98a1",
+      "path": "reports/current-ci-285982d7/pq-system-original-artifact-summary.json",
+      "sha256": "13805e0350ed9cb98451d71955867785223c0c6d2f43f3b8fc5bc7701545ea63"
+    },
+    {
+      "bytes": 10316,
+      "git_blob_sha": "b486d0df02084c78570ebf8727bb690fa6a1da25",
+      "path": "reports/current-ci-285982d7/pq-terminal-counts-4-matrices.json",
+      "sha256": "75485c63b7613fc7f0d7eb34de98aa8b4f2afb5299ce5654887632f8bbca99c3"
+    },
+    {
+      "bytes": 299140,
+      "git_blob_sha": "ef9fe516448fe0a157416db158f43269572a9ba9",
+      "path": "reports/current-ci-285982d7/workspace-original-artifact-summary.json",
+      "sha256": "f81a359cac9a85aab1b0d0898c26c5c8dcc31718810bd4bc4715304ff2d802f2"
+    },
+    {
+      "bytes": 12600,
+      "git_blob_sha": "f957301cfe731213edf7326b8361d36c5abd8f4b",
+      "path": "reports/history-counter-correction-note.md",
+      "sha256": "2570b3decd58d5855ac6302676920c6fc29447c0ccb2e6e8a8bfeed34523b2fc"
+    },
+    {
+      "bytes": 64470,
+      "git_blob_sha": "b933472ddb57dcd406826ee93badfedb53de176a",
+      "path": "reports/history-counter-correction-source-anchors.json",
+      "sha256": "e7e7068f4f6e8bad87bb7df155e6b7f27a9ea6c15cce7e9c6ba4e2894ac6b2e6"
+    },
+    {
+      "bytes": 14757,
+      "git_blob_sha": "ee09b64935ff15c66cb24c2491e5d299dc53c53c",
+      "path": "reports/history-sqlite-reprepare-counter-fix.json",
+      "sha256": "7f6a39efd59bb2d59267e4a55797603ace7b0eb7773def8be2bd194263068c51"
+    },
+    {
+      "bytes": 3872,
+      "git_blob_sha": "5e0f694db1a84cd1d7cd08c35122ea43c7dee0f4",
+      "path": "reports/initial-assembly/SHA256SUMS",
+      "sha256": "6d13de67bb76d4568c9643ff327cdbd2a3e01529e0d0ddd57cdb523329f96ce1"
+    },
+    {
+      "bytes": 8278,
+      "git_blob_sha": "ae1de471450a53a982276fe90584c540f36437d0",
+      "path": "reports/initial-assembly/archive-provenance.json",
+      "sha256": "8ea703fb4f8e812ba8b91d12f5ac8d4107e3417123467c02347be3ab0c470f4d"
+    },
+    {
+      "bytes": 16376,
+      "git_blob_sha": "4e575dde399d0d29094d56c1a65bd1be443ba190",
+      "path": "reports/initial-assembly/manifest.json",
+      "sha256": "4f4bc0411b5d572558675dfcfb32c92574b2a49cd0aa18778b643a75ea1e8f5d"
+    },
+    {
+      "bytes": 652,
+      "git_blob_sha": "7b585b77df24b2ffc0841a429997c8c27340a9eb",
+      "path": "reports/initial-assembly/readback.json",
+      "sha256": "1e020a957baec3df714d344a335986eb67421eb65e9a05f5360313859291b7a0"
+    },
+    {
+      "bytes": 4941,
+      "git_blob_sha": "2444dc8bc64c639bb0893156016a8fbd7725d35d",
+      "path": "reports/initial-assembly/receipt.json",
+      "sha256": "e0081e679ee0abdeb5cfc39ee4e57517a36c9285237b0d2a7ca21293e566cea3"
+    },
+    {
+      "bytes": 7360,
+      "git_blob_sha": "1a98b00e70797ea012dba255fc8dcff750757488",
+      "path": "reports/original-ci/README-20261106T081354Z.md",
+      "sha256": "ebead9dfca888dcacf8db7c5b8b46cc6423e0349fb5cc55f607860e72ca47da0"
+    },
+    {
+      "bytes": 567,
+      "git_blob_sha": "e8712e76b036f6f72bbda10364198f8983d4b8d1",
+      "path": "reports/original-ci/original-zip-readback.json",
+      "sha256": "162c60cf44322083fc83df9daaa292ed7f969b2a8572dcf7eedd6a78610a1680"
+    },
+    {
+      "bytes": 1885817,
+      "git_blob_sha": "bfe0df4cbdcdce9c71064731de3737eb1a7f1ced",
+      "path": "reports/original-ci/pq-system-original-artifact-summary.json",
+      "sha256": "97dc7f633745616b08ed02ca5f8ef101119b66c618353bccfd27fc940e1352f2"
+    },
+    {
+      "bytes": 15251,
+      "git_blob_sha": "d75df53d1fc5e0e2d845df89696b8d8191b9390b",
+      "path": "reports/publication-finalization-attempt1/original-SHA256SUMS",
+      "sha256": "4e751aaf0d185568574d05434f13e8c7f7d70db03811a17a7a12b39eda916f4d"
+    },
+    {
+      "bytes": 40963,
+      "git_blob_sha": "51138ad23040149f6428e372a34adca830c04e88",
+      "path": "reports/publication-finalization-attempt1/original-manifest.json",
+      "sha256": "761a1814465cde73730fff9849b1edcde0da8466f6d6c7201d4637ea33675ade"
+    },
+    {
+      "bytes": 1257,
+      "git_blob_sha": "7c30e7bfe2e20b52f484a4540d4ca0c34cd388a4",
+      "path": "reports/publication-finalization-attempt1/result.json",
+      "sha256": "36724328c55f1b58b29e795c91eee66dd8afd85cbba87505c2e06160bdaaff14"
+    },
+    {
+      "bytes": 6787,
+      "git_blob_sha": "b617d6cf34872fd144ebb8779a86c0c66c176e2b",
+      "path": "reports/publication-finalization-attempt1/script.py",
+      "sha256": "f22d50476fde0dca077c66c9f42d16a192fba310d0edf86fb700ffdd08fe492c"
+    },
+    {
+      "bytes": 1487,
+      "git_blob_sha": "95064bb7a990a602a46f1f40c959c02bd49eb29b",
+      "path": "reports/readme-original-draft-review.json",
+      "sha256": "1b3fa1ac96190a9a332cd34d057ee193e666f5cf19ae0a1b8adee229e1eb96cf"
+    },
+    {
+      "bytes": 1896,
+      "git_blob_sha": "e685274cdc3c687a41ac3713e931f772ce4ab508",
+      "path": "reports/rog-archive-carrier-provenance.json",
+      "sha256": "465365ec9896cd72db891f7ae2f0c0438fd1836ee4e7cead52f1961bec7064cf"
+    },
+    {
+      "bytes": 4705,
+      "git_blob_sha": "c9752787071e806ede30f6e5c23368eb2914a4f2",
+      "path": "reports/rog-components/analysis.json",
+      "sha256": "79e5b70ff76db5df485c988e4eb11aedda09f8ed4020593cdda861d6ff8f21fd"
+    },
+    {
+      "bytes": 3443,
+      "git_blob_sha": "da05d507f5d0690d5167455c62eb8583db1e7ed7",
+      "path": "reports/rog-composed-285982d7/cell-controls.gate.json",
+      "sha256": "ca3dae8c434e327ffd8385779cb4d77bbad6b62de2d3f3f86bcd60dfd68ebce7"
+    },
+    {
+      "bytes": 15176,
+      "git_blob_sha": "9f5d208350107edbba389992fa88e37f309354b1",
+      "path": "reports/rog-composed-285982d7/cell-counts-review.json",
+      "sha256": "4e1fc6dd630297a72f36ee4b83dea1a958f2f6c8fe621bc2161b4c305013a2f1"
+    },
+    {
+      "bytes": 2613,
+      "git_blob_sha": "aaeda7c26196891a83aa989ddc12b12b429b3922",
+      "path": "reports/rog-composed-285982d7/cell-native/m09-all-targets.json",
+      "sha256": "bfaf11a4eb64cec0972a0608df636c08e5fdbc15fb29b0fb609806cef5c567e4"
+    },
+    {
+      "bytes": 46132,
+      "git_blob_sha": "463c3d7560e66d9a4b835db3506dac4081718149",
+      "path": "reports/rog-composed-285982d7/cell-native/m09-all-targets.log",
+      "sha256": "c9e7338645ce4781c303533f4c34b863127d920aef0e22fc4ce77ebc8abd13fd"
+    },
+    {
+      "bytes": 2595,
+      "git_blob_sha": "60f5e2ab9ac7e060a640ff2c84bfc75a4667a66c",
+      "path": "reports/rog-composed-285982d7/cell-native/m09-doc.json",
+      "sha256": "670b2c2878fe1a531f019b17ddbab174e51f2bfb83aef8a2dc3d669a2452150c"
+    },
+    {
+      "bytes": 1131,
+      "git_blob_sha": "144c25f7a425e9e2d0dccdba2bfd10088f10ae60",
+      "path": "reports/rog-composed-285982d7/cell-native/m09-doc.log",
+      "sha256": "a9ae2d4c1cd1cf2583a51ae1e9aa0054bd1531c8d52ca50c927bea5279d03cc8"
+    },
+    {
+      "bytes": 2646,
+      "git_blob_sha": "71f4bbf9f980b085e2a74d9fa8756febc7cc0f92",
+      "path": "reports/rog-composed-285982d7/cell-native/m12-native-budget.json",
+      "sha256": "e15eefb3ddfd98a8e4374655301e22c42b8bbe8274aa71310d90cfdaec6c628d"
+    },
+    {
+      "bytes": 4784,
+      "git_blob_sha": "963909e8e5105bcc53c171b643a4ba1978a5cb47",
+      "path": "reports/rog-composed-285982d7/cell-native/m12-native-budget.log",
+      "sha256": "8196d4af69266d1d57f2e237f3c9d5b1064b1ab3cf000a5a4c21de6642c71ab1"
+    },
+    {
+      "bytes": 88535,
+      "git_blob_sha": "69081cbcdf970b4047a8ae69f8ddd52de59027a4",
+      "path": "reports/rog-composed-285982d7/cell-summary.json",
+      "sha256": "65ce3a366d1229c57dea3718768eed08962c617b9dbbe0c660738e6e071e14ab"
+    },
+    {
+      "bytes": 3562,
+      "git_blob_sha": "73fdcb0dffd2b91b5295bed5d8df99360ea95c39",
+      "path": "reports/rog-composed-285982d7/controls-80.gate.json",
+      "sha256": "6896e6e73847d0efb72ba7d6f445c7fc8d713c11fc6d049a18ea314b9879e703"
+    },
+    {
+      "bytes": 732,
+      "git_blob_sha": "6543d1ae6e630695e2d0752cc2a2ecda8174f722",
+      "path": "reports/rog-composed-285982d7/durable-process-status.json",
+      "sha256": "99450648bcf1fa96c35050acc63e5dbf342de5263aa97e33482bec5877b64061"
+    },
+    {
+      "bytes": 13927,
+      "git_blob_sha": "8c26ae367b881443cec6d60d0c7ab47df047aa34",
+      "path": "reports/rog-composed-285982d7/index.json",
+      "sha256": "55aafd2ab1d9ff633ddd9e544f03b91a553cc0f593d26e632359c97413ea548f"
+    },
+    {
+      "bytes": 2644,
+      "git_blob_sha": "701a7d4e1f1bc83c248f76fe278bc298a14defe8",
+      "path": "reports/rog-composed-285982d7/package-receipt.json",
+      "sha256": "06049ae133996802f54001b59db857cf6bbdf3ec7b9ca2107beab909dcdf026c"
+    },
+    {
+      "bytes": 4322,
+      "git_blob_sha": "8f49700f8dc26a8fb1bcf015b6fb1caf6f954e96",
+      "path": "reports/rog-composed-285982d7/pq-full-and-required.gate.json",
+      "sha256": "89eb5e8640c0bcdc70430726e6915b4debb8a483eaad1092b396468fa2616f05"
+    },
+    {
+      "bytes": 3049,
+      "git_blob_sha": "12f8d5ebcdbe9a79bb06cee251372b56f6105fd4",
+      "path": "reports/rog-composed-285982d7/provider-receipt.json",
+      "sha256": "8f38de77d89c99060882aaa73551c71faceacd5bba4375887c311131dbd9be73"
+    },
+    {
+      "bytes": 961,
+      "git_blob_sha": "46abaa7fd9d09890ad38b10ed8effa9a9727c1a3",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-build-interruption.json",
+      "sha256": "54a7c37aa9aa0138e15e79e58261ac4fb7cf5d06f4f38b5eddba461badde55ef"
+    },
+    {
+      "bytes": 1114,
+      "git_blob_sha": "1c3c64c002aca3dac7bfac9304b79f5e00596a16",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-build-scope-recovery.json",
+      "sha256": "ec59d15a860675a775e1ebce98513be3475c2f3ab92be66ee4b3f712543532a3"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-attempt2-source-after.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-attempt2-source-before.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 1233,
+      "git_blob_sha": "82dfa87ce7e09e7ae99c57a1a5b8708adc7106c9",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-attempt2.json",
+      "sha256": "743ab2ed8cc4a5d69bb1154d72f6f9ce973dc70cc3042effd9212f286c349497"
+    },
+    {
+      "bytes": 3340,
+      "git_blob_sha": "3656810c6f4478cedcfb8d3dd570bc26a9200ca0",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-attempt2.stderr",
+      "sha256": "bec86ca3eb360ea1ec6e4d62bccf18f4a1327dd197605eac385925ecc4150a1b"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-source-after.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build-source-before.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 1073,
+      "git_blob_sha": "d1b981e5f3f68b7f32c7abfc015acbb6845e7286",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build.json",
+      "sha256": "664175c2b2198eda78a36203d6842922547dd2d083769bc6c3ed18b8f4ce347c"
+    },
+    {
+      "bytes": 4677,
+      "git_blob_sha": "b73c57b9dc2a48cfc3fe7e1954a2dd0e5e27aad5",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-build.stderr",
+      "sha256": "c52c11d7dff3d8eafd25c28e788f2f20a188eb629bb8636ad921d39427c2d847"
+    },
+    {
+      "bytes": 593,
+      "git_blob_sha": "210859fd209bb27df7f4e07caf177972cc4270c2",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-component-tmpdir-recovery.json",
+      "sha256": "a03ba06499145801c2f1e7ff889b44ddeb235ed9dca2edbf0e830611371a7ac2"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-workspace-build-attempt2-source-before.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 732,
+      "git_blob_sha": "a3989749e8338c80d5695594000bec8eb8bb6d74",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-workspace-build-attempt2.stderr",
+      "sha256": "bc3abde3c55d39393f51cb332e4f9378d6af213f509122b75e7de5326cff14bf"
+    },
+    {
+      "bytes": 422,
+      "git_blob_sha": "a9306a09d5fdbb05d74b771195743ebf2043d939",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-workspace-build-source-before.json",
+      "sha256": "93290146d04c828ecbdc95df9e7069e7ee953f02bedbb13fef305aab58778aac"
+    },
+    {
+      "bytes": 3660,
+      "git_blob_sha": "78a8ba058ee89e4b0dc69f5ac87b729f6f859265",
+      "path": "reports/rog-composed-285982d7/rog-composed-2859-workspace-build.stderr",
+      "sha256": "2480e2921a52bed305a19e0b9df2648fef762e51c9b3c9a1e2081e8f2d0083aa"
+    },
+    {
+      "bytes": 1145,
+      "git_blob_sha": "282f39d5e902e3e7eb021710f5622bfe98972c1f",
+      "path": "reports/rog-composed-285982d7/rog-owned-tmpfs-build-cache-cleanup.json",
+      "sha256": "58978cc451c17b1f31a71cc033012310db4237e24b5af503f348662c407348a2"
+    },
+    {
+      "bytes": 2584,
+      "git_blob_sha": "dec63d70af8787201ba7f50a74a7dacbcc6a15f7",
+      "path": "reports/rog-composed-285982d7/strict-workspace-clippy-command.json",
+      "sha256": "c18f59fc4d3cab43288a7480dc93e6aba8be5b78802c46d546cc1b684b63c929"
+    },
+    {
+      "bytes": 6442,
+      "git_blob_sha": "4109f00e4d61ea42a3e907d70008a6e9aead8bae",
+      "path": "reports/rog-composed-285982d7/strict-workspace-clippy.gate.json",
+      "sha256": "a102940b4271e853d8ef5148f7e748ece5f03ad44ca1d1b4d5393c53b32a8d86"
+    },
+    {
+      "bytes": 28216,
+      "git_blob_sha": "7fded54f216ba8b1d11605176d943114e53efa86",
+      "path": "reports/rog-composed-285982d7/summary.json",
+      "sha256": "bebb191bfe5617a065f1b28e815af1eb5d9e40de068ab745414a11c0c2967508"
+    },
+    {
+      "bytes": 7582,
+      "git_blob_sha": "be3533648450e09cc7082d1cd69e3597139b1428",
+      "path": "reports/rog-composed-285982d7/transfer-readback.json",
+      "sha256": "45204d032db7dd36b81da409abef1e4ea9da20523e08f07091e9c502715d0e5e"
+    },
+    {
+      "bytes": 3425,
+      "git_blob_sha": "d8341d640c8b2c3f439f10909a1bc52bd47afead",
+      "path": "reports/rog-composed-7586d3e2/cell-controls.gate.json",
+      "sha256": "4cf9596c16a43cf9e1e259736b790f5852afc5f791c9c9dc587019a24882c1fe"
+    },
+    {
+      "bytes": 17078,
+      "git_blob_sha": "c196f663d6248b42ff166d3884aec56c6d7988a9",
+      "path": "reports/rog-composed-7586d3e2/cell-counts-review.json",
+      "sha256": "8d306cb392615de8cd90f39b89ed0b271487502fc6c1e87d9fbdccd80087d884"
+    },
+    {
+      "bytes": 2615,
+      "git_blob_sha": "164bb5cf37354815aabdad311055b81de5e9d1e1",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m09-all-targets.json",
+      "sha256": "cc150ce90176167877e1cff77eabbf7730bde04f9ebc35778781a527fc7183e0"
+    },
+    {
+      "bytes": 45495,
+      "git_blob_sha": "374aea505d87e26b40b1b9f9278df248cc91efd2",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m09-all-targets.log",
+      "sha256": "44a52b31f501343a363407c8112d9a074dac70cbf4be5e89e7e6b621a4490975"
+    },
+    {
+      "bytes": 2597,
+      "git_blob_sha": "2ba4bb33271eb8255b2362742a829df938c4f0d4",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m09-doc.json",
+      "sha256": "5ab15c478b7d7752e9fcb4b569c746d65d1dbeeb46cd49fddd032574737b111c"
+    },
+    {
+      "bytes": 1131,
+      "git_blob_sha": "4f968334d4f35eb511f87c548329e36fb5a823ab",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m09-doc.log",
+      "sha256": "a5430de1edc30498d87bb394e3badb12514c2c21b130885ac7609c980b0e1cdb"
+    },
+    {
+      "bytes": 2648,
+      "git_blob_sha": "d33d6ea5ed24ffd87891fe08e88e46054c11a458",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m12-native-budget.json",
+      "sha256": "694692b4dc805cfe4a91d4ae5e67de441222a53e5bcc8451417d1a141cadda4a"
+    },
+    {
+      "bytes": 3988,
+      "git_blob_sha": "a81e5cb8b25c9ca59232e6a144ec0feb38ee5307",
+      "path": "reports/rog-composed-7586d3e2/cell-native/m12-native-budget.log",
+      "sha256": "f1a2f843509f91c77e074dab719fc2a81079f02e4bc5356366566035aef2ff8f"
+    },
+    {
+      "bytes": 88538,
+      "git_blob_sha": "cbb24b72e5615da3b64bc9d2583865f747f1e9ce",
+      "path": "reports/rog-composed-7586d3e2/cell-summary.json",
+      "sha256": "dc12e9dd980143c37444c5dbfff01490474444352e21c242fb4af15a4091cb7a"
+    },
+    {
+      "bytes": 3508,
+      "git_blob_sha": "b3c92a0933086697629c4aad852f0a14d9865a89",
+      "path": "reports/rog-composed-7586d3e2/controls-80.gate.json",
+      "sha256": "a80130437172906588131100552de61f73f34c20c480ff6d18ec78865ef890bf"
+    },
+    {
+      "bytes": 24923,
+      "git_blob_sha": "669e806c19b501b2a17e9b12585c7b6f4167e174",
+      "path": "reports/rog-composed-7586d3e2/index.json",
+      "sha256": "7b9cf48ba2582b54e7502e0e86ba784868c906cbc0a5c7451526a44f642932f6"
+    },
+    {
+      "bytes": 2001,
+      "git_blob_sha": "e48791a24f0bfbf3f7ba04f6247060aeb59946b2",
+      "path": "reports/rog-composed-7586d3e2/package-receipt.json",
+      "sha256": "4515a2ae3894ec25e869478bf8a4d284752a3f6cc7cde78b11126f9d654c6e16"
+    },
+    {
+      "bytes": 4268,
+      "git_blob_sha": "a0f13566fc7293ccea4a706d2a6f7ee077a69791",
+      "path": "reports/rog-composed-7586d3e2/pq-full-and-required.gate.json",
+      "sha256": "ab635950309c14f2ff569619f6ccc1f6fe0ec5b6f079992855e4af2e95188470"
+    },
+    {
+      "bytes": 3049,
+      "git_blob_sha": "12f8d5ebcdbe9a79bb06cee251372b56f6105fd4",
+      "path": "reports/rog-composed-7586d3e2/provider-receipt.json",
+      "sha256": "8f38de77d89c99060882aaa73551c71faceacd5bba4375887c311131dbd9be73"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha": "48cd28cf4b79ec5fd4711c0d00aa4dcac58ced4b",
+      "path": "reports/rog-composed-7586d3e2/rog-composed-7586-component-build-source-after.json",
+      "sha256": "e8e64ae82d9a4394c10a22dd6f8a2687a09618d86aa4eaac7f7aa3241f71fd8a"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha": "48cd28cf4b79ec5fd4711c0d00aa4dcac58ced4b",
+      "path": "reports/rog-composed-7586d3e2/rog-composed-7586-component-build-source-before.json",
+      "sha256": "e8e64ae82d9a4394c10a22dd6f8a2687a09618d86aa4eaac7f7aa3241f71fd8a"
+    },
+    {
+      "bytes": 1232,
+      "git_blob_sha": "548ec60ef79f838a579e053f951eda94924a14ee",
+      "path": "reports/rog-composed-7586d3e2/rog-composed-7586-component-build.json",
+      "sha256": "d2cdc5552155701424cac1ca2faa7c7fa9ef4d57205e620c88b89e8357f198a4"
+    },
+    {
+      "bytes": 128640,
+      "git_blob_sha": "a6c77138cd4fa223096009558c265dc9afbca470",
+      "path": "reports/rog-composed-7586d3e2/rog-composed-7586-component-build.jsonl",
+      "sha256": "8d118b227723bdc89ef220c0af92b454a67897d99af1d5e2082cc6d7586f119c"
+    },
+    {
+      "bytes": 209,
+      "git_blob_sha": "57c43e23c61bfefc6b2574d6d6b0825ed0b47a9f",
+      "path": "reports/rog-composed-7586d3e2/rog-composed-7586-component-build.stderr",
+      "sha256": "06c9bc4f6b43860bd0217880422aeb78a2d1db7bf3eefb37db97e6bb6f080689"
+    },
+    {
+      "bytes": 5006,
+      "git_blob_sha": "fd1730637172c37bbfcf6d234721543e3b886d53",
+      "path": "reports/rog-composed-7586d3e2/sampler-counts-review.json",
+      "sha256": "d240132a70095bc9b5943225647c5ef2832cdc780bea73592336b297fb85c99d"
+    },
+    {
+      "bytes": 2618,
+      "git_blob_sha": "4ae2bf02aa16718663192dd5615d983696538e08",
+      "path": "reports/rog-composed-7586d3e2/sampler-native/v4-sampler-release.json",
+      "sha256": "dc89ca4b6df571cc4c8dbad19fb0642c5e3e7010a033b6e30aec858d4ca1bfd6"
+    },
+    {
+      "bytes": 5245,
+      "git_blob_sha": "72a06f1f75e490bcb33c48f08a6d4d8673bd413f",
+      "path": "reports/rog-composed-7586d3e2/sampler-native/v4-sampler-release.log",
+      "sha256": "db88268a1ea4e5b16ef5a6ffb27c695db904fe6dac89ab3c62e50b0c0609890f"
+    },
+    {
+      "bytes": 1434,
+      "git_blob_sha": "bc092efe043ff81c5f6d635347b69c270bb08b62",
+      "path": "reports/rog-composed-7586d3e2/sampler-registry/registry.result.json",
+      "sha256": "4acb4a4b1f9df80caaaf4c188c459b83856ccb8329d966af0cb6e040a979e67e"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "path": "reports/rog-composed-7586d3e2/sampler-registry/registry.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 775,
+      "git_blob_sha": "081739994d4dd294993594f6991fcb3d0a31f999",
+      "path": "reports/rog-composed-7586d3e2/sampler-registry/registry.stdout",
+      "sha256": "664b97fc53eccdc15f0bd3fc95356a54af836b3e200038c1dd3b2216b2a6d1bc"
+    },
+    {
+      "bytes": 29544,
+      "git_blob_sha": "5ef6afaff67861b81fe2658cddb465156787bd65",
+      "path": "reports/rog-composed-7586d3e2/sampler-summary.json",
+      "sha256": "3db483cb62cb7dfa1974901c133f423f8a352dc0d385d3f2e296674ab7c4ab48"
+    },
+    {
+      "bytes": 2,
+      "git_blob_sha": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "path": "reports/rog-composed-7586d3e2/sampler.exit",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 2585,
+      "git_blob_sha": "e039bd8312b5ff09e855655cda6406abcc432c42",
+      "path": "reports/rog-composed-7586d3e2/strict-workspace-clippy-command.json",
+      "sha256": "db042af0f6bb242c3df774e892e91c304c97949fdbd5e2ba2020bdc9fd854db4"
+    },
+    {
+      "bytes": 6441,
+      "git_blob_sha": "ab24826c9f3aee6b812335559bae70288fc5d55b",
+      "path": "reports/rog-composed-7586d3e2/strict-workspace-clippy.gate.json",
+      "sha256": "fcb73096d36c14fdb7f98394c725b67c533ede0214c64344d9e8d347a4d2b5d1"
+    },
+    {
+      "bytes": 28091,
+      "git_blob_sha": "b28c2d880d8d8bc3d69849273239a41e72445f17",
+      "path": "reports/rog-composed-7586d3e2/summary.json",
+      "sha256": "c2eed33c0b743a243539aab5f3f83b5c1a596f690c99b8e95cdc8448c90cd6d0"
+    },
+    {
+      "bytes": 7043,
+      "git_blob_sha": "03036a9c6c21bb7a2ecb0c03ade93a3ae9ad097c",
+      "path": "reports/rog-composed-7586d3e2/transfer-readback.json",
+      "sha256": "6e21128209c40f6e073155e5661031a3fd7a732b890ca199af04e77d604edc75"
+    },
+    {
+      "bytes": 1861,
+      "git_blob_sha": "55261de362704b71332d25cb050321d47a39216a",
+      "path": "reports/rog-counter/history-counter.log",
+      "sha256": "c24a1e005305c6ae5dde91226a8d857da456aa91c827a9afaace92e08c9b813b"
+    },
+    {
+      "bytes": 537293,
+      "git_blob_sha": "2d61a4d4cb0b225bb91304a350d9bd7d917d2df3",
+      "path": "reports/rog-counter/summary.json",
+      "sha256": "f3bd16b8255e40a4666e889b6373e068b5f48fdf78ce54fee133dda5e2c769c8"
+    },
+    {
+      "bytes": 360580,
+      "git_blob_sha": "4e08dcbd7e161bf6b2669a4217dbb50ab7053fc3",
+      "path": "reports/rog-pq-counter/summary.json",
+      "sha256": "68ebdb2c918113902ae62bea1aa4ea475f03eb3f2d784aa8c0c1f119f047d5e9"
+    },
+    {
+      "bytes": 25873,
+      "git_blob_sha": "ade32766b6c78ea79b36205542814387e806320a",
+      "path": "reports/source-map/remaining-throughput-source-map.json",
+      "sha256": "ab4ee6cc9c0037302db677b88d1c5768c7f7f033784bd525aa70a4bd50c9b404"
+    },
+    {
+      "bytes": 17842,
+      "git_blob_sha": "b455ebfaa84caea0e81198c23aa00121c7ee5622",
+      "path": "reports/source-map/remaining-throughput-source-map.md",
+      "sha256": "35a5894f6c9d4715ad2f4ba1560ee983f26222907f6921e87cd35ab254e9c17d"
+    },
+    {
+      "bytes": 7155,
+      "git_blob_sha": "c16e79bcb20c42ad788b64e23418c9fb69a46098",
+      "path": "reports/static-285982d7/final-summary.json",
+      "sha256": "5182a9be7478c96aee55a8f4114e730f70dd80bec11633ee6d5222637bc2abb9"
+    },
+    {
+      "bytes": 13894,
+      "git_blob_sha": "9de16150a97d2b1cd7ce51c0c9522735f9b6685d",
+      "path": "reports/static-7586d3e2/final-summary.json",
+      "sha256": "3305d5113ecd69c708fe676dc00c2414c77c66c8655c48728caff3aab3f22e79"
+    },
+    {
+      "bytes": 3203,
+      "git_blob_sha": "dafe497a2b3555f2353070d0c8fb0b979a1eca3a",
+      "path": "reports/static-7586d3e2/index.json",
+      "sha256": "31abed3aee8f35fd6f936f22966b5c3571a0a72c6867e7cd096c0a872690679f"
+    },
+    {
+      "bytes": 3683,
+      "git_blob_sha": "11a8761993a04b8c64b52af3fe6631f8171b2365",
+      "path": "reports/static-7586d3e2/package-receipt.json",
+      "sha256": "9701ea99ce1506c60c55c6aa8d63828867753e280bece93e79f49425517353ba"
+    }
+  ],
+  "final_native_suite_passed_as_recorded": true,
+  "final_sampler_passed_as_recorded": true,
+  "final_static_result_as_recorded": "PASS",
+  "frozen_input_files_verified_unchanged": 125,
+  "latest_completed_original_ci": {
+    "actual_head_and_prospective_merge_identities_retained": true,
+    "candidate": "285982d78a4f62a064841cb0f106d18c865e19c5",
+    "snapshot_utc": "2026-11-06T09:28:59Z"
+  },
+  "local_markdown_links_verified": [
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/README-20261106T081354Z.md"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/pq-system-original-artifact-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-counter/history-counter.log"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/history-sqlite-reprepare-counter-fix.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-components/analysis.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-pq-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-285982d7/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/rog-composed-2859-build-interruption.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/rog-composed-2859-component-build.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/rog-composed-2859-component-build.stderr"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/rog-composed-2859-component-build-attempt2.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/controls-80.gate.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/pq-full-and-required.gate.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/cell-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/cell-counts-review.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/strict-workspace-clippy-command.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/campaign-business-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/large-cpu-all-matrices-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/f0-business-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/workspace-original-artifact-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/pq-terminal-counts-4-matrices.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-composed-2859-native-evidence.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/campaign-budget-readback.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/f0-budget-readback.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/bundle-index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/bundle-README.md"
+    },
+    {
+      "from": "README.md",
+      "target": "records/current-ci-285982d7.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-7586d3e2/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/final-source-7586d3e2.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-7586d3e2/index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync-7586/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync-7586/source-review.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-7586d3e2/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-7586d3e2/cell-counts-review.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-7586d3e2/sampler-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-composed-7586-native-evidence.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "manifest.json"
+    },
+    {
+      "from": "README.md",
+      "target": "SHA256SUMS"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/archive-provenance.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-archive-carrier-provenance.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/publication-finalization-attempt1/result.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/original-ci/README-20261106T081354Z.md"
+    },
+    {
+      "from": "README.md",
+      "target": "records/original-ci-20261106T081354Z.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-components/analysis.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-default-evidence.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-pq-counter/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-pq-and-counter-evidence.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-285982d7/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/ci-source-evidence.tar.gz"
+    },
+    {
+      "from": "README.md",
+      "target": "records/ci-source-evidence.index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync/independent-review-message-record.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/base-sync.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/source-map/remaining-throughput-source-map.md"
+    },
+    {
+      "from": "README.md",
+      "target": "records/development-records.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-285982d7/index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-composed-2859-native-evidence.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/bundle-index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/current-ci-285982d7/pq-terminal-counts-4-matrices.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/current-ci-285982d7.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-7586d3e2/final-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/base-sync-7586/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/static-7586d3e2/index.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/final-source-7586d3e2.tar.xz"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-7586d3e2/summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "reports/rog-composed-7586d3e2/sampler-summary.json"
+    },
+    {
+      "from": "README.md",
+      "target": "records/rog-composed-7586-native-evidence.tar.xz"
+    }
+  ],
+  "manifest_excludes": [
+    "manifest.json",
+    "SHA256SUMS"
+  ],
+  "original_campaign_acceptance": "FAIL",
+  "original_f0_slo": "FAIL_0_OF_6",
+  "production_activation": false,
+  "production_tps_established": false,
+  "sampler_sqlite_status_as_recorded": "UNKNOWN_SELECTED_RELEASE_UNIT_BINDING",
+  "schema": "trnm-throughput-publication-evidence-v2",
+  "scope": "Evidence publication only; original native, CI and cost outcomes keep their measured source and attempt. No execution is inferred from packaging.",
+  "source_scope": "A later evidence-only Git commit is not a new native or performance measurement. Its exact publication identity is supplied by Git.",
+  "sqlite_qualification_granted_by_packaging": false,
+  "validated_implementation": {
+    "head": "7586d3e209b38246402e34cf73a27aa9b907bc9c",
+    "ordered_parents": [
+      "285982d78a4f62a064841cb0f106d18c865e19c5",
+      "56897f125df27994efa1dda935f2c62eceb36de9"
+    ],
+    "tree": "fc0e51b1235470b972de41f2d677f6d5948f4868"
+  }
+}

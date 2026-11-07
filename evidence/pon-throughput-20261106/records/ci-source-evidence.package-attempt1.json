@@ -1,0 +1,20 @@
+{
+  "archive_already_created": {
+    "bytes": 576072,
+    "path": "ci-source-evidence.tar.gz",
+    "sha256": "a340d4aa245b12f7ea26e0c4d0f83683ca2fc283b33980ae4804f137eefb8199"
+  },
+  "command": [
+    "python3",
+    "validation/package_ci_source_evidence.py"
+  ],
+  "error": "AssertionError while requiring entire retained 5eb source-integrity combined log tail to equal OK; expected negative fixture stdout follows the genuine terminal OK",
+  "observed_exit": 1,
+  "original_evidence_changed": false,
+  "recovery": "Correct only summary-line reading, then verify and reuse the existing archive byte-for-byte; finish index without rewriting archive or original evidence.",
+  "schema": "trnm-ci-evidence-packager-failed-attempt-v1",
+  "script_backup": "package_ci_source_evidence_attempt1.py",
+  "script_sha256": "0037ea32fabb5a95509f8bc4e1d778bf7d510a13181dd26772f7b8610f19edd4",
+  "stage": "cross-source index after successful archive creation/readback",
+  "tests_reexecuted": false
+}

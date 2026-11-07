@@ -1114,3 +1114,6 @@ mod tasks_v4_tests;
 mod application_v6_tests;
 #[cfg(test)]
 mod tasks_v5_tests;
+
+#[cfg(test)]
+mod parallel_preparation_tests;

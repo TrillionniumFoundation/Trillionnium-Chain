@@ -3396,6 +3396,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/parallel_preparation_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/task_migration_v1.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4278,6 +4285,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/host_kernel_parent_relative_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/host_kernel_parent_resource_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/host_public_guard.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -4366,6 +4387,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/local_control_origin_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/pq_network/parallel_execution_tests.rs"
         )),
     ),
     (
@@ -4492,6 +4520,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake/shared_readiness_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/ingress/public_v3/intake/shared_readiness_tests.rs"
         )),
     ),
     (
@@ -5349,6 +5384,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_record_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_record_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/history_tests.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/post_write_readback/tests.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -5381,6 +5430,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/observed_history.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/observed_history.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-pon-node/src/store/observed_history/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-pon-node/src/store/observed_history/tests.rs"
         )),
     ),
     (

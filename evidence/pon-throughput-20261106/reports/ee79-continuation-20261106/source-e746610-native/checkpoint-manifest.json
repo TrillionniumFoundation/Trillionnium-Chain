@@ -1,0 +1,128 @@
+{
+  "durable_pipeline_job": "1a1b1d5f06c-fc05-7b12",
+  "files": [
+    {
+      "bytes": 11730,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/artifacts.json",
+      "path": "semantic-controls/artifacts.json",
+      "retrieved_version": "66306:48125613:11730:1793985456449084121:1793985456449084121",
+      "sha256": "1cae1c7d820ad4dbef8b67d430247c63af79381908de3b79b2caabc8698a8f60"
+    },
+    {
+      "bytes": 16966,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/selected-tests.tsv",
+      "path": "semantic-controls/selected-tests.tsv",
+      "retrieved_version": "66306:48125631:16966:1793985456484172732:1793985456484172732",
+      "sha256": "a739aaf045ff4a78c36768b4650829d178b0dae05dc56aac600e8346bb9fd420"
+    },
+    {
+      "bytes": 1590,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-074-node.log",
+      "path": "semantic-controls/test-074-node.log",
+      "retrieved_version": "66306:48126023:1590:1793985468219663255:1793985468219663255",
+      "sha256": "85cfabab96b63fb7bc8cb9db2a2e79b22c33d26da7b8d0f0ee6af93a6901475e"
+    },
+    {
+      "bytes": 232,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-074-node-check.log",
+      "path": "semantic-controls/test-074-node-check.log",
+      "retrieved_version": "66306:48126025:232:1793985468242542514:1793985468242542514",
+      "sha256": "5c4ab0137a2557175ab55d55b0bc90c8e51aa2df176eaf39922733ed38bee061"
+    },
+    {
+      "bytes": 900,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-115-m06.log",
+      "path": "semantic-controls/test-115-m06.log",
+      "retrieved_version": "66306:48129723:900:1793985472671382002:1793985472671382002",
+      "sha256": "e6098c75f36f5b288a7fd84bee808d519240b629c7f78836f1165f5e6effea22"
+    },
+    {
+      "bytes": 236,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-115-m06-check.log",
+      "path": "semantic-controls/test-115-m06-check.log",
+      "retrieved_version": "66306:48129725:236:1793985472692381241:1793985472692381241",
+      "sha256": "5b22798f96fce636e68de43a113139efc53e819d8fc0f41847056a1c2d2110fa"
+    },
+    {
+      "bytes": 258,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-116-m06.log",
+      "path": "semantic-controls/test-116-m06.log",
+      "retrieved_version": "66306:48129727:258:1793985473332358047:1793985473332358047",
+      "sha256": "29f38a803acd8f27bb16dba1a097dafa3092afac0e00d27f803fd1c2e3340360"
+    },
+    {
+      "bytes": 224,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-116-m06-check.log",
+      "path": "semantic-controls/test-116-m06-check.log",
+      "retrieved_version": "66306:48129729:224:1793985473354357249:1793985473354357249",
+      "sha256": "a80ddf1e89896f1d6207f3d7a43da9ecdd4ecac153feb66331da10ea8de1ed87"
+    },
+    {
+      "bytes": 253,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-117-m06.log",
+      "path": "semantic-controls/test-117-m06.log",
+      "retrieved_version": "66306:48129731:253:1793985473849339310:1793985473849339310",
+      "sha256": "72fc06f17a75ccd6f697f3a901346cf645f15c9fb59700894cd42989843dda4d"
+    },
+    {
+      "bytes": 219,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-117-m06-check.log",
+      "path": "semantic-controls/test-117-m06-check.log",
+      "retrieved_version": "66306:48129733:219:1793985473871338513:1793985473871338513",
+      "sha256": "df5581b3585c43a0d0be2f11f1e0c40d936c6e4300f52ac4760e64c12cb5bf7c"
+    },
+    {
+      "bytes": 239,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-118-node.log",
+      "path": "semantic-controls/test-118-node.log",
+      "retrieved_version": "66306:48129735:239:1793985475239920513:1793985475239920513",
+      "sha256": "ffb1f43c5a69143c72a5f121f34964b370a91621a2b6ca4ec93ae1d3d5d63000"
+    },
+    {
+      "bytes": 204,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/test-118-node-check.log",
+      "path": "semantic-controls/test-118-node-check.log",
+      "retrieved_version": "66306:48129737:204:1793985475262288101:1793985475262288101",
+      "sha256": "455b7b3d70fe4314a3aac26c2467520d4e37e4eb7cf1bd5ff34406ca923416a3"
+    },
+    {
+      "bytes": 8729,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/controls-stage.json",
+      "path": "controls-stage.json",
+      "retrieved_version": "66306:48125073:8729:1793985476189012688:1793985476189012688",
+      "sha256": "367c8605e84ae2048c0eddc1b0f5ab53771849f8448819658e5759ddcd79f070"
+    },
+    {
+      "bytes": 2430,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/build.json",
+      "path": "build.json",
+      "retrieved_version": "66306:48125068:2430:1793985453942316120:1793985453942316120",
+      "sha256": "a9c7c23278a5c332a82af80fe0d4e0d84f36f05121445994e90f5c841adcf947"
+    },
+    {
+      "bytes": 2548,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/authenticated-prefix-registration.json",
+      "path": "authenticated-prefix-registration.json",
+      "retrieved_version": "66306:48130630:2548:1793985477170114335:1793985477170114335",
+      "sha256": "5a461d723dc0e1148458f0d0a7c36337ae7622edd567502b61d189f55a2afbdf"
+    },
+    {
+      "bytes": 2725,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/controls.json",
+      "path": "controls.json",
+      "retrieved_version": "66306:48125595:2725:1793985476176318420:1793985476176318420",
+      "sha256": "87b1acbe56ea09e36e98b68eff4c1943feeb473ff21f1ae5ef54e0903dc78687"
+    },
+    {
+      "bytes": 338001,
+      "original_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/semantic-controls/execution-summary.json",
+      "path": "semantic-controls/execution-summary.json",
+      "retrieved_version": "66306:48125602:338001:1793985475555277482:1793985475555277482",
+      "sha256": "22b6dd6cb2fba9bce67c590e899cb33071ddcf391f4847d8af45de8f180df2e7"
+    }
+  ],
+  "schema": "trnm-completed-native-control-checkpoint-v1",
+  "scope": "Already completed original build identity, selected118 controls and actual ELF registrations only. Full runtime/docs still running and not archived in this checkpoint.",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

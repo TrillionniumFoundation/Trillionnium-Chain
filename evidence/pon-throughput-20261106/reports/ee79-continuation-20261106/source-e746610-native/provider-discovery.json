@@ -1,0 +1,37 @@
+{
+  "actual_binary_sha256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+  "current_observation": true,
+  "descriptor_sha256": "6eb7842501dc1e58325aacbd0c461c5eb8fc1608bd374e14e6fe774066ca7e83",
+  "environment": {
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_DIR": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install",
+    "OPENSSL_MODULES": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/ossl-modules",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "f98be2651b5c922e6f51cefa7d71389df3b3d87eae543de1be4fbbb34685980f",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+  },
+  "errors": [],
+  "reusable": true,
+  "reused_prior_descriptor_path": "/home/qq/work/chain-throughput-20261106-ee79/qualification-114-0bca28ebf590/raw/provider-discovery.json",
+  "reused_prior_descriptor_sha256": "954db6c5a995906f89aab3305ca4b23ac822cfa9e392e83da321d580ca3e8dcd",
+  "source_descriptor": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/provider.env",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "static_libraries": [
+    {
+      "bytes": 12442344,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libcrypto.a",
+      "sha256": "8bc23f678b85015007fe5259b1463df1b1c908373d4b364117a78c07788ec154"
+    },
+    {
+      "bytes": 2149026,
+      "path": "/home/qq/work/chain-tls-m15-58cecf-20261106-evidence/runner-temp/trnm-pq-provider-3.5.9.3AMY5M6S/install/lib/libssl.a",
+      "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+    }
+  ],
+  "version": {
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)"
+  }
+}

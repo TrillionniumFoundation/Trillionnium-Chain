@@ -47,6 +47,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_maintenance_cost.py
     python3 scripts/ci/test_work_rejection_report.py
     python3 scripts/ci/test_six_workpackage_native_rosters.py
+    python3 scripts/ci/test_throughput_cost_coverage.py
     python3 scripts/ci/test_w1_full_v2_disposition.py
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.

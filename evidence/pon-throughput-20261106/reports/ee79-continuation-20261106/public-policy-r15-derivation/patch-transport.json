@@ -1,0 +1,11 @@
+{
+  "decoded_byte_identity_verified": true,
+  "delivered_bytes": 489,
+  "delivered_name": "minimal.patch.gz",
+  "delivered_sha256": "8ab44d5afb1fe0d85c63fe3fa3e9fa1c2d88ea58277c9e1bd20df4f860a30a6c",
+  "original_bytes": 1014,
+  "original_name": "minimal.patch",
+  "original_sha256": "6759de30650dcba5ce8a6451f303391be90c5636052a014d4b4fdb81e59d0339",
+  "reason": "Git whitespace checking rejects the original unified-diff context blank line. Preserve the original bytes with lossless gzip transport; no patch content correction.",
+  "schema": "trnm-original-patch-compressed-transport-v1"
+}

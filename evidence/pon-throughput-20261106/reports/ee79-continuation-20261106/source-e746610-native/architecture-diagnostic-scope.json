@@ -1,0 +1,45 @@
+{
+  "architecture_target_summary": {
+    "failed": 1,
+    "ignored": 0,
+    "passed": 12
+  },
+  "bounded_error_code": "PUBLIC_HOST_KERNEL_PARENT",
+  "bounded_failure_rows": 18,
+  "business_qualification": false,
+  "docs_command_passed": true,
+  "excerpt": "architecture-delivery-target-excerpt.log",
+  "excerpt_bytes": 7453,
+  "excerpt_sha256": "98b18bf3a62517eb586086f3dee76d8f70b1f33cb890169b425e69579e8db1be",
+  "excerpt_start_byte": 422233,
+  "exited_native_complete_environment_reconstructed": false,
+  "full_report_json_archived": false,
+  "full_report_json_reconstructed": false,
+  "host_probe_scope": "New read-only shell after original job termination; fixed cgroup parent absent. It does not reconstruct the exited native process environment.",
+  "known_report_locations_read_missing": [
+    "/home/qq/trnm-ee79-e7466106a2a6-tmp/.tmpOkP0Js/architecture-comparison/report.json",
+    "/home/qq/work/chain-throughput-20261106-ee79/qualification-118-e7466106a2a6/raw/architecture-delivery-comparison.json"
+  ],
+  "missing_read_responses": [
+    "durable-original/temporary-report-missing-response.txt",
+    "durable-original/receipt-report-missing-response.txt"
+  ],
+  "native_workspace_command_passed": false,
+  "node_lib_summary": {
+    "failed": 0,
+    "ignored": 32,
+    "passed": 1216
+  },
+  "original_launch_explicit_environment_did_not_set": [
+    "GITHUB_ACTIONS",
+    "TRNM_CI_RECEIPT_DIR",
+    "TRNM_ARCHITECTURE_COMPARE_DIR"
+  ],
+  "original_runtime_log": "runtime-tests.log",
+  "original_runtime_log_bytes": 429686,
+  "original_runtime_log_sha256": "bcea08c4d6ca6547098917d8ce603cb0ddf2c8dca9fad7b51d0ac34e5efa3664",
+  "schema": "trnm-original-architecture-log-excerpt-scope-v1",
+  "scope": "Exact final target stdout and Cargo failure tail extracted from the original complete runtime log. The 18 JSON failure lines are bounded diagnostics, not the complete per-sample business report.",
+  "source_head": "e7466106a2a647c8032556273101440384d88b70",
+  "source_tree": "63e03dc848eeb92d747fe2c7926c2f758b277cef"
+}

@@ -1,0 +1,57 @@
+{
+  "backend_exported": true,
+  "build_directory": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490",
+  "cli_executable": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+  "cli_sha256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d",
+  "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+  "elapsed_wall_seconds": 95,
+  "exit_code": 0,
+  "github_actions_reported": false,
+  "independent_cryptographic_implementation_claim": false,
+  "install_prefix": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install",
+  "last_stage": "complete",
+  "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+  "native_backend_inputs": [
+    {
+      "bytes": 8985944,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/bin/openssl",
+      "sha256": "253724b900b96c194ce4da7c59b158ea477eba0be651df8c72ab899c65cca93d"
+    },
+    {
+      "bytes": 3449,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/include/openssl/opensslv.h",
+      "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+    },
+    {
+      "bytes": 4729,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/include/openssl/configuration.h",
+      "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+    },
+    {
+      "bytes": 12442344,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/libcrypto.a",
+      "sha256": "63139df50e84b3a0fdf78cd725c7b32cdd75e535a6a300c2f963b61552777a62"
+    },
+    {
+      "bytes": 2149026,
+      "path": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/libssl.a",
+      "sha256": "d7cddef12614789118f792fb4b07748c9a413d241895c1501fe12e3998658d90"
+    }
+  ],
+  "native_rust_pq_tests_run_by_preparation": false,
+  "openssl_conf": "/dev/null",
+  "openssl_modules": "/home/qian-qi/work/chain-throughput-20261106-1eed/provider-temp/trnm-pq-provider-3.5.9.8DrdJ490/install/lib/ossl-modules",
+  "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+  "production_activation": false,
+  "result": "PREPARED_AND_SMOKE_VERIFIED",
+  "runner_environment_reported": null,
+  "schema": "trnm-ci-pq-provider-v3",
+  "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+  "source_digest_verified": true,
+  "source_transport": "download",
+  "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+  "static_build": true,
+  "upstream_full_tests_run": false,
+  "version": "3.5.9",
+  "whole_chain_quantum_security_qualified": false
+}
