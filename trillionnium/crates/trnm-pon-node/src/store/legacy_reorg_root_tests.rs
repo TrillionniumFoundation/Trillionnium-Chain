@@ -347,10 +347,14 @@ fn legacy_reorg_root_preserves_pq_v2_and_v6_state_validation() {
             Node::open_with_pq_network(directory.path(), cfg.clone(), 1, &policy).unwrap();
         assert_eq!(node.state_backend, StateBackend::PqNetworkV2);
         assert!(node.legacy_reorg_root_arithmetic().is_none());
+        assert!(node.legacy_admission_readback_schema().is_none());
         // Isolate the defensive profile predicate. The normal Legacy constructor
         // already refuses PQ, and no SQL operation runs with this test-only tag.
         node.state_backend = StateBackend::Legacy;
         assert!(node.legacy_reorg_root_arithmetic().is_none());
+        node.legacy_admission_schema = Some(BTreeMap::new());
+        assert!(node.legacy_admission_readback_schema().is_none());
+        node.legacy_admission_schema = None;
         node.state_backend = StateBackend::PqNetworkV2;
         let mut malformed = cfg.initial.clone();
         let auth = malformed

@@ -1,0 +1,27 @@
+test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs (__main__.PushSourceControls.test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs) ... ERROR
+test_conflicts_refuse_without_a_merge_or_candidate_repair (__main__.PushSourceControls.test_conflicts_refuse_without_a_merge_or_candidate_repair) ... ok
+test_context_corruption_and_independent_expected_values_are_refused (__main__.PushSourceControls.test_context_corruption_and_independent_expected_values_are_refused) ... ok
+test_dirty_or_wrong_candidate_cannot_select_source (__main__.PushSourceControls.test_dirty_or_wrong_candidate_cannot_select_source) ... ok
+test_fast_forward_tree_still_has_two_ordered_parents (__main__.PushSourceControls.test_fast_forward_tree_still_has_two_ordered_parents) ... ok
+test_independent_head_and_merge_workers_reproduce_one_frozen_source (__main__.PushSourceControls.test_independent_head_and_merge_workers_reproduce_one_frozen_source) ... ok
+test_local_merge_driver_cannot_supply_the_selected_tree (__main__.PushSourceControls.test_local_merge_driver_cannot_supply_the_selected_tree) ... ok
+test_real_diverged_merge_imports_tree_and_blob_closure (__main__.PushSourceControls.test_real_diverged_merge_imports_tree_and_blob_closure) ... ok
+test_real_event_ref_after_repository_and_run_are_not_optional (__main__.PushSourceControls.test_real_event_ref_after_repository_and_run_are_not_optional) ... ok
+test_workers_do_not_resolve_a_later_main (__main__.PushSourceControls.test_workers_do_not_resolve_a_later_main) ... ok
+test_wrong_tree_and_reversed_parent_commit_cannot_borrow_correct_inputs (__main__.PushSourceControls.test_wrong_tree_and_reversed_parent_commit_cannot_borrow_correct_inputs) ... ok
+test_original_matrices_commands_and_pr_sources_keep_the_push_owner (__main__.PushWorkflowControls.test_original_matrices_commands_and_pr_sources_keep_the_push_owner) ... ok
+test_trigger_resolver_source_and_retention_cannot_be_silently_removed (__main__.PushWorkflowControls.test_trigger_resolver_source_and_retention_cannot_be_silently_removed) ... ok
+
+======================================================================
+ERROR: test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs (__main__.PushSourceControls.test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/ae364bcbabfb/publication-check/scripts/ci/test_integration_push_source.py", line 209, in test_cli_refusal_retains_attempted_context_and_independent_workflow_inputs
+    environment = dict(os.environ, **self.expected(context), EXPECTED_BASE='f' * 40,
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument 'EXPECTED_BASE'
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.977s
+
+FAILED (errors=1)
