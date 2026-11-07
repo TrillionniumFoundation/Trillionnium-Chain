@@ -1,0 +1,125 @@
+{
+  "schema": "trnm-original-business-evidence-index-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5706,
+      "sha256": "9334f7ec3f47e12697d9a6a27ae62565656e7d8dfd49d569d4f02d549873554d"
+    },
+    {
+      "path": "development/admin-ci-readback-96e1-20261107.json",
+      "bytes": 148966,
+      "sha256": "224236fc5ef2ca806517000503ef1faf655f232532078caecfde474cd12faf99"
+    },
+    {
+      "path": "development/crypto-rejection-development.log",
+      "bytes": 3440,
+      "sha256": "e25de761d057aad4f413982988a6ee9dc333d85d72f97e9480972b61bc125d35"
+    },
+    {
+      "path": "development/fresh-cache-metadata-validation.json",
+      "bytes": 2030,
+      "sha256": "793f07493b7e14c2d3101028a46af67e62400a402cabc8b690af8eb4ad410b34"
+    },
+    {
+      "path": "development/fresh-cache-path-negative-controls.log",
+      "bytes": 3080,
+      "sha256": "3dbd7d2a5ea8a48ca2d6e568aef8348d86b17950e3c7f20297fce99186a6ecdb"
+    },
+    {
+      "path": "development/fresh-cache-path-reader-tests.log",
+      "bytes": 128,
+      "sha256": "bab323be83579b976653baf1fdfef58d6e85d8aa2aa3d07fda040ed0d86fe9f9"
+    },
+    {
+      "path": "development/fresh-cache-path-validation.json",
+      "bytes": 1851,
+      "sha256": "ecc1dc7f444e0a8e6c9fc12b4690d7462361798abd28e561e1051a9ded31430b"
+    },
+    {
+      "path": "development/fresh-cache-reader-tests-v2.log",
+      "bytes": 126,
+      "sha256": "3544cef8eddbbb5b8d7ca9d0a428cc25ff586d5dda7b056046e0573a7644945b"
+    },
+    {
+      "path": "development/fresh-cache-reader-tests.log",
+      "bytes": 3870,
+      "sha256": "8c596d816e06045595fdf0f9798054efd105fad5a91fa5c1a4faa49f97c9cdad"
+    },
+    {
+      "path": "development/legacy-readback-development-fixed.log",
+      "bytes": 3836,
+      "sha256": "fbfd078973f17ea47f52683413764bb50b177c9304f606761a85478f8393f698"
+    },
+    {
+      "path": "development/legacy-readback-development.log",
+      "bytes": 4374,
+      "sha256": "4798944f0c0c7188d697409ffc2ff402fc72cecd2dd522e50b4fafa3b1c429af"
+    },
+    {
+      "path": "reader-controls/INDEX.json",
+      "bytes": 5460,
+      "sha256": "f0e438df1da9947ad9f354ca79658b633443f577ef25d81a9ce685d3a86bce03"
+    },
+    {
+      "path": "reader-controls/manifest.json",
+      "bytes": 41420,
+      "sha256": "2a28836e3edf8e92bb2c4e0e8bae0c738c998ecbb890af8a1f7440464a2eab26"
+    },
+    {
+      "path": "reader-controls/read_retained_failures.py",
+      "bytes": 3860,
+      "sha256": "6a940ec368cb80e26678a471691d5b366134fe5f728981e3b0dec1b6391a7e70"
+    },
+    {
+      "path": "reader-controls/retained-failure-readback.json",
+      "bytes": 3459,
+      "sha256": "ef1f89ab7a15704263e175409f2ffbc104346e5d11e1b8dfcb797abf1ab9dab5"
+    },
+    {
+      "path": "reader-controls/retained-failure-readback.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reader-controls/test_ci_observation_process.json",
+      "bytes": 587,
+      "sha256": "3012017cac409476090c4aef314a6c1245db00ebb0a37227ce3c9f601baa3760"
+    },
+    {
+      "path": "reader-controls/test_ci_observation_process.log",
+      "bytes": 1102,
+      "sha256": "48abf5c56ca98dbf6a4462e15b734c0bc2a93c62444b6802a3e0cab1220da0fd"
+    },
+    {
+      "path": "reader-controls/test_from_zero_host_ci.json",
+      "bytes": 577,
+      "sha256": "7413ba2dbf6f8504884148bada90a8ea5f71e4fb76eb4ac8a63e89a83b9606fb"
+    },
+    {
+      "path": "reader-controls/test_from_zero_host_ci.log",
+      "bytes": 177,
+      "sha256": "07f741e4276b061106ed45799fcd38e240cb2c540c0509bf5ef283c93e224c65"
+    },
+    {
+      "path": "reader-controls/test_run_from_zero_native.json",
+      "bytes": 587,
+      "sha256": "0492beb70df222eeef121bfd4a82ed52d1ccc278bf81f977f4564c4ad1d3c6f2"
+    },
+    {
+      "path": "reader-controls/test_run_from_zero_native.log",
+      "bytes": 24541,
+      "sha256": "d785620caa62cbf3589b7efdbd252fe73006691946b94814b45cbe11024c9d58"
+    },
+    {
+      "path": "reader-controls/test_run_w1_fresh_service_v1.json",
+      "bytes": 589,
+      "sha256": "b5d49901951e305bec9f2548c1fc2bfc6027ade148d7cedd9e025bc167d9f122"
+    },
+    {
+      "path": "reader-controls/test_run_w1_fresh_service_v1.log",
+      "bytes": 128,
+      "sha256": "16433f8247dee2e495387b8fe5aa63f4c6e21128dd4e44c9b6bbacc06f629a1c"
+    }
+  ]
+}

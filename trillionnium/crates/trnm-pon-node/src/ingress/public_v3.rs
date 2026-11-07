@@ -19,6 +19,7 @@ mod history_response;
 pub(super) mod request_observation;
 pub mod scalar_cpu;
 mod work_arithmetic;
+mod work_rejection;
 use growth::ClientProfile;
 pub use growth::{call_public_protected_growth_v1, GROWTH_PROFILE};
 pub use request_observation::{
@@ -62,6 +63,7 @@ pub use work_arithmetic::{
     call_public_protected_v3_with_arithmetic_facts, PublicArithmeticFactObservation,
     PublicArithmeticWorkObservation,
 };
+pub use work_rejection::{PublicRejectionFactObservation, PublicRejectionWorkObservation};
 
 /// Fresh signed/wire successor. V2 remains a separate unchanged byte contract.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -784,10 +786,11 @@ impl PublicServer {
             fail_next_live_cpu_finish: AtomicBool::new(false),
         })
     }
-    /// Opt-in exact invalid-math suppression for a single bounded V3 service.
+    /// Explicit exact invalid-math suppression settings for one V3 service.
     /// Does not alter W1 validity, signed profile, caller admission budgets or
     /// the complete verifier; NEW bogus traces still consume one full replay.
-    /// Future public rollout requires a separately reviewed resource profile.
+    /// Ordinary classical service startup otherwise installs the fixed bounded
+    /// default. Explicit settings and the separate arithmetic profile are exclusive.
     pub fn with_w1_rejection_cache(mut self, slots: usize, ttl: Duration) -> Result<Self> {
         ensure(
             self.arithmetic_facts.is_none() && self.w1_rejection_cache.is_none(),
@@ -1809,11 +1812,9 @@ fn public_dispatch(
                     };
                     let result = match arithmetic_facts {
                         None => match w1_rejection_cache {
-                            Some(cache) => WorkCheckedPacket::verify_with_rejection_cache(
-                                packet,
-                                cache,
-                                &mut checkpoint,
-                            ),
+                            Some(cache) => {
+                                work_rejection::verify(packet, cache, &mut checkpoint, observation)
+                            }
                             None => {
                                 WorkCheckedPacket::verify_with_progress(packet, &mut checkpoint)
                             }
@@ -2118,7 +2119,7 @@ fn serve_public_protected_v3_inner(
     node: Arc<Mutex<Node>>,
     lifetime: Duration,
     stop: Arc<AtomicBool>,
-    server: PublicServer,
+    mut server: PublicServer,
     observations: (Arc<Mutex<PublicMetrics>>, Option<PublicRequestObserver>),
 ) -> Result<PublicMetrics> {
     let (metrics, observer) = observations;
@@ -2163,6 +2164,7 @@ fn serve_public_protected_v3_inner(
         owner.bind_public_service_cpu_domain(&server.mutation_cpu_domain())?;
         owner.settings().clone()
     };
+    server.install_default_w1_rejection_cache()?;
     let end = Instant::now() + lifetime;
     let (proof_tx, proof_rx) = mpsc::sync_channel::<Task>(2);
     let (read_tx, read_rx) = mpsc::sync_channel::<Task>(2);
@@ -3795,7 +3797,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn w1_negative_cache_is_explicit_bounded_and_never_activated_by_default() {
+    fn w1_negative_cache_explicit_settings_are_bounded_before_service_startup() {
         let make = || {
             PublicServer::new(
                 DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),

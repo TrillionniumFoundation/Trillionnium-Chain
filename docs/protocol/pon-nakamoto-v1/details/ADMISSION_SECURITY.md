@@ -837,13 +837,33 @@ time, eligibility, and application context must still be verified by the
 existing Node owner. Different bogus traces miss and still cost one full
 replay each; a fresh false trace can still starve the original CPU budget.
 
-The V3 'PublicServer::with_w1_rejection_cache' builder selects this option
-explicitly. Its default is **off**; signed V3 policy identity, task wire,
-W1/PNW1 proof bytes, target, W1 ticket/chainwork and runtime activation
-remain unchanged. This is a bounded local optimization for repeated invalid
-bytes, **not** a remedy for cheap novel false transcripts, Sybil identities,
-or host-wide CPU fairness. Public rollout needs a separate reviewed
-configuration/evidence scope.
+Ordinary classical V3 service startup installs a fresh 256-slot, 30-second
+mathematical rejection owner after its original Host/profile/Node/intake
+checks and before its workers start. The existing
+'PublicServer::with_w1_rejection_cache' builder can explicitly select smaller
+bounds before startup; its selected owner is preserved. Automatic installation
+excludes PQ History, Growth and the separately signed arithmetic-fact profile.
+Retained Rust object storage, including allocated slot capacity, is bounded by
+32 KiB per owner; this excludes allocator metadata and verifier workspace and is
+not a process-RSS claim. Allocation failure refuses startup without silently
+selecting another mode. No new CPU credit, queue, worker or deadline is created.
+
+Signed V3 policy identity, task wire, W1/PNW1 proof bytes, target, W1
+ticket/chainwork and runtime activation remain unchanged. All valid proofs and
+all new complete mathematical identities still use the full native verifier.
+Current authentication, Node context and the original deadline/cancellation/CPU
+checks precede a cached refusal. The optional per-request 'work_rejection'
+observation distinguishes a found fact, a returned cached error and actual
+native replay. Legacy 'full_work' CPU fields continue measuring the complete
+verification attempt, including lookup/hash/publication and failed/cancelled
+work; those intervals remain nested and cannot be added twice.
+
+This default is a bounded local optimization for repeated invalid bytes, not a
+remedy for cheap novel false transcripts, Sybil identities or host-wide CPU
+fairness. Old source-specific cache-off failures remain failed. The unchanged
+original-resource four-second/16-worker service and fresh-challenge cohorts
+still require execution on the new complete candidate; default selection or
+component success does not establish their business acceptance or activation.
 
 ### P5 W2-A concrete research outcome
 

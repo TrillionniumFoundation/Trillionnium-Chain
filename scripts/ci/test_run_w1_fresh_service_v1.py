@@ -96,6 +96,30 @@ def synthetic_fresh_report():
     return doc
 
 
+def synthetic_enabled_fresh_report():
+    """Same synthetic business, with actual-mode-shaped cache path records."""
+    doc = synthetic_fresh_report()
+    doc.update(negative_cache_enabled=True,
+               negative_cache_observation_source='actual-request-work-rejection-observations-v1')
+    for phase in doc['phases']:
+        attempts = 7 + sum(len(worker['calls']) for worker in phase['attacks'])
+        for index, row in enumerate(phase['observations']['records']):
+            row.update(full_work_started=index < attempts,
+                       full_work_accepted=(index < 7 if index < attempts else None))
+            if index >= attempts:
+                continue
+            row.update(
+                work_rejection=dict(schema='public-v3-work-rejection-observation-v1',
+                    slots=256, retained_software_bytes=24576, lifetime_ms=30000,
+                    lifetime_seconds=30, lifetime_subsec_nanos=0, completed=True,
+                    cache=dict(key_hashed=True, lookup_contended=False, lookup_poisoned=False,
+                        exact_fact_found=False, cached_rejection_returned=False,
+                        native_verifier_started=True, native_verifier_returned=True,
+                        full_replay_started=True,
+                        publication='none' if index < 7 else 'retained')))
+    return doc
+
+
 def process():
     return dict(executed=True, exit_code=0, process_exit_code=0, timed_out=False,
                 source_verified=True, expected_source='a' * 40)
@@ -112,6 +136,160 @@ class FreshRefusalControls(unittest.TestCase):
             path = Path(directory) / 'report.json'
             path.write_text(json.dumps(doc))
             return fresh.validate_fresh_report(path)
+
+    def test_historical_disabled_and_current_observed_mode_keep_distinct_scope(self):
+        old = self.validate_doc(synthetic_fresh_report())
+        self.assertNotIn('negative_cache_observation', old)
+        current = self.validate_doc(synthetic_enabled_fresh_report())['negative_cache_observation']
+        self.assertIs(current['enabled'], True)
+        self.assertEqual([row['full_replay_started'] for row in current['phases']], [7, 24])
+        self.assertEqual([row['cached_rejection_returned'] for row in current['phases']], [0, 0])
+
+    def test_enabled_mode_requires_both_phases_and_every_started_attempt_observation(self):
+        original = synthetic_enabled_fresh_report()
+        changes = [
+            lambda d: d.update(negative_cache_enabled=False),
+            lambda d: d.update(negative_cache_enabled=None),
+            lambda d: d.update(negative_cache_enabled=1),
+            lambda d: d.pop('negative_cache_observation_source'),
+            lambda d: d['phases'][0]['observations']['records'][0].pop('work_rejection'),
+            lambda d: d['phases'][1]['observations']['records'][0].pop('work_rejection'),
+            lambda d: d['phases'][1]['observations']['records'][0].update(full_work_started=False),
+            lambda d: d['phases'][1]['observations']['records'][0].pop('full_work_started'),
+        ]
+        for index, change in enumerate(changes):
+            doc = copy.deepcopy(original)
+            change(doc)
+            with self.subTest(index=index), self.assertRaisesRegex(ValueError, 'FRESH_CACHE_'):
+                self.validate_doc(doc)
+        doc = copy.deepcopy(original)
+        for row in doc['phases'][1]['observations']['records']:
+            row.update(full_work_started=False)
+            row.pop('work_rejection', None)
+        with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_NO_OBSERVED_ATTEMPTS'):
+            self.validate_doc(doc)
+
+    def test_cache_configuration_retains_exact_positive_submillisecond_lifetime(self):
+        doc = synthetic_enabled_fresh_report()
+        for phase in doc['phases']:
+            for row in phase['observations']['records']:
+                if row['full_work_started']:
+                    row['work_rejection'].update(
+                        lifetime_seconds=0, lifetime_subsec_nanos=1, lifetime_ms=0)
+        observed = self.validate_doc(doc)['negative_cache_observation']['configuration']
+        self.assertEqual((observed['lifetime_ms'], observed['lifetime_seconds'],
+                          observed['lifetime_subsec_nanos']), (0, 0, 1))
+        invalid = [dict(slots=0), dict(slots=257), dict(slots=True),
+                   dict(retained_software_bytes=32769), dict(retained_software_bytes=0),
+                   dict(lifetime_ms=1), dict(lifetime_seconds=-1), dict(lifetime_seconds=31),
+                   dict(lifetime_subsec_nanos=-1), dict(lifetime_subsec_nanos=1_000_000_000),
+                   dict(lifetime_seconds=0, lifetime_subsec_nanos=0, lifetime_ms=0),
+                   dict(lifetime_seconds=30, lifetime_subsec_nanos=1, lifetime_ms=30000)]
+        for mutation in invalid:
+            bad = copy.deepcopy(doc)
+            bad['phases'][0]['observations']['records'][0]['work_rejection'].update(mutation)
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'FRESH_CACHE_CONFIGURATION'):
+                self.validate_doc(bad)
+        bad = copy.deepcopy(doc)
+        bad['phases'][1]['observations']['records'][0]['work_rejection'].update(slots=128)
+        with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_CONFIGURATION_CHANGED'):
+            self.validate_doc(bad)
+
+    def test_fresh_cache_hit_and_cancelled_found_fact_cannot_claim_fresh_replay(self):
+        for returned in (False, True):
+            doc = synthetic_enabled_fresh_report()
+            row = doc['phases'][1]['observations']['records'][0]
+            row['full_work_accepted'] = False
+            row['work_rejection']['cache'].update(exact_fact_found=True,
+                cached_rejection_returned=returned, native_verifier_started=False,
+                native_verifier_returned=False, full_replay_started=False)
+            with self.subTest(returned=returned), self.assertRaisesRegex(ValueError, 'FRESH_CACHE_REUSED_FACT'):
+                self.validate_doc(doc)
+        doc = synthetic_enabled_fresh_report()
+        doc['phases'][1]['observations']['records'][0]['work_rejection']['cache'].update(
+            exact_fact_found=True, cached_rejection_returned=True)
+        with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_PATH_CONTRADICTION'):
+            self.validate_doc(doc)
+
+    def test_incomplete_and_cheap_error_path_is_not_counted_as_complete_native_replay(self):
+        doc = synthetic_enabled_fresh_report()
+        first = doc['phases'][0]['observations']['records'][0]
+        first['full_work_accepted'] = None
+        first['work_rejection'].update(completed=False, cache=None)
+        second = doc['phases'][1]['observations']['records'][0]
+        second['full_work_accepted'] = False
+        second['work_rejection']['cache'].update(key_hashed=False, full_replay_started=False)
+        phases = self.validate_doc(doc)['negative_cache_observation']['phases']
+        self.assertEqual(phases[0]['incomplete_cache_observations'], 1)
+        self.assertEqual(phases[0]['completed_cache_observations'], 6)
+        self.assertEqual(phases[1]['native_verifier_started'], 24)
+        self.assertEqual(phases[1]['full_replay_started'], 23)
+
+    def test_cache_fact_types_completion_publication_and_acceptance_cannot_conflict(self):
+        invalid = [dict(key_hashed=False), dict(lookup_contended=True, lookup_poisoned=True),
+                   dict(cached_rejection_returned=True), dict(native_verifier_started=False),
+                   dict(native_verifier_returned=False), dict(publication='unknown'),
+                   dict(publication='retained'), dict(full_replay_started=1)]
+        for mutation in invalid:
+            doc = synthetic_enabled_fresh_report()
+            doc['phases'][0]['observations']['records'][0]['work_rejection']['cache'].update(mutation)
+            # key_hashed=false is valid before a cheap error, but contradicts a retained fact.
+            if mutation == dict(key_hashed=False):
+                doc['phases'][0]['observations']['records'][0]['work_rejection']['cache'].update(
+                    publication='retained')
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'FRESH_CACHE_'):
+                self.validate_doc(doc)
+        for mutation in (dict(completed=True, cache=None), dict(completed=1), dict(completed=False)):
+            doc = synthetic_enabled_fresh_report()
+            doc['phases'][0]['observations']['records'][0]['work_rejection'].update(mutation)
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'FRESH_CACHE_'):
+                self.validate_doc(doc)
+
+    def test_completed_full_replay_requires_a_hashed_statement(self):
+        doc = synthetic_enabled_fresh_report()
+        # An accepted native replay cannot precede the complete canonical key.
+        # Keep publication=none so the publication check cannot mask this gap.
+        doc['phases'][0]['observations']['records'][0]['work_rejection']['cache'].update(
+            key_hashed=False)
+        with self.assertRaisesRegex(ValueError, 'FRESH_CACHE_PATH_CONTRADICTION'):
+            self.validate_doc(doc)
+
+    def test_completed_keyed_miss_enters_native_but_unkeyed_cheap_errors_remain_valid(self):
+        for lookup in ('miss', 'contended', 'poisoned'):
+            doc = synthetic_enabled_fresh_report()
+            row = doc['phases'][1]['observations']['records'][0]
+            row['full_work_accepted'] = False
+            row['work_rejection']['cache'].update(
+                native_verifier_started=False, native_verifier_returned=False,
+                full_replay_started=False, publication='none',
+                lookup_contended=lookup == 'contended', lookup_poisoned=lookup == 'poisoned')
+            with self.subTest(lookup=lookup), self.assertRaisesRegex(
+                    ValueError, 'FRESH_CACHE_PATH_CONTRADICTION'):
+                self.validate_doc(doc)
+        for entered in (False, True):
+            doc = synthetic_enabled_fresh_report()
+            row = doc['phases'][1]['observations']['records'][0]
+            row['full_work_accepted'] = False
+            row['work_rejection']['cache'].update(
+                key_hashed=False, native_verifier_started=entered,
+                native_verifier_returned=entered, full_replay_started=False, publication='none')
+            observed = self.validate_doc(doc)['negative_cache_observation']['phases'][1]
+            self.assertEqual(observed['native_verifier_started'], 23 + int(entered))
+            self.assertEqual(observed['full_replay_started'], 23)
+
+    def test_enabled_cache_does_not_replace_original_business_and_pressure_predicates(self):
+        changes = [lambda d: d.update(finite_target_met=False),
+                   lambda d: d.update(requested_window_ns=4_000_000_001),
+                   lambda d: d.update(attack_workers=15),
+                   lambda d: d['phases'][1].update(overlap_demonstrated=False),
+                   lambda d: d['phases'][1].update(confirmation_ended_ns=4_000_000_000),
+                   lambda d: d['phases'][1].update(full_native_state_equal=False),
+                   lambda d: d['phases'][1].pop('honest_history')]
+        for index, change in enumerate(changes):
+            doc = synthetic_enabled_fresh_report()
+            change(doc)
+            with self.subTest(index=index), self.assertRaises(ValueError):
+                self.validate_doc(doc)
 
     def test_missing_business_history_or_observer_cannot_hide_behind_positive_summary(self):
         original = synthetic_fresh_report()

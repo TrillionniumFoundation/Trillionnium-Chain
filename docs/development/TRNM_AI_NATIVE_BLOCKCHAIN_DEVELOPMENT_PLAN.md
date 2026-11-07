@@ -17,6 +17,36 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
+**Original business gates, continued 2026-11-07 America/New_York:**
+Continue the same integration branch after published
+`96e1eede091153199894532c91430bfc0f8e4572`. ProfHepta is the project
+administrator and the designated local GitHub publication identity. Ordinary
+classical V3 service startup installs a bounded exact mathematical refusal
+cache (256 slots, 30 seconds, at most 32 KiB retained Rust objects); a prior
+explicit positive configuration wins. Only completed Transcript/Product failures
+may be reused. Full proof bytes, profile, challenge, task and target identify a
+fact; new proofs and valid work retain native verification. Original caller,
+current context, cancellation, deadline and actual CPU ownership still apply.
+PQ, Growth and the separate arithmetic profile do not acquire this default.
+Per-request observations distinguish a found fact, a returned cached refusal,
+native-verifier entry and actual replay, including incomplete observations.
+The fresh-challenge reader must refuse every exact-fact hit and inconsistent
+path; it preserves the original business requirement and legacy records.
+
+Classical Legacy admission may lend a fully read-back historical parent State
+once to its child's readback in the same original writer transaction, after
+all intended writes. This excludes active-parent KV reads, all PQ/Growth/
+Authenticated profiles, and a child's actual snapshot path. Actual SQL linkage,
+delta values, roots, complete parent equality, closed schema, no-write epoch,
+transaction identity and final callback checks remain required. Failure to
+qualify the closed schema retains both original reads; changed transaction
+identity remains an integrity error. See [State recovery](../protocol/pon-nakamoto-v1/details/STATE_RECOVERY.md)
+and the [business continuation record](../../evidence/pon-original-business-continuation-20261107/README.md).
+These changes do not complete touched-set migration or close the original
+4-second/16-worker service or 4,105-block History gates. Preserve the e70
+baseline 1/1 at 3.098539910 seconds, pressure 0/1, x64 2,362/4,105 and ARM
+4,104/4,105 with all rows but active genesis and cancelled cursor 3,404.
+
 **Throughput and original-denominator continuation, 2026-11-07 America/New_York:**
 Continue the existing #688 candidate from
 `e70f13448aad715286fb8eb56fc802b09db643a3`. Strict packet envelopes may construct
