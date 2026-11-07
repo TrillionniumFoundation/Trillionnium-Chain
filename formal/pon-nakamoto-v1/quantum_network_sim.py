@@ -23,7 +23,7 @@ from quantum_daa_model import (
 from reference import retarget, timestamp_state, work
 from quantum_adversarial_search import (
     ADVERSARIAL_ASSUMPTIONS, MAX_CLOCK_SECONDS, MAX_DOMAIN_SIZE,
-    MAX_EXACT_BINOMIAL_SIZE, TrialCosts, bounded_throughput_choice,
+    MAX_EXACT_BINOMIAL_SIZE, TrialCosts, batch_success, bounded_throughput_choice,
     finite_domain_success, sample_binary_probability, sample_marked_count,
     upward_float, validate_candidates,
 )
@@ -95,10 +95,9 @@ def grover_success(p: float, iterations: int, processors: int = 1) -> float:
     uint(processors, "QUANTUM_PROCESSORS", 1024)
     if processors == 0:
         raise ValueError("QUANTUM_PROCESSORS")
-    single = math.sin((2 * iterations + 1) * math.asin(math.sqrt(p))) ** 2
-    if single >= 1:
-        return 1.0
-    return -math.expm1(processors * math.log1p(-single))
+    # Share the literal-domain kernel, including exact empty/full marked sets.
+    # Evaluating sin((2j+1)*pi/2) can invent failures when every item is marked.
+    return batch_success(p, iterations, processors)
 
 
 @dataclass(frozen=True)
@@ -698,6 +697,16 @@ class Simulator:
             self.adaptive_next_check = at
             self._schedule(at, "adaptive-check", None)
 
+    def _private_timeout_at(self) -> float | None:
+        wait = self.case.private_release_max_wait_seconds
+        if self.private_wait_started is None or wait is None:
+            return None
+        # Scheduling and admission must use the same upward-rounded deadline.
+        # Nearest addition followed by subtraction can lose a timer forever:
+        # 0.5 + 0.1 rounds to 0.6, but 0.6 - 0.5 is strictly below 0.1.
+        return upward_float(Fraction.from_float(float(self.private_wait_started))
+                            + Fraction.from_float(float(wait)))
+
     def _maybe_adaptive_release(self, reason: str) -> None:
         """Repeated publication decisions from own work and delayed public view.
 
@@ -724,9 +733,8 @@ class Simulator:
         observed_work = self.blocks[self.public_q_tip].chainwork
         eligible_work = self.blocks[eligible].chainwork
         threshold = case.private_release_work_lead * work(self.initial_target)
-        timed_out = (case.private_release_max_wait_seconds is not None
-                     and self.private_wait_started is not None
-                     and self.now - self.private_wait_started >= case.private_release_max_wait_seconds)
+        timeout_at = self._private_timeout_at()
+        timed_out = timeout_at is not None and self.now >= timeout_at
         release = unpublished > 0 and (timed_out or (
             unpublished >= case.private_release_min_blocks and eligible_work - observed_work >= threshold))
         self._emit("adaptive-release-check", reason=reason, public_tip=self.public_q_tip,
@@ -742,8 +750,10 @@ class Simulator:
             self.adaptive_next_check = None
         if first_future is not None:
             self._schedule_adaptive_check(float(self.blocks[first_future].timestamp - 120 - self.start_timestamp))
-        if self.private_wait_started is not None and case.private_release_max_wait_seconds is not None:
-            self._schedule_adaptive_check(self.private_wait_started + case.private_release_max_wait_seconds)
+        # Rebuild after a partial-prefix release, which starts a fresh wait.
+        timeout_at = self._private_timeout_at()
+        if timeout_at is not None:
+            self._schedule_adaptive_check(timeout_at)
 
     def private_step(self) -> int:
         count = self.counts["q"]["blocks_created"]
