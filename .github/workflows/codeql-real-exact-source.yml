@@ -47,6 +47,8 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_SHA"
           test -z "$(git status --porcelain)"
           printf 'CODEQL_EVENT_SHA=%s CODEQL_SOURCE_SHA=%s CODEQL_SOURCE_KIND=%s CODEQL_LANGUAGE=%s\n' "$GITHUB_SHA" "$(git rev-parse HEAD)" "$SOURCE_KIND" '${{ matrix.language }}'
+      - name: Require local SARIF retention failure controls
+        run: python3 -B scripts/ci/test_codeql_retention.py
       - name: Initialize pinned official CodeQL
         uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
         with:
@@ -62,9 +64,12 @@ jobs:
           sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
           upload: always
       - name: Verify generated SARIF is present and parseable
+        id: sarif_verify
+        if: always()
         shell: bash
         env:
-          SARIF_DIR: ${{ steps.codeql.outputs.sarif-output }}
+          # A remote upload refusal must not hide the already-generated file.
+          SARIF_DIR: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}
         run: |
           set -euo pipefail
           python3 - "$SARIF_DIR" <<'PY'
@@ -80,9 +85,11 @@ jobs:
           print(f'CODEQL_SARIF_FILES={len(files)} CODEQL_LANGUAGE=${{ matrix.language }}')
           PY
       - name: Retain exact-source local SARIF for independent review
+        # Keep the original analyze/upload failure; retain only validated files.
+        if: ${{ always() && steps.sarif_verify.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: codeql-sarif-${{ matrix.language }}-${{ matrix.source }}-${{ github.sha }}
-          path: ${{ steps.codeql.outputs.sarif-output }}/
+          path: ${{ runner.temp }}/codeql-results/${{ matrix.language }}/${{ matrix.source }}/*.sarif
           if-no-files-found: error
           retention-days: 14
