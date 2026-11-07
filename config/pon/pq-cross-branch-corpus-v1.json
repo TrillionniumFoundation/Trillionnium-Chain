@@ -628,7 +628,7 @@
     "trillionnium/crates/trnm-pon-node/src/store/history_page.rs": "abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9",
     "trillionnium/crates/trnm-pon-node/src/store/history_page_inline_tests.rs": "52914aec898d2967db55a7b618aa6bcf99ee424f",
     "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback.rs": "2cca5dce572f70c5180750caecc4a4340620f09a",
-    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs": "c05cdcc79edbbce744f19405983fdd421f4743bf",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_admission_readback/tests.rs": "c53e8e00b973678b5766b731e7af1abefc6236f2",
     "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_observation_tests.rs": "d50f5e607f5aed311174808b980f50e95cac929f",
     "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": "7300db720abd74be9f788f4c356f4d08c177db23",
     "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs": "e99453b1abe6ce589f003be199b5553241cba398",
