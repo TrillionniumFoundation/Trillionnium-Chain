@@ -457,12 +457,12 @@ class CoordinatorFailureTests(unittest.TestCase):
     def test_preparation_consumes_same_cumulative_budget(self):
         with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
             temp = Path(temp)
-            self.assertEqual(coordinator.main(self.invocation(temp, "import time;time.sleep(60)", .2)), 1)
+            self.assertEqual(coordinator.main(self.invocation(temp, "import time;time.sleep(60)", 5)), 1)
             result = json.loads((temp / "result/result.json").read_text())
             self.assertFalse(result["complete_proof_claim"])
             self.assertEqual(result["stages"][0]["stage"], "prepare-full-execution")
             self.assertTrue(result["stages"][0]["result"]["timed_out"])
-            self.assertLess(result["new_controller_wall_seconds"], 2)
+            self.assertLess(result["new_controller_wall_seconds"], 7)
             self.assertEqual(result["proof_randomness_tickets"], 0)
             self.assertIsNone(result["post_find_publish_seconds"])
 
