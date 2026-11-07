@@ -1,0 +1,561 @@
+{
+  "schema": "required-child-original-members-v1",
+  "archive_sha256": "f0a596f95d54d30602918e7415bab6c6e4ef8032537cfc148b23d7f9bbce1df0",
+  "archive_bytes": 4289977,
+  "member_bytes": 108876988,
+  "all_original_bytes_preserved": true,
+  "members": [
+    {
+      "path": "artifact-13552739900/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 889,
+      "sha256": "2e17ec358a37a87dd4b88386f2cc504922999ee4a697299d97d0c86ce16b0d3d",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "84caba6da2ca95e4a515949f2fd324dc23f3c8af2a2eccbde489d62aa1b62592",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3363,
+      "sha256": "44ad9673d4b2920f99deb6fb609131ff4a5e6e902684ed5b4d4c99972cc64fa5",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 897,
+      "sha256": "c82defe0089f94ea3dde8af153d8cf1cec674165305e6379fd7e5b13757875c0",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 911,
+      "sha256": "df01ed6d4ed81f30a483e134972175649eb57c2d15e5e174702ad7e2a2dcb59b",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "cc66061de1e08b8f79fadbdfe2d9dff7bb7f5825ea6219e67059bfb785ac1074",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 948,
+      "sha256": "d0cb05a0eb530df2531afaec3e81dc0e3da187122afe26a9e8b34d025d1a9e26",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "c194798d8353251e8da6c51e898a4e4bf40510a7e94aca85747f1f92cdcc8134",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/manifest.json",
+      "bytes": 65755,
+      "sha256": "fea493e823633aecc1a0cd95351b1640201d26dbb042e538258fe1a45917242d",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native/manifest.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native-host/controller-result.json",
+      "bytes": 7644,
+      "sha256": "fe60b8c1563800a58b91ec503deaa9e804d9e8b69ce4dd3f5042e308548894e2",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native-host/prepare-build.json",
+      "bytes": 3425,
+      "sha256": "43190effe77e37b5e3c0392843539bf17b36a59e116fac7d0a08af54bd6517b6",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/from-zero-native-host/prepare-build.json"
+    },
+    {
+      "path": "artifact-13552739900/source.json",
+      "bytes": 423,
+      "sha256": "5984b38d6bd53289f640a683d55114059cf1dde70f6d65eefffe8a5dd65bd31b",
+      "source": "hosted-d873/secondary-children/artifact-13552739900-minimal/source.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/confirmation/report.json",
+      "bytes": 9802334,
+      "sha256": "e5196fa77a14919068e6777a8b956a38cd661275aa6ed88ad53cd0e9733ab29c",
+      "source": "hosted-d873/secondary-children/artifact-13552739900.zip!from-zero-native/confirmation/report.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/native/report.json",
+      "bytes": 3477727,
+      "sha256": "2a47c211111c444624497dc22f1218e1e76d7244a48ea609a27d48fdd34ee153",
+      "source": "hosted-d873/secondary-children/artifact-13552739900.zip!from-zero-native/native/report.json"
+    },
+    {
+      "path": "artifact-13552739900/from-zero-native/native/sustained/report.json",
+      "bytes": 16005909,
+      "sha256": "3f69e1c8bc2699bd1d43736da6588cca8045b86d24168dd8d2102cb3af90fcd2",
+      "source": "hosted-d873/secondary-children/artifact-13552739900.zip!from-zero-native/native/sustained/report.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 887,
+      "sha256": "089434dca477a97e3de6a832353e152c3664c7f9f6dfb8f85af22267900b5d1b",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 899,
+      "sha256": "04ca06f65136de406bc0e611e0be17eaf1ec31bb1602a370d1aadcf1566dbe28",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3363,
+      "sha256": "619daafeaee500d7100a3419a982e083375c6f95267df4e8a8dd2133f632055e",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 900,
+      "sha256": "9bd3909d834ae5509554eb881c60f803ea2bef684f19107e9b54baa155674af4",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b57a1ea2f91bdcdecac12aeb853e4f0c47690a5c3ab51028786aad6ad4fb5376",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 914,
+      "sha256": "c3f86f94093ac1c11f25e96b351e5692732b5c199c5f1e11e5114c0e948d2b06",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "f39478dac1b23ed023061dfb9e0e1c250019b2e7833f390e1b11eb8422be59c1",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 951,
+      "sha256": "d3ebba3850ddc418d9b323dfc54dd77da71edfdf6430d0009ce41c80c2d8778f",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "e4bd0caf6c28d2a96bad4f3b7c55d2ba9d1704f6e16ddc73da6409e662fb800f",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/manifest.json",
+      "bytes": 65757,
+      "sha256": "1375047c5bd2df83d06147ad122d2760b2240c2cc78ac1e3d0fa02345edb5580",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native/manifest.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native-host/controller-result.json",
+      "bytes": 7952,
+      "sha256": "229638938dab97547543e022b817504dffe3f7b01dde0d439fc4901ffd4c3eb4",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native-host/prepare-build.json",
+      "bytes": 3714,
+      "sha256": "65b2cfcef402595c664b1e415a777c29d736752e625e09940afb11d195a94654",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/from-zero-native-host/prepare-build.json"
+    },
+    {
+      "path": "artifact-13553414025/source.json",
+      "bytes": 423,
+      "sha256": "5984b38d6bd53289f640a683d55114059cf1dde70f6d65eefffe8a5dd65bd31b",
+      "source": "hosted-d873/secondary-children/artifact-13553414025-minimal/source.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/confirmation/report.json",
+      "bytes": 8987840,
+      "sha256": "6fd5d39404118729873958cd68c32f721d26ff105a6ee6d354b764369c78f149",
+      "source": "hosted-d873/secondary-children/artifact-13553414025.zip!from-zero-native/confirmation/report.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/native/report.json",
+      "bytes": 3474023,
+      "sha256": "554390c2e22f754170f7d5cd24d7e7615765c971ad7d8830f07602ae11bb68a2",
+      "source": "hosted-d873/secondary-children/artifact-13553414025.zip!from-zero-native/native/report.json"
+    },
+    {
+      "path": "artifact-13553414025/from-zero-native/native/sustained/report.json",
+      "bytes": 13319554,
+      "sha256": "40116a469f717c9c2698d56e2410bb20fcdec94d7a56270eabcbbf14cedd7a73",
+      "source": "hosted-d873/secondary-children/artifact-13553414025.zip!from-zero-native/native/sustained/report.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 885,
+      "sha256": "0c0f9c26eb5c4a84b4ab91e36ac7ef173299549c8dec900e4412d79298fb6f54",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 897,
+      "sha256": "74a4219240ad1169671f20da8aff93ec3e9c2b81ad9f8d703046be3cae21e1a2",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3363,
+      "sha256": "cddf45cb066b693e0bfb2db45f7af63a57cced3c3e45acdd9408cb5347eb7935",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 891,
+      "sha256": "2b77965b93d83179ddd90cde2c9abab96c5e192c588185872a6598f582e812ec",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 910,
+      "sha256": "5802d4495be6803c32fc0af96a6f7c289f433a5f5f37117cbbc878d0f45d0692",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "4ab6218d02b4304030ce0d95b2e8ef1e2a984a26ccb3bfec7f04dd09bdac488c",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 948,
+      "sha256": "58d37dac2247f43522fdb7832021c76728af57c2829775d3fdfc1f4ae4745dcc",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "d82b888feb4cdcedea3de3194ec397d13490dfcdda0b60d11a34f024809dbc52",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/manifest.json",
+      "bytes": 65643,
+      "sha256": "ee218f6967f714bd883c325a42399233960a62d36004b0f3cb0e9ebce7dd3fca",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native/manifest.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native-host/controller-result.json",
+      "bytes": 7645,
+      "sha256": "3987eceab15dabfa738b5cc22c71eb82cff92144faf05d5ff54d333fe38dd658",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native-host/prepare-build.json",
+      "bytes": 3426,
+      "sha256": "612f39e6ef3d59d91ddb551ceb4b925a0752b3c86ae825f3464da22d199fc14c",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/from-zero-native-host/prepare-build.json"
+    },
+    {
+      "path": "artifact-13553783434/source.json",
+      "bytes": 423,
+      "sha256": "5984b38d6bd53289f640a683d55114059cf1dde70f6d65eefffe8a5dd65bd31b",
+      "source": "hosted-d873/secondary-children/artifact-13553783434-minimal/source.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/confirmation/report.json",
+      "bytes": 8236722,
+      "sha256": "2c805b374c16f3bff9fb065c8c3a983d3d51d7336bdb7d31e7e5e4c757b5d208",
+      "source": "hosted-d873/secondary-children/artifact-13553783434.zip!from-zero-native/confirmation/report.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/native/report.json",
+      "bytes": 3477167,
+      "sha256": "8437d5b4a65f0e4a9050c3a07e6f9ab2341eaf35554d0467896de823af80936c",
+      "source": "hosted-d873/secondary-children/artifact-13553783434.zip!from-zero-native/native/report.json"
+    },
+    {
+      "path": "artifact-13553783434/from-zero-native/native/sustained/report.json",
+      "bytes": 11719129,
+      "sha256": "0c30b313de1eed6b67ec33514fb77a3d331335a4284abbc146a4c0f756f2fbbb",
+      "source": "hosted-d873/secondary-children/artifact-13553783434.zip!from-zero-native/native/sustained/report.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json",
+      "bytes": 887,
+      "sha256": "29bb20b78a51ebb09dda1055a1d69ed92f297a896bb8f0936bfa2fdda5b9d45a",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout",
+      "bytes": 189,
+      "sha256": "05fd932ad3a74264f1f8eb589af0ece231ebaab66a380bb98130bfcac6956ec5",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json",
+      "bytes": 898,
+      "sha256": "3c662a567565df3f94e188fbcc4a2a72c070325fde8e09846cff183ef23af2f3",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout",
+      "bytes": 3365,
+      "sha256": "66d25e2268c0acd0353be64b96d35389177285a03a0a11dfb2ca6312bced5c3d",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json",
+      "bytes": 893,
+      "sha256": "26be2b5d1e8e3425aa63e3425c1487fc8f38ad9f95309eee8937d1b9fc9b5763",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout",
+      "bytes": 195,
+      "sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json",
+      "bytes": 914,
+      "sha256": "58baa3c0fae6afd25053b1196ef8ef8cd6deabfa2b3652607e7bc6b65de990e4",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout",
+      "bytes": 915,
+      "sha256": "d9e57d9f057fbbf0fc5bd1013b5d03c7b5a75e57fbdc12ff736ae447e6414c66",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json",
+      "bytes": 950,
+      "sha256": "3ab9a3754eca76687ebab78be37a614253e3fe4a44d289a9b2b1b90b09aab429",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout",
+      "bytes": 407,
+      "sha256": "c194798d8353251e8da6c51e898a4e4bf40510a7e94aca85747f1f92cdcc8134",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/manifest.json",
+      "bytes": 65707,
+      "sha256": "3340ff9b5bc0fe3ce1822a419c7b34bd470863a88d3a3e3e9a9efc2fd1653f77",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native/manifest.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native-host/child-result.json",
+      "bytes": 333,
+      "sha256": "b624dd8f68fd721f45d9a3242294d04b80982ba4d060d61d55eaf1125394a321",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native-host/child-result.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native-host/controller-result.json",
+      "bytes": 7952,
+      "sha256": "a3fc591febd8c5c70a469da55e5337893f33db8b5aa13bccbbc407b09c0c8615",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native-host/controller-result.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native-host/prepare-build.json",
+      "bytes": 3714,
+      "sha256": "28365911de4d85eda8d58ebd8e425e641978a0c379bde50a18b4074e8a9e91aa",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/from-zero-native-host/prepare-build.json"
+    },
+    {
+      "path": "artifact-13553877465/source.json",
+      "bytes": 512,
+      "sha256": "ab24e5da24faec8a00f0592aa5109792c9842ed32b7242044d0cbd2ae5182a41",
+      "source": "hosted-d873/secondary-children/artifact-13553877465-minimal/source.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/confirmation/report.json",
+      "bytes": 9946458,
+      "sha256": "58b4c31cb97c06c74491c57f9ace19a799b0b7f0b30f402833bc18d82506d30b",
+      "source": "hosted-d873/secondary-children/artifact-13553877465.zip!from-zero-native/confirmation/report.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/native/report.json",
+      "bytes": 3475688,
+      "sha256": "e47f35044a9976ddec15cfc0cd878b6a0fd00071516ff41e2e5469e0e049f0ba",
+      "source": "hosted-d873/secondary-children/artifact-13553877465.zip!from-zero-native/native/report.json"
+    },
+    {
+      "path": "artifact-13553877465/from-zero-native/native/sustained/report.json",
+      "bytes": 16604546,
+      "sha256": "1cfd2870ae1c88b2c78fb2558445645298cfa47d918d61cf31ab640180972c44",
+      "source": "hosted-d873/secondary-children/artifact-13553877465.zip!from-zero-native/native/sustained/report.json"
+    }
+  ]
+}

@@ -1,0 +1,423 @@
+{
+  "schema": "d873-required-wrapper-command-scope-read-only-audit-v1",
+  "generated_utc": "2026-11-07T01:58:42.075306+00:00",
+  "source_before": {
+    "head": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+    "tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+    "status": ""
+  },
+  "source_after": {
+    "head": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+    "tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+    "status": ""
+  },
+  "monitor": {
+    "path": "/workspace/scratch/a66f84888260/hosted-d873/required-source-final-monitor.json",
+    "sha256": "8114b8035db4da11d84e0316f156f851bc624715517a2506ac4b0f45081f1d3b"
+  },
+  "jobs": [
+    {
+      "run_id": 42320842015,
+      "workflow": ".github/workflows/trnm-required-baseline.yml",
+      "job_id": 128244737679,
+      "job_name": "cross-arch-cost (arm64)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737679",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "source_steps": [
+        {
+          "number": 3,
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "entry_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/ci-observations/from-zero-native"
+      ],
+      "host_wrapper_return": 1,
+      "host_wrapper_failure": null,
+      "host_final_errors": [],
+      "preparation_completed": true,
+      "preparation_build_exit": 0,
+      "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+      "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+      "binary_sha256": "bc1d2ad65a9bbeaa8155b1b4e1a619cbaba99d23d1ba1d94db1b2dc589e39c75",
+      "raw_log": "hosted-d873/secondary-128244737679.log",
+      "raw_log_sha256": "9bd244a38e49f7b17acaf563967238749630cb15a145ad88a6bfeaa003c56f0f",
+      "controller_log_line": 1122
+    },
+    {
+      "run_id": 42320842015,
+      "workflow": ".github/workflows/trnm-required-baseline.yml",
+      "job_id": 128244737934,
+      "job_name": "protocol-contract",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244737934",
+      "failed_steps": [
+        {
+          "number": 8,
+          "name": "Run actual protocol-contract checks",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "source_steps": [
+        {
+          "number": 3,
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Retain source and execution observations",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "entry_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/ci-observations/from-zero-native"
+      ],
+      "host_wrapper_return": 1,
+      "host_wrapper_failure": null,
+      "host_final_errors": [],
+      "preparation_completed": true,
+      "preparation_build_exit": 0,
+      "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+      "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+      "binary_sha256": "35fcd76807cf274a009d77430dbc34dc3b7b013b88d6f80a6eba049d6f5ba8c5",
+      "raw_log": "hosted-d873/secondary-128244737934.log",
+      "raw_log_sha256": "d141cd7cda79180ae7349368f669d515e8c0c0bf5c371cac8d863ae8e8a9f5fe",
+      "controller_log_line": 1063
+    },
+    {
+      "run_id": 42320842015,
+      "workflow": ".github/workflows/trnm-required-baseline.yml",
+      "job_id": 128244738026,
+      "job_name": "prospective-merge (protocol-contract)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738026",
+      "failed_steps": [
+        {
+          "number": 11,
+          "name": "Execute the same lane on the prospective merge",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "source_steps": [
+        {
+          "number": 2,
+          "name": "Checkout exact prospective merge",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Verify merge identity and exact ordered parents",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Verify merge source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Retain source and execution observations",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 26,
+          "name": "Post Checkout exact prospective merge",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "entry_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/ci-observations/from-zero-native"
+      ],
+      "host_wrapper_return": 1,
+      "host_wrapper_failure": null,
+      "host_final_errors": [],
+      "preparation_completed": true,
+      "preparation_build_exit": 0,
+      "tested_commit": "6f03626963aa2145b53acce3f5f9254e7ff81410",
+      "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+      "binary_sha256": "a05eb296c83b5d28d699a5bc075608b01a8b4779860360957a1fd6cfc72abea5",
+      "raw_log": "hosted-d873/secondary-128244738026.log",
+      "raw_log_sha256": "54477f03cbe3873c2f07fbff6aaca71ab42b4f974bfda0968c7c3ccb8fe2e314",
+      "controller_log_line": 1073
+    },
+    {
+      "run_id": 42320842015,
+      "workflow": ".github/workflows/trnm-required-baseline.yml",
+      "job_id": 128244738082,
+      "job_name": "cross-arch-cost (x64)",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42320842015/job/128244738082",
+      "failed_steps": [
+        {
+          "number": 12,
+          "name": "Execute exact native from-zero service controls",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "source_steps": [
+        {
+          "number": 3,
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "entry_command": [
+        "python3",
+        "scripts/ci/run_from_zero_native.py",
+        "--out",
+        "/home/runner/work/_temp/ci-observations/from-zero-native"
+      ],
+      "host_wrapper_return": 1,
+      "host_wrapper_failure": null,
+      "host_final_errors": [],
+      "preparation_completed": true,
+      "preparation_build_exit": 0,
+      "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+      "tested_tree": "323d99df3155b2242aec70c1cc11215bbade2807",
+      "binary_sha256": "a2b289ead4a8501cfa0f7ec834f4f7ef5dad0f7a0c7514086f586ab410a81c3b",
+      "raw_log": "hosted-d873/secondary-128244738082.log",
+      "raw_log_sha256": "497c33d23badf34d1330511a4eed20d5ebb84a6a2b5e878c0303cbf8f46fce56",
+      "controller_log_line": 1126
+    }
+  ],
+  "native_target": "public_v3_from_zero",
+  "build_command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--release",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--test",
+    "public_v3_from_zero",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "exact_named_native_tests": [
+    {
+      "name": "caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct",
+      "scope": "Checked caller-thread CPU measurement: missing/negative/overflow/reversed timestamps and wrong-thread ownership remain unknown; actual Linux CPU advances."
+    },
+    {
+      "name": "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+      "scope": "Fixed from-zero nonce search retains 22 attempts, exact cross-language packet digest, 512 transcript tiles and transcript rejection before product/capability; 64 misses and zero budget remain explicit."
+    },
+    {
+      "name": "four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged",
+      "scope": "Four distinct false W1 transcripts are rejected by full verification and native admission; state/statistics/chainwork and same-process reopen remain unchanged."
+    },
+    {
+      "name": "from_zero_service_shares_cpu_with_honest_work_and_reopened_owner",
+      "scope": "Two native TCP service phases across owner reopen, each eight constructions/eight requested reads and honest submit; requires on-time reads/submit, no attack acceptance, full state equality and closed CPU accounting. Then runs two mandatory sustained 4-second/16-worker phases retaining the same CPU meter across reopen.",
+      "nested_sustained_not_entered_if_initial_service_assertion_fails": true,
+      "sustained_success": "All reads on time, honest ACK on time, honest admission, post-pressure Head success, no attack acceptance, full observations/accounting, no attempt cap and state/meter retained across reopen."
+    },
+    {
+      "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+      "scope": "Identical seven signed packets in baseline and 16-worker original-packet pressure; separate native consumer downloads/replays and checks depth six and required work in the original four-second window.",
+      "rust_harness_assertion": "assert!(invariants_passed): native safety/accounting only. finite_business_target_met=false may still return exit 0.",
+      "business_acceptance": "Later validate_confirmation_report requires finite_target_met and both phases individually confirmed exactly one transaction before 4,000,000,000ns, depth6/work binding, full state equality, exact seven-packet history/replay, no verifier errors and closed accounting."
+    }
+  ],
+  "native_command_template": [
+    "<exact built binary>",
+    "<one name>",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "outer_timeout_per_test_seconds": 90,
+  "fresh_challenge_native_test_invoked_by_this_runner": false,
+  "sequential_acceptance_stages": {
+    "service_report": "native/report.json",
+    "sustained_report": "native/sustained/report.json",
+    "confirmation_report": "confirmation/report.json"
+  },
+  "all_named_tests_pass_does_not_imply_business_acceptance": true,
+  "control_flow": [
+    "A native nonzero result is retained and the next named test is still invoked unless the child timed out.",
+    "A child timeout stops the campaign; outer 90 seconds is not a renewed or enlarged four-second business window.",
+    "Report validators execute service_report, sustained_report, confirmation_report in that order. First validation error stops subsequent acceptance stages.",
+    "finally retains hashes and terminal evidence for existing reports, including unvalidated reports, and separately reads confirmation observations without granting acceptance.",
+    "Overall wrapper success additionally requires unchanged source and binary, actual source build, format pass, all five exact nonzero-selection harness passes, all report acceptance stages and no retained failures.",
+    "ci_job.sh protocol-contract invokes this wrapper before the remaining Cargo/protocol/formal checks under set -e; wrapper failure means later commands cannot be assumed to have run."
+  ],
+  "identical_whole_source_files_0ca_a3_d873": [
+    {
+      "path": "scripts/ci/run_from_zero_native.py",
+      "blobs": {
+        "0ca": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+        "a3": "4960474ac61bdee7d1af738e9f06910e19f8bd35",
+        "d873": "4960474ac61bdee7d1af738e9f06910e19f8bd35"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "blobs": {
+        "0ca": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "a3": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+        "d873": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "scripts/ci/replay_pinned_native.py",
+      "blobs": {
+        "0ca": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+        "a3": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+        "d873": "2e633556e2b6f5cc4278491d5c4c8edf437fab81"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "scripts/ci/check_required_native_test.py",
+      "blobs": {
+        "0ca": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+        "a3": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+        "d873": "277137b9e6ced74e9ec81061040ebfbb3949ffaf"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "scripts/ci/verify_ci_source.py",
+      "blobs": {
+        "0ca": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+        "a3": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+        "d873": "c775290c138c3b41a32e654f56ed5cbe9acec3ee"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "blobs": {
+        "0ca": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+        "a3": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+        "d873": "beff089827ed0c138edb8b653026a9be7cc1f4a6"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+      "blobs": {
+        "0ca": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+        "a3": "87825357c881a1283ef46ce0226c2eacfd5af6cb",
+        "d873": "87825357c881a1283ef46ce0226c2eacfd5af6cb"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+      "blobs": {
+        "0ca": "38d20a3344d40ea73a32982568dba14a275b1e10",
+        "a3": "38d20a3344d40ea73a32982568dba14a275b1e10",
+        "d873": "38d20a3344d40ea73a32982568dba14a275b1e10"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs",
+      "blobs": {
+        "0ca": "940753e4962536de928ce855d67ff2a2d7a84148",
+        "a3": "940753e4962536de928ce855d67ff2a2d7a84148",
+        "d873": "940753e4962536de928ce855d67ff2a2d7a84148"
+      },
+      "whole_file_identical": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/contract_wire.py",
+      "blobs": {
+        "0ca": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+        "a3": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b",
+        "d873": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+      },
+      "whole_file_identical": true
+    }
+  ],
+  "identical_imported_phase_reader_functions": [
+    {
+      "function": "validate_history_import_observation",
+      "source": "scripts/pon_public_v3_phase_read.py",
+      "function_text_sha256": {
+        "0ca": "0fade30706e719cfa598479db89dd797a5c6649a1cf56b919f7a2c7c7e4d9ea2",
+        "a3": "0fade30706e719cfa598479db89dd797a5c6649a1cf56b919f7a2c7c7e4d9ea2",
+        "d873": "0fade30706e719cfa598479db89dd797a5c6649a1cf56b919f7a2c7c7e4d9ea2"
+      },
+      "identical": true
+    },
+    {
+      "function": "validate_v4_record",
+      "source": "scripts/pon_public_v3_phase_read.py",
+      "function_text_sha256": {
+        "0ca": "fe0991812b86e57c7dbec35f7e5be78164763914fb09d6f5e350930b07e560b4",
+        "a3": "fe0991812b86e57c7dbec35f7e5be78164763914fb09d6f5e350930b07e560b4",
+        "d873": "fe0991812b86e57c7dbec35f7e5be78164763914fb09d6f5e350930b07e560b4"
+      },
+      "identical": true
+    }
+  ],
+  "identical_protocol_contract_shell_block_sha256": {
+    "0ca": "bb533e53f4e216f982cdc0b3f6a774a764920c525da25fd6bc603cb5cb18b571",
+    "a3": "bb533e53f4e216f982cdc0b3f6a774a764920c525da25fd6bc603cb5cb18b571",
+    "d873": "bb533e53f4e216f982cdc0b3f6a774a764920c525da25fd6bc603cb5cb18b571"
+  },
+  "other_relevant_source_changes": [
+    "ci_job.sh differs from 0ca only by two extra rank-batch Python controls in repository-truth; its protocol-contract block is byte-identical. ci_job.sh is whole-file identical from a3 to d873.",
+    "Phase/policy reader catalogs explicitly add r16 and preserve r10-r14 exact mappings; this does not change the two imported v4/history-observation validators or the unchanged run_from_zero_native.py business validator.",
+    "Production W1, SQL/cache, History paging, importer and consumer code may differ between commits. Unchanged test/runner bodies establish unchanged tested criteria, not unchanged production behavior or a causal performance verdict."
+  ],
+  "unresolved_from_wrapper_logs_alone": [
+    "systemd_run_exit=1 does not identify a Rust assertion, report validation failure, timeout, format error or other finalization error.",
+    "No new correctness regression or overall correctness success is inferred from wrapper exit. Exact child outcomes must come from each retained artifact manifest/terminal and raw reports.",
+    "Separate evidence agent is checking the four corresponding artifacts; their child conclusions are intentionally not substituted for this source/command-scope audit."
+  ],
+  "tests_builds_or_ci_executed_by_this_audit": false,
+  "source_or_criteria_modified": false
+}

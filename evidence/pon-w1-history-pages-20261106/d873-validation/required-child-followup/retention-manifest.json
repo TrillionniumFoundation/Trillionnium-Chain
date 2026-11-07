@@ -1,0 +1,41 @@
+{
+  "schema": "required-child-followup-retention-v1",
+  "tested_commit": "d87357de197db5ff750d08c96d52432e5d22a0b4",
+  "prior_evidence_commit": "8f9d9d950d97487f56d692dfb16509034315ead3",
+  "source_unchanged": true,
+  "tests_executed_by_collection": false,
+  "qualification": false,
+  "archive_members_verified": 92,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4673,
+      "sha256": "2d30a9a48a08d93a88046cd8477ce44ff75f6f95207d8ea61f13c2a02151053c"
+    },
+    {
+      "path": "archive-members.json",
+      "bytes": 36069,
+      "sha256": "4751645f745e8fe2e55809d1945228d69aa3ddc331b360d3d2c8dab16241abc4"
+    },
+    {
+      "path": "assemble_required_followup.py",
+      "bytes": 10334,
+      "sha256": "67308db15d46580782a15320d6f805db4c5fa956b4f3a34aaf0bdaff4967c4fa"
+    },
+    {
+      "path": "original-child-reports-and-receipts.tar.gz",
+      "bytes": 4289977,
+      "sha256": "f0a596f95d54d30602918e7415bab6c6e4ef8032537cfc148b23d7f9bbce1df0"
+    },
+    {
+      "path": "required-wrapper-scope-audit.json",
+      "bytes": 17887,
+      "sha256": "c571a134d0c7ffed1cb9d2a318c268945c841ed1b64307104cf2b13298f20181"
+    },
+    {
+      "path": "secondary-child-failure-audit.json",
+      "bytes": 110971,
+      "sha256": "9c927d413a874117b7070086bb08799a0e0220fea12fbee0d20634b0409cc182"
+    }
+  ]
+}
