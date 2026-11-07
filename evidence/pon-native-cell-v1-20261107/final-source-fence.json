@@ -1,0 +1,18 @@
+{
+  "binary_sha256": "4125c3ba8a477da4744b023c9cfa6aec99859a975ccf4a4979fb3d0b86b6e01b",
+  "cargo_lock_sha256": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+  "local_mirror_matches": true,
+  "production_activation": false,
+  "source_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/cell_native_cli.rs": "c3137f25f1b549552594f00179874d29de8b94e692299a0cf9c794cf46608cff",
+    "trillionnium/crates/trnm-pon-node/src/cell_native_v1.rs": "d807c924d7e9657d4126d9092d32585427fccba8144133066deb3ea7db54fe26",
+    "trillionnium/crates/trnm-pon-node/src/cell_native_v1/execution.rs": "cbe589c07dfe2fef0c900676e74300946ae00e424359d43f11002989db5eb20d",
+    "trillionnium/crates/trnm-pon-node/src/cell_native_v1/source.rs": "8c27cdadece9f1f9c26bd20869a74318bb7490aea436e6dc0140684c20cf6c3e",
+    "trillionnium/crates/trnm-pon-node/src/cell_native_v1/work.rs": "deb160835dda7a0efacef8975ed55a2a31fd6e4372a635a601cbac9e0c8b672c",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs": "1f42a30d859ca726a5b2cdbaf4ce8291d0b2b62d4def3bbf47310dadd0c3e215",
+    "trillionnium/crates/trnm-pon-node/src/main.rs": "6e815726f99a36535e7de5ec2fa7dfe2d3ecd5e9e7e6ef87c0e1516c3ef277b7",
+    "trillionnium/crates/trnm-pon-node/tests/cell_native_v1.rs": "a2658e8c4f6d18d7715411e0ef2f4a27f800e07e16536540a8255973d03d540d",
+    "trillionnium/crates/trnm-pon-node/tests/cell_native_v1_fixture.py": "dd6abf0fd88c19f34b79d99f15a59a6f17eb52d196aaace5936b18ca4293b721",
+    "trillionnium/crates/trnm-pon-node/tests/data/cell_native_v1_oracle.json": "adbae626bb6d7ca0581ce31ea4438e2abe8c2dd711a2d6cc8da140cdd87ca438"
+  }
+}

@@ -1,6 +1,6 @@
 # Trillionnium Chain Development Plan — PoN / Hepta-PoH revision
 
-Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 22).
+Plan ID: `trnm-chain-development-plan-v2` (stable registry identity; content revision 23).
 Effective: 2026-09-28; priority implementation revision: 2026-10-25. Status: selected development direction; no runtime activation.
 Canonical destination: `refs/heads/main`; continuation uses the current main lineage, not retired PR #194.
 Current source/head/tree/base and prospective merge are derived at verification time.
@@ -89,6 +89,35 @@ locally. That delivery recorded account-suspended HTTP 403 through its connected
 GitHub route, no publication and no new hosted CI result. These retained results
 do not qualify the r17 successor. Keep HOLD.
 
+**Finite multimodal computation and native Cell consumers, 2026-11-07:**
+Continue the same integration candidate with two separately named profiles.
+The [multimodal V3 relation](specs/pon/USEFUL_CELL_MULTIMODAL_V3.md) reexecutes raw
+UTF-8/RGB8/PCM16 preprocessing, parameterized encoders, a residual MLP, routed
+rank-two adapters, the head and an explicit integer training surrogate. Every
+forward dense operator has its own complete W1 proof bound to its actual
+intermediate tensor. The [native Cell profile](specs/pon/USEFUL_CELL_NATIVE_V1.md)
+adds real Rust Node/CLI verification of the bounded stateful source router;
+expected task bytes come from the owner channel and parent state/time from
+verified Node history. Preserve native historical UNIX-second consensus
+semantics and V3's declared millisecond lane separately from current use and
+Hepta monotonic-microsecond owner effects.
+These profiles do not silently share proof domains or constitute arbitrary
+multimodal runtime support. Ordinary runtime owner-context wiring, genuine
+FinalUse/checkpoint composition and later model use require their own actual
+consumer evidence. External delivery, production adoption, independent quality
+and cheapest-legal-work qualification remain open. No local pass activates a
+new consensus rule or lifts these distinct gates.
+The [multimodal evidence](../../evidence/pon-useful-cell-multimodal-v3-20261107/README.md)
+retains the finite controls and complete proof material without promoting
+generated arithmetic labels into task-quality evidence.
+The [native evidence](../../evidence/pon-native-cell-v1-20261107/README.md)
+retains full owner inputs, claims and verified-parent packets plus fresh-process
+historical replay. The separate private Hepta owner path does not consume this
+public native proof; proof-to-owner composition remains an explicit open gate.
+The [integration record](../../evidence/pon-cell-integration-v1-20261107/README.md)
+retains original-source preparation, the unchanged V1/V2 replay, mandatory CI
+controls, raw source checks and failed observations without changing qualification.
+
 **Original business gates, continued 2026-11-07 America/New_York:**
 Continue the same integration branch after published
 `96e1eede091153199894532c91430bfc0f8e4572`. ProfHepta is the project
@@ -164,6 +193,24 @@ changes and the strict CodeQL source guard; separately index the later historica
 crypto scan lock rather than rewriting its original capture. Exact outcomes,
 all failed setup attempts and remaining original-resource gates are in the
 continuation record above.
+
+**Stateful useful-Cell computation, 2026-11-07 America/New_York:** Continue
+the existing #688 candidate with the separately named
+[V2 reference relation](specs/pon/USEFUL_CELL_RELATION_V2.md). Replay actual
+source preprocessing, feature/expert masks, all five W1 products, recurrent
+memory, sampling state, STOP/abstention/tool proposals and an optional exact
+masked/clipped momentum update. Bind actual intermediate values to one task
+and reject independently valid segments from another task. Separate historical
+parent/protocol-time verification from current-clock verification; neither
+pure result grants owner authority. Integrate consumer expected context with
+the existing Hepta guarded generation journal, CURRENT and FinalUse boundaries,
+not a second operation/checkpoint store. Preserve V1 source and semantics.
+The finite integer source-router profile is not ordinary multimodal Hepta,
+a native Node work entry, a succinct proof, a training-quality result or work
+hardness qualification. Existing service, History, recovery and PQ gates remain
+independent and their failed evidence remains retained.
+The [retained Cell V2 record](../../evidence/pon-useful-cell-stateful-v2-20261107/README.md)
+contains the complete local replay, counterexample/repair and source-pinned gates.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from

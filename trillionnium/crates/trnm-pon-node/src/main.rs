@@ -1,4 +1,5 @@
 //! Ordinary native development entrypoint. Signed transactions remain external inputs.
+mod cell_native_cli;
 mod growth_cli;
 mod host_public_guard;
 use serde_json::{json, Value};
@@ -343,6 +344,9 @@ fn authenticated_state_backend(command: &str, args: &BTreeMap<String, String>) -
             | "capacity-observe"
             | "evaluation-observe"
             | "evaluation-round-observe"
+            | "cell-verify-historical"
+            | "cell-verify-live"
+            | "cell-prove-reference"
             | "pool-submit"
             | "mine-loop"
             | "mine"
@@ -1380,6 +1384,8 @@ fn run() -> Result<Value> {
         "status" | "recover" | "pool-status" | "capacity-observe" => "",
         "evaluation-observe" => "--candidate --ancestry-blocks",
         "evaluation-round-observe" => "--candidate --round-blocks",
+        "cell-verify-historical" | "cell-verify-live" => "--cell-parent --cell-expected --cell-expected-sha256 --cell-claim",
+        "cell-prove-reference" => "--cell-parent --cell-expected --cell-expected-sha256 --cell-attempts --output",
         "pool-submit" => "--transactions --pool-policy",
         "pool-push" => "--peer --transactions --pool-context",
         "pool-status-remote" => "--peer",
@@ -1674,6 +1680,15 @@ fn run() -> Result<Value> {
     };
     if growth_network && command != "serve" {
         return growth_network_call(&command, &args, &settings, command_started);
+    }
+    if cell_native_cli::is_command(&command) {
+        return cell_native_cli::run(
+            &command,
+            &args,
+            settings,
+            owner_task_config,
+            authenticated_state,
+        );
     }
     // This local observation has no peer request or signed response counterpart.
     // Reject other profiles before opening or creating a store.
