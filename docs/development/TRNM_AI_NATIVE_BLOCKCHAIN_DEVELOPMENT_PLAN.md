@@ -17,22 +17,34 @@ Module index: [M00-M17](../modules/README.md); [source registry](module-registry
 
 ## 0. One authority and explicit retirement
 
-**PQ migration and recovery continuation, 2026-11-06 America/New_York:**
-Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`.
+**PQ migration and recovery continuation, 2026-11-07 UTC:**
+Continue the existing #723 candidate from `840522d0b65b4989f1a2a1d09c0ad51af1a1956d`,
+preserving the concurrent `f943c23b` migration/schema-reader work and `0ca272d0`
+baseline partition in integrated source `9fb011c4`.
 Connect the actual admitted source checkpoint and complete inventory to the
 existing M06 migration anchor under an independently pinned prior PQ registry.
 Retain all account nonce/balance and supported task/reward obligations, and refuse
 unsupported source rights without projecting them away. An explicitly restricted
-source fixture exercises NPQ6 claims and both storage backends; it cannot qualify
+source fixture exercises NPQ6 claims from both source storage backends into the
+existing PQ network owner; it cannot qualify
 ordinary running-network migration, source finality or source retirement.
 Fence checkpoint listener ownership independently of the journal before changing
 any socket path. Retain the public regressions on the original source and execute
 the complete repaired checkpoint package. Exercise full local-journal rollback
 against a fresh checkpoint actually retained on another configured machine,
 including the coherent-old-world counterexample and unavailable-pin refusal.
+The executed ROG/X230 exercise retains the fresh pin on X230 before restoring
+ROG's complete declared old journal namespace, and reads it back after restore.
+The old namespace is refused under that fresh pin; the coherent old namespace
+and co-restored old local pin still pass as the required counterexample.
 The exercise has synthetic checkpoint contents and does not qualify whole-Node
 effects, production custody, independent administration or physical power loss.
-Preserve all prior failures and keep whole-chain/production acceptance false.
+The [execution and recovery record](../../evidence/pq-migration-recovery-20261107-e1dee/README.md)
+retains exact source identities, original failures, actual-execution rosters,
+raw command receipts and independent complete readbacks. A matching registry
+digest cannot establish prior ownership or binding time; independent checkpoint
+custody must also remain current for each protected business effect. Keep
+running-network migration, whole-chain and production acceptance false.
 
 **Cell inventory and connection-reuse composition, 2026-11-06 America/New_York:**
 Continue the existing #688 candidate from
