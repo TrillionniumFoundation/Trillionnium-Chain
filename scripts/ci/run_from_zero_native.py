@@ -36,6 +36,22 @@ TESTS = (
     'from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline',
 )
 
+FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs'
+FORMAT_COPY_ROOT = 'format-copy-source'
+
+
+def prepare_format_copy(out: Path, root: Path) -> Path:
+    """Mirror the source's relative module path before standalone rustfmt."""
+    staging = out / FORMAT_COPY_ROOT
+    source = staging / SOURCE
+    support = staging / FORMAT_SUPPORT
+    source.parent.mkdir(parents=True, exist_ok=True)
+    support.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(root / SOURCE, source)
+    shutil.copyfile(root / FORMAT_SUPPORT, support)
+    return source
+
+
 
 def source_identity() -> dict:
     def git(*args: str) -> str:
@@ -770,10 +786,10 @@ def run(out: Path) -> dict:
         result['cargo'] = subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip()
         result['build_env'] = {key: os.environ.get(key) for key in (
             'CARGO_BUILD_JOBS', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS')}
-        # A copy gives a reproducible formatting repair without changing checkout.
-        shutil.copyfile(ROOT / SOURCE, out / 'formatted.rs')
+        # Preserve #[path] module resolution in the diagnostic copy; the checkout stays read-only.
+        format_source = prepare_format_copy(out, ROOT)
         result['format_copy'] = run_child(
-            ['rustfmt', '--edition', '2021', str(out / 'formatted.rs')], out / 'format-copy', 60)
+            ['rustfmt', '--edition', '2021', str(format_source)], out / 'format-copy', 60)
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['format'] = run_child(
             ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
