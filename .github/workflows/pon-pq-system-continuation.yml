@@ -365,7 +365,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do
+          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py test_sqlite_build_requalification.py; do
             bash "$PQ_OUT/run-command.sh" "${test_file%.py}" python3 -m unittest discover -s scripts/ci -p "$test_file" -v
           done
           bash "$PQ_OUT/run-command.sh" pq-source python3 scripts/ci/check_pq_research_integration.py
@@ -620,7 +620,8 @@ jobs:
           set -euo pipefail
           bash "$PQ_OUT/run-command.sh" sqlite-build-requalification python3 scripts/ci/check_sqlite_build_requalification.py \
             --output "$PQ_OUT/sqlite-build-requalification" --target "$RUNNER_TEMP/sqlite-build-requalification-target" \
-            --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)"
+            --rustc "$(rustup which --toolchain 1.95.0 rustc)" --cargo "$(rustup which --toolchain 1.95.0 cargo)" \
+            --rustup "$(command -v rustup)"
       - name: Preserve native control records before the complete regression
         if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

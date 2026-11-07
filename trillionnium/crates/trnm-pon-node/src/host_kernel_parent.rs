@@ -585,17 +585,11 @@ mod kernel_parent {
                     tasks: 0,
                 },
             };
-            let read = |name: &str| -> Result<String> {
-                fs::read_to_string(budget.parent.join(name))
-                    .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))
-            };
-            let limits = validate_limits(
-                &read("cpu.max")?,
-                &read("cpu.max.burst")?,
-                &read("memory.max")?,
-                &read("memory.swap.max")?,
-                &read("pids.max")?,
-            )?;
+            // Initial acquisition needs the same current child protections as
+            // later checks: nonblocking nofollow opens, regular opened files,
+            // and bounded complete reads in the original five-file order.
+            // Keep the full check below; these reads do not grant Host authority.
+            let limits = budget.directory.read_limits()?;
             let checked = Self { limits, ..budget };
             checked.check()?;
             Ok(checked)

@@ -89,7 +89,7 @@ def registry_fixtures():
 def source_registry_fixtures():
     """Keep actual registry bytes separate from synthetic current declarations."""
     result = registry_fixtures()
-    for crate, count in (('node', 55), ('m06', 3)):
+    for crate, count in (('node', 56), ('m06', 3)):
         names = [name for group in source_fixture_extensions(crate).values() for name in group]
         assert len(names) == len(set(names)) == count
         assert all(name + ': test\n' not in result[crate] for name in names)
@@ -193,9 +193,9 @@ class WorkspaceSemanticRegistry(unittest.TestCase):
         result, selected = workspace_registry_check(registries)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
-        self.assertEqual(report['selected_count'], 118)
-        self.assertEqual(len(selected.splitlines()), 118)
-        self.assertEqual(len(set(selected.splitlines())), 118)
+        self.assertEqual(report['selected_count'], 119)
+        self.assertEqual(len(selected.splitlines()), 119)
+        self.assertEqual(len(set(selected.splitlines())), 119)
         extensions = {**source_fixture_extensions(), **source_fixture_extensions('m06')}
         self.assertEqual({group['group']: group['expected_count'] for group in report['groups']
                           if group['group'] not in extensions}, {

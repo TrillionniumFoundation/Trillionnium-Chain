@@ -129,10 +129,10 @@ const LIMIT_CHILD_SELECTOR: &str =
     "host_kernel_parent::kernel_parent::relative_tests::relative_limit_child_probe";
 
 #[test]
+#[ignore = "only invoked by the bounded nonregular-limit parent"]
 fn relative_limit_child_probe() {
-    let Some(parent) = std::env::var_os(LIMIT_CHILD_PARENT) else {
-        return;
-    };
+    let parent = std::env::var_os(LIMIT_CHILD_PARENT)
+        .expect("bounded parent must supply the limit fixture");
     let parent = PathBuf::from(parent);
     let directory =
         ParentDirectory::open(&parent, &fs::symlink_metadata(&parent).unwrap()).unwrap();
@@ -169,6 +169,7 @@ fn assert_limit_probe_finishes(parent: &Path, name: &str, kind: &str) {
             .args([
                 "--exact",
                 LIMIT_CHILD_SELECTOR,
+                "--ignored",
                 "--nocapture",
                 "--test-threads=1",
             ])

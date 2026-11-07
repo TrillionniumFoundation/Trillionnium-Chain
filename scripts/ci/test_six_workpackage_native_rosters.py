@@ -53,7 +53,7 @@ def source_fixture_extensions(crate='node'):
         ('postwrite-history', 'store/native_authenticated/post_write_readback/history_tests.rs',
          'store::native_authenticated::post_write_readback::history_tests', 21),
         ('host-parent-relative', 'host_kernel_parent_relative_tests.rs',
-         'host_kernel_parent::kernel_parent::relative_tests', 8),
+         'host_kernel_parent::kernel_parent::relative_tests', 9),
         ('header-material', 'store/observed_history/tests.rs',
          'store::observed_history::tests', 8),
         ('shared-ready', 'ingress/public_v3/intake/shared_readiness_tests.rs',
@@ -107,7 +107,7 @@ class NativeRosterTests(unittest.TestCase):
         cls.required = json.loads((ROOT / 'config/pon/pq-system-required-tests-v1.json').read_text())
         cls.source_fixture_extensions = {}
         cls.source_fixture_registries = dict(cls.registries)
-        for crate, expected in (('node', 55), ('m06', 3)):
+        for crate, expected in (('node', 56), ('m06', 3)):
             extensions = source_fixture_extensions(crate)
             if cls.source_fixture_extensions.keys() & extensions.keys():
                 raise ValueError('source fixture group has more than one crate owner')
@@ -178,7 +178,7 @@ class NativeRosterTests(unittest.TestCase):
             extension = next(row for row in report['groups'] if row['group'] == name)
             self.assertCountEqual(extension['tests'], tests)
             self.assertEqual(extension['expected_count'], len(tests))
-        self.assertEqual(report['selected_count'], 118)
+        self.assertEqual(report['selected_count'], 119)
         group = next(row for row in report['groups'] if row['group'] == 'postwrite-readback')
         self.assertEqual(group['expected_count'], 25)
         names = [line[:-6] for line in self.registries['node'].splitlines()

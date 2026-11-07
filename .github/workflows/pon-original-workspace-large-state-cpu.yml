@@ -372,6 +372,7 @@ jobs:
             "host_kernel_parent::kernel_parent::relative_tests::relative_limits_read_replacement_bytes_and_every_current_file",
             "host_kernel_parent::kernel_parent::relative_tests::relative_limits_preserve_eof_size_utf8_and_late_io_error_precedence",
             "host_kernel_parent::kernel_parent::relative_tests::relative_limits_never_follow_replacement_symlinks",
+            "host_kernel_parent::kernel_parent::relative_tests::relative_limits_refuse_nonregular_children_in_bounded_native_processes",
             "host_kernel_parent::kernel_parent::relative_tests::held_parent_refuses_renamed_recreated_and_symlink_paths_then_rechecks_restore",
             "host_kernel_parent::kernel_parent::relative_tests::held_parent_binds_actual_opened_fd_and_accepts_search_only_directory",
             "host_kernel_parent::kernel_parent::relative_tests::held_parent_final_fence_refuses_changes_after_successful_limit_reads",

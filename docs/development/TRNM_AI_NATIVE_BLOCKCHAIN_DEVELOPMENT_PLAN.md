@@ -8710,3 +8710,75 @@ hashes must join the candidate descriptor after execution. Historical failures,
 UNKNOWN operations, all cost denominators and all false acceptance/activation
 flags remain. Independent custody, external W1/quantum acceptance, a positive
 model product loop and a paid long-duration storage loop are still open.
+
+
+### 2026-11-07 — e0c10 revision after full original native execution
+
+The preceding frozen Chain source was
+`9f77f4334a365387d7389735d5b67c37f12a02a0`, tree
+`d7803f073a81e17ce4b79efca748645e12d3adff`. Its original operation
+`1a1b396fff7-fc05-83ba` completed all 89 native selectors: 87 accepted and
+2 failed, with 110 total recorded commands and strict Clippy accepted. The
+complete summary is SHA-256
+`449ce551c63b960ab6571de3c33a8e60d9eb0d09884ff50cb106bfab8e2ea871`.
+The witness CLI now completes its first request but fails its exact replay
+under the unchanged two-second server lifetime. The endpoint CLI completes
+Head and Submit, then fails Submit replay at the unchanged five-second
+server deadline; History is not reached. Neither is a completed service gate.
+
+The actual same-head original native campaign, run `42323271551`, retains
+all three runs and all 27 planned confirmations. Only three baseline
+confirmations complete inside their original 30-second phases; none of the
+18 attacked confirmations completes. Nine rounds start and fail and fifteen
+never start. The actual same-head F0 run `42323271496` retains all six rounds
+and 42 planned packet exposures: zero confirmations meet its original
+four-second objective. ACKs, late results and unobserved rounds do not change
+those denominators. Current client-import observations show large nested Host
+cost, not a Host refusal or an exhausted paid-credit bucket. Account-graph
+span counts do not prove that every span is a complete graph traversal.
+
+The paired Hepta diagnostic source
+`3bc3ce7c92caf800496a02f208fa6216d7395c7a` genuinely resolves all three Chain
+dependencies to the preceding source through Cargo and Bazel regeneration.
+Its original campaign `1a1b3b6decf-fc05-8467` passes Fleet 113/113, policy
+35/35, one five-agent selector and 16 workflow selectors (four original
+ignored helpers remain). Four additional recovery guards pass separately.
+The original daemon scenario still fails both 60-second attempts: 23/31 and
+27/31 recovery cycles complete, with all 32 UNKNOWN records retained and
+the daemon not started. This is not independent custody or a whole-machine
+rollback qualification. A later pair must resolve this revised Chain source
+and execute its own gates; none of these observations is inherited as a pass.
+
+This revision fixes the Host source roster without counting an empty child
+helper as a passed control. The helper is explicitly ignored in ordinary
+execution, requires its parent-supplied fixture, and is invoked with
+`--ignored` only by the bounded 20-case native parent. Meaningful Host
+relative controls are nine, source extensions are 56 and workspace selection
+is 119. The separate original authenticated/history denominator remains 118.
+
+Initial Host limit acquisition now uses the same held-directory reader as
+later checks: five fresh nonblocking, nofollow opens; actual opened-object
+regular-file checks; and bounded complete reads through EOF. The full later
+check and its frequency remain unchanged. Fixed path, root ownership, boot,
+current calling-thread membership and both parent identity fences remain.
+Nonregular or overlong input can now fail at initial acquisition; this does
+not promise unchanged error strings for old combinations of unbounded bad
+inputs and does not widen the accepted input surface.
+
+The preceding candidate's actual x64 cache gate, run `42323271728`, job
+`128252587387`, executes all four Cargo commands with exit zero but fails both
+qualification phases because the normal loader-directory set is incomplete.
+Its ordinary native build emits the required SQLite witness. This revision
+uses the installed pinned-toolchain rustup launcher for cache qualification,
+checks its actual Cargo/rustc selection, and binds executable hashes before
+and after. It does not hand-fill normal loader paths or weaken the runtime
+fence. The original four check/offline/locked transitions remain; two separate
+foreign-loader refusal/restoration controls share the same target without
+cleaning, and retain their separate denominator. Python reader fixtures do
+not establish a native cache pass.
+
+All original attack inputs, clocks, memory/CPU/PID/swap caps, failed attempts,
+UNKNOWN identities and false activation flags remain. External W1/quantum
+acceptance, independent custody, a current-authorized model product loop with
+independent unseen-task benefit, and a paid long-duration storage loop remain
+open. No NG/Prism/DAG migration is authorized by these component results.

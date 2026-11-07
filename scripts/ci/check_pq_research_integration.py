@@ -453,6 +453,7 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/pon_w1_rank_batch_reader_v5.py",
     "scripts/ci/run_w1_rank_batch_v5.py",
     "scripts/ci/public_host_ci_observation.py",
+    "scripts/ci/test_sqlite_build_requalification.py",
     "scripts/ci/test_pon_w1_rank_batch_reader_v5.py",
     "scripts/ci/test_run_w1_rank_batch_v5.py",
     "scripts/ci/test_w1_factorial_native_gate.py",
