@@ -111,8 +111,46 @@ impl Write for DeadlineStream<'_> {
     }
 }
 
+// OpenSSL can request a record header and body in separate BIO reads. Fill a
+// fixed ciphertext buffer through the original durable/deadline owner first,
+// then satisfy small TLS reads from those already charged bytes. This neither
+// caches witness answers nor waits to fill the buffer before making progress.
+const CIPHERTEXT_READ_BUFFER: usize = 16_384;
+
+pub(super) struct BufferedIo<'a> {
+    reader: io::BufReader<DeadlineStream<'a>>,
+}
+impl<'a> BufferedIo<'a> {
+    pub(super) fn new(stream: DeadlineStream<'a>) -> Self {
+        Self {
+            reader: io::BufReader::with_capacity(CIPHERTEXT_READ_BUFFER, stream),
+        }
+    }
+}
+impl Read for BufferedIo<'_> {
+    fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+        if output.is_empty() {
+            return Ok(0);
+        }
+        // BufReader can return without a syscall. Such a cache hit must still
+        // honor the original absolute deadline, including after a slow caller.
+        self.reader.get_ref().remaining()?;
+        let read = self.reader.read(output)?;
+        self.reader.get_ref().remaining()?;
+        Ok(read)
+    }
+}
+impl Write for BufferedIo<'_> {
+    fn write(&mut self, input: &[u8]) -> io::Result<usize> {
+        self.reader.get_mut().write(input)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        self.reader.get_mut().flush()
+    }
+}
+
 pub(super) struct Channel<'a> {
-    stream: SslStream<DeadlineStream<'a>>,
+    stream: SslStream<BufferedIo<'a>>,
     admission: TransportAdmission,
     deadline: Instant,
 }
@@ -164,6 +202,7 @@ impl<'a> Channel<'a> {
     ) -> Result<Self> {
         let mut io = DeadlineStream::new(stream, deadline, owner)?;
         io.observation = observation;
+        let io = BufferedIo::new(io);
         let mut stream = SslStream::new(context.session()?, io).map_err(crypto)?;
         check_live_request(deadline, None)?;
         if server {
@@ -177,7 +216,7 @@ impl<'a> Channel<'a> {
         check_live_request(deadline, None)?;
         let admission = context.admit(stream.ssl())?;
         check_live_request(deadline, None)?;
-        stream.get_mut().limit = CONNECTION_BYTES;
+        stream.get_mut().reader.get_mut().limit = CONNECTION_BYTES;
         Ok(Self {
             stream,
             admission,
@@ -219,3 +258,6 @@ impl<'a> Channel<'a> {
         check_live_request(self.deadline, None)
     }
 }
+
+#[cfg(test)]
+mod buffer_tests;

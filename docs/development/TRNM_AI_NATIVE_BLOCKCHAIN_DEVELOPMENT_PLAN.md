@@ -8202,3 +8202,25 @@ The harness now projects only known stages, codes, categories and typed scalar
 fields from the same original 4096-byte prefix. Arbitrary child fields stay
 redacted. Producer bytes, original test bodies, windows and cleanup are unchanged.
 New projection controls and original-window diagnosis on this source are pending.
+
+
+## 2026-11-07: buffer already metered TLS ciphertext under the original deadline
+
+The f58 diagnostic run preserves the previous Node ELF exactly. It records a
+witness first-request refusal in `tls_handshake`: nine BIO ingress charges use
+1,657,519 microseconds of the 1,666,486-microsecond handshake stage. The
+endpoint replay refusal is in `request_read`: its connection accumulates
+eighteen BIO charges taking 1,308,603 of 1,469,864 microseconds. Both record
+`PQ_WITNESS_DEADLINE` and an elapsed original connection deadline. Both
+original controls fail; both new strict stderr-projection controls pass.
+These observations do not identify the older ready + 0.338538-second reset.
+
+A fixed 16 KiB ciphertext read buffer now fills through the unchanged raw
+deadline/byte-accounting owner before returning any bytes to OpenSSL. Buffered
+reads check the same absolute deadline on entry and exit. Writes still use the
+original metered stream. No witness answer/root is cached, no signature check
+is skipped, and the original 64 KiB handshake, connection, persistent byte and
+application-frame limits remain. Original CLI bodies and time windows are
+unchanged. New real-TCP controls check prepaid bytes, deadline refusal of
+retained bytes and the durable rejection of byte 65,537. Native validation of
+this buffer change is pending; no public/WAN or whole-chain claim is added.
