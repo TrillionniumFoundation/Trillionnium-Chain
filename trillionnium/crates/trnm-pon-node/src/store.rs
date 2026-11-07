@@ -5,6 +5,8 @@ mod admission_header_tests;
 mod append_readback_tests;
 pub mod authenticated_migration;
 pub(crate) mod authenticated_state;
+#[cfg(test)]
+mod canonical_row_reuse_tests;
 pub mod capacity_observation;
 pub mod evaluation_observation;
 pub mod evaluation_round_observation;
@@ -3038,6 +3040,8 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?;
         let mut state = State::new();
         let mut canonical_bytes = Vec::new();
+        let mut previous_key = [0_u8; 160];
+        let mut previous_key_len = None;
         while let Some(row) = rows
             .next()
             .map_err(|error| Error::from(error).local_integrity())?
@@ -3075,13 +3079,36 @@ impl Node {
                 ))
                 .local_integrity()
             })?;
-            let value: Value = serde_json::from_slice(bytes)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            canonical_bytes.clear();
-            serde_json::to_writer(&mut canonical_bytes, &value)
-                .map_err(|error| Error::from(error).local_integrity())?;
-            ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+            // Reuse only the pure bytes-to-Value decoding of the previous
+            // successful row in THIS complete scan. SQL types and dimensions
+            // above still apply to the current row, and full current BLOB
+            // equality is required. The local State owns the prior value;
+            // no SQLite borrow, State verdict or fact survives this call.
+            let decoded = previous_key_len
+                .filter(|_| canonical_bytes.as_slice() == bytes)
+                .and_then(|len| std::str::from_utf8(&previous_key[..len]).ok())
+                .and_then(|prior| state.get(prior))
+                .cloned();
+            let value = if let Some(value) = decoded {
+                value
+            } else {
+                let value: Value = serde_json::from_slice(bytes)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                canonical_bytes.clear();
+                serde_json::to_writer(&mut canonical_bytes, &value)
+                    .map_err(|error| Error::from(error).local_integrity())?;
+                ensure(canonical_bytes == bytes, "STATE_BYTES").map_err(Error::local_integrity)?;
+                value
+            };
+            // A fixed key buffer adds no per-row allocation. Exact map lookup
+            // also preserves the old decoder under repeated keys or unusual
+            // SQL ordering; this is never a claim that such a schema is valid.
+            let next_previous_key_len = previous_key.get_mut(..key.len()).map(|prior| {
+                prior.copy_from_slice(key.as_bytes());
+                key.len()
+            });
             state.insert(key, value);
+            previous_key_len = next_previous_key_len;
         }
         progress()?;
         Ok(state)
