@@ -257,3 +257,23 @@ preserves initial failures, exact source/binary bindings, actual Linux native
 runs and the unchanged qualification table. Physical all-algorithm work
 losses, authentic joint initial state, full-world coverage, clocks, inventory
 and honest-progress laws remain the two actual scientific obligations.
+
+## Explicit finite joint initial states
+
+[FJS1](FINITE_JOINT_STATE_CERTIFICATE_V1.md) checks every oracle table and the
+complete declared conditional advice density matrix with exact rational PSD
+arithmetic. One common independent reference state and explicit positive excess
+give the proved probability transfer `lambda * B + epsilon`. The reference
+query/list bound is recomputed, and selected-start probability scopes are
+refused. Five complete finite models include coherent advice, noisy advice,
+singular independent state, full truth-table advice and a paid positive excess.
+
+This certifies the supplied finite state, its operator-order loss, and the
+unconditioned model event. Authenticity of actual worker/environment states,
+future helper coverage, actual hash idealization, physical resources and native
+confirmation risk remain separate unproved obligations.
+
+```bash
+python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
+python3 formal/pon-nakamoto-v1/finite_joint_state_certificate.py --evidence-dir /tmp/new-finite-joint-state
+```

@@ -7607,3 +7607,31 @@ checks, original host requirements and complete remote CI keep their separate
 results. Actual all-algorithm physical costs, joint initial state, complete world
 coverage, physical clocks, hidden inventory and honest-progress laws remain
 scientific obligations; the current six-successor failure probability is unknown.
+
+### 2026-11-07 joint-state and repeated-start continuation
+
+Recover the complete uncommitted lifecycle-query, persistent-owner-journal and
+exact-evidence-composition work in an isolated candidate. Preserve its previous
+failed and successful observations and validate the exact recovered source before
+publication. The existing integration candidate remains the review destination.
+
+Three additions now address distinct remaining interfaces. A finite joint-state
+checker verifies exact rational positive-semidefinite domination of the complete
+declared oracle/advice state by one oracle-independent reference state, with an
+explicit multiplicative loss and optional positive excess. This certifies only
+the supplied finite mathematical model. A fresh persistent native risk ledger
+registers each confirmation claim and its allowance before the native operation,
+retains charges through failure and restart, and independently reconciles all
+registered starts with the complete underlying owner journal. Its budget is an
+accounting invariant, not an authenticated conditional failure probability. An
+execution-family checker derives every confirmation and later failure from all
+leaves of one declared finite law, enforcing event coverage before applying the
+existing conditional risk bank.
+
+Each new stored format has a separate namespace. Missing backends, omitted
+starts, incomplete oracle tables, forged matrix positivity, mismatched source
+bytes, stale prefixes and omitted failure leaves fail explicitly. No actual
+SHA-256/Poseidon idealization, all-algorithm physical-cost lower bound, global
+initial-state authentication, physical clock, hidden world inventory, honest
+progress law, native/MU1 relation bridge or six-successor failure probability is
+promoted. Complete applicable source and native gates retain separate outcomes.
