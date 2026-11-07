@@ -94,17 +94,17 @@ population p99 guarantee. Retained v1/v2/v3 outputs remain reproducible.
 
 | Observation on frozen implementation | Result | Retained evidence |
 | --- | --- | --- |
-| All-target, all-feature locked Cargo compilation | PASS; unchanged repository profiles | [First final-source run](logs/r16-workspace-all-features-corrected.log) |
-| Complete workspace runtime, original tests retained | FAILED, exit 101: 4,344 passed / 77 failed / 70 ignored across 385 targets; 18 targets failed | [Complete no-fail-fast log](logs/r16-workspace-complete-denominator.log), [readback](r16-workspace-readback.json) |
+| All-target, all-feature locked Cargo compilation | PASS; unchanged repository profiles | [First final-source run](logs/r16-workspace-all-features-corrected.log.gz) |
+| Complete workspace runtime, original tests retained | FAILED, exit 101: 4,344 passed / 77 failed / 70 ignored across 385 targets; 18 targets failed | [Complete no-fail-fast log](logs/r16-workspace-complete-denominator.log.gz), [readback](r16-workspace-readback.json) |
 | New authentication/startup/lifecycle regressions | 25 passed, 0 failed, 0 ignored; included in the complete run | Same complete log/readback |
-| Strict Clippy, all targets/all features | PASS, `-D warnings` | [Clippy log](logs/r16-strict-workspace-clippy.log) |
-| Rust formatting | PASS, `cargo fmt --all -- --check` | [Format log](logs/r16-final-format.log) |
-| Canonical repository/links and reference model | 50 repository tests and 29 reference tests passed; 3,457 Markdown links checked at implementation source | [Canonical check](logs/r16-final-canonical-plan.log) |
-| Source-integrity counterexamples | 43 passed | [Source tests](logs/r16-final-source-integrity-tests.log) |
-| PQ/source contract counterexamples | 37 passed; 568 exact source pins match; qualification remains HOLD_NO_GO | [Counterexamples](logs/r16-final-pq-source-tests.log), [pins](logs/r16-final-source-pins.log) |
-| Current/historical resource policy reader | 7 passed | [Policy tests](logs/r16-final-policy-tests.log) |
-| Phase-reader complete-cohort counterexamples | 69 passed | [Phase tests](logs/r16-final-phase-tests.log) |
-| Exact retained-artifact reader compatibility | 19 passed; historical artifact, not new native execution | [Artifact reader tests](logs/r16-final-retained-artifact-tests.log) |
+| Strict Clippy, all targets/all features | PASS, `-D warnings` | [Clippy log](logs/r16-strict-workspace-clippy.log.gz) |
+| Rust formatting | PASS, `cargo fmt --all -- --check` | [Format log](logs/r16-final-format.log.gz) |
+| Canonical repository/links and reference model | 50 repository tests and 29 reference tests passed; 3,457 Markdown links checked at implementation source | [Canonical check](logs/r16-final-canonical-plan.log.gz) |
+| Source-integrity counterexamples | 43 passed | [Source tests](logs/r16-final-source-integrity-tests.log.gz) |
+| PQ/source contract counterexamples | 37 passed; 568 exact source pins match; qualification remains HOLD_NO_GO | [Counterexamples](logs/r16-final-pq-source-tests.log.gz), [pins](logs/r16-final-source-pins.log.gz) |
+| Current/historical resource policy reader | 7 passed | [Policy tests](logs/r16-final-policy-tests.log.gz) |
+| Phase-reader complete-cohort counterexamples | 69 passed | [Phase tests](logs/r16-final-phase-tests.log.gz) |
+| Exact retained-artifact reader compatibility | 19 passed; historical artifact, not new native execution | [Artifact reader tests](logs/r16-final-retained-artifact-tests.log.gz) |
 | Original fixed Host acceptance | Not executed: required Host unavailable | [Actual readiness refusal](original-host-readiness.json) |
 | Publication/hosted CI | Blocked; no remote write or new run | [Actual GitHub response](github-publication-block.json) |
 
@@ -123,7 +123,7 @@ workspace failure result or qualify public-service throughput.
 A further 37 applicability negative tests passed. That run began before the
 retained-test call repair and is not presented as an entirely post-final-commit
 run; its tested applicability subjects were unchanged. See the ledger's exact
-scope and the [applicability log](logs/r16-applicability-negative-tests.log).
+scope and the [applicability log](logs/r16-applicability-negative-tests.log.gz).
 
 The original completed workspace remains failed. Its 77 failed tests are
 classified by the actual retained failure stage, not automatically blamed on the
@@ -159,7 +159,10 @@ files. These additional invocations are not added to the 4,344/77/70 denominator
 
 
 Commands are recorded in `validation.json`; retained stdout/stderr are under
-`logs/`. The early retained-artifact argparse/EXDEV failures are described in
+`logs/`. Raw `.log` captures use lossless gzip so original trailing
+whitespace and empty outputs remain intact. The [retention manifest](raw-log-retention.json)
+binds original and compressed lengths/hashes; decode before comparing original
+log hashes or reading a capture. The early retained-artifact argparse/EXDEV failures are described in
 `acceptance-notes.md`; their full raw stdout was not retained. Native
 fault-injection controls and synthetic negative-credit settlement examples
 verify the state machine; they are not measurements of attacker CPU or global

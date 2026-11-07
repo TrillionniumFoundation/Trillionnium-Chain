@@ -11,7 +11,7 @@
     {
       "id": "source_before",
       "command": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head 2cd7353187bb58347ae7cbf884fef7aa2d05f610 --output <receipt>",
-      "log": "r16-final-source-before.log",
+      "log": "r16-final-source-before.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "receipt": "r16-final-source-before.json",
@@ -22,7 +22,7 @@
     {
       "id": "canonical_plan",
       "command": "bash scripts/ci/check_canonical_development_plan.sh",
-      "log": "r16-final-canonical-plan.log",
+      "log": "r16-final-canonical-plan.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "repository_negative_tests": 50,
@@ -32,7 +32,7 @@
     {
       "id": "source_integrity",
       "command": "python3 scripts/ci/test_ci_source_integrity.py -v",
-      "log": "r16-final-source-integrity-tests.log",
+      "log": "r16-final-source-integrity-tests.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "passed": 43
@@ -40,7 +40,7 @@
     {
       "id": "pq_source_integrity",
       "command": "python3 scripts/ci/test_pq_research_integration.py",
-      "log": "r16-final-pq-source-tests.log",
+      "log": "r16-final-pq-source-tests.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "passed": 37
@@ -48,7 +48,7 @@
     {
       "id": "source_pins",
       "command": "python3 scripts/ci/check_pq_research_integration.py",
-      "log": "r16-final-source-pins.log",
+      "log": "r16-final-source-pins.log.gz",
       "status": "PASS_SOURCE_ONLY",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "matching_source_blobs": 568,
@@ -57,7 +57,7 @@
     {
       "id": "policy_reader",
       "command": "python3 scripts/ci/test_pon_public_v3_policy_read.py -v",
-      "log": "r16-final-policy-tests.log",
+      "log": "r16-final-policy-tests.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "passed": 7
@@ -65,7 +65,7 @@
     {
       "id": "phase_reader",
       "command": "python3 scripts/ci/test_pon_public_v3_phase_read.py -v",
-      "log": "r16-final-phase-tests.log",
+      "log": "r16-final-phase-tests.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "passed": 69
@@ -73,7 +73,7 @@
     {
       "id": "retained_artifact_tests",
       "command": "TMPDIR=/workspace/scratch/270e2a9ce94f/acceptance-tmp python3 scripts/ci/test_read_original_native_campaign.py --artifact-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-pr327-original-campaign-39694587963 --expected-manifest-sha256 12406cc156e57c130fa14af2b50b386031ec3640ce7f0234ed5bc9f0a700aac3 --expected-head 9e705ccf75b7318dcc4bda4815956f58beb10e72 --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset",
-      "log": "r16-final-retained-artifact-tests.log",
+      "log": "r16-final-retained-artifact-tests.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "passed": 19,
@@ -82,7 +82,7 @@
     {
       "id": "strict_clippy",
       "command": "cargo clippy --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- -D warnings",
-      "log": "r16-strict-workspace-clippy.log",
+      "log": "r16-strict-workspace-clippy.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "exit_code": 0
@@ -90,7 +90,7 @@
     {
       "id": "format",
       "command": "cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check",
-      "log": "r16-final-format.log",
+      "log": "r16-final-format.log.gz",
       "status": "PASS",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "exit_code": 0
@@ -98,7 +98,7 @@
     {
       "id": "all_target_compilation",
       "command": "cargo test --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- --test-threads=1",
-      "log": "r16-workspace-all-features-corrected.log",
+      "log": "r16-workspace-all-features-corrected.log.gz",
       "status": "COMPILE_PASS_RUNTIME_FAIL",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "command_exit_code": 101,
@@ -108,7 +108,7 @@
     {
       "id": "complete_workspace_runtime",
       "command": "cargo test --no-fail-fast --locked --workspace --all-targets --all-features --manifest-path trillionnium/Cargo.toml -- --test-threads=1",
-      "log": "r16-workspace-complete-denominator.log",
+      "log": "r16-workspace-complete-denominator.log.gz",
       "status": "FAILED",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "readback": "r16-workspace-readback.json",
@@ -128,7 +128,7 @@
       "id": "new_authentication_and_lifecycle_regressions",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "command": "Included in complete_workspace_runtime; not a separate filtered invocation.",
-      "log": "r16-workspace-complete-denominator.log",
+      "log": "r16-workspace-complete-denominator.log.gz",
       "status": "PASS_COMPONENT_REGRESSIONS",
       "passed": 25,
       "failed": 0,
@@ -146,7 +146,7 @@
       "id": "retained_native_false_trace_controls",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
       "command": "Included in complete_workspace_runtime, public_v3_from_zero target.",
-      "log": "r16-workspace-complete-denominator.log",
+      "log": "r16-workspace-complete-denominator.log.gz",
       "status": "PASS_COMPONENT_ONLY",
       "target_passed": 5,
       "target_failed": 0,
@@ -161,14 +161,14 @@
   "additional_observations": [
     {
       "id": "applicability_negative_tests",
-      "log": "r16-applicability-negative-tests.log",
+      "log": "r16-applicability-negative-tests.log.gz",
       "status": "PASS",
       "passed": 37,
       "source_scope": "Started before the retained complete(true) to complete() test-call and exact-blob-pin repair. The applicability subjects were unchanged; this run is not labelled wholly post-final-commit."
     },
     {
       "id": "w1_python_oracle",
-      "log": "w1-false-transcript-oracle.log",
+      "log": "w1-false-transcript-oracle.log.gz",
       "status": "PASS_COMPONENT_ONLY",
       "passed": 5,
       "source_scope": "Earlier development observation, not final committed native qualification. Four distinct passing-ticket invented traces replayed and were rejected by the Python oracle; no proof generation, native Node state or Host CPU ownership is established."
@@ -199,13 +199,13 @@
   "failure_history": [
     {
       "id": "ambiguous_test_channel",
-      "log": "public-v3-native-original-profile.log",
+      "log": "public-v3-native-original-profile.log.gz",
       "status": "COMPILE_FAILED",
       "resolution": "Test-only channel type specified as channel::<()>."
     },
     {
       "id": "stale_current_profile_vectors",
-      "log": "public-v3-native-corrected-profile.log",
+      "log": "public-v3-native-corrected-profile.log.gz",
       "status": "FAILED",
       "passed": 215,
       "failed": 3,
@@ -215,8 +215,8 @@
     {
       "id": "stale_applicability_callable",
       "logs": [
-        "r16-repository-precommit.log",
-        "r16-canonical-plan.log"
+        "r16-repository-precommit.log.gz",
+        "r16-canonical-plan.log.gz"
       ],
       "status": "FAILED",
       "resolution": "Renamed callable binding corrected in applicability metadata and authority documentation."
@@ -224,7 +224,7 @@
     {
       "id": "retained_test_call",
       "source_commit": "45d84f4acb5222920b535252ff5609ca8a445a68",
-      "log": "r16-workspace-all-features-tests.log",
+      "log": "r16-workspace-all-features-tests.log.gz",
       "status": "COMPILE_FAILED",
       "error": "E0061 at retained fence.complete(true) call",
       "source_after": "r16-source-after-first-compile-failure.json",
@@ -233,7 +233,7 @@
     {
       "id": "first_final_workspace_runtime_stop",
       "source_commit": "2cd7353187bb58347ae7cbf884fef7aa2d05f610",
-      "log": "r16-workspace-all-features-corrected.log",
+      "log": "r16-workspace-all-features-corrected.log.gz",
       "status": "FAILED",
       "exit_code": 101,
       "source_after": "r16-source-after-workspace-stop.json",
@@ -249,6 +249,14 @@
         "19 fixture error occurrences from os.link EXDEV across workspace and /tmp"
       ],
       "resolution": "Same original artifact pins and unchanged tests retried with same-filesystem TMPDIR; final-source 19-test pass has its own retained stdout log."
+    },
+    {
+      "id": "raw_capture_whitespace",
+      "status": "PACKAGING_WHITESPACE_CHECK_REFUSED_RAW_TEXT",
+      "command": "git diff --cached --check",
+      "exit_code": 2,
+      "log": "r16-raw-log-whitespace-check.log.gz",
+      "resolution": "Original stdout includes trailing whitespace. All raw .log captures are stored losslessly as gzip; raw-log-retention.json binds original/encoded bytes and hashes. No raw bytes, source assertions or validation gates were altered."
     }
   ],
   "original_host": {
@@ -287,7 +295,7 @@
   "log_root": "logs",
   "receipt_root": ".",
   "provider_receipt": "provider/pq-provider/provider.json",
-  "provider_preparation_log": "provider/pq-provider/build-and-smoke.log",
+  "provider_preparation_log": "provider/pq-provider/build-and-smoke.log.gz",
   "package_inputs": {
     "w1-ingress-r16-implementation.patch": {
       "bytes": 205905,
@@ -327,5 +335,7 @@
     "worker_descendant_cleanup_incomplete": 36,
     "adapter_error_kind_mismatch_cause_unprinted": 1
   },
-  "source_after_additional_diagnostic": "r16-after-additional-diagnostic-source.json"
+  "source_after_additional_diagnostic": "r16-after-additional-diagnostic-source.json",
+  "log_encoding": "gzip when the retained filename ends in .gz; decode before comparing original log hashes",
+  "raw_log_retention_manifest": "raw-log-retention.json"
 }
