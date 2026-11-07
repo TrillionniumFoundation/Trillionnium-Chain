@@ -1,0 +1,7 @@
+{
+  "intentional_local_probe": true,
+  "cuda_not_attempted": true,
+  "expected_error": "ModuleNotFoundError: torch not installed locally",
+  "argparse_fixed": true,
+  "exit_code": 1
+}

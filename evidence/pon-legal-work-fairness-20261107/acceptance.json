@@ -1,0 +1,131 @@
+{
+  "authenticated_new_demand": false,
+  "business_credit": 0,
+  "chainwork_awarded": 0,
+  "gpu": {
+    "actual_cloud_attempts": 2,
+    "actual_device": "Tesla T4",
+    "all_primary_samples_verified": true,
+    "allocation_to_release_seconds": 650.278609,
+    "billed_cost": null,
+    "conclusion": "concrete CPU cached-merged implementations faster than tested CUDA implementations at existing small profile",
+    "failed_cloud_attempts": 1,
+    "final_consumption_assignments_count": 0,
+    "fresh_reference_samples": 12,
+    "fresh_verification_scope": "new conversion/transfers/compute/scalar reference/comparison",
+    "frozen_standalone_bytes_match_committed_harness_with_payload_substitution": true,
+    "gpu_energy": null,
+    "lifecycle": {
+      "bytes": 51714,
+      "path": "gpu/cloud-lifecycle.json",
+      "sha256": "c3a36dd5d1c70922bb82f1630e719448396b2d8522c99001cb92e9ef7acb0808"
+    },
+    "owned_allocation_released": true,
+    "payload_sha256": "475c1583a1059ddd1acc5d58c81390f4fb3ebfe7045f5cf73f5ea0692c334142",
+    "remote_full_checkout_run_claimed": false,
+    "result": {
+      "bytes": 256484,
+      "path": "gpu/result.json",
+      "sha256": "b037da2e62f9d758beaeb977a710fcc01bdb93e761ac693658b45b993f4d8b37"
+    },
+    "submitted_script_sha256": "c00765a255c021cb2e59b9670736acbcbcfcd36aa4773ef5befc60921de6fdc4",
+    "successful_cloud_attempts": 1,
+    "summary": {
+      "bytes": 13674,
+      "path": "gpu/summary.json",
+      "sha256": "5210164dd39ee831611b4a9b8e815233e33c33179faeeddd24c1d6b89db645c1"
+    },
+    "template_sha256": "83c0e3162b8cdfe4936a6316560c9ea749af76b03c83fc5866c55e63ad81afdd",
+    "timed_first_warmup_warm_samples": 480,
+    "warm_verification_scope": "compare with precomputed independent scalar reference"
+  },
+  "hardware_lower_bound_proved": false,
+  "lottery": {
+    "attempts": 142,
+    "carrier_variants": 64,
+    "current_verified_relations": 134,
+    "distinct_carrier_tickets": 1,
+    "distinct_ticket_inputs": 69,
+    "duplicate_evaluations": 73,
+    "expired_refusals": 8,
+    "fresh_context_variants_with_identical_arithmetic": 5,
+    "independent_review": {
+      "bytes": 7405,
+      "path": "lottery/independent-final-review.json",
+      "sha256": "a5b88aedccd9262e249dc9f1503cf518aab55a11f481a8cdef7aac3aef051c65"
+    },
+    "native_differential_checks_passed": true,
+    "new_matrix_contractions_after_preparation": 0,
+    "primary_unique_hits": 2,
+    "primary_unique_misses": 62,
+    "report": {
+      "bytes": 18003,
+      "path": "lottery/final-source-run/report.json",
+      "sha256": "41e93c3c4707b28d15b1ae03363633da49ebf85db88aac10b5bb531e78eddb85"
+    },
+    "verdict": "HOLD_CHALLENGE_INVARIANT_ARITHMETIC"
+  },
+  "minimum_fresh_legal_cost_proved": false,
+  "model_reward": 0,
+  "native_w1_free_encoding_vulnerability_confirmed": false,
+  "new_model_efficacy_proved": false,
+  "parent_sha": "adebe0bd78e6e1bdb55a599179ffe2313997170e",
+  "pow_qualified": false,
+  "production_activation": false,
+  "schema": "pon-grouped-work-fairness-acceptance-v0",
+  "source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+  "source_tree": "e7ddee5ecf6f9844b728a34c0fe6d6e06bb4ee56",
+  "status": "IMPLEMENTED_AUDIT_VALIDATED_RESEARCH_HOLD",
+  "strategies": {
+    "attempts": 453,
+    "complete_operation_counts": false,
+    "complete_round_accounting": true,
+    "expected_rejections": 6,
+    "incomplete_operation_count_reason": "six expected rejected rounds preserve unknown counters as null",
+    "independent_review": {
+      "bytes": 3177,
+      "path": "strategies/independent-final-ledger-review.json",
+      "sha256": "d766993bac38a7794467ca58dc0690f7d48064fd67d948862fec1daed0bd470f"
+    },
+    "ledger": {
+      "bytes": 657159,
+      "path": "strategies/final-source-run/attempts.ndjson",
+      "sha256": "bf437183b49ccc7fd723babc177396dbc88f3729cd8c0bb2bb71c00fb2143cb4"
+    },
+    "not_started": 0,
+    "observations": 151,
+    "plan": {
+      "bytes": 51624,
+      "path": "strategies/final-source-run/plan.json",
+      "sha256": "003eb59ffb7c5d25abfe2f509b95bcdd5bc29d96160308db5be6bd1542d322e6"
+    },
+    "planned_rounds": 453,
+    "report": {
+      "bytes": 551002,
+      "path": "strategies/final-source-run/report.json",
+      "sha256": "3ecb07410057f7d81c1b4cfddfbfa479a62faef8da9e012ace9fae85600a6d1a"
+    },
+    "verified": 447
+  },
+  "validation": {
+    "corrective_followup": {
+      "bytes": 2212,
+      "path": "validation/fuzz-cache-followup/result.json",
+      "sha256": "4b8f293e0c1eebeea07176f31395e3187524767538c5cebddb87441801fa2fb7"
+    },
+    "followup_scope": "locked offline fuzz metadata using checksum-verified existing local archives in isolated source directory",
+    "full_workspace_unit_tests_executed": false,
+    "github_actions_result_claimed": false,
+    "original_commands": 18,
+    "original_failed": 1,
+    "original_failure_preserved": true,
+    "original_hostile_service_campaign_executed": false,
+    "original_passed": 17,
+    "original_suite": {
+      "bytes": 843,
+      "path": "validation/final-source/summary.json",
+      "sha256": "63065a7cb36356f9dbce787847960bbbf7d54ee4f05c220a17a889d3a069cf1d"
+    },
+    "required_scoped_checks_complete_after_followup": true
+  }
+}

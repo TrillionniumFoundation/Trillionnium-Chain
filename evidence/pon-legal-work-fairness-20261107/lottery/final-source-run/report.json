@@ -1,0 +1,542 @@
+{
+  "distinct_ticket_inputs_across_all_observed_groups": 69,
+  "fixture_clock": {
+    "arrival_ns": 0,
+    "deadline_ns": 3600000000000,
+    "now_ns": 1,
+    "origin": "declared retrospective transport test values; no real request-time evidence"
+  },
+  "groups": {
+    "carrier": {
+      "attempts": 64,
+      "chainwork_awarded": 0,
+      "distinct_ticket_inputs_in_group": 1,
+      "first_query_target_hits": 0,
+      "global_first_ticket_inputs": 0,
+      "refused_attempts": 0,
+      "target_hits_including_duplicates": 0,
+      "target_misses_including_duplicates": 64,
+      "ticket_evaluations_observed": 64,
+      "verified_relation_attempts": 64
+    },
+    "context": {
+      "attempts": 5,
+      "chainwork_awarded": 0,
+      "distinct_ticket_inputs_in_group": 5,
+      "first_query_target_hits": 0,
+      "global_first_ticket_inputs": 5,
+      "refused_attempts": 0,
+      "target_hits_including_duplicates": 0,
+      "target_misses_including_duplicates": 5,
+      "ticket_evaluations_observed": 5,
+      "verified_relation_attempts": 5
+    },
+    "expired": {
+      "attempts": 8,
+      "chainwork_awarded": 0,
+      "distinct_ticket_inputs_in_group": 8,
+      "first_query_target_hits": 0,
+      "global_first_ticket_inputs": 0,
+      "refused_attempts": 8,
+      "target_hits_including_duplicates": 0,
+      "target_misses_including_duplicates": 0,
+      "ticket_evaluations_observed": 8,
+      "verified_relation_attempts": 0
+    },
+    "primary": {
+      "attempts": 65,
+      "chainwork_awarded": 0,
+      "distinct_ticket_inputs_in_group": 64,
+      "first_query_target_hits": 2,
+      "global_first_ticket_inputs": 64,
+      "refused_attempts": 0,
+      "target_hits_including_duplicates": 2,
+      "target_misses_including_duplicates": 63,
+      "ticket_evaluations_observed": 65,
+      "verified_relation_attempts": 65
+    }
+  },
+  "interpretation": [
+    "A single exact cached arithmetic product serves all planned nonce queries.",
+    "Full independent verification and all target misses/refusals remain charged in their recorded scopes.",
+    "Carrier variants do not create new ticket identities; context changes do, without fresh neural arithmetic.",
+    "The unchanged native W1 relation is not attacked or reweighted by these results.",
+    "Python binding timings and native kernel/verification timings are different scopes; no cross-scope speedup is claimed."
+  ],
+  "native": {
+    "chainwork_awarded": 0,
+    "correctness_checks": [
+      "original-coefficient scalar all product fields",
+      "existing model-contract prediction",
+      "ordinary cached selected-expert NumPy",
+      "all native model/input/statement commitments",
+      "direct/packed statements equal",
+      "native statement equals nonce-zero lottery audit statement"
+    ],
+    "full_native_verifier_dense_positions": 37008,
+    "input_commitment": "f5404d87ea052b1b3ed13d953ec01cf2ffcdddd801dd9e53abc6b5b853817d51",
+    "ipc_only_ns": null,
+    "kernel_comparison": {
+      "grouped_over_ordinary_hot_kernel_median": 1.7902681530581501,
+      "hot_comparison_scope": "same prepared model and batch; A ordinary returns routes/logits/predictions; B selected direct and C packed grouped return the same complete Product; packed retains three internal router/gather/expert phase-clock probes absent from ordinary/direct, so differences include that instrumentation as well as gather/contraction; no commitments, verification or transport inside hot kernels",
+      "hot_sampling_order": {
+        "arms": {
+          "ordinary": "ordinary",
+          "packed": "packed_grouped",
+          "selected": "selected_direct"
+        },
+        "complete_cycles": 2,
+        "cycle": [
+          [
+            "ordinary",
+            "selected",
+            "packed"
+          ],
+          [
+            "packed",
+            "selected",
+            "ordinary"
+          ],
+          [
+            "selected",
+            "packed",
+            "ordinary"
+          ],
+          [
+            "ordinary",
+            "packed",
+            "selected"
+          ],
+          [
+            "packed",
+            "ordinary",
+            "selected"
+          ],
+          [
+            "selected",
+            "ordinary",
+            "packed"
+          ]
+        ],
+        "partial_cycle_samples": 0,
+        "remaining_orders": []
+      },
+      "kernel_candidate_for_this_fixture": {
+        "basis": "lower observed hot median between the two complete-Product kernels",
+        "candidate": "selected_direct",
+        "ordinary_control_retained": true,
+        "performance_qualified": false,
+        "runtime_policy_changed": false,
+        "scope": "this frozen corpus, batch shape and host observation only"
+      },
+      "native_hot_grouped": {
+        "median_ns": 29709.5,
+        "minimum_ns": 28974,
+        "p95_ns": 31408,
+        "samples_ns": [
+          31347,
+          31408,
+          29635,
+          31307,
+          31167,
+          28974,
+          29414,
+          29384,
+          29784,
+          29355,
+          29274,
+          30996
+        ]
+      },
+      "native_hot_ordinary": {
+        "median_ns": 16595.0,
+        "minimum_ns": 16094,
+        "p95_ns": 17776,
+        "samples_ns": [
+          17006,
+          16776,
+          16425,
+          16625,
+          17776,
+          16094,
+          16215,
+          16405,
+          16565,
+          16174,
+          17256,
+          17667
+        ]
+      },
+      "native_hot_selected": {
+        "median_ns": 17852.0,
+        "minimum_ns": 16535,
+        "p95_ns": 38088,
+        "samples_ns": [
+          18167,
+          18167,
+          16595,
+          18207,
+          17707,
+          38088,
+          16815,
+          16915,
+          16535,
+          16945,
+          18087,
+          17997
+        ]
+      },
+      "packed_over_selected_hot_kernel_median": 1.6642112928523414,
+      "selected_over_ordinary_hot_kernel_median": 1.075745706538114
+    },
+    "model_commitment": "e365293070b00d2c3600ff38324b5e730c94bb4b8b07f61b7eac4e451cce64a4",
+    "model_preparation_wall_ns": 95164,
+    "native_handler_cpu_ns": 1223013,
+    "native_handler_wall_ns": 1241781,
+    "native_phases_wall_ns": {
+      "expert": 15233,
+      "gather": 7191,
+      "input_commitment": 36775,
+      "router": 8473,
+      "statement_commitment": 2824,
+      "validation": 4217,
+      "verify": 55904
+    },
+    "native_selected_phases_wall_ns": {
+      "execution": 16915,
+      "input_commitment": 23806,
+      "statement_commitment": 1703,
+      "validation": 2554,
+      "verify": 51197
+    },
+    "native_selected_producer_with_verify_cpu_ns": 97946,
+    "native_selected_producer_with_verify_wall_ns": 98629,
+    "native_selected_scope": "prepared_model_fresh_batch_input_commit_selected_statement_full_verify",
+    "native_statement_matches_nonce_zero": true,
+    "per_phase_cpu_ns": null,
+    "pow_qualified": false,
+    "production_activation": false,
+    "python_reticket_and_native_kernel_speedup_comparison": null,
+    "startup_only_ns": null,
+    "statement_commitment": "b70b021e3724d4f05e822afc39cf21069b36efac79e3361a948ba6c01e1f90c4",
+    "whole_process": {
+      "child_cpu_ns": 3795000,
+      "parent_cpu_ns": 704509,
+      "status": "completed",
+      "wall_ns": 4910859
+    },
+    "whole_process_scope": "one process startup, model init, single batch with all disclosed warmups and three-arm repetitions, full verifiers, input/output pipes, exit and process-group cleanup"
+  },
+  "native_differential_checks_passed": true,
+  "plan": {
+    "business_credit": 0,
+    "carrier_variants": {
+      "auxiliary_bytes_are_not_a_proof": true,
+      "count": 64,
+      "same_header_nonce": 0
+    },
+    "chainwork_awarded": 0,
+    "context_variants": {
+      "fields": [
+        "parent",
+        "batch_id",
+        "task",
+        "payee",
+        "parameters"
+      ],
+      "same_arithmetic_product": true
+    },
+    "demand": {
+      "kind": "retrospective_public_source_fixture",
+      "original_deadlines": null,
+      "real_arrival_trace": null,
+      "real_demand_verified": false,
+      "synthetic_rows_added": 0
+    },
+    "expired": {
+      "expected_refusal": "REQUEST_NOT_CURRENT",
+      "nonces": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "now_ns": 3600000000000,
+      "planned_attempts": 8,
+      "same_ticket_inputs_as_primary_prefix": true,
+      "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    "fixed_material": {
+      "count": 16,
+      "directory": "evidence/pon-native-node-v1/model-current/model",
+      "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+      "offset": 0,
+      "partition": "consumer",
+      "replay_source": true
+    },
+    "model_reward": 0,
+    "native": {
+      "batch_frames": 1,
+      "context": "exact nonce-zero audit candidate",
+      "init_frames": 1,
+      "performance_qualification": false,
+      "processes": 1,
+      "samples": 12,
+      "timeout_seconds": 30,
+      "warmup": 2
+    },
+    "pow_qualified": false,
+    "primary": {
+      "nonces": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        0
+      ],
+      "planned_attempts": 65,
+      "stop_on_success": false,
+      "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "unique_nonces": 64
+    },
+    "production_activation": false,
+    "profile": "pon-grouped-int257-lottery-audit-v0",
+    "schema": "pon-grouped-work-lottery-source-audit-v0",
+    "source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e"
+  },
+  "provenance": {
+    "batch_offset": 0,
+    "batch_size": 16,
+    "evaluation_bundle": "485d1ddac3f10b859599297ede15c5703517952d3f507cdc3efea7f14214429e",
+    "evaluation_bundle_sha256": "e2a67320971f6620dc4c67c4114eb9fcf3389d4b9925daedfbb471f9936b8570",
+    "independent_administration": false,
+    "model_artifact": "d6ac3f24a43045dda6af862344918688b5fbb047599d423e27c567cf670ccfc2",
+    "model_sha256": "d07ae8ce412746b5cc7289f65be3a5fb0e417aa3ad747aa71c2e3d1fd2f3514e",
+    "ordinary_hepta_product_entry": false,
+    "partition": "consumer",
+    "production_activation": false,
+    "prospective_evaluation": false,
+    "public_reward_eligible": false,
+    "scope": "controlled-local-frozen-inputs-not-authorized-future-evidence",
+    "selected_tasks": {
+      "content_root": "2206cad582edcb914c231dbc132fef71f97e8809630e347fa688eabf6f5158e1",
+      "groups": [
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+        "trillionnium/crates/trnm-types/src/transcript/mod.rs"
+      ],
+      "rows": 16,
+      "task_id_root": "e0be3a10d5cf1f00167b6b35746a1b3537319ce61ceb194289110f2af05730bf",
+      "tasks_digest": "b545fdb5dc980520302e7949c9e2d7072026277356042e926e14fadc50e8bcd6"
+    },
+    "source_commit": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "source_replayed": true,
+    "tasks_file_sha256": "f75d027312966d7316795629ba7ae0dfd82c2ccbaece417db30b8a28b4210051",
+    "whole_partition": {
+      "content_root": "8ce3cf3b37b5934cb8cd41304aa0840e97829e37845b3f60db9377bffad8f855",
+      "groups": [
+        "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+        "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+        "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+        "trillionnium/crates/trnm-task-kernel/src/error.rs",
+        "trillionnium/crates/trnm-transport/src/proof_admission.rs",
+        "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+        "trillionnium/crates/trnm-types/src/request_status/transitions.rs",
+        "trillionnium/crates/trnm-types/src/transcript/mod.rs",
+        "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+        "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+        "trillionnium/crates/trnm-worker-agent/src/state.rs",
+        "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_classification_error_maps.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+        "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs"
+      ],
+      "rows": 213,
+      "task_id_root": "fa32cc65e4356449024d124a457fe1250f6acdd2a7ff63750c38611fbfb9f8f5",
+      "tasks_digest": "18acb91d531f29dbc9539b0100881ab180a0fe6be1057615040041355dd8d200"
+    }
+  },
+  "python_cached_reticket": {
+    "fresh_matrix_work_per_ticket_required": false,
+    "preparation_cpu_ns": 17363461,
+    "producer_new_matrix_contractions_after_preparation": 0,
+    "scope": "finite_python_cpu_counterexample_not_W1_not_real_demand_not_hardware_lower_bound",
+    "total_cpu_ns": 884520524,
+    "total_wall_ns": 894068656
+  },
+  "qualification": {
+    "business_credit": 0,
+    "chainwork_awarded": 0,
+    "consensus_qualified": false,
+    "hardware_lower_bound_proved": false,
+    "minimum_fresh_work_proved": false,
+    "model_adoption_changed": false,
+    "model_reward": 0,
+    "pow_qualified": false,
+    "production_activation": false,
+    "real_demand_verified": false
+  },
+  "query_count_scope": "distinct (challenge, canonical statement) inputs observed in all producer groups; repeated internal verifier hashes are duplicates; this is not a raw SHA-256 invocation counter",
+  "reproduction_command": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/scratch/10a9f8f2cba0/chain-fairness/formal/pon-nakamoto-v1/experiments/grouped_work_lottery_audit_v0.py --source-sha a4302cbf401d59391bcd38978ce3e2c68f60e49e --runner /workspace/scratch/10a9f8f2cba0/native-target/release/examples/pon_routed_int257_grouped --native-timeout 30 --out /workspace/scratch/10a9f8f2cba0/evidence-staging/pon-legal-work-fairness-20261107/lottery/final-source-run-replay",
+  "schema": "pon-grouped-work-lottery-source-audit-v0",
+  "source_identity_unchanged": true,
+  "source_replayed": true,
+  "source_sha": "a4302cbf401d59391bcd38978ce3e2c68f60e49e",
+  "stages": {
+    "carrier_variants": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 1041538015,
+      "status": "completed",
+      "wall_ns": 1041956576
+    },
+    "context_variants": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 120447437,
+      "status": "completed",
+      "wall_ns": 120449632
+    },
+    "environment": {
+      "child_cpu_ns": 23755000,
+      "parent_cpu_ns": 5732709,
+      "status": "completed",
+      "wall_ns": 33098715
+    },
+    "expired_queries": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 18131892,
+      "status": "completed",
+      "wall_ns": 18186367
+    },
+    "historical_source_identity": {
+      "child_cpu_ns": 1183847000,
+      "parent_cpu_ns": 212919980,
+      "status": "completed",
+      "wall_ns": 1395711173
+    },
+    "native_decode": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 119919,
+      "status": "completed",
+      "wall_ns": 119951
+    },
+    "native_independent_python_numpy_verification": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 8995273,
+      "status": "completed",
+      "wall_ns": 8992710
+    },
+    "native_process": {
+      "child_cpu_ns": 3795000,
+      "parent_cpu_ns": 704509,
+      "status": "completed",
+      "wall_ns": 4910859
+    },
+    "primary_queries": {
+      "child_cpu_ns": 0,
+      "parent_cpu_ns": 884573344,
+      "status": "completed",
+      "wall_ns": 894120355
+    },
+    "source_after": {
+      "child_cpu_ns": 23184000,
+      "parent_cpu_ns": 29182326,
+      "status": "completed",
+      "wall_ns": 49453807
+    },
+    "source_before": {
+      "child_cpu_ns": 18382000,
+      "parent_cpu_ns": 24557423,
+      "status": "completed",
+      "wall_ns": 46023714
+    },
+    "source_replay_and_input_load": {
+      "child_cpu_ns": 687073000,
+      "parent_cpu_ns": 394299875,
+      "status": "completed",
+      "wall_ns": 1111396901
+    }
+  },
+  "status": "completed_research_hold",
+  "timing_before_final_report_and_manifest": {
+    "child_cpu_ns": 1940036000,
+    "parent_cpu_ns": 2771118065,
+    "wall_ns": 4757069350
+  },
+  "verdict": "HOLD_CHALLENGE_INVARIANT_ARITHMETIC"
+}
