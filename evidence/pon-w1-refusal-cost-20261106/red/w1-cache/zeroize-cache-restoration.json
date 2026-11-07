@@ -1,0 +1,9 @@
+{
+  "source_archive": "/workspace/scratch/a66f84888260/env-crates/zeroize-1.8.2.crate",
+  "destination_archive": "/workspace/scratch/667741fd74aa/cargo-home/registry/cache/index.crates.io-1949cf8c6b5b557f/zeroize-1.8.2.crate",
+  "sha256": "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0",
+  "expected_locked_checksum": "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0",
+  "match": true,
+  "registry_seed": "/workspace/scratch/e1dee205f3d3/cargo-home/registry",
+  "copied_method": "existing immutable registry hardlinks; missing archive copied after checksum validation"
+}

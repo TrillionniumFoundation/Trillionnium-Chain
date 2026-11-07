@@ -1,11 +1,13 @@
-//! Optional exact W1 mathematical rejection cache. No acceptance/authority cache.
-//! A fresh forged trace still incurs full W1 replay; this protects ONLY exact
-//! repeated bogus mathematical statements in the same local receiver epoch.
+//! Optional bounded W1 mathematical rejection cache. No acceptance/authority cache.
+//! A transcript fact binds challenge/A/B/claimed trace and is independent of
+//! canonical claimed C. A product fact additionally binds that exact C. Fresh
+//! forged traces still incur full W1 replay in the same local receiver epoch.
 //! Contended or poisoned cache locks never delay the caller: lookup misses and
 //! publication is skipped while the original verifier retains its checkpoints.
 use super::{
-    hash, verify_with_progress, Hash, VerificationError, VerificationProgress, VerifiedWork,
-    WorkError, PROFILE, PROOF_BYTES,
+    checked_proof_statement, hash, verify_checked_with_kernel, CheckedProofInputs, Hash,
+    VerificationError, VerificationKernel, VerificationProgress, VerifiedWork, WorkError, CELLS,
+    PROFILE, PROOF_BYTES,
 };
 use std::{
     sync::Mutex,
@@ -14,9 +16,15 @@ use std::{
 
 #[cfg(test)]
 std::thread_local! {
-    // Actual bytes passed to this optional cache's full-proof digest. This is
-    // separate from task hashing and arithmetic, and absent from production.
+    // Actual proof bytes passed to this optional cache's two claim digests.
+    // This excludes task hashing/arithmetic and is absent from production.
     static CACHE_KEY_PROOF_BYTES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+#[derive(Clone, Copy)]
+struct ClaimKeys {
+    transcript: Hash,
+    product: Hash,
 }
 
 #[derive(Clone, Copy)]
@@ -47,7 +55,7 @@ impl RejectionCache {
         })
     }
 
-    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<Hash> {
+    fn key(challenge: Hash, task: Hash, target: Hash, bytes: &[u8]) -> Option<ClaimKeys> {
         // The original verifier refuses a wrong width before reading proof
         // bytes. An optional cache must not turn that constant-cost refusal
         // into an unbounded hash over an attacker-controlled buffer.
@@ -56,26 +64,60 @@ impl RejectionCache {
         }
         #[cfg(test)]
         CACHE_KEY_PROOF_BYTES.with(|count| count.set(count.get() + bytes.len()));
-        Some(hash(
-            b"w1-exact-invalid-math-v1",
-            &[PROFILE.as_bytes(), &challenge, &task, &target, bytes],
-        ))
+        let input_end = 4 + 2 * CELLS * 4;
+        let trace_start = PROOF_BYTES - 32;
+        // A completed transcript mismatch depends on canonical A/B and the
+        // exact claimed trace, not on any canonical claimed product. Bind the
+        // original context/target too; no current authorization is cached.
+        let transcript = hash(
+            b"w1-negative-transcript-claim-v2",
+            &[
+                PROFILE.as_bytes(),
+                &challenge,
+                &task,
+                &target,
+                &bytes[..input_end],
+                &bytes[trace_start..],
+            ],
+        );
+        // The second domain reuses the bound input digest and additionally
+        // binds exact C. Across both digests each proof byte is hashed once.
+        let product = hash(
+            b"w1-negative-product-claim-v2",
+            &[&transcript, &bytes[input_end..trace_start]],
+        );
+        Some(ClaimKeys {
+            transcript,
+            product,
+        })
     }
 
-    fn hit(&self, key: Hash) -> Option<WorkError> {
+    fn hit(&self, keys: ClaimKeys) -> Option<WorkError> {
         // Optional reuse must not wait outside the caller's cancellation and
         // deadline checkpoints. Contention, like poison, is a cache miss.
         let entries = self.slots.try_lock().ok()?;
-        let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
-        entries[i]
-            .filter(|entry| entry.key == key && Instant::now() < entry.expires)
-            .map(|entry| entry.error)
+        let now = Instant::now();
+        // One nonblocking lookup, at most two direct slots and no allocation.
+        for (key, error) in [
+            (keys.transcript, WorkError::Transcript),
+            (keys.product, WorkError::Product),
+        ] {
+            let i = u64::from_le_bytes(key[..8].try_into().ok()?) as usize % entries.len();
+            if entries[i].is_some_and(|entry| {
+                entry.key == key && entry.error == error && now < entry.expires
+            }) {
+                return Some(error);
+            }
+        }
+        None
     }
 
-    fn insert(&self, key: Hash, error: WorkError) {
-        if !matches!(error, WorkError::Transcript | WorkError::Product) {
-            return;
-        }
+    fn insert(&self, keys: ClaimKeys, error: WorkError) {
+        let key = match error {
+            WorkError::Transcript => keys.transcript,
+            WorkError::Product => keys.product,
+            _ => return,
+        };
         // Losing optional publication to contention or poison never delays or
         // changes the already completed mathematical refusal.
         if let Ok(mut entries) = self.slots.try_lock() {
@@ -97,28 +139,30 @@ impl RejectionCache {
         proof: &[u8],
         progress: &mut impl FnMut(VerificationProgress) -> Result<(), E>,
     ) -> Result<VerifiedWork, VerificationError<E>> {
-        // Keep the native Length, Version, zero-Target, Field ordering before
-        // hashing all proof bytes for optional reuse. Delegate the first three
-        // failures to the original verifier; the shared encoding filter then
-        // checks every canonical field without allocating or hashing A/B.
-        // Task/ticket checks stay with the native verifier on a miss, so this
-        // filter does not add a second task hash to ordinary cold verification.
-        if proof.len() != PROOF_BYTES || &proof[..4] != b"PNW1" || target == [0; 32] {
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
-        }
-        super::precheck_proof_encoding(proof)?;
-        let Some(key) = Self::key(challenge, expected_task, target, proof) else {
-            // Preserve the native error ordering and cancellation semantics;
-            // malformed lengths never consult or populate the cache.
-            return verify_with_progress(challenge, expected_task, target, proof, progress);
-        };
+        // Repeat the complete original cheap-check order against this call's
+        // immutable bytes before any cache access: Length, Version, zero target,
+        // C/A/B fields, task, then ticket. A hit never masks a current failure.
+        let checked = checked_proof_statement(challenge, expected_task, target, proof)?;
+        let key = Self::key(challenge, expected_task, target, proof).ok_or(WorkError::Length)?;
         if let Some(error) = self.hit(key) {
             // A cached error is only a performance hint. Callers must still be
             // able to cancel, and must have checked present branch authority.
             progress(VerificationProgress::BeforeReplay).map_err(VerificationError::Cancelled)?;
             return Err(VerificationError::Relation(error));
         }
-        let result = verify_with_progress(challenge, expected_task, target, proof, progress);
+        // Only a miss allocates/decodes A/B. Continue the same current checked
+        // statement without rerunning its cheap checks or decoding inputs twice.
+        let result = verify_checked_with_kernel(
+            challenge,
+            proof,
+            CheckedProofInputs {
+                matrices: checked.decode_inputs(),
+                actual_task: checked.actual_task,
+                ticket: checked.ticket,
+            },
+            progress,
+            VerificationKernel::FullLimb,
+        );
         if let Err(VerificationError::Relation(error)) = &result {
             self.insert(key, *error);
         }
@@ -129,7 +173,7 @@ impl RejectionCache {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::pon_work::{prove, task_id, CELLS, PROOF_BYTES};
+    use crate::pon_work::{prove, task_id, verify_with_progress, CELLS, PROOF_BYTES};
     use std::{sync::mpsc, thread};
 
     type WorkSummary = (Hash, Hash, Hash, Vec<u32>);
@@ -465,7 +509,7 @@ mod tests {
 
     #[test]
     fn four_distinct_from_zero_false_traces_each_owe_first_full_replay() {
-        // The cache is strictly an EXACT retransmission defense, not an
+        // Reuse is limited to the same negative mathematical fact, not an
         // attacker-cost floor and not a Sybil or arbitrary-trace defense.
         let cache = RejectionCache::new(64, Duration::from_secs(30)).unwrap();
         let zeros = vec![0; CELLS];
@@ -517,7 +561,247 @@ mod tests {
         ));
         assert_eq!(
             replayed, 0,
-            "only an exact cached false proof is short-circuited"
+            "the retained exact false transcript fact is short-circuited"
+        );
+    }
+
+    #[test]
+    fn canonical_product_variants_reuse_the_same_negative_transcript_fact() {
+        let cache = RejectionCache::new(64, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [83; 32];
+        // No producer or legal transcript is used to create this fake claim.
+        // The same challenge/task/trace already meets this explicit target;
+        // changing only canonical C bytes requires no fresh ticket search.
+        let fake = hash(b"w1-negative-cache-c-variant-v1", &[&challenge]);
+        let mut wire = vec![0u8; PROOF_BYTES];
+        wire[..4].copy_from_slice(b"PNW1");
+        wire[PROOF_BYTES - 32..].copy_from_slice(&fake);
+        let mut replay_counts = Vec::new();
+        for word in [None, Some(0), Some(CELLS / 2), Some(CELLS - 1)] {
+            let mut variant = wire.clone();
+            if let Some(word) = word {
+                let start = 4 + (2 * CELLS + word) * 4;
+                variant[start..start + 4].copy_from_slice(&1_u32.to_le_bytes());
+            }
+            let (result, points) = observed(Some(&cache), challenge, task, &variant, None);
+            assert_eq!(
+                result,
+                Err(VerificationError::Relation(WorkError::Transcript))
+            );
+            replay_counts.push(
+                points
+                    .iter()
+                    .filter(|point| matches!(point, VerificationProgress::TranscriptTile { .. }))
+                    .count(),
+            );
+        }
+        assert_eq!(
+            replay_counts,
+            vec![512, 0, 0, 0],
+            "C is not an input to the challenge/A/B transcript and must not defeat its negative fact"
+        );
+    }
+
+    #[test]
+    fn transcript_fact_keeps_current_cheap_checks_and_decodes_only_on_a_miss() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [84; 32];
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        let mut bad_trace = valid.clone();
+        bad_trace[PROOF_BYTES - 1] ^= 1;
+        super::super::ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_trace, None).0,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        );
+        assert_eq!(
+            super::super::ARITHMETIC_INPUT_DECODES.with(std::cell::Cell::get),
+            1,
+            "the cold miss must decode the current A/B once"
+        );
+        let product_start = 4 + 2 * CELLS * 4;
+        let mut variant = bad_trace;
+        variant[product_start] = 1;
+        super::super::ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+        let warm = observed(Some(&cache), challenge, task, &variant, None);
+        assert_eq!(
+            warm.0,
+            Err(VerificationError::Relation(WorkError::Transcript))
+        );
+        assert_eq!(warm.1, vec![VerificationProgress::BeforeReplay]);
+        assert_eq!(
+            super::super::ARITHMETIC_INPUT_DECODES.with(std::cell::Cell::get),
+            0,
+            "a negative fact hit has no decoded-matrix allocation"
+        );
+        let mut noncanonical = variant.clone();
+        noncanonical[product_start..product_start + 4]
+            .copy_from_slice(&(super::super::Q as u32).to_le_bytes());
+        let mut wrong_task = task;
+        wrong_task[0] ^= 1;
+        let mut below_ticket = [0; 32];
+        below_ticket[31] = 1;
+        assert!(hash(b"ticket", &[&challenge, &variant[PROOF_BYTES - 32..]]) > below_ticket);
+        for (proof, current_task, target, error) in [
+            (noncanonical.clone(), task, [255; 32], WorkError::Field),
+            (variant.clone(), wrong_task, [255; 32], WorkError::Task),
+            (variant.clone(), task, below_ticket, WorkError::Target),
+            // Zero target still wins over malformed C and a wrong task.
+            (noncanonical, wrong_task, [0; 32], WorkError::Target),
+        ] {
+            let native = verify_with_progress(challenge, current_task, target, &proof, &mut |_| {
+                Err::<(), _>("cheap failure must precede cancellation")
+            });
+            assert_eq!(native.unwrap_err(), VerificationError::Relation(error));
+            CACHE_KEY_PROOF_BYTES.with(|count| count.set(0));
+            super::super::ARITHMETIC_INPUT_DECODES.with(|count| count.set(0));
+            let actual =
+                cache.verify_with_progress(challenge, current_task, target, &proof, &mut |_| {
+                    Err::<(), _>("cheap failure must precede cancellation")
+                });
+            assert_eq!(actual.unwrap_err(), VerificationError::Relation(error));
+            assert_eq!(CACHE_KEY_PROOF_BYTES.with(std::cell::Cell::get), 0);
+            assert_eq!(
+                super::super::ARITHMETIC_INPUT_DECODES.with(std::cell::Cell::get),
+                0
+            );
+        }
+        let cancelled = observed(
+            Some(&cache),
+            challenge,
+            task,
+            &variant,
+            Some(VerificationProgress::BeforeReplay),
+        );
+        assert_eq!(
+            cancelled.0,
+            Err(VerificationError::Cancelled("CALLER_CANCELLED"))
+        );
+        assert_eq!(cancelled.1, vec![VerificationProgress::BeforeReplay]);
+        // The same A/B/challenge with its actual trace and C must still pass
+        // the full native path; the negative fact supplies no authority.
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &valid, None),
+            observed(None, challenge, task, &valid, None)
+        );
+    }
+
+    #[test]
+    fn transcript_fact_binds_challenge_both_inputs_and_claimed_trace() {
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [85; 32];
+        let mut bad_trace = prove(challenge, &zeros, &zeros).unwrap();
+        bad_trace[PROOF_BYTES - 1] ^= 1;
+        let mut other_challenge = challenge;
+        other_challenge[0] ^= 1;
+        let mut changed_input = zeros.clone();
+        changed_input[CELLS - 1] = 1;
+        let mut other_a = bad_trace.clone();
+        other_a[4 + (CELLS - 1) * 4] = 1;
+        let mut other_b = bad_trace.clone();
+        other_b[4 + (2 * CELLS - 1) * 4] = 1;
+        let mut other_trace = bad_trace.clone();
+        other_trace[PROOF_BYTES - 2] ^= 1;
+        for (current_challenge, current_task, proof) in [
+            (other_challenge, task, bad_trace.clone()),
+            (challenge, task_id(&changed_input, &zeros).unwrap(), other_a),
+            (challenge, task_id(&zeros, &changed_input).unwrap(), other_b),
+            (challenge, task, other_trace),
+        ] {
+            let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+            assert_eq!(
+                observed(Some(&cache), challenge, task, &bad_trace, None).0,
+                Err(VerificationError::Relation(WorkError::Transcript))
+            );
+            let native = observed(None, current_challenge, current_task, &proof, None);
+            assert_eq!(
+                native.0,
+                Err(VerificationError::Relation(WorkError::Transcript))
+            );
+            assert!(native.1.iter().any(|point| matches!(
+                point,
+                VerificationProgress::TranscriptTile {
+                    row: 7,
+                    column: 7,
+                    inner: 7
+                }
+            )));
+            assert_eq!(
+                observed(Some(&cache), current_challenge, current_task, &proof, None),
+                native,
+                "a changed transcript input or claim still owes complete native replay"
+            );
+        }
+    }
+
+    #[test]
+    fn product_fact_binds_exact_c_and_does_not_reject_a_repaired_product() {
+        let cache = RejectionCache::new(8, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [86; 32];
+        let valid = prove(challenge, &zeros, &zeros).unwrap();
+        let product_start = 4 + 2 * CELLS * 4;
+        let mut bad_product = valid.clone();
+        bad_product[product_start] = 1;
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_product, None),
+            observed(None, challenge, task, &bad_product, None)
+        );
+        let warm = observed(Some(&cache), challenge, task, &bad_product, None);
+        assert_eq!(warm.0, Err(VerificationError::Relation(WorkError::Product)));
+        assert_eq!(warm.1, vec![VerificationProgress::BeforeReplay]);
+        bad_product[product_start] = 2;
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_product, None),
+            observed(None, challenge, task, &bad_product, None),
+            "a different C must not inherit an exact Product failure"
+        );
+        let repaired = observed(Some(&cache), challenge, task, &valid, None);
+        assert!(repaired.0.is_ok());
+        assert_eq!(repaired, observed(None, challenge, task, &valid, None));
+    }
+
+    #[test]
+    fn transcript_variant_hit_does_not_renew_ttl_and_partial_replay_is_not_cached() {
+        let cache = RejectionCache::new(1, Duration::from_secs(30)).unwrap();
+        let zeros = vec![0; CELLS];
+        let task = task_id(&zeros, &zeros).unwrap();
+        let challenge = [87; 32];
+        let mut bad_trace = prove(challenge, &zeros, &zeros).unwrap();
+        bad_trace[PROOF_BYTES - 1] ^= 1;
+        let last_tile = VerificationProgress::TranscriptTile {
+            row: 7,
+            column: 7,
+            inner: 7,
+        };
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_trace, Some(last_tile)).0,
+            Err(VerificationError::Cancelled("CALLER_CANCELLED"))
+        );
+        assert!(cache.slots.lock().unwrap().iter().all(Option::is_none));
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_trace, None),
+            observed(None, challenge, task, &bad_trace, None)
+        );
+        let expires = cache.slots.lock().unwrap()[0].unwrap().expires;
+        bad_trace[4 + 2 * CELLS * 4] = 1;
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_trace, None).1,
+            vec![VerificationProgress::BeforeReplay]
+        );
+        assert_eq!(cache.slots.lock().unwrap()[0].unwrap().expires, expires);
+        // Deterministic expiry control: no timing sleep or altered lifetime.
+        cache.slots.lock().unwrap()[0].as_mut().unwrap().expires = Instant::now();
+        assert_eq!(
+            observed(Some(&cache), challenge, task, &bad_trace, None),
+            observed(None, challenge, task, &bad_trace, None),
+            "expired negative facts owe a fresh complete replay"
         );
     }
 

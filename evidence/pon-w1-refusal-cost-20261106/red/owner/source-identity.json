@@ -1,0 +1,53 @@
+{
+  "baseline_commit": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+  "baseline_test_blob": "918a104be77409e88264e811ceae64a80dda89be",
+  "baseline_tree": "8c3417aa4bfec4c8ed068d615bba83583360a632",
+  "cargo_manifest_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+  "cargo_manifest_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+  "owner_red_worktree_clean_at_packaging": true,
+  "parents": [
+    "0ca272d09d1522b0ffd740e441b6d3de1ed81de6"
+  ],
+  "regression_patch_sha256": "52fdbcdada9a87fd82b7a74e0ef397ad9ed069e6bc783073966f3b3f7d6b481a",
+  "retained_test_package_overrides": {
+    "curve25519-dalek": {
+      "opt-level": 3
+    },
+    "ed25519-dalek": {
+      "opt-level": 3
+    },
+    "sha2": {
+      "debug-assertions": true,
+      "opt-level": 3,
+      "overflow-checks": true
+    },
+    "trnm-crypto-primitives": {
+      "debug-assertions": true,
+      "opt-level": 3,
+      "overflow-checks": true
+    },
+    "trnm-mvcc-fee": {
+      "debug-assertions": true,
+      "opt-level": 1,
+      "overflow-checks": true
+    },
+    "trnm-pon-node": {
+      "debug-assertions": true,
+      "opt-level": 3,
+      "overflow-checks": true
+    },
+    "trnm-protocol": {
+      "debug-assertions": true,
+      "opt-level": 3,
+      "overflow-checks": true
+    }
+  },
+  "schema": "pon-w1-owner-red-source-v1",
+  "scope": "Read-only source identity and patch packaging; does not run tests or certify resource gates.",
+  "tested_commit": "6228b3da159c0bb69f9dbe50815f70a1a53a3171",
+  "tested_test_blob": "5f44e9f8ec517fb6348ec0860542440d706fe860",
+  "tested_tree": "7131ac7ed6b2033323bded0e0ca09c6d8568655d",
+  "tests_only_changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs"
+  ]
+}

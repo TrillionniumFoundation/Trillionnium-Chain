@@ -123,6 +123,9 @@ pub(super) fn dispatch(
     measurement: Option<&MutationCpuMeasurement>,
 ) -> Result<Value> {
     let live_cpu = measurement.map(|cpu| &cpu.workers);
+    let owner_cpu = live_cpu
+        .and_then(|cpu| cpu.live.as_ref())
+        .map(|live| ServiceMutationCpuCheckpoint::from_actual_live(live.clone()));
     let checkpoint = |_: GrowthProgress| {
         task_alive(deadline, stop, cancelled)?;
         live_cpu.map_or(Ok(()), ScopedWorkerCpu::checkpoint)
@@ -133,7 +136,10 @@ pub(super) fn dispatch(
             let charge = measurement.ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?;
             let packet = packet(&text)?;
             {
-                let mut owner = lock_owner(node, &mut wait)?;
+                let mut owner = super::super::scope_node_owner(
+                    lock_owner(node, &mut wait)?,
+                    owner_cpu.as_ref(),
+                )?;
                 if let Some(id) = owner.precheck_growth_admission_with_progress(
                     &packet,
                     super::super::now()?,
@@ -181,7 +187,8 @@ pub(super) fn dispatch(
                 .as_ref()
                 .ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?
                 .growth_work_verified(&checked)?;
-            let mut owner = lock_owner(node, &mut wait)?;
+            let mut owner =
+                super::super::scope_node_owner(lock_owner(node, &mut wait)?, owner_cpu.as_ref())?;
             // Reacquired ORIGINAL owner. No cached State, clock or parent is
             // supplied; the typed entry rebinds all current inputs before commit.
             let id = owner.admit_growth_work_checked_with_worker_accounting(
@@ -197,11 +204,13 @@ pub(super) fn dispatch(
             // SAME original proof lane and CPU domain as a submit.
             ensure(measurement.is_some(), "PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?;
             let packet = packet(&text)?;
-            let owner = lock_owner(node, &mut wait)?;
+            let owner =
+                super::super::scope_node_owner(lock_owner(node, &mut wait)?, owner_cpu.as_ref())?;
             owner.growth_exact_packet_observation_with_progress(&packet, &checkpoint)
         }
         Request::GrowthHeadV1 => {
-            let owner = lock_owner(node, &mut wait)?;
+            let owner =
+                super::super::scope_node_owner(lock_owner(node, &mut wait)?, owner_cpu.as_ref())?;
             owner.growth_head_observation_with_progress(&checkpoint)
         }
         _ => Err("PUBLIC_OPERATION_PROFILE".into()),

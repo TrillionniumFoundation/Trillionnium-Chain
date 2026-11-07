@@ -32,11 +32,15 @@ ARITHMETIC_EXPECTED = [
     '05ace470c6c6d89dabe506e4fa96555847f34e72ae28255b8eb80c9f9c2dfe5b',
     '8af03f5efd2dc465f6180faddd36561c6f4d42f996ab0f901594c2b460c3d1bd',
 ]
-CURRENT_ARITHMETIC_EXPECTED = [
+R14_ARITHMETIC_EXPECTED = [
     'c6d64d3f924ddc6b621e6a7faec04b4a835add3a90c8e3835a7718f77cf95825',
     '0d462bce59800e8a2e4cfe348d0db06bf9771caa4f9a56df36a7d8b59fe3b507',
     '4b04f3da433221f69055cc4e78268e0a4f2393ae66b43a849fc58e3c14ca485f',
 ]
+
+CURRENT_REVISION = 'r14-owner-lock-v1'
+EXPECTED[CURRENT_REVISION] = ['0aa7a9664af8978646ece3c77b631417feeb401ac6fdae018965fd904362e570', '63fbeece48648831cbf24c6d92bb6510dbe14ecfff54b47b637bbc26212b1b6d', '47f92da689a8c14da4a61a317d3fe6be8cdf21dbd360ad74ed1f036f4114f1ba']
+CURRENT_ARITHMETIC_EXPECTED = ['4ae67ae397c2a0d9e54bc11a12736e9a8cb3a73f06b7767d37baad7be400c967', 'fb1f33878bdcf26be274a0ed2eaaad2056ccef5b7a426dd0426859a007feceaf', 'e8869c5613ac4b1b64ccb07e71f2db252079abed1dbcdaee3b6be1dd226bacd1']
 
 
 def observation(revision='r13'):
@@ -46,7 +50,7 @@ def observation(revision='r13'):
 
 
 def arithmetic_observation(revision='r13'):
-    expected = {'r13': ARITHMETIC_EXPECTED, 'r14': CURRENT_ARITHMETIC_EXPECTED}[revision]
+    expected = {'r13': ARITHMETIC_EXPECTED, 'r14': R14_ARITHMETIC_EXPECTED, CURRENT_REVISION: CURRENT_ARITHMETIC_EXPECTED}[revision]
     return {**observation(revision), 'policy_id': expected[0]}
 
 
@@ -57,7 +61,8 @@ class PolicyReaderTests(unittest.TestCase):
         self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000)
                           for bits in (8, 12, 16)], CURRENT_ARITHMETIC_EXPECTED)
         for revision, expected in (('r13', ARITHMETIC_EXPECTED),
-                                   ('r14', CURRENT_ARITHMETIC_EXPECTED)):
+                                   ('r14', R14_ARITHMETIC_EXPECTED),
+                                   (CURRENT_REVISION, CURRENT_ARITHMETIC_EXPECTED)):
             self.assertEqual([reader.arithmetic_policy_id(config, bits, 2000,
                                                          base_revision=revision)
                               for bits in (8, 12, 16)], expected)
@@ -110,19 +115,22 @@ class PolicyReaderTests(unittest.TestCase):
                               for bits in (8, 12, 16)], expected)
             self.assertEqual(reader.identify_observation(observation(revision))['resource_revision'],
                              revision)
-        self.assertEqual(config['current_revision'], 'r14')
+        self.assertEqual(config['current_revision'], CURRENT_REVISION)
 
     def test_current_rust_contract_and_independent_config_are_byte_identical(self):
         config = reader.load_profiles()
         source = reader.CONFIG.parents[2] / 'trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs'
-        contracts = re.findall(r'b"(resource-revision-r14/[^\"]+)"', source.read_text())
-        self.assertEqual(contracts, [config['revisions']['r14']['resource_contract']])
+        contracts = re.findall(r'b"(resource-revision-r14-owner-lock-v1/[^\"]+)"', source.read_text())
+        self.assertEqual(contracts, [config['revisions'][CURRENT_REVISION]['resource_contract']])
+        self.assertIn('/owner-scope-entry-original-thread-only-no-live-scoped-workers/',
+                      contracts[0])
 
     def test_historical_arithmetic_cannot_be_omitted_or_relabelled(self):
         config = reader.load_profiles()
         for edit in (
             lambda c: c.update(historical_arithmetic_profiles={}),
-            lambda c: c['historical_arithmetic_profiles'].update(r14=c['arithmetic_profile']),
+            lambda c: c['historical_arithmetic_profiles'].pop('r14'),
+            lambda c: c['historical_arithmetic_profiles'].update({CURRENT_REVISION: c['arithmetic_profile']}),
             lambda c: c['historical_arithmetic_profiles']['r13'].update(base_revision='r14'),
             lambda c: c['historical_arithmetic_profiles']['r13'].update(resource_revision='r14-arithmetic-facts-v1'),
             lambda c: c['historical_arithmetic_profiles']['r13']['vectors'][0].update(policy_id=CURRENT_ARITHMETIC_EXPECTED[0]),

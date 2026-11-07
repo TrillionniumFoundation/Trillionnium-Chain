@@ -141,6 +141,8 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
+    'python3 scripts/ci/test_pon_w1_rank_one_reuse_reader_v1.py',
+    'python3 scripts/ci/test_pon_w1_rejection_variants_reader_v1.py',
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
     'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
     'python3 scripts/ci/test_run_w1_reused_cost_v3.py',

@@ -111,9 +111,11 @@ def validate_job(job_path, binary):
         value["mode"] == (None if phase.name == "baseline" else phase.name),
         "ORIGINAL_PHASE_MODE",
     )
+    # Preserve explicit historical job labels with their original bytes/ELF.
+    # The selected native owner still enforces its own current profile.
     require(
         value["state_backend"] in ("legacy-v2", "authenticated-v1")
-        and value["work_profile"] in ("raw-r14", "arithmetic-facts-v1"),
+        and value["work_profile"] in ("raw-r14", "raw-r14-owner-lock-v1", "arithmetic-facts-v1"),
         "ORIGINAL_PHASE_PROFILE",
     )
     require(

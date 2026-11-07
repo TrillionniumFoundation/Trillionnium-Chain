@@ -356,6 +356,11 @@ impl Producer {
             Self::Full(t) => match t.preparation_used() {
                 PreparationUsed::Dense => json!({"preparation_used":"dense","rank_bound":null}),
                 PreparationUsed::Sparse => json!({"preparation_used":"sparse","rank_bound":null}),
+                // The frozen V5 arms never select the separately measured
+                // specialized constructor. Do not label it as a generic probe.
+                PreparationUsed::CheckedRankOne => {
+                    json!({"preparation_used":"checked-rank-one","rank_bound":1})
+                }
                 PreparationUsed::LeftLowRank { rank } => {
                     json!({"preparation_used":"left-low-rank","rank_bound":8,"rank":rank,"right_probe":false,"dense_fallback":false})
                 }

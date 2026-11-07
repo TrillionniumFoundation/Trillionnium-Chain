@@ -1,0 +1,178 @@
+{
+  "baseline_commit": "0ca272d09d1522b0ffd740e441b6d3de1ed81de6",
+  "deterministic_gzip": {
+    "compresslevel": 9,
+    "filename": "",
+    "mtime": 0
+  },
+  "files": [
+    {
+      "encoding": "gzip",
+      "original_bytes": 121,
+      "original_git_blob": "aaf1803a56e20ac9255e1747847ac243236c24a1",
+      "original_sha256": "12d14a05b2c3a1c4babf2a16d20888532b7fff9ab0a5befc2fe6ec854e43c5cd",
+      "path": "w1-cache/pre-fix-c-variants-existing-cache.log.gz",
+      "source": "w1-cache-tests/pre-fix-c-variants-existing-cache.log",
+      "stored_bytes": 127,
+      "stored_sha256": "411dc3ecc8e45fc045f2ae3dac768b0016e6487eefb3de4176cde88bcd9081a5"
+    },
+    {
+      "encoding": "gzip",
+      "original_bytes": 2930,
+      "original_git_blob": "5f36f4e53483bb437d78e2947d51ba503d36767c",
+      "original_sha256": "22559e796712ba01e27e14d10dcb9a3c2fd0187781dffdee9c3b51e57d2d7366",
+      "path": "w1-cache/pre-fix-c-variants-native-red.log.gz",
+      "source": "w1-cache-tests/pre-fix-c-variants-native-red.log",
+      "stored_bytes": 1126,
+      "stored_sha256": "beac279448006ff595485f159afba844516140ac462f16a9f1361a43c97f5099"
+    },
+    {
+      "encoding": "gzip",
+      "original_bytes": 399,
+      "original_git_blob": "5c30b4b20daa316d9cf373d673f79f4ef2d78197",
+      "original_sha256": "09dd7d0695f0d6fe82c6636c03a3d133ea7ebdab5fb4f5826dbc38873e0ef0cd",
+      "path": "w1-cache/pre-fix-c-variants.log.gz",
+      "source": "w1-cache-tests/pre-fix-c-variants.log",
+      "stored_bytes": 276,
+      "stored_sha256": "e1d31e21e944c0280a71a5cf45d451e129cdcf43deb251efe623e478344697b2"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 3725,
+      "original_git_blob": "efc875a48c7446a7e41189450e56a7a867394d63",
+      "original_sha256": "9c292aaa83fad402775bf004f6e5d79ee548eae07e6d09e11f1579cc621e5bf4",
+      "path": "w1-cache/pre-fix-source-and-attempts.json",
+      "source": "w1-cache-tests/pre-fix-source-and-attempts.json",
+      "stored_bytes": 3725,
+      "stored_sha256": "9c292aaa83fad402775bf004f6e5d79ee548eae07e6d09e11f1579cc621e5bf4"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 2323,
+      "original_git_blob": "00a981ba2bae84751611eefbd65bffd536911fc4",
+      "original_sha256": "72fc6cb4819987d8241cf6d849f9f1a4e31e648a62491be7d1dc59095c09cc89",
+      "path": "w1-cache/regression-only.patch",
+      "source": "w1-cache-tests/regression-only.patch",
+      "stored_bytes": 2323,
+      "stored_sha256": "72fc6cb4819987d8241cf6d849f9f1a4e31e648a62491be7d1dc59095c09cc89"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 607,
+      "original_git_blob": "ded57d61f124f02dcf3faf3998f3fc58d4a98e65",
+      "original_sha256": "3277481ceaaa1fd4f10285c0b860498c2b5f544a9027806362406c9dbbb0b871",
+      "path": "w1-cache/zeroize-cache-restoration.json",
+      "source": "w1-cache-tests/zeroize-cache-restoration.json",
+      "stored_bytes": 607,
+      "stored_sha256": "3277481ceaaa1fd4f10285c0b860498c2b5f544a9027806362406c9dbbb0b871"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 2396,
+      "original_git_blob": "04579be0204f94d0dc742c3aa8a1f52016be51c9",
+      "original_sha256": "2d7ad8b18c633fa25adcbfdeb2d744677dcfc106fec9497bb1fb31143f8c7ad5",
+      "path": "owner/owner-red-test-profile.json",
+      "source": "owner-red-tests/owner-red-test-profile.json",
+      "stored_bytes": 2396,
+      "stored_sha256": "2d7ad8b18c633fa25adcbfdeb2d744677dcfc106fec9497bb1fb31143f8c7ad5"
+    },
+    {
+      "encoding": "gzip",
+      "original_bytes": 5454,
+      "original_git_blob": "d060cdd41b20ea08ee5307fbd63bf85f41f166aa",
+      "original_sha256": "958f4ec480b324d0eef1850860378a44231f9172b7fa79d54425a0ccc42492d9",
+      "path": "owner/owner-red-test-profile.log.gz",
+      "source": "owner-red-tests/owner-red-test-profile.log",
+      "stored_bytes": 1804,
+      "stored_sha256": "a1a5a2f78a5cc5dc443014ae46fbe55158ebf2887354398e1a5dede5305c0f23"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 2211,
+      "original_git_blob": "a285547ad4b312f3b41f2190e511947ab6b0edc3",
+      "original_sha256": "1ff901bf350d42fad2a13e68b8cb5ad700926e6ac01d8828559ff17be07f27a1",
+      "path": "owner/owner-red.json",
+      "source": "owner-red-tests/owner-red.json",
+      "stored_bytes": 2211,
+      "stored_sha256": "1ff901bf350d42fad2a13e68b8cb5ad700926e6ac01d8828559ff17be07f27a1"
+    },
+    {
+      "encoding": "gzip",
+      "original_bytes": 6860,
+      "original_git_blob": "6573f6eadca6768dea2c750c9ae31c67589c9801",
+      "original_sha256": "8d5980b217a9949a8371fccf56ea630dc709e88bbc2bdf5636c4dbae02276540",
+      "path": "owner/owner-red.log.gz",
+      "source": "owner-red-tests/owner-red.log",
+      "stored_bytes": 1933,
+      "stored_sha256": "074e2d10c1d7b13bcffa154312469b8364391dcae488c6153bc00b48b9ea8444"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 4953,
+      "original_git_blob": "187628c08dd48b84b293ec178cf922a77084716e",
+      "original_sha256": "52fdbcdada9a87fd82b7a74e0ef397ad9ed069e6bc783073966f3b3f7d6b481a",
+      "path": "owner/regression-only.patch",
+      "source": "read-only git diff --no-ext-diff --full-index --binary 0ca272d09d1522b0ffd740e441b6d3de1ed81de6 6228b3da159c0bb69f9dbe50815f70a1a53a3171 -- trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+      "stored_bytes": 4953,
+      "stored_sha256": "52fdbcdada9a87fd82b7a74e0ef397ad9ed069e6bc783073966f3b3f7d6b481a"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 2204,
+      "original_git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "original_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+      "path": "owner/test-profile-Cargo.toml",
+      "source": "6228b3da159c0bb69f9dbe50815f70a1a53a3171:trillionnium/Cargo.toml",
+      "stored_bytes": 2204,
+      "stored_sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 1763,
+      "original_git_blob": "e76411a07fc04eec8807f8c8613605067c0e66a6",
+      "original_sha256": "7391e175f74458fd5e956599ebb6da00c7f8bcf776f64a6f9e0c1d1430c4d536",
+      "path": "owner/source-identity.json",
+      "source": "generated from the unchanged owner-red Git objects",
+      "stored_bytes": 1763,
+      "stored_sha256": "7391e175f74458fd5e956599ebb6da00c7f8bcf776f64a6f9e0c1d1430c4d536"
+    },
+    {
+      "encoding": "identity",
+      "original_bytes": 4982,
+      "original_git_blob": "29973a60b403fd178336072244941ac7a34bc0cb",
+      "original_sha256": "904b0fd14673f57a3d1d55f6c9ce8f27e1b493819d42d573022b8965b3e99c19",
+      "path": "README.md",
+      "source": "packaging description of the original records",
+      "stored_bytes": 4982,
+      "stored_sha256": "904b0fd14673f57a3d1d55f6c9ce8f27e1b493819d42d573022b8965b3e99c19"
+    }
+  ],
+  "manifest_excludes_itself": true,
+  "original_source_files": 10,
+  "owner_test_commit": "6228b3da159c0bb69f9dbe50815f70a1a53a3171",
+  "schema": "pon-w1-red-evidence-manifest-v1",
+  "validation": {
+    "binaries_included": false,
+    "cargo_executed_by_packaging": false,
+    "original_recorder_log_hashes_match": true,
+    "owner_before_after_source_identity_matches": true,
+    "owner_diff_is_tests_only": true,
+    "patch_reconstruction": [
+      {
+        "match": true,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "reconstructed_blob": "d6a364a4ac81e66050f143817cb2cf6a6a62ab28",
+        "reconstructed_sha256": "9edf8c6df637a816bab6365d5d52d168d1900a2e402e4a08c1884533c0c92e40"
+      },
+      {
+        "match": true,
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs",
+        "reconstructed_blob": "5f44e9f8ec517fb6348ec0860542440d706fe860",
+        "reconstructed_sha256": "0d4e75d032993c1a6d25d221f96a7e90d9e71b4ed6a5531316fa65319c756644"
+      }
+    ],
+    "recorded_patch_sha256_matches": true,
+    "resource_qualification": false,
+    "zeroize_restoration_checksum_matches_frozen_lockfile": true
+  }
+}

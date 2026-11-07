@@ -42,9 +42,14 @@ class PhaseHostControls(unittest.TestCase):
         self.job.write_text(json.dumps(value))
 
     def test_exact_job_and_raw_bytes_are_bound(self):
-        value, digest = host.validate_job(self.job, self.binary)
-        self.assertEqual(value, self.value)
-        self.assertEqual(digest, hashlib.sha256(self.job.read_bytes()).hexdigest())
+        # Historical jobs keep their exact label and bytes. The separately
+        # named owner-lock job is recognized without relabelling its predecessor.
+        for profile in ("raw-r14", "raw-r14-owner-lock-v1", "arithmetic-facts-v1"):
+            expected = dict(self.value, work_profile=profile)
+            self.write(expected)
+            value, digest = host.validate_job(self.job, self.binary)
+            self.assertEqual(value, expected)
+            self.assertEqual(digest, hashlib.sha256(self.job.read_bytes()).hexdigest())
 
     def test_changed_binary_is_not_the_original_test_program(self):
         self.binary.write_bytes(b"\x7fELFchanged")
